@@ -24,7 +24,7 @@ const actividadRoutes = require('./routes/actividadRoutes');
 const progresoRoutes = require('./routes/progresoRoutes');
 const adjuntoRoutes = require('./routes/adjuntoRoutes');
 const notificacionRoutes = require('./routes/notificacionRoutes');
-const sharepointRoutes = require('./routes/sharepointRoutes');
+//const sharepointRoutes = require('./routes/sharepointRoutes');
 
 // Inicializar app
 const app = express();
@@ -62,7 +62,7 @@ app.use('/api/actividades', actividadRoutes);
 app.use('/api/progreso', progresoRoutes);
 app.use('/api/adjuntos', adjuntoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
-app.use('/api/sharepoint', sharepointRoutes);
+//app.use('/api/sharepoint', sharepointRoutes);
 
 // Ruta para verificar que el servidor está funcionando
 app.get('/', (req, res) => {
