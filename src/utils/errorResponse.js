@@ -1,4 +1,4 @@
-# Utilidades para manejo de errores
+//Utilidades para manejo de errores
 class ErrorResponse extends Error {
   constructor(message, statusCode) {
     super(message);
