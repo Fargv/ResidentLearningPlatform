@@ -7,7 +7,7 @@ import config from '../config/config.js';
 
 
 // Middleware para proteger rutas
-export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const protect = async (req, res, next) => {
   let token;
 
   // Verificar si hay token en los headers
@@ -18,6 +18,7 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
     // Obtener token del header
     token = req.headers.authorization.split(' ')[1];
   }
+
 
   // Verificar si el token existe
   if (!token) {
