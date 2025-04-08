@@ -39,7 +39,7 @@ export const protect = async (req, res, next) => {
 };
 
 // Middleware para autorizar roles
-export const authorize = (...roles: string[]) => {
+export const authorize = (...roles) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return next(new ErrorResponse('No autorizado para acceder a esta ruta', 401));
