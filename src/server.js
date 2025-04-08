@@ -79,10 +79,15 @@ app.use(errorHandler);
 // Puerto
 const PORT = process.env.PORT || 5000;
 
-// Iniciar servidor
-const server = app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en modo ${process.env.NODE_ENV} en el puerto ${PORT}`);
-});
+// Iniciar servidor con manejo de errores
+try {
+  const server = app.listen(PORT, () => {
+    console.log(`Servidor ejecutándose en modo ${process.env.NODE_ENV} en el puerto ${PORT}`);
+  });
+} catch (error) {
+  console.error(' Error al iniciar el servidor:', error);
+}
+
 
 // Manejar rechazos de promesas no capturados
 process.on('unhandledRejection', (err, promise) => {
