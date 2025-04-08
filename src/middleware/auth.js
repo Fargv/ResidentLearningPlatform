@@ -4,10 +4,7 @@ import User from '../models/User.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import config from '../config/config.js';
 
-// Interfaz para extender Request con el usuario autenticado
-interface AuthRequest extends Request {
-  user?: any;
-}
+
 
 // Middleware para proteger rutas
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
