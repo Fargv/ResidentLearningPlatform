@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Verificar si el token es válido
         try {
-          const decoded: any = jwt_decode(token);
+          const decoded: any = jwtDecode(token);
           
           // Verificar si el token ha expirado
           const currentTime = Date.now() / 1000;
