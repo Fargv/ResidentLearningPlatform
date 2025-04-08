@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import * as jwtDecode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 interface User {
   _id: string;
