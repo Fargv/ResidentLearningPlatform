@@ -27,7 +27,7 @@ export const protect = async (req, res, next) => {
 
   try {
     // Verificar token
-    const decoded: any = jwt.verify(token, config.jwtSecret);
+    const decoded = jwt.verify(token, config.jwtSecret);
 
     // Añadir usuario al request
     req.user = await User.findById(decoded.id);
