@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import * as jwt_decode from 'jwt-decode';
+import { decode } from 'jwt-decode';
 
 
 interface User {
@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Verificar si el token es válido
         try {
-          const decoded = jwt_decode(token);
+          const decoded = decode(token);
           
           // Verificar si el token ha expirado
           const currentTime = Date.now() / 1000;
