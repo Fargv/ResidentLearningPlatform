@@ -19,7 +19,6 @@ import {
   Badge,
   useMediaQuery,
   useTheme,
-  Grid,
   Paper,
   Card,
   CardContent
