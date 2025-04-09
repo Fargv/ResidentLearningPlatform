@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "react-scripts build"
+    "build": "CI=false react-scripts build",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "keywords": [],
   "author": "",
@@ -38,5 +39,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.5.3"
   }
 }
