@@ -264,14 +264,14 @@ const AdminHospitales: React.FC = () => {
       {/* Resumen */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4} sx={{ p: 2 }} >
+        <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
             <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{hospitales.length}</Typography>
                 <Typography variant="body2">Hospitales</Typography>
               </CardContent>
             </Card>
-          </Grid>
+          </Box>
         </Grid>
       </Paper>
       
@@ -350,34 +350,35 @@ const AdminHospitales: React.FC = () => {
             onChange={handleChange}
             sx={{ mb: 2 }}
           />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
-              <TextField
-                margin="dense"
-                id="ciudad"
-                name="ciudad"
-                label="Ciudad"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={formData.ciudad}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
-              <TextField
-                margin="dense"
-                id="provincia"
-                name="provincia"
-                label="Provincia"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={formData.provincia}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
+<Box display="flex" flexWrap="wrap" gap={2}>
+  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
+    <TextField
+      margin="dense"
+      id="ciudad"
+      name="ciudad"
+      label="Ciudad"
+      type="text"
+      fullWidth
+      variant="outlined"
+      value={formData.ciudad}
+      onChange={handleChange}
+    />
+  </Box>
+  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
+    <TextField
+      margin="dense"
+      id="provincia"
+      name="provincia"
+      label="Provincia"
+      type="text"
+      fullWidth
+      variant="outlined"
+      value={formData.provincia}
+      onChange={handleChange}
+    />
+  </Box>
+</Box>
+
           <TextField
             margin="dense"
             id="codigoPostal"
@@ -459,34 +460,35 @@ const AdminHospitales: React.FC = () => {
             onChange={handleChange}
             sx={{ mb: 2 }}
           />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
-              <TextField
-                margin="dense"
-                id="ciudad"
-                name="ciudad"
-                label="Ciudad"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={formData.ciudad}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
-              <TextField
-                margin="dense"
-                id="provincia"
-                name="provincia"
-                label="Provincia"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={formData.provincia}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
+<Box display="flex" flexWrap="wrap" gap={2}>
+  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
+    <TextField
+      margin="dense"
+      id="ciudad"
+      name="ciudad"
+      label="Ciudad"
+      type="text"
+      fullWidth
+      variant="outlined"
+      value={formData.ciudad}
+      onChange={handleChange}
+    />
+  </Box>
+  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
+    <TextField
+      margin="dense"
+      id="provincia"
+      name="provincia"
+      label="Provincia"
+      type="text"
+      fullWidth
+      variant="outlined"
+      value={formData.provincia}
+      onChange={handleChange}
+    />
+  </Box>
+</Box>
+
           <TextField
             margin="dense"
             id="codigoPostal"
