@@ -64,7 +64,7 @@ const DashboardHome: React.FC = () => {
     return (
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid component="div" item xs={12} sm={6} sx={{ p: 2 }}>
+          <Grid item xs={12} sm={6} sx={{ p: 2 }}>
             <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{stats?.fasesTotales || 0}</Typography>
@@ -73,7 +73,7 @@ const DashboardHome: React.FC = () => {
             </Card>
           </Grid>
 
-          <Grid component="div" item xs={12} sm={6} sx={{ p: 2 }}>
+          <Grid item xs={12} sm={6} sx={{ p: 2 }}>
             <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{stats?.actividadesCompletadas || 0}</Typography>
@@ -82,7 +82,7 @@ const DashboardHome: React.FC = () => {
             </Card>
           </Grid>
 
-          <Grid component="div" item xs={12} sx={{ p: 2 }}>
+          <Grid item xs={12} sx={{ p: 2 }}>
             <Card>
               <CardHeader title="Actividad Reciente" />
               <Divider />
