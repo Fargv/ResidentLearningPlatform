@@ -32,7 +32,6 @@ import {
   Delete as DeleteIcon
   //LocalHospital as HospitalIcon
 } from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const AdminHospitales: React.FC = () => {

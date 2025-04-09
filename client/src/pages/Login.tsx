@@ -12,7 +12,7 @@ import {
 
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
+//import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ const Login: React.FC = () => {
   const { email, password } = formData;
   const { login, error, loading, clearError } = useAuth();
   //const navigate = useNavigate();
-  const location = useLocation();
+//const location = useLocation();
 
   // Obtener la ubicación anterior si existe
   //const from = location.state?.from?.pathname || '/dashboard';
