@@ -1,8 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { decode } from 'jwt-decode';
 
+// Función de decodificación manual del JWT
+function decodeJwt(token: string): any {
+  const base64Url = token.split('.')[1];  // Parte del token que contiene el payload
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Ajuste para que sea un Base64 válido
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);  // Devuelve el payload como un objeto
+}
 
 interface User {
   _id: string;
@@ -57,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Verificar si el token es válido
         try {
-          const decoded = decode(token);
+          const decoded = decodeJwt(token);  // Usando la función de decodificación manual
           
           // Verificar si el token ha expirado
           const currentTime = Date.now() / 1000;
