@@ -284,7 +284,7 @@ const FormadorValidaciones: React.FC = () => {
               {pendientes.map(progreso => (
                 <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
                   <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} sm={7}>
+                  <Grid item xs={12} sm={7} component="div">
                       <Typography variant="h6">
                         {progreso.actividad.nombre}
                       </Typography>
@@ -308,7 +308,7 @@ const FormadorValidaciones: React.FC = () => {
                         </Typography>
                       )}
                     </Grid>
-                    <Grid item xs={12} sm={5} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'column', gap: 1 }}>
+                    <Grid item xs={12} sm={5} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'column', gap: 1 }} component="div">
                       <Button
                         variant="contained"
                         color="success"
@@ -346,7 +346,7 @@ const FormadorValidaciones: React.FC = () => {
               {validadas.map(progreso => (
                 <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
                   <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} sm={9}>
+                  <Grid item xs={12} sm={9} component="div">
                       <Typography variant="h6">
                         {progreso.actividad.nombre}
                       </Typography>
@@ -370,7 +370,7 @@ const FormadorValidaciones: React.FC = () => {
                         </Typography>
                       )}
                     </Grid>
-                    <Grid item xs={12} sm={3} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Grid item xs={12} sm={3} sx={{ display: 'flex', justifyContent: 'flex-end' }} component="div">
                       <Chip 
                         icon={<CheckCircleIcon />} 
                         label="Validado" 
@@ -396,7 +396,7 @@ const FormadorValidaciones: React.FC = () => {
               {rechazadas.map(progreso => (
                 <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
                   <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} sm={9}>
+                  <Grid item xs={12} sm={9} component="div">
                       <Typography variant="h6">
                         {progreso.actividad.nombre}
                       </Typography>
@@ -420,7 +420,7 @@ const FormadorValidaciones: React.FC = () => {
                         </Typography>
                       )}
                     </Grid>
-                    <Grid item xs={12} sm={3} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Grid item xs={12} sm={3} sx={{ display: 'flex', justifyContent: 'flex-end' }} component="div">
                       <Chip 
                         icon={<ErrorIcon />} 
                         label="Rechazado" 

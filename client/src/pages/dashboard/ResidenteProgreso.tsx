@@ -280,7 +280,7 @@ const ResidenteProgreso: React.FC = () => {
                   return (
                     <Paper key={actividad._id} sx={{ mb: 2, p: 2 }}>
                       <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={12} sm={8}>
+                      <Grid item xs={12} sm={8} component="div">
                           <Typography variant="h6">{actividad.nombre}</Typography>
                           <Typography variant="body2" color="text.secondary" paragraph>
                             {actividad.descripcion}
@@ -314,7 +314,7 @@ const ResidenteProgreso: React.FC = () => {
                             )}
                           </Box>
                         </Grid>
-                        <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end' }} component="div">
                           <Button
                             variant="contained"
                             color="primary"
