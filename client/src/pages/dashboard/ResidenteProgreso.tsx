@@ -207,32 +207,41 @@ const ResidenteProgreso: React.FC = () => {
           </Box>
         </Box>
         
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={4} sx={{ p: 2 }} >
-            <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{stats?.fases?.reduce((acc: number, fase: any) => acc + fase.completadas, 0) || 0}</Typography>
-                <Typography variant="body2">Completadas</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={4} sx={{ p: 2 }} >
-            <Card sx={{ bgcolor: 'warning.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{stats?.fases?.reduce((acc: number, fase: any) => acc + fase.pendientes, 0) || 0}</Typography>
-                <Typography variant="body2">Pendientes</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={4} sx={{ p: 2 }} >
-            <Card sx={{ bgcolor: 'error.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{stats?.fases?.reduce((acc: number, fase: any) => acc + fase.rechazadas, 0) || 0}</Typography>
-                <Typography variant="body2">Rechazadas</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <Box display="flex" flexWrap="wrap" gap={2} mt={2}>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+    <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">
+          {stats?.fases?.reduce((acc: number, fase: any) => acc + fase.completadas, 0) || 0}
+        </Typography>
+        <Typography variant="body2">Completadas</Typography>
+      </CardContent>
+    </Card>
+  </Box>
+
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+    <Card sx={{ bgcolor: 'warning.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">
+          {stats?.fases?.reduce((acc: number, fase: any) => acc + fase.pendientes, 0) || 0}
+        </Typography>
+        <Typography variant="body2">Pendientes</Typography>
+      </CardContent>
+    </Card>
+  </Box>
+
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+    <Card sx={{ bgcolor: 'error.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">
+          {stats?.fases?.reduce((acc: number, fase: any) => acc + fase.rechazadas, 0) || 0}
+        </Typography>
+        <Typography variant="body2">Rechazadas</Typography>
+      </CardContent>
+    </Card>
+  </Box>
+</Box>
+
       </Paper>
       
       {/* Pestañas de fases */}
@@ -279,52 +288,54 @@ const ResidenteProgreso: React.FC = () => {
                   const estado = getActividadEstado(actividad._id);
                   return (
                     <Paper key={actividad._id} sx={{ mb: 2, p: 2 }}>
-                      <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={12} sm={8} sx={{ p: 2 }} >
-                          <Typography variant="h6">{actividad.nombre}</Typography>
-                          <Typography variant="body2" color="text.secondary" paragraph>
-                            {actividad.descripcion}
-                          </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                            <Chip 
-                              size="small" 
-                              label={actividad.tipo} 
-                              color="primary"
-                              sx={{ mr: 1 }}
-                            />
-                            {estado && (
-                              <Chip 
-                                size="small" 
-                                icon={
-                                  estado === 'validado' ? <CheckCircleIcon /> : 
-                                  estado === 'pendiente' ? <PendingIcon /> : 
-                                  <ErrorIcon />
-                                }
-                                label={
-                                  estado === 'validado' ? 'Validado' : 
-                                  estado === 'pendiente' ? 'Pendiente de validación' : 
-                                  'Rechazado'
-                                }
-                                color={
-                                  estado === 'validado' ? 'success' : 
-                                  estado === 'pendiente' ? 'warning' : 
-                                  'error'
-                                }
-                              />
-                            )}
-                          </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }} >
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            disabled={tieneProgreso(actividad._id)}
-                            onClick={() => handleOpenDialog(actividad)}
-                          >
-                            {tieneProgreso(actividad._id) ? 'Completada' : 'Registrar'}
-                          </Button>
-                        </Grid>
-                      </Grid>
+                      <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '66.666%' } }}>
+    <Typography variant="h6">{actividad.nombre}</Typography>
+    <Typography variant="body2" color="text.secondary" paragraph>
+      {actividad.descripcion}
+    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+      <Chip 
+        size="small" 
+        label={actividad.tipo} 
+        color="primary"
+        sx={{ mr: 1 }}
+      />
+      {estado && (
+        <Chip 
+          size="small" 
+          icon={
+            estado === 'validado' ? <CheckCircleIcon /> : 
+            estado === 'pendiente' ? <PendingIcon /> : 
+            <ErrorIcon />
+          }
+          label={
+            estado === 'validado' ? 'Validado' : 
+            estado === 'pendiente' ? 'Pendiente de validación' : 
+            'Rechazado'
+          }
+          color={
+            estado === 'validado' ? 'success' : 
+            estado === 'pendiente' ? 'warning' : 
+            'error'
+          }
+        />
+      )}
+    </Box>
+  </Box>
+
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' }, display: 'flex', justifyContent: 'flex-end' }}>
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={tieneProgreso(actividad._id)}
+      onClick={() => handleOpenDialog(actividad)}
+    >
+      {tieneProgreso(actividad._id) ? 'Completada' : 'Registrar'}
+    </Button>
+  </Box>
+</Box>
+
                     </Paper>
                   );
                 })}
