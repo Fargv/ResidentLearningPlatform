@@ -9,7 +9,6 @@ import {
   CardHeader,
   LinearProgress,
   Divider,
-  Button,
   Chip,
   Avatar,
   List,
@@ -19,11 +18,9 @@ import {
   Alert
 } from '@mui/material';
 import {
-  Assignment as AssignmentIcon,
   CheckCircle as CheckCircleIcon,
   Pending as PendingIcon,
-  Error as ErrorIcon,
-  Notifications as NotificationsIcon
+  Error as ErrorIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
@@ -34,37 +31,16 @@ const DashboardHome: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
-  const [pendingValidations, setPendingValidations] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
-        // Obtener estadísticas según el rol del usuario
         if (user?.rol === 'residente') {
           const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
           setStats(statsRes.data.data);
-          
-          // Obtener actividades recientes
           const actividadesRes = await axios.get(`/api/progreso/residente/${user._id}`);
           setRecentActivity(actividadesRes.data.data.slice(0, 5));
-        } else if (user?.rol === 'formador') {
-          // Obtener estadísticas del hospital
-          const statsRes = await axios.get(`/api/hospitals/${user.hospital}/stats`);
-          setStats(statsRes.data.data);
-          
-          // Obtener validaciones pendientes
-          const validacionesRes = await axios.get('/api/progreso?estado=pendiente');
-          setPendingValidations(validacionesRes.data.data.slice(0, 5));
-        } else if (user?.rol === 'administrador') {
-          // Obtener estadísticas generales
-          const statsRes = await axios.get('/api/users/stats');
-          setStats(statsRes.data.data);
-          
-          // Obtener últimos usuarios registrados
-          const usuariosRes = await axios.get('/api/users?sort=-fechaCreacion&limit=5');
-          setRecentActivity(usuariosRes.data.data);
         }
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar los datos del dashboard');
@@ -73,87 +49,41 @@ const DashboardHome: React.FC = () => {
       }
     };
 
-    if (user) {
-      fetchDashboardData();
-    }
+    if (user) fetchDashboardData();
   }, [user]);
 
-  // Renderizar contenido según el rol del usuario
   const renderContent = () => {
     if (loading) {
-      return (
-        <Box sx={{ width: '100%', mt: 4 }}>
-          <LinearProgress />
-        </Box>
-      );
+      return <Typography>Cargando...</Typography>;
     }
 
     if (error) {
-      return (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {error}
-        </Alert>
-      );
+      return <Alert severity="error">{error}</Alert>;
     }
 
-    // Dashboard para residentes
-    if (user?.rol === 'residente') {
-      return (
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8} sx={{ p: 2 }}>
-            <Paper sx={{ p: 2, height: '100%' }}>
-              <Typography variant="h6" gutterBottom>
-                Progreso General
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Box sx={{ width: '100%', mr: 1 }}>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={stats?.porcentajeTotal || 0} 
-                    sx={{ height: 10, borderRadius: 5 }}
-                  />
-                </Box>
-                <Box sx={{ minWidth: 35 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {stats?.porcentajeTotal || 0}%
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Typography variant="subtitle1" gutterBottom sx={{ mt: 3 }}>
-                Progreso por Fases
-              </Typography>
-              {stats?.fases?.map((fase: any) => (
-                <Box key={fase.fase._id} sx={{ mb: 2 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="body2">
-                      Fase {fase.fase.numero}: {fase.fase.nombre}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {fase.completadas}/{fase.totalActividades} actividades
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ width: '100%', mr: 1 }}>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={fase.porcentajeCompletado} 
-                        sx={{ height: 8, borderRadius: 4 }}
-                      />
-                    </Box>
-                    <Box sx={{ minWidth: 35 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        {fase.porcentajeCompletado}%
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              ))}
-            </Paper>
+    return (
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Grid container spacing={2}>
+          <Grid component="div" item xs={12} sm={6} sx={{ p: 2 }}>
+            <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
+              <CardContent>
+                <Typography variant="h4">{stats?.fasesTotales || 0}</Typography>
+                <Typography variant="subtitle1">Fases totales</Typography>
+              </CardContent>
+            </Card>
           </Grid>
-          
-          <Grid item xs={12} md={4} sx={{ p: 2 }}>
-            <Card sx={{ height: '100%' }}>
+
+          <Grid component="div" item xs={12} sm={6} sx={{ p: 2 }}>
+            <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
+              <CardContent>
+                <Typography variant="h4">{stats?.actividadesCompletadas || 0}</Typography>
+                <Typography variant="subtitle1">Actividades completadas</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid component="div" item xs={12} sx={{ p: 2 }}>
+            <Card>
               <CardHeader title="Actividad Reciente" />
               <Divider />
               <CardContent sx={{ p: 0 }}>
@@ -198,12 +128,8 @@ const DashboardHome: React.FC = () => {
             </Card>
           </Grid>
         </Grid>
-      );
-    }
-
-    // Continue with the rest of the conditions for 'formador' and 'administrador' roles...
-
-    return null;
+      </Paper>
+    );
   };
 
   return (
@@ -220,7 +146,6 @@ const DashboardHome: React.FC = () => {
               : `Residente en ${user?.hospital?.nombre || 'Hospital'}`}
         </Typography>
       </Box>
-      
       {renderContent()}
     </Box>
   );
