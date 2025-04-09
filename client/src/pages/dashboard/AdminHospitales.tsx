@@ -3,10 +3,10 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
+  //Grid,
   Card,
   CardContent,
-  Divider,
+  //Divider,
   Button,
   TextField,
   Dialog,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Chip,
+  //Chip,
   LinearProgress,
   Alert,
   Snackbar
@@ -29,14 +29,14 @@ import {
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  LocalHospital as HospitalIcon
+  Delete as DeleteIcon
+  //LocalHospital as HospitalIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const AdminHospitales: React.FC = () => {
-  const { user } = useAuth();
+  //const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hospitales, setHospitales] = useState<any[]>([]);

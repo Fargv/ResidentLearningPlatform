@@ -18,10 +18,8 @@ import {
   MenuItem,
   Badge,
   useMediaQuery,
-  useTheme,
-  Paper,
-  Card,
-  CardContent
+  useTheme
+
 } from '@mui/material';
 import {
   Menu as MenuIcon,
