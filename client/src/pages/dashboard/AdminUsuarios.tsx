@@ -5,7 +5,7 @@ import {
   Paper,
   Card,
   CardContent,
-  Divider,
+  //Divider,
   Button,
   TextField,
   Dialog,
@@ -28,15 +28,15 @@ import {
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Person as PersonIcon,
-  Email as EmailIcon
+  Delete as DeleteIcon
+  //Person as PersonIcon,
+  //Email as EmailIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const AdminUsuarios: React.FC = () => {
-  const { user } = useAuth();
+  //const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<any[]>([]);
