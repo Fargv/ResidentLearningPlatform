@@ -264,7 +264,7 @@ const AdminHospitales: React.FC = () => {
       {/* Resumen */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4} sx={{ p: 2 }} component="div">
+          <Grid item xs={12} sm={4} sx={{ p: 2 }} >
             <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{hospitales.length}</Typography>
@@ -351,7 +351,7 @@ const AdminHospitales: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} component="div">
+            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
               <TextField
                 margin="dense"
                 id="ciudad"
@@ -364,7 +364,7 @@ const AdminHospitales: React.FC = () => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} component="div">
+            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
               <TextField
                 margin="dense"
                 id="provincia"
@@ -460,7 +460,7 @@ const AdminHospitales: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} component="div">
+            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
               <TextField
                 margin="dense"
                 id="ciudad"
@@ -473,7 +473,7 @@ const AdminHospitales: React.FC = () => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ p: 2 }} component="div">
+            <Grid item xs={12} sm={6} sx={{ p: 2 }} >
               <TextField
                 margin="dense"
                 id="provincia"
