@@ -63,71 +63,71 @@ const DashboardHome: React.FC = () => {
 
     return (
       <Paper sx={{ p: 2, mb: 3 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} sx={{ p: 2 }} component="div">
-            <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{stats?.fasesTotales || 0}</Typography>
-                <Typography variant="subtitle1">Fases totales</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+ <Box display="flex" flexWrap="wrap" gap={2}>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
+    <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">{stats?.fasesTotales || 0}</Typography>
+        <Typography variant="subtitle1">Fases totales</Typography>
+      </CardContent>
+    </Card>
+  </Box>
 
-          <Grid item xs={12} sm={6} sx={{ p: 2 }} component="div">
-            <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{stats?.actividadesCompletadas || 0}</Typography>
-                <Typography variant="subtitle1">Actividades completadas</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
+    <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">{stats?.actividadesCompletadas || 0}</Typography>
+        <Typography variant="subtitle1">Actividades completadas</Typography>
+      </CardContent>
+    </Card>
+  </Box>
 
-          <Grid item xs={12} sx={{ p: 2 }} component="div">
-            <Card>
-              <CardHeader title="Actividad Reciente" />
-              <Divider />
-              <CardContent sx={{ p: 0 }}>
-                <List sx={{ width: '100%', maxHeight: 400, overflow: 'auto' }}>
-                  {recentActivity.length > 0 ? (
-                    recentActivity.map((actividad) => (
-                      <React.Fragment key={actividad._id}>
-                        <ListItem alignItems="flex-start">
-                          <ListItemAvatar>
-                            <Avatar sx={{ bgcolor: actividad.estado === 'validado' ? 'success.main' : actividad.estado === 'pendiente' ? 'warning.main' : 'error.main' }}>
-                              {actividad.estado === 'validado' ? <CheckCircleIcon /> : actividad.estado === 'pendiente' ? <PendingIcon /> : <ErrorIcon />}
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={actividad.actividad.nombre}
-                            secondary={
-                              <>
-                                <Typography component="span" variant="body2" color="text.primary">
-                                  {actividad.actividad.fase.nombre}
-                                </Typography>
-                                {` — ${new Date(actividad.fechaCreacion).toLocaleDateString()}`}
-                                <Chip 
-                                  size="small" 
-                                  label={actividad.estado === 'validado' ? 'Validado' : actividad.estado === 'pendiente' ? 'Pendiente' : 'Rechazado'} 
-                                  color={actividad.estado === 'validado' ? 'success' : actividad.estado === 'pendiente' ? 'warning' : 'error'}
-                                  sx={{ ml: 1 }}
-                                />
-                              </>
-                            }
-                          />
-                        </ListItem>
-                        <Divider variant="inset" component="li" />
-                      </React.Fragment>
-                    ))
-                  ) : (
-                    <ListItem>
-                      <ListItemText primary="No hay actividades recientes" />
-                    </ListItem>
-                  )}
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+  <Box sx={{ p: 2, flexBasis: '100%' }}>
+    <Card>
+      <CardHeader title="Actividad Reciente" />
+      <Divider />
+      <CardContent sx={{ p: 0 }}>
+        <List sx={{ width: '100%', maxHeight: 400, overflow: 'auto' }}>
+          {recentActivity.length > 0 ? (
+            recentActivity.map((actividad) => (
+              <React.Fragment key={actividad._id}>
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: actividad.estado === 'validado' ? 'success.main' : actividad.estado === 'pendiente' ? 'warning.main' : 'error.main' }}>
+                      {actividad.estado === 'validado' ? <CheckCircleIcon /> : actividad.estado === 'pendiente' ? <PendingIcon /> : <ErrorIcon />}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={actividad.actividad.nombre}
+                    secondary={
+                      <>
+                        <Typography component="span" variant="body2" color="text.primary">
+                          {actividad.actividad.fase.nombre}
+                        </Typography>
+                        {` — ${new Date(actividad.fechaCreacion).toLocaleDateString()}`}
+                        <Chip 
+                          size="small" 
+                          label={actividad.estado === 'validado' ? 'Validado' : actividad.estado === 'pendiente' ? 'Pendiente' : 'Rechazado'} 
+                          color={actividad.estado === 'validado' ? 'success' : actividad.estado === 'pendiente' ? 'warning' : 'error'}
+                          sx={{ ml: 1 }}
+                        />
+                      </>
+                    }
+                  />
+                </ListItem>
+                <Divider variant="inset" component="li" />
+              </React.Fragment>
+            ))
+          ) : (
+            <ListItem>
+              <ListItemText primary="No hay actividades recientes" />
+            </ListItem>
+          )}
+        </List>
+      </CardContent>
+    </Card>
+  </Box>
+</Box>
       </Paper>
     );
   };

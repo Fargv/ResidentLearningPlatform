@@ -461,24 +461,24 @@ const AdminFases: React.FC = () => {
       
       {/* Resumen */}
       <Paper sx={{ p: 2, mb: 3 }}>
-        <Grid container spacing={2}>
-        <Box sx={{ p: 2 }}>
-            <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{fases.length}</Typography>
-                <Typography variant="body2">Fases</Typography>
-              </CardContent>
-            </Card>
-            </Box>
-            <Box sx={{ p: 2 }}>
-            <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{actividades.length}</Typography>
-                <Typography variant="body2">Actividades</Typography>
-              </CardContent>
-            </Card>
-            </Box>
-        </Grid>
+      <Box display="flex" flexWrap="wrap" gap={2}>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
+    <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">{fases.length}</Typography>
+        <Typography variant="body2">Fases</Typography>
+      </CardContent>
+    </Card>
+  </Box>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
+    <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">{actividades.length}</Typography>
+        <Typography variant="body2">Actividades</Typography>
+      </CardContent>
+    </Card>
+  </Box>
+</Box>
       </Paper>
       
       {/* Pestañas de fases */}

@@ -40,102 +40,103 @@ const Login: React.FC = () => {
 
   return (
     <Box
+  sx={{
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'background.default',
+    py: 4
+  }}
+>
+  <Container maxWidth="sm">
+    <Paper
+      elevation={3}
       sx={{
-        minHeight: '100vh',
+        p: 4,
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'background.default',
-        py: 4
+        borderRadius: 2
       }}
     >
-      <Container maxWidth="sm">
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            borderRadius: 2
-          }}
+      <Box sx={{ mb: 3, textAlign: 'center' }}>
+        <img
+          src="/logo.png"
+          alt="Abex Excelencia Robótica"
+          style={{ maxWidth: '200px', marginBottom: '16px' }}
+        />
+        <Typography variant="h4" component="h1" gutterBottom>
+          Plataforma de Formación
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          Tecnologías del Robot da Vinci
+        </Typography>
+      </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      <Box component="form" onSubmit={onSubmit} sx={{ width: '100%' }}>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Email"
+          name="email"
+          autoComplete="email"
+          autoFocus
+          value={email}
+          onChange={onChange}
+          disabled={loading}
+        />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Contraseña"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={onChange}
+          disabled={loading}
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          sx={{ mt: 3, mb: 2, py: 1.5 }}
+          disabled={loading}
         >
-          <Box sx={{ mb: 3, textAlign: 'center' }}>
-            <img
-              src="/logo.png"
-              alt="Abex Excelencia Robótica"
-              style={{ maxWidth: '200px', marginBottom: '16px' }}
-            />
-            <Typography variant="h4" component="h1" gutterBottom>
-              Plataforma de Formación
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              Tecnologías del Robot da Vinci
-            </Typography>
-          </Box>
+          {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
+        </Button>
 
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <Box component="form" onSubmit={onSubmit} sx={{ width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={onChange}
-              disabled={loading}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Contraseña"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={onChange}
-              disabled={loading}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={loading}
-            >
-              {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
-            </Button>
-            <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <Link component={RouterLink} to="/forgot-password" variant="body2">
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
-        <Box sx={{ mt: 2, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} Abex Excelencia Robótica
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Powered by Intuitive Surgical
-          </Typography>
+        <Box sx={{ mt: 2 }}>
+          <Link component={RouterLink} to="/forgot-password" variant="body2">
+            ¿Olvidaste tu contraseña?
+          </Link>
         </Box>
-      </Container>
+      </Box>
+    </Paper>
+
+    <Box sx={{ mt: 2, textAlign: 'center' }}>
+      <Typography variant="body2" color="text.secondary">
+        © {new Date().getFullYear()} Abex Excelencia Robótica
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        Powered by Intuitive Surgical
+      </Typography>
     </Box>
+  </Container>
+</Box>
+
   );
 };
 
