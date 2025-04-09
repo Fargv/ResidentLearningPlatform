@@ -10,7 +10,7 @@ import {
   Typography,
   Divider,
   IconButton,
-  ListItemButton,  // Cambiado aquí
+  ListItemButton,  // Cambio de ListItem a ListItemButton
   ListItemIcon,
   ListItemText,
   Avatar,
@@ -18,7 +18,8 @@ import {
   MenuItem,
   Badge,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Grid  // Import Grid
 } from '@mui/material';
 import {
   Menu as MenuIcon,
