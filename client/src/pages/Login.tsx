@@ -117,8 +117,8 @@ const Login: React.FC = () => {
             >
               {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
             </Button>
-            <Grid container>
-              <Grid item xs>
+            <Grid container spacing={2}>
+            <Grid item xs={12}>
                 <Link component={RouterLink} to="/forgot-password" variant="body2">
                   ¿Olvidaste tu contraseña?
                 </Link>
