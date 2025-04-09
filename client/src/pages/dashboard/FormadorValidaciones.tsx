@@ -3,17 +3,17 @@ import {
   Box,
   Typography,
   Paper,
-  Grid,
+  //Grid,
   Card,
   CardContent,
-  Divider,
+  //Divider,
   Button,
   Chip,
   LinearProgress,
   List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
+  //ListItem,
+  //ListItemText,
+  //ListItemAvatar,
   Avatar,
   Alert,
   Dialog,
@@ -27,9 +27,9 @@ import {
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
-  Pending as PendingIcon,
-  Error as ErrorIcon,
-  School as SchoolIcon
+  //Pending as PendingIcon,
+  Error as ErrorIcon
+  //School as SchoolIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
