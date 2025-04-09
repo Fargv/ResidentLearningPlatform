@@ -100,7 +100,7 @@ const DashboardHome: React.FC = () => {
     if (user?.rol === 'residente') {
       return (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8} component="div">
+          <Grid item xs={12} md={8} component="div" sx={{ p: 2 }}>
             <Paper sx={{ p: 2, height: '100%' }}>
               <Typography variant="h6" gutterBottom>
                 Progreso General
@@ -152,7 +152,7 @@ const DashboardHome: React.FC = () => {
             </Paper>
           </Grid>
           
-          <Grid item xs={12} md={4} component="div">
+          <Grid item xs={12} md={4} component="div" sx={{ p: 2 }}>
             <Card sx={{ height: '100%' }}>
               <CardHeader title="Actividad Reciente" />
               <Divider />
