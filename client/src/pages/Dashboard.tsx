@@ -10,7 +10,7 @@ import {
   Typography,
   Divider,
   IconButton,
-  ListItem,
+  ListItemButton,  // Cambiado aquí
   ListItemIcon,
   ListItemText,
   Avatar,
@@ -288,8 +288,7 @@ const Dashboard: React.FC = () => {
         <Divider />
         <List>
           {menuItems.map((item) => (
-            <ListItem
-              button
+            <ListItemButton  // Cambio de ListItem a ListItemButton
               key={item.text}
               onClick={() => {
                 navigate(item.path);
@@ -298,13 +297,12 @@ const Dashboard: React.FC = () => {
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
         <Divider />
         <List>
-          <ListItem
-            button
+          <ListItemButton  // Cambio de ListItem a ListItemButton
             onClick={() => {
               navigate('/dashboard/perfil');
               if (isMobile) handleDrawerClose();
@@ -314,9 +312,8 @@ const Dashboard: React.FC = () => {
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Mi Perfil" />
-          </ListItem>
-          <ListItem
-            button
+          </ListItemButton>
+          <ListItemButton  // Cambio de ListItem a ListItemButton
             onClick={() => {
               navigate('/dashboard/notificaciones');
               if (isMobile) handleDrawerClose();
@@ -328,13 +325,15 @@ const Dashboard: React.FC = () => {
               </Badge>
             </ListItemIcon>
             <ListItemText primary="Notificaciones" />
-          </ListItem>
-          <ListItem button onClick={handleLogout}>
+          </ListItemButton>
+          <ListItemButton  // Cambio de ListItem a ListItemButton
+            onClick={handleLogout}
+          >
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
             <ListItemText primary="Cerrar Sesión" />
-          </ListItem>
+          </ListItemButton>
         </List>
       </Drawer>
       <Box
