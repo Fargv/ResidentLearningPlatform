@@ -208,7 +208,7 @@ const ResidenteProgreso: React.FC = () => {
         </Box>
         
         <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={4} sx={{ p: 2 }} component="div">
+          <Grid item xs={4} sx={{ p: 2 }} >
             <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{stats?.fases?.reduce((acc: number, fase: any) => acc + fase.completadas, 0) || 0}</Typography>
@@ -216,7 +216,7 @@ const ResidenteProgreso: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={4} sx={{ p: 2 }} component="div">
+          <Grid item xs={4} sx={{ p: 2 }} >
             <Card sx={{ bgcolor: 'warning.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{stats?.fases?.reduce((acc: number, fase: any) => acc + fase.pendientes, 0) || 0}</Typography>
@@ -224,7 +224,7 @@ const ResidenteProgreso: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={4} sx={{ p: 2 }} component="div">
+          <Grid item xs={4} sx={{ p: 2 }} >
             <Card sx={{ bgcolor: 'error.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">{stats?.fases?.reduce((acc: number, fase: any) => acc + fase.rechazadas, 0) || 0}</Typography>
@@ -280,7 +280,7 @@ const ResidenteProgreso: React.FC = () => {
                   return (
                     <Paper key={actividad._id} sx={{ mb: 2, p: 2 }}>
                       <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={12} sm={8} sx={{ p: 2 }} component="div">
+                      <Grid item xs={12} sm={8} sx={{ p: 2 }} >
                           <Typography variant="h6">{actividad.nombre}</Typography>
                           <Typography variant="body2" color="text.secondary" paragraph>
                             {actividad.descripcion}
@@ -314,7 +314,7 @@ const ResidenteProgreso: React.FC = () => {
                             )}
                           </Box>
                         </Grid>
-                        <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }} component="div">
+                        <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }} >
                           <Button
                             variant="contained"
                             color="primary"
