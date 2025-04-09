@@ -263,16 +263,17 @@ const AdminHospitales: React.FC = () => {
       
       {/* Resumen */}
       <Paper sx={{ p: 2, mb: 3 }}>
-        <Grid container spacing={2}>
-        <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-            <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-              <CardContent>
-                <Typography variant="h4">{hospitales.length}</Typography>
-                <Typography variant="body2">Hospitales</Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        </Grid>
+      <Box display="flex" flexWrap="wrap" gap={2}>
+  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+    <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
+      <CardContent>
+        <Typography variant="h4">{hospitales.length}</Typography>
+        <Typography variant="body2">Hospitales</Typography>
+      </CardContent>
+    </Card>
+  </Box>
+</Box>
+
       </Paper>
       
       {/* Tabla de hospitales */}
