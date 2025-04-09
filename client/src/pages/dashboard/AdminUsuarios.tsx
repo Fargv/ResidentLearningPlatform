@@ -265,7 +265,7 @@ const AdminUsuarios: React.FC = () => {
       {/* Resumen */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4} component="div" sx={{ p: 2 }}>
+          <Grid item xs={12} sm={4} sx={{ p: 2 }} component="div">
             <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">
@@ -275,7 +275,7 @@ const AdminUsuarios: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4} component="div" sx={{ p: 2 }}>
+          <Grid item xs={12} sm={4} sx={{ p: 2 }} component="div">
             <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">
@@ -285,7 +285,7 @@ const AdminUsuarios: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4} component="div" sx={{ p: 2 }}>
+          <Grid item xs={12} sm={4} sx={{ p: 2 }} component="div">
             <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">
