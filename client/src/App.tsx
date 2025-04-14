@@ -119,7 +119,6 @@ function App() {
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/register/:token" element={<Register />} />
 
             {/* Ruta raíz redirige a dashboard o login */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
