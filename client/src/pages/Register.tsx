@@ -16,6 +16,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { useAuth } from '../context/AuthContext';
 
 const Register: React.FC = () => {
@@ -52,19 +53,27 @@ const Register: React.FC = () => {
 
   const onChange = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
-  
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-  
+
     if (error) clearError();
-  
+
     if ((name === 'password' || name === 'confirmPassword') && value !== formData.password) {
       setPasswordError('Las contraseñas no coinciden');
     } else {
       setPasswordError(null);
     }
+  };
+
+  const onSelectHospital = (event: SelectChangeEvent<string>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -220,7 +229,7 @@ const Register: React.FC = () => {
                 name="hospital"
                 value={hospital}
                 label="Hospital"
-                onChange={onChange}
+                onChange={onSelectHospital}
               >
                 {hospitales.map((h) => (
                   <MenuItem key={h._id} value={h._id}>
