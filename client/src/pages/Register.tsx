@@ -45,7 +45,7 @@ const Register: React.FC = () => {
   useEffect(() => {
     const fetchHospitales = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/hospitals`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/hospitales`);
         const data = await res.json();
         setHospitales(data.data);
       } catch (error) {
