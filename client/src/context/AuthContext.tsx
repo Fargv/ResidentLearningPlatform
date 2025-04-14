@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const API = process.env.REACT_APP_API_URL;
+
+
 // Función de decodificación manual del JWT
 function decodeJwt(token: string): any {
   const base64Url = token.split('.')[1];  // Parte del token que contiene el payload
@@ -84,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         
         // Obtener información del usuario
-        const res = await axios.get('/api/auth/me');
+        const res = await axios.get(`${API}/auth/me`);
         
         setUser(res.data.data);
         setIsAuthenticated(true);
@@ -106,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
       
-      const res = await axios.post('/api/auth/login', { email, password });
+      const res = await axios.post(`${API}/auth/login`, { email, password });
       
       // Guardar token en localStorage
       localStorage.setItem('token', res.data.token);
@@ -115,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
       
       // Obtener información del usuario
-      const userRes = await axios.get('/api/auth/me');
+      const userRes = await axios.get(`${API}/auth/me`);
       
       setUser(userRes.data.data);
       setIsAuthenticated(true);
@@ -135,7 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
       
-      const res = await axios.post('/api/auth/register', userData);
+      const res = await axios.post(`${API}/auth/register`, userData);
       
       // Guardar token en localStorage
       localStorage.setItem('token', res.data.token);
@@ -144,7 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
       
       // Obtener información del usuario
-      const userRes = await axios.get('/api/auth/me');
+      const userRes = await axios.get(`${API}/auth/me`);
       
       setUser(userRes.data.data);
       setIsAuthenticated(true);
