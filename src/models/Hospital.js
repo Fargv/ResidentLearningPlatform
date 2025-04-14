@@ -6,6 +6,11 @@ const hospitalSchema = new mongoose.Schema({
     required: [true, 'Por favor proporcione un nombre para el hospital'],
     trim: true
   },
+  codigoNumerico: {
+    type: Number,
+    unique: true,
+    required: [true, 'Debe especificar un ID numérico']
+  },
   direccion: {
     type: String,
     required: [true, 'Por favor proporcione una dirección']
