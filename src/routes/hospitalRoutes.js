@@ -13,17 +13,15 @@ const {
   getHospitalStats
 } = require('../controllers/hospitalController');
 
-// Todas las rutas requieren autenticación
-router.use(protect);
+// 🟢 Ruta pública para que el formulario de registro cargue hospitales
+router.get('/', getHospitals);
 
-// Rutas para todos los roles
-router.route('/')
-  .get(getHospitals);
+// 🔒 Todas las demás rutas requieren login
+router.use(protect);
 
 router.route('/:id')
   .get(getHospital);
 
-// Rutas solo para administradores
 router.route('/')
   .post(authorize('administrador'), createHospital);
 
@@ -31,7 +29,6 @@ router.route('/:id')
   .put(authorize('administrador'), updateHospital)
   .delete(authorize('administrador'), deleteHospital);
 
-// Rutas para administradores y formadores
 router.route('/:id/residentes')
   .get(authorize('administrador', 'formador'), getHospitalResidentes);
 

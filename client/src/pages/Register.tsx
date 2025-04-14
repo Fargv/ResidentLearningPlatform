@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -10,10 +10,13 @@ import {
   CircularProgress,
   Checkbox,
   FormControlLabel,
-  Link
+  Link,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,20 +26,37 @@ const Register: React.FC = () => {
     password: '',
     confirmPassword: '',
     codigoAcceso: '',
-    consentimientoDatos: false
+    consentimientoDatos: false,
+    hospital: ''
   });
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [codigoError, setCodigoError] = useState<string | null>(null);
+  const [hospitales, setHospitales] = useState([]);
 
-  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos } = formData;
+  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital } = formData;
   const { register, error, loading, clearError } = useAuth();
 
+  useEffect(() => {
+    const fetchHospitales = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/hospitales`);
+        const data = await res.json();
+        setHospitales(data.data);
+      } catch (error) {
+        console.error('Error cargando hospitales:', error);
+      }
+    };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked } = e.target;
+    fetchHospitales();
+  }, []);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+
     setFormData({
       ...formData,
-      [name]: name === 'consentimientoDatos' ? checked : value
+      [name!]: type === 'checkbox' ? checked : value
     });
 
     if (error) clearError();
@@ -74,7 +94,7 @@ const Register: React.FC = () => {
       return;
     }
 
-    await register({ nombre, apellidos, email, password, rol });
+    await register({ nombre, apellidos, email, password, rol, hospital });
   };
 
   return (
@@ -197,6 +217,23 @@ const Register: React.FC = () => {
               onChange={onChange}
               disabled={loading}
             />
+            <FormControl fullWidth margin="normal" required disabled={loading}>
+              <InputLabel id="hospital-label">Hospital</InputLabel>
+              <Select
+                labelId="hospital-label"
+                id="hospital"
+                name="hospital"
+                value={hospital}
+                label="Hospital"
+                onChange={onChange}
+              >
+                {hospitales.map((h) => (
+                  <MenuItem key={h._id} value={h._id}>
+                    {h.nombre}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <FormControlLabel
               control={
                 <Checkbox

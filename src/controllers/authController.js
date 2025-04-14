@@ -10,57 +10,64 @@ import config from '../config/config.js';
 // @access  Public
 export const register = async (req, res, next) => {
   try {
-    const { nombre, apellidos, password, token, consentimientoDatos } = req.body;
-
-    if (!token) {
-      return next(new ErrorResponse('Token de invitación requerido', 400));
+    const { nombre, apellidos, email, password, accessCode, hospital, consentimientoDatos } = req.body;
+  
+    if (!accessCode) {
+      return next(new ErrorResponse('Código de acceso requerido', 400));
     }
-
+  
     if (!consentimientoDatos) {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
     }
-
-    // Verificar token de invitación
-    const invitacion = await User.findOne({
-      invitacionToken: token,
-      invitacionExpira: { $gt: Date.now() }
-    });
-
-    if (!invitacion) {
-      return next(new ErrorResponse('Token de invitación inválido o expirado', 400));
+  
+    // Determinar rol según el código de acceso
+    let rol = null;
+    if (accessCode === 'ABEXFOR2025') {
+      rol = 'formador';
+    } else if (accessCode === 'ABEXRES2025') {
+      rol = 'residente';
+    } else {
+      return next(new ErrorResponse('Código de acceso inválido', 400));
     }
-
-    // Actualizar usuario con datos de registro
-    invitacion.nombre = nombre || invitacion.nombre;
-    invitacion.apellidos = apellidos || invitacion.apellidos;
-    invitacion.password = password;
-    invitacion.invitacionToken = undefined;
-    invitacion.invitacionExpira = undefined;
-    invitacion.activo = true;
-    invitacion.consentimientoDatos = true;
-    invitacion.fechaRegistro = Date.now();
-
-    await invitacion.save();
-
+  
+    // Verificar si el email ya está registrado
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return next(new ErrorResponse('El usuario ya está registrado', 400));
+    }
+  
+    // Crear el nuevo usuario
+    const newUser = await User.create({
+      nombre,
+      apellidos,
+      email,
+      password,
+      rol,
+      hospital,
+      activo: true,
+      consentimientoDatos: true,
+      fechaRegistro: Date.now()
+    });
+  
     // Generar token JWT
-    const jwtToken = generateToken(invitacion);
-
+    const jwtToken = generateToken(newUser);
+  
     res.status(200).json({
       success: true,
       token: jwtToken,
       data: {
-        _id: invitacion._id,
-        nombre: invitacion.nombre,
-        apellidos: invitacion.apellidos,
-        email: invitacion.email,
-        rol: invitacion.rol,
-        hospital: invitacion.hospital
+        _id: newUser._id,
+        nombre: newUser.nombre,
+        apellidos: newUser.apellidos,
+        email: newUser.email,
+        rol: newUser.rol,
+        hospital: newUser.hospital
       }
     });
   } catch (err) {
     next(err);
   }
-};
+  
 
 // @desc    Iniciar sesión
 // @route   POST /api/auth/login
