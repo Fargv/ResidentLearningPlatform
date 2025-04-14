@@ -30,7 +30,7 @@ const Register: React.FC = () => {
 
   const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos } = formData;
   const { register, error, loading, clearError } = useAuth();
-  const navigate = useNavigate();
+
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = e.target;
