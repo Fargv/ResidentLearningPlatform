@@ -118,11 +118,12 @@ function App() {
           <Routes>
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/register/:token" element={<Register />} />
-            
+
             {/* Ruta raíz redirige a dashboard o login */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            
+
             {/* Rutas del dashboard */}
             <Route path="/dashboard" element={
               <PrivateRoute>
@@ -130,21 +131,21 @@ function App() {
               </PrivateRoute>
             }>
               <Route index element={<DashboardHome />} />
-              
+
               {/* Rutas para residentes */}
               <Route path="progreso" element={
                 <ResidenteRoute>
                   <ResidenteProgreso />
                 </ResidenteRoute>
               } />
-              
+
               {/* Rutas para formadores */}
               <Route path="validaciones" element={
                 <FormadorRoute>
                   <FormadorValidaciones />
                 </FormadorRoute>
               } />
-              
+
               {/* Rutas para administradores */}
               <Route path="usuarios" element={
                 <AdminRoute>
@@ -161,12 +162,12 @@ function App() {
                   <AdminFases />
                 </AdminRoute>
               } />
-              
+
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
               <Route path="notificaciones" element={<Notificaciones />} />
             </Route>
-            
+
             {/* Ruta 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>

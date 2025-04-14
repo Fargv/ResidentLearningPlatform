@@ -123,6 +123,17 @@ const Login: React.FC = () => {
             ¿Olvidaste tu contraseña?
           </Link>
         </Box>
+        
+<Box sx={{ mt: 1 }}>
+  <Typography variant="body2" align="center">
+    ¿No tienes cuenta?
+    {' '}
+    <Link component={RouterLink} to="/register" underline="hover">
+      Regístrate aquí
+    </Link>
+  </Typography>
+</Box>
+
       </Box>
     </Paper>
 
