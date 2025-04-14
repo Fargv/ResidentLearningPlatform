@@ -45,16 +45,19 @@ const Register: React.FC = () => {
   useEffect(() => {
     const fetchHospitales = async () => {
       try {
+        console.log('🔍 Usando API URL:', process.env.REACT_APP_API_URL);  // <-- Añádelo aquí
+  
         const res = await fetch(`${process.env.REACT_APP_API_URL}/hospitales`);
         const data = await res.json();
         setHospitales(data.data);
       } catch (error) {
-        console.error('Error cargando hospitales:', error);
+        console.error('❌ Error cargando hospitales:', error);
       }
     };
-
+  
     fetchHospitales();
   }, []);
+  
 
   const onChange = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
