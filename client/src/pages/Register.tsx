@@ -50,25 +50,20 @@ const Register: React.FC = () => {
     fetchHospitales();
   }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-
-    setFormData({
-      ...formData,
-      [name!]: type === 'checkbox' ? checked : value
-    });
-
+  const onChange = (e: React.ChangeEvent<any>) => {
+    const { name, value, type, checked } = e.target;
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  
     if (error) clearError();
-
-    if (name === 'confirmPassword' || name === 'password') {
-      if (name === 'confirmPassword' && value !== password) {
-        setPasswordError('Las contraseñas no coinciden');
-      } else if (name === 'password' && confirmPassword && value !== confirmPassword) {
-        setPasswordError('Las contraseñas no coinciden');
-      } else {
-        setPasswordError(null);
-      }
+  
+    if ((name === 'password' || name === 'confirmPassword') && value !== formData.password) {
+      setPasswordError('Las contraseñas no coinciden');
+    } else {
+      setPasswordError(null);
     }
   };
 
