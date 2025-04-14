@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -13,75 +13,34 @@ import {
   Link
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-
-interface InvitacionData {
-  email: string;
-  nombre: string;
-  apellidos: string;
-  rol: string;
-  hospital?: {
-    nombre: string;
-  };
-}
+import { useNavigate } from 'react-router-dom';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     apellidos: '',
+    email: '',
     password: '',
     confirmPassword: '',
+    codigoAcceso: '',
     consentimientoDatos: false
   });
-  const [invitacion, setInvitacion] = useState<InvitacionData | null>(null);
-  const [loadingInvitacion, setLoadingInvitacion] = useState(true);
-  const [invitacionError, setInvitacionError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  
-  const { nombre, apellidos, password, confirmPassword, consentimientoDatos } = formData;
+  const [codigoError, setCodigoError] = useState<string | null>(null);
+
+  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos } = formData;
   const { register, error, loading, clearError } = useAuth();
   const navigate = useNavigate();
-  const { token } = useParams<{ token: string }>();
-
-  // Verificar token de invitación
-  useEffect(() => {
-    const verificarToken = async () => {
-      try {
-        const res = await axios.get(`/api/users/invite/verify/${token}`);
-        setInvitacion(res.data.data);
-        
-        // Pre-llenar el formulario con los datos de la invitación
-        setFormData(prevState => ({
-          ...prevState,
-          nombre: res.data.data.nombre || '',
-          apellidos: res.data.data.apellidos || ''
-        }));
-      } catch (err: any) {
-        setInvitacionError(err.response?.data?.error || 'Token de invitación inválido o expirado');
-      } finally {
-        setLoadingInvitacion(false);
-      }
-    };
-
-    if (token) {
-      verificarToken();
-    } else {
-      setInvitacionError('No se proporcionó un token de invitación');
-      setLoadingInvitacion(false);
-    }
-  }, [token]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = e.target;
-    setFormData({ 
-      ...formData, 
-      [name]: name === 'consentimientoDatos' ? checked : value 
+    setFormData({
+      ...formData,
+      [name]: name === 'consentimientoDatos' ? checked : value
     });
-    
+
     if (error) clearError();
-    
-    // Validar contraseñas
+
     if (name === 'confirmPassword' || name === 'password') {
       if (name === 'confirmPassword' && value !== password) {
         setPasswordError('Las contraseñas no coinciden');
@@ -95,83 +54,28 @@ const Register: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Validar contraseñas
+
+    setCodigoError(null);
+
     if (password !== confirmPassword) {
       setPasswordError('Las contraseñas no coinciden');
       return;
     }
-    
-    if (password.length < 6) {
-      setPasswordError('La contraseña debe tener al menos 6 caracteres');
+
+    if (!consentimientoDatos) return;
+
+    let rol: 'residente' | 'formador';
+    if (codigoAcceso === 'ABEXRES2025') {
+      rol = 'residente';
+    } else if (codigoAcceso === 'ABEXFOR2025') {
+      rol = 'formador';
+    } else {
+      setCodigoError('Código de acceso no válido');
       return;
     }
-    
-    if (!consentimientoDatos) {
-      return;
-    }
-    
-    // Registrar usuario
-    if (token) {
-      await register({
-        nombre,
-        apellidos,
-        password,
-        token,
-        consentimientoDatos
-      });
-    }
+
+    await register({ nombre, apellidos, email, password, rol });
   };
-
-  if (loadingInvitacion) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (invitacionError) {
-    return (
-      <Box
-        sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'background.default',
-          py: 4
-        }}
-      >
-        <Container maxWidth="sm">
-          <Paper
-            elevation={3}
-            sx={{
-              p: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              borderRadius: 2
-            }}
-          >
-            <Typography variant="h5" component="h1" gutterBottom>
-              Error de Invitación
-            </Typography>
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {invitacionError}
-            </Alert>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate('/login')}
-            >
-              Volver al Inicio de Sesión
-            </Button>
-          </Paper>
-        </Container>
-      </Box>
-    );
-  }
 
   return (
     <Box
@@ -187,13 +91,7 @@ const Register: React.FC = () => {
       <Container maxWidth="sm">
         <Paper
           elevation={3}
-          sx={{
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            borderRadius: 2
-          }}
+          sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2 }}
         >
           <Box sx={{ mb: 3, textAlign: 'center' }}>
             <img
@@ -202,34 +100,22 @@ const Register: React.FC = () => {
               style={{ maxWidth: '200px', marginBottom: '16px' }}
             />
             <Typography variant="h4" component="h1" gutterBottom>
-              Completar Registro
+              Registro de Usuario
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
               Plataforma de Formación en Tecnologías del Robot da Vinci
             </Typography>
           </Box>
 
-          {invitacion && (
-            <Box sx={{ mb: 3, width: '100%' }}>
-              <Alert severity="info">
-                <Typography variant="body1">
-                  <strong>Email:</strong> {invitacion.email}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Rol:</strong> {invitacion.rol === 'residente' ? 'Residente' : invitacion.rol === 'formador' ? 'Formador' : 'Administrador'}
-                </Typography>
-                {invitacion.hospital && (
-                  <Typography variant="body1">
-                    <strong>Hospital:</strong> {invitacion.hospital.nombre}
-                  </Typography>
-                )}
-              </Alert>
-            </Box>
-          )}
-
           {error && (
             <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
               {error}
+            </Alert>
+          )}
+
+          {codigoError && (
+            <Alert severity="warning" sx={{ width: '100%', mb: 2 }}>
+              {codigoError}
             </Alert>
           )}
 
@@ -263,6 +149,18 @@ const Register: React.FC = () => {
               margin="normal"
               required
               fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              value={email}
+              onChange={onChange}
+              disabled={loading}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
               name="password"
               label="Contraseña"
               type="password"
@@ -287,6 +185,17 @@ const Register: React.FC = () => {
               onChange={onChange}
               disabled={loading}
               error={!!passwordError}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="codigoAcceso"
+              label="Código de Acceso"
+              id="codigoAcceso"
+              value={codigoAcceso}
+              onChange={onChange}
+              disabled={loading}
             />
             <FormControlLabel
               control={
@@ -317,7 +226,7 @@ const Register: React.FC = () => {
               sx={{ mt: 3, mb: 2, py: 1.5 }}
               disabled={loading || !consentimientoDatos}
             >
-              {loading ? <CircularProgress size={24} /> : 'Completar Registro'}
+              {loading ? <CircularProgress size={24} /> : 'Registrarse'}
             </Button>
           </Box>
         </Paper>
