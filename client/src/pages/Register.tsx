@@ -19,6 +19,11 @@ import {
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useAuth } from '../context/AuthContext';
 
+interface Hospital {
+  _id: string;
+  nombre: string;
+}
+
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -32,7 +37,7 @@ const Register: React.FC = () => {
   });
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [codigoError, setCodigoError] = useState<string | null>(null);
-  const [hospitales, setHospitales] = useState([]);
+  const [hospitales, setHospitales] = useState<Hospital[]>([]);
 
   const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital } = formData;
   const { register, error, loading, clearError } = useAuth();
@@ -276,7 +281,7 @@ const Register: React.FC = () => {
             © {new Date().getFullYear()} Abex Excelencia Robótica
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Powered by Intuitive Surgical
+            Powered by FARGV
           </Typography>
         </Box>
       </Container>
