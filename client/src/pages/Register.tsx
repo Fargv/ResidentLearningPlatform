@@ -13,7 +13,7 @@ import {
   Link
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
