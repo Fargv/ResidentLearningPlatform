@@ -247,60 +247,62 @@ const AdminUsuarios: React.FC = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-  <Typography variant="h4" component="h1" gutterBottom>
-    {user?.rol === 'administrador'
-      ? 'Gestión de Todos los Usuarios'
-      : 'Usuarios de Tu Hospital'}
-  </Typography>
-
-  <Button
-    variant="contained"
-    color="primary"
-    startIcon={<AddIcon />}
-    onClick={handleOpenInvitarDialog}
-  >
-    Invitar Usuario
-  </Button>
-</Box>
+    <Box sx={{ px: 3, py: 2 }}>
+      {/* Cabecera */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          {user?.rol === 'administrador'
+            ? 'Gestión de Todos los Usuarios'
+            : 'Usuarios de Tu Hospital'}
+        </Typography>
+  
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleOpenInvitarDialog}
+        >
+          Invitar Usuario
+        </Button>
+      </Box>
 
       
-      {/* Resumen */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">
-          {usuarios.filter(u => u.rol === 'administrador').length}
-        </Typography>
-        <Typography variant="body2">Administradores</Typography>
-      </CardContent>
-    </Card>
+    {/* Resumen */}
+<Paper sx={{ p: 2, mb: 3 }}>
+  <Box display="flex" flexWrap="wrap" gap={2}>
+    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+      <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
+        <CardContent>
+          <Typography variant="h4">
+            {usuarios.filter(u => u.rol === 'administrador').length}
+          </Typography>
+          <Typography variant="body2">Administradores</Typography>
+        </CardContent>
+      </Card>
+    </Box>
+    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+      <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
+        <CardContent>
+          <Typography variant="h4">
+            {usuarios.filter(u => u.rol === 'formador').length}
+          </Typography>
+          <Typography variant="body2">Formadores</Typography>
+        </CardContent>
+      </Card>
+    </Box>
+    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
+      <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
+        <CardContent>
+          <Typography variant="h4">
+            {usuarios.filter(u => u.rol === 'residente').length}
+          </Typography>
+          <Typography variant="body2">Residentes</Typography>
+        </CardContent>
+      </Card>
+    </Box>
   </Box>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">
-          {usuarios.filter(u => u.rol === 'formador').length}
-        </Typography>
-        <Typography variant="body2">Formadores</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">
-          {usuarios.filter(u => u.rol === 'residente').length}
-        </Typography>
-        <Typography variant="body2">Residentes</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-</Box>
+</Paper>
 
-      </Paper>
       
       {/* Tabla de usuarios */}
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
