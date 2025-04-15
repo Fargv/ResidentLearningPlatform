@@ -24,7 +24,7 @@ interface Hospital {
   nombre: string;
 }
 
-const especialidades = ['URO', 'GEN', 'GYN', 'THOR', 'ORL'];
+//const especialidades = ['URO', 'GEN', 'GYN', 'THOR', 'ORL'];
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
