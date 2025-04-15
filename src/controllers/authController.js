@@ -87,12 +87,21 @@ const login = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      token
+      token,
+      data: {
+        _id: user._id,
+        nombre: user.nombre,
+        apellidos: user.apellidos,
+        email: user.email,
+        rol: user.rol,
+        hospital: user.hospital
+      }
     });
   } catch (err) {
     next(err);
   }
 };
+
 
 const getMe = async (req, res, next) => {
   try {
