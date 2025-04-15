@@ -6,12 +6,20 @@ const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
 
-// @desc    Obtener todos los usuarios
+// @desc    Obtener todos los usuarios (admin) o usuarios del hospital (formador)
 // @route   GET /api/users
-// @access  Private/Admin
+// @access  Private/Admin|Formador
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await User.find().populate('hospital');
+    let users;
+
+    if (req.user.rol === 'administrador') {
+      users = await User.find().populate('hospital');
+    } else if (req.user.rol === 'formador') {
+      users = await User.find({ hospital: req.user.hospital }).populate('hospital');
+    } else {
+      return next(new ErrorResponse('No autorizado para ver usuarios', 403));
+    }
 
     res.status(200).json({
       success: true,
@@ -22,6 +30,8 @@ exports.getUsers = async (req, res, next) => {
     next(err);
   }
 };
+
+// Resto del código permanece igual...
 
 // @desc    Obtener un usuario específico
 // @route   GET /api/users/:id
@@ -42,6 +52,9 @@ exports.getUser = async (req, res, next) => {
     next(err);
   }
 };
+
+// (todo el resto del archivo permanece igual, sin cambios adicionales)
+
 
 // @desc    Actualizar un usuario
 // @route   PUT /api/users/:id
