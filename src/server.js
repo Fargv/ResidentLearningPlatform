@@ -57,6 +57,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/hospitals', hospitalRoutes);
+app.use('/api/hospitales', hospitalRoutes); // ✅ para que funcione el frontend
 app.use('/api/fases', faseRoutes);
 app.use('/api/actividades', actividadRoutes);
 app.use('/api/progreso', progresoRoutes);
