@@ -32,7 +32,7 @@ import {
   //Person as PersonIcon,
   //Email as EmailIcon
 } from '@mui/icons-material';
-//import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const AdminUsuarios: React.FC = () => {
@@ -58,6 +58,7 @@ const AdminUsuarios: React.FC = () => {
     message: '',
     severity: 'success' as 'success' | 'error'
   });
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
