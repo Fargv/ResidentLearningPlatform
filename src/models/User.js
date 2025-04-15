@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema({
   },
   especialidad: {
     type: String,
+    enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL'],
     required: function() {
       return this.rol === 'residente';
     }
