@@ -7,7 +7,7 @@ const config = require('../config/config');
 
 const register = async (req, res, next) => {
   try {
-    const { nombre, apellidos, email, password, codigoAcceso, hospital, consentimientoDatos } = req.body;
+    const { nombre, apellidos, email, password, codigoAcceso, hospital, consentimientoDatos, especialidad} = req.body;
     const accessCode = codigoAcceso;
 
     if (!accessCode) {
