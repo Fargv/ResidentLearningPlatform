@@ -36,7 +36,7 @@ import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
 const AdminUsuarios: React.FC = () => {
-  //const { user } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -58,7 +58,7 @@ const AdminUsuarios: React.FC = () => {
     message: '',
     severity: 'success' as 'success' | 'error'
   });
-  const { user } = useAuth();
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,20 +247,23 @@ const AdminUsuarios: React.FC = () => {
   }
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Gestión de Usuarios
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleOpenInvitarDialog}
-        >
-          Invitar Usuario
-        </Button>
-      </Box>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+  <Typography variant="h4" component="h1" gutterBottom>
+    {user?.rol === 'administrador'
+      ? 'Gestión de Todos los Usuarios'
+      : 'Usuarios de Tu Hospital'}
+  </Typography>
+
+  <Button
+    variant="contained"
+    color="primary"
+    startIcon={<AddIcon />}
+    onClick={handleOpenInvitarDialog}
+  >
+    Invitar Usuario
+  </Button>
+</Box>
+
       
       {/* Resumen */}
       <Paper sx={{ p: 2, mb: 3 }}>
