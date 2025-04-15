@@ -2,30 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Chip } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
-
-//comment
-
 const DebugDashboard = () => {
   const { user } = useAuth();
-  const [token, setToken] = useState('');
-  const [decoded, setDecoded] = useState(null);
+  const [token, setToken] = useState<string>('');
+  const [decoded, setDecoded] = useState<any>(null);
   const [status, setStatus] = useState('');
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
-
-    if (!storedToken) {
+    if (storedToken) {
+      setToken(storedToken);
+      try {
+        const payload = JSON.parse(atob(storedToken.split('.')[1]));
+        setDecoded(payload);
+        setStatus('✅ Token válido y decodificado');
+      } catch (error) {
+        setStatus('❌ Token no válido o corrupto');
+      }
+    } else {
       setStatus('❌ Token no encontrado en localStorage');
-      return;
-    }
-
-    try {
-      const payload = JSON.parse(atob(storedToken.split('.')[1]));
-      setDecoded(payload);
-      setStatus('✅ Token válido y decodificado');
-    } catch (error) {
-      setStatus('❌ Token no válido o corrupto');
     }
   }, []);
 
