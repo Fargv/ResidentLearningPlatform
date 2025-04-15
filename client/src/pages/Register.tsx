@@ -249,20 +249,22 @@ const Register: React.FC = () => {
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal" required disabled={loading}>
-              <InputLabel id="especialidad-label">Especialidad</InputLabel>
-              <Select
-                labelId="especialidad-label"
-                id="especialidad"
-                name="especialidad"
-                value={especialidad}
-                label="Especialidad"
-                onChange={onSelectHospital} // reutilizamos la misma función
-              >
-                {especialidades.map((esp) => (
-                  <MenuItem key={esp} value={esp}>{esp}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+  <InputLabel id="especialidad-label">Especialidad</InputLabel>
+  <Select
+    labelId="especialidad-label"
+    id="especialidad"
+    name="especialidad"
+    value={especialidad}
+    label="Especialidad"
+    onChange={onChange}
+  >
+    <MenuItem value="URO">Urología (URO)</MenuItem>
+    <MenuItem value="GEN">Cirugía General (GEN)</MenuItem>
+    <MenuItem value="GYN">Ginecología (GYN)</MenuItem>
+    <MenuItem value="THOR">Torácica (THOR)</MenuItem>
+    <MenuItem value="ORL">Otorrino (ORL)</MenuItem>
+  </Select>
+</FormControl>
             <FormControlLabel
               control={
                 <Checkbox
