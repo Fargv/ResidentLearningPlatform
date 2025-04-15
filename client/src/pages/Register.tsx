@@ -107,7 +107,7 @@ const Register: React.FC = () => {
       setCodigoError('Código de acceso no válido');
       return;
     }
-
+    console.log('FormData', formData);
     await register({ nombre, apellidos, email, password, rol, hospital, codigoAcceso, consentimientoDatos, especialidad });
   };
 
