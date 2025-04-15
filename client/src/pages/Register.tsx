@@ -105,7 +105,7 @@ const Register: React.FC = () => {
       return;
     }
 
-    await register({ nombre, apellidos, email, password, rol, hospital });
+    await register({ nombre, apellidos, email, password, rol, hospital,codigoAcceso });
   };
 
   return (
