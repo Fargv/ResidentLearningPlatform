@@ -66,11 +66,21 @@ const AdminUsuarios: React.FC = () => {
         setLoading(true);
         
         // Obtener usuarios
-        const usuariosRes = await axios.get('/api/users');
+        const token = localStorage.getItem('token');
+const usuariosRes = await axios.get('/api/users', {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
         setUsuarios(usuariosRes.data.data);
         
         // Obtener hospitales
-        const hospitalesRes = await axios.get('/api/hospitals');
+        const hospitalesRes = await axios.get('/api/hospitals', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
         setHospitales(hospitalesRes.data.data);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar los datos');
