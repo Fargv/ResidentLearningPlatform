@@ -24,6 +24,8 @@ interface Hospital {
   nombre: string;
 }
 
+const especialidades = ['URO', 'GEN', 'GYN', 'THOR', 'ORL'];
+
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -33,13 +35,14 @@ const Register: React.FC = () => {
     confirmPassword: '',
     codigoAcceso: '',
     consentimientoDatos: false,
-    hospital: ''
+    hospital: '',
+    especialidad: ''
   });
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [codigoError, setCodigoError] = useState<string | null>(null);
   const [hospitales, setHospitales] = useState<Hospital[]>([]);
 
-  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital } = formData;
+  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital, especialidad } = formData;
   const { register, error, loading, clearError } = useAuth();
 
   useEffect(() => {
@@ -105,7 +108,7 @@ const Register: React.FC = () => {
       return;
     }
 
-    await register({ nombre, apellidos, email, password, rol, hospital,codigoAcceso,consentimientoDatos  });
+    await register({ nombre, apellidos, email, password, rol, hospital, codigoAcceso, consentimientoDatos, especialidad });
   };
 
   return (
@@ -242,6 +245,21 @@ const Register: React.FC = () => {
                   <MenuItem key={h._id} value={h._id}>
                     {h.nombre}
                   </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="normal" required disabled={loading}>
+              <InputLabel id="especialidad-label">Especialidad</InputLabel>
+              <Select
+                labelId="especialidad-label"
+                id="especialidad"
+                name="especialidad"
+                value={especialidad}
+                label="Especialidad"
+                onChange={onSelectHospital} // reutilizamos la misma función
+              >
+                {especialidades.map((esp) => (
+                  <MenuItem key={esp} value={esp}>{esp}</MenuItem>
                 ))}
               </Select>
             </FormControl>

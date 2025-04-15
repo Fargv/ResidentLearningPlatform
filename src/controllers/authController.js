@@ -39,6 +39,7 @@ const register = async (req, res, next) => {
       password,
       rol,
       hospital,
+      especialidad,
       activo: true,
       consentimientoDatos: true,
       fechaRegistro: Date.now()
