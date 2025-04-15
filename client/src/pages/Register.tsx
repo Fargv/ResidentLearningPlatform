@@ -86,6 +86,14 @@ const Register: React.FC = () => {
     }));
   };
 
+  const onSelectEspecialidad = (event: SelectChangeEvent<string>) => {
+    const { value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      especialidad: value
+    }));
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -256,7 +264,7 @@ const Register: React.FC = () => {
     name="especialidad"
     value={especialidad}
     label="Especialidad"
-    onChange={onChange}
+    onChange={onSelectEspecialidad}
   >
     <MenuItem value="URO">Urología (URO)</MenuItem>
     <MenuItem value="GEN">Cirugía General (GEN)</MenuItem>
