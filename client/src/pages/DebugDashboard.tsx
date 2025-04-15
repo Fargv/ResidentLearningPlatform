@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Chip } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 
+//comment
+
 const DebugDashboard = () => {
   const { user } = useAuth();
   const [token, setToken] = useState('');
