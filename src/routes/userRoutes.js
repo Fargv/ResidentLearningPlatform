@@ -19,7 +19,7 @@ router.use(protect);
 
 // Rutas solo para administradores
 router.route('/')
-  .get(authorize('administrador'), getUsers);
+  .get(authorize('administrador', 'formador'), getUsers);
 
 router.route('/invite')
   .post(authorize('administrador'), inviteUser);
