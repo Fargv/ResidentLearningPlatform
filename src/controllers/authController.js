@@ -7,7 +7,8 @@ const config = require('../config/config');
 
 const register = async (req, res, next) => {
   try {
-    const { nombre, apellidos, email, password, accessCode, hospital, consentimientoDatos } = req.body;
+    const { nombre, apellidos, email, password, codigoAcceso, hospital, consentimientoDatos } = req.body;
+    const accessCode = codigoAcceso;
 
     if (!accessCode) {
       return next(new ErrorResponse('Código de acceso requerido', 400));
