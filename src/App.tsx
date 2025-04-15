@@ -158,6 +158,14 @@ function App() {
                   </FormadorRoute>
                 }
               />
+              <Route
+                path="usuarios"
+                element={
+                  <FormadorRoute>
+                    <AdminUsuarios />
+                  </FormadorRoute>
+                }
+              />
 
               {/* Rutas para administradores */}
               <Route
