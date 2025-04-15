@@ -142,7 +142,7 @@ const Login: React.FC = () => {
         © {new Date().getFullYear()} Abex Excelencia Robótica
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        Powered by Intuitive Surgical
+        Powered by FARGV
       </Typography>
     </Box>
   </Container>
