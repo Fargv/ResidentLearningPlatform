@@ -21,6 +21,7 @@ import {
   useTheme
 
 } from '@mui/material';
+import { BugReport as BugReportIcon } from '@mui/icons-material';
 import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
@@ -31,7 +32,8 @@ import {
   Assignment as AssignmentIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
-  Person as PersonIcon
+  Person as PersonIcon,
+  BugReport as BugReportIcon 
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
@@ -227,6 +229,7 @@ const Dashboard: React.FC = () => {
           <Route path="/fases" element={<AdminFases />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/notificaciones" element={<Notificaciones />} />
+          <Route path="/debug" element={<DebugDashboard />} />
         </Routes>
       </Box>
     </Box>
