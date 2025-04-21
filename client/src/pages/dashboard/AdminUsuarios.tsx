@@ -64,33 +64,36 @@ const AdminUsuarios: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
-        // Obtener usuarios
+  
         const token = localStorage.getItem('token');
-        const usuariosRes = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        if (!token) {
+          console.error('No se encontró token');
+          setError('Token no disponible');
+          return;
+        }
+  
+        const [usuariosRes, hospitalesRes] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_API_URL}/users`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get(`${process.env.REACT_APP_API_URL}/hospitals`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
+  
         setUsuarios(usuariosRes.data.data);
-        
-        // Obtener hospitales
-        const hospitalesRes = await axios.get('/api/hospitals', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
         setHospitales(hospitalesRes.data.data);
       } catch (err: any) {
+        console.error('Error en fetchData:', err);
         setError(err.response?.data?.error || 'Error al cargar los datos');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handleOpenInvitarDialog = () => {
     setFormData({
