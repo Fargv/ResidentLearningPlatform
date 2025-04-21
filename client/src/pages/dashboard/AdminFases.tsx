@@ -132,7 +132,7 @@ const AdminFases: React.FC = () => {
         });
   
         console.log('Hospitales recibidos:', hospitalesRes.data.data);
-        console.log("Hospitales disponibles:", hospitales);
+        
         setHospitales(hospitalesRes.data.data);
       } catch (err: any) {
         console.error('Error al cargar datos:', err);
