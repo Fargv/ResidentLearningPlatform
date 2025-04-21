@@ -27,6 +27,8 @@ import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
+import DebugDashboard from './pages/DebugDashboard';
+
 
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
