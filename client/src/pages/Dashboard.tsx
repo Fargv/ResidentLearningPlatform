@@ -44,7 +44,7 @@ import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
-import DebugDashboard from './dashboard/DebugDashboard';
+import DebugDashboard from './DebugDashboard';
 
 const drawerWidth = 240;
 
