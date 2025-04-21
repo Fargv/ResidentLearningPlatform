@@ -65,6 +65,7 @@ const AdminFases: React.FC = () => {
   //const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [usuarios, setUsuariosLista] = useState<any[]>([]);
   const [fases, setFases] = useState<any[]>([]);
   const [actividades, setActividades] = useState<any[]>([]);
   const [tabValue, setTabValue] = useState(0);
@@ -118,7 +119,7 @@ const AdminFases: React.FC = () => {
         });
   
         console.log('Usuarios recibidos:', usuariosRes.data.data);
-        setUsuarios(usuariosRes.data.data);
+        setUsuariosLista(usuariosRes.data.data);
   
         // Obtener hospitales
         const hospitalesRes = await axios.get('/api/hospitals', {
@@ -501,6 +502,15 @@ const AdminFases: React.FC = () => {
     </Card>
   </Box>
 </Box>
+<Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
+      <Card sx={{ bgcolor: 'info.main', color: 'white' }}>
+        <CardContent>
+          <Typography variant="h4">{usuarios.length}</Typography>
+          <Typography variant="body2">Usuarios en plataforma</Typography>
+        </CardContent>
+      </Card>
+    </Box>
+
       </Paper>
       
       {/* Pestañas de fases */}
