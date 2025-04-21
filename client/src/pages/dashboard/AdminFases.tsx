@@ -77,6 +77,7 @@ const AdminFases: React.FC = () => {
   const [openEliminarActividadDialog, setOpenEliminarActividadDialog] = useState(false);
   const [selectedFase, setSelectedFase] = useState<any>(null);
   const [selectedActividad, setSelectedActividad] = useState<any>(null);
+  const [hospitales, setHospitales] = useState<any[]>([]);
   const [faseFormData, setFaseFormData] = useState({
     numero: '',
     nombre: '',
@@ -103,6 +104,7 @@ const AdminFases: React.FC = () => {
   
         const token = localStorage.getItem('token');
         console.log('Token recuperado:', token);
+      
   
         if (!token) {
           console.error('No se encontró token en localStorage');
@@ -129,6 +131,7 @@ const AdminFases: React.FC = () => {
         });
   
         console.log('Hospitales recibidos:', hospitalesRes.data.data);
+        console.log("Hospitales disponibles:", hospitales);
         setHospitales(hospitalesRes.data.data);
       } catch (err: any) {
         console.error('Error al cargar datos:', err);
