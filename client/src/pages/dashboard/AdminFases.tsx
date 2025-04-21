@@ -77,6 +77,7 @@ const AdminFases: React.FC = () => {
   const [openEliminarActividadDialog, setOpenEliminarActividadDialog] = useState(false);
   const [selectedFase, setSelectedFase] = useState<any>(null);
   const [selectedActividad, setSelectedActividad] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hospitales, setHospitales] = useState<any[]>([]);
   const [faseFormData, setFaseFormData] = useState({
     numero: '',
