@@ -67,12 +67,11 @@ const AdminUsuarios: React.FC = () => {
         
         // Obtener usuarios
         const token = localStorage.getItem('token');
-const usuariosRes = await axios.get('/api/users', {
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
-  //commnt
-});
+        const usuariosRes = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setUsuarios(usuariosRes.data.data);
         
         // Obtener hospitales
