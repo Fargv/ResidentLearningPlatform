@@ -39,7 +39,7 @@ const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [usuarios, setUsuariosLista] = useState<any[]>([]);
   const [hospitales, setHospitales] = useState<any[]>([]);
   const [openInvitarDialog, setOpenInvitarDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
@@ -74,7 +74,7 @@ const AdminUsuarios: React.FC = () => {
         });
   
         console.log('Usuarios recibidos:', usuariosRes.data.data);
-        setUsuarios(usuariosRes.data.data); // <-- aquí es donde fallaba antes
+        setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
   
         const hospitalesRes = await axios.get(`${process.env.REACT_APP_API_URL}/hospitales`, {
           headers: {
@@ -151,7 +151,7 @@ const AdminUsuarios: React.FC = () => {
       const res = await axios.post('/api/users/invite', formData);
       
       // Actualizar lista de usuarios
-      setUsuarios([...usuarios, res.data.data]);
+      setUsuariosLista([...usuarios, res.data.data]);
       
       handleCloseInvitarDialog();
       
@@ -182,7 +182,7 @@ const AdminUsuarios: React.FC = () => {
       const res = await axios.put(`/api/users/${selectedUsuario._id}`, formData);
       
       // Actualizar lista de usuarios
-      setUsuarios(usuarios.map(u => u._id === selectedUsuario._id ? res.data.data : u));
+      setUsuariosLista(usuarios.map(u => u._id === selectedUsuario._id ? res.data.data : u));
       
       handleCloseEditarDialog();
       
@@ -213,7 +213,7 @@ const AdminUsuarios: React.FC = () => {
       await axios.delete(`/api/users/${selectedUsuario._id}`);
       
       // Actualizar lista de usuarios
-      setUsuarios(usuarios.filter(u => u._id !== selectedUsuario._id));
+      setUsuariosLista(usuarios.filter(u => u._id !== selectedUsuario._id));
       
       handleCloseEliminarDialog();
       
