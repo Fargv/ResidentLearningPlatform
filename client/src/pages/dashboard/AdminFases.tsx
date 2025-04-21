@@ -97,6 +97,7 @@ const AdminFases: React.FC = () => {
     severity: 'success' as 'success' | 'error'
   });
 
+  //eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchData = async () => {
       try {
