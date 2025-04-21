@@ -19,9 +19,7 @@ import {
   Badge,
   useMediaQuery,
   useTheme
-
 } from '@mui/material';
-import { BugReport as BugReportIcon } from '@mui/icons-material';
 import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
@@ -33,7 +31,7 @@ import {
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
-  BugReport as BugReportIcon 
+  BugReport as BugReportIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
@@ -46,6 +44,7 @@ import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
+import DebugDashboard from './dashboard/DebugDashboard';
 
 const drawerWidth = 240;
 
@@ -85,7 +84,8 @@ const Dashboard: React.FC = () => {
       items.push(
         { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
         { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitales', roles: ['administrador'] },
-        { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] }
+        { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
+        { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
     }
     return items;
