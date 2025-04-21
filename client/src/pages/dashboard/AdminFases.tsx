@@ -105,7 +105,7 @@ const AdminFases: React.FC = () => {
         setFases(fasesRes.data.data);
         
         // Obtener actividades
-        const actividadesRes = await axios.get('/api/actividades');
+        const actividadesRes = await axios.get(`${process.env.REACT_APP_API_URL}/phases`)
         setActividades(actividadesRes.data.data);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar los datos');

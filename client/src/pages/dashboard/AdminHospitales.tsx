@@ -64,7 +64,7 @@ const AdminHospitales: React.FC = () => {
       try {
         setLoading(true);
         
-        const res = await axios.get('/api/hospitals');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals`);
         setHospitales(res.data.data);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar los hospitales');
