@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -110,6 +110,10 @@ const theme = createTheme({
 });
 
 function App() {
+  useEffect(() => {
+    console.log("REACT_APP_API_URL cargada:", process.env.REACT_APP_API_URL);
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -165,6 +169,9 @@ function App() {
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
               <Route path="notificaciones" element={<Notificaciones />} />
+
+              {/* Ruta de depuración */}
+              <Route path="debug" element={<DebugDashboard />} />
             </Route>
 
             {/* Ruta 404 */}
