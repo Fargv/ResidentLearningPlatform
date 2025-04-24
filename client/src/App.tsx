@@ -22,13 +22,13 @@ import Dashboard from './pages/Dashboard';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
 import FormadorValidaciones from './pages/dashboard/FormadorValidaciones';
+import FormadorUsuarios from './pages/dashboard/FormadorUsuarios';
 import AdminUsuarios from './pages/dashboard/AdminUsuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import DebugDashboard from './pages/DebugDashboard';
-
 
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
@@ -148,6 +148,11 @@ function App() {
               <Route path="validaciones" element={
                 <FormadorRoute>
                   <FormadorValidaciones />
+                </FormadorRoute>
+              } />
+              <Route path="usuarios" element={
+                <FormadorRoute>
+                  <FormadorUsuarios />
                 </FormadorRoute>
               } />
 
