@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Paper, Card, CardContent, Button, TextField,
+  Box, Typography, Paper, Button, TextField,
   Dialog, DialogTitle, DialogContent, DialogActions,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   IconButton, Chip, LinearProgress, Alert, Snackbar
@@ -50,7 +50,7 @@ const FormadorUsuarios: React.FC = () => {
       setLoading(false);
     }
   };
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchUsuarios();
   }, []);
