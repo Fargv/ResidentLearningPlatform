@@ -45,6 +45,7 @@ import AdminFases from './dashboard/AdminFases';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
 import DebugDashboard from './DebugDashboard';
+import ResidenteFases from './dashboard/ResidenteFases';
 
 const drawerWidth = 240;
 
@@ -76,8 +77,12 @@ const Dashboard: React.FC = () => {
     ];
   
     if (user?.rol === 'residente') {
-      items.push({ text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente'] });
+      items.push(
+        { text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente'] },
+        { text: 'Fases Formativas', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente'] }
+      );
     }
+    
   
     if (user?.rol === 'formador' || user?.rol === 'administrador') {
       items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'administrador'] });
@@ -239,6 +244,7 @@ const Dashboard: React.FC = () => {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/notificaciones" element={<Notificaciones />} />
           <Route path="/debug" element={<DebugDashboard />} />
+          <Route path="/fases" element={<ResidenteFases />} />
         </Routes>
       </Box>
     </Box>
