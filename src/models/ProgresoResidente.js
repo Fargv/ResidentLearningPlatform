@@ -1,39 +1,51 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const progresoResidenteSchema = new mongoose.Schema({
-  residente: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'Por favor proporcione el residente']
-  },
-  actividad: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Actividad',
-    required: [true, 'Por favor proporcione la actividad realizada']
-  },
-  fechaRealizacion: {
-    type: Date,
-    required: [true, 'Por favor proporcione la fecha de realización']
-  },
+const actividadSchema = new Schema({
+  nombre: { type: String, required: true },
+  completada: { type: Boolean, default: false },
+  fechaRealizacion: Date,
   porcentajeParticipacion: {
     type: Number,
     min: 0,
     max: 100,
     default: 100
   },
-  comentariosResidente: {
-    type: String
-  },
+  comentariosResidente: String,
   estado: {
     type: String,
     enum: ['pendiente', 'completado', 'validado', 'rechazado'],
     default: 'pendiente'
+  }
+});
+
+const progresoResidenteSchema = new Schema({
+  residente: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  fechaRegistro: {
+  fase: {
+    type: Schema.Types.ObjectId,
+    ref: 'Fase',
+    required: true
+  },
+  actividades: [actividadSchema],
+  comentariosFinales: String,
+  estadoGeneral: {
+    type: String,
+    enum: ['en progreso', 'completado', 'validado'],
+    default: 'en progreso'
+  },
+  validadoPor: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  fechaInicio: {
     type: Date,
     default: Date.now
   },
-  // Campos para cumplimiento LOPD
+  fechaFin: Date,
   datosAnonimizados: {
     type: Boolean,
     default: false
@@ -45,7 +57,6 @@ const progresoResidenteSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Virtuals para obtener validaciones y adjuntos asociados
 progresoResidenteSchema.virtual('validaciones', {
   ref: 'Validacion',
   localField: '_id',
@@ -60,9 +71,8 @@ progresoResidenteSchema.virtual('adjuntos', {
   justOne: false
 });
 
-// Método para anonimizar datos personales (cumplimiento LOPD)
-progresoResidenteSchema.methods.anonimizar = function() {
-  this.comentariosResidente = '[Datos anonimizados]';
+progresoResidenteSchema.methods.anonimizar = function () {
+  this.comentariosFinales = '[Datos anonimizados]';
   this.datosAnonimizados = true;
   this.fechaAnonimizacion = Date.now();
   return this.save();

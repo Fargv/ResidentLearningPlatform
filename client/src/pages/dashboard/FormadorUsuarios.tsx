@@ -208,7 +208,7 @@ const FormadorUsuarios: React.FC = () => {
             name="rol"
             value={formData.rol}
             onChange={handleChange}
-            SelectProps={{ native: true }}
+            slotProps={{ select: { native: true } }}
           >
             <option value="residente">Residente</option>
             <option value="formador">Formador</option>
