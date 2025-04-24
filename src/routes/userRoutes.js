@@ -1,3 +1,4 @@
+// routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
@@ -11,11 +12,15 @@ const {
   getInvitations,
   cancelInvitation,
   getFormadorResidentes,
-  getResidenteFormadores
+  getResidenteFormadores,
+  getUsersByHospital
 } = require('../controllers/userController');
 
 // Todas las rutas requieren autenticación
 router.use(protect);
+
+// Rutas solo para administradores y formadores
+router.get('/hospital/:hospitalId', authorize('administrador', 'formador'), getUsersByHospital);
 
 // Rutas solo para administradores
 router.route('/')

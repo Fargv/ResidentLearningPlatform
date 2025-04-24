@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
 
+
 // @desc    Obtener todos los usuarios (admin) o usuarios del hospital (formador)
 // @route   GET /api/users
 // @access  Private/Admin|Formador
@@ -333,5 +334,23 @@ exports.getResidenteFormadores = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+exports.getUsersByHospital = async (req, res) => {
+  try {
+    const { hospitalId } = req.params;
+
+    const users = await User.find({ hospital: hospitalId }).populate('hospital');
+
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener usuarios del hospital',
+    });
   }
 };
