@@ -103,48 +103,56 @@ const AdminFases: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-  
+    
         const token = localStorage.getItem('token');
         console.log('Token recuperado:', token);
-      
-  
+    
         if (!token) {
           console.error('No se encontró token en localStorage');
           setError('No hay token disponible para autenticar la solicitud');
           setLoading(false);
           return;
         }
-  
+    
         // Obtener usuarios
         const usuariosRes = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-  
-        console.log('Usuarios recibidos:', usuariosRes.data.data);
         setUsuariosLista(usuariosRes.data.data);
-  
+        console.log('Usuarios recibidos:', usuariosRes.data.data);
+    
         // Obtener hospitales
         const hospitalesRes = await axios.get('/api/hospitals', {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-  
-        console.log('Hospitales recibidos:', hospitalesRes.data.data);
-        
         setHospitales(hospitalesRes.data.data);
+        console.log('Hospitales recibidos:', hospitalesRes.data.data);
+    
+        // Obtener fases
+        const fasesRes = await axios.get(`${process.env.REACT_APP_API_URL}/fases`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setFases(fasesRes.data.data);
+        console.log('Fases recibidas:', fasesRes.data.data);
+    
       } catch (err: any) {
         console.error('Error al cargar datos:', err);
-        setError(err.response?.data?.error || 'Error al cargar los datos');
+        if (err.response?.status === 403) {
+          setError('No tienes permisos para ver esta sección');
+        } else {
+          setError(err.response?.data?.error || 'Error al cargar los datos');
+        }
       } finally {
         setLoading(false);
       }
     };
-  
-    fetchData();
-  }, []);
+    
   
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
