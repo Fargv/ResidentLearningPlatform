@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Typography, Paper, Button, TextField,
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -34,7 +35,7 @@ const FormadorUsuarios: React.FC = () => {
     severity: 'success' as 'success' | 'error'
   });
 
-  const fetchUsuarios = async () => {
+  const fetchUsuarios = useCallback(async () => {
     if (!user?.hospital?._id) return;
     try {
       const token = localStorage.getItem('token');
@@ -49,11 +50,11 @@ const FormadorUsuarios: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.hospital?._id]);
+
   useEffect(() => {
     fetchUsuarios();
-  }, []);
+  }, [fetchUsuarios]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
@@ -212,7 +213,6 @@ const FormadorUsuarios: React.FC = () => {
             <option value="residente">Residente</option>
             <option value="formador">Formador</option>
           </TextField>
-          {/* hospital oculto */}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
