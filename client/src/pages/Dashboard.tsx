@@ -74,12 +74,19 @@ const Dashboard: React.FC = () => {
     const items = [
       { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', roles: ['administrador', 'formador', 'residente'] }
     ];
+  
     if (user?.rol === 'residente') {
       items.push({ text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente'] });
     }
+  
     if (user?.rol === 'formador' || user?.rol === 'administrador') {
       items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'administrador'] });
     }
+  
+    if (user?.rol === 'formador') {
+      items.push({ text: 'Mis Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador'] });
+    }
+  
     if (user?.rol === 'administrador') {
       items.push(
         { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
@@ -88,8 +95,10 @@ const Dashboard: React.FC = () => {
         { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
     }
+  
     return items;
   };
+  
 
   const menuItems = getMenuItems();
 
