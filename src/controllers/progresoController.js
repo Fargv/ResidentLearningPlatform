@@ -6,6 +6,7 @@ const Validacion = require('../models/Validacion');
 const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const { createAuditLog } = require('../utils/auditLog');
+const mongoose = require('mongoose');
 
 // @desc    Obtener todos los registros de progreso
 // @route   GET /api/progreso
@@ -55,7 +56,6 @@ exports.getProgresoResidente = async (req, res, next) => {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
     }
 
-    // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
       req.user.rol === 'residente' && req.user.id !== req.params.id
     ) {
@@ -68,25 +68,36 @@ exports.getProgresoResidente = async (req, res, next) => {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
 
-    const progreso = await ProgresoResidente.find({ residente: req.params.id })
+    const progresoRaw = await ProgresoResidente.find({ residente: new mongoose.Types.ObjectId(req.params.id) })
       .populate({
         path: 'actividad',
         select: 'nombre descripcion tipo fase',
         populate: { path: 'fase', select: 'nombre numero' }
-      })
-      .populate({
-        path: 'validaciones',
-        populate: { 
-          path: 'formador',
-          select: 'nombre apellidos email'
-        }
-      })
-      .populate('adjuntos');
+      });
+
+    const agrupadoPorFase = {};
+
+    for (const prog of progresoRaw) {
+      const faseId = prog.actividad.fase._id;
+      if (!agrupadoPorFase[faseId]) {
+        agrupadoPorFase[faseId] = {
+          fase: prog.actividad.fase,
+          actividades: [],
+          estadoGeneral: 'en progreso',
+        };
+      }
+
+      agrupadoPorFase[faseId].actividades.push({
+        nombre: prog.actividad.nombre,
+        completada: prog.estado === 'validado',
+        comentariosResidente: prog.comentarios,
+        estado: prog.estado
+      });
+    }
 
     res.status(200).json({
       success: true,
-      count: progreso.length,
-      data: progreso
+      data: Object.values(agrupadoPorFase)
     });
   } catch (err) {
     next(err);
