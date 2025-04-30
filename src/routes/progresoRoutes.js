@@ -44,4 +44,6 @@ router.route('/:id/validar')
 router.route('/:id/rechazar')
   .post(authorize('formador', 'administrador'), rechazarProgreso);
 
+router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
+
 module.exports = router;
