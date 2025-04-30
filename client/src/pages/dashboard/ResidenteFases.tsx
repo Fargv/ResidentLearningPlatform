@@ -33,13 +33,13 @@ const ResidenteFases: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
-      {progresos.map((fase, index) => (
+      {Array.isArray(progresos) && progresos.map((fase, index) => (
         <Card key={index} sx={{ mb: 3 }}>
           <CardContent>
             <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.titulo}</Typography>
             <Chip label={fase.estadoGeneral} color={fase.estadoGeneral === 'validado' ? 'success' : fase.estadoGeneral === 'completado' ? 'primary' : 'default'} sx={{ mt: 1, mb: 2 }} />
             <List>
-              {fase.actividades.map((act: any, idx: number) => (
+              {Array.isArray(fase.actividades) && fase.actividades.map((act: any, idx: number) => (
                 <ListItem key={idx}>
                   <Checkbox checked={act.completada} disabled />
                   <ListItemText primary={act.nombre} secondary={act.comentariosResidente || ''} />
@@ -54,4 +54,3 @@ const ResidenteFases: React.FC = () => {
 };
 
 export default ResidenteFases;
-
