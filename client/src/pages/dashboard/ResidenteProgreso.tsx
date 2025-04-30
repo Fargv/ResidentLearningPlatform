@@ -18,7 +18,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  TextField
+  TextField,
+  Skeleton
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
@@ -71,21 +72,23 @@ const ResidenteProgreso: React.FC = () => {
         setLoading(true);
 
         const fasesRes = await axios.get('/api/fases');
-        setFases(fasesRes.data.data);
-
         const actividadesRes = await axios.get('/api/actividades');
-        setActividades(actividadesRes.data.data);
-
         const progresoRes = await axios.get(`/api/progreso/residente/${user._id}`);
-        setProgreso(progresoRes.data.data);
-
         const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+
+        setFases(fasesRes.data.data);
+        setActividades(actividadesRes.data.data);
+        setProgreso(progresoRes.data.data);
         setStats(statsRes.data.data);
+
+        console.log('Progreso:', progresoRes.data.data);
+        console.log('Stats:', statsRes.data.data);
 
         if (Array.isArray(fasesRes.data.data) && fasesRes.data.data.length > 0) {
           setTabValue(0);
         }
       } catch (err: any) {
+        console.error("Error al cargar datos de progreso:", err);
         setError(err.response?.data?.error || 'Error al cargar los datos');
       } finally {
         setLoading(false);
@@ -145,7 +148,17 @@ const ResidenteProgreso: React.FC = () => {
     return progreso.some(p => p.actividad._id === actividadId);
   };
 
-  if (loading) return <Box sx={{ width: '100%', mt: 4 }}><LinearProgress /></Box>;
+  if (loading) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h4" gutterBottom>Mi Progreso</Typography>
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
+        ))}
+      </Box>
+    );
+  }
+
   if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
 
   return (
@@ -222,7 +235,7 @@ const ResidenteProgreso: React.FC = () => {
             ))}
           </Tabs>
         </Box>
-
+              
         {Array.isArray(fases) && fases.map((fase, index) => (
           <TabPanel key={fase._id} value={tabValue} index={index}>
             <Typography variant="h6" gutterBottom>{fase.nombre}</Typography>
