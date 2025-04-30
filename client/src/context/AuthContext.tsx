@@ -122,6 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(userRes.data.data);
       setIsAuthenticated(true);
+      localStorage.setItem("user", JSON.stringify(userRes.data.data));
       
       // Redirigir al dashboard
       navigate('/dashboard');
@@ -151,6 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(userRes.data.data);
       setIsAuthenticated(true);
+      localStorage.setItem("user", JSON.stringify(userRes.data.data));
       
       // Redirigir al dashboard
       navigate('/dashboard');

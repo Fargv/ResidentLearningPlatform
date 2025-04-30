@@ -10,21 +10,21 @@ const ResidenteFases: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user?._id) return;
+
     const fetchProgresos = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/progresoresidentes/${user?._id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setProgresos(res.data.data);
+        setLoading(true);
+        const response = await axios.get(`/api/progreso/residente/${user._id}`);
+        setProgresos(response.data.data);
       } catch (err: any) {
-        setError('Error al cargar los progresos del residente');
+        setError(err.response?.data?.error || 'Error al cargar el progreso');
       } finally {
         setLoading(false);
       }
     };
 
-    if (user?._id) fetchProgresos();
+    fetchProgresos();
   }, [user]);
 
   if (loading) return <LinearProgress />;
@@ -54,3 +54,4 @@ const ResidenteFases: React.FC = () => {
 };
 
 export default ResidenteFases;
+
