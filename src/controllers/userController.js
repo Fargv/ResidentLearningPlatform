@@ -1,10 +1,26 @@
+// userController.js COMPLETO CON INICIALIZACIÓN DEL PROGRESO
 const ErrorResponse = require('../utils/errorResponse');
 const User = require('../models/User');
 const Hospital = require('../models/Hospital');
 const Invitacion = require('../models/Invitacion');
+const ProgresoResidente = require('../models/ProgresoResidente');
+const Fase = require('../models/Fase');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
+
+async function inicializarProgresoFormativo(usuario) {
+  if (usuario.rol !== 'residente') return;
+  const fases = await Fase.find().sort({ numero: 1 });
+  for (const fase of fases) {
+    await ProgresoResidente.create({
+      residente: usuario._id,
+      fase: fase._id,
+      actividades: fase.actividades.map(a => ({ nombre: a.nombre, completada: false })),
+      estadoGeneral: fase.numero === 1 ? 'en progreso' : 'bloqueada'
+    });
+  }
+}
 
 
 // @desc    Obtener todos los usuarios (admin) o usuarios del hospital (formador)

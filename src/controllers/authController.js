@@ -1,9 +1,25 @@
 const jwt = require('jsonwebtoken');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const User = require('../models/User');
+const Fase = require('../models/Fase');
+const ProgresoResidente = require('../models/ProgresoResidente');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
+
+const inicializarProgresoFormativo = async (usuario) => {
+  if (usuario.rol !== 'residente') return;
+  const fases = await Fase.find().sort({ numero: 1 });
+  for (const fase of fases) {
+    await ProgresoResidente.create({
+      residente: usuario._id,
+      fase: fase._id,
+      actividades: fase.actividades.map(a => ({ nombre: a.nombre, completada: false })),
+      estadoGeneral: fase.numero === 1 ? 'en progreso' : 'bloqueada'
+    });
+  }
+};
 
 const register = async (req, res, next) => {
   try {
@@ -44,6 +60,8 @@ const register = async (req, res, next) => {
       consentimientoDatos: true,
       fechaRegistro: Date.now()
     });
+
+    await inicializarProgresoFormativo(newUser);
 
     const jwtToken = generateToken(newUser);
 
@@ -101,7 +119,6 @@ const login = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const getMe = async (req, res, next) => {
   try {
@@ -176,11 +193,7 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
-    const resetPasswordToken = crypto
-      .createHash('sha256')
-      .update(req.params.resettoken)
-      .digest('hex');
-
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }
