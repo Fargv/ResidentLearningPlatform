@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent, LinearProgress, Alert, List, ListItem, ListItemText, Checkbox, Chip } from '@mui/material';
+import { Box, Typography, Card, CardContent, LinearProgress, Alert, List, ListItem, ListItemText, Checkbox, Chip, Skeleton } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
@@ -16,8 +16,10 @@ const ResidenteFases: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get(`/api/progreso/residente/${user._id}`);
+        console.log("Respuesta del backend:", response.data);
         setProgresos(response.data.data);
       } catch (err: any) {
+        console.error("Error cargando progreso:", err);
         setError(err.response?.data?.error || 'Error al cargar el progreso');
       } finally {
         setLoading(false);
@@ -27,28 +29,42 @@ const ResidenteFases: React.FC = () => {
     fetchProgresos();
   }, [user]);
 
-  if (loading) return <LinearProgress />;
+  if (loading) {
+    return (
+      <Box>
+        <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
+        ))}
+      </Box>
+    );
+  }
+
   if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <Box>
       <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
-      {Array.isArray(progresos) && progresos.map((fase, index) => (
-        <Card key={index} sx={{ mb: 3 }}>
-          <CardContent>
-          <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.nombre}</Typography>
-            <Chip label={fase.estadoGeneral} color={fase.estadoGeneral === 'validado' ? 'success' : fase.estadoGeneral === 'completado' ? 'primary' : 'default'} sx={{ mt: 1, mb: 2 }} />
-            <List>
-              {Array.isArray(fase.actividades) && fase.actividades.map((act: any, idx: number) => (
-                <ListItem key={idx}>
-                  <Checkbox checked={act.completada} disabled />
-                  <ListItemText primary={act.nombre} secondary={act.comentariosResidente || ''} />
-                </ListItem>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      ))}
+      {Array.isArray(progresos) && progresos.length > 0 ? (
+        progresos.map((fase, index) => (
+          <Card key={index} sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.nombre}</Typography>
+              <Chip label={fase.estadoGeneral} color={fase.estadoGeneral === 'validado' ? 'success' : fase.estadoGeneral === 'completado' ? 'primary' : 'default'} sx={{ mt: 1, mb: 2 }} />
+              <List>
+                {Array.isArray(fase.actividades) && fase.actividades.map((act: any, idx: number) => (
+                  <ListItem key={idx}>
+                    <Checkbox checked={act.completada} disabled />
+                    <ListItemText primary={act.nombre} secondary={act.comentariosResidente || ''} />
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
+        ))
+      ) : (
+        <Alert severity="info">No hay progreso formativo disponible.</Alert>
+      )}
     </Box>
   );
 };
