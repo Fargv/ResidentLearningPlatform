@@ -12,6 +12,11 @@ const { createAuditLog } = require('../utils/auditLog');
 // @access  Private/Admin
 exports.getAllProgreso = async (req, res, next) => {
   try {
+    // Solo administrador puede acceder a todos los progresos
+    if (req.user.rol !== 'administrador') {
+      return res.status(403).json({ success: false, error: 'No autorizado para acceder a todos los progresos' });
+    }
+
     const progreso = await ProgresoResidente.find()
       .populate({
         path: 'residente',
@@ -34,6 +39,7 @@ exports.getAllProgreso = async (req, res, next) => {
   }
 };
 
+
 // @desc    Obtener progreso de un residente específico
 // @route   GET /api/progreso/residente/:id
 // @access  Private
@@ -51,11 +57,15 @@ exports.getProgresoResidente = async (req, res, next) => {
 
     // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== req.params.id && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== residente.hospital.toString())
+      req.user.rol === 'residente' && req.user.id !== req.params.id
     ) {
-      return next(new ErrorResponse('No autorizado para acceder a este recurso', 403));
+      return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
+    }
+
+    if (
+      req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()
+    ) {
+      return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
@@ -83,9 +93,6 @@ exports.getProgresoResidente = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener progreso por fase para un residente
-// @route   GET /api/progreso/residente/:id/fase/:faseId
-// @access  Private
 exports.getProgresoResidentePorFase = async (req, res, next) => {
   try {
     const residente = await User.findById(req.params.id);
@@ -98,20 +105,21 @@ exports.getProgresoResidentePorFase = async (req, res, next) => {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
     }
 
-    // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== req.params.id && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== residente.hospital.toString())
+      req.user.rol === 'residente' && req.user.id !== req.params.id
     ) {
-      return next(new ErrorResponse('No autorizado para acceder a este recurso', 403));
+      return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
     }
 
-    // Obtener actividades de la fase
+    if (
+      req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()
+    ) {
+      return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+    }
+
     const actividades = await Actividad.find({ fase: req.params.faseId });
     const actividadesIds = actividades.map(act => act._id);
 
-    // Obtener progreso para esas actividades
     const progreso = await ProgresoResidente.find({ 
       residente: req.params.id,
       actividad: { $in: actividadesIds }
@@ -139,6 +147,7 @@ exports.getProgresoResidentePorFase = async (req, res, next) => {
     next(err);
   }
 };
+
 
 // @desc    Registrar nuevo progreso
 // @route   POST /api/progreso
