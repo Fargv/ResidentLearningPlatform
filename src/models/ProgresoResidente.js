@@ -34,7 +34,7 @@ const progresoResidenteSchema = new Schema({
   comentariosFinales: String,
   estadoGeneral: {
     type: String,
-    enum: ['en progreso', 'completado', 'validado'],
+    enum: ['bloqueada','en progreso', 'completado', 'validado'],
     default: 'en progreso'
   },
   validadoPor: {
