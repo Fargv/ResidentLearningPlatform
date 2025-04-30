@@ -74,12 +74,19 @@ const ResidenteProgreso: React.FC = () => {
         const fasesRes = await axios.get('/api/fases');
         const actividadesRes = await axios.get('/api/actividades');
         const progresoRes = await axios.get(`/api/progreso/residente/${user._id}`);
-        const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+        try {
+          console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
+          const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+          console.log("Stats response completa:", statsRes);
+          setStats(statsRes.data.data);
+        } catch (err: any) {
+          console.error("ERROR en /stats:", err?.response?.data || err.message || err);
+        }
 
         setFases(fasesRes.data.data);
         setActividades(actividadesRes.data.data);
         setProgreso(progresoRes.data.data);
-        setStats(statsRes.data.data);
+        
 
         console.log('Progreso:', progresoRes.data.data);
         console.log('Stats:', statsRes.data.data);
@@ -128,8 +135,15 @@ const ResidenteProgreso: React.FC = () => {
 
       setProgreso([...progreso, res.data.data]);
 
-      const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
-      setStats(statsRes.data.data);
+      try {
+        console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
+        const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+        console.log("Stats response completa:", statsRes);
+        setStats(statsRes.data.data);
+      } catch (err: any) {
+        console.error("ERROR en /stats:", err?.response?.data || err.message || err);
+      }
+
 
       handleCloseDialog();
     } catch (err: any) {
