@@ -36,7 +36,7 @@ const ResidenteFases: React.FC = () => {
       {Array.isArray(progresos) && progresos.map((fase, index) => (
         <Card key={index} sx={{ mb: 3 }}>
           <CardContent>
-            <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.titulo}</Typography>
+          <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.nombre}</Typography>
             <Chip label={fase.estadoGeneral} color={fase.estadoGeneral === 'validado' ? 'success' : fase.estadoGeneral === 'completado' ? 'primary' : 'default'} sx={{ mt: 1, mb: 2 }} />
             <List>
               {Array.isArray(fase.actividades) && fase.actividades.map((act: any, idx: number) => (
