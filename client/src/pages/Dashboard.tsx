@@ -235,17 +235,22 @@ const Dashboard: React.FC = () => {
       >
         <Toolbar />
         <Routes>
-          <Route path="/" element={<DashboardHome />} />
-          <Route path="/progreso" element={<ResidenteProgreso />} />
-          <Route path="/validaciones" element={<FormadorValidaciones />} />
-          <Route path="/usuarios" element={<AdminUsuarios />} />
-          <Route path="/hospitales" element={<AdminHospitales />} />
-          <Route path="/fases" element={<AdminFases />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/notificaciones" element={<Notificaciones />} />
-          <Route path="/debug" element={<DebugDashboard />} />
-          <Route path="/fases" element={<ResidenteFases />} />
-        </Routes>
+  <Route path="/" element={<DashboardHome />} />
+  <Route path="/progreso" element={<ResidenteProgreso />} />
+  <Route path="/validaciones" element={<FormadorValidaciones />} />
+  <Route path="/usuarios" element={<AdminUsuarios />} />
+  <Route path="/hospitales" element={<AdminHospitales />} />
+  {user?.rol === 'administrador' && (
+    <Route path="/fases" element={<AdminFases />} />
+  )}
+  {user?.rol === 'residente' && (
+    <Route path="/fases" element={<ResidenteFases />} />
+  )}
+  <Route path="/perfil" element={<Perfil />} />
+  <Route path="/notificaciones" element={<Notificaciones />} />
+  <Route path="/debug" element={<DebugDashboard />} />
+</Routes>
+
       </Box>
     </Box>
   );
