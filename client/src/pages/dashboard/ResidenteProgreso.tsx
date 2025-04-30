@@ -89,7 +89,6 @@ const ResidenteProgreso: React.FC = () => {
         
 
         console.log('Progreso:', progresoRes.data.data);
-        console.log('Stats:', statsRes.data.data);
 
         if (Array.isArray(fasesRes.data.data) && fasesRes.data.data.length > 0) {
           setTabValue(0);
@@ -137,12 +136,12 @@ const ResidenteProgreso: React.FC = () => {
 
       try {
         console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
-        const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
-        console.log("Stats response completa:", statsRes);
-        setStats(statsRes.data.data);
-      } catch (err: any) {
-        console.error("ERROR en /stats:", err?.response?.data || err.message || err);
-      }
+  const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+  console.log("Stats response completa:", statsRes);
+  setStats(statsRes.data.data);
+} catch (err: any) {
+  console.error("ERROR en /stats:", err?.response?.data || err.message || err);
+}
 
 
       handleCloseDialog();
