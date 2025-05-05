@@ -58,7 +58,10 @@ const ResidenteFases: React.FC = () => {
         progresos.map((fase, index) => (
           <Card key={index} sx={{ mb: 3 }}>
             <CardContent>
-              <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.nombre}</Typography>
+            <Typography variant="h6">
+  Fase {fase.numero}: {fase.nombre}
+</Typography>
+
               <Chip
                 label={fase.estadoGeneral}
                 color={
