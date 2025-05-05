@@ -62,11 +62,14 @@ const ResidenteFases: React.FC = () => {
   }, [user]);
 
   const handleOpenDialog = (progresoId: string, index: number) => {
-    console.log('🔍 Abriendo diálogo:', { progresoId, index });
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
     setComentario('');
     setFecha(new Date().toISOString().split('T')[0]);
+  
+    // Mover el console.log al final para que acceda a los parámetros directamente
+    console.log('🧠 DEBUG → progresoId:', progresoId, 'actividadIndex:', index);
+  
     setDialogOpen(true);
   };
 
@@ -194,10 +197,7 @@ const ResidenteFases: React.FC = () => {
                         <Button
                         size="small"
                         variant="outlined"
-                        onClick={() => {
-                          console.log("🛠 DEBUG - progresoId:", item._id, "actividadIndex:", idx, "fase:", item);
-                          handleOpenDialog(item._id, idx);
-                        }}
+                        onClick={() => handleOpenDialog(item._id, idx)}
                         sx={{ ml: 2 }}
                       >
                         Marcar como completada
