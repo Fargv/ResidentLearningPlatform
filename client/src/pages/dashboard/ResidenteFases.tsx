@@ -39,8 +39,8 @@ const ResidenteFases: React.FC = () => {
   const [fecha, setFecha] = useState('');
 
   useEffect(() => {
-    if (!user?._id) return;
-
+    if (!user || !user._id) return;
+  
     const fetchProgresos = async () => {
       try {
         setLoading(true);
@@ -53,9 +53,10 @@ const ResidenteFases: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     fetchProgresos();
   }, [user]);
+  
 
   const handleOpenDialog = (progresoId: string, index: number) => {
     setSelectedProgresoId(progresoId);
@@ -68,13 +69,17 @@ const ResidenteFases: React.FC = () => {
   const handleCompletarActividad = async () => {
     if (!selectedProgresoId || selectedActividadIndex === null) return;
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
         estado: 'completado',
         fechaRealizacion: fecha,
         comentariosResidente: comentario
       });
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
-      setProgresos(response.data.data || []);
+      setProgresos(prev =>
+        prev.map((prog) =>
+          prog._id === selectedProgresoId ? response.data.data : prog
+        )
+      );
+      
     } catch (err) {
       console.error('Error actualizando actividad:', err);
     } finally {
