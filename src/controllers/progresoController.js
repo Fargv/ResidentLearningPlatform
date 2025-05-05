@@ -7,6 +7,8 @@ const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
+const ProgresoResidente = require('../models/ProgresoResidente');
+const ErrorResponse = require('../utils/errorResponse');
 
 // @desc    Obtener todos los registros de progreso
 // @route   GET /api/progreso
@@ -477,6 +479,37 @@ exports.getEstadisticasResidente = async (req, res, next) => {
   } catch (err) {
     console.error("Error en getEstadisticasResidente:", err);
     next(err);
+  }
+};
+// PUT /api/progreso/:id/actividad/:index
+exports.marcarActividadCompletada = async (req, res, next) => {
+  try {
+    const { id, index } = req.params;
+    const { estado, fechaRealizacion, comentariosResidente } = req.body;
+
+    const progreso = await ProgresoResidente.findById(id);
+    if (!progreso) {
+      return next(new ErrorResponse('Progreso no encontrado', 404));
+    }
+
+    if (!progreso.actividades || !progreso.actividades[index]) {
+      return next(new ErrorResponse('Actividad no válida', 400));
+    }
+
+    const actividad = progreso.actividades[index];
+    if (actividad.estado !== 'pendiente') {
+      return next(new ErrorResponse('Esta actividad ya ha sido marcada', 400));
+    }
+
+    actividad.estado = estado || 'completado';
+    actividad.fechaRealizacion = fechaRealizacion || new Date();
+    actividad.comentariosResidente = comentariosResidente || '';
+
+    await progreso.save();
+
+    res.status(200).json({ success: true, data: progreso });
+  } catch (error) {
+    next(error);
   }
 };
 
