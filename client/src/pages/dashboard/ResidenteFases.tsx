@@ -55,44 +55,52 @@ const ResidenteFases: React.FC = () => {
       </Box>
   
       {Array.isArray(progresos) && progresos.length > 0 ? (
-        progresos.map((fase, index) => (
-          <Card key={index} sx={{ mb: 3 }}>
-            <CardContent>
-            <Typography variant="h6">
-  Fase {fase.numero}: {fase.nombre}
-</Typography>
-
-              <Chip
-                label={fase.estadoGeneral}
-                color={
-                  fase.estadoGeneral === 'validado'
-                    ? 'success'
-                    : fase.estadoGeneral === 'completado'
-                    ? 'primary'
-                    : 'default'
-                }
-                sx={{ mt: 1, mb: 2 }}
-              />
-              <List>
-                {Array.isArray(fase.actividades) &&
-                  fase.actividades.map((act: any, idx: number) => (
-                    <ListItem key={idx}>
-                      <Checkbox checked={act.completada} disabled />
-                      <ListItemText
-                        primary={act.nombre}
-                        secondary={act.comentariosResidente || ''}
-                      />
+        progresos.map((item, index) => {
+          const fase = item.fase || {};
+          return (
+            <Card key={index} sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography variant="h6">
+                  Fase {fase.numero || '—'}: {fase.nombre || 'Sin título'}
+                </Typography>
+                <Chip
+                  label={item.estadoGeneral || '—'}
+                  color={
+                    item.estadoGeneral === 'validado'
+                      ? 'success'
+                      : item.estadoGeneral === 'completado'
+                      ? 'primary'
+                      : 'default'
+                  }
+                  sx={{ mt: 1, mb: 2 }}
+                />
+                <List>
+                  {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+                    item.actividades.map((act: any, idx: number) => (
+                      <ListItem key={idx}>
+                        <Checkbox checked={act.completada} disabled />
+                        <ListItemText
+                          primary={act.nombre || 'Actividad sin nombre'}
+                          secondary={act.comentariosResidente || ''}
+                        />
+                      </ListItem>
+                    ))
+                  ) : (
+                    <ListItem>
+                      <ListItemText primary="No hay actividades disponibles" />
                     </ListItem>
-                  ))}
-              </List>
-            </CardContent>
-          </Card>
-        ))
+                  )}
+                </List>
+              </CardContent>
+            </Card>
+          );
+        })
       ) : (
         <Alert severity="info">No hay progreso formativo disponible.</Alert>
       )}
     </Box>
   );
+  
 };
 
 export default ResidenteFases;
