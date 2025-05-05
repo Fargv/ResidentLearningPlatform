@@ -90,6 +90,6 @@ const ResidenteFases: React.FC = () => {
       )}
     </Box>
   );
-  
+};
 
 export default ResidenteFases;
