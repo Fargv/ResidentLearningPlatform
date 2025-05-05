@@ -17,7 +17,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,
+  Snackbar
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -37,10 +38,13 @@ const ResidenteFases: React.FC = () => {
   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
   const [comentario, setComentario] = useState('');
   const [fecha, setFecha] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
+  const [snackbarError, setSnackbarError] = useState(false);
 
   useEffect(() => {
     if (!user || !user._id) return;
-  
+
     const fetchProgresos = async () => {
       try {
         setLoading(true);
@@ -53,10 +57,9 @@ const ResidenteFases: React.FC = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProgresos();
   }, [user]);
-  
 
   const handleOpenDialog = (progresoId: string, index: number) => {
     setSelectedProgresoId(progresoId);
@@ -67,24 +70,48 @@ const ResidenteFases: React.FC = () => {
   };
 
   const handleCompletarActividad = async () => {
-    if (!selectedProgresoId || selectedActividadIndex === null) return;
+    if (!selectedProgresoId || selectedActividadIndex === null) {
+      setSnackbarError(true);
+      setSnackbarMsg('Error interno: No se ha seleccionado ninguna actividad.');
+      setSnackbarOpen(true);
+      return;
+    }
+
     try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
+      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
         estado: 'completado',
         fechaRealizacion: fecha,
         comentariosResidente: comentario
       });
+
+      if (!data?.success) {
+        setSnackbarError(true);
+        setSnackbarMsg('No se pudo completar la actividad.');
+        setSnackbarOpen(true);
+        return;
+      }
+
       setProgresos(prev =>
         prev.map((prog) =>
-          prog._id === selectedProgresoId ? response.data.data : prog
+          prog._id === selectedProgresoId ? data.data : prog
         )
       );
-      
+
+      setSnackbarError(false);
+      setSnackbarMsg('✅ Actividad registrada con éxito');
+      setSnackbarOpen(true);
     } catch (err) {
       console.error('Error actualizando actividad:', err);
+      setSnackbarError(true);
+      setSnackbarMsg('Error al guardar la actividad.');
+      setSnackbarOpen(true);
     } finally {
       setDialogOpen(false);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   if (loading) {
@@ -207,6 +234,17 @@ const ResidenteFases: React.FC = () => {
           <Button onClick={handleCompletarActividad} variant="contained">Guardar</Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMsg}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        ContentProps={{
+          sx: { bgcolor: snackbarError ? 'error.main' : 'success.main', color: 'white' }
+        }}
+      />
     </Box>
   );
 };
