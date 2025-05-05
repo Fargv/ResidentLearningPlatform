@@ -2,17 +2,22 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Alert,
   List,
   ListItem,
   ListItemText,
-  Checkbox,
   Chip,
   Skeleton,
-  LinearProgress 
+  LinearProgress,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
@@ -60,46 +65,51 @@ const ResidenteFases: React.FC = () => {
 
       {Array.isArray(progresos) && progresos.length > 0 ? (
         progresos.map((item, index) => (
-          <Card key={index} sx={{ mb: 3 }}>
-            <CardContent>
+          <Accordion key={index} defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">
                 Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
               </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
               <Chip
-  label={item.estadoGeneral || '—'}
-  color={
-    item.estadoGeneral === 'validado'
-      ? 'success'
-      : item.estadoGeneral === 'completado'
-      ? 'primary'
-      : 'default'
-  }
-  sx={{ mt: 1, mb: 2 }}
-/>
+                label={item.estadoGeneral || '—'}
+                color={
+                  item.estadoGeneral === 'validado'
+                    ? 'success'
+                    : item.estadoGeneral === 'completado'
+                    ? 'primary'
+                    : 'default'
+                }
+                sx={{ mb: 2 }}
+              />
 
-{(() => {
-  const total = item.actividades.length;
-  const completadas = item.actividades.filter((a: any) => a.completada).length;
-  const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
-  return (
-    <>
-      <LinearProgress
-        variant="determinate"
-        value={porcentaje}
-        sx={{ height: 8, borderRadius: 5, mb: 1 }}
-      />
-      <Typography variant="body2" sx={{ mb: 2 }}>
-        Progreso validado: {porcentaje}%
-      </Typography>
-    </>
-  );
-})()}
+              {(() => {
+                const total = item.actividades.length;
+                const completadas = item.actividades.filter((a: any) => a.completada).length;
+                const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
+                return (
+                  <>
+                    <LinearProgress
+                      variant="determinate"
+                      value={porcentaje}
+                      sx={{ height: 8, borderRadius: 5, mb: 1 }}
+                    />
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      Progreso validado: {porcentaje}%
+                    </Typography>
+                  </>
+                );
+              })()}
 
               <List>
                 {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
                   item.actividades.map((act: any, idx: number) => (
                     <ListItem key={idx}>
-                      <Checkbox checked={act.completada} disabled />
+                      {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
+                      {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
+                      {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
+                      {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
                       <ListItemText
                         primary={act.nombre || 'Actividad sin nombre'}
                         secondary={act.comentariosResidente || ''}
@@ -112,8 +122,8 @@ const ResidenteFases: React.FC = () => {
                   </ListItem>
                 )}
               </List>
-            </CardContent>
-          </Card>
+            </AccordionDetails>
+          </Accordion>
         ))
       ) : (
         <Alert severity="info">No hay progreso formativo disponible.</Alert>
