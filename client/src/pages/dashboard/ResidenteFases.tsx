@@ -15,7 +15,7 @@ const ResidenteFases: React.FC = () => {
     const fetchProgresos = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/progreso/residente/${user._id}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
         console.log("Respuesta del backend:", response.data);
         setProgresos(response.data.data);
       } catch (err: any) {
