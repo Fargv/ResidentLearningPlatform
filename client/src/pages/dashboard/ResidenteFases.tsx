@@ -39,25 +39,48 @@ const ResidenteFases: React.FC = () => {
       </Box>
     );
   }
-
+  
   if (error) return <Alert severity="error">{error}</Alert>;
-
+  
   return (
     <Box>
       <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
+  
+      {/* 🔍 Panel de depuración */}
+      <Box sx={{ mb: 2, p: 2, bgcolor: '#f9f9f9', borderRadius: 2 }}>
+        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Depuración (progresos):</Typography>
+        <pre style={{ maxHeight: 300, overflow: 'auto', fontSize: '0.75rem' }}>
+          {JSON.stringify(progresos, null, 2)}
+        </pre>
+      </Box>
+  
       {Array.isArray(progresos) && progresos.length > 0 ? (
         progresos.map((fase, index) => (
           <Card key={index} sx={{ mb: 3 }}>
             <CardContent>
               <Typography variant="h6">Fase {fase.fase?.numero}: {fase.fase?.nombre}</Typography>
-              <Chip label={fase.estadoGeneral} color={fase.estadoGeneral === 'validado' ? 'success' : fase.estadoGeneral === 'completado' ? 'primary' : 'default'} sx={{ mt: 1, mb: 2 }} />
+              <Chip
+                label={fase.estadoGeneral}
+                color={
+                  fase.estadoGeneral === 'validado'
+                    ? 'success'
+                    : fase.estadoGeneral === 'completado'
+                    ? 'primary'
+                    : 'default'
+                }
+                sx={{ mt: 1, mb: 2 }}
+              />
               <List>
-                {Array.isArray(fase.actividades) && fase.actividades.map((act: any, idx: number) => (
-                  <ListItem key={idx}>
-                    <Checkbox checked={act.completada} disabled />
-                    <ListItemText primary={act.nombre} secondary={act.comentariosResidente || ''} />
-                  </ListItem>
-                ))}
+                {Array.isArray(fase.actividades) &&
+                  fase.actividades.map((act: any, idx: number) => (
+                    <ListItem key={idx}>
+                      <Checkbox checked={act.completada} disabled />
+                      <ListItemText
+                        primary={act.nombre}
+                        secondary={act.comentariosResidente || ''}
+                      />
+                    </ListItem>
+                  ))}
               </List>
             </CardContent>
           </Card>
@@ -67,6 +90,6 @@ const ResidenteFases: React.FC = () => {
       )}
     </Box>
   );
-};
+  
 
 export default ResidenteFases;
