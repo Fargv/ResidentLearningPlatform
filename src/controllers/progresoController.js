@@ -7,7 +7,6 @@ const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
-const ProgresoResidente = require('../models/ProgresoResidente');
 const ErrorResponse = require('../utils/errorResponse');
 
 // @desc    Obtener todos los registros de progreso
