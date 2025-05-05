@@ -105,14 +105,19 @@ exports.getProgresoResidente = async (req, res, next) => {
 
     for (const prog of progresoRaw) {
       const faseId = prog.actividad.fase._id;
+    
       if (!agrupadoPorFase[faseId]) {
         agrupadoPorFase[faseId] = {
-          fase: prog.actividad.fase,
+          fase: {
+            _id: prog.actividad.fase._id,
+            numero: prog.actividad.fase.numero,
+            nombre: prog.actividad.fase.nombre
+          },
           actividades: [],
           estadoGeneral: 'en progreso',
         };
       }
-
+    
       agrupadoPorFase[faseId].actividades.push({
         nombre: prog.actividad.nombre,
         completada: prog.estado === 'validado',
