@@ -232,9 +232,18 @@ const ResidenteFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleCompletarActividad} variant="contained" disabled={!selectedProgresoId || selectedActividadIndex === null}>
-            Guardar
-          </Button>
+          <Button
+  onClick={handleCompletarActividad}
+  variant="contained"
+  disabled={
+    !selectedProgresoId ||
+    selectedActividadIndex === null ||
+    !fecha ||
+    comentario.trim() === ''
+}
+>
+  Confirmar
+</Button>
         </DialogActions>
       </Dialog>
 
