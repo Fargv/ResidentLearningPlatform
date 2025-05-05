@@ -90,57 +90,32 @@ exports.getProgresoResidente = async (req, res, next) => {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
 
-    const progresoRaw = await ProgresoResidente.find({ residente: new mongoose.Types.ObjectId(req.params.id) })
-      .populate({
-        path: 'actividad',
-        select: 'nombre fase',
-        populate: {
-          path: 'fase',
-          select: 'nombre numero'
-        }
-      });
+    const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
+      .populate({ path: 'fase', select: 'nombre numero' });
 
-    const agrupadoPorFase = {};
-
-    for (const prog of progresoRaw) {
-      if (!prog.actividad || !prog.actividad.fase) continue;
-
-      const faseId = prog.actividad.fase._id;
-
-      if (!agrupadoPorFase[faseId]) {
-        agrupadoPorFase[faseId] = {
-          fase: {
-            _id: faseId,
-            numero: prog.actividad.fase.numero,
-            nombre: prog.actividad.fase.nombre
-          },
-          actividades: [],
-          estadoGeneral: 'en progreso'
-        };
-      }
-
-      agrupadoPorFase[faseId].actividades.push({
-        nombre: prog.actividad.nombre,
-        completada: prog.estado === 'validado',
-        comentariosResidente: prog.comentarios,
-        estado: prog.estado
-      });
-    }
-
-    const progresos = Object.values(agrupadoPorFase);
+    const resultado = progresoPorFase.map(item => {
+      return {
+        fase: item.fase,
+        estadoGeneral: item.estadoGeneral,
+        actividades: item.actividades.map(act => ({
+          nombre: act.nombre,
+          completada: act.estado === 'validado',
+          comentariosResidente: act.comentariosResidente || '',
+          estado: act.estado
+        }))
+      };
+    });
 
     res.status(200).json({
       success: true,
-      count: progresos.length,
-      data: progresos
+      count: resultado.length,
+      data: resultado
     });
-
   } catch (err) {
     console.error("Error en getProgresoResidente:", err);
     next(err);
   }
 };
-
 
 
 exports.getProgresoResidentePorFase = async (req, res, next) => {
@@ -481,46 +456,23 @@ exports.getEstadisticasResidente = async (req, res, next) => {
   try {
     const residenteId = req.params.id;
 
-    const progreso = await ProgresoResidente.find({ residente: residenteId })
-      .populate({
-        path: 'actividad',
-        select: 'fase nombre',
-        populate: { path: 'fase', select: 'nombre numero' }
-      });
+    const progresos = await ProgresoResidente.find({ residente: residenteId })
+      .populate({ path: 'fase', select: 'nombre numero' });
 
-    const estadisticas = {};
-
-    for (const prog of progreso) {
-      if (!prog.actividad || !prog.actividad.fase) continue;
-
-      const faseId = prog.actividad.fase._id;
-      const faseNombre = prog.actividad.fase.nombre;
-
-      if (!estadisticas[faseId]) {
-        estadisticas[faseId] = {
-          fase: {
-            _id: faseId,
-            nombre: faseNombre
-          },
-          total: 0,
-          completadas: 0
-        };
-      }
-
-      estadisticas[faseId].total++;
-      if (prog.estado === 'validado') {
-        estadisticas[faseId].completadas++;
-      }
-    }
-
-    const resultado = Object.values(estadisticas).map(item => ({
-      ...item,
-      porcentaje: item.total ? Math.round((item.completadas / item.total) * 100) : 0
-    }));
+    const estadisticas = progresos.map(item => {
+      const total = item.actividades.length;
+      const completadas = item.actividades.filter(act => act.estado === 'validado').length;
+      return {
+        fase: item.fase,
+        total,
+        completadas,
+        porcentaje: total ? Math.round((completadas / total) * 100) : 0
+      };
+    });
 
     res.status(200).json({
       success: true,
-      data: resultado
+      data: estadisticas
     });
   } catch (err) {
     console.error("Error en getEstadisticasResidente:", err);
