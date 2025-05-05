@@ -192,13 +192,17 @@ const ResidenteFases: React.FC = () => {
                       />
                       {act.estado === 'pendiente' && item.estadoGeneral !== 'bloqueada' && (
                         <Button
-                          size="small"
-                          variant="outlined"
-                          onClick={() => handleOpenDialog(item._id, idx)}
-                          sx={{ ml: 2 }}
-                        >
-                          Marcar como completada
-                        </Button>
+                        size="small"
+                        variant="outlined"
+                        onClick={() => {
+                          console.log('🧩 Actividad seleccionada:', item._id, idx);
+                          handleOpenDialog(item._id, idx);
+                        }}
+                        sx={{ ml: 2 }}
+                      >
+                        Marcar como completada
+                      </Button>
+                      
                       )}
                     </ListItem>
                   ))
