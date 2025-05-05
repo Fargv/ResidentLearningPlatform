@@ -62,6 +62,7 @@ const ResidenteFases: React.FC = () => {
   }, [user]);
 
   const handleOpenDialog = (progresoId: string, index: number) => {
+    console.log('🔍 Abriendo diálogo:', { progresoId, index });
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
     setComentario('');
@@ -231,7 +232,9 @@ const ResidenteFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleCompletarActividad} variant="contained">Guardar</Button>
+          <Button onClick={handleCompletarActividad} variant="contained" disabled={!selectedProgresoId || selectedActividadIndex === null}>
+            Guardar
+          </Button>
         </DialogActions>
       </Dialog>
 
