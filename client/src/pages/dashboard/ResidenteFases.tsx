@@ -195,7 +195,7 @@ const ResidenteFases: React.FC = () => {
                         size="small"
                         variant="outlined"
                         onClick={() => {
-                          console.log('🧩 Actividad seleccionada:', item._id, idx);
+                          console.log("🛠 DEBUG - progresoId:", item._id, "actividadIndex:", idx, "fase:", item);
                           handleOpenDialog(item._id, idx);
                         }}
                         sx={{ ml: 2 }}
