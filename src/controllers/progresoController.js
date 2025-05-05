@@ -82,42 +82,43 @@ exports.getProgresoResidente = async (req, res, next) => {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
     }
 
-    if (
-      req.user.rol === 'residente' && req.user.id !== req.params.id
-    ) {
+    if (req.user.rol === 'residente' && req.user.id !== req.params.id) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
     }
 
-    if (
-      req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()
-    ) {
+    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
 
     const progresoRaw = await ProgresoResidente.find({ residente: new mongoose.Types.ObjectId(req.params.id) })
-    .populate({
-      path: 'fase',
-      select: 'nombre numero'
-    });
-  
+      .populate({
+        path: 'actividad',
+        select: 'nombre fase',
+        populate: {
+          path: 'fase',
+          select: 'nombre numero'
+        }
+      });
 
     const agrupadoPorFase = {};
 
     for (const prog of progresoRaw) {
+      if (!prog.actividad || !prog.actividad.fase) continue;
+
       const faseId = prog.actividad.fase._id;
-    
+
       if (!agrupadoPorFase[faseId]) {
         agrupadoPorFase[faseId] = {
           fase: {
-            _id: prog.actividad.fase._id,
+            _id: faseId,
             numero: prog.actividad.fase.numero,
             nombre: prog.actividad.fase.nombre
           },
           actividades: [],
-          estadoGeneral: 'en progreso',
+          estadoGeneral: 'en progreso'
         };
       }
-    
+
       agrupadoPorFase[faseId].actividades.push({
         nombre: prog.actividad.nombre,
         completada: prog.estado === 'validado',
@@ -126,14 +127,21 @@ exports.getProgresoResidente = async (req, res, next) => {
       });
     }
 
+    const progresos = Object.values(agrupadoPorFase);
+
     res.status(200).json({
       success: true,
-      data: Object.values(agrupadoPorFase)
+      count: progresos.length,
+      data: progresos
     });
+
   } catch (err) {
+    console.error("Error en getProgresoResidente:", err);
     next(err);
   }
 };
+
+
 
 exports.getProgresoResidentePorFase = async (req, res, next) => {
   try {
@@ -147,38 +155,20 @@ exports.getProgresoResidentePorFase = async (req, res, next) => {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
     }
 
-    if (
-      req.user.rol === 'residente' && req.user.id !== req.params.id
-    ) {
+    if (req.user.rol === 'residente' && req.user.id !== req.params.id) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
     }
 
-    if (
-      req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()
-    ) {
+    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
 
-    const actividades = await Actividad.find({ fase: req.params.faseId });
-    const actividadesIds = actividades.map(act => act._id);
-
-    const progreso = await ProgresoResidente.find({ 
-      residente: req.params.id,
-      actividad: { $in: actividadesIds }
-    })
+    const progreso = await ProgresoResidente.find({ residente: req.params.id })
       .populate({
         path: 'actividad',
         select: 'nombre descripcion tipo fase',
         populate: { path: 'fase', select: 'nombre numero' }
-      })
-      .populate({
-        path: 'validaciones',
-        populate: { 
-          path: 'formador',
-          select: 'nombre apellidos email'
-        }
-      })
-      .populate('adjuntos');
+      });
 
     res.status(200).json({
       success: true,
@@ -489,103 +479,52 @@ exports.rechazarProgreso = async (req, res, next) => {
 // @access  Private
 exports.getEstadisticasResidente = async (req, res, next) => {
   try {
-    const residente = await User.findById(req.params.id);
+    const residenteId = req.params.id;
 
-    if (!residente) {
-      return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
-    }
+    const progreso = await ProgresoResidente.find({ residente: residenteId })
+      .populate({
+        path: 'actividad',
+        select: 'fase nombre',
+        populate: { path: 'fase', select: 'nombre numero' }
+      });
 
-    if (residente.rol !== 'residente') {
-      return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
-    }
+    const estadisticas = {};
 
-    // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
-    if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== req.params.id && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== residente.hospital.toString())
-    ) {
-      return next(new ErrorResponse('No autorizado para acceder a este recurso', 403));
-    }
+    for (const prog of progreso) {
+      if (!prog.actividad || !prog.actividad.fase) continue;
 
-    // Obtener todas las actividades agrupadas por fase
-    const fases = await Actividad.aggregate([
-      {
-        $lookup: {
-          from: 'fases',
-          localField: 'fase',
-          foreignField: '_id',
-          as: 'faseInfo'
-        }
-      },
-      {
-        $unwind: '$faseInfo'
-      },
-      {
-        $group: {
-          _id: '$fase',
-          fase: { $first: '$faseInfo' },
-          totalActividades: { $sum: 1 },
-          actividades: { $push: '$$ROOT' }
-        }
-      },
-      {
-        $sort: { 'fase.orden': 1 }
+      const faseId = prog.actividad.fase._id;
+      const faseNombre = prog.actividad.fase.nombre;
+
+      if (!estadisticas[faseId]) {
+        estadisticas[faseId] = {
+          fase: {
+            _id: faseId,
+            nombre: faseNombre
+          },
+          total: 0,
+          completadas: 0
+        };
       }
-    ]);
 
-    // Obtener progreso del residente
-    const progreso = await ProgresoResidente.find({ residente: req.params.id })
-      .populate('actividad');
+      estadisticas[faseId].total++;
+      if (prog.estado === 'validado') {
+        estadisticas[faseId].completadas++;
+      }
+    }
 
-    // Calcular estadísticas
-    const estadisticas = fases.map(fase => {
-      const actividadesFase = fase.actividades.map(act => act._id.toString());
-      
-      const progresoFase = progreso.filter(p => 
-        actividadesFase.includes(p.actividad._id.toString())
-      );
-      
-      const completadas = progresoFase.filter(p => p.estado === 'validado').length;
-      const pendientes = progresoFase.filter(p => p.estado === 'pendiente').length;
-      const rechazadas = progresoFase.filter(p => p.estado === 'rechazado').length;
-      
-      const porcentajeCompletado = fase.totalActividades > 0 
-        ? Math.round((completadas / fase.totalActividades) * 100) 
-        : 0;
-      
-      return {
-        fase: {
-          _id: fase._id,
-          nombre: fase.fase.nombre,
-          numero: fase.fase.numero,
-          orden: fase.fase.orden
-        },
-        totalActividades: fase.totalActividades,
-        completadas,
-        pendientes,
-        rechazadas,
-        porcentajeCompletado
-      };
-    });
-
-    // Calcular estadísticas globales
-    const totalActividades = fases.reduce((sum, fase) => sum + fase.totalActividades, 0);
-    const totalCompletadas = estadisticas.reduce((sum, est) => sum + est.completadas, 0);
-    const porcentajeTotal = totalActividades > 0 
-      ? Math.round((totalCompletadas / totalActividades) * 100) 
-      : 0;
+    const resultado = Object.values(estadisticas).map(item => ({
+      ...item,
+      porcentaje: item.total ? Math.round((item.completadas / item.total) * 100) : 0
+    }));
 
     res.status(200).json({
       success: true,
-      data: {
-        porcentajeTotal,
-        totalActividades,
-        totalCompletadas,
-        fases: estadisticas
-      }
+      data: resultado
     });
   } catch (err) {
+    console.error("Error en getEstadisticasResidente:", err);
     next(err);
   }
 };
+
