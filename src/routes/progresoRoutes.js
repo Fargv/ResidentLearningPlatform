@@ -10,7 +10,8 @@ const {
   actualizarProgreso,
   validarProgreso,
   rechazarProgreso,
-  getEstadisticasResidente
+  getEstadisticasResidente,
+  marcarActividadCompletada 
 } = require('../controllers/progresoController');
 
 // Todas las rutas requieren autenticación
@@ -45,5 +46,7 @@ router.route('/:id/rechazar')
   .post(authorize('formador', 'administrador'), rechazarProgreso);
 
 router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
+
+router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
 
 module.exports = router;

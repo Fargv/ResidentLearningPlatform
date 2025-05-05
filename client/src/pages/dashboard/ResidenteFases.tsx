@@ -11,7 +11,13 @@ import {
   LinearProgress,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -26,6 +32,11 @@ const ResidenteFases: React.FC = () => {
   const [progresos, setProgresos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+  const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+  const [comentario, setComentario] = useState('');
+  const [fecha, setFecha] = useState('');
 
   useEffect(() => {
     if (!user?._id) return;
@@ -45,6 +56,31 @@ const ResidenteFases: React.FC = () => {
 
     fetchProgresos();
   }, [user]);
+
+  const handleOpenDialog = (progresoId: string, index: number) => {
+    setSelectedProgresoId(progresoId);
+    setSelectedActividadIndex(index);
+    setComentario('');
+    setFecha(new Date().toISOString().split('T')[0]);
+    setDialogOpen(true);
+  };
+
+  const handleCompletarActividad = async () => {
+    if (!selectedProgresoId || selectedActividadIndex === null) return;
+    try {
+      await axios.put(`${process.env.REACT_APP_API_URL}/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
+        estado: 'completado',
+        fechaRealizacion: fecha,
+        comentariosResidente: comentario
+      });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
+      setProgresos(response.data.data || []);
+    } catch (err) {
+      console.error('Error actualizando actividad:', err);
+    } finally {
+      setDialogOpen(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -108,12 +144,22 @@ const ResidenteFases: React.FC = () => {
                     <ListItem key={idx}>
                       {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
                       {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
-                      {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
                       {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
+                      {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
                       <ListItemText
                         primary={act.nombre || 'Actividad sin nombre'}
                         secondary={act.comentariosResidente || ''}
                       />
+                      {act.estado === 'pendiente' && item.estadoGeneral !== 'bloqueada' && (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => handleOpenDialog(item._id, idx)}
+                          sx={{ ml: 2 }}
+                        >
+                          Marcar como completada
+                        </Button>
+                      )}
                     </ListItem>
                   ))
                 ) : (
@@ -128,6 +174,34 @@ const ResidenteFases: React.FC = () => {
       ) : (
         <Alert severity="info">No hay progreso formativo disponible.</Alert>
       )}
+
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Marcar actividad como completada</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Fecha de realización"
+            type="date"
+            value={fecha}
+            onChange={(e) => setFecha(e.target.value)}
+            fullWidth
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Comentario"
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
+            fullWidth
+            multiline
+            rows={3}
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
+          <Button onClick={handleCompletarActividad} variant="contained">Guardar</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
