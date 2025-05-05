@@ -95,11 +95,11 @@ exports.getProgresoResidente = async (req, res, next) => {
     }
 
     const progresoRaw = await ProgresoResidente.find({ residente: new mongoose.Types.ObjectId(req.params.id) })
-      .populate({
-        path: 'actividad',
-        select: 'nombre descripcion tipo fase',
-        populate: { path: 'fase', select: 'nombre numero' }
-      });
+    .populate({
+      path: 'fase',
+      select: 'nombre numero'
+    });
+  
 
     const agrupadoPorFase = {};
 
