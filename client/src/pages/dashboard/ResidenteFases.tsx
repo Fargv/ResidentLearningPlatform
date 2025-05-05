@@ -10,7 +10,8 @@ import {
   ListItemText,
   Checkbox,
   Chip,
-  Skeleton
+  Skeleton,
+  LinearProgress 
 } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -65,16 +66,35 @@ const ResidenteFases: React.FC = () => {
                 Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
               </Typography>
               <Chip
-                label={item.estadoGeneral || '—'}
-                color={
-                  item.estadoGeneral === 'validado'
-                    ? 'success'
-                    : item.estadoGeneral === 'completado'
-                    ? 'primary'
-                    : 'default'
-                }
-                sx={{ mt: 1, mb: 2 }}
-              />
+  label={item.estadoGeneral || '—'}
+  color={
+    item.estadoGeneral === 'validado'
+      ? 'success'
+      : item.estadoGeneral === 'completado'
+      ? 'primary'
+      : 'default'
+  }
+  sx={{ mt: 1, mb: 2 }}
+/>
+
+{(() => {
+  const total = item.actividades.length;
+  const completadas = item.actividades.filter((a: any) => a.completada).length;
+  const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
+  return (
+    <>
+      <LinearProgress
+        variant="determinate"
+        value={porcentaje}
+        sx={{ height: 8, borderRadius: 5, mb: 1 }}
+      />
+      <Typography variant="body2" sx={{ mb: 2 }}>
+        Progreso validado: {porcentaje}%
+      </Typography>
+    </>
+  );
+})()}
+
               <List>
                 {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
                   item.actividades.map((act: any, idx: number) => (
