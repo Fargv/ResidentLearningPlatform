@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent, Alert, List, ListItem, ListItemText, Checkbox, Chip, Skeleton } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Alert,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Chip,
+  Skeleton
+} from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
@@ -16,8 +28,7 @@ const ResidenteFases: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
-        console.log("Respuesta del backend:", response.data);
-        setProgresos(response.data.data);
+        setProgresos(response.data.data || []);
       } catch (err: any) {
         console.error("Error cargando progreso:", err);
         setError(err.response?.data?.error || 'Error al cargar el progreso');
@@ -39,68 +50,56 @@ const ResidenteFases: React.FC = () => {
       </Box>
     );
   }
-  
+
   if (error) return <Alert severity="error">{error}</Alert>;
-  
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
-  
-      {/* 🔍 Panel de depuración */}
-      <Box sx={{ mb: 2, p: 2, bgcolor: '#f9f9f9', borderRadius: 2 }}>
-        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Depuración (progresos):</Typography>
-        <pre style={{ maxHeight: 300, overflow: 'auto', fontSize: '0.75rem' }}>
-          {JSON.stringify(progresos, null, 2)}
-        </pre>
-      </Box>
-  
+
       {Array.isArray(progresos) && progresos.length > 0 ? (
-        progresos.map((item, index) => {
-          const fase = item.fase || {};
-          return (
-            <Card key={index} sx={{ mb: 3 }}>
-              <CardContent>
-                <Typography variant="h6">
-                  Fase {fase.numero || '—'}: {fase.nombre || 'Sin título'}
-                </Typography>
-                <Chip
-                  label={item.estadoGeneral || '—'}
-                  color={
-                    item.estadoGeneral === 'validado'
-                      ? 'success'
-                      : item.estadoGeneral === 'completado'
-                      ? 'primary'
-                      : 'default'
-                  }
-                  sx={{ mt: 1, mb: 2 }}
-                />
-                <List>
-                  {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
-                    item.actividades.map((act: any, idx: number) => (
-                      <ListItem key={idx}>
-                        <Checkbox checked={act.completada} disabled />
-                        <ListItemText
-                          primary={act.nombre || 'Actividad sin nombre'}
-                          secondary={act.comentariosResidente || ''}
-                        />
-                      </ListItem>
-                    ))
-                  ) : (
-                    <ListItem>
-                      <ListItemText primary="No hay actividades disponibles" />
+        progresos.map((item, index) => (
+          <Card key={index} sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6">
+                Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
+              </Typography>
+              <Chip
+                label={item.estadoGeneral || '—'}
+                color={
+                  item.estadoGeneral === 'validado'
+                    ? 'success'
+                    : item.estadoGeneral === 'completado'
+                    ? 'primary'
+                    : 'default'
+                }
+                sx={{ mt: 1, mb: 2 }}
+              />
+              <List>
+                {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+                  item.actividades.map((act: any, idx: number) => (
+                    <ListItem key={idx}>
+                      <Checkbox checked={act.completada} disabled />
+                      <ListItemText
+                        primary={act.nombre || 'Actividad sin nombre'}
+                        secondary={act.comentariosResidente || ''}
+                      />
                     </ListItem>
-                  )}
-                </List>
-              </CardContent>
-            </Card>
-          );
-        })
+                  ))
+                ) : (
+                  <ListItem>
+                    <ListItemText primary="No hay actividades disponibles" />
+                  </ListItem>
+                )}
+              </List>
+            </CardContent>
+          </Card>
+        ))
       ) : (
         <Alert severity="info">No hay progreso formativo disponible.</Alert>
       )}
     </Box>
   );
-  
 };
 
 export default ResidenteFases;
