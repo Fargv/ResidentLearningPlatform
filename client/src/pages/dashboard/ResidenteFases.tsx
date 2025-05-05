@@ -71,6 +71,13 @@ const ResidenteFases: React.FC = () => {
   };
 
   const handleCompletarActividad = async () => {
+    console.log('✅ Confirmando actividad:', {
+      selectedProgresoId,
+      selectedActividadIndex,
+      fecha,
+      comentario
+    });
+
     if (!selectedProgresoId || selectedActividadIndex === null) {
       setSnackbarError(true);
       setSnackbarMsg('Error interno: No se ha seleccionado ninguna actividad.');
