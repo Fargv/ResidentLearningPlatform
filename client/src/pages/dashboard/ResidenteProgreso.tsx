@@ -242,7 +242,7 @@ useEffect(() => {
             <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">
-                  {Array.isArray(stats?.fases) ? stats.fases.reduce((acc: number, fase: any) => acc + fase.completadas, 0) : 0}
+                {stats?.fases?.reduce((acc, fase) => acc + fase.completadas, 0) ?? 0}
                 </Typography>
                 <Typography variant="body2">Completadas</Typography>
               </CardContent>
@@ -252,7 +252,8 @@ useEffect(() => {
             <Card sx={{ bgcolor: 'warning.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">
-                  {Array.isArray(stats?.fases) ? stats.fases.reduce((acc: number, fase: any) => acc + fase.pendientes, 0) : 0}
+                {stats?.fases?.reduce((acc, fase) => acc + fase.pendientes, 0) ?? 0}
+
                 </Typography>
                 <Typography variant="body2">Pendientes</Typography>
               </CardContent>
@@ -262,7 +263,8 @@ useEffect(() => {
             <Card sx={{ bgcolor: 'error.light', color: 'white' }}>
               <CardContent>
                 <Typography variant="h4">
-                  {Array.isArray(stats?.fases) ? stats.fases.reduce((acc: number, fase: any) => acc + fase.rechazadas, 0) : 0}
+                {stats?.fases?.reduce((acc, fase) => acc + fase.rechazadas, 0) ?? 0}
+
                 </Typography>
                 <Typography variant="body2">Rechazadas</Typography>
               </CardContent>
