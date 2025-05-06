@@ -13,18 +13,20 @@ const {
   getEstadisticasResidente,
   marcarActividadCompletada,
   getProgreso,
-  getProgresosPendientesDelHospital, // ✅ AÑADIR ESTO
-   
+  getProgresosPendientesDelHospital,
 } = require('../controllers/progresoController');
 
-// Todas las rutas requieren autenticación
+// ✅ Middleware de autenticación
 router.use(protect);
 
-// Rutas para administradores
+// ✅ Ruta específica para formador primero (¡esto evita el conflicto!)
+router.get('/formador/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
+
+// ✅ Rutas para administrador
 router.route('/')
   .get(authorize('administrador'), getAllProgreso);
 
-// Rutas para todos los roles (con verificación de permisos en el controlador)
+// ✅ Rutas generales por ID de residente
 router.route('/residente/:id')
   .get(getProgresoResidente);
 
@@ -34,14 +36,14 @@ router.route('/residente/:id/fase/:faseId')
 router.route('/stats/residente/:id')
   .get(getEstadisticasResidente);
 
-// Rutas para registrar y actualizar progreso
+// ✅ Registro y actualización
 router.route('/')
   .post(registrarProgreso);
 
 router.route('/:id')
   .put(actualizarProgreso);
 
-// Rutas para formadores y administradores
+// ✅ Validación
 router.route('/:id/validar')
   .post(authorize('formador', 'administrador'), validarProgreso);
 
@@ -52,9 +54,7 @@ router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativ
 
 router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
 
-router.get('/formador/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
-
+// ✅ ESTA VA AL FINAL para evitar conflicto con /formador/pendientes
 router.get('/:id', authorize('formador'), getProgreso);
-
 
 module.exports = router;
