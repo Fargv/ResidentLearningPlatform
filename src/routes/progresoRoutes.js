@@ -49,4 +49,7 @@ router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativ
 
 router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
 
+router.get('/formador/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
+
+
 module.exports = router;
