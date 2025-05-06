@@ -1,59 +1,50 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
-const {
-  inicializarProgresoFormativo,
-  getAllProgreso,
-  getProgresoResidente,
-  getProgresoResidentePorFase,
-  registrarProgreso,
-  actualizarProgreso,
-  validarProgreso,
-  rechazarProgreso,
-  getEstadisticasResidente,
-  marcarActividadCompletada,
-  getProgreso,
-  getProgresosPendientesDelHospital,
-} = require('../controllers/progresoController');
+const progresoController = require('../controllers/progresoController');
 
-// ✅ Middleware de autenticación
+// ✅ Middleware de autenticación global
 router.use(protect);
 
 // ✅ Ruta específica para formador primero
-console.log('🧪 getProgresosPendientesDelHospital:', typeof getProgresosPendientesDelHospital);
-router.get('/formador/validaciones/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
+router.get(
+  '/formador/validaciones/pendientes',
+  authorize('formador'),
+  progresoController.getProgresosPendientesDelHospital
+);
 
 // ✅ Rutas para administrador y creación
 router.route('/')
-  .get(authorize('administrador'), getAllProgreso)
-  .post(registrarProgreso);
+  .get(authorize('administrador'), progresoController.getAllProgreso)
+  .post(progresoController.registrarProgreso);
 
 // ✅ Rutas generales por ID de residente
 router.route('/residente/:id')
-  .get(getProgresoResidente);
+  .get(progresoController.getProgresoResidente);
 
 router.route('/residente/:id/fase/:faseId')
-  .get(getProgresoResidentePorFase);
+  .get(progresoController.getProgresoResidentePorFase);
 
 router.route('/stats/residente/:id')
-  .get(getEstadisticasResidente);
+  .get(progresoController.getEstadisticasResidente);
 
 // ✅ Actualización de progreso y actividades
 router.route('/:id')
-  .put(actualizarProgreso);
+  .put(progresoController.actualizarProgreso);
 
-router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
+router.put('/:id/actividad/:index', protect, progresoController.marcarActividadCompletada);
 
 // ✅ Validación
 router.route('/:id/validar')
-  .post(authorize('formador', 'administrador'), validarProgreso);
+  .post(authorize('formador', 'administrador'), progresoController.validarProgreso);
 
 router.route('/:id/rechazar')
-  .post(authorize('formador', 'administrador'), rechazarProgreso);
+  .post(authorize('formador', 'administrador'), progresoController.rechazarProgreso);
 
-router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
+// ✅ Inicialización de progreso
+router.post('/init/:id', authorize('administrador'), progresoController.inicializarProgresoFormativo);
 
-// ✅ Esta va al final
-router.get('/:id', authorize('formador'), getProgreso);
+// ✅ Esta va al final para evitar conflictos con otras rutas
+router.get('/:id', authorize('formador'), progresoController.getProgreso);
 
 module.exports = router;
