@@ -19,12 +19,13 @@ const {
 // ✅ Middleware de autenticación
 router.use(protect);
 
-// ✅ Ruta específica para formador primero (¡esto evita el conflicto!)
+// ✅ Ruta específica para formador primero
 router.get('/formador/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
 
-// ✅ Rutas para administrador
+// ✅ Rutas para administrador y creación
 router.route('/')
-  .get(authorize('administrador'), getAllProgreso);
+  .get(authorize('administrador'), getAllProgreso)
+  .post(registrarProgreso);
 
 // ✅ Rutas generales por ID de residente
 router.route('/residente/:id')
@@ -36,12 +37,11 @@ router.route('/residente/:id/fase/:faseId')
 router.route('/stats/residente/:id')
   .get(getEstadisticasResidente);
 
-// ✅ Registro y actualización
-router.route('/')
-  .post(registrarProgreso);
-
+// ✅ Actualización de progreso y actividades
 router.route('/:id')
   .put(actualizarProgreso);
+
+router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
 
 // ✅ Validación
 router.route('/:id/validar')
@@ -52,9 +52,7 @@ router.route('/:id/rechazar')
 
 router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
 
-router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
-
-// ✅ ESTA VA AL FINAL para evitar conflicto con /formador/pendientes
+// ✅ Esta va al final
 router.get('/:id', authorize('formador'), getProgreso);
 
 module.exports = router;
