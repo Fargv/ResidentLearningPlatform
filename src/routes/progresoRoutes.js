@@ -20,6 +20,7 @@ const {
 router.use(protect);
 
 // ✅ Ruta específica para formador primero
+console.log('🧪 getProgresosPendientesDelHospital:', typeof getProgresosPendientesDelHospital);
 router.get('/formador/validaciones/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
 
 // ✅ Rutas para administrador y creación
