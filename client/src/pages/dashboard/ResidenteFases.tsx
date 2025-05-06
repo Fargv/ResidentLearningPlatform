@@ -45,17 +45,19 @@ const ResidenteFases: React.FC = () => {
 
   useEffect(() => {
     if (!user || !user._id) return;
-
+  
     const fetchProgresos = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
         const data = response.data.data || [];
-console.log('✅ Progresos recibidos del backend:', data);
-const dataFiltrada = data.filter((p: any) => p._id);
-console.log('✅ Progresos válidos con _id:', dataFiltrada);
-setProgresos(dataFiltrada);
-
+  
+        // 🔍 Añade este log aquí:
+        data.forEach((p: any, i: number) => console.log(`🔍 Progreso[${i}]`, p));
+  
+        const dataFiltrada = data.filter((p: any) => typeof p._id === 'string' && p._id.trim() !== '');
+        console.log('✅ Progresos válidos con _id:', dataFiltrada);
+        setProgresos(dataFiltrada);
       } catch (err: any) {
         console.error("Error cargando progreso:", err);
         setError(err.response?.data?.error || 'Error al cargar el progreso');
@@ -63,7 +65,7 @@ setProgresos(dataFiltrada);
         setLoading(false);
       }
     };
-
+  
     fetchProgresos();
   }, [user]);
 
