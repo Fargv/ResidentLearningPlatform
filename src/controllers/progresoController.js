@@ -93,19 +93,21 @@ exports.getProgresoResidente = async (req, res, next) => {
 
     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
       .populate({ path: 'fase', select: 'nombre numero' });
-
-    const resultado = progresoPorFase.map(item => {
-      return {
-        fase: item.fase,
-        estadoGeneral: item.estadoGeneral,
-        actividades: item.actividades.map(act => ({
-          nombre: act.nombre,
-          completada: act.estado === 'validado',
-          comentariosResidente: act.comentariosResidente || '',
-          estado: act.estado
-        }))
-      };
-    });
+//cambios
+      const resultado = progresoPorFase.map(item => {
+        return {
+          _id: item._id.toString(), // ✅ AÑADIDO AQUÍ---
+          fase: item.fase,
+          estadoGeneral: item.estadoGeneral,
+          actividades: item.actividades.map(act => ({
+            nombre: act.nombre,
+            completada: act.estado === 'validado',
+            comentariosResidente: act.comentariosResidente || '',
+            estado: act.estado
+          }))
+        };
+      });
+      
 
     res.status(200).json({
       success: true,
