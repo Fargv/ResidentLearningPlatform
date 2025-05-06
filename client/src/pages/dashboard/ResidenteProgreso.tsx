@@ -141,17 +141,19 @@ useEffect(() => {
     setTabValue(newValue);
   };
 
-  const handleOpenDialog = (actividad: any) => {
-    const progresoMatch = progreso.find((p) => p.actividad._id === actividad._id);
-    if (progresoMatch) {
-      const index = progreso.findIndex((p) => p.actividad._id === actividad._id);
-      setSelectedProgresoId(progresoMatch._id);
-      setSelectedActividadIndex(index);
-      setSelectedActividad(actividad);
-      setComentarios('');
-      setOpenDialog(true);
-    }
+  const handleOpenDialog = (
+    actividad: Actividad,
+    progresoId: string | undefined,
+    index: number
+  ) => {
+    if (!progresoId || index === -1) return;
+    setSelectedActividad(actividad);
+    setSelectedProgresoId(progresoId);
+    setSelectedActividadIndex(index);
+    setComentarios('');
+    setOpenDialog(true);
   };
+  
   
 
   const handleCloseDialog = () => {
@@ -336,14 +338,21 @@ useEffect(() => {
                           </Box>
                         </Box>
                         <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' }, display: 'flex', justifyContent: 'flex-end' }}>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            disabled={tieneProgreso(actividad._id)}
-                            onClick={() => handleOpenDialog(actividad)}
-                          >
-                            {tieneProgreso(actividad._id) ? 'Completada' : 'Registrar'}
-                          </Button>
+                        {(() => {
+  const progresoItem = progreso.find(p => p.actividad._id === actividad._id);
+  const index = progreso.findIndex(p => p.actividad._id === actividad._id);
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={tieneProgreso(actividad._id)}
+      onClick={() => handleOpenDialog(actividad, progresoItem?._id, index)}
+    >
+      {tieneProgreso(actividad._id) ? 'Completada' : 'Registrar'}
+    </Button>
+  );
+})()}
+
                         </Box>
                       </Box>
                     </Paper>
