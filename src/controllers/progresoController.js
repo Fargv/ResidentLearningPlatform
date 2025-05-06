@@ -7,36 +7,28 @@ const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
+const path = require('path');
+const initProgreso = require(path.join(__dirname, '../utils/initProgreso'));
+const inicializarProgresoFormativo = initProgreso.inicializarProgresoFormativo;
 
 
 
-// @desc    Inicializar progreso formativo para un residente
-// @route   POST /api/progreso/init/:id
-// @access  Private/Admin
-const inicializarProgresoFormativo = async (req, res, next) => {
+
+exports.inicializarProgresoFormativo = async (req, res, next) => {
   try {
-    const residente = await User.findById(req.params.id);
-    if (!residente || residente.rol !== 'residente') {
+    const user = await User.findById(req.params.id);
+    if (!user || user.rol !== 'residente') {
       return res.status(404).json({ success: false, error: 'Residente no válido' });
     }
 
-    const actividades = await Actividad.find().populate('fase');
-
-    const nuevosRegistros = actividades.map((act) => ({
-      residente: residente._id,
-      actividad: act._id,
-      estado: act.requiereValidacion ? 'pendiente' : 'validado',
-      comentarios: '',
-      fechaRegistro: new Date()
-    }));
-
-    await ProgresoResidente.insertMany(nuevosRegistros);
-
-    res.status(200).json({ success: true, count: nuevosRegistros.length });
+    const count = await inicializarProgresoFormativo(user);
+    res.status(200).json({ success: true, count });
   } catch (err) {
     next(err);
   }
 };
+
+
 
 
 // @desc    Obtener todos los registros de progreso

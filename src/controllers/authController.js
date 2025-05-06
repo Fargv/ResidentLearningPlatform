@@ -8,18 +8,8 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 
-const inicializarProgresoParaNuevoUsuario  = async (usuario) => {
-  if (usuario.rol !== 'residente') return;
-  const fases = await Fase.find().sort({ numero: 1 });
-  for (const fase of fases) {
-    await ProgresoResidente.create({
-      residente: usuario._id,
-      fase: fase._id,
-      actividades: fase.actividades.map(a => ({ nombre: a.nombre, completada: false })),
-      estadoGeneral: fase.numero === 1 ? 'en progreso' : 'bloqueada'
-    });
-  }
-};
+const { inicializarProgresoFormativo } = require('../utils/initProgreso');
+
 
 const register = async (req, res, next) => {
   try {
@@ -61,7 +51,7 @@ const register = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    await inicializarProgresoParaNuevoUsuario(newUser);
+    await inicializarProgresoFormativo(newUser);
 
     const jwtToken = generateToken(newUser);
 
