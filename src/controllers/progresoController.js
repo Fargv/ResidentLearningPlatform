@@ -560,5 +560,5 @@ module.exports = {
   getEstadisticasResidente,
   marcarActividadCompletada,
   getProgreso,
-  getProgresosPendientesDelHospital // ✅ Asegúrate de que esta línea esté incluida
+  getProgresosPendientesDelHospital, // ✅ debe estar aquí
 };
