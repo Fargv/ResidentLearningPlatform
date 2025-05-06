@@ -11,7 +11,12 @@ const {
   validarProgreso,
   rechazarProgreso,
   getEstadisticasResidente,
-  marcarActividadCompletada 
+  marcarActividadCompletada,
+  getAllProgreso,
+  getProgreso,
+  getProgresoResidente,
+  getProgresosPendientesDelHospital, // ✅ AÑADIR ESTO
+   
 } = require('../controllers/progresoController');
 
 // Todas las rutas requieren autenticación
@@ -50,6 +55,8 @@ router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativ
 router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
 
 router.get('/formador/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
+
+router.get('/:id', authorize('formador'), getProgreso);
 
 
 module.exports = router;
