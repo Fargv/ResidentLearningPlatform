@@ -49,62 +49,93 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
+interface Actividad {
+  _id: string;
+  nombre: string;
+  descripcion: string;
+  tipo: string;
+  fase?: {
+    _id: string;
+  };
+  orden: number;
+}
+
+interface Fase {
+  _id: string;
+  nombre: string;
+  descripcion: string;
+  numero: number;
+}
+
+interface ProgresoItem {
+  _id: string;
+  actividad: {
+    _id: string;
+  };
+  estado: 'pendiente' | 'validado' | 'rechazado';
+}
+
+interface Stats {
+  porcentajeTotal: number;
+  fases: {
+    completadas: number;
+    pendientes: number;
+    rechazadas: number;
+  }[];
+}
 
 const ResidenteProgreso: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [fases, setFases] = useState<any[]>([]);
-  const [actividades, setActividades] = useState<any[]>([]);
-  const [progreso, setProgreso] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [fases, setFases] = useState<Fase[]>([]);
+  const [actividades, setActividades] = useState<Actividad[]>([]);
+  const [progreso, setProgreso] = useState<ProgresoItem[]>([]);  
+  const [stats, setStats] = useState<Stats | null>(null);
   const [tabValue, setTabValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedActividad, setSelectedActividad] = useState<any>(null);
+  const [selectedActividad, setSelectedActividad] = useState<Actividad | null>(null);
   const [comentarios, setComentarios] = useState('');
   const [registrando, setRegistrando] = useState(false);
   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
 const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (!user?._id) return;
+useEffect(() => {
+  if (!user?._id) return;
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
 
-        const fasesRes = await axios.get('/api/fases');
-        const actividadesRes = await axios.get('/api/actividades');
-        const progresoRes = await axios.get(`/api/progreso/residente/${user._id}`);
-        try {
-          console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
-          const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
-          console.log("Stats response completa:", statsRes);
-          setStats(statsRes.data.data);
-        } catch (err: any) {
-          console.error("ERROR en /stats:", err?.response?.data || err.message || err);
-        }
+      const fasesRes = await axios.get('/api/fases');
+      const actividadesRes = await axios.get('/api/actividades');
+      const progresoRes = await axios.get(`/api/progreso/residente/${user._id}`);
 
-        setFases(fasesRes.data.data);
-        setActividades(actividadesRes.data.data);
-        setProgreso(progresoRes.data.data);
-        
+      console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
+      const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+      console.log("Stats response completa:", statsRes);
+      setStats(statsRes.data.data);
 
-        console.log('Progreso:', progresoRes.data.data);
+      setFases(fasesRes.data.data);
+      setActividades(actividadesRes.data.data);
+      setProgreso(progresoRes.data.data);
 
-        if (Array.isArray(fasesRes.data.data) && fasesRes.data.data.length > 0) {
-          setTabValue(0);
-        }
-      } catch (err: any) {
-        console.error("Error al cargar datos de progreso:", err);
-        setError(err.response?.data?.error || 'Error al cargar los datos');
-      } finally {
-        setLoading(false);
+      console.log('Progreso:', progresoRes.data.data);
+
+      if (Array.isArray(fasesRes.data.data) && fasesRes.data.data.length > 0) {
+        setTabValue(0);
       }
-    };
+    } catch (err: any) {
+      console.error("Error al cargar datos de progreso:", err);
+      setError(err.response?.data?.error || 'Error al cargar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [user]);
+  fetchData();
+}, [user]);
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -133,7 +164,7 @@ const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | nu
   
 
   const handleRegistrarProgreso = async () => {
-    if (!selectedProgresoId || selectedActividadIndex === null) return;
+    if (!selectedProgresoId || selectedActividadIndex === null || !user?._id) return;
   
     try {
       setRegistrando(true);
@@ -144,14 +175,12 @@ const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | nu
         fechaRealizacion: new Date(),
       });
   
-      // Actualizar progreso local
       const actualizado = progreso.map((p, i) =>
         i === selectedActividadIndex ? res.data.data : p
       );
   
       setProgreso(actualizado);
   
-      // Opcional: actualizar stats
       const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
       setStats(statsRes.data.data);
   
@@ -162,6 +191,7 @@ const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | nu
       setRegistrando(false);
     }
   };
+  
   
 
   const getActividadEstado = (actividadId: string) => {
