@@ -11,7 +11,14 @@ const path = require('path');
 const initProgreso = require(path.join(__dirname, '../utils/initProgreso'));
 const inicializarProgresoFormativo = initProgreso.inicializarProgresoFormativo;
 
-
+const getAllProgreso = async (req, res, next) => {
+  try {
+    // Temporalmente solo devuelve un OK vacío
+    res.status(200).json({ success: true, data: [] });
+  } catch (err) {
+    next(err);
+  }
+};
 
 
 exports.inicializarProgresoFormativo = async (req, res, next) => {
