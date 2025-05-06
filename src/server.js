@@ -24,73 +24,60 @@ const actividadRoutes = require('./routes/actividadRoutes');
 const progresoRoutes = require('./routes/progresoRoutes');
 const adjuntoRoutes = require('./routes/adjuntoRoutes');
 const notificacionRoutes = require('./routes/notificacionRoutes');
-//const sharepointRoutes = require('./routes/sharepointRoutes');
 
 // Inicializar app
 const app = express();
 
-// Body parser
+// Middlewares esenciales
 app.use(express.json());
-
-// Cookie parser
 app.use(cookieParser());
+app.use(helmet());
+app.use(cors({
+  origin: process.env.CLIENT_URL || '*',
+  credentials: true
+}));
+app.use(fileupload());
 
 // Middleware de desarrollo
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Seguridad
-app.use(helmet());
-app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
-  credentials: true
-}));
-
-// Subida de archivos
-app.use(fileupload());
-
-// Directorio estático
+// Directorio público
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Montar rutas
+// Rutas principales
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/hospitals', hospitalRoutes);
-app.use('/api/hospitales', hospitalRoutes); // ✅ para que funcione el frontend
 app.use('/api/fases', faseRoutes);
 app.use('/api/actividades', actividadRoutes);
 app.use('/api/progreso', progresoRoutes);
 app.use('/api/adjuntos', adjuntoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
-//app.use('/api/sharepoint', sharepointRoutes);
 
-// Ruta para verificar que el servidor está funcionando
+// Ruta test del servidor
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'API de la plataforma de formación en tecnologías del robot da Vinci',
+    message: 'API de la plataforma de formación Da Vinci',
     version: '1.0.0'
   });
 });
 
-// Middleware de manejo de errores
+// Middleware de errores
 app.use(errorHandler);
 
-// Puerto
+// Configuración del puerto
 const PORT = process.env.PORT || 5000;
-
-// Iniciar servidor con manejo de errores
 const server = app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en modo ${process.env.NODE_ENV} en el puerto ${PORT}`);
+  console.log(`Servidor en modo ${process.env.NODE_ENV} en puerto ${PORT}`);
 });
 
-// Manejar rechazos de promesas no capturados
+// Captura errores no gestionados
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`Error: ${err.message}`);
+  console.error(`Error no capturado: ${err.message}`);
   server.close(() => process.exit(1));
 });
-
-
 
 module.exports = app;

@@ -8,7 +8,7 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 
-const inicializarProgresoFormativo = async (usuario) => {
+const inicializarProgresoParaNuevoUsuario  = async (usuario) => {
   if (usuario.rol !== 'residente') return;
   const fases = await Fase.find().sort({ numero: 1 });
   for (const fase of fases) {
