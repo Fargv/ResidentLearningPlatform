@@ -50,7 +50,12 @@ const ResidenteFases: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
-        setProgresos(response.data.data || []);
+        const data = response.data.data || [];
+console.log('✅ Progresos recibidos del backend:', data);
+const dataFiltrada = data.filter((p: any) => p._id);
+console.log('✅ Progresos válidos con _id:', dataFiltrada);
+setProgresos(dataFiltrada);
+
       } catch (err: any) {
         console.error("Error cargando progreso:", err);
         setError(err.response?.data?.error || 'Error al cargar el progreso');
