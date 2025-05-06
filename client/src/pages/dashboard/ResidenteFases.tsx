@@ -54,10 +54,7 @@ const ResidenteFases: React.FC = () => {
   
         // 🔍 Añade este log aquí:
         data.forEach((p: any, i: number) => console.log(`🔍 Progreso[${i}]`, p));
-  
-        const dataFiltrada = data.filter((p: any) => typeof p._id === 'string' && p._id.trim() !== '');
-        console.log('✅ Progresos válidos con _id:', dataFiltrada);
-        setProgresos(dataFiltrada);
+        setProgresos(data);
       } catch (err: any) {
         console.error("Error cargando progreso:", err);
         setError(err.response?.data?.error || 'Error al cargar el progreso');
@@ -161,7 +158,7 @@ const ResidenteFases: React.FC = () => {
     console.log('%c🔍 [ResidenteFases] Renderizando progreso item', 'color: cyan; font-weight: bold;', item);
 
     return (
-      <Accordion key={index} defaultExpanded>
+      <Accordion key={item._id} defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">
             Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
