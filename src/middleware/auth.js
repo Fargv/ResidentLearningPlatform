@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
-import ErrorResponse from '../utils/errorResponse.js';
-import config from '../config/config.js';
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const ErrorResponse = require('../utils/errorResponse');
+const config = require('../config/config');
 
 // Middleware para proteger rutas
-export const protect = async (req, res, next) => {
+const protect = async (req, res, next) => {
   let token;
 
   // Verificar si hay token en los headers
@@ -35,7 +35,7 @@ export const protect = async (req, res, next) => {
 };
 
 // Middleware para autorizar roles
-export const authorize = (...roles) => {
+const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return next(new ErrorResponse('No autorizado para acceder a esta ruta', 401));
@@ -52,3 +52,5 @@ export const authorize = (...roles) => {
     next();
   };
 };
+
+module.exports = { protect, authorize };

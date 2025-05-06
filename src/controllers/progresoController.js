@@ -547,3 +547,18 @@ exports.getProgresosPendientesDelHospital = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports = {
+  inicializarProgresoFormativo,
+  getAllProgreso,
+  getProgresoResidente,
+  getProgresoResidentePorFase,
+  registrarProgreso,
+  actualizarProgreso,
+  validarProgreso,
+  rechazarProgreso,
+  getEstadisticasResidente,
+  marcarActividadCompletada,
+  getProgreso,
+  getProgresosPendientesDelHospital // ✅ Asegúrate de que esta línea esté incluida
+};
