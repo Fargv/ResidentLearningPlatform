@@ -514,3 +514,36 @@ exports.marcarActividadCompletada = async (req, res, next) => {
   }
 };
 
+// GET /api/progreso/formador/pendientes
+exports.getProgresosPendientesDelHospital = async (req, res, next) => {
+  try {
+    if (req.user.rol !== 'formador') {
+      return res.status(403).json({ success: false, error: 'No autorizado' });
+    }
+
+    const pendientes = await ProgresoResidente.find({
+      estado: { $in: ['pendiente', 'validado', 'rechazado'] }
+    })
+    .populate({
+      path: 'residente',
+      select: 'nombre apellidos hospital',
+      match: { hospital: req.user.hospital }  // ⚠️ Asegura que solo vea su hospital
+    })
+    .populate({
+      path: 'actividad',
+      select: 'nombre descripcion fase',
+      populate: { path: 'fase', select: 'nombre numero' }
+    });
+
+    // Filtrar los que sí pertenecen al hospital (match no quita nulls automáticamente)
+    const filtrados = pendientes.filter(p => p.residente !== null);
+
+    res.status(200).json({
+      success: true,
+      count: filtrados.length,
+      data: filtrados
+    });
+  } catch (err) {
+    next(err);
+  }
+};

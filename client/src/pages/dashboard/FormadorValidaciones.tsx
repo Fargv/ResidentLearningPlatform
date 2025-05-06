@@ -79,45 +79,25 @@ const FormadorValidaciones: React.FC = () => {
     const fetchValidaciones = async () => {
       try {
         setLoading(true);
-        
-        // Obtener validaciones pendientes
-        const pendientesRes = await axios.get('/api/progreso', {
-          params: {
-            estado: 'pendiente',
-            hospital: user?.hospital
-          }
-        });
-        setPendientes(pendientesRes.data.data);
-        
-        // Obtener validaciones completadas
-        const validadasRes = await axios.get('/api/progreso', {
-          params: {
-            estado: 'validado',
-            hospital: user?.hospital
-          }
-        });
-        setValidadas(validadasRes.data.data);
-        
-        // Obtener validaciones rechazadas
-        const rechazadasRes = await axios.get('/api/progreso', {
-          params: {
-            estado: 'rechazado',
-            hospital: user?.hospital
-          }
-        });
-        setRechazadas(rechazadasRes.data.data);
+  
+        const respuesta = await axios.get('/api/progreso/formador/pendientes');
+        const todos = respuesta.data.data || [];
+  
+        setPendientes(todos.filter((p: any) => p.estado === 'pendiente'));
+        setValidadas(todos.filter((p: any) => p.estado === 'validado'));
+        setRechazadas(todos.filter((p: any) => p.estado === 'rechazado'));
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar las validaciones');
       } finally {
         setLoading(false);
       }
     };
-
-    if (user?.hospital) {
+  
+    if (user?.rol === 'formador') {
       fetchValidaciones();
     }
   }, [user]);
-
+  
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
