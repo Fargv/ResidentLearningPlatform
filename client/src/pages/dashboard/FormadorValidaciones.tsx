@@ -80,7 +80,7 @@ const FormadorValidaciones: React.FC = () => {
       try {
         setLoading(true);
   
-        const respuesta = await axios.get('/api/progreso/formador/pendientes');
+        const respuesta = await axios.get('/api/progreso/formador/validaciones/pendientes');
         const todos = respuesta.data.data || [];
   
         setPendientes(todos.filter((p: any) => p.estado === 'pendiente'));
