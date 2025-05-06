@@ -63,6 +63,8 @@ const ResidenteProgreso: React.FC = () => {
   const [selectedActividad, setSelectedActividad] = useState<any>(null);
   const [comentarios, setComentarios] = useState('');
   const [registrando, setRegistrando] = useState(false);
+  const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user?._id) return;
@@ -109,48 +111,58 @@ const ResidenteProgreso: React.FC = () => {
   };
 
   const handleOpenDialog = (actividad: any) => {
-    setSelectedActividad(actividad);
-    setComentarios('');
-    setOpenDialog(true);
+    const progresoMatch = progreso.find((p) => p.actividad._id === actividad._id);
+    if (progresoMatch) {
+      const index = progreso.findIndex((p) => p.actividad._id === actividad._id);
+      setSelectedProgresoId(progresoMatch._id);
+      setSelectedActividadIndex(index);
+      setSelectedActividad(actividad);
+      setComentarios('');
+      setOpenDialog(true);
+    }
   };
+  
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedActividad(null);
     setComentarios('');
+    setSelectedProgresoId(null);
+    setSelectedActividadIndex(null);
   };
+  
 
   const handleRegistrarProgreso = async () => {
-    if (!selectedActividad || !user?._id) return;
-
+    if (!selectedProgresoId || selectedActividadIndex === null) return;
+  
     try {
       setRegistrando(true);
-
-      const res = await axios.post('/api/progreso', {
-        residente: user._id,
-        actividad: selectedActividad._id,
-        comentarios
+  
+      const res = await axios.put(`/api/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
+        estado: 'completado',
+        comentariosResidente: comentarios,
+        fechaRealizacion: new Date(),
       });
-
-      setProgreso([...progreso, res.data.data]);
-
-      try {
-        console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
-  const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
-  console.log("Stats response completa:", statsRes);
-  setStats(statsRes.data.data);
-} catch (err: any) {
-  console.error("ERROR en /stats:", err?.response?.data || err.message || err);
-}
-
-
+  
+      // Actualizar progreso local
+      const actualizado = progreso.map((p, i) =>
+        i === selectedActividadIndex ? res.data.data : p
+      );
+  
+      setProgreso(actualizado);
+  
+      // Opcional: actualizar stats
+      const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+      setStats(statsRes.data.data);
+  
       handleCloseDialog();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al registrar progreso');
+      setError(err.response?.data?.error || 'Error al marcar como completada');
     } finally {
       setRegistrando(false);
     }
   };
+  
 
   const getActividadEstado = (actividadId: string) => {
     const actividadProgreso = progreso.find(p => p.actividad._id === actividadId);
