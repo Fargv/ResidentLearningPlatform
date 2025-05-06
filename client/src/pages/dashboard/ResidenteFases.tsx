@@ -151,7 +151,7 @@ const ResidenteFases: React.FC = () => {
       
       {Array.isArray(progresos) && progresos.length > 0 ? (
   progresos.map((item, index) => {
-    console.log('🧪 progreso item:', item); // ✅ AQUÍ ESTÁ BIEN
+    console.log('%c🔍 [ResidenteFases] Renderizando progreso item', 'color: cyan; font-weight: bold;', item);
 
     return (
       <Accordion key={index} defaultExpanded>
@@ -207,7 +207,16 @@ const ResidenteFases: React.FC = () => {
                     <Button
                       size="small"
                       variant="outlined"
-                      onClick={() => handleOpenDialog(item._id, idx)}
+                      onClick={() => {
+                        console.log(
+                          '%c📦 [ResidenteFases] handleOpenDialog → item._id:',
+                          'color: lime; font-weight: bold;',
+                          item._id,
+                          'idx:',
+                          idx
+                        );
+                        handleOpenDialog(item._id, idx);
+                      }}
                       sx={{ ml: 2 }}
                     >
                       Marcar como completada
@@ -228,6 +237,7 @@ const ResidenteFases: React.FC = () => {
 ) : (
   <Alert severity="info">No hay progreso formativo disponible.</Alert>
 )}
+
 
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
@@ -251,6 +261,9 @@ const ResidenteFases: React.FC = () => {
             rows={3}
             margin="normal"
           />
+          <Typography variant="caption" color="text.secondary">
+    progresoId: {selectedProgresoId || '—'} | actividadIndex: {selectedActividadIndex ?? '—'}
+  </Typography>
         </DialogContent>
         <DialogActions>
   <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
