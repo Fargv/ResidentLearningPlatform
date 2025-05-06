@@ -12,9 +12,7 @@ const {
   rechazarProgreso,
   getEstadisticasResidente,
   marcarActividadCompletada,
-  getAllProgreso,
   getProgreso,
-  getProgresoResidente,
   getProgresosPendientesDelHospital, // ✅ AÑADIR ESTO
    
 } = require('../controllers/progresoController');
