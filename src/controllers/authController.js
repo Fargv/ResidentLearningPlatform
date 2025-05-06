@@ -61,7 +61,7 @@ const register = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    await inicializarProgresoFormativo(newUser);
+    await inicializarProgresoParaNuevoUsuario(newUser);
 
     const jwtToken = generateToken(newUser);
 
