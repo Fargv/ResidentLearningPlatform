@@ -46,30 +46,7 @@ exports.getAllProgreso = async (req, res, next) => {
 // @route   GET /api/progreso/residente/:id
 // @access  Private
 
-exports.inicializarProgresoFormativo = async (req, res, next) => {
-  try {
-    const residente = await User.findById(req.params.id);
-    if (!residente || residente.rol !== 'residente') {
-      return next(new ErrorResponse('Residente no válido', 404));
-    }
 
-    const actividades = await Actividad.find().populate('fase');
-
-    const nuevosRegistros = actividades.map((act) => ({
-      residente: residente._id,
-      actividad: act._id,
-      estado: act.requiereValidacion ? 'pendiente' : 'validado',
-      comentarios: '',
-      fechaRegistro: new Date()
-    }));
-
-    await ProgresoResidente.insertMany(nuevosRegistros);
-
-    res.status(200).json({ success: true, count: nuevosRegistros.length });
-  } catch (err) {
-    next(err);
-  }
-};
 
 exports.getProgresoResidente = async (req, res, next) => {
   try {
@@ -543,6 +520,31 @@ exports.getProgresosPendientesDelHospital = async (req, res, next) => {
       count: filtrados.length,
       data: filtrados
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.inicializarProgresoFormativo = async (req, res, next) => {
+  try {
+    const residente = await User.findById(req.params.id);
+    if (!residente || residente.rol !== 'residente') {
+      return next(new ErrorResponse('Residente no válido', 404));
+    }
+
+    const actividades = await Actividad.find().populate('fase');
+
+    const nuevosRegistros = actividades.map((act) => ({
+      residente: residente._id,
+      actividad: act._id,
+      estado: act.requiereValidacion ? 'pendiente' : 'validado',
+      comentarios: '',
+      fechaRegistro: new Date()
+    }));
+
+    await ProgresoResidente.insertMany(nuevosRegistros);
+
+    res.status(200).json({ success: true, count: nuevosRegistros.length });
   } catch (err) {
     next(err);
   }
