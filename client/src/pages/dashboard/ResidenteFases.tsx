@@ -18,7 +18,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Snackbar
+  Snackbar,
+  Tooltip 
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -72,6 +73,12 @@ const ResidenteFases: React.FC = () => {
   
     setDialogOpen(true);
   };
+
+  const botonConfirmarHabilitado =
+  Boolean(selectedProgresoId) &&
+  selectedActividadIndex !== null &&
+  Boolean(fecha);
+
 
   const handleCompletarActividad = async () => {
     console.log('✅ Confirmando actividad:', {
@@ -141,83 +148,87 @@ const ResidenteFases: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
-
+      
       {Array.isArray(progresos) && progresos.length > 0 ? (
-        progresos.map((item, index) => (
-          <Accordion key={index} defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">
-                Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Chip
-                label={item.estadoGeneral || '—'}
-                color={
-                  item.estadoGeneral === 'validado'
-                    ? 'success'
-                    : item.estadoGeneral === 'completado'
-                    ? 'primary'
-                    : 'default'
-                }
-                sx={{ mb: 2 }}
-              />
+  progresos.map((item, index) => {
+    console.log('🧪 progreso item:', item); // ✅ AQUÍ ESTÁ BIEN
 
-              {(() => {
-                const total = item.actividades.length;
-                const completadas = item.actividades.filter((a: any) => a.completada).length;
-                const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
-                return (
-                  <>
-                    <LinearProgress
-                      variant="determinate"
-                      value={porcentaje}
-                      sx={{ height: 8, borderRadius: 5, mb: 1 }}
-                    />
-                    <Typography variant="body2" sx={{ mb: 2 }}>
-                      Progreso validado: {porcentaje}%
-                    </Typography>
-                  </>
-                );
-              })()}
+    return (
+      <Accordion key={index} defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">
+            Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Chip
+            label={item.estadoGeneral || '—'}
+            color={
+              item.estadoGeneral === 'validado'
+                ? 'success'
+                : item.estadoGeneral === 'completado'
+                ? 'primary'
+                : 'default'
+            }
+            sx={{ mb: 2 }}
+          />
 
-              <List>
-                {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
-                  item.actividades.map((act: any, idx: number) => (
-                    <ListItem key={idx}>
-                      {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
-                      {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
-                      {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
-                      {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
-                      <ListItemText
-                        primary={act.nombre || 'Actividad sin nombre'}
-                        secondary={act.comentariosResidente || ''}
-                      />
-                      {act.estado === 'pendiente' && item.estadoGeneral !== 'bloqueada' && (
-                        <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleOpenDialog(item._id, idx)}
-                        sx={{ ml: 2 }}
-                      >
-                        Marcar como completada
-                      </Button>
-                      
-                      )}
-                    </ListItem>
-                  ))
-                ) : (
-                  <ListItem>
-                    <ListItemText primary="No hay actividades disponibles" />
-                  </ListItem>
-                )}
-              </List>
-            </AccordionDetails>
-          </Accordion>
-        ))
-      ) : (
-        <Alert severity="info">No hay progreso formativo disponible.</Alert>
-      )}
+          {(() => {
+            const total = item.actividades.length;
+            const completadas = item.actividades.filter((a: any) => a.completada).length;
+            const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
+            return (
+              <>
+                <LinearProgress
+                  variant="determinate"
+                  value={porcentaje}
+                  sx={{ height: 8, borderRadius: 5, mb: 1 }}
+                />
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  Progreso validado: {porcentaje}%
+                </Typography>
+              </>
+            );
+          })()}
+
+          <List>
+            {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+              item.actividades.map((act: any, idx: number) => (
+                <ListItem key={idx}>
+                  {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
+                  {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
+                  {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
+                  {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
+                  <ListItemText
+                    primary={act.nombre || 'Actividad sin nombre'}
+                    secondary={act.comentariosResidente || ''}
+                  />
+                  {act.estado === 'pendiente' && item.estadoGeneral !== 'bloqueada' && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => handleOpenDialog(item._id, idx)}
+                      sx={{ ml: 2 }}
+                    >
+                      Marcar como completada
+                    </Button>
+                  )}
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText primary="No hay actividades disponibles" />
+              </ListItem>
+            )}
+          </List>
+        </AccordionDetails>
+      </Accordion>
+    );
+  })
+) : (
+  <Alert severity="info">No hay progreso formativo disponible.</Alert>
+)}
+
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Marcar actividad como completada</DialogTitle>
@@ -242,11 +253,32 @@ const ResidenteFases: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleCompletarActividad} variant="contained" disabled={!selectedProgresoId || selectedActividadIndex === null || !fecha}>
-            Confirmar
-          </Button>
-        </DialogActions>
+  <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
+  <Tooltip
+  title={
+    !selectedProgresoId
+      ? 'Falta el ID del progreso'
+      : selectedActividadIndex === null
+      ? 'No se ha seleccionado ninguna actividad'
+      : !fecha
+      ? 'Selecciona una fecha de realización'
+      : ''
+  }
+  arrow
+  disableHoverListener={botonConfirmarHabilitado}
+>
+  <span>
+    <Button
+      onClick={handleCompletarActividad}
+      variant="contained"
+      disabled={!botonConfirmarHabilitado}
+    >
+      Confirmar
+    </Button>
+  </span>
+</Tooltip>
+</DialogActions>
+
       </Dialog>
 
       <Snackbar
