@@ -10,6 +10,33 @@ const mongoose = require('mongoose');
 
 
 
+// @desc    Inicializar progreso formativo para un residente
+// @route   POST /api/progreso/init/:id
+// @access  Private/Admin
+const inicializarProgresoFormativo = async (req, res, next) => {
+  try {
+    const residente = await User.findById(req.params.id);
+    if (!residente || residente.rol !== 'residente') {
+      return res.status(404).json({ success: false, error: 'Residente no válido' });
+    }
+
+    const actividades = await Actividad.find().populate('fase');
+
+    const nuevosRegistros = actividades.map((act) => ({
+      residente: residente._id,
+      actividad: act._id,
+      estado: act.requiereValidacion ? 'pendiente' : 'validado',
+      comentarios: '',
+      fechaRegistro: new Date()
+    }));
+
+    await ProgresoResidente.insertMany(nuevosRegistros);
+
+    res.status(200).json({ success: true, count: nuevosRegistros.length });
+  } catch (err) {
+    next(err);
+  }
+};
 
 
 // @desc    Obtener todos los registros de progreso
@@ -144,30 +171,7 @@ exports.getProgresoResidentePorFase = async (req, res, next) => {
 // @access  Private
 
 
-exports.inicializarProgresoFormativo = async (req, res, next) => {
-  try {
-    const residente = await User.findById(req.params.id);
-    if (!residente || residente.rol !== 'residente') {
-      return next(new ErrorResponse('Residente no válido', 404));
-    }
 
-    const actividades = await Actividad.find().populate('fase');
-
-    const nuevosRegistros = actividades.map((act) => ({
-      residente: residente._id,
-      actividad: act._id,
-      estado: act.requiereValidacion ? 'pendiente' : 'validado',
-      comentarios: '',
-      fechaRegistro: new Date()
-    }));
-
-    await ProgresoResidente.insertMany(nuevosRegistros);
-
-    res.status(200).json({ success: true, count: nuevosRegistros.length });
-  } catch (err) {
-    next(err);
-  }
-};
 
 exports.registrarProgreso = async (req, res, next) => {
   try {
