@@ -158,7 +158,7 @@ const ResidenteFases: React.FC = () => {
     console.log('%c🔍 [ResidenteFases] Renderizando progreso item', 'color: cyan; font-weight: bold;', item);
 
     return (
-      <Accordion key={item._id} defaultExpanded>
+      <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">
             Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
@@ -204,9 +204,27 @@ const ResidenteFases: React.FC = () => {
                   {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
                   {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
                   <ListItemText
-                    primary={act.nombre || 'Actividad sin nombre'}
-                    secondary={act.comentariosResidente || ''}
-                  />
+  primary={act.nombre || 'Actividad sin nombre'}
+  secondary={
+    <>
+      {act.comentariosResidente && (
+        <Typography variant="body2" color="text.secondary">
+          Comentario: {act.comentariosResidente}
+        </Typography>
+      )}
+      {act.fecha && (
+        <Typography variant="body2" color="text.secondary">
+          Fecha completada: {new Date(act.fecha).toLocaleDateString()}
+        </Typography>
+      )}
+      {act.estado && (
+        <Typography variant="body2" color="text.secondary">
+          Estado: {act.estado === 'validado' ? 'Validado' : act.estado === 'rechazado' ? 'Rechazado' : 'Pendiente de validación'}
+        </Typography>
+      )}
+    </>
+  }
+/>
                   {act.estado === 'pendiente' && item.estadoGeneral !== 'bloqueada' && (
                     <Button
                       size="small"
