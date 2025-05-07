@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+
 const {
   getAllProgreso,
   getProgresoResidente,
@@ -11,49 +12,48 @@ const {
   rechazarProgreso,
   getEstadisticasResidente,
   marcarActividadCompletada,
-  getProgreso,
   getProgresosPendientesDelHospital,
   inicializarProgresoFormativo
 } = require('../controllers/progresoController');
 
-// ✅ Middleware de autenticación
+// ✅ Middleware de autenticación para todas las rutas
 router.use(protect);
 
-// ✅ Ruta específica para formador primero
-console.log('🧪 getProgresosPendientesDelHospital:', typeof getProgresosPendientesDelHospital);
+// ✅ Validaciones pendientes del formador
 router.get('/formador/validaciones/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
 
-// ✅ Rutas para administrador y creación
+// ✅ Listado general y creación de progreso
 router.route('/')
   .get(authorize('administrador'), getAllProgreso)
   .post(registrarProgreso);
 
-// ✅ Rutas generales por ID de residente
+// ✅ Obtener progreso de un residente
 router.route('/residente/:id')
   .get(getProgresoResidente);
 
+// ✅ Obtener progreso por fase
 router.route('/residente/:id/fase/:faseId')
   .get(getProgresoResidentePorFase);
 
+// ✅ Estadísticas por residente
 router.route('/stats/residente/:id')
   .get(getEstadisticasResidente);
 
-// ✅ Actualización de progreso y actividades
+// ✅ Actualizar progreso
 router.route('/:id')
   .put(actualizarProgreso);
 
-router.put('/:id/actividad/:index', protect, marcarActividadCompletada);
+// ✅ Marcar actividad completada
+router.put('/:id/actividad/:index', marcarActividadCompletada);
 
-// ✅ Validación
+// ✅ Validar o rechazar progreso
 router.route('/:id/validar')
   .post(authorize('formador', 'administrador'), validarProgreso);
 
 router.route('/:id/rechazar')
   .post(authorize('formador', 'administrador'), rechazarProgreso);
 
+// ✅ Inicializar progreso formativo de un residente
 router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
-
-// ✅ Esta va al final
-router.get('/:id', authorize('formador'), getProgreso);
 
 module.exports = router;
