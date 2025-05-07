@@ -9,7 +9,8 @@ const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
 const path = require('path');
 const initProgreso = require(path.join(__dirname, '../utils/initProgreso'));
-const { inicializarProgresoFormativo: inicializarProgresoFormativo } = require('../utils/initProgreso');
+const { inicializarProgresoFormativo: inicializarProgresoFormativoDB } = require('../utils/initProgreso');
+
 
 const inicializarProgresoFormativo = async (req, res, next) => {
   try {
@@ -18,12 +19,13 @@ const inicializarProgresoFormativo = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Residente no válido' });
     }
 
-    const count = await inicializarProgresoFormativo(user);
+    const count = await inicializarProgresoFormativoDB(user); // ← usa el nombre nuevo aquí
     res.status(200).json({ success: true, count });
   } catch (err) {
     next(err);
   }
 };
+
 
 
 
