@@ -77,7 +77,7 @@ exports.getAllProgreso = async (req, res, next) => {
 
 
 
-exports.getProgresoResidente = async (req, res, next) => {
+const getProgresoResidente = async (req, res, next) => {
   try {
     const residente = await User.findById(req.params.id);
 
@@ -127,7 +127,7 @@ exports.getProgresoResidente = async (req, res, next) => {
 };
 
 
-exports.getProgresoResidentePorFase = async (req, res, next) => {
+const getProgresoResidentePorFase = async (req, res, next) => {
   try {
     const residente = await User.findById(req.params.id);
 
@@ -563,7 +563,7 @@ exports.getProgresosPendientesDelHospital = async (req, res, next) => {
 module.exports = {
   inicializarProgresoFormativo,
   getAllProgreso,
-  //getProgresoResidente,
+  getProgresoResidente,
   getProgresoResidentePorFase,
   registrarProgreso,
   actualizarProgreso,
@@ -571,6 +571,5 @@ module.exports = {
   rechazarProgreso,
   getEstadisticasResidente,
   marcarActividadCompletada,
-  getProgreso,
   getProgresosPendientesDelHospital
 };
