@@ -9,19 +9,9 @@ const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
 const path = require('path');
 const initProgreso = require(path.join(__dirname, '../utils/initProgreso'));
-const inicializarProgresoFormativo = initProgreso.inicializarProgresoFormativo;
+const { inicializarProgresoFormativo: inicializarProgresoFormativo } = require('../utils/initProgreso');
 
-const getAllProgreso = async (req, res, next) => {
-  try {
-    // Temporalmente solo devuelve un OK vacío
-    res.status(200).json({ success: true, data: [] });
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-exports.inicializarProgresoFormativo = async (req, res, next) => {
+const inicializarProgresoFormativo = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user || user.rol !== 'residente') {
@@ -41,7 +31,7 @@ exports.inicializarProgresoFormativo = async (req, res, next) => {
 // @desc    Obtener todos los registros de progreso
 // @route   GET /api/progreso
 // @access  Private/Admin
-exports.getAllProgreso = async (req, res, next) => {
+const getAllProgreso = async (req, res, next) => {
   try {
     // Solo administrador puede acceder a todos los progresos
     if (req.user.rol !== 'administrador') {
@@ -172,7 +162,7 @@ const getProgresoResidentePorFase = async (req, res, next) => {
 
 
 
-exports.registrarProgreso = async (req, res, next) => {
+const registrarProgreso = async (req, res, next) => {
   try {
     // Si el usuario es residente, solo puede registrar su propio progreso
     if (req.user.rol === 'residente' && req.body.residente !== req.user.id) {
@@ -258,7 +248,7 @@ exports.registrarProgreso = async (req, res, next) => {
 // @desc    Actualizar registro de progreso
 // @route   PUT /api/progreso/:id
 // @access  Private
-exports.actualizarProgreso = async (req, res, next) => {
+const actualizarProgreso = async (req, res, next) => {
   try {
     let progreso = await ProgresoResidente.findById(req.params.id)
       .populate('residente')
@@ -317,7 +307,7 @@ exports.actualizarProgreso = async (req, res, next) => {
 // @desc    Validar progreso de residente
 // @route   POST /api/progreso/:id/validar
 // @access  Private/Formador,Admin
-exports.validarProgreso = async (req, res, next) => {
+const validarProgreso = async (req, res, next) => {
   try {
     // Verificar que el usuario es formador o administrador
     if (req.user.rol !== 'formador' && req.user.rol !== 'administrador') {
@@ -405,7 +395,7 @@ exports.validarProgreso = async (req, res, next) => {
 // @desc    Rechazar progreso de residente
 // @route   POST /api/progreso/:id/rechazar
 // @access  Private/Formador,Admin
-exports.rechazarProgreso = async (req, res, next) => {
+const rechazarProgreso = async (req, res, next) => {
   try {
     // Verificar que el usuario es formador o administrador
     if (req.user.rol !== 'formador' && req.user.rol !== 'administrador') {
@@ -465,7 +455,7 @@ exports.rechazarProgreso = async (req, res, next) => {
 // @desc    Obtener estadísticas de progreso por residente
 // @route   GET /api/progreso/stats/residente/:id
 // @access  Private
-exports.getEstadisticasResidente = async (req, res, next) => {
+const getEstadisticasResidente = async (req, res, next) => {
   try {
     const residenteId = req.params.id;
 
@@ -493,7 +483,7 @@ exports.getEstadisticasResidente = async (req, res, next) => {
   }
 };
 // PUT /api/progreso/:id/actividad/:index
-exports.marcarActividadCompletada = async (req, res, next) => {
+const marcarActividadCompletada = async (req, res, next) => {
   try {
     const { id, index } = req.params;
     const { estado, fechaRealizacion, comentariosResidente } = req.body;
@@ -525,7 +515,7 @@ exports.marcarActividadCompletada = async (req, res, next) => {
 };
 
 // GET /api/progreso/formador/pendientes
-exports.getProgresosPendientesDelHospital = async (req, res, next) => {
+const getProgresosPendientesDelHospital = async (req, res, next) => {
   try {
     if (req.user.rol !== 'formador') {
       return res.status(403).json({ success: false, error: 'No autorizado' });
