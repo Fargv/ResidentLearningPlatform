@@ -550,6 +550,52 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
   }
 };
 
+// @desc Obtener lista plana de validaciones pendientes por actividad
+// @route GET /api/progreso/formador/validaciones/pendientes
+// @access Private/Formador
+const getValidacionesPendientes = async (req, res, next) => {
+  try {
+    if (req.user.rol !== 'formador') {
+      return res.status(403).json({ success: false, error: 'No autorizado' });
+    }
+
+    const progresos = await ProgresoResidente.find()
+      .populate({
+        path: 'residente',
+        match: { hospital: req.user.hospital },
+        select: 'nombre apellidos hospital'
+      })
+      .populate({
+        path: 'fase',
+        select: 'nombre numero'
+      });
+
+    const pendientes = [];
+
+    for (const progreso of progresos) {
+      if (!progreso.residente) continue;
+
+      progreso.actividades.forEach((actividad, index) => {
+        if (actividad.estado === 'pendiente') {
+          pendientes.push({
+            _id: `${progreso._id}-${index}`,
+            progresoId: progreso._id,
+            index,
+            actividad,
+            residente: progreso.residente,
+            fase: progreso.fase,
+            fechaCreacion: actividad.fechaRealizacion || progreso.fechaRegistro,
+            estado: 'pendiente'
+          });
+        }
+      });
+    }
+
+    res.status(200).json({ success: true, count: pendientes.length, data: pendientes });
+  } catch (err) {
+    next(err);
+  }
+};
 
 
 module.exports = {
@@ -563,5 +609,6 @@ module.exports = {
   rechazarProgreso,
   getEstadisticasResidente,
   marcarActividadCompletada,
-  getProgresosPendientesDelHospital
+  getProgresosPendientesDelHospital,
+  getValidacionesPendientes,
 };

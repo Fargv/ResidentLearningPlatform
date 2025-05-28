@@ -20,7 +20,7 @@ const {
 router.use(protect);
 
 // ✅ Validaciones pendientes del formador
-router.get('/formador/validaciones/pendientes', authorize('formador'), getProgresosPendientesDelHospital);
+router.get('/formador/validaciones/pendientes', authorize('formador'), getValidacionesPendientes);
 
 // ✅ Listado general y creación de progreso
 router.route('/')
