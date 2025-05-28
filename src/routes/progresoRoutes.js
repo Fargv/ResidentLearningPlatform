@@ -12,8 +12,8 @@ const {
   rechazarProgreso,
   getEstadisticasResidente,
   marcarActividadCompletada,
-  getProgresosPendientesDelHospital,
-  inicializarProgresoFormativo
+  inicializarProgresoFormativo,
+  getValidacionesPendientes
 } = require('../controllers/progresoController');
 
 // ✅ Middleware de autenticación para todas las rutas
