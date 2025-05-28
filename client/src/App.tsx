@@ -129,12 +129,12 @@ function App() {
             {/* Ruta raíz redirige a dashboard o login */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            {/* Rutas del dashboard */}
-            <Route path="/dashboard" element={
+            <Route path="/dashboard/*" element={
               <PrivateRoute>
                 <Dashboard />
               </PrivateRoute>
             }>
+
               <Route index element={<DashboardHome />} />
 
               {/* Rutas para residentes */}
