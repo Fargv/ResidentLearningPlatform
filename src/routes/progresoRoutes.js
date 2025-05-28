@@ -61,4 +61,6 @@ router.route('/:id/rechazar')
 // ✅ Inicializar progreso formativo de un residente
 router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
 
+router.post('/crear/:id', authorize('administrador'), crearProgresoParaUsuario);
+
 module.exports = router;

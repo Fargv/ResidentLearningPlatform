@@ -36,5 +36,6 @@ const inicializarProgresoFormativo = async (usuario) => {
   }
 };
 
-module.exports = inicializarProgresoFormativo;
+module.exports = { inicializarProgresoFormativo };
+
 

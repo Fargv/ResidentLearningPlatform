@@ -663,7 +663,27 @@ const rechazarActividad = async (req, res, next) => {
     next(err);
   }
 };
+const inicializarProgresoFormativo = require('../utils/initProgreso');
+const crearProgresoParaUsuario = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
+    const usuario = await Usuario.findById(id);
+    if (!usuario || usuario.rol !== 'residente') {
+      return res.status(400).json({ success: false, error: 'Usuario no válido o no es residente' });
+    }
+
+    const yaTiene = await ProgresoResidente.findOne({ residente: id });
+    if (yaTiene) {
+      return res.status(400).json({ success: false, error: 'Ya tiene progreso formativo' });
+    }
+
+    await inicializarProgresoFormativo(usuario);
+    res.status(200).json({ success: true, message: 'Progreso formativo creado' });
+  } catch (err) {
+    next(err);
+  }
+};
 
 module.exports = {
   inicializarProgresoFormativo,
@@ -679,5 +699,6 @@ module.exports = {
   getProgresosPendientesDelHospital,
   getValidacionesPendientes,
   validarActividad,
-  rechazarActividad
+  rechazarActividad,
+  crearProgresoParaUsuario
 };
