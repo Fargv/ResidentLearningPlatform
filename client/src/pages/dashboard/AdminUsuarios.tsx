@@ -234,7 +234,29 @@ const AdminUsuarios: React.FC = () => {
       setProcesando(false);
     }
   };
+  const handleCrearProgreso = async (usuarioId: string) => {
+  try {
+    setProcesando(true);
+    const token = localStorage.getItem('token');
+    await axios.post(`${process.env.REACT_APP_API_URL}/progreso/crear/${usuarioId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
+    setSnackbar({
+      open: true,
+      message: 'Progreso formativo creado con éxito',
+      severity: 'success'
+    });
+  } catch (err: any) {
+    setSnackbar({
+      open: true,
+      message: err.response?.data?.error || 'Error al crear el progreso',
+      severity: 'error'
+    });
+  } finally {
+    setProcesando(false);
+  }
+};
   const handleCloseSnackbar = () => {
     setSnackbar({
       ...snackbar,
@@ -359,21 +381,32 @@ const AdminUsuarios: React.FC = () => {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton 
-                      color="primary" 
-                      onClick={() => handleOpenEditarDialog(usuario)}
-                      size="small"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton 
-                      color="error" 
-                      onClick={() => handleOpenEliminarDialog(usuario)}
-                      size="small"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
+                      <IconButton 
+                        color="primary" 
+                        onClick={() => handleOpenEditarDialog(usuario)}
+                        size="small"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton 
+                        color="error" 
+                        onClick={() => handleOpenEliminarDialog(usuario)}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                      {usuario.rol === 'residente' && (
+                        <IconButton
+                          color="warning"
+                          onClick={() => handleCrearProgreso(usuario._id)}
+                          size="small"
+                          title="Crear Progreso Formativo"
+                        >
+                          ⚙️
+                        </IconButton>
+                      )}
+                    </TableCell>
+
                 </TableRow>
               ))}
             </TableBody>
