@@ -1,29 +1,40 @@
-
 const ProgresoResidente = require('../models/ProgresoResidente');
-const Actividad = require('../models/Actividad');
+const Fase = require('../models/Fase');
 
 /**
- * Inicializa el progreso formativo para un usuario residente.
- * @param {Object} usuario - Objeto de usuario (debe ser rol: 'residente').
- * @returns {Promise<Number>} - Número de registros insertados.
+ * Inicializa el progreso formativo agrupado por fase para un residente.
+ * @param {Object} usuario - Usuario recién creado con rol 'residente'.
  */
 const inicializarProgresoFormativo = async (usuario) => {
-  if (!usuario || usuario.rol !== 'residente') {
-    throw new Error('Usuario no válido o no es residente');
+  try {
+    const fases = await Fase.find().populate('actividades');
+
+    for (const fase of fases) {
+      const actividades = fase.actividades.map(act => ({
+        actividad: act._id,
+        nombre: act.nombre,
+        completada: false,
+        estado: null,
+        comentariosResidente: '',
+        comentariosFormador: '',
+        fechaRealizacion: null,
+        firmaDigital: '',
+      }));
+
+      await ProgresoResidente.create({
+        residente: usuario._id,
+        fase: fase._id,
+        actividades,
+        estadoGeneral: 'bloqueada',
+        fechaRegistro: new Date(),
+      });
+    }
+
+    console.log(`✅ Progreso inicializado para ${usuario.email}`);
+  } catch (err) {
+    console.error('❌ Error al inicializar progreso formativo:', err);
   }
-
-  const actividades = await Actividad.find().populate('fase');
-
-  const nuevosRegistros = actividades.map((act) => ({
-    residente: usuario._id,
-    actividad: act._id,
-    estado: act.requiereValidacion ? 'pendiente' : 'validado',
-    comentarios: '',
-    fechaRegistro: new Date(),
-  }));
-
-  await ProgresoResidente.insertMany(nuevosRegistros);
-  return nuevosRegistros.length;
 };
 
-module.exports = { inicializarProgresoFormativo };
+module.exports = inicializarProgresoFormativo;
+
