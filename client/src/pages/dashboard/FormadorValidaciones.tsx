@@ -75,28 +75,28 @@ const FormadorValidaciones: React.FC = () => {
   const [procesando, setProcesando] = useState(false);
   const [firmaDigital, setFirmaDigital] = useState('');
 
-  useEffect(() => {
-    const fetchValidaciones = async () => {
-      try {
-        setLoading(true);
-  
-        const respuesta = await axios.get('/api/progreso/formador/validaciones/pendientes');
-        const todos = respuesta.data.data || [];
-  
-        setPendientes(todos.filter((p: any) => p.estado === 'pendiente'));
-        setValidadas(todos.filter((p: any) => p.estado === 'validado'));
-        setRechazadas(todos.filter((p: any) => p.estado === 'rechazado'));
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Error al cargar las validaciones');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    if (user?.rol === 'formador') {
-      fetchValidaciones();
-    }
-  }, [user]);
+  const fetchValidaciones = async () => {
+  try {
+    setLoading(true);
+
+    const respuesta = await axios.get('/api/progreso/formador/validaciones/pendientes');
+    const todos = respuesta.data.data || [];
+
+    setPendientes(todos);
+    setValidadas(todos.filter((p: any) => p.estado === 'validado'));
+    setRechazadas(todos.filter((p: any) => p.estado === 'rechazado'));
+  } catch (err: any) {
+    setError(err.response?.data?.error || 'Error al cargar las validaciones');
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  if (user?.rol === 'formador') {
+    fetchValidaciones();
+  }
+}, [user]);
   
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -129,51 +129,46 @@ const FormadorValidaciones: React.FC = () => {
   };
 
   const handleValidar = async () => {
-    if (!selectedProgreso) return;
-    
-    try {
-      setProcesando(true);
-      
-      await axios.post(`/api/progreso/${selectedProgreso._id}/validar`, {
-        comentarios,
-        firmaDigital
-      });
-      
-      // Actualizar listas locales
-      const progresoActualizado = { ...selectedProgreso, estado: 'validado' };
-      setPendientes(pendientes.filter(p => p._id !== selectedProgreso._id));
-      setValidadas([progresoActualizado, ...validadas]);
-      
-      handleCloseValidarDialog();
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al validar el progreso');
-    } finally {
-      setProcesando(false);
-    }
-  };
+  if (!selectedProgreso || !firmaDigital) return;
 
-  const handleRechazar = async () => {
-    if (!selectedProgreso) return;
-    
-    try {
-      setProcesando(true);
-      
-      await axios.post(`/api/progreso/${selectedProgreso._id}/rechazar`, {
-        comentarios
-      });
-      
-      // Actualizar listas locales
-      const progresoActualizado = { ...selectedProgreso, estado: 'rechazado' };
-      setPendientes(pendientes.filter(p => p._id !== selectedProgreso._id));
-      setRechazadas([progresoActualizado, ...rechazadas]);
-      
-      handleCloseRechazarDialog();
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al rechazar el progreso');
-    } finally {
-      setProcesando(false);
-    }
-  };
+  setProcesando(true);
+  try {
+    await axios.post(
+      `${process.env.REACT_APP_API_URL}/progreso/${selectedProgreso.progresoId}/actividad/${selectedProgreso.index}/validar`,
+      {
+        comentarios,
+        firmaDigital,
+      }
+    );
+    handleCloseValidarDialog();
+    fetchValidaciones(); // Refresca la lista desde el backend
+  } catch (error) {
+    console.error('Error al validar actividad:', error);
+  } finally {
+    setProcesando(false);
+  }
+};
+
+const handleRechazar = async () => {
+  if (!selectedProgreso || !comentarios) return;
+
+  setProcesando(true);
+  try {
+    await axios.post(
+      `${process.env.REACT_APP_API_URL}/progreso/${selectedProgreso.progresoId}/actividad/${selectedProgreso.index}/rechazar`,
+      {
+        comentarios,
+      }
+    );
+    handleCloseRechazarDialog();
+    fetchValidaciones(); // Refresca la lista desde el backend
+  } catch (error) {
+    console.error('Error al rechazar actividad:', error);
+  } finally {
+    setProcesando(false);
+  }
+};
+
 
   if (loading) {
     return (
@@ -255,7 +250,7 @@ const FormadorValidaciones: React.FC = () => {
             />
           </Tabs>
         </Box>
-        
+
         {/* Panel de Pendientes */}
         <TabPanel value={tabValue} index={0}>
           {pendientes.length === 0 ? (
@@ -264,76 +259,64 @@ const FormadorValidaciones: React.FC = () => {
             </Typography>
           ) : (
             <List>
-              {pendientes.map(progreso => (
+              {pendientes.map((progreso) => (
                 <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
-                  <Box
-  display="flex"
-  flexWrap="wrap"
-  alignItems="center"
-  gap={2}
->
-  <Box
-    sx={{
-      p: 2,
-      flexBasis: { xs: '100%', sm: '58.3333%' }, // 7/12
-      flexGrow: 1
-    }}
-  >
-    <Typography variant="h6">
-      {progreso.actividad.nombre}
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      Fase: {progreso.actividad.fase.nombre}
-    </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-      <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
-        {progreso.residente.nombre.charAt(0)}
-      </Avatar>
-      <Typography variant="body2">
-        {progreso.residente.nombre} {progreso.residente.apellidos}
-      </Typography>
-    </Box>
-    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-      Fecha: {new Date(progreso.fechaCreacion).toLocaleDateString()}
-    </Typography>
-    {progreso.comentarios && (
-      <Typography variant="body2" sx={{ mt: 1 }}>
-        <strong>Comentarios:</strong> {progreso.comentarios}
-      </Typography>
-    )}
-  </Box>
+                  <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        flexBasis: { xs: '100%', sm: '75%' },
+                        flexGrow: 1,
+                      }}
+                    >
+                      <Typography variant="h6" gutterBottom>
+                        Actividad: {progreso.actividad.nombre}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Fase: {progreso.fase?.nombre || 'Sin fase'}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 1 }}>
+                        Residente: {progreso.residente.nombre} {progreso.residente.apellidos}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Fecha: {new Date(progreso.fechaCreacion).toLocaleDateString()}
+                      </Typography>
+                      {progreso.actividad.comentariosResidente && (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          <strong>Comentarios:</strong> {progreso.actividad.comentariosResidente}
+                        </Typography>
+                      )}
+                    </Box>
 
-  <Box
-    sx={{
-      p: 2,
-      flexBasis: { xs: '100%', sm: '41.6667%' }, // 5/12
-      display: 'flex',
-      justifyContent: 'flex-end',
-      flexDirection: 'column',
-      gap: 1
-    }}
-  >
-    <Button
-      variant="contained"
-      color="success"
-      startIcon={<CheckCircleIcon />}
-      onClick={() => handleOpenValidarDialog(progreso)}
-      fullWidth
-    >
-      Validar
-    </Button>
-    <Button
-      variant="contained"
-      color="error"
-      startIcon={<ErrorIcon />}
-      onClick={() => handleOpenRechazarDialog(progreso)}
-      fullWidth
-    >
-      Rechazar
-    </Button>
-  </Box>
-</Box>
-
+                    <Box
+                      sx={{
+                        p: 2,
+                        flexBasis: { xs: '100%', sm: '25%' },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1,
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        color="success"
+                        startIcon={<CheckCircleIcon />}
+                        onClick={() => handleOpenValidarDialog({ progresoId: progreso.progresoId, index: progreso.index, ...progreso })}
+                        fullWidth
+                      >
+                        Validar
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        startIcon={<ErrorIcon />}
+                        onClick={() => handleOpenRechazarDialog({ progresoId: progreso.progresoId, index: progreso.index, ...progreso })}
+                        fullWidth
+                      >
+                        Rechazar
+                      </Button>
+                    </Box>
+                  </Box>
                 </Paper>
               ))}
             </List>
