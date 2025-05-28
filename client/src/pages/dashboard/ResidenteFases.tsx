@@ -179,8 +179,8 @@ const ResidenteFases: React.FC = () => {
 
           {(() => {
             const total = item.actividades.length;
-            const completadas = item.actividades.filter((a: any) => a.completada).length;
-            const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
+            const validadas = item.actividades.filter((a: any) => a.estado === 'validado').length;
+            const porcentaje = total ? Math.round((validadas / total) * 100) : 0;
             return (
               <>
                 <LinearProgress
@@ -217,15 +217,18 @@ const ResidenteFases: React.FC = () => {
           Fecha completada: {new Date(act.fecha).toLocaleDateString()}
         </Typography>
       )}
-      {act.estado && (
-        <Typography variant="body2" color="text.secondary">
-          Estado: {act.estado === 'validado' ? 'Validado' : act.estado === 'rechazado' ? 'Rechazado' : 'Pendiente de validación'}
-        </Typography>
-      )}
+      <Typography variant="body2" color="text.secondary">
+  Estado: {
+    act.estado === 'validado' ? 'Validado' :
+    act.estado === 'rechazado' ? 'Rechazado' :
+    act.estado === 'completado' ? 'Pendiente de validación' :
+    'No completada'
+  }
+</Typography>
     </>
   }
 />
-                  {act.estado === 'pendiente' && item.estadoGeneral !== 'bloqueada' && (
+                  {(!act.estado || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada' && (
                     <Button
                       size="small"
                       variant="outlined"
