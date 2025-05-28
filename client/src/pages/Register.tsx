@@ -50,7 +50,7 @@ const Register: React.FC = () => {
       try {
         const apiUrl = process.env.REACT_APP_API_URL;
         console.log("Usando API URL:", apiUrl);
-        const res = await fetch(`${apiUrl}/hospitales`);
+        const res = await fetch(`${apiUrl}/hospitals`);
         const data = await res.json();
         setHospitales(data.data);
       } catch (error) {

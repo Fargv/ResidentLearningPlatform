@@ -76,7 +76,7 @@ const AdminUsuarios: React.FC = () => {
         console.log('Usuarios recibidos:', usuariosRes.data.data);
         setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
   
-        const hospitalesRes = await axios.get(`${process.env.REACT_APP_API_URL}/hospitales`, {
+        const hospitalesRes = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
