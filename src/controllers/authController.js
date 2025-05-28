@@ -51,7 +51,9 @@ const register = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    await inicializarProgresoFormativo(newUser);
+    if (rol === 'residente') {
+  await inicializarProgresoFormativo(newUser);
+      }
 
     const jwtToken = generateToken(newUser);
 
