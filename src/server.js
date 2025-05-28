@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Rutas principales
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/hospitals', hospitalRoutes);
+app.use('/api/hospitales', hospitalRoutes);
 app.use('/api/fases', faseRoutes);
 app.use('/api/actividades', actividadRoutes);
 app.use('/api/progreso', progresoRoutes);
