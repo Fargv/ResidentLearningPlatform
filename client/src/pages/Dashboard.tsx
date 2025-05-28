@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
     if (user?.rol === 'administrador') {
       items.push(
         { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-        { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitales', roles: ['administrador'] },
+        { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitals', roles: ['administrador'] },
         { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
         { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
@@ -239,7 +239,7 @@ const Dashboard: React.FC = () => {
   <Route path="/progreso" element={<ResidenteProgreso />} />
   <Route path="/validaciones" element={<FormadorValidaciones />} />
   <Route path="/usuarios" element={<AdminUsuarios />} />
-  <Route path="/hospitales" element={<AdminHospitales />} />
+  <Route path="/hospitals" element={<AdminHospitales />} />
   {user?.rol === 'administrador' && (
     <Route path="/fases" element={<AdminFases />} />
   )}
