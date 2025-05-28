@@ -663,7 +663,7 @@ const rechazarActividad = async (req, res, next) => {
     next(err);
   }
 };
-const inicializarProgresoFormativo = require('../utils/initProgreso');
+
 const crearProgresoParaUsuario = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -678,7 +678,7 @@ const crearProgresoParaUsuario = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Ya tiene progreso formativo' });
     }
 
-    await inicializarProgresoFormativo(usuario);
+    await inicializarProgresoFormativoDB(usuario);
     res.status(200).json({ success: true, message: 'Progreso formativo creado' });
   } catch (err) {
     next(err);
