@@ -80,11 +80,11 @@ const FormadorValidaciones: React.FC = () => {
     setLoading(true);
 
     const respuesta = await axios.get('/api/progreso/formador/validaciones/pendientes');
-    const todos = respuesta.data.data || [];
+    const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
+setPendientes(pendientes || []);
+setValidadas(validadas || []);
+setRechazadas(rechazadas || []);
 
-    setPendientes(todos);
-    setValidadas(todos.filter((p: any) => p.estado === 'validado'));
-    setRechazadas(todos.filter((p: any) => p.estado === 'rechazado'));
   } catch (err: any) {
     setError(err.response?.data?.error || 'Error al cargar las validaciones');
   } finally {

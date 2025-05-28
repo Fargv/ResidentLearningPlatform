@@ -488,31 +488,25 @@ const getEstadisticasResidente = async (req, res, next) => {
 const marcarActividadCompletada = async (req, res, next) => {
   try {
     const { id, index } = req.params;
-    const { estado, fechaRealizacion, comentariosResidente } = req.body;
+    const { comentarios } = req.body;
 
     const progreso = await ProgresoResidente.findById(id);
-    if (!progreso) {
-      return next(new ErrorResponse('Progreso no encontrado', 404));
-    }
-
-    if (!progreso.actividades || !progreso.actividades[index]) {
-      return next(new ErrorResponse('Actividad no válida', 400));
+    if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
+      return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
 
     const actividad = progreso.actividades[index];
-    if (actividad.estado !== 'pendiente') {
-      return next(new ErrorResponse('Esta actividad ya ha sido marcada', 400));
-    }
 
-    actividad.estado = estado || 'completado';
-    actividad.fechaRealizacion = fechaRealizacion || new Date();
-    actividad.comentariosResidente = comentariosResidente || '';
+    actividad.completada = true;
+    actividad.fechaRealizacion = new Date();
+    actividad.comentariosResidente = comentarios;
+    actividad.estado = 'completado';
 
     await progreso.save();
 
     res.status(200).json({ success: true, data: progreso });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -560,38 +554,42 @@ const getValidacionesPendientes = async (req, res, next) => {
     }
 
     const progresos = await ProgresoResidente.find()
-      .populate({
-        path: 'residente',
-        match: { hospital: req.user.hospital },
-        select: 'nombre apellidos hospital'
-      })
-      .populate({
-        path: 'fase',
-        select: 'nombre numero'
-      });
+      .populate({ path: 'residente', match: { hospital: req.user.hospital }, select: 'nombre apellidos hospital' })
+      .populate({ path: 'fase', select: 'nombre numero' });
 
     const pendientes = [];
+    const validadas = [];
+    const rechazadas = [];
 
     for (const progreso of progresos) {
       if (!progreso.residente) continue;
 
       progreso.actividades.forEach((actividad, index) => {
-        if (actividad.estado === 'pendiente') {
-          pendientes.push({
-            _id: `${progreso._id}-${index}`,
-            progresoId: progreso._id,
-            index,
-            actividad,
-            residente: progreso.residente,
-            fase: progreso.fase,
-            fechaCreacion: actividad.fechaRealizacion || progreso.fechaRegistro,
-            estado: 'pendiente'
-          });
-        }
+        const item = {
+          _id: `${progreso._id}-${index}`,
+          progresoId: progreso._id,
+          index,
+          actividad,
+          residente: progreso.residente,
+          fase: progreso.fase,
+          fechaCreacion: actividad.fechaRealizacion || progreso.fechaRegistro,
+          estado: actividad.estado
+        };
+
+        if (actividad.estado === 'completado') pendientes.push(item);
+        if (actividad.estado === 'validado') validadas.push(item);
+        if (actividad.estado === 'rechazado') rechazadas.push(item);
       });
     }
 
-    res.status(200).json({ success: true, count: pendientes.length, data: pendientes });
+    res.status(200).json({
+      success: true,
+      data: {
+        pendientes,
+        validadas,
+        rechazadas
+      }
+    });
   } catch (err) {
     next(err);
   }
@@ -609,8 +607,8 @@ const validarActividad = async (req, res, next) => {
 
     const actividad = progreso.actividades[index];
 
-    if (actividad.estado !== 'pendiente') {
-      return next(new ErrorResponse('La actividad ya ha sido procesada', 400));
+    if (actividad.estado !== 'completado') {
+      return next(new ErrorResponse('Solo se pueden validar actividades completadas', 400));
     }
 
     actividad.estado = 'validado';
@@ -644,8 +642,8 @@ const rechazarActividad = async (req, res, next) => {
 
     const actividad = progreso.actividades[index];
 
-    if (actividad.estado !== 'pendiente') {
-      return next(new ErrorResponse('La actividad ya ha sido procesada', 400));
+    if (actividad.estado !== 'completado') {
+      return next(new ErrorResponse('Solo se pueden rechazar actividades completadas', 400));
     }
 
     actividad.estado = 'rechazado';
