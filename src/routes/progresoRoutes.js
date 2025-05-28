@@ -46,6 +46,9 @@ router.route('/:id')
 // ✅ Marcar actividad completada
 router.put('/:id/actividad/:index', marcarActividadCompletada);
 
+router.post('/:id/actividad/:index/validar', authorize('formador', 'administrador'), validarActividad);
+router.post('/:id/actividad/:index/rechazar', authorize('formador', 'administrador'), rechazarActividad);
+
 // ✅ Validar o rechazar progreso
 router.route('/:id/validar')
   .post(authorize('formador', 'administrador'), validarProgreso);

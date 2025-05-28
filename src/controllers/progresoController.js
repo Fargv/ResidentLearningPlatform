@@ -597,6 +597,75 @@ const getValidacionesPendientes = async (req, res, next) => {
   }
 };
 
+const validarActividad = async (req, res, next) => {
+  try {
+    const { id, index } = req.params;
+    const { comentarios, firmaDigital } = req.body;
+
+    const progreso = await ProgresoResidente.findById(id).populate('residente');
+    if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
+      return next(new ErrorResponse('Progreso o actividad no válida', 404));
+    }
+
+    const actividad = progreso.actividades[index];
+
+    if (actividad.estado !== 'pendiente') {
+      return next(new ErrorResponse('La actividad ya ha sido procesada', 400));
+    }
+
+    actividad.estado = 'validado';
+    actividad.comentariosFormador = comentarios;
+    actividad.firmaDigital = firmaDigital;
+    actividad.fechaValidacion = new Date();
+
+    await progreso.save();
+
+    await Notificacion.create({
+      usuario: progreso.residente._id,
+      tipo: 'validacion',
+      mensaje: `Tu actividad "${actividad.nombre}" ha sido validada.`
+    });
+
+    res.status(200).json({ success: true, data: progreso });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const rechazarActividad = async (req, res, next) => {
+  try {
+    const { id, index } = req.params;
+    const { comentarios } = req.body;
+
+    const progreso = await ProgresoResidente.findById(id).populate('residente');
+    if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
+      return next(new ErrorResponse('Progreso o actividad no válida', 404));
+    }
+
+    const actividad = progreso.actividades[index];
+
+    if (actividad.estado !== 'pendiente') {
+      return next(new ErrorResponse('La actividad ya ha sido procesada', 400));
+    }
+
+    actividad.estado = 'rechazado';
+    actividad.comentariosRechazo = comentarios;
+    actividad.fechaRechazo = new Date();
+
+    await progreso.save();
+
+    await Notificacion.create({
+      usuario: progreso.residente._id,
+      tipo: 'rechazo',
+      mensaje: `Tu actividad "${actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
+    });
+
+    res.status(200).json({ success: true, data: progreso });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 module.exports = {
   inicializarProgresoFormativo,
@@ -611,4 +680,6 @@ module.exports = {
   marcarActividadCompletada,
   getProgresosPendientesDelHospital,
   getValidacionesPendientes,
+  validarActividad,
+  rechazarActividad
 };
