@@ -3,20 +3,20 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 
 const {
+  actualizarProgreso,
+  crearProgresoParaUsuario,
   getAllProgreso,
+  getEstadisticasResidente,
   getProgresoResidente,
   getProgresoResidentePorFase,
-  registrarProgreso,
-  actualizarProgreso,
-  validarProgreso,
-  rechazarProgreso,
-  getEstadisticasResidente,
-  marcarActividadCompletada,
-  inicializarProgresoFormativo,
   getValidacionesPendientes,
-  validarActividad,
+  inicializarProgresoFormativo,
+  marcarActividadCompletada,
   rechazarActividad,
-  crearProgresoParaUsuario
+  rechazarProgreso,
+  registrarProgreso,
+  validarActividad,
+  validarProgreso
 } = require('../controllers/progresoController');
 
 // ✅ Middleware de autenticación para todas las rutas
