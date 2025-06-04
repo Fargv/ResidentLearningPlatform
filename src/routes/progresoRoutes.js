@@ -15,7 +15,8 @@ const {
   inicializarProgresoFormativo,
   getValidacionesPendientes,
   validarActividad,
-  rechazarActividad
+  rechazarActividad,
+  crearProgresoParaUsuario
 } = require('../controllers/progresoController');
 
 // ✅ Middleware de autenticación para todas las rutas
