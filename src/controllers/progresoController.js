@@ -668,7 +668,7 @@ const crearProgresoParaUsuario = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const usuario = await Usuario.findById(id);
+    const usuario = await User.findById(id);
     if (!usuario || usuario.rol !== 'residente') {
       return res.status(400).json({ success: false, error: 'Usuario no válido o no es residente' });
     }
