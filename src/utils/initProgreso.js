@@ -1,27 +1,22 @@
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Fase = require('../models/Fase');
+const Actividad = require('../models/Actividad');
 
-/**
- * Inicializa el progreso formativo agrupado por fase para un residente.
- * @param {Object} usuario - Usuario recién creado con rol 'residente'.
- */
 const inicializarProgresoFormativo = async (usuario) => {
   try {
-    const fases = await Fase.find()
-      .sort('orden')
-      .populate({ path: 'actividades', options: { sort: { orden: 1 } } });
+    const fases = await Fase.find().sort('orden');
     let createdCount = 0;
+
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
+      const actividadesDB = await Actividad.find({ fase: fase._id }).sort('orden');
 
-      if (fase.actividades.length === 0) {
-        console.warn(
-          `⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`
-        );
-        continue; // no crear ProgresoResidente para esta fase
+      if (!actividadesDB.length) {
+        console.warn(`⚠️  La fase "${fase.titulo}" no tiene actividades asociadas en la colección Actividades`);
+        continue;
       }
 
-      const actividades = fase.actividades.map(act => ({
+      const actividades = actividadesDB.map(act => ({
         actividad: act._id,
         nombre: act.nombre,
         completada: false,
@@ -39,10 +34,11 @@ const inicializarProgresoFormativo = async (usuario) => {
         estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',
         fechaRegistro: new Date(),
       });
-      createdCount += 1;
+
+      createdCount++;
     }
 
-    console.log(`✅ Progreso inicializado para ${usuario.email}: ${createdCount} registros creados`);
+    console.log(`✅ Progreso inicializado para ${usuario.email}: ${createdCount} fases creadas`);
     return createdCount;
   } catch (err) {
     console.error('❌ Error al inicializar progreso formativo:', err);
@@ -51,3 +47,4 @@ const inicializarProgresoFormativo = async (usuario) => {
 };
 
 module.exports = { inicializarProgresoFormativo };
+
