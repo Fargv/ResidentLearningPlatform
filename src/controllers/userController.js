@@ -57,9 +57,6 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
-// (todo el resto del archivo permanece igual, sin cambios adicionales)
-
-
 // @desc    Actualizar un usuario
 // @route   PUT /api/users/:id
 // @access  Private/Admin

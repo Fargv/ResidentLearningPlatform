@@ -7,8 +7,6 @@ const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
-const path = require('path');
-const initProgreso = require(path.join(__dirname, '../utils/initProgreso'));
 const { inicializarProgresoFormativo: inicializarProgresoFormativoDB } = require('../utils/initProgreso');
 
 
@@ -94,10 +92,9 @@ const getProgresoResidente = async (req, res, next) => {
 
     // Ordenar las fases por su campo 'orden'
     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
-//cambios
       const resultado = progresoPorFase.map(item => {
         return {
-          _id: item._id.toString(), // ✅ AÑADIDO AQUÍ---
+          _id: item._id.toString(),
           fase: item.fase,
           estadoGeneral: item.estadoGeneral,
           actividades: item.actividades.map(act => ({
