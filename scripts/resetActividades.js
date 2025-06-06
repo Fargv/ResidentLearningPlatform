@@ -2,39 +2,40 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
-const Actividad = require('../models/Actividad');
+const Actividad = require('../src/models/Actividad');
 
 dotenv.config();
-const MONGO_URI = process.env.MONGO_URI;
+
+// Puedes dejar esta URI en .env o pegarla directamente aquí si prefieres:
+const MONGO_URI = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0';
 
 const main = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('✅ Conectado a MongoDB');
 
-    // Leer y parsear el JSON
-    const raw = fs.readFileSync(path.join(__dirname, '../test.actividades.json'));
+    const raw = fs.readFileSync(path.join(__dirname, '../data/test.actividades.json'));
     const actividadesJSON = JSON.parse(raw);
 
-    // Eliminar actividades existentes
     await Actividad.deleteMany({});
     console.log('🧹 Actividades anteriores eliminadas');
 
-    // Transformar _id y fase.$oid
     const actividades = actividadesJSON.map(a => ({
       _id: a._id.$oid,
       nombre: a.nombre,
-      fase: a.fase.$oid,
+      fase: new mongoose.Types.ObjectId(a.fase.$oid),
       orden: a.orden,
-      descripcion: a.nombre, // Puedes mejorar esto si tienes descripciones reales
-      tipo: 'práctica', // O 'teórica'/'observación' según el caso
-      requiereValidacion: true
+      descripcion: a.nombre,
+      tipo: 'práctica',
+      requiereValidacion: true,
+      requiereFirma: false,
+      requierePorcentaje: false,
+      requiereAdjunto: false,
     }));
 
     await Actividad.insertMany(actividades);
     console.log(`✅ ${actividades.length} actividades insertadas correctamente`);
 
-    // Listado breve
     const resumen = actividades.reduce((acc, act) => {
       acc[act.fase] = acc[act.fase] ? acc[act.fase] + 1 : 1;
       return acc;
