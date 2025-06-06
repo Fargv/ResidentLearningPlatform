@@ -13,9 +13,7 @@ const inicializarProgresoFormativo = async (usuario) => {
       const fase = fases[i];
       console.log("🧬 fase._id:", fase._id, "tipo:", typeof fase._id);
 
-      const faseId = fase._id;
-
-      const actividadesDB = await Actividad.find({ fase: faseId }).sort('orden');
+      const actividadesDB = await Actividad.find({ fase: fase._id }).sort('orden');
 
       if (!actividadesDB.length) {
         console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas en la colección Actividades`);
@@ -56,5 +54,3 @@ const inicializarProgresoFormativo = async (usuario) => {
 };
 
 module.exports = { inicializarProgresoFormativo };
-
-
