@@ -26,15 +26,18 @@ const inicializarProgresoFormativo = async (usuario) => {
         fechaRealizacion: null,
         firmaDigital: '',
       }));
-
-      await ProgresoResidente.create({
+      console.log(`➡️ Fase: ${fase.titulo}`);
+      console.log(`🔢 Actividades encontradas: ${actividadesDB.length}`);
+      console.log(`🧩 Actividades para guardar:`);
+      console.log(actividades);
+      const creado = await ProgresoResidente.create({
         residente: usuario._id,
         fase: fase._id,
         actividades,
         estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',
         fechaRegistro: new Date(),
       });
-
+      console.log(`✅ Progreso guardado para fase ${fase.titulo} con ID: ${creado._id}`);
       createdCount++;
     }
 
