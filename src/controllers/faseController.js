@@ -45,6 +45,9 @@ exports.getFase = async (req, res, next) => {
 // @access  Private/Admin
 exports.createFase = async (req, res, next) => {
   try {
+    if (req.body.orden === undefined || req.body.orden === null) {
+      req.body.orden = req.body.numero;
+    }
     const fase = await Fase.create(req.body);
     
     // Crear registro de auditoría

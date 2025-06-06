@@ -195,10 +195,11 @@ const ResidenteFases: React.FC = () => {
             );
           })()}
 
-          <List>
-            {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
-              item.actividades.map((act: any, idx: number) => (
-                <ListItem key={idx}>
+          {item.estadoGeneral !== 'bloqueada' ? (
+            <List>
+              {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+                item.actividades.map((act: any, idx: number) => (
+                  <ListItem key={idx}>
                   {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
                   {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
                   {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
@@ -247,14 +248,19 @@ const ResidenteFases: React.FC = () => {
                       Marcar como completada
                     </Button>
                   )}
+                  </ListItem>
+                ))
+              ) : (
+                <ListItem>
+                  <ListItemText primary="No hay actividades disponibles" />
                 </ListItem>
-              ))
-            ) : (
-              <ListItem>
-                <ListItemText primary="No hay actividades disponibles" />
-              </ListItem>
-            )}
-          </List>
+              )}
+            </List>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              Fase bloqueada
+            </Typography>
+          )}
         </AccordionDetails>
       </Accordion>
     );
