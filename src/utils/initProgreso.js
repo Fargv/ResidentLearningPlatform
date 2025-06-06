@@ -1,6 +1,7 @@
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Fase = require('../models/Fase');
 const Actividad = require('../models/Actividad');
+const mongoose = require('mongoose');
 
 const inicializarProgresoFormativo = async (usuario) => {
   try {
@@ -10,7 +11,7 @@ const inicializarProgresoFormativo = async (usuario) => {
 
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
-      const actividadesDB = await Actividad.find({ fase: fase._id }).sort('orden');
+      const actividadesDB = await Actividad.find({ fase: new mongoose.Types.ObjectId(fase._id) }).sort('orden');
 
       if (!actividadesDB.length) {
         console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas en la colección Actividades`);
