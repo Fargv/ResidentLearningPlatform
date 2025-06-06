@@ -5,6 +5,7 @@ const Actividad = require('../models/Actividad');
 const inicializarProgresoFormativo = async (usuario) => {
   try {
     const fases = await Fase.find().sort('orden');
+    console.log("📦 Fases encontradas:", fases.map(f => ({ id: f._id, nombre: f.nombre })));
     let createdCount = 0;
 
     for (let i = 0; i < fases.length; i++) {
