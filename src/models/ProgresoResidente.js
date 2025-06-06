@@ -5,6 +5,12 @@ const actividadSchema = new Schema({
   nombre: { type: String, required: true },
   completada: { type: Boolean, default: false },
   fechaRealizacion: Date,
+  actividad: { type: Schema.Types.ObjectId, ref: 'Actividad', required: true },
+  comentariosFormador: String,
+  comentariosRechazo: String,
+  firmaDigital: String,
+  fechaValidacion: Date,
+  fechaRechazo: Date,
   porcentajeParticipacion: {
     type: Number,
     min: 0,
@@ -41,6 +47,7 @@ const progresoResidenteSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
+  fechaRegistro: { type: Date, default: Date.now },
   fechaInicio: {
     type: Date,
     default: Date.now

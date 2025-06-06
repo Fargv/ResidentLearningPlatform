@@ -6,13 +6,15 @@
 
 echo "Iniciando pruebas del sistema..."
 
-# Directorio base
-BASE_DIR="/home/ubuntu/davinci-platform"
+# Directorio base del repositorio
+# Calcular la ruta absoluta de este script para que
+# pueda ejecutarse desde cualquier directorio
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 API_URL="http://localhost:5000/api"
 
 # Iniciar el servidor backend en segundo plano
 echo "Iniciando servidor backend..."
-cd $BASE_DIR
+cd "$BASE_DIR"
 node src/server.js > backend.log 2>&1 &
 BACKEND_PID=$!
 
@@ -38,7 +40,7 @@ function make_request() {
     else
       curl -s -X $METHOD -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "$DATA" $API_URL$ENDPOINT
     fi
-  fi
+
 }
 
 # Prueba 1: Crear un administrador inicial

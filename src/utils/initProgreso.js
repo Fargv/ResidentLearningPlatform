@@ -10,6 +10,7 @@ const inicializarProgresoFormativo = async (usuario) => {
     const fases = await Fase.find()
       .sort('orden')
       .populate({ path: 'actividades', options: { sort: { orden: 1 } } });
+    let createdCount = 0;
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
       const actividades = fase.actividades.map(act => ({
@@ -30,14 +31,15 @@ const inicializarProgresoFormativo = async (usuario) => {
         estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',
         fechaRegistro: new Date(),
       });
+      createdCount += 1;
     }
 
-    console.log(`✅ Progreso inicializado para ${usuario.email}`);
+    console.log(`✅ Progreso inicializado para ${usuario.email}: ${createdCount} registros creados`);
+    return createdCount;
   } catch (err) {
     console.error('❌ Error al inicializar progreso formativo:', err);
+    throw err;
   }
 };
 
 module.exports = { inicializarProgresoFormativo };
-
-
