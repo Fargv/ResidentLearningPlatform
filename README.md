@@ -88,12 +88,47 @@ Ver `DEPLOY.md` para instrucciones detalladas de despliegue.
 - `DEPLOY.md`: Instrucciones detalladas para el despliegue en servicios gratuitos
 - `MANUAL_USUARIO.md`: Manual de usuario con instrucciones para cada rol
 
+## Ejecución de scripts de migración
+Los cambios en el esquema pueden requerir ejecutar scripts ubicados en la carpeta
+`scripts/`. Estos se lanzan manualmente y **solo una vez** tras actualizar a una
+nueva versión que lo indique.
+
+### Prerrequisitos
+1. Configurar la variable `MONGO_URI` con la cadena de conexión a tu base de
+   datos (en un archivo `.env` o exportándola en la terminal).
+2. Tener instalado Node.js.
+
+### Cómo ejecutarlos
+Cada script se ejecuta con Node:
+
+```bash
+node scripts/migrateLegacyData.js
+node scripts/migrateOrdenFases.js
+node scripts/updateFaseOrden.js
+node scripts/ensureOrdenUnique.js
+```
+`migrateLegacyData.js` adapta datos antiguos y `ensureOrdenUnique.js` crea el
+índice único en el campo `orden`. Los demás actualizan el orden de las fases.
+
 ## Inicialización del progreso
 Al registrar un usuario con rol de **residente** se crea un progreso
 formativo por cada fase del programa. Si alguna fase no tiene
 actividades asociadas, la función de inicialización registrará una
 advertencia en consola y no generará un `ProgresoResidente` para esa
 fase.
+
+## Migración de datos antiguos
+Si trabajas con una base de datos creada antes de la versión que incluye el
+campo `nombre` en `Fase` y la referencia `actividad` en los progresos, ejecuta:
+
+```bash
+node scripts/migrateLegacyData.js
+```
+
+El script actualiza las fases que todavía usan el campo `titulo`, rellena el
+orden con el número de la fase y vincula cada actividad de los registros de
+`ProgresoResidente` con su documento `Actividad` correspondiente.
+
 
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.

@@ -1,6 +1,13 @@
+// Uso:
+//   node scripts/migrarActividades.js
+//
+// Este script extrae las actividades embebidas en cada documento de "Fase" y
+// las crea en la colección "Actividad". Se espera que la variable de entorno
+// MONGO_URI esté definida para establecer la conexión.
+
 const mongoose = require('mongoose');
-const Fase = require('./models/Fase');
-const Actividad = require('./models/Actividad');
+const Fase = require('../src/models/Fase');
+const Actividad = require('../src/models/Actividad');
 require('dotenv').config(); // Asegúrate de tener MONGO_URI en .env
 
 async function migrarActividades() {
@@ -20,10 +27,18 @@ async function migrarActividades() {
       if (!yaExiste) {
         await Actividad.create({
           nombre: act.nombre,
+          descripcion: act.descripcion || 'Descripción pendiente',
+          tipo: act.tipo || 'teórica',
           fase: fase._id,
-          orden: i + 1
+          orden: i + 1,
+          requiereValidacion: act.requiereValidacion,
+          requiereFirma: act.requiereFirma,
+          requierePorcentaje: act.requierePorcentaje,
+          requiereAdjunto: act.requiereAdjunto
         });
-        console.log(`✅ Insertada actividad "${act.nombre}" en fase "${fase.titulo}"`);
+        console.log(
+          `✅ Insertada actividad "${act.nombre}" en fase "${fase.titulo || fase.nombre}"`
+        );
       } else {
         console.log(`⏩ Ya existía: "${act.nombre}"`);
       }
