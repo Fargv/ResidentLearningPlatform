@@ -40,7 +40,7 @@ function make_request() {
     else
       curl -s -X $METHOD -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "$DATA" $API_URL$ENDPOINT
     fi
-
+  fi
 }
 
 # Prueba 1: Crear un administrador inicial
