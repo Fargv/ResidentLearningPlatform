@@ -5,9 +5,35 @@ const User = require('../models/User');
 const Validacion = require('../models/Validacion');
 const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
+const Fase = require('../models/Fase');
 const { createAuditLog } = require('../utils/auditLog');
 const mongoose = require('mongoose');
 const { inicializarProgresoFormativo: inicializarProgresoFormativoDB } = require('../utils/initProgreso');
+
+const updatePhaseStatus = async (progreso) => {
+  await progreso.populate('fase residente');
+  const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
+  if (!todasValidadas) return;
+
+  if (progreso.estadoGeneral !== 'validado') {
+    progreso.estadoGeneral = 'validado';
+    await progreso.save();
+  }
+
+  const nextFase = await Fase.findOne({ orden: progreso.fase.orden + 1 });
+  if (!nextFase) return;
+
+  const nextProgreso = await ProgresoResidente.findOne({
+    residente: progreso.residente._id,
+    fase: nextFase._id
+  });
+
+  if (nextProgreso && nextProgreso.estadoGeneral === 'bloqueada') {
+    nextProgreso.estadoGeneral = 'en progreso';
+    await nextProgreso.save();
+  }
+};
+
 
 
 const inicializarProgresoFormativo = async (req, res, next) => {
@@ -618,6 +644,7 @@ const validarActividad = async (req, res, next) => {
     actividad.fechaValidacion = new Date();
 
     await progreso.save();
+    await updatePhaseStatus(progreso);
 
     await Notificacion.create({
       usuario: progreso.residente._id,
@@ -701,5 +728,6 @@ module.exports = {
   getValidacionesPendientes,
   validarActividad,
   rechazarActividad,
-  crearProgresoParaUsuario
+  crearProgresoParaUsuario,
+  updatePhaseStatus
 };

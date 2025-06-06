@@ -86,5 +86,12 @@ Ver `DEPLOY.md` para instrucciones detalladas de despliegue.
 - `DEPLOY.md`: Instrucciones detalladas para el despliegue en servicios gratuitos
 - `MANUAL_USUARIO.md`: Manual de usuario con instrucciones para cada rol
 
+## Inicialización del progreso
+Al registrar un usuario con rol de **residente** se crea un progreso
+formativo por cada fase del programa. Si alguna fase no tiene
+actividades asociadas, la función de inicialización registrará una
+advertencia en consola y no generará un `ProgresoResidente` para esa
+fase.
+
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.
