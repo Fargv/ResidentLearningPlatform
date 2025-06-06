@@ -15,8 +15,9 @@ const inicializarProgresoFormativo = async (usuario) => {
       const fase = fases[i];
 
       if (fase.actividades.length === 0) {
-        console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`);
-        continue;
+        console.warn(
+          `⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`
+        );
       }
 
       const actividades = fase.actividades.map(act => ({
@@ -44,6 +45,7 @@ const inicializarProgresoFormativo = async (usuario) => {
     return createdCount;
   } catch (err) {
     console.error('❌ Error al inicializar progreso formativo:', err);
+    throw err;
   }
 };
 
