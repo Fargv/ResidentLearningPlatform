@@ -11,7 +11,13 @@ const inicializarProgresoFormativo = async (usuario) => {
 
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
-      const actividadesDB = await Actividad.find({ fase: new mongoose.Types.ObjectId(fase._id) }).sort('orden');
+      console.log("🧬 fase._id:", fase._id, "tipo:", typeof fase._id);
+
+      const faseId = typeof fase._id === 'string'
+        ? new mongoose.Types.ObjectId(fase._id)
+        : fase._id;
+
+      const actividadesDB = await Actividad.find({ fase: faseId }).sort('orden');
 
       if (!actividadesDB.length) {
         console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas en la colección Actividades`);
@@ -52,4 +58,5 @@ const inicializarProgresoFormativo = async (usuario) => {
 };
 
 module.exports = { inicializarProgresoFormativo };
+
 
