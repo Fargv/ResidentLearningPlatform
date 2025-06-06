@@ -18,6 +18,7 @@ const inicializarProgresoFormativo = async (usuario) => {
         console.warn(
           `⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`
         );
+        continue; // no crear ProgresoResidente para esta fase
       }
 
       const actividades = fase.actividades.map(act => ({

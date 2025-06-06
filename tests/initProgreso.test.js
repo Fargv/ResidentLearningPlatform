@@ -1,0 +1,35 @@
+const { inicializarProgresoFormativo } = require('../src/utils/initProgreso');
+const Fase = require('../src/models/Fase');
+const ProgresoResidente = require('../src/models/ProgresoResidente');
+
+describe('inicializarProgresoFormativo', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('skips phases without activities', async () => {
+    const user = { _id: 'res1', email: 'test@example.com' };
+
+    const fases = [
+      { _id: 'f1', nombre: 'Fase 1', actividades: [{ _id: 'a1', nombre: 'Act 1' }] },
+      { _id: 'f2', nombre: 'Fase 2', actividades: [] }
+    ];
+
+    jest.spyOn(Fase, 'find').mockReturnValue({
+      sort: jest.fn().mockReturnThis(),
+      populate: jest.fn().mockResolvedValue(fases)
+    });
+
+    const createSpy = jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({});
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const count = await inicializarProgresoFormativo(user);
+
+    expect(count).toBe(1);
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({ fase: 'f1' }));
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Fase 2')
+    );
+  });
+});
