@@ -90,7 +90,10 @@ const getProgresoResidente = async (req, res, next) => {
     }
 
     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
-      .populate({ path: 'fase', select: 'nombre numero' });
+      .populate({ path: 'fase', select: 'nombre numero orden' });
+
+    // Ordenar las fases por su campo 'orden'
+    progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
 //cambios
       const resultado = progresoPorFase.map(item => {
         return {
@@ -116,6 +119,7 @@ const getProgresoResidente = async (req, res, next) => {
     console.error("Error en getProgresoResidente:", err);
     next(err);
   }
+
 };
 
 

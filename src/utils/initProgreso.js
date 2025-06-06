@@ -7,14 +7,16 @@ const Fase = require('../models/Fase');
  */
 const inicializarProgresoFormativo = async (usuario) => {
   try {
-    const fases = await Fase.find().populate('actividades');
-
-    for (const fase of fases) {
+    const fases = await Fase.find()
+      .sort('orden')
+      .populate({ path: 'actividades', options: { sort: { orden: 1 } } });
+    for (let i = 0; i < fases.length; i++) {
+      const fase = fases[i];
       const actividades = fase.actividades.map(act => ({
         actividad: act._id,
         nombre: act.nombre,
         completada: false,
-        estado: null,
+        estado: 'pendiente',
         comentariosResidente: '',
         comentariosFormador: '',
         fechaRealizacion: null,
@@ -25,7 +27,7 @@ const inicializarProgresoFormativo = async (usuario) => {
         residente: usuario._id,
         fase: fase._id,
         actividades,
-        estadoGeneral: 'bloqueada',
+        estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',
         fechaRegistro: new Date(),
       });
     }
