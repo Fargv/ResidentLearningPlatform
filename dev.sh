@@ -5,8 +5,8 @@
 
 echo "Iniciando entorno de desarrollo..."
 
-# Directorio base
-BASE_DIR="/home/ubuntu/davinci-platform"
+# Directorio base calculado a partir de la ubicación del script
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
 # Verificar si hay procesos previos ejecutándose
 echo "Verificando procesos previos..."
@@ -24,7 +24,7 @@ fi
 
 # Iniciar el servidor backend en segundo plano
 echo "Iniciando servidor backend..."
-cd $BASE_DIR
+cd "$PROJECT_ROOT"
 node src/server.js > backend.log 2>&1 &
 BACKEND_PID=$!
 echo "Servidor backend iniciado con PID: $BACKEND_PID"
@@ -32,7 +32,7 @@ echo "Servidor backend iniciado con PID: $BACKEND_PID"
 # Esperar a que el servidor backend esté listo
 sleep 3
 echo "Verificando estado del servidor backend..."
-if curl -s http://localhost:5000/api/health > /dev/null; then
+if curl -s http://localhost:5000/ > /dev/null; then
   echo "Servidor backend funcionando correctamente"
 else
   echo "Error: El servidor backend no responde"
@@ -43,7 +43,7 @@ fi
 
 # Iniciar el servidor frontend en segundo plano
 echo "Iniciando servidor frontend..."
-cd $BASE_DIR/client
+cd "$PROJECT_ROOT/client"
 npm start > frontend.log 2>&1 &
 FRONTEND_PID=$!
 echo "Servidor frontend iniciado con PID: $FRONTEND_PID"

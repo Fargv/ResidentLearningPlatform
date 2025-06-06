@@ -18,6 +18,7 @@ const faseSchema = new mongoose.Schema({
   },
   orden: {
     type: Number,
+    unique: true,
     required: true,
     default: function () {
       return this.numero;

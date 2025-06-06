@@ -110,17 +110,12 @@ useEffect(() => {
       const fasesRes = await axios.get('/api/fases');
       const actividadesRes = await axios.get('/api/actividades');
       const progresoRes = await axios.get(`/api/progreso/residente/${user._id}`);
-
-      console.log("Fetching stats from:", `/api/progreso/stats/residente/${user._id}`);
       const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
-      console.log("Stats response completa:", statsRes);
       setStats(statsRes.data.data);
 
       setFases(fasesRes.data.data);
       setActividades(actividadesRes.data.data);
       setProgreso(progresoRes.data.data);
-
-      console.log('Progreso:', progresoRes.data.data);
 
       if (Array.isArray(fasesRes.data.data) && fasesRes.data.data.length > 0) {
         setTabValue(0);

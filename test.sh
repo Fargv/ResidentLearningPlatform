@@ -9,12 +9,12 @@ echo "Iniciando pruebas del sistema..."
 # Directorio base del repositorio
 # Calcular la ruta absoluta de este script para que
 # pueda ejecutarse desde cualquier directorio
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 API_URL="http://localhost:5000/api"
 
 # Iniciar el servidor backend en segundo plano
 echo "Iniciando servidor backend..."
-cd "$BASE_DIR"
+cd "$PROJECT_ROOT"
 node src/server.js > backend.log 2>&1 &
 BACKEND_PID=$!
 
