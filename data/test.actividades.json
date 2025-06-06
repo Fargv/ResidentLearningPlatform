@@ -1,0 +1,452 @@
+[
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d1019c\")",
+    "nombre": "Talleres prácticos con el sistema da Vinci",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3ba\")",
+    "orden": 1,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d1019d\")",
+    "nombre": "Ejercicios en SimNow (puntuación 1)",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3ba\")",
+    "orden": 2,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d1019e\")",
+    "nombre": "Ejercicios en SimNow (puntuación 2)",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3ba\")",
+    "orden": 3,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d1019f\")",
+    "nombre": "Ejercicios en SimNow (puntuación 3)",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3ba\")",
+    "orden": 4,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a0\")",
+    "nombre": "Ejercicios en pelvic trainer con formador",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3ba\")",
+    "orden": 5,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a1\")",
+    "nombre": "Crear cuenta en la da Vinci Online Community",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 1,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a2\")",
+    "nombre": "Aceptar términos y asociar cuenta al hospital",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 2,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a3\")",
+    "nombre": "Revisar módulos online del sistema correspondiente",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 3,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a4\")",
+    "nombre": "Imprimir certificado",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 4,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a5\")",
+    "nombre": "Ver vídeo 1 de cirugía",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 5,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a6\")",
+    "nombre": "Ver vídeo 2 de cirugía",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 6,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a7\")",
+    "nombre": "Taller práctico con el sistema da Vinci",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 7,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a8\")",
+    "nombre": "Definir plan clínico inicial con el coordinador",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3b9\")",
+    "orden": 8,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101a9\")",
+    "nombre": "Asistencia a procedimientos como observador 1",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 1,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101aa\")",
+    "nombre": "Asistencia a procedimientos como observador 2",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 2,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101ab\")",
+    "nombre": "Procedimiento de consola 1",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 3,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101ac\")",
+    "nombre": "Procedimiento de consola 2",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 4,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101ad\")",
+    "nombre": "Procedimiento de consola 3",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 5,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101ae\")",
+    "nombre": "Procedimiento de consola 4",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 6,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101af\")",
+    "nombre": "Procedimiento de consola 5",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 7,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b0\")",
+    "nombre": "Procedimiento de consola 6",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 8,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b1\")",
+    "nombre": "Procedimiento de consola 7",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 9,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b2\")",
+    "nombre": "Procedimiento de consola 8",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 10,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b3\")",
+    "nombre": "Procedimiento de consola 9",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 11,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b4\")",
+    "nombre": "Procedimiento de consola 10",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 12,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b5\")",
+    "nombre": "Procedimiento de consola 11",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 13,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b6\")",
+    "nombre": "Procedimiento de consola 12",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 14,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b7\")",
+    "nombre": "Procedimiento de consola 13",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 15,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b8\")",
+    "nombre": "Procedimiento de consola 14",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 16,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101b9\")",
+    "nombre": "Procedimiento de consola 15",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 17,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101ba\")",
+    "nombre": "Procedimiento de consola 16",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 18,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101bb\")",
+    "nombre": "Procedimiento de consola 17",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 19,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101bc\")",
+    "nombre": "Procedimiento de consola 18",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 20,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101bd\")",
+    "nombre": "Procedimiento de consola 19",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 21,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101be\")",
+    "nombre": "Procedimiento de consola 20",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
+    "orden": 22,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101bf\")",
+    "nombre": "Cirugía como asistente 1",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 1,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c0\")",
+    "nombre": "Cirugía como asistente 2",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 2,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c1\")",
+    "nombre": "Cirugía como asistente 3",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 3,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c2\")",
+    "nombre": "Cirugía como asistente 4",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 4,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c3\")",
+    "nombre": "Cirugía como asistente 5",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 5,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c4\")",
+    "nombre": "Cirugía como asistente 6",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 6,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c5\")",
+    "nombre": "Cirugía como asistente 7",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 7,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c6\")",
+    "nombre": "Cirugía como asistente 8",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 8,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c7\")",
+    "nombre": "Cirugía como asistente 9",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 9,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  },
+  {
+    "_id": "ObjectId(\"6842f73881d01cbb57d101c8\")",
+    "nombre": "Cirugía como asistente 10",
+    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+    "orden": 10,
+    "status": "pendiente",
+    "comentarios": "",
+    "fechaCompletado": null,
+    "validado": false
+  }
+]
