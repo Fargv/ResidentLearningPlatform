@@ -52,8 +52,8 @@ const ResidenteFases: React.FC = () => {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
         const data = response.data.data || [];
   
-        // 🔍 Añade este log aquí:
-        data.forEach((p: any, i: number) => console.log(`🔍 Progreso[${i}]`, p));
+      // (debug) Aquí se listaban los progresos recibidos
+
         setProgresos(data);
       } catch (err: any) {
         console.error("Error cargando progreso:", err);
@@ -73,7 +73,6 @@ const ResidenteFases: React.FC = () => {
     setFecha(new Date().toISOString().split('T')[0]);
   
     // Mover el console.log al final para que acceda a los parámetros directamente
-    console.log('🧠 DEBUG → progresoId:', progresoId, 'actividadIndex:', index);
   
     setDialogOpen(true);
   };
@@ -85,13 +84,7 @@ const ResidenteFases: React.FC = () => {
 
 
   const handleCompletarActividad = async () => {
-    console.log('✅ Confirmando actividad:', {
-      selectedProgresoId,
-      selectedActividadIndex,
-      fecha,
-      comentario
-    });
-
+    
     if (!selectedProgresoId || selectedActividadIndex === null) {
       setSnackbarError(true);
       setSnackbarMsg('Error interno: No se ha seleccionado ninguna actividad.');
@@ -155,7 +148,6 @@ const ResidenteFases: React.FC = () => {
       
       {Array.isArray(progresos) && progresos.length > 0 ? (
   progresos.map((item, index) => {
-    console.log('%c🔍 [ResidenteFases] Renderizando progreso item', 'color: cyan; font-weight: bold;', item);
 
     return (
       <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
@@ -234,13 +226,6 @@ const ResidenteFases: React.FC = () => {
                       size="small"
                       variant="outlined"
                       onClick={() => {
-                        console.log(
-                          '%c📦 [ResidenteFases] handleOpenDialog → item._id:',
-                          'color: lime; font-weight: bold;',
-                          item._id,
-                          'idx:',
-                          idx
-                        );
                         handleOpenDialog(item._id, idx);
                       }}
                       sx={{ ml: 2 }}

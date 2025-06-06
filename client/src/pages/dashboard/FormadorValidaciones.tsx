@@ -81,7 +81,6 @@ const FormadorValidaciones: React.FC = () => {
 
     const respuesta = await axios.get('/api/progreso/formador/validaciones/pendientes');
     const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
-console.log('Validaciones recibidas:', { pendientes, validadas, rechazadas });
     setPendientes(pendientes || []);
 setValidadas(validadas || []);
 setRechazadas(rechazadas || []);

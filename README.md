@@ -70,11 +70,13 @@ davinci-platform/
 ```bash
 ./dev.sh
 ```
+El script determina automáticamente la ruta del proyecto por lo que puede ejecutarse desde cualquier directorio.
 
 ### Pruebas
 ```bash
 ./test.sh
 ```
+Al igual que `dev.sh`, este script se puede ejecutar desde cualquier ubicación ya que calcula la raíz del repositorio.
 
 ### Despliegue
 ```bash
