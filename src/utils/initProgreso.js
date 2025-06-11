@@ -35,6 +35,7 @@ const inicializarProgresoFormativo = async (usuario) => {
           firmaDigital: '',
         }));
 
+
       const creado = await ProgresoResidente.create({
         residente: usuario._id,
         fase: fase._id,
