@@ -98,6 +98,7 @@ const AdminFases: React.FC = () => {
     message: '',
     severity: 'success' as 'success' | 'error'
   });
+  const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
 
   //eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -442,6 +443,25 @@ const AdminFases: React.FC = () => {
     });
   };
 
+  const handleConfirmarEliminarActividad = async (actividad: any) => {
+  try {
+    setProcesando(true);
+    const res = await api.get(`/progresos/actividad/${actividad._id}/count`);
+    setProgresoVinculado(res.data.count);
+    setSelectedActividad(actividad);
+    setOpenEliminarActividadDialog(true);
+  } catch (err: any) {
+    setSnackbar({
+      open: true,
+      message: 'Error al comprobar progresos vinculados',
+      severity: 'error'
+    });
+  } finally {
+    setProcesando(false);
+  }
+};
+
+
   if (loading) {
     return (
       <Box sx={{ width: '100%', mt: 4 }}>
@@ -460,50 +480,6 @@ const AdminFases: React.FC = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Fases y Actividades
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleOpenCrearFaseDialog}
-        >
-          Nueva Fase
-        </Button>
-      </Box>
-      
-      {/* Resumen */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
-    <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">{fases.length}</Typography>
-        <Typography variant="body2">Fases</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
-    <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">{actividades.length}</Typography>
-        <Typography variant="body2">Actividades</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-</Box>
-<Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '50%' } }}>
-      <Card sx={{ bgcolor: 'info.main', color: 'white' }}>
-        <CardContent>
-          <Typography variant="h4">{usuarios.length}</Typography>
-          <Typography variant="body2">Usuarios en plataforma</Typography>
-        </CardContent>
-      </Card>
-    </Box>
-
-      </Paper>
       
       {/* Pestañas de fases */}
       <Paper sx={{ width: '100%' }}>
@@ -528,29 +504,33 @@ const AdminFases: React.FC = () => {
         
         {fases.sort((a, b) => a.numero - b.numero).map((fase, index) => (
           <TabPanel key={fase._id} value={tabValue} index={index}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h5" component="h2" gutterBottom>
-                Fase {fase.numero}: {fase.nombre}
-              </Typography>
-              <Box>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<EditIcon />}
-                  onClick={() => handleOpenEditarFaseDialog(fase)}
-                  sx={{ mr: 1 }}
-                >
-                  Editar Fase
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleOpenEliminarFaseDialog(fase)}
-                >
-                  Eliminar Fase
-                </Button>
-              </Box>
+            <Box>
+              <Button
+                variant="outlined"
+                color="info"
+                startIcon={<AddIcon />}
+                onClick={handleOpenCrearFaseDialog}
+                sx={{ mr: 1 }}
+              >
+                Nueva Fase
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<EditIcon />}
+                onClick={() => handleOpenEditarFaseDialog(fase)}
+                sx={{ mr: 1 }}
+              >
+                Editar Fase
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<DeleteIcon />}
+                onClick={() => handleOpenEliminarFaseDialog(fase)}
+              >
+                Eliminar Fase
+              </Button>
             </Box>
             
             <Typography variant="body1" paragraph>
@@ -616,7 +596,7 @@ const AdminFases: React.FC = () => {
                           </IconButton>
                           <IconButton 
                             color="error" 
-                            onClick={() => handleOpenEliminarActividadDialog(actividad)}
+                            onClick={() => handleConfirmarEliminarActividad(actividad)}
                             size="small"
                           >
                             <DeleteIcon />
@@ -920,9 +900,11 @@ const AdminFases: React.FC = () => {
             onChange={handleActividadChange}
             required
             sx={{ mb: 2 }}
-            SelectProps={{
-              native: true
-            }}
+            slotProps={{
+                select: {
+                  native: true
+                }
+              }}
           >
             <option value="teorica">Teórica</option>
             <option value="practica">Práctica</option>
@@ -940,8 +922,10 @@ const AdminFases: React.FC = () => {
             onChange={handleActividadChange}
             required
             sx={{ mb: 2 }}
-            SelectProps={{
-              native: true
+            slotProps={{
+              select: {
+                native: true
+              }
             }}
           >
             {fases.sort((a, b) => a.numero - b.numero).map((fase) => (
@@ -983,7 +967,16 @@ const AdminFases: React.FC = () => {
         <DialogTitle>Eliminar Actividad</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar la actividad <strong>{selectedActividad?.nombre}</strong>? Esta acción no se puede deshacer.
+            {progresoVinculado !== null && progresoVinculado > 0 ? (
+              <>
+                La actividad <strong>{selectedActividad?.nombre}</strong> tiene <strong>{progresoVinculado}</strong> registros de progreso.
+                ¿Estás seguro de que deseas eliminarla? Esto eliminará también esos progresos de todos los usuarios.
+              </>
+            ) : (
+              <>
+                ¿Estás seguro de que deseas eliminar la actividad <strong>{selectedActividad?.nombre}</strong>? Esta acción no se puede deshacer.
+              </>
+            )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

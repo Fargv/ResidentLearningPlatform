@@ -120,34 +120,25 @@ exports.deleteActividad = async (req, res, next) => {
     const actividad = await Actividad.findById(req.params.id);
 
     if (!actividad) {
-      return next(new ErrorResponse(`Actividad no encontrada con id ${req.params.id}`, 404));
+      return next(new ErrorResponse('Actividad no encontrada', 404));
     }
 
-    // Verificar si hay progreso de residentes asociado a la actividad
-    const progresoCount = await ProgresoResidente.countDocuments({ actividad: req.params.id });
-    
-    if (progresoCount > 0) {
-      return next(new ErrorResponse(`No se puede eliminar la actividad porque tiene ${progresoCount} registros de progreso asociados`, 400));
-    }
+    // Eliminar progresos relacionados
+    const deletedProgress = await ProgresoResidente.deleteMany({ actividad: req.params.id });
 
-    await actividad.remove();
-    
-    // Crear registro de auditoría
-    await createAuditLog({
-      usuario: req.user._id,
-      accion: 'eliminar_actividad',
-      descripcion: `Actividad eliminada: ${actividad.nombre}`,
-      ip: req.ip
-    });
+    // Luego eliminar la actividad
+    await actividad.deleteOne();
 
     res.status(200).json({
       success: true,
-      data: {}
+      data: {},
+      mensaje: `Actividad eliminada junto con ${deletedProgress.deletedCount} registros de progreso`
     });
   } catch (err) {
     next(err);
   }
 };
+
 
 // @desc    Reordenar actividades
 // @route   PUT /api/actividades/reorder
