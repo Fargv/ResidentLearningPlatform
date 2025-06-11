@@ -836,13 +836,17 @@ const AdminFases: React.FC = () => {
             onChange={handleActividadChange}
             required
             sx={{ mb: 2 }}
-            SelectProps={{
-              native: true
+            slotProps={{
+              select: {
+                native: true
+              }
             }}
           >
-            <option value="teorica">Teórica</option>
-            <option value="practica">Práctica</option>
-            <option value="evaluacion">Evaluación</option>
+                <option value="teórica">Teórica</option>
+                <option value="práctica">Práctica</option>
+                <option value="evaluación">Evaluación</option>
+                <option value="observación">Observación</option>
+                <option value="procedimiento">Procedimiento</option>
           </TextField>
           <TextField
             margin="dense"
