@@ -16,7 +16,8 @@ const {
   rechazarProgreso,
   registrarProgreso,
   validarActividad,
-  validarProgreso
+  validarProgreso,
+  getCountProgresosByActividad
 } = require('../controllers/progresoController');
 
 // ✅ Middleware de autenticación para todas las rutas
@@ -63,5 +64,7 @@ router.route('/:id/rechazar')
 router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
 
 router.post('/crear/:id', authorize('administrador'), crearProgresoParaUsuario);
+
+router.get('/actividad/:id/count', getCountProgresosByActividad);
 
 module.exports = router;
