@@ -104,7 +104,7 @@ const AdminFases: React.FC = () => {
     try {
       setLoading(true);
 
-      const usuariosRes = await api.get('/users');
+      //const usuariosRes = await api.get('/users');
       //setUsuariosLista(usuariosRes.data.data);
 
       const hospitalesRes = await api.get('/hospitals');
