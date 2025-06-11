@@ -278,7 +278,7 @@ const handleRechazar = async () => {
                       }}
                     >
                       <Typography variant="h6" gutterBottom>
-                        Actividad: {progreso.actividad.nombre}
+                        Actividad: {progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Fase: {progreso.fase?.nombre || 'Sin fase'}
@@ -289,11 +289,11 @@ const handleRechazar = async () => {
                       <Typography variant="body2" color="text.secondary">
                         Fecha: {new Date(progreso.fechaCreacion).toLocaleDateString()}
                       </Typography>
-                      {progreso.actividad.comentariosResidente && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          <strong>Comentarios:</strong> {progreso.actividad.comentariosResidente}
-                        </Typography>
-                      )}
+                      {progreso.actividad?.comentariosResidente && (
+                      <Typography variant="body2" sx={{ mt: 1 }}>
+                        <strong>Comentarios:</strong> {progreso.actividad.comentariosResidente}
+                      </Typography>
+                    )}
                     </Box>
 
                     <Box
@@ -342,59 +342,41 @@ const handleRechazar = async () => {
               {validadas.map(progreso => (
                 <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
                   <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
-  <Box
-    sx={{
-      p: 2,
-      flexBasis: { xs: '100%', sm: '75%' }, // 9/12
-      flexGrow: 1
-    }}
-  >
-    <Typography variant="h6">
-      {progreso.actividad.nombre}
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      Fase: {progreso.actividad.fase.nombre}
-    </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-      <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
-        {progreso.residente.nombre.charAt(0)}
-      </Avatar>
-      <Typography variant="body2">
-        {progreso.residente.nombre} {progreso.residente.apellidos}
-      </Typography>
-    </Box>
-    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-      Validado el: {new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}
-    </Typography>
-    {progreso.validaciones && progreso.validaciones.length > 0 && (
-      <Typography variant="body2" sx={{ mt: 1 }}>
-        <strong>Comentarios:</strong> {progreso.validaciones[0].comentarios}
-      </Typography>
-    )}
-  </Box>
+                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '75%' }, flexGrow: 1 }}>
+                      <Typography variant="h6">
+                        {progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Fase: {progreso.actividad?.fase?.nombre || 'Sin fase'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                        <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
+                          {progreso.residente?.nombre?.charAt(0) || '?'}
+                        </Avatar>
+                        <Typography variant="body2">
+                          {progreso.residente?.nombre} {progreso.residente?.apellidos}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Validado el: {new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}
+                      </Typography>
+                      {progreso.validaciones?.[0]?.comentarios && (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          <strong>Comentarios:</strong> {progreso.validaciones[0].comentarios}
+                        </Typography>
+                      )}
+                    </Box>
 
-  <Box
-    sx={{
-      p: 2,
-      flexBasis: { xs: '100%', sm: '25%' }, // 3/12
-      display: 'flex',
-      justifyContent: 'flex-end'
-    }}
-  >
-    <Chip
-      icon={<CheckCircleIcon />}
-      label="Validado"
-      color="success"
-      variant="outlined"
-    />
-  </Box>
-</Box>
-
+                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '25%' }, display: 'flex', justifyContent: 'flex-end' }}>
+                      <Chip icon={<CheckCircleIcon />} label="Validado" color="success" variant="outlined" />
+                    </Box>
+                  </Box>
                 </Paper>
               ))}
             </List>
           )}
         </TabPanel>
+
         
         {/* Panel de Rechazadas */}
         <TabPanel value={tabValue} index={2}>
@@ -407,54 +389,35 @@ const handleRechazar = async () => {
               {rechazadas.map(progreso => (
                 <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
                   <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
-  <Box
-    sx={{
-      p: 2,
-      flexBasis: { xs: '100%', sm: '75%' }, // 9/12
-      flexGrow: 1
-    }}
-  >
-    <Typography variant="h6">
-      {progreso.actividad.nombre}
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      Fase: {progreso.actividad.fase.nombre}
-    </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-      <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
-        {progreso.residente.nombre.charAt(0)}
-      </Avatar>
-      <Typography variant="body2">
-        {progreso.residente.nombre} {progreso.residente.apellidos}
-      </Typography>
-    </Box>
-    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-      Rechazado el: {new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}
-    </Typography>
-    {progreso.comentariosRechazo && (
-      <Typography variant="body2" sx={{ mt: 1 }}>
-        <strong>Motivo:</strong> {progreso.comentariosRechazo}
-      </Typography>
-    )}
-  </Box>
+                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '75%' }, flexGrow: 1 }}>
+                      <Typography variant="h6">
+                        {progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Fase: {progreso.actividad?.fase?.nombre || 'Sin fase'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                        <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
+                          {progreso.residente?.nombre?.charAt(0) || '?'}
+                        </Avatar>
+                        <Typography variant="body2">
+                          {progreso.residente?.nombre} {progreso.residente?.apellidos}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Rechazado el: {new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}
+                      </Typography>
+                      {progreso.comentariosRechazo && (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          <strong>Motivo:</strong> {progreso.comentariosRechazo}
+                        </Typography>
+                      )}
+                    </Box>
 
-  <Box
-    sx={{
-      p: 2,
-      flexBasis: { xs: '100%', sm: '25%' }, // 3/12
-      display: 'flex',
-      justifyContent: 'flex-end'
-    }}
-  >
-    <Chip
-      icon={<ErrorIcon />}
-      label="Rechazado"
-      color="error"
-      variant="outlined"
-    />
-  </Box>
-</Box>
-
+                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '25%' }, display: 'flex', justifyContent: 'flex-end' }}>
+                      <Chip icon={<ErrorIcon />} label="Rechazado" color="error" variant="outlined" />
+                    </Box>
+                  </Box>
                 </Paper>
               ))}
             </List>
