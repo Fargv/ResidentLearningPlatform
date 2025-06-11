@@ -101,44 +101,33 @@ const AdminFases: React.FC = () => {
 
   //eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError('No hay token disponible para autenticar la solicitud');
-          setLoading(false);
-          return;
-        }
-  
-        const usuariosRes = await api.get(`${process.env.REACT_APP_API_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUsuariosLista(usuariosRes.data.data);
-  
-        const hospitalesRes = await api.get('/api/hospitals', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setHospitales(hospitalesRes.data.data);
-  
-        const fasesRes = await api.get(`${process.env.REACT_APP_API_URL}/fases`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setFases(fasesRes.data.data);
-  
-      } catch (err: any) {
-        if (err.response?.status === 403) {
-          setError('No tienes permisos para ver esta sección');
-        } else {
-          setError(err.response?.data?.error || 'Error al cargar los datos');
-        }
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      const usuariosRes = await api.get('/users');
+      setUsuariosLista(usuariosRes.data.data);
+
+      const hospitalesRes = await api.get('/hospitals');
+      setHospitales(hospitalesRes.data.data);
+
+      const fasesRes = await api.get('/fases');
+      setFases(fasesRes.data.data);
+
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        setError('No tienes permisos para ver esta sección');
+      } else {
+        setError(err.response?.data?.error || 'Error al cargar los datos');
       }
-    };
-  
-    fetchData(); // ✅ Estaba fuera, ahora va dentro
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
   
     
   
