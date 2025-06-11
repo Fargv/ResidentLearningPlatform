@@ -33,7 +33,8 @@ import {
   Delete as DeleteIcon,
   //Assignment as AssignmentIcon
 } from '@mui/icons-material';
-import axios from 'axios';
+  import api from '../../api';
+
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -110,17 +111,17 @@ const AdminFases: React.FC = () => {
           return;
         }
   
-        const usuariosRes = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
+        const usuariosRes = await api.get(`${process.env.REACT_APP_API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsuariosLista(usuariosRes.data.data);
   
-        const hospitalesRes = await axios.get('/api/hospitals', {
+        const hospitalesRes = await api.get('/api/hospitals', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setHospitales(hospitalesRes.data.data);
   
-        const fasesRes = await axios.get(`${process.env.REACT_APP_API_URL}/fases`, {
+        const fasesRes = await api.get(`${process.env.REACT_APP_API_URL}/fases`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setFases(fasesRes.data.data);
@@ -197,7 +198,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.post('/api/fases', {
+      const res = await api.post('/fases', {
         ...faseFormData,
         numero: parseInt(faseFormData.numero)
       });
@@ -231,11 +232,11 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.put(`/api/fases/${selectedFase._id}`, {
+      const res = await api.put(`/fases/${selectedFase._id}`, {
         ...faseFormData,
         numero: parseInt(faseFormData.numero)
       });
-      
+   
       // Actualizar lista de fases
       setFases(fases.map(f => f._id === selectedFase._id ? res.data.data : f));
       
@@ -265,7 +266,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      await axios.delete(`/api/fases/${selectedFase._id}`);
+      await api.delete(`/fases/${selectedFase._id}`);
       
       // Actualizar lista de fases
       setFases(fases.filter(f => f._id !== selectedFase._id));
@@ -350,10 +351,10 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.post('/api/actividades', {
-        ...actividadFormData,
-        orden: parseInt(actividadFormData.orden)
-      });
+      const res = await api.post('/actividades', {
+            ...actividadFormData,
+            orden: parseInt(actividadFormData.orden)
+          });
       
       // Actualizar lista de actividades
       setActividades([...actividades, res.data.data]);
@@ -379,38 +380,40 @@ const AdminFases: React.FC = () => {
   };
 
   const handleEditarActividad = async () => {
-    if (!selectedActividad) return;
-    
-    try {
-      setProcesando(true);
-      
-      const res = await axios.put(`/api/actividades/${selectedActividad._id}`, {
-        ...actividadFormData,
-        orden: parseInt(actividadFormData.orden)
-      });
-      
-      // Actualizar lista de actividades
-      setActividades(actividades.map(a => a._id === selectedActividad._id ? res.data.data : a));
-      
-      handleCloseEditarActividadDialog();
-      
-      setSnackbar({
-        open: true,
-        message: 'Actividad actualizada correctamente',
-        severity: 'success'
-      });
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al actualizar la actividad');
-      
-      setSnackbar({
-        open: true,
-        message: err.response?.data?.error || 'Error al actualizar la actividad',
-        severity: 'error'
-      });
-    } finally {
-      setProcesando(false);
-    }
-  };
+  if (!selectedActividad) return;
+
+  try {
+    setProcesando(true);
+
+    const res = await api.put(`/actividades/${selectedActividad._id}`, {
+      ...actividadFormData,
+      orden: parseInt(actividadFormData.orden)
+    });
+
+    // Actualizar lista de actividades
+    setActividades(
+      actividades.map(a => a._id === selectedActividad._id ? res.data.data : a)
+    );
+
+    handleCloseEditarActividadDialog();
+
+    setSnackbar({
+      open: true,
+      message: 'Actividad actualizada correctamente',
+      severity: 'success'
+    });
+  } catch (err: any) {
+    setError(err.response?.data?.error || 'Error al actualizar la actividad');
+
+    setSnackbar({
+      open: true,
+      message: err.response?.data?.error || 'Error al actualizar la actividad',
+      severity: 'error'
+    });
+  } finally {
+    setProcesando(false);
+  }
+};
 
   const handleEliminarActividad = async () => {
     if (!selectedActividad) return;
@@ -418,7 +421,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      await axios.delete(`/api/actividades/${selectedActividad._id}`);
+      await api.delete(`/actividades/${selectedActividad._id}`);
       
       // Actualizar lista de actividades
       setActividades(actividades.filter(a => a._id !== selectedActividad._id));
