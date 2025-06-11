@@ -11,17 +11,25 @@ const mongoose = require('mongoose');
 const { inicializarProgresoFormativo: inicializarProgresoFormativoDB } = require('../utils/initProgreso');
 
 const updatePhaseStatus = async (progreso) => {
-  await progreso.populate('fase residente');
+  await progreso.populate(['fase', 'residente']);
+
   const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
-  if (!todasValidadas) return;
+  if (!todasValidadas) {
+    console.log(`⏳ No todas las actividades están validadas aún en fase "${progreso.fase.nombre}" para ${progreso.residente.email}`);
+    return;
+  }
 
   if (progreso.estadoGeneral !== 'validado') {
     progreso.estadoGeneral = 'validado';
     await progreso.save();
+    console.log(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
   }
 
   const nextFase = await Fase.findOne({ orden: progreso.fase.orden + 1 });
-  if (!nextFase) return;
+  if (!nextFase) {
+    console.log(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
+    return;
+  }
 
   const nextProgreso = await ProgresoResidente.findOne({
     residente: progreso.residente._id,
@@ -31,8 +39,12 @@ const updatePhaseStatus = async (progreso) => {
   if (nextProgreso && nextProgreso.estadoGeneral === 'bloqueada') {
     nextProgreso.estadoGeneral = 'en progreso';
     await nextProgreso.save();
+    console.log(`🚀 Fase "${nextFase.nombre}" DESBLOQUEADA para ${progreso.residente.email}`);
+  } else {
+    console.log(`ℹ️ Fase "${nextFase.nombre}" ya estaba desbloqueada o no encontrada`);
   }
 };
+
 
 
 
@@ -634,7 +646,9 @@ const getValidacionesPendientes = async (req, res, next) => {
     const { id, index } = req.params;
     const { comentarios, firmaDigital } = req.body;
 
-    const progreso = await ProgresoResidente.findById(id).populate('residente');
+    const progreso = await ProgresoResidente.findById(id);
+    await progreso.populate(['residente', 'fase']); // ⬅️ AÑADIDO CRUCIAL
+
     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
@@ -667,6 +681,7 @@ const getValidacionesPendientes = async (req, res, next) => {
     next(err);
   }
 };
+
 
 const rechazarActividad = async (req, res, next) => {
   try {
