@@ -524,22 +524,17 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     const actividadOriginal = progreso.actividades[index];
-      if (!actividadOriginal || !actividadOriginal.actividad) {
-        return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
-      }
+    if (!actividadOriginal || !actividadOriginal.actividad) {
+      return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
+    }
 
-      progreso.actividades[index] = {
-        ...actividadOriginal,
-        estado: 'validado', // o 'rechazado'
-        comentariosFormador: comentarios, // o comentariosRechazo
-        firmaDigital: firmaDigital,
-        fechaValidacion: new Date(), // o fechaRechazo
-      };
-
-    actividad.completada = true;
-    actividad.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
-    actividad.comentariosResidente = comentariosResidente;
-    actividad.estado = 'completado';
+    progreso.actividades[index] = {
+      ...actividadOriginal,
+      estado: 'completado',
+      completada: true,
+      fechaRealizacion: fechaRealizacion ? new Date(fechaRealizacion) : new Date(),
+      comentariosResidente: comentariosResidente,
+    };
 
     await progreso.save();
 
