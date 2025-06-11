@@ -6,6 +6,19 @@ const Actividad = require('../src/models/Actividad');
 
 dotenv.config();
 
+function extractOid(value) {
+  if (value && typeof value === 'object' && '$oid' in value) {
+    return value.$oid;
+  }
+  if (typeof value === 'string') {
+    const match = value.match(/ObjectId\(['"]?([a-fA-F0-9]{24})['"]?\)/);
+    if (match) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
 // Puedes dejar esta URI en .env o pegarla directamente aquí si prefieres:
 const MONGO_URI = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0';
 
@@ -20,18 +33,27 @@ const main = async () => {
     await Actividad.deleteMany({});
     console.log('🧹 Actividades anteriores eliminadas');
 
-    const actividades = actividadesJSON.map(a => ({
-      _id: a._id.$oid,
-      nombre: a.nombre,
-      fase: new mongoose.Types.ObjectId(a.fase.$oid),
-      orden: a.orden,
-      descripcion: a.nombre,
-      tipo: 'práctica',
-      requiereValidacion: true,
-      requiereFirma: false,
-      requierePorcentaje: false,
-      requiereAdjunto: false,
-    }));
+     const actividades = actividadesJSON.map(a => {
+      const idHex = extractOid(a._id);
+      const faseHex = extractOid(a.fase);
+
+      if (!mongoose.Types.ObjectId.isValid(idHex) || !mongoose.Types.ObjectId.isValid(faseHex)) {
+        throw new Error(`ID inválido en actividad: ${a.nombre}`);
+      }
+
+      return {
+        _id: new mongoose.Types.ObjectId(idHex),
+        nombre: a.nombre,
+        fase: new mongoose.Types.ObjectId(faseHex),
+        orden: a.orden,
+        descripcion: a.nombre,
+        tipo: 'práctica',
+        requiereValidacion: true,
+        requiereFirma: false,
+        requierePorcentaje: false,
+        requiereAdjunto: false,
+      };
+    });
 
     await Actividad.insertMany(actividades);
     console.log(`✅ ${actividades.length} actividades insertadas correctamente`);
