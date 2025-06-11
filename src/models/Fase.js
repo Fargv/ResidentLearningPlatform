@@ -5,7 +5,7 @@ const faseSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Por favor proporcione un número de fase'],
     min: 1,
-    max: 4
+    max: 10
   },
   nombre: {
     type: String,
