@@ -127,6 +127,7 @@ const getProgresoResidente = async (req, res, next) => {
             nombre: act.nombre,
             completada: act.estado === 'validado',
             comentariosResidente: act.comentariosResidente || '',
+            fecha: act.fechaRealizacion,
             estado: act.estado
           }))
         };
@@ -515,7 +516,7 @@ const getEstadisticasResidente = async (req, res, next) => {
 const marcarActividadCompletada = async (req, res, next) => {
   try {
     const { id, index } = req.params;
-    const { comentarios } = req.body;
+    const { fechaRealizacion, comentariosResidente } = req.body;
 
     const progreso = await ProgresoResidente.findById(id);
     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
@@ -525,8 +526,8 @@ const marcarActividadCompletada = async (req, res, next) => {
     const actividad = progreso.actividades[index];
 
     actividad.completada = true;
-    actividad.fechaRealizacion = new Date();
-    actividad.comentariosResidente = comentarios;
+    actividad.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+    actividad.comentariosResidente = comentariosResidente;
     actividad.estado = 'completado';
 
     await progreso.save();

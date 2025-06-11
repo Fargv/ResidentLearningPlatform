@@ -221,7 +221,7 @@ const ResidenteFases: React.FC = () => {
     </>
   }
 />
-                  {(!act.estado || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada' && (
+                  {((!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada') && (
                     <Button
                       size="small"
                       variant="outlined"
