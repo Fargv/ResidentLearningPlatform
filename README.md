@@ -129,6 +129,21 @@ El script actualiza las fases que todavía usan el campo `titulo`, rellena el
 orden con el número de la fase y vincula cada actividad de los registros de
 `ProgresoResidente` con su documento `Actividad` correspondiente.
 
+## Carga inicial de fases y actividades
+Para empezar con una base de datos vacía, ejecuta los scripts `scripts/resetFases.js`
+y `scripts/resetActividades.js`. Antes de lanzarlos, configura la variable
+`MONGO_URI` con tu cadena de conexión (en un archivo `.env` o exportándola en la
+terminal).
+
+```bash
+node scripts/resetFases.js
+node scripts/resetActividades.js
+```
+
+Las actividades deben referenciar los identificadores de las fases recién
+creadas; de lo contrario, la inicialización del progreso no podrá asociarlas
+correctamente.
+
 
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.
