@@ -309,7 +309,7 @@ const handleRechazar = async () => {
                         variant="contained"
                         color="success"
                         startIcon={<CheckCircleIcon />}
-                        onClick={() => handleOpenValidarDialog({ progresoId: progreso.progresoId, index: progreso.index, ...progreso })}
+                        onClick={() => handleOpenValidarDialog({ progresoId: progreso.progresoId || progreso._id.split('-')[0], index: progreso.index, ...progreso })}
                         fullWidth
                       >
                         Validar
@@ -318,7 +318,7 @@ const handleRechazar = async () => {
                         variant="contained"
                         color="error"
                         startIcon={<ErrorIcon />}
-                        onClick={() => handleOpenRechazarDialog({ progresoId: progreso.progresoId, index: progreso.index, ...progreso })}
+                        onClick={() => handleOpenRechazarDialog({ progresoId: progreso.progresoId || progreso._id.split('-')[0], index: progreso.index, ...progreso })}
                         fullWidth
                       >
                         Rechazar
