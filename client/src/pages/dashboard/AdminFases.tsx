@@ -3,8 +3,6 @@ import {
   Box,
   Typography,
   Paper,
-  Card,
-  CardContent,
   Divider,
   Button,
   TextField,
@@ -66,7 +64,7 @@ const AdminFases: React.FC = () => {
   //const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usuarios, setUsuariosLista] = useState<any[]>([]);
+  //const [usuarios, setUsuariosLista] = useState<any[]>([]);
   const [fases, setFases] = useState<any[]>([]);
   const [actividades, setActividades] = useState<any[]>([]);
   const [tabValue, setTabValue] = useState(0);
@@ -107,7 +105,7 @@ const AdminFases: React.FC = () => {
       setLoading(true);
 
       const usuariosRes = await api.get('/users');
-      setUsuariosLista(usuariosRes.data.data);
+      //setUsuariosLista(usuariosRes.data.data);
 
       const hospitalesRes = await api.get('/hospitals');
       setHospitales(hospitalesRes.data.data);
@@ -319,10 +317,10 @@ const AdminFases: React.FC = () => {
     setSelectedActividad(null);
   };
 
-  const handleOpenEliminarActividadDialog = (actividad: any) => {
-    setSelectedActividad(actividad);
-    setOpenEliminarActividadDialog(true);
-  };
+  //const handleOpenEliminarActividadDialog = (actividad: any) => {
+   // setSelectedActividad(actividad);
+//setOpenEliminarActividadDialog(true);
+  //};
 
   const handleCloseEliminarActividadDialog = () => {
     setOpenEliminarActividadDialog(false);

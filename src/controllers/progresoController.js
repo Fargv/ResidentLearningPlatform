@@ -773,5 +773,6 @@ module.exports = {
   validarActividad,
   rechazarActividad,
   crearProgresoParaUsuario,
-  updatePhaseStatus
+  updatePhaseStatus,
+  getCountProgresosByActividad
 };
