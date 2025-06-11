@@ -18,13 +18,7 @@ const inicializarProgresoFormativo = async (usuario) => {
       }
 
       const actividades = actividadesDB.map(act => ({
-        actividad: {
-          _id: act._id,
-          nombre: act.nombre,
-          descripcion: act.descripcion || '',
-          orden: act.orden || 0,
-          fase: act.fase,
-        },
+        actividad: act._id,
         nombre: act.nombre,
         completada: false,
         estado: 'pendiente',
