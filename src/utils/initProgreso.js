@@ -4,13 +4,12 @@ const Actividad = require('../models/Actividad');
 
 const inicializarProgresoFormativo = async (usuario) => {
   try {
-    const fases = await Fase.find().sort('numero');  // ✅ Corrección aquí
+    const fases = await Fase.find().sort('numero');
     console.log("📦 Fases encontradas:", fases.map(f => ({ id: f._id, nombre: f.nombre })));
     let createdCount = 0;
 
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
-
       const actividadesDB = await Actividad.find({ fase: fase._id }).sort('orden');
 
       if (!actividadesDB.length) {
@@ -19,28 +18,32 @@ const inicializarProgresoFormativo = async (usuario) => {
       }
 
       const actividades = actividadesDB.map(act => ({
-          actividad: {
-            _id: act._id,
-            nombre: act.nombre,
-            descripcion: act.descripcion || '',
-            orden: act.orden || 0,
-            fase: act.fase,
-          },
+        actividad: {
+          _id: act._id,
           nombre: act.nombre,
-          completada: false,
-          estado: 'pendiente',
-          comentariosResidente: '',
-          comentariosFormador: '',
-          fechaRealizacion: null,
-          firmaDigital: '',
-        }));
+          descripcion: act.descripcion || '',
+          orden: act.orden || 0,
+          fase: act.fase,
+        },
+        nombre: act.nombre,
+        completada: false,
+        estado: 'pendiente',
+        comentariosResidente: '',
+        comentariosFormador: '',
+        fechaRealizacion: null,
+        firmaDigital: '',
+      }));
 
+      // 🔍 Debug para confirmar que el objeto se crea correctamente
+      if (i === 0) {
+        console.log('🧪 Actividad generada:', actividades[0]);
+      }
 
       const creado = await ProgresoResidente.create({
         residente: usuario._id,
         fase: fase._id,
         actividades,
-        estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',  // Solo la 1ª en progreso
+        estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',
         fechaRegistro: new Date(),
       });
 
