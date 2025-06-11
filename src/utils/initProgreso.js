@@ -19,15 +19,21 @@ const inicializarProgresoFormativo = async (usuario) => {
       }
 
       const actividades = actividadesDB.map(act => ({
-        actividad: act._id,
-        nombre: act.nombre,
-        completada: false,
-        estado: 'pendiente',
-        comentariosResidente: '',
-        comentariosFormador: '',
-        fechaRealizacion: null,
-        firmaDigital: '',
-      }));
+          actividad: {
+            _id: act._id,
+            nombre: act.nombre,
+            descripcion: act.descripcion || '',
+            orden: act.orden || 0,
+            fase: act.fase,
+          },
+          nombre: act.nombre,
+          completada: false,
+          estado: 'pendiente',
+          comentariosResidente: '',
+          comentariosFormador: '',
+          fechaRealizacion: null,
+          firmaDigital: '',
+        }));
 
       const creado = await ProgresoResidente.create({
         residente: usuario._id,
