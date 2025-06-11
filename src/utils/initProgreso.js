@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Fase = require('../models/Fase');
 const Actividad = require('../models/Actividad');
@@ -18,7 +19,7 @@ const inicializarProgresoFormativo = async (usuario) => {
       }
 
       const actividades = actividadesDB.map(act => ({
-        actividad: act._id,
+        actividad: new mongoose.Types.ObjectId(act._id), // ✅ Forzar ObjectId válido
         nombre: act.nombre,
         completada: false,
         estado: 'pendiente',
@@ -28,9 +29,10 @@ const inicializarProgresoFormativo = async (usuario) => {
         firmaDigital: '',
       }));
 
-      // 🔍 Debug para confirmar que el objeto se crea correctamente
       if (i === 0) {
-        console.log('🧪 Actividad generada:', actividades[0]);
+        console.log('🧪 ACTIVIDAD 0:', actividades[0]);
+        console.log('🧪 tipo actividad:', typeof actividades[0].actividad);
+        console.log('🧪 es ObjectId:', actividades[0].actividad instanceof mongoose.Types.ObjectId);
       }
 
       const creado = await ProgresoResidente.create({
