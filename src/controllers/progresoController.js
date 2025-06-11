@@ -528,13 +528,13 @@ const marcarActividadCompletada = async (req, res, next) => {
       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
     }
 
-    progreso.actividades[index] = {
-      ...actividadOriginal,
-      estado: 'completado',
-      completada: true,
-      fechaRealizacion: fechaRealizacion ? new Date(fechaRealizacion) : new Date(),
-      comentariosResidente: comentariosResidente,
-    };
+    const actividadExistente = progreso.actividades[index];
+
+          actividadExistente.estado = 'completado';
+          actividadExistente.completada = true;
+          actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+          actividadExistente.comentariosResidente = comentariosResidente;
+
 
     await progreso.save();
 
@@ -629,7 +629,7 @@ const getValidacionesPendientes = async (req, res, next) => {
   }
 };
 
-const validarActividad = async (req, res, next) => {
+  const validarActividad = async (req, res, next) => {
   try {
     const { id, index } = req.params;
     const { comentarios, firmaDigital } = req.body;
@@ -639,22 +639,19 @@ const validarActividad = async (req, res, next) => {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
 
-    const actividadOriginal = progreso.actividades[index];
-    if (!actividadOriginal || !actividadOriginal.actividad) {
+    const actividad = progreso.actividades[index];
+    if (!actividad || !actividad.actividad) {
       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
     }
 
-    if (actividadOriginal.estado !== 'completado') {
+    if (actividad.estado !== 'completado') {
       return next(new ErrorResponse('Solo se pueden validar actividades completadas', 400));
     }
 
-    progreso.actividades[index] = {
-      ...actividadOriginal,
-      estado: 'validado',
-      comentariosFormador: comentarios,
-      firmaDigital: firmaDigital,
-      fechaValidacion: new Date(),
-    };
+    actividad.estado = 'validado';
+    actividad.comentariosFormador = comentarios;
+    actividad.firmaDigital = firmaDigital;
+    actividad.fechaValidacion = new Date();
 
     await progreso.save();
     await updatePhaseStatus(progreso);
@@ -662,7 +659,7 @@ const validarActividad = async (req, res, next) => {
     await Notificacion.create({
       usuario: progreso.residente._id,
       tipo: 'validacion',
-      mensaje: `Tu actividad "${actividadOriginal.actividad.nombre}" ha sido validada.`
+      mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido validada.`
     });
 
     res.status(200).json({ success: true, data: progreso });
@@ -681,28 +678,25 @@ const rechazarActividad = async (req, res, next) => {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
 
-    const actividadOriginal = progreso.actividades[index];
-    if (!actividadOriginal || !actividadOriginal.actividad) {
+    const actividad = progreso.actividades[index];
+    if (!actividad || !actividad.actividad) {
       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
     }
 
-    if (actividadOriginal.estado !== 'completado') {
+    if (actividad.estado !== 'completado') {
       return next(new ErrorResponse('Solo se pueden rechazar actividades completadas', 400));
     }
 
-    progreso.actividades[index] = {
-      ...actividadOriginal,
-      estado: 'rechazado',
-      comentariosRechazo: comentarios,
-      fechaRechazo: new Date(),
-    };
+    actividad.estado = 'rechazado';
+    actividad.comentariosRechazo = comentarios;
+    actividad.fechaRechazo = new Date();
 
     await progreso.save();
 
     await Notificacion.create({
       usuario: progreso.residente._id,
       tipo: 'rechazo',
-      mensaje: `Tu actividad "${actividadOriginal.actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
+      mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
     });
 
     res.status(200).json({ success: true, data: progreso });
@@ -710,6 +704,7 @@ const rechazarActividad = async (req, res, next) => {
     next(err);
   }
 };
+
 
 
 const crearProgresoParaUsuario = async (req, res, next) => {
