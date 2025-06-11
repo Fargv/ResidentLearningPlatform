@@ -114,6 +114,9 @@ const AdminFases: React.FC = () => {
       const fasesRes = await api.get('/fases');
       setFases(fasesRes.data.data);
 
+      const actividadesRes = await api.get('/actividades');
+      setActividades(actividadesRes.data.data);
+
     } catch (err: any) {
       if (err.response?.status === 403) {
         setError('No tienes permisos para ver esta sección');
@@ -128,9 +131,6 @@ const AdminFases: React.FC = () => {
   fetchData();
 }, []);
 
-  
-    
-  
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
