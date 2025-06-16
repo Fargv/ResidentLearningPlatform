@@ -298,44 +298,6 @@ const AdminUsuarios: React.FC = () => {
           Invitar Usuario
         </Button>
       </Box>
-
-      
-    {/* Resumen */}
-<Paper sx={{ p: 2, mb: 3 }}>
-  <Box display="flex" flexWrap="wrap" gap={2}>
-    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-      <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-        <CardContent>
-          <Typography variant="h4">
-            {usuarios.filter(u => u.rol === 'administrador').length}
-          </Typography>
-          <Typography variant="body2">Administradores</Typography>
-        </CardContent>
-      </Card>
-    </Box>
-    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-      <Card sx={{ bgcolor: 'secondary.light', color: 'white' }}>
-        <CardContent>
-          <Typography variant="h4">
-            {usuarios.filter(u => u.rol === 'formador').length}
-          </Typography>
-          <Typography variant="body2">Formadores</Typography>
-        </CardContent>
-      </Card>
-    </Box>
-    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-      <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
-        <CardContent>
-          <Typography variant="h4">
-            {usuarios.filter(u => u.rol === 'residente').length}
-          </Typography>
-          <Typography variant="body2">Residentes</Typography>
-        </CardContent>
-      </Card>
-    </Box>
-  </Box>
-</Paper>
-
       
       {/* Tabla de usuarios */}
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
