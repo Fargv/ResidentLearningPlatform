@@ -123,8 +123,11 @@ exports.deleteActividad = async (req, res, next) => {
       return next(new ErrorResponse('Actividad no encontrada', 404));
     }
 
-    // Eliminar progresos relacionados
-    const deletedProgress = await ProgresoResidente.deleteMany({ actividad: req.params.id });
+   // Eliminar actividad de los progresos que la contengan y no esté validada
+    const updateResult = await ProgresoResidente.updateMany(
+      { 'actividades.actividad': req.params.id },
+      { $pull: { actividades: { actividad: req.params.id, estado: { $ne: 'validado' } } } }
+    );
 
     // Luego eliminar la actividad
     await actividad.deleteOne();
@@ -132,7 +135,7 @@ exports.deleteActividad = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: {},
-      mensaje: `Actividad eliminada junto con ${deletedProgress.deletedCount} registros de progreso`
+      mensaje: `Actividad eliminada y ${updateResult.modifiedCount} progresos actualizados`
     });
   } catch (err) {
     next(err);

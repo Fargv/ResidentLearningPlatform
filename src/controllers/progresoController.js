@@ -745,7 +745,9 @@ const crearProgresoParaUsuario = async (req, res, next) => {
 
 const getCountProgresosByActividad = async (req, res, next) => {
   try {
-    const count = await ProgresoResidente.countDocuments({ actividad: req.params.id });
+    const count = await ProgresoResidente.countDocuments({
+      'actividades.actividad': req.params.id
+    });
     res.status(200).json({ success: true, count });
   } catch (err) {
     next(err);
