@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const Fase = require('../models/Fase');
 const Actividad = require('../models/Actividad');
+const ProgresoResidente = require('../models/ProgresoResidente');
 const { createAuditLog } = require('../utils/auditLog');
 
 // @desc    Obtener todas las fases
@@ -118,9 +119,18 @@ exports.deleteFase = async (req, res, next) => {
       return next(new ErrorResponse(`No se puede eliminar la fase porque tiene ${actividadesCount} actividades asociadas`, 400));
     }
 
+    const deleteResult = await ProgresoResidente.deleteMany({
+      fase: req.params.id,
+      estadoGeneral: { $ne: 'validado' }
+    });
+
+    const preservedCount = await ProgresoResidente.countDocuments({
+      fase: req.params.id,
+      estadoGeneral: 'validado'
+    });
+
     await fase.remove();
     
-    // Crear registro de auditoría
     await createAuditLog({
       usuario: req.user._id,
       accion: 'eliminar_fase',
@@ -130,7 +140,8 @@ exports.deleteFase = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: {}
+      removedCount: deleteResult.deletedCount || 0,
+      preservedCount
     });
   } catch (err) {
     next(err);
