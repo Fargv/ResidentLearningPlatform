@@ -86,7 +86,7 @@ const AdminFases: React.FC = () => {
   const [actividadFormData, setActividadFormData] = useState({
     nombre: '',
     descripcion: '',
-    tipo: 'teorica',
+    tipo: 'teórica',
     fase: '',
     orden: ''
   });
@@ -164,9 +164,22 @@ const AdminFases: React.FC = () => {
     setSelectedFase(null);
   };
 
-  const handleOpenEliminarFaseDialog = (fase: any) => {
-    setSelectedFase(fase);
-    setOpenEliminarFaseDialog(true);
+  const handleConfirmarEliminarFase = async (fase: any) => {
+    try {
+      setProcesando(true);
+      const res = await api.get(`/progreso/fase/${fase._id}/count`);
+      setProgresoVinculado(res.data.count);
+      setSelectedFase(fase);
+      setOpenEliminarFaseDialog(true);
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: 'Error al comprobar progresos vinculados',
+        severity: 'error'
+      });
+    } finally {
+      setProcesando(false);
+    }
   };
 
   const handleCloseEliminarFaseDialog = () => {
@@ -254,7 +267,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      await api.delete(`/fases/${selectedFase._id}`);
+      const res = await api.delete(`/fases/${selectedFase._id}`);
       
       // Actualizar lista de fases
       setFases(fases.filter(f => f._id !== selectedFase._id));
@@ -266,7 +279,7 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Fase eliminada correctamente',
+        message: `Fase eliminada correctamente. Progresos eliminados: ${res.data.removedCount || 0}. Validados preservados: ${res.data.preservedCount || 0}`,
         severity: 'success'
       });
     } catch (err: any) {
@@ -287,7 +300,7 @@ const AdminFases: React.FC = () => {
     setActividadFormData({
       nombre: '',
       descripcion: '',
-      tipo: 'teorica',
+      tipo: 'teórica',
       fase: fase._id,
       orden: ''
     });
@@ -525,7 +538,7 @@ const AdminFases: React.FC = () => {
                 variant="outlined"
                 color="error"
                 startIcon={<DeleteIcon />}
-                onClick={() => handleOpenEliminarFaseDialog(fase)}
+                onClick={() => handleConfirmarEliminarFase(fase)}
               >
                 Eliminar Fase
               </Button>
@@ -571,14 +584,28 @@ const AdminFases: React.FC = () => {
                         <TableCell>{actividad.orden}</TableCell>
                         <TableCell>{actividad.nombre}</TableCell>
                         <TableCell>
-                          <Chip 
-                            label={actividad.tipo === 'teorica' ? 'Teórica' : actividad.tipo === 'practica' ? 'Práctica' : 'Evaluación'} 
+                         <Chip
+                            label={
+                              actividad.tipo === 'teórica'
+                                ? 'Teórica'
+                                : actividad.tipo === 'práctica'
+                                  ? 'Práctica'
+                                  : actividad.tipo === 'evaluación'
+                                    ? 'Evaluación'
+                                    : actividad.tipo === 'observación'
+                                      ? 'Observación'
+                                      : 'Procedimiento'
+                            } 
                             color={
-                              actividad.tipo === 'teorica' 
-                                ? 'primary' 
-                                : actividad.tipo === 'practica' 
-                                  ? 'secondary' 
-                                  : 'warning'
+                              actividad.tipo === 'teórica'
+                                ? 'primary'
+                                : actividad.tipo === 'práctica'
+                                  ? 'secondary'
+                                  : actividad.tipo === 'evaluación'
+                                    ? 'warning'
+                                    : actividad.tipo === 'observación'
+                                      ? 'info'
+                                      : 'success'
                             }
                             size="small"
                           />
@@ -749,7 +776,11 @@ const AdminFases: React.FC = () => {
         <DialogTitle>Eliminar Fase</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar la fase <strong>{selectedFase?.nombre}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase.
+            {progresoVinculado !== null && progresoVinculado > 0 ? (
+              <>La fase <strong>{selectedFase?.nombre}</strong> tiene <strong>{progresoVinculado}</strong> registros de progreso. ¿Deseas eliminarla? Los progresos validados se mantendrán.</>
+            ) : (
+              <>¿Estás seguro de que deseas eliminar la fase <strong>{selectedFase?.nombre}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase.</>
+            )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -904,9 +935,11 @@ const AdminFases: React.FC = () => {
                 }
               }}
           >
-            <option value="teorica">Teórica</option>
-            <option value="practica">Práctica</option>
-            <option value="evaluacion">Evaluación</option>
+            <option value="teórica">Teórica</option>
+            <option value="práctica">Práctica</option>
+            <option value="evaluación">Evaluación</option>
+            <option value="observación">Observación</option>
+            <option value="procedimiento">Procedimiento</option>
           </TextField>
           <TextField
             select

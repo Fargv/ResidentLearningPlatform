@@ -83,7 +83,7 @@ echo "ID de la fase: $FASE_ID"
 
 # Prueba 6: Crear una actividad
 echo "Prueba 6: Creando actividad..."
-ACTIVIDAD_DATA="{\"nombre\":\"Actividad de Prueba\",\"descripcion\":\"Esta es una actividad de prueba\",\"tipo\":\"teorica\",\"fase\":\"$FASE_ID\",\"orden\":1}"
+ACTIVIDAD_DATA="{\"nombre\":\"Actividad de Prueba\",\"descripcion\":\"Esta es una actividad de prueba\",\"tipo\":\"teórica\",\"fase\":\"$FASE_ID\",\"orden\":1}"
 ACTIVIDAD_RESULT=$(make_request "POST" "/actividades" "$ACTIVIDAD_DATA" "$ADMIN_TOKEN")
 ACTIVIDAD_ID=$(echo $ACTIVIDAD_RESULT | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 echo "ID de la actividad: $ACTIVIDAD_ID"
