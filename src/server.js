@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: 'https://residentlearningplatform.netlify.app',
   credentials: true
 }));
 app.use(fileupload());
