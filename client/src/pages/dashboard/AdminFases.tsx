@@ -444,7 +444,7 @@ const AdminFases: React.FC = () => {
   const handleConfirmarEliminarActividad = async (actividad: any) => {
   try {
     setProcesando(true);
-    const res = await api.get(`/progresos/actividad/${actividad._id}/count`);
+    const res = await api.get(`/progreso/actividad/${actividad._id}/count`);
     setProgresoVinculado(res.data.count);
     setSelectedActividad(actividad);
     setOpenEliminarActividadDialog(true);
