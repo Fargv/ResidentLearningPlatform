@@ -4,9 +4,9 @@ import {
   Typography,
   Paper,
   //Grid,
-  Card,
-  CardContent,
-  //Divider,
+  // Card,
+  // CardContent,
+  // Divider,
   Button,
   TextField,
   Dialog,
@@ -259,21 +259,6 @@ const AdminHospitales: React.FC = () => {
           Nuevo Hospital
         </Button>
       </Box>
-      
-      {/* Resumen */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'primary.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">{hospitales.length}</Typography>
-        <Typography variant="body2">Hospitales</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-</Box>
-
-      </Paper>
       
       {/* Tabla de hospitales */}
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>

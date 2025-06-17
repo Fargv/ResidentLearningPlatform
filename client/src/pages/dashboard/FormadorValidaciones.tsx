@@ -4,8 +4,8 @@ import {
   Typography,
   Paper,
   //Grid,
-  Card,
-  CardContent,
+  //Card,
+  //CardContent,
   //Divider,
   Button,
   Chip,
@@ -200,38 +200,6 @@ const handleRechazar = async () => {
         Validaciones
       </Typography>
       
-      {/* Resumen */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'warning.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">{pendientes.length}</Typography>
-        <Typography variant="body2">Pendientes</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'success.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">{validadas.length}</Typography>
-        <Typography variant="body2">Validadas</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-
-  <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '33.333%' } }}>
-    <Card sx={{ bgcolor: 'error.light', color: 'white' }}>
-      <CardContent>
-        <Typography variant="h4">{rechazadas.length}</Typography>
-        <Typography variant="body2">Rechazadas</Typography>
-      </CardContent>
-    </Card>
-  </Box>
-</Box>
-
-      </Paper>
       
       {/* Pestañas */}
       <Paper sx={{ width: '100%' }}>
