@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 const DashboardHome: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   useEffect(() => {
     setLoading(false);
   }, [user]);
