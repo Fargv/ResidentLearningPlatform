@@ -6,6 +6,7 @@ const Invitacion = require('../models/Invitacion');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
+const ProgresoResidente = require('../models/ProgresoResidente');
 
 
 
@@ -131,6 +132,38 @@ exports.updateUserStatus = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Eliminar un usuario y su progreso
+// @route   DELETE /api/users/:id
+// @access  Private/Admin
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
+    }
+
+    await ProgresoResidente.deleteMany({ residente: req.params.id });
+
+    await user.remove();
+
+    await createAuditLog({
+      usuario: req.user._id,
+      accion: 'eliminar_usuario',
+      descripcion: `Usuario eliminado: ${user.email}`,
+      ip: req.ip
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 // @desc    Invitar a un nuevo usuario
 // @route   POST /api/users/invite

@@ -45,7 +45,8 @@ router.route('/residente/:id/formadores')
 
 router.route('/:id')
   .get(authorize('administrador'), getUser)
-  .put(authorize('administrador'), updateUser);
+  .put(authorize('administrador'), updateUser)
+  .delete(authorize('administrador'), deleteUser);
 
 router.route('/:id/status')
   .put(authorize('administrador'), updateUserStatus);
