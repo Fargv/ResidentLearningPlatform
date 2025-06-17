@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import api from '../../api';
 
 const FormadorUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -38,12 +38,7 @@ const FormadorUsuarios: React.FC = () => {
   const fetchUsuarios = useCallback(async () => {
     if (!user?.hospital?._id) return;
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/users/hospital/${user.hospital._id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const res = await api.get(`/users/hospital/${user.hospital._id}`);
       setUsuarios(res.data.data);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Error al cargar usuarios');
@@ -64,17 +59,13 @@ const FormadorUsuarios: React.FC = () => {
   const handleSubmit = async () => {
     try {
       setProcesando(true);
-      const token = localStorage.getItem('token');
+      
 
       if (editar && selected) {
-        const res = await axios.put(`${process.env.REACT_APP_API_URL}/users/${selected._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await api.put(`/users/${selected._id}`, formData);
         setUsuarios(usuarios.map(u => u._id === selected._id ? res.data.data : u));
       } else {
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/invite`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await api.post('/users/invite', formData);
         setUsuarios([...usuarios, res.data.data]);
       }
 
@@ -99,10 +90,8 @@ const FormadorUsuarios: React.FC = () => {
   const handleDelete = async (usuarioId: string) => {
     try {
       setProcesando(true);
-      const token = localStorage.getItem('token');
-      await axios.delete(`${process.env.REACT_APP_API_URL}/users/${usuarioId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/users/${usuarioId}`);
+
       setUsuarios(usuarios.filter(u => u._id !== usuarioId));
       setSnackbar({
         open: true,

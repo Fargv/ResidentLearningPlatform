@@ -31,9 +31,7 @@ import {
   //Email as EmailIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
-
-const API = process.env.REACT_APP_API_URL;
+import api from '../../api';
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -65,21 +63,11 @@ const AdminUsuarios: React.FC = () => {
       try {
         setLoading(true);
   
-        const token = localStorage.getItem('token');
-  
-        const usuariosRes = await axios.get(`${API}/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const usuariosRes = await api.get('/users');
   
         setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
   
-        const hospitalesRes = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const hospitalesRes = await api.get('/hospitals');
   
         setHospitales(hospitalesRes.data.data);
       } catch (err: any) {
@@ -147,7 +135,7 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.post(`${API}/users/invite`, formData);
+      const res = await api.post('/users/invite', formData);
       
       // Actualizar lista de usuarios
       setUsuariosLista([...usuarios, res.data.data]);
@@ -178,7 +166,7 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.put(`${API}/users/${selectedUsuario._id}`, formData);
+      const res = await api.put(`/users/${selectedUsuario._id}`, formData);
       
       // Actualizar lista de usuarios
       setUsuariosLista(usuarios.map(u => u._id === selectedUsuario._id ? res.data.data : u));
@@ -209,7 +197,7 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      await axios.delete(`${API}/users/${selectedUsuario._id}`);
+      await api.delete(`/users/${selectedUsuario._id}`);
       
       // Actualizar lista de usuarios
       setUsuariosLista(usuarios.filter(u => u._id !== selectedUsuario._id));
@@ -236,10 +224,7 @@ const AdminUsuarios: React.FC = () => {
   const handleCrearProgreso = async (usuarioId: string) => {
   try {
     setProcesando(true);
-    const token = localStorage.getItem('token');
-    await axios.post(`${process.env.REACT_APP_API_URL}/progreso/crear/${usuarioId}`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await api.post(`/progreso/crear/${usuarioId}`);
 
     setSnackbar({
       open: true,
