@@ -13,7 +13,8 @@ const {
   cancelInvitation,
   getFormadorResidentes,
   getResidenteFormadores,
-  getUsersByHospital
+  getUsersByHospital,
+  deleteUser
 } = require('../controllers/userController');
 
 // Todas las rutas requieren autenticación
