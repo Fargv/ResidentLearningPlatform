@@ -167,7 +167,7 @@ const AdminHospitales: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.post('/api/hospitals', {
+      const res = await api.post('/hospitals', {
         ...formData,
         codigoNumerico: parseInt(formData.codigoNumerico as any)
       });
@@ -201,7 +201,7 @@ const AdminHospitales: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.put(`/api/hospitals/${selectedHospital._id}`, {
+      const res = await api.put(`/hospitals/${selectedHospital._id}`, {
         ...formData,
         codigoNumerico: parseInt(formData.codigoNumerico as any)
       });
