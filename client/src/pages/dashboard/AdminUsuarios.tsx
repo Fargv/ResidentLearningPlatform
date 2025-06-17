@@ -33,6 +33,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
+const API = process.env.REACT_APP_API_URL;
+
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -65,7 +67,7 @@ const AdminUsuarios: React.FC = () => {
   
         const token = localStorage.getItem('token');
   
-        const usuariosRes = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
+        const usuariosRes = await axios.get(`${API}/users`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -145,7 +147,7 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.post('/api/users/invite', formData);
+      const res = await axios.post(`${API}/users/invite`, formData);
       
       // Actualizar lista de usuarios
       setUsuariosLista([...usuarios, res.data.data]);
@@ -176,7 +178,7 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.put(`/api/users/${selectedUsuario._id}`, formData);
+      const res = await axios.put(`${API}/users/${selectedUsuario._id}`, formData);
       
       // Actualizar lista de usuarios
       setUsuariosLista(usuarios.map(u => u._id === selectedUsuario._id ? res.data.data : u));
@@ -207,7 +209,7 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      await axios.delete(`/api/users/${selectedUsuario._id}`);
+      await axios.delete(`${API}/users/${selectedUsuario._id}`);
       
       // Actualizar lista de usuarios
       setUsuariosLista(usuarios.filter(u => u._id !== selectedUsuario._id));
