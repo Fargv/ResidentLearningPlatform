@@ -32,26 +32,42 @@ import {
   Delete as DeleteIcon
   //LocalHospital as HospitalIcon
 } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../../api';
+
+interface Hospital {
+  _id: string;
+  nombre: string;
+  codigoNumerico?: string;
+  direccion?: string;
+  ciudad?: string;
+  provincia?: string;
+  codigoPostal?: string;
+  telefono?: string;
+  email?: string;
+  tipoSistema?: string;
+}
 
 const AdminHospitales: React.FC = () => {
   //const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hospitales, setHospitales] = useState<any[]>([]);
+  const [hospitales, setHospitales] = useState<Hospital[]>([]);
   const [openCrearDialog, setOpenCrearDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
-  const [selectedHospital, setSelectedHospital] = useState<any>(null);
-  const [formData, setFormData] = useState({
-    nombre: '',
-    direccion: '',
-    ciudad: '',
-    provincia: '',
-    codigoPostal: '',
-    telefono: '',
-    email: ''
-  });
+  const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
+  const [usuariosAsociados, setUsuariosAsociados] = useState(0);
+  const [formData, setFormData] = useState<Omit<Hospital, '_id'>>({
+        nombre: '',
+        codigoNumerico: '',
+        direccion: '',
+        ciudad: '',
+        provincia: '',
+        codigoPostal: '',
+        telefono: '',
+        email: '',
+        tipoSistema: ''
+      });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -64,7 +80,7 @@ const AdminHospitales: React.FC = () => {
       try {
         setLoading(true);
         
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/hospitals`);
+       const res = await api.get('/hospitals');
         setHospitales(res.data.data);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar los hospitales');
@@ -79,12 +95,14 @@ const AdminHospitales: React.FC = () => {
   const handleOpenCrearDialog = () => {
     setFormData({
       nombre: '',
+      codigoNumerico: '',
       direccion: '',
       ciudad: '',
       provincia: '',
       codigoPostal: '',
       telefono: '',
-      email: ''
+      email: '',
+      tipoSistema: ''
     });
     setOpenCrearDialog(true);
   };
@@ -93,16 +111,19 @@ const AdminHospitales: React.FC = () => {
     setOpenCrearDialog(false);
   };
 
-  const handleOpenEditarDialog = (hospital: any) => {
+  const handleOpenEditarDialog = (hospital: Hospital) => {
+
     setSelectedHospital(hospital);
     setFormData({
       nombre: hospital.nombre,
+      codigoNumerico: hospital.codigoNumerico || '',
       direccion: hospital.direccion || '',
       ciudad: hospital.ciudad || '',
       provincia: hospital.provincia || '',
       codigoPostal: hospital.codigoPostal || '',
       telefono: hospital.telefono || '',
-      email: hospital.email || ''
+      email: hospital.email || '',
+      tipoSistema: hospital.tipoSistema || ''
     });
     setOpenEditarDialog(true);
   };
@@ -112,21 +133,33 @@ const AdminHospitales: React.FC = () => {
     setSelectedHospital(null);
   };
 
-  const handleOpenEliminarDialog = (hospital: any) => {
+  const handleOpenEliminarDialog = async (hospital: Hospital) => {
+
     setSelectedHospital(hospital);
+    setUsuariosAsociados(0);
+    try {
+      const res = await api.get(`/hospitals/${hospital._id}/stats`);
+      const { residentes = 0, formadores = 0 } = res.data.data || {};
+      setUsuariosAsociados(residentes + formadores);
+    } catch {
+      setUsuariosAsociados(0);
+    }
     setOpenEliminarDialog(true);
   };
 
   const handleCloseEliminarDialog = () => {
     setOpenEliminarDialog(false);
     setSelectedHospital(null);
+    setUsuariosAsociados(0);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name as string]: value
     });
   };
 
@@ -134,7 +167,10 @@ const AdminHospitales: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.post('/api/hospitals', formData);
+      const res = await api.post('/api/hospitals', {
+        ...formData,
+        codigoNumerico: parseInt(formData.codigoNumerico as any)
+      });
       
       // Actualizar lista de hospitales
       setHospitales([...hospitales, res.data.data]);
@@ -165,7 +201,10 @@ const AdminHospitales: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await axios.put(`/api/hospitals/${selectedHospital._id}`, formData);
+      const res = await api.put(`/api/hospitals/${selectedHospital._id}`, {
+        ...formData,
+        codigoNumerico: parseInt(formData.codigoNumerico as any)
+      });
       
       // Actualizar lista de hospitales
       setHospitales(hospitales.map(h => h._id === selectedHospital._id ? res.data.data : h));
@@ -196,7 +235,7 @@ const AdminHospitales: React.FC = () => {
     try {
       setProcesando(true);
       
-      await axios.delete(`/api/hospitals/${selectedHospital._id}`);
+      await api.delete(`/hospitals/${selectedHospital._id}`);
       
       // Actualizar lista de hospitales
       setHospitales(hospitales.filter(h => h._id !== selectedHospital._id));
@@ -325,110 +364,13 @@ const AdminHospitales: React.FC = () => {
           />
           <TextField
             margin="dense"
-            id="direccion"
-            name="direccion"
-            label="Dirección"
-            type="text"
+            id="codigoNumerico"
+            name="codigoNumerico"
+            label="Código Numérico"
+            type="number"
             fullWidth
             variant="outlined"
-            value={formData.direccion}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-<Box display="flex" flexWrap="wrap" gap={2}>
-  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
-    <TextField
-      margin="dense"
-      id="ciudad"
-      name="ciudad"
-      label="Ciudad"
-      type="text"
-      fullWidth
-      variant="outlined"
-      value={formData.ciudad}
-      onChange={handleChange}
-    />
-  </Box>
-  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
-    <TextField
-      margin="dense"
-      id="provincia"
-      name="provincia"
-      label="Provincia"
-      type="text"
-      fullWidth
-      variant="outlined"
-      value={formData.provincia}
-      onChange={handleChange}
-    />
-  </Box>
-</Box>
-
-          <TextField
-            margin="dense"
-            id="codigoPostal"
-            name="codigoPostal"
-            label="Código Postal"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.codigoPostal}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            id="telefono"
-            name="telefono"
-            label="Teléfono"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.telefono}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            fullWidth
-            variant="outlined"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCrearDialog} color="primary">
-            Cancelar
-          </Button>
-          <Button 
-            onClick={handleCrear} 
-            color="primary"
-            variant="contained"
-            disabled={procesando || !formData.nombre}
-          >
-            {procesando ? 'Creando...' : 'Crear'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* Diálogo para editar hospital */}
-      <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
-        <DialogTitle>Editar Hospital</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="nombre"
-            name="nombre"
-            label="Nombre"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.nombre}
+            value={formData.codigoNumerico}
             onChange={handleChange}
             required
             sx={{ mb: 2 }}
@@ -499,6 +441,172 @@ const AdminHospitales: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <TextField
+            select
+            margin="dense"
+            id="tipoSistema"
+            name="tipoSistema"
+            label="Tipo de Sistema"
+            fullWidth
+            variant="outlined"
+            value={formData.tipoSistema}
+            onChange={handleChange}
+            required
+            SelectProps={{ native: true }}
+            sx={{ mb: 2 }}
+          >
+            <option value="Xi">Xi</option>
+            <option value="X">X</option>
+            <option value="SP">SP</option>
+            <option value="Otro">Otro</option>
+          </TextField>
+          <TextField
+            margin="dense"
+            id="email"
+            name="email"
+            label="Email"
+            type="email"
+            fullWidth
+            variant="outlined"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCrearDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleCrear} 
+            color="primary"
+            variant="contained"
+             disabled={
+              procesando ||
+              !formData.nombre ||
+              !formData.codigoNumerico ||
+              !formData.tipoSistema
+            }
+          >
+            {procesando ? 'Creando...' : 'Crear'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Diálogo para editar hospital */}
+      <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
+        <DialogTitle>Editar Hospital</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="nombre"
+            name="nombre"
+            label="Nombre"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.nombre}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="codigoNumerico"
+            name="codigoNumerico"
+            label="Código Numérico"
+            type="number"
+            fullWidth
+            variant="outlined"
+            value={formData.codigoNumerico}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="direccion"
+            name="direccion"
+            label="Dirección"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.direccion}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
+<Box display="flex" flexWrap="wrap" gap={2}>
+  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
+    <TextField
+      margin="dense"
+      id="ciudad"
+      name="ciudad"
+      label="Ciudad"
+      type="text"
+      fullWidth
+      variant="outlined"
+      value={formData.ciudad}
+      onChange={handleChange}
+    />
+  </Box>
+  <Box flex="1 1 100%" maxWidth={{ xs: '100%', sm: 'calc(50% - 8px)' }} p={2}>
+    <TextField
+      margin="dense"
+      id="provincia"
+      name="provincia"
+      label="Provincia"
+      type="text"
+      fullWidth
+      variant="outlined"
+      value={formData.provincia}
+      onChange={handleChange}
+    />
+  </Box>
+</Box>
+
+          <TextField
+            margin="dense"
+            id="codigoPostal"
+            name="codigoPostal"
+            label="Código Postal"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.codigoPostal}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="telefono"
+            name="telefono"
+            label="Teléfono"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.telefono}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            select
+            margin="dense"
+            id="tipoSistema"
+            name="tipoSistema"
+            label="Tipo de Sistema"
+            fullWidth
+            variant="outlined"
+            value={formData.tipoSistema}
+            onChange={handleChange}
+            required
+            SelectProps={{ native: true }}
+            sx={{ mb: 2 }}
+          >
+            <option value="Xi">Xi</option>
+            <option value="X">X</option>
+            <option value="SP">SP</option>
+            <option value="Otro">Otro</option>
+          </TextField>
+          <TextField
             margin="dense"
             id="email"
             name="email"
@@ -518,7 +626,12 @@ const AdminHospitales: React.FC = () => {
             onClick={handleEditar} 
             color="primary"
             variant="contained"
-            disabled={procesando || !formData.nombre}
+            disabled={
+              procesando ||
+              !formData.nombre ||
+              !formData.codigoNumerico ||
+              !formData.tipoSistema
+            }
           >
             {procesando ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
@@ -530,7 +643,7 @@ const AdminHospitales: React.FC = () => {
         <DialogTitle>Eliminar Hospital</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar el hospital <strong>{selectedHospital?.nombre}</strong>? Esta acción no se puede deshacer y podría afectar a los usuarios asociados a este hospital.
+            ¿Estás seguro de que deseas eliminar el hospital <strong>{selectedHospital?.nombre}</strong>? Se eliminarán {usuariosAsociados} usuarios y sus progresos. Esta acción no se puede deshacer.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

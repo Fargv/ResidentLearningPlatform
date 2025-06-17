@@ -32,7 +32,7 @@ import {
   //School as SchoolIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import api from '../../api';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -79,13 +79,8 @@ const FormadorValidaciones: React.FC = () => {
   try {
     setLoading(true);
 
-    const respuesta = await axios.get(
-        `${process.env.REACT_APP_API_URL}/progreso/formador/validaciones/pendientes`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
+    const respuesta = await api.get(
+        '/progreso/formador/validaciones/pendientes'
       );
 
     const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
@@ -141,8 +136,8 @@ useEffect(() => {
 
   setProcesando(true);
   try {
-    await axios.post(
-      `${process.env.REACT_APP_API_URL}/progreso/${selectedProgreso.progresoId}/actividad/${selectedProgreso.index}/validar`,
+    await api.post(
+      `/progreso/${selectedProgreso.progresoId}/actividad/${selectedProgreso.index}/validar`,
       {
         comentarios,
         firmaDigital,
@@ -162,8 +157,8 @@ const handleRechazar = async () => {
 
   setProcesando(true);
   try {
-    await axios.post(
-      `${process.env.REACT_APP_API_URL}/progreso/${selectedProgreso.progresoId}/actividad/${selectedProgreso.index}/rechazar`,
+    await api.post(
+      `/progreso/${selectedProgreso.progresoId}/actividad/${selectedProgreso.index}/rechazar`,
       {
         comentarios,
       }

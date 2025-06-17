@@ -26,7 +26,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
-import axios from 'axios';
+import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 
 const ResidenteFases: React.FC = () => {
@@ -49,7 +49,7 @@ const ResidenteFases: React.FC = () => {
     const fetchProgresos = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/progreso/residente/${user._id}`);
+        const response = await api.get(`/progreso/residente/${user._id}`);
         const data = response.data.data || [];
   
       // (debug) Aquí se listaban los progresos recibidos
@@ -93,7 +93,7 @@ const ResidenteFases: React.FC = () => {
     }
 
     try {
-      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
+      const { data } = await api.put(`/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
         estado: 'completado',
         fechaRealizacion: fecha,
         comentariosResidente: comentario

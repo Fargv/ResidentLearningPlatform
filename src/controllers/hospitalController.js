@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const Hospital = require('../models/Hospital');
 const User = require('../models/User');
+const ProgresoResidente = require('../models/ProgresoResidente');
 const { createAuditLog } = require('../utils/auditLog');
 
 // @desc    Obtener todos los hospitales
@@ -108,15 +109,19 @@ exports.deleteHospital = async (req, res, next) => {
       return next(new ErrorResponse(`Hospital no encontrado con id ${req.params.id}`, 404));
     }
 
-    // Verificar si hay usuarios asociados al hospital
-    const usersCount = await User.countDocuments({ hospital: req.params.id });
-    
-    if (usersCount > 0) {
-      return next(new ErrorResponse(`No se puede eliminar el hospital porque tiene ${usersCount} usuarios asociados`, 400));
-    }
+     // Obtener usuarios asociados
+    const users = await User.find({ hospital: req.params.id });
+    const userIds = users.map(u => u._id);
+
+    // Contar progresos de estos usuarios
+    const progressCount = await ProgresoResidente.countDocuments({ residente: { $in: userIds } });
+
+    // Eliminar progresos y usuarios
+    await ProgresoResidente.deleteMany({ residente: { $in: userIds } });
+    await User.deleteMany({ hospital: req.params.id });
 
     await hospital.remove();
-    
+
     // Crear registro de auditoría
     await createAuditLog({
       usuario: req.user._id,
@@ -127,6 +132,8 @@ exports.deleteHospital = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
+      deletedUsers: users.length,
+      deletedProgress: progressCount,
       data: {}
     });
   } catch (err) {

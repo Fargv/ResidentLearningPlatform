@@ -27,7 +27,7 @@ import {
   Error as ErrorIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import api from '../../api';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -107,10 +107,10 @@ useEffect(() => {
     try {
       setLoading(true);
 
-      const fasesRes = await axios.get('/api/fases');
-      const actividadesRes = await axios.get('/api/actividades');
-      const progresoRes = await axios.get(`/api/progreso/residente/${user._id}`);
-      const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+      const fasesRes = await api.get('/fases');
+      const actividadesRes = await api.get('/actividades');
+      const progresoRes = await api.get(`/progreso/residente/${user._id}`);
+      const statsRes = await api.get(`/progreso/stats/residente/${user._id}`);
       setStats(statsRes.data.data);
 
       setFases(fasesRes.data.data);
@@ -166,7 +166,7 @@ useEffect(() => {
     try {
       setRegistrando(true);
   
-      const res = await axios.put(`/api/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
+      const res = await api.put(`/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
         estado: 'completado',
         comentariosResidente: comentarios,
         fechaRealizacion: new Date(),
@@ -178,7 +178,7 @@ useEffect(() => {
   
       setProgreso(actualizado);
   
-      const statsRes = await axios.get(`/api/progreso/stats/residente/${user._id}`);
+      const statsRes = await api.get(`/progreso/stats/residente/${user._id}`);
       setStats(statsRes.data.data);
   
       handleCloseDialog();
