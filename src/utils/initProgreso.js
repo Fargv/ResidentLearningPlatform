@@ -5,13 +5,15 @@ const Actividad = require('../models/Actividad');
 
 const inicializarProgresoFormativo = async (usuario) => {
   try {
-    const fases = await Fase.find().sort('numero');
+    const fases = await Fase.find().sort('numero').populate('actividades');
     console.log("📦 Fases encontradas:", fases.map(f => ({ id: f._id, nombre: f.nombre })));
     let createdCount = 0;
 
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
-      const actividadesDB = await Actividad.find({ fase: fase._id }).sort('orden');
+      const actividadesDB = Array.isArray(fase.actividades)
+        ? fase.actividades
+        : await Actividad.find({ fase: fase._id }).sort('orden');
 
       if (!actividadesDB.length) {
         console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`);
@@ -19,7 +21,9 @@ const inicializarProgresoFormativo = async (usuario) => {
       }
 
       const actividades = actividadesDB.map(act => ({
-        actividad: new mongoose.Types.ObjectId(act._id), // ✅ Forzar ObjectId válido
+        actividad: mongoose.Types.ObjectId.isValid(act._id)
+          ? new mongoose.Types.ObjectId(act._id)
+          : act._id,
         nombre: act.nombre,
         completada: false,
         estado: 'pendiente',
