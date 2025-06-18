@@ -13,6 +13,7 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-06-07: `orden` en `Fase` ahora usa `numero` como valor predeterminado; se actualizó `createFase` y se añadió script de migración.
 - 2025-06-07: Implementado `updatePhaseStatus` en `progresoController.js` y tests asociados.
 - 2025-06-08: Campo `orden` de `Fase` marcado como único y script `scripts/ensureOrdenUnique.js` para crear índice.
+- 2025-06-08: Script `scripts/addZonaField.js` para inicializar campo `zona` en hospitales.
 ---
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.
