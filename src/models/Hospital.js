@@ -23,6 +23,10 @@ const hospitalSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Por favor proporcione una provincia']
   },
+  zona: {
+    type: String,
+    enum: ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS']
+  },
   codigoPostal: {
     type: String,
     required: [true, 'Por favor proporcione un código postal']

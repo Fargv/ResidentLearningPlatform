@@ -24,7 +24,11 @@ import {
   //Chip,
   LinearProgress,
   Alert,
-  Snackbar
+  Snackbar,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -45,6 +49,7 @@ interface Hospital {
   telefono?: string;
   email?: string;
   tipoSistema?: string;
+  zona?: string;
 }
 
 const AdminHospitales: React.FC = () => {
@@ -66,7 +71,8 @@ const AdminHospitales: React.FC = () => {
         codigoPostal: '',
         telefono: '',
         email: '',
-        tipoSistema: ''
+        tipoSistema: '',
+        zona: ''
       });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -102,7 +108,8 @@ const AdminHospitales: React.FC = () => {
       codigoPostal: '',
       telefono: '',
       email: '',
-      tipoSistema: ''
+      tipoSistema: '',
+      zona: ''
     });
     setOpenCrearDialog(true);
   };
@@ -123,7 +130,8 @@ const AdminHospitales: React.FC = () => {
       codigoPostal: hospital.codigoPostal || '',
       telefono: hospital.telefono || '',
       email: hospital.email || '',
-      tipoSistema: hospital.tipoSistema || ''
+      tipoSistema: hospital.tipoSistema || '',
+      zona: hospital.zona || ''
     });
     setOpenEditarDialog(true);
   };
@@ -154,14 +162,14 @@ const AdminHospitales: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name as string]: value
-    });
-  };
+  e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<{ name?: string; value: unknown }> | any
+) => {
+  const { name, value } = e.target;
+  setFormData({
+    ...formData,
+    [name as string]: value
+  });
+};
 
   const handleCrear = async () => {
     try {
@@ -308,6 +316,7 @@ const AdminHospitales: React.FC = () => {
                 <TableCell>Nombre</TableCell>
                 <TableCell>Ciudad</TableCell>
                 <TableCell>Provincia</TableCell>
+                <TableCell>Zona</TableCell>
                 <TableCell>Teléfono</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell align="right">Acciones</TableCell>
@@ -319,6 +328,7 @@ const AdminHospitales: React.FC = () => {
                   <TableCell>{hospital.nombre}</TableCell>
                   <TableCell>{hospital.ciudad || '-'}</TableCell>
                   <TableCell>{hospital.provincia || '-'}</TableCell>
+                  <TableCell>{hospital.zona || '-'}</TableCell>
                   <TableCell>{hospital.telefono || '-'}</TableCell>
                   <TableCell>{hospital.email || '-'}</TableCell>
                   <TableCell align="right">
@@ -415,6 +425,27 @@ const AdminHospitales: React.FC = () => {
     />
   </Box>
 </Box>
+
+
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="zona-label">Zona</InputLabel>
+          <Select
+            labelId="zona-label"
+            id="zona"
+            name="zona"
+            value={formData.zona}
+            label="Zona"
+            onChange={handleChange}
+          >
+            <MenuItem value="NORDESTE">NORDESTE</MenuItem>
+            <MenuItem value="NORTE">NORTE</MenuItem>
+            <MenuItem value="CENTRO">CENTRO</MenuItem>
+            <MenuItem value="ANDALUCÍA">ANDALUCÍA</MenuItem>
+            <MenuItem value="PORTUGAL">PORTUGAL</MenuItem>
+            <MenuItem value="LEVANTE">LEVANTE</MenuItem>
+            <MenuItem value="CANARIAS">CANARIAS</MenuItem>
+          </Select>
+        </FormControl>
 
           <TextField
             margin="dense"
@@ -561,7 +592,26 @@ const AdminHospitales: React.FC = () => {
       onChange={handleChange}
     />
   </Box>
-</Box>
+</Box>             
+            <FormControl fullWidth margin="dense">
+            <InputLabel id="zona-edit-label">Zona</InputLabel>
+            <Select
+              labelId="zona-edit-label"
+              id="zona-edit"
+              name="zona"
+              value={formData.zona}
+              label="Zona"
+              onChange={handleChange}
+            >
+              <MenuItem value="NORDESTE">NORDESTE</MenuItem>
+              <MenuItem value="NORTE">NORTE</MenuItem>
+              <MenuItem value="CENTRO">CENTRO</MenuItem>
+              <MenuItem value="ANDALUCÍA">ANDALUCÍA</MenuItem>
+              <MenuItem value="PORTUGAL">PORTUGAL</MenuItem>
+              <MenuItem value="LEVANTE">LEVANTE</MenuItem>
+              <MenuItem value="CANARIAS">CANARIAS</MenuItem>
+            </Select>
+          </FormControl>
 
           <TextField
             margin="dense"
