@@ -8,276 +8,192 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   TextField,
   LinearProgress,
   Alert,
+  Autocomplete,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import api from '../../api';
 
 interface Actividad {
-  _id: string;
   nombre: string;
   estado: string;
 }
 
 interface Fase {
   _id: string;
-  nombre: string;
+  fase: {
+    _id: string;
+    nombre: string;
+    numero: number;
+  };
   estadoGeneral: string;
   actividades: Actividad[];
 }
 
-interface ProgresoResidente {
+interface Usuario {
   _id: string;
-  residente: {
+  nombre: string;
+  apellidos: string;
+  activo: boolean;
+  hospital?: {
     _id: string;
     nombre: string;
-    apellidos: string;
-    hospital?: {
-      _id: string;
-      nombre: string;
-    };
   };
-  fases: Fase[];
 }
 
 const estadoColors: Record<string, string> = {
-  incompleto: 'error.main',
-  completado: 'warning.main',
+  pendiente: 'warning.main',
+  completado: 'info.main',
   validado: 'success.main',
+  rechazado: 'error.main',
+  'en progreso': 'info.main',
+  bloqueada: 'error.main',
 };
 
 const AdminValidaciones: React.FC = () => {
-  const [progresos, setProgresos] = useState<ProgresoResidente[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [residentes, setResidentes] = useState<Usuario[]>([]);
+  const [selected, setSelected] = useState<Usuario | null>(null);
+  const [progreso, setProgreso] = useState<Fase[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hospitales, setHospitales] = useState<any[]>([]);
-  const [filtros, setFiltros] = useState({
-    hospital: '',
-    estado: '',
-    nombre: '',
-    search: '',
-  });
 
-  const fetchProgresos = async () => {
+  useEffect(() => {
+    const cargarResidentes = async () => {
+      try {
+        const res = await api.get('/users');
+        const activos = (res.data.data || []).filter(
+          (u: any) => u.rol === 'residente' && u.activo,
+        );
+        setResidentes(activos);
+      } catch (e: any) {
+        setError(e.response?.data?.error || 'Error al cargar usuarios');
+      }
+    };
+    cargarResidentes();
+  }, []);
+
+  const fetchProgreso = async (id: string) => {
     try {
       setLoading(true);
-      const res = await api.get('/admin/progresos', {
-        params: {
-          hospital: filtros.hospital,
-          estado: filtros.estado,
-          nombre: filtros.nombre,
-          q: filtros.search,
-        },
-      });
-      setProgresos(res.data.data || []);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al cargar los progresos');
+      const res = await api.get(`/progreso/residente/${id}`);
+      setProgreso(res.data.data || []);
+    } catch (e: any) {
+      setError(e.response?.data?.error || 'Error al cargar progreso');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const cargarHospitales = async () => {
-      try {
-        const res = await api.get('/hospitals');
-        setHospitales(res.data.data || []);
-      } catch (e) {
-        /* empty */
-      }
-    };
-    cargarHospitales();
-    fetchProgresos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleFiltroChange = (field: string, value: string) => {
-    setFiltros((prev) => ({ ...prev, [field]: value }));
+  const handleResidenteChange = (_: any, value: Usuario | null) => {
+    setSelected(value);
+    setProgreso([]);
+    if (value) fetchProgreso(value._id);
   };
 
-  const handleActualizarEstadoActividad = async (
+  const actualizarActividad = async (
     progresoId: string,
-    faseId: string,
-    actividadId: string,
+    index: number,
     estado: string,
   ) => {
     try {
-      await api.patch(
-        `/admin/progresos/${progresoId}/fase/${faseId}/actividad/${actividadId}`,
-        { estado },
-      );
-      fetchProgresos();
+      await api.post('/admin/cambiar-estado-actividad', {
+        progresoId,
+        index,
+        estado,
+      });
+      if (selected) fetchProgreso(selected._id);
     } catch (e) {
       console.error(e);
     }
   };
 
-  const handleActualizarEstadoFase = async (
-    progresoId: string,
-    faseId: string,
-    estado: string,
-  ) => {
+  const actualizarFase = async (progresoId: string, estadoGeneral: string) => {
     try {
-      await api.patch(`/admin/progresos/${progresoId}/fase/${faseId}`, { estado });
-      fetchProgresos();
+      await api.post('/admin/cambiar-estado-fase', { progresoId, estadoGeneral });
+      if (selected) fetchProgreso(selected._id);
     } catch (e) {
       console.error(e);
     }
   };
 
-  const filtrados = progresos.filter((p) => {
-    const coincideHospital =
-      !filtros.hospital || p.residente.hospital?._id === filtros.hospital;
-    const coincideNombre =
-      !filtros.search ||
-      `${p.residente.nombre} ${p.residente.apellidos}`
-        .toLowerCase()
-        .includes(filtros.search.toLowerCase());
-    return coincideHospital && coincideNombre;
-  });
+  const faseInconsistente = (fase: Fase) =>
+    fase.estadoGeneral === 'validado' &&
+    fase.actividades.some((a) => a.estado !== 'validado');
 
-  if (loading) {
-    return (
-      <Box sx={{ width: '100%', mt: 4 }}>
-        <LinearProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert severity="error" sx={{ mt: 2 }}>
-        {error}
-      </Alert>
-    );
-  }
+  if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
 
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Validaciones Administrador
+        Panel de Validaciones
       </Typography>
-
-      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
-        <FormControl sx={{ minWidth: 160 }} size="small">
-          <InputLabel id="filtro-hospital-label">Hospital</InputLabel>
-          <Select
-            labelId="filtro-hospital-label"
-            value={filtros.hospital}
-            label="Hospital"
-            onChange={(e) => handleFiltroChange('hospital', e.target.value)}
-          >
-            <MenuItem value="">
-              <em>Todos</em>
-            </MenuItem>
-            {hospitales.map((h) => (
-              <MenuItem key={h._id} value={h._id}>
-                {h.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <TextField
-          label="Buscar por nombre"
-          size="small"
-          value={filtros.search}
-          onChange={(e) => handleFiltroChange('search', e.target.value)}
-        />
-      </Box>
-
-      {filtrados.map((res) => (
-        <Accordion key={res._id} sx={{ mb: 2 }}>
+      <Autocomplete
+        options={residentes}
+        value={selected}
+        onChange={handleResidenteChange}
+        getOptionLabel={(option) =>
+          `${option.nombre} ${option.apellidos} - ${option.hospital?.nombre || ''}`
+        }
+        renderInput={(params) => <TextField {...params} label="Buscar residente" />}
+        sx={{ maxWidth: 350, mb: 2 }}
+        isOptionEqualToValue={(o, v) => o._id === v._id}
+      />
+      {loading && <LinearProgress sx={{ mb: 2 }} />}
+      {progreso.map((fase) => (
+        <Accordion
+          key={fase._id}
+          sx={{
+            mb: 2,
+            border: faseInconsistente(fase) ? '1px solid red' : undefined,
+          }}
+        >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>
-              {res.residente.nombre} {res.residente.apellidos} -{' '}
-              {res.residente.hospital?.nombre || 'Sin hospital'}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', width: '100%' }}>
+              <Typography sx={{ flexGrow: 1 }}>
+                Fase {fase.fase.numero}: {fase.fase.nombre}
+              </Typography>
+              <FormControl size="small" disabled={selected ? !selected.activo : true}>
+                <Select
+                  value={fase.estadoGeneral}
+                  onChange={(e) =>
+                    actualizarFase(fase._id, e.target.value as string)
+                  }
+                  sx={{ '& .MuiSelect-select': { color: estadoColors[fase.estadoGeneral] } }}
+                >
+                  {['bloqueada', 'en progreso', 'completado', 'validado'].map((op) => (
+                    <MenuItem key={op} value={op}>
+                      {op}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
           </AccordionSummary>
           <AccordionDetails>
-            {res.fases.map((fase) => (
-              <Accordion key={fase._id} sx={{ mb: 1 }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 2,
-                      flexWrap: 'wrap',
-                    }}
+            {fase.actividades.map((act, index) => (
+              <Box
+                key={index}
+                sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}
+              >
+                <Typography sx={{ flexGrow: 1 }}>{act.nombre}</Typography>
+                <FormControl size="small" disabled={selected ? !selected.activo : true}>
+                  <Select
+                    value={act.estado}
+                    onChange={(e) =>
+                      actualizarActividad(fase._id, index, e.target.value as string)
+                    }
+                    sx={{ '& .MuiSelect-select': { color: estadoColors[act.estado] } }}
                   >
-                    <Typography>
-                      {fase.nombre}
-                    </Typography>
-                    <FormControl size="small">
-                      <Select
-                        value={fase.estadoGeneral}
-                        onChange={(e) =>
-                          handleActualizarEstadoFase(
-                            res._id,
-                            fase._id,
-                            e.target.value as string,
-                          )
-                        }
-                        sx={{
-                          '& .MuiSelect-select': {
-                            color: estadoColors[fase.estadoGeneral] || 'inherit',
-                          },
-                        }}
-                      >
-                        {['incompleto', 'completado', 'validado'].map((op) => (
-                          <MenuItem key={op} value={op}>
-                            {op}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {fase.actividades.map((act) => (
-                    <Box
-                      key={act._id}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        mb: 1,
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <Typography sx={{ flexGrow: 1 }}>{act.nombre}</Typography>
-                      <FormControl size="small">
-                        <Select
-                          value={act.estado}
-                          onChange={(e) =>
-                            handleActualizarEstadoActividad(
-                              res._id,
-                              fase._id,
-                              act._id,
-                              e.target.value as string,
-                            )
-                          }
-                          sx={{
-                            '& .MuiSelect-select': {
-                              color: estadoColors[act.estado] || 'inherit',
-                            },
-                          }}
-                        >
-                          {['incompleto', 'completado', 'validado'].map((op) => (
-                            <MenuItem key={op} value={op}>
-                              {op}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
+                    {['pendiente', 'completado', 'validado', 'rechazado'].map((op) => (
+                      <MenuItem key={op} value={op}>
+                        {op}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
             ))}
           </AccordionDetails>
         </Accordion>

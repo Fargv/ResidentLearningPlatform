@@ -84,8 +84,12 @@ const Dashboard: React.FC = () => {
     }
     
   
-    if (user?.rol === 'formador' || user?.rol === 'administrador') {
-      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'administrador'] });
+       if (user?.rol === 'formador') {
+      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador'] });
+    }
+
+    if (user?.rol === 'administrador') {
+      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] });
     }
   
     if (user?.rol === 'formador') {
