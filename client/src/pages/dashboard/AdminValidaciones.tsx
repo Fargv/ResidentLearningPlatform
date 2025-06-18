@@ -141,6 +141,16 @@ const AdminValidaciones: React.FC = () => {
         isOptionEqualToValue={(o, v) => o._id === v._id}
       />
       {loading && <LinearProgress sx={{ mb: 2 }} />}
+      {!loading && !selected && (
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          Seleccione un residente para ver su progreso
+        </Typography>
+      )}
+      {!loading && selected && progreso.length === 0 && (
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          No hay información de progreso para este residente
+        </Typography>
+      )}
       {progreso.map((fase) => (
         <Accordion
           key={fase._id}
