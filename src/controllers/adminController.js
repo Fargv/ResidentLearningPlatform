@@ -48,6 +48,10 @@ const updateActivityStatus = async (req, res, next) => {
       return next(new ErrorResponse('Actividad no encontrada', 404));
     }
 
+     if (progreso.estadoGeneral !== 'en progreso') {
+      return next(new ErrorResponse('La fase no está en progreso', 400));
+    }
+
     const actividad = progreso.actividades[index];
     actividad.estado = estado;
 
@@ -79,12 +83,34 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
       return next(new ErrorResponse('Progreso no encontrado', 404));
     }
 
-    progreso.estadoGeneral = estadoGeneral;
-    if (estadoGeneral === 'completado' && !progreso.fechaFin) {
-      progreso.fechaFin = new Date();
+     if (progreso.estadoGeneral !== 'en progreso') {
+      return next(new ErrorResponse('La fase no está en progreso', 400));
     }
 
+    if (estadoGeneral === 'completado') {
+      const todasCompletadas = progreso.actividades.every(a => a.estado === 'completado' || a.estado === 'validado');
+      if (!todasCompletadas) {
+        return next(new ErrorResponse('Todas las actividades deben estar completadas para marcar la fase como completada', 400));
+      }
+      if (!progreso.fechaFin) {
+        progreso.fechaFin = new Date();
+      }
+    }
+
+    if (estadoGeneral === 'validado') {
+      const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
+      if (!todasValidadas) {
+        return next(new ErrorResponse('Todas las actividades deben estar validadas para marcar la fase como validada', 400));
+      }
+    }
+
+    progreso.estadoGeneral = estadoGeneral;
     await progreso.save();
+    
+    if (estadoGeneral === 'validado') {
+      await updatePhaseStatus(progreso);
+    }
+
     res.status(200).json({ success: true, data: progreso });
   } catch (err) {
     next(err);
