@@ -8,6 +8,7 @@ import {
   Select,
   MenuItem,
   FormControl,
+  Button,
   TextField,
   LinearProgress,
   Alert,
@@ -118,6 +119,19 @@ const AdminValidaciones: React.FC = () => {
     }
   };
 
+  const crearProgreso = async () => {
+    if (!selected) return;
+    try {
+      setLoading(true);
+      await api.post(`/progreso/crear/${selected._id}`);
+      fetchProgreso(selected._id);
+    } catch (e: any) {
+      setError(e.response?.data?.error || 'Error al crear progreso');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const faseInconsistente = (fase: Fase) =>
     fase.estadoGeneral === 'validado' &&
     fase.actividades.some((a) => a.estado !== 'validado');
@@ -147,9 +161,14 @@ const AdminValidaciones: React.FC = () => {
         </Typography>
       )}
       {!loading && selected && progreso.length === 0 && (
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-          No hay información de progreso para este residente
-        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+            No hay información de progreso para este residente
+          </Typography>
+          <Button variant="contained" onClick={crearProgreso}>
+            Crear progreso formativo
+          </Button>
+        </Box>
       )}
       {progreso.map((fase) => (
         <Accordion
@@ -164,7 +183,10 @@ const AdminValidaciones: React.FC = () => {
               <Typography sx={{ flexGrow: 1 }}>
                 Fase {fase.fase.numero}: {fase.fase.nombre}
               </Typography>
-              <FormControl size="small" disabled={selected ? !selected.activo : true}>
+              <FormControl
+                size="small"
+                disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
+              >
                 <Select
                   value={fase.estadoGeneral}
                   onChange={(e) =>
@@ -188,7 +210,10 @@ const AdminValidaciones: React.FC = () => {
                 sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}
               >
                 <Typography sx={{ flexGrow: 1 }}>{act.nombre}</Typography>
-                <FormControl size="small" disabled={selected ? !selected.activo : true}>
+                <FormControl
+                  size="small"
+                  disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
+                >
                   <Select
                     value={act.estado}
                     onChange={(e) =>
