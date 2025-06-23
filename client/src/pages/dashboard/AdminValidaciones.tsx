@@ -136,13 +136,16 @@ const AdminValidaciones: React.FC = () => {
     fase.estadoGeneral === 'validado' &&
     fase.actividades.some((a) => a.estado !== 'validado');
 
-  if (error) return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
-
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
         Panel de Validaciones
       </Typography>
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
       <Autocomplete
         options={residentes}
         value={selected}
