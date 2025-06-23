@@ -137,15 +137,16 @@ const AdminValidaciones: React.FC = () => {
     fase.actividades.some((a) => a.estado !== 'validado');
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Panel de Validaciones
+  <Box>
+    {error && (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        {error}
+      </Alert>
+    )}
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, mb: 4 }}>
+      <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
+        Seleccione un residente para validar su progreso
       </Typography>
-      {error && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {error}
-        </Alert>
-      )}
       <Autocomplete
         options={residentes}
         value={selected}
@@ -153,51 +154,81 @@ const AdminValidaciones: React.FC = () => {
         getOptionLabel={(option) =>
           `${option.nombre} ${option.apellidos} - ${option.hospital?.nombre || ''}`
         }
-        renderInput={(params) => <TextField {...params} label="Buscar residente" />}
-        sx={{ maxWidth: 350, mb: 2 }}
+        renderInput={(params) => (
+          <TextField {...params} label="Buscar residente" variant="outlined" />
+        )}
+        sx={{ width: '100%', maxWidth: 400 }}
         isOptionEqualToValue={(o, v) => o._id === v._id}
       />
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
-      {!loading && !selected && (
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-          Seleccione un residente para ver su progreso
+    </Box>
+
+    {loading && <LinearProgress sx={{ mb: 2 }} />}
+
+    {!loading && !selected && (
+      <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
+        Seleccione un residente para ver su progreso
+      </Typography>
+    )}
+
+    {!loading && selected && progreso.length === 0 && (
+      <Box sx={{ mt: 2, textAlign: 'center' }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+          No hay información de progreso para este residente
         </Typography>
-      )}
-      {!loading && selected && progreso.length === 0 && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-            No hay información de progreso para este residente
-          </Typography>
-          <Button variant="contained" onClick={crearProgreso}>
-            Crear progreso formativo
-          </Button>
-        </Box>
-      )}
-      {progreso.map((fase) => (
-        <Accordion
-          key={fase._id}
-          sx={{
-            mb: 2,
-            border: faseInconsistente(fase) ? '1px solid red' : undefined,
-          }}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', width: '100%' }}>
-              <Typography sx={{ flexGrow: 1 }}>
-                Fase {fase.fase.numero}: {fase.fase.nombre}
-              </Typography>
+        <Button variant="contained" onClick={crearProgreso}>
+          Crear progreso formativo
+        </Button>
+      </Box>
+    )}
+
+    {progreso.map((fase) => (
+      <Accordion
+        key={fase._id}
+        sx={{
+          mb: 2,
+          border: faseInconsistente(fase) ? '1px solid red' : undefined,
+        }}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', width: '100%' }}>
+            <Typography sx={{ flexGrow: 1 }}>
+              Fase {fase.fase.numero}: {fase.fase.nombre}
+            </Typography>
+            <FormControl
+              size="small"
+              disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
+            >
+              <Select
+                value={fase.estadoGeneral}
+                onChange={(e) => actualizarFase(fase._id, e.target.value as string)}
+                sx={{ '& .MuiSelect-select': { color: estadoColors[fase.estadoGeneral] } }}
+              >
+                {['bloqueada', 'en progreso', 'completado', 'validado'].map((op) => (
+                  <MenuItem key={op} value={op}>
+                    {op}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          {fase.actividades.map((act, index) => (
+            <Box
+              key={index}
+              sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}
+            >
+              <Typography sx={{ flexGrow: 1 }}>{act.nombre}</Typography>
               <FormControl
                 size="small"
                 disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
               >
                 <Select
-                  value={fase.estadoGeneral}
-                  onChange={(e) =>
-                    actualizarFase(fase._id, e.target.value as string)
-                  }
-                  sx={{ '& .MuiSelect-select': { color: estadoColors[fase.estadoGeneral] } }}
+                  value={act.estado}
+                  onChange={(e) => actualizarActividad(fase._id, index, e.target.value as string)}
+                  sx={{ '& .MuiSelect-select': { color: estadoColors[act.estado] } }}
                 >
-                  {['bloqueada', 'en progreso', 'completado', 'validado'].map((op) => (
+                  {['pendiente', 'completado', 'validado', 'rechazado'].map((op) => (
                     <MenuItem key={op} value={op}>
                       {op}
                     </MenuItem>
@@ -205,39 +236,13 @@ const AdminValidaciones: React.FC = () => {
                 </Select>
               </FormControl>
             </Box>
-          </AccordionSummary>
-          <AccordionDetails>
-            {fase.actividades.map((act, index) => (
-              <Box
-                key={index}
-                sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}
-              >
-                <Typography sx={{ flexGrow: 1 }}>{act.nombre}</Typography>
-                <FormControl
-                  size="small"
-                  disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
-                >
-                  <Select
-                    value={act.estado}
-                    onChange={(e) =>
-                      actualizarActividad(fase._id, index, e.target.value as string)
-                    }
-                    sx={{ '& .MuiSelect-select': { color: estadoColors[act.estado] } }}
-                  >
-                    {['pendiente', 'completado', 'validado', 'rechazado'].map((op) => (
-                      <MenuItem key={op} value={op}>
-                        {op}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            ))}
-          </AccordionDetails>
-        </Accordion>
-      ))}
-    </Box>
-  );
+          ))}
+        </AccordionDetails>
+      </Accordion>
+    ))}
+  </Box>
+);
+
 };
 
 export default AdminValidaciones;
