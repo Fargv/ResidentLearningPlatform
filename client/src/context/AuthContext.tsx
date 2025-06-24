@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
-const API = process.env.REACT_APP_API_URL;
+//const API = process.env.REACT_APP_API_URL;
 
 // Función de decodificación manual del JWT
 function decodeJwt(token: string): any {
