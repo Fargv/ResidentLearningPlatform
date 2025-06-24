@@ -16,6 +16,9 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import api from '../../api';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import InputAdornment from '@mui/material/InputAdornment';
+
 
 interface Actividad {
   nombre: string;
@@ -143,24 +146,40 @@ const AdminValidaciones: React.FC = () => {
         {error}
       </Alert>
     )}
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, mb: 4 }}>
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
-        Seleccione un residente para validar su progreso
-      </Typography>
-      <Autocomplete
-        options={residentes}
-        value={selected}
-        onChange={handleResidenteChange}
-        getOptionLabel={(option) =>
-          `${option.nombre} ${option.apellidos} - ${option.hospital?.nombre || ''}`
-        }
-        renderInput={(params) => (
-          <TextField {...params} label="Buscar residente" variant="outlined" />
-        )}
-        sx={{ width: '100%', maxWidth: 400 }}
-        isOptionEqualToValue={(o, v) => o._id === v._id}
-      />
-    </Box>
+    <Box sx={{ mt: 3, mb: 4, ml: 2 }}>
+  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+    Buscar residente
+  </Typography>
+  <Autocomplete
+  options={residentes}
+  value={selected}
+  onChange={handleResidenteChange}
+  getOptionLabel={(option) =>
+    `${option.nombre} ${option.apellidos} - ${option.hospital?.nombre || ''}`
+  }
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Seleccione un residente"
+      variant="outlined"
+      size="small"
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <PersonSearchIcon />
+            </InputAdornment>
+          ),
+        },
+      }}
+    />
+  )}
+  sx={{ width: 320 }}
+  isOptionEqualToValue={(o, v) => o._id === v._id}
+/>
+
+</Box>
+
 
     {loading && <LinearProgress sx={{ mb: 2 }} />}
 
