@@ -15,5 +15,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-06-08: Campo `orden` de `Fase` marcado como único y script `scripts/ensureOrdenUnique.js` para crear índice.
 - 2025-06-08: Script `scripts/addZonaField.js` para inicializar campo `zona` en hospitales.
 - 2025-06-09: Botón para crear progreso en `AdminValidaciones` y validaciones de coherencia en `adminController`.
+- 2025-06-24: Añadida página de Sociedades al Dashboard con nuevo icono y ruta
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

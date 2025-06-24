@@ -31,7 +31,8 @@ import {
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
-  BugReport as BugReportIcon
+  BugReport as BugReportIcon,
+  Group as GroupIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
@@ -42,6 +43,7 @@ import FormadorValidaciones from './dashboard/FormadorValidaciones';
 import AdminUsuarios from './dashboard/AdminUsuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
+import AdminSociedades from './dashboard/AdminSociedades';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
 import DebugDashboard from './DebugDashboard';
@@ -100,6 +102,7 @@ const Dashboard: React.FC = () => {
       items.push(
         { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
         { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitals', roles: ['administrador'] },
+        { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
         { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
         { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
@@ -247,6 +250,7 @@ const Dashboard: React.FC = () => {
   {user?.rol === 'administrador' && (
     <Route path="/fases" element={<AdminFases />} />
   )}
+  <Route path="/sociedades" element={<AdminSociedades />} />
   {user?.rol === 'residente' && (
     <Route path="/fases" element={<ResidenteFases />} />
   )}
