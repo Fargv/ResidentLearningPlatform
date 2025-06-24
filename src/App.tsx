@@ -32,6 +32,7 @@ import AdminHospitales from "./pages/dashboard/AdminHospitales";
 import AdminFases from "./pages/dashboard/AdminFases";
 import Perfil from "./pages/dashboard/Perfil";
 import Notificaciones from "./pages/dashboard/Notificaciones";
+import AdminValidaciones from "./pages/dashboard/AdminValidaciones";
 
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
@@ -192,6 +193,11 @@ function App() {
                   </AdminRoute>
                 }
               />
+              <Route
+                path="validaciones-admin"
+                element={<AdminValidaciones />} // ← sin AdminRoute por ahora
+              />
+
 
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
