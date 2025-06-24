@@ -29,6 +29,7 @@ import AdminValidaciones from './pages/dashboard/AdminValidaciones';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import DebugDashboard from './pages/DebugDashboard';
+import AdminSociedades from "./pages/dashboard/AdminSociedades";
 
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
@@ -173,6 +174,13 @@ function App() {
                   <AdminValidaciones />
                 </AdminRoute>
               } />
+              <Route path="sociedades" element={
+                  <AdminRoute>
+                    <AdminSociedades />
+                  </AdminRoute>
+                }
+              />
+
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
               <Route path="notificaciones" element={<Notificaciones />} />
