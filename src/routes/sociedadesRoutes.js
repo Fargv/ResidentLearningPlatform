@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { crearSociedad, obtenerSociedades, obtenerSociedad, actualizarSociedad, eliminarSociedad } = require('../controllers/sociedadesController');
-const { proteger, esAdmin } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
-router.post('/', proteger, esAdmin, crearSociedad);
-router.get('/', proteger, obtenerSociedades);
-router.get('/:id', proteger, obtenerSociedad);
-router.put('/:id', proteger, esAdmin, actualizarSociedad);
-router.delete('/:id', proteger, esAdmin, eliminarSociedad);
-
+router.post('/', protect, authorize('administrador'), crearSociedad);
+router.get('/', protect, obtenerSociedades);
+router.get('/:id', protect, obtenerSociedad);
+router.put('/:id', protect, authorize('administrador'), actualizarSociedad);
+router.delete('/:id', protect, authorize('administrador'), eliminarSociedad);
 module.exports = router;

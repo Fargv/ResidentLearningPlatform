@@ -3,8 +3,7 @@ import {
   Box, Button, Typography, Table, TableBody, TableCell, TableHead, TableRow,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField
 } from '@mui/material';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+import api from '../../api';
 
 interface Sociedad {
   _id?: string;
@@ -19,17 +18,12 @@ interface Sociedad {
 }
 
 const AdminSociedades = () => {
-const { user } = useAuth();
-const token = user?.token || '';
-
   const [sociedades, setSociedades] = useState<Sociedad[]>([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Sociedad>({ titulo: '' });
 
   const fetchSociedades = async () => {
-    const res = await axios.get('/api/sociedades', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await api.get('/api/sociedades');
     setSociedades(res.data);
   };
 
@@ -54,19 +48,17 @@ const token = user?.token || '';
   };
 
   const handleSave = async () => {
-    const config = { headers: { Authorization: `Bearer ${token}` } };
     if (formData._id) {
-      await axios.put(`/api/sociedades/${formData._id}`, formData, config);
+      await api.put(`/api/sociedades/${formData._id}`, formData);
     } else {
-      await axios.post('/api/sociedades', formData, config);
+      await api.post('/api/sociedades', formData);
     }
     fetchSociedades();
     handleClose();
   };
 
   const handleDelete = async (id: string) => {
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    await axios.delete(`/api/sociedades/${id}`, config);
+    await api.delete(`/api/sociedades/${id}`);
     fetchSociedades();
   };
 
