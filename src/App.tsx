@@ -159,6 +159,7 @@ function App() {
                   </FormadorRoute>
                 }
               />
+              {/* Rutas para formadores y administradores */}
               <Route
                 path="usuarios"
                 element={
@@ -168,15 +169,7 @@ function App() {
                 }
               />
 
-              {/* Rutas para administradores */}
-              <Route
-                path="usuarios"
-                element={
-                  <AdminRoute>
-                    <AdminUsuarios />
-                  </AdminRoute>
-                }
-              />
+              {/* Rutas solo para administradores */}
               <Route
                 path="hospitales"
                 element={
@@ -197,8 +190,7 @@ function App() {
                 path="validaciones-admin"
                 element={<AdminValidaciones />} // ← sin AdminRoute por ahora
               />
-
-
+              
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
               <Route path="notificaciones" element={<Notificaciones />} />
