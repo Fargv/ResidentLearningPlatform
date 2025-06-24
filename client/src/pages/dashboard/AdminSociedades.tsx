@@ -34,8 +34,10 @@ const token = user?.token || '';
   };
 
   useEffect(() => {
-    fetchSociedades();
-  }, []);
+  fetchSociedades();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
 
   const handleOpen = (s?: Sociedad) => {
     setFormData(s || { titulo: '' });
