@@ -23,7 +23,7 @@ const AdminSociedades = () => {
   const [formData, setFormData] = useState<Sociedad>({ titulo: '' });
 
   const fetchSociedades = async () => {
-    const res = await api.get('/api/sociedades');
+    const res = await api.get('/sociedades');
     setSociedades(res.data);
   };
 
@@ -49,16 +49,16 @@ const AdminSociedades = () => {
 
   const handleSave = async () => {
     if (formData._id) {
-      await api.put(`/api/sociedades/${formData._id}`, formData);
+      await api.put(`/sociedades/${formData._id}`, formData);
     } else {
-      await api.post('/api/sociedades', formData);
+      await api.post('/sociedades', formData);
     }
     fetchSociedades();
     handleClose();
   };
 
   const handleDelete = async (id: string) => {
-    await api.delete(`/api/sociedades/${id}`);
+    await api.delete(`/sociedades/${id}`);
     fetchSociedades();
   };
 
