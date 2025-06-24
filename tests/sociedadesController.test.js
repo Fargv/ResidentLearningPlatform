@@ -9,8 +9,8 @@ describe('sociedadesController', () => {
   });
 
   test('crearSociedad crea una nueva sociedad', async () => {
-    const nueva = { _id: 's1', titulo: 'Test' };
-    const req = { body: { titulo: 'Test' } };
+   const nueva = { _id: 's1', titulo: 'Test', status: 'ACTIVO' };
+    const req = { body: { titulo: 'Test', status: 'ACTIVO' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
     jest.spyOn(Sociedades, 'create').mockResolvedValue(nueva);
@@ -23,8 +23,8 @@ describe('sociedadesController', () => {
   });
 
   test('actualizarSociedad actualiza la sociedad', async () => {
-    const actualizada = { _id: 's1', titulo: 'Actualizada' };
-    const req = { params: { id: 's1' }, body: { titulo: 'Actualizada' } };
+    const actualizada = { _id: 's1', titulo: 'Actualizada', status: 'INACTIVO' };
+    const req = { params: { id: 's1' }, body: { titulo: 'Actualizada', status: 'INACTIVO' } };
     const res = { json: jest.fn() };
 
     jest.spyOn(Sociedades, 'findByIdAndUpdate').mockResolvedValue(actualizada);

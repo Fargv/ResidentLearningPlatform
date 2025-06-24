@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const SociedadSchema = new mongoose.Schema({
   titulo: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ['ACTIVO', 'INACTIVO'],
+    default: 'ACTIVO'
+  },
   fechaConvocatoria: { type: Date },
   fechaPresentacion: { type: Date },
   fechaModulosOnline: { type: Date },
