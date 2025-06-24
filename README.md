@@ -146,7 +146,8 @@ correctamente.
 
 ## Gestión de sociedades
 
-El modelo `Sociedades` almacena las fechas clave de las convocatorias de las distintas sociedades médicas. Desde el panel de administración se pueden crear, editar y eliminar estos eventos para mantener actualizada la programación.
+El modelo `Sociedades` almacena las fechas clave de las convocatorias de las distintas sociedades médicas. Cada registro cuenta con un campo opcional `status` ("ACTIVO" o "INACTIVO") para indicar si la sociedad está vigente. Desde el panel de administración se pueden crear, editar y eliminar estos eventos para mantener actualizada la programación.
+
 
 ### Endpoints `/api/sociedades`
 

@@ -14,13 +14,18 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import api from '../../api';
 
 interface Sociedad {
   _id?: string;
   titulo: string;
+  status?: string;
   fechaConvocatoria?: string;
   fechaPresentacion?: string;
   fechaModulosOnline?: string;
@@ -35,6 +40,7 @@ const AdminSociedades = () => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Sociedad>({
     titulo: '',
+    status: 'ACTIVO',
     fechaConvocatoria: '',
     fechaPresentacion: '',
     fechaModulosOnline: '',
@@ -59,6 +65,7 @@ const AdminSociedades = () => {
     if (s) {
       setFormData({
         ...s,
+        status: s.status || 'ACTIVO',
         fechaConvocatoria: s.fechaConvocatoria?.slice(0, 10) || '',
         fechaPresentacion: s.fechaPresentacion?.slice(0, 10) || '',
         fechaModulosOnline: s.fechaModulosOnline?.slice(0, 10) || '',
@@ -70,6 +77,7 @@ const AdminSociedades = () => {
     } else {
       setFormData({
         titulo: '',
+        status: 'ACTIVO',
         fechaConvocatoria: '',
         fechaPresentacion: '',
         fechaModulosOnline: '',
@@ -85,6 +93,7 @@ const AdminSociedades = () => {
   const handleClose = () => {
     setFormData({
       titulo: '',
+      status: 'ACTIVO',
       fechaConvocatoria: '',
       fechaPresentacion: '',
       fechaModulosOnline: '',
@@ -96,8 +105,14 @@ const AdminSociedades = () => {
     setOpen(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<{ name?: string; value: unknown }> | any
+  ) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name as string]: value
+    });
   };
 
   const handleSave = async () => {
@@ -132,6 +147,7 @@ const AdminSociedades = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Título</TableCell>
+                <TableCell>Estado</TableCell>
                 <TableCell>Convocatoria</TableCell>
                 <TableCell>Presentación</TableCell>
                 <TableCell>Mod. Online</TableCell>
@@ -146,6 +162,7 @@ const AdminSociedades = () => {
               {sociedades.map((s) => (
                 <TableRow key={s._id} hover>
                   <TableCell>{s.titulo}</TableCell>
+                  <TableCell>{s.status || '-'}</TableCell>
                   <TableCell>{s.fechaConvocatoria?.slice(0, 10) || '-'}</TableCell>
                   <TableCell>{s.fechaPresentacion?.slice(0, 10) || '-'}</TableCell>
                   <TableCell>{s.fechaModulosOnline?.slice(0, 10) || '-'}</TableCell>
@@ -179,6 +196,20 @@ const AdminSociedades = () => {
             value={formData.titulo}
             onChange={handleChange}
           />
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="status-label">Estado</InputLabel>
+            <Select
+              labelId="status-label"
+              id="status"
+              name="status"
+              value={formData.status}
+              label="Estado"
+              onChange={handleChange}
+            >
+              <MenuItem value="ACTIVO">ACTIVO</MenuItem>
+              <MenuItem value="INACTIVO">INACTIVO</MenuItem>
+            </Select>
+          </FormControl>
           {[
             'fechaConvocatoria',
             'fechaPresentacion',
