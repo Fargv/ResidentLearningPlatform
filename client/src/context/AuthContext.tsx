@@ -4,16 +4,15 @@ import { useNavigate } from 'react-router-dom';
 
 const API = process.env.REACT_APP_API_URL;
 
-
 // Función de decodificación manual del JWT
 function decodeJwt(token: string): any {
-  const base64Url = token.split('.')[1];  // Parte del token que contiene el payload
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Ajuste para que sea un Base64 válido
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
   }).join(''));
 
-  return JSON.parse(jsonPayload);  // Devuelve el payload como un objeto
+  return JSON.parse(jsonPayload);
 }
 
 interface User {
@@ -21,6 +20,7 @@ interface User {
   nombre: string;
   apellidos: string;
   email: string;
+  token: string;
   rol: 'administrador' | 'formador' | 'residente';
   hospital?: {
     _id: string;
@@ -50,28 +50,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Verificar token al cargar la aplicación
   useEffect(() => {
     const loadUser = async () => {
       try {
         setLoading(true);
-        
-        // Verificar si hay un token en localStorage
         const token = localStorage.getItem('token');
-        
         if (!token) {
           setLoading(false);
           return;
         }
-        
-        // Configurar el token en los headers de axios
+
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        
-        // Verificar si el token es válido
+
         try {
-          const decoded = decodeJwt(token);  // Usando la función de decodificación manual
-          
-          // Verificar si el token ha expirado
+          const decoded = decodeJwt(token);
           const currentTime = Date.now() / 1000;
           if (decoded.exp < currentTime) {
             localStorage.removeItem('token');
@@ -85,14 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setLoading(false);
           return;
         }
-        
-        // Obtener información del usuario
-        const res = await axios.get(`${API}/auth/me`);
-        
-        setUser(res.data.data);
-        setIsAuthenticated(true);
-        localStorage.setItem("user", JSON.stringify(res.data.data));
 
+        const res = await axios.get(`${API}/auth/me`);
+
+        const userWithToken = { ...res.data.data, token };
+        setUser(userWithToken);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(userWithToken));
       } catch (err: any) {
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
@@ -105,28 +96,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loadUser();
   }, []);
 
-  // Función para iniciar sesión
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await axios.post(`${API}/auth/login`, { email, password });
-      
-      // Guardar token en localStorage
-      localStorage.setItem('token', res.data.token);
-      
-      // Configurar el token en los headers de axios
-      axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-      
-      // Obtener información del usuario
+      const token = res.data.token;
+
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
       const userRes = await axios.get(`${API}/auth/me`);
-      
-      setUser(userRes.data.data);
+      const userWithToken = { ...userRes.data.data, token };
+
+      setUser(userWithToken);
       setIsAuthenticated(true);
-      localStorage.setItem("user", JSON.stringify(userRes.data.data));
-      
-      // Redirigir al dashboard
+      localStorage.setItem("user", JSON.stringify(userWithToken));
+
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Error al iniciar sesión');
@@ -135,28 +122,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Función para registrarse
   const register = async (userData: any) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await axios.post(`${API}/auth/register`, userData);
-      
-      // Guardar token en localStorage
-      localStorage.setItem('token', res.data.token);
-      
-      // Configurar el token en los headers de axios
-      axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-      
-      // Obtener información del usuario
+      const token = res.data.token;
+
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
       const userRes = await axios.get(`${API}/auth/me`);
-      
-      setUser(userRes.data.data);
+      const userWithToken = { ...userRes.data.data, token };
+
+      setUser(userWithToken);
       setIsAuthenticated(true);
-      localStorage.setItem("user", JSON.stringify(userRes.data.data));
-      
-      // Redirigir al dashboard
+      localStorage.setItem("user", JSON.stringify(userWithToken));
+
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Error al registrarse');
@@ -165,23 +148,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Función para cerrar sesión
   const logout = () => {
-    // Eliminar token de localStorage
     localStorage.removeItem('token');
-    
-    // Eliminar token de los headers de axios
     delete axios.defaults.headers.common['Authorization'];
-    
-    // Limpiar estado
     setUser(null);
     setIsAuthenticated(false);
-    
-    // Redirigir a la página de login
     navigate('/login');
   };
 
-  // Función para limpiar errores
   const clearError = () => {
     setError(null);
   };
@@ -206,10 +180,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  
   if (context === undefined) {
     throw new Error('useAuth debe ser usado dentro de un AuthProvider');
   }
-  
   return context;
 };

@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/database');
+const sociedadesRoutes = require('./routes/sociedadesRoutes');
 
 // Cargar variables de entorno
 dotenv.config();
@@ -24,6 +25,7 @@ const actividadRoutes = require('./routes/actividadRoutes');
 const progresoRoutes = require('./routes/progresoRoutes');
 const adjuntoRoutes = require('./routes/adjuntoRoutes');
 const notificacionRoutes = require('./routes/notificacionRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Inicializar app
 const app = express();
@@ -55,6 +57,9 @@ app.use('/api/actividades', actividadRoutes);
 app.use('/api/progreso', progresoRoutes);
 app.use('/api/adjuntos', adjuntoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/sociedades', sociedadesRoutes);
+
 
 // Ruta test del servidor
 app.get('/', (req, res) => {
