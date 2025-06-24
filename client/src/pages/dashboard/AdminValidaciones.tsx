@@ -138,7 +138,7 @@ const AdminValidaciones: React.FC = () => {
   const faseInconsistente = (fase: Fase) =>
     fase.estadoGeneral === 'validado' &&
     fase.actividades.some((a) => a.estado !== 'validado');
-console.log("🟢 AdminValidaciones MONTADO");
+
   return (
   <Box>
     {error && (
@@ -159,20 +159,19 @@ console.log("🟢 AdminValidaciones MONTADO");
   }
   renderInput={(params) => (
     <TextField
-      {...params}
-      label="Seleccione un residente"
-      variant="outlined"
-      size="small"
-      slotProps={{
-        input: {
+        {...params}
+        label="Seleccione un residente"
+        variant="outlined"
+        size="small"
+        InputProps={{
+          ...params.InputProps,
           startAdornment: (
             <InputAdornment position="start">
               <PersonSearchIcon />
             </InputAdornment>
           ),
-        },
-      }}
-    />
+        }}
+      />
   )}
   sx={{ width: 320 }}
   isOptionEqualToValue={(o, v) => o._id === v._id}

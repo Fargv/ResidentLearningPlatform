@@ -22,8 +22,7 @@ import Dashboard from './pages/Dashboard';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
 import FormadorValidaciones from './pages/dashboard/FormadorValidaciones';
-import FormadorUsuarios from './pages/dashboard/FormadorUsuarios';
-import AdminUsuarios from './pages/dashboard/AdminUsuarios';
+import Usuarios from './pages/dashboard/Usuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
 import AdminValidaciones from './pages/dashboard/AdminValidaciones';
@@ -151,18 +150,14 @@ function App() {
                   <FormadorValidaciones />
                 </FormadorRoute>
               } />
+              {/* Rutas para formadores y administradores */}
               <Route path="usuarios" element={
                 <FormadorRoute>
-                  <FormadorUsuarios />
+                  <Usuarios />
                 </FormadorRoute>
               } />
 
-              {/* Rutas para administradores */}
-              <Route path="usuarios" element={
-                <AdminRoute>
-                  <AdminUsuarios />
-                </AdminRoute>
-              } />
+              {/* Rutas solo para administradores */}
               <Route path="hospitales" element={
                 <AdminRoute>
                   <AdminHospitales />

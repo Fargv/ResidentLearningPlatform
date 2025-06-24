@@ -43,13 +43,9 @@ const updateActivityStatus = async (req, res, next) => {
   try {
     const { progresoId, index, estado } = req.body;
 
-    const progreso = await ProgresoResidente.findById(progresoId).populate(['fase','residente']);
+    const progreso = await ProgresoResidente.findById(progresoId).populate(['fase', 'residente']);
     if (!progreso || !progreso.actividades[index]) {
       return next(new ErrorResponse('Actividad no encontrada', 404));
-    }
-
-     if (progreso.estadoGeneral !== 'en progreso') {
-      return next(new ErrorResponse('La fase no está en progreso', 400));
     }
 
     const actividad = progreso.actividades[index];
