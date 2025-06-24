@@ -79,7 +79,13 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
       return next(new ErrorResponse('Progreso no encontrado', 404));
     }
 
-     if (progreso.estadoGeneral !== 'en progreso') {
+    if (progreso.estadoGeneral === 'bloqueada' && estadoGeneral === 'en progreso') {
+      progreso.estadoGeneral = 'en progreso';
+      await progreso.save();
+      return res.status(200).json({ success: true, data: progreso });
+    }
+
+    if (progreso.estadoGeneral !== 'en progreso') {
       return next(new ErrorResponse('La fase no está en progreso', 400));
     }
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const API = process.env.REACT_APP_API_URL;
@@ -60,25 +60,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         try {
           const decoded = decodeJwt(token);
           const currentTime = Date.now() / 1000;
           if (decoded.exp < currentTime) {
             localStorage.removeItem('token');
-            delete axios.defaults.headers.common['Authorization'];
+            
             setLoading(false);
             return;
           }
         } catch (err) {
           localStorage.removeItem('token');
-          delete axios.defaults.headers.common['Authorization'];
+          
           setLoading(false);
           return;
         }
 
-        const res = await axios.get(`${API}/auth/me`);
+        const res = await api.get('/auth/me');
 
         const userWithToken = { ...res.data.data, token };
         setUser(userWithToken);
@@ -86,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('user', JSON.stringify(userWithToken));
       } catch (err: any) {
         localStorage.removeItem('token');
-        delete axios.defaults.headers.common['Authorization'];
+        
         setError(err.response?.data?.error || 'Error al cargar el usuario');
       } finally {
         setLoading(false);
@@ -101,13 +100,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
 
-      const res = await axios.post(`${API}/auth/login`, { email, password });
+      const res = await api.post('/auth/login', { email, password });
       const token = res.data.token;
 
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      const userRes = await axios.get(`${API}/auth/me`);
+      const userRes = await api.get('/auth/me');
       const userWithToken = { ...userRes.data.data, token };
 
       setUser(userWithToken);
@@ -127,13 +125,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
 
-      const res = await axios.post(`${API}/auth/register`, userData);
+      const res = await api.post('/auth/register', userData);
       const token = res.data.token;
 
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
 
-      const userRes = await axios.get(`${API}/auth/me`);
+      const userRes = await api.get('/auth/me');
       const userWithToken = { ...userRes.data.data, token };
 
       setUser(userWithToken);
@@ -150,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
+    
     setUser(null);
     setIsAuthenticated(false);
     navigate('/login');

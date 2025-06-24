@@ -144,6 +144,22 @@ Las actividades deben referenciar los identificadores de las fases recién
 creadas; de lo contrario, la inicialización del progreso no podrá asociarlas
 correctamente.
 
+## Gestión de sociedades
+
+El modelo `Sociedades` almacena las fechas clave de las convocatorias de las distintas sociedades médicas. Desde el panel de administración se pueden crear, editar y eliminar estos eventos para mantener actualizada la programación.
+
+### Endpoints `/api/sociedades`
+
+- `GET /api/sociedades` devuelve todas las sociedades.
+- `GET /api/sociedades/:id` devuelve una sociedad concreta.
+- `POST /api/sociedades` crea una nueva (requiere rol de administrador).
+- `PUT /api/sociedades/:id` actualiza una existente (requiere rol de administrador).
+- `DELETE /api/sociedades/:id` elimina la sociedad indicada (requiere rol de administrador).
+
+### Ruta en el dashboard
+
+El administrador puede gestionar estas convocatorias en `/dashboard/sociedades`.
+
 
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.
