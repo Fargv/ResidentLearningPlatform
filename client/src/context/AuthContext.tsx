@@ -91,6 +91,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         setUser(res.data.data);
         setIsAuthenticated(true);
+        localStorage.setItem("user", JSON.stringify(res.data.data));
+
       } catch (err: any) {
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];

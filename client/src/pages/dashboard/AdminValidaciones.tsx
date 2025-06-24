@@ -138,7 +138,7 @@ const AdminValidaciones: React.FC = () => {
   const faseInconsistente = (fase: Fase) =>
     fase.estadoGeneral === 'validado' &&
     fase.actividades.some((a) => a.estado !== 'validado');
-
+console.log("🟢 AdminValidaciones MONTADO");
   return (
   <Box>
     {error && (
