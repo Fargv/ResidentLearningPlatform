@@ -21,7 +21,7 @@ interface User {
   apellidos: string;
   email: string;
   token: string;
-  rol: 'administrador' | 'formador' | 'residente';
+  rol: 'administrador' | 'formador' | 'instructor' | 'residente';
   hospital?: {
     _id: string;
     nombre: string;

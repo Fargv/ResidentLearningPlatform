@@ -24,8 +24,8 @@ const FormadorRoute: React.FC<FormadorRouteProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Verificar si el usuario es formador o administrador (los administradores pueden acceder a todo)
-  if (user?.rol !== 'formador' && user?.rol !== 'administrador') {
+  // Verificar si el usuario es formador, instructor o administrador (los administradores pueden acceder a todo)
+  if (user?.rol !== 'formador' && user?.rol !== 'instructor' && user?.rol !== 'administrador') {
     // Redirigir al dashboard si no tiene permisos
     return <Navigate to="/dashboard" replace />;
   }
