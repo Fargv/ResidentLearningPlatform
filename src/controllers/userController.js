@@ -69,6 +69,9 @@ exports.updateUser = async (req, res, next) => {
   try {
     // Eliminar campos que no deben ser actualizados por esta ruta
     const { password, ...updateData } = req.body;
+    if (updateData.tipo === 'Programa Residentes') {
+      updateData.sociedad = null;
+    }
 
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true,

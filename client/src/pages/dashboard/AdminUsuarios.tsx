@@ -135,10 +135,11 @@ const AdminUsuarios: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name as string]: value
-    });
+    const updated = { ...formData, [name as string]: value };
+    if (name === 'tipo' && value === 'Programa Residentes') {
+      updated.sociedad = '';
+    }
+    setFormData(updated);
   };
 
   const handleInvitar = async () => {
@@ -176,7 +177,12 @@ const AdminUsuarios: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.put(`/users/${selectedUsuario._id}`, formData);
+      const payload = { ...formData } as any;
+      if (payload.tipo === 'Programa Residentes') {
+        payload.sociedad = null;
+      }
+
+      const res = await api.put(`/users/${selectedUsuario._id}`, payload);
       
       // Actualizar lista de usuarios
       setUsuariosLista(usuarios.map(u => u._id === selectedUsuario._id ? res.data.data : u));
@@ -448,6 +454,23 @@ const AdminUsuarios: React.FC = () => {
           <TextField
             select
             margin="dense"
+            id="tipo"
+            name="tipo"
+            label="Tipo"
+            fullWidth
+            variant="outlined"
+            value={formData.tipo}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+            SelectProps={{ native: true }}
+          >
+            <option value="Programa Residentes">Programa Residentes</option>
+            <option value="Programa Sociedades">Programa Sociedades</option>
+          </TextField>
+          <TextField
+            select
+            margin="dense"
             id="rol"
             name="rol"
             label="Rol"
@@ -484,6 +507,27 @@ const AdminUsuarios: React.FC = () => {
               {hospitales.map((hospital) => (
                 <option key={hospital._id} value={hospital._id}>
                   {hospital.nombre}
+                </option>
+              ))}
+            </TextField>
+          )}
+           {formData.tipo === 'Programa Sociedades' && (
+            <TextField
+              select
+              margin="dense"
+              id="sociedad"
+              name="sociedad"
+              label="Sociedad"
+              fullWidth
+              variant="outlined"
+              value={formData.sociedad}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              {sociedades.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.titulo}
                 </option>
               ))}
             </TextField>
