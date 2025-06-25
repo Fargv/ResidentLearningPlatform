@@ -11,10 +11,10 @@ const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 
 const accessCodes = {
-  ABEXRES2025: { rol: 'residente', tipo: 'hospital' },
-  ABEXFOR2025: { rol: 'formador', tipo: 'hospital' },
-  ABEXSOCUSER2025: { rol: 'alumno', tipo: 'sociedad' },
-  ABEXSOCFOR2025: { rol: 'instructor', tipo: 'sociedad' }
+  ABEXRES2025: { rol: 'residente', tipo: 'Programa Residentes' },
+  ABEXFOR2025: { rol: 'formador', tipo: 'Programa Residentes' },
+  ABEXSOCUSER2025: { rol: 'alumno', tipo: 'Programa Sociedades' },
+  ABEXSOCFOR2025: { rol: 'instructor', tipo: 'Programa Sociedades' }
 };
 
 const checkAccessCode = async (req, res, next) => {
@@ -57,11 +57,11 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
     }
 
-    if (tipo === 'hospital' && !hospital) {
+    if (tipo === 'Programa Residentes' && !hospital) {
       return next(new ErrorResponse('Hospital requerido', 400));
     }
 
-    if (tipo === 'sociedad') {
+    if (tipo === 'Programa Sociedades') {
       if (!sociedad) {
         return next(new ErrorResponse('Sociedad requerida', 400));
       }
@@ -84,8 +84,8 @@ const register = async (req, res, next) => {
       password,
       rol,
       tipo,
-      hospital: tipo === 'hospital' ? hospital : undefined,
-      sociedad: tipo === 'sociedad' ? sociedad : undefined,
+      hospital: tipo === 'Programa Residentes' ? hospital : undefined,
+      sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
       especialidad,
       activo: true,
       consentimientoDatos: true,
