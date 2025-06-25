@@ -1,5 +1,6 @@
 const { inicializarProgresoFormativo } = require('../src/utils/initProgreso');
 const Fase = require('../src/models/Fase');
+const FaseSoc = require('../src/models/FaseSoc');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 
 describe('inicializarProgresoFormativo', () => {
@@ -31,5 +32,28 @@ describe('inicializarProgresoFormativo', () => {
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('Fase 2')
     );
+  });
+
+  test('uses FaseSoc when user.tipo es Programa Sociedades', async () => {
+    const user = { _id: 'res1', email: 'test@example.com', tipo: 'Programa Sociedades' };
+
+    const fases = [
+      { _id: 'fs1', nombre: 'Soc 1', actividades: [{ _id: 'a1', nombre: 'Act' }] }
+    ];
+
+    const findSpy = jest.spyOn(FaseSoc, 'find').mockReturnValue({
+      sort: jest.fn().mockReturnThis(),
+      populate: jest.fn().mockResolvedValue(fases)
+    });
+    const otherSpy = jest.spyOn(Fase, 'find');
+
+    const createSpy = jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({});
+
+    const count = await inicializarProgresoFormativo(user);
+
+    expect(findSpy).toHaveBeenCalled();
+    expect(otherSpy).not.toHaveBeenCalled();
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(count).toBe(1);
   });
 });

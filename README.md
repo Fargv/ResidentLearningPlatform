@@ -152,6 +152,7 @@ El modelo `Sociedades` almacena las fechas clave de las convocatorias de las dis
 ### Endpoints `/api/sociedades`
 
 - `GET /api/sociedades` devuelve todas las sociedades.
+- `GET /api/sociedades/public` devuelve las sociedades activas y no requiere autenticación.
 - `GET /api/sociedades/:id` devuelve una sociedad concreta.
 - `POST /api/sociedades` crea una nueva (requiere rol de administrador).
 - `PUT /api/sociedades/:id` actualiza una existente (requiere rol de administrador).

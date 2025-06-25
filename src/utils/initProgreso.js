@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Fase = require('../models/Fase');
+const FaseSoc = require('../models/FaseSoc');
 const Actividad = require('../models/Actividad');
 
 const inicializarProgresoFormativo = async (usuario) => {
   try {
-    const fases = await Fase.find().sort('numero').populate('actividades');
+    const esProgramaSoc = usuario && usuario.tipo === 'Programa Sociedades';
+    const ModeloFase = esProgramaSoc ? FaseSoc : Fase;
+
+    const fases = await ModeloFase.find().sort('numero').populate('actividades');
     console.log("📦 Fases encontradas:", fases.map(f => ({ id: f._id, nombre: f.nombre })));
     let createdCount = 0;
 

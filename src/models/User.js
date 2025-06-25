@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['residente', 'formador', 'administrador'],
+    enum: ['residente', 'formador', 'administrador', 'alumno', 'instructor'],
     required: [true, 'Por favor especifique un rol']
   },
   hospital: {
@@ -37,11 +37,30 @@ const userSchema = new mongoose.Schema({
       return this.rol === 'residente' || this.rol === 'formador';
     }
   },
+  tipo: {
+    type: String
+  },
+  sociedad: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Sociedades'
+  },
   especialidad: {
     type: String,
     enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL'],
     required: function() {
       return this.rol === 'residente';
+    }
+  },
+   tipo: {
+    type: String,
+    enum: ['Programa Residentes', 'Programa Sociedades'],
+    required: [true, 'Por favor especifique un tipo de programa']
+  },
+  sociedad: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Sociedades',
+    required: function() {
+      return this.tipo === 'Programa Sociedades';
     }
   },
   activo: {

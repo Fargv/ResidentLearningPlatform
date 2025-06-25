@@ -18,13 +18,17 @@ import {
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useAuth } from '../context/AuthContext';
+import api from '../api';
 
 interface Hospital {
   _id: string;
   nombre: string;
 }
 
-//const especialidades = ['URO', 'GEN', 'GYN', 'THOR', 'ORL'];
+interface Sociedad {
+  _id: string;
+  titulo: string;
+}
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -36,20 +40,23 @@ const Register: React.FC = () => {
     codigoAcceso: '',
     consentimientoDatos: false,
     hospital: '',
-    especialidad: ''
+    especialidad: '',
+    sociedad: '',
+    tipo: ''
   });
+
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [codigoError, setCodigoError] = useState<string | null>(null);
   const [hospitales, setHospitales] = useState<Hospital[]>([]);
+  const [sociedades, setSociedades] = useState<Sociedad[]>([]);
 
-  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital, especialidad } = formData;
+  const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital, especialidad, sociedad, tipo } = formData;
   const { register, error, loading, clearError } = useAuth();
 
   useEffect(() => {
     const fetchHospitales = async () => {
       try {
         const apiUrl = process.env.REACT_APP_API_URL;
-        console.log("Usando API URL:", apiUrl);
         const res = await fetch(`${apiUrl}/hospitals`);
         const data = await res.json();
         setHospitales(data.data);
@@ -58,7 +65,17 @@ const Register: React.FC = () => {
       }
     };
 
+    const fetchSociedades = async () => {
+      try {
+        const res = await api.get('/sociedades/public');
+        setSociedades(res.data);
+      } catch (error) {
+        console.error('Error cargando sociedades:', error);
+      }
+    };
+
     fetchHospitales();
+    fetchSociedades();
   }, []);
 
   const onChange = (e: React.ChangeEvent<any>) => {
@@ -94,185 +111,122 @@ const Register: React.FC = () => {
     }));
   };
 
+  const onSelectSociedad = (event: SelectChangeEvent<string>) => {
+    const { value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      sociedad: value
+    }));
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setCodigoError(null);
 
+    if (!nombre || !apellidos || !email || !password || !hospital || !especialidad || !codigoAcceso) {
+      return setCodigoError('Por favor, completa todos los campos obligatorios.');
+    }
+
     if (password !== confirmPassword) {
-      setPasswordError('Las contraseñas no coinciden');
-      return;
+      return setPasswordError('Las contraseñas no coinciden');
     }
 
     if (!consentimientoDatos) return;
 
-    let rol: 'residente' | 'formador';
-    if (codigoAcceso === 'ABEXRES2025') {
-      rol = 'residente';
-    } else if (codigoAcceso === 'ABEXFOR2025') {
-      rol = 'formador';
-    } else {
-      setCodigoError('Código de acceso no válido');
-      return;
+    try {
+      const res = await api.get(`/auth/codigos/${codigoAcceso}`);
+      const { rol, tipo: tipoResp, sociedad: sociedadResp } = res.data;
+
+      await register({
+        nombre,
+        apellidos,
+        email,
+        password,
+        rol,
+        hospital,
+        codigoAcceso,
+        consentimientoDatos,
+        especialidad,
+        tipo: tipoResp || tipo,
+        sociedad: sociedadResp || sociedad
+      });
+    } catch (err: any) {
+      setCodigoError(err.response?.data?.error || 'Código de acceso no válido');
     }
-    console.log('FormData', formData);
-    await register({ nombre, apellidos, email, password, rol, hospital, codigoAcceso, consentimientoDatos, especialidad });
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'background.default',
-        py: 4
-      }}
-    >
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'background.default', py: 4 }}>
       <Container maxWidth="sm">
-        <Paper
-          elevation={3}
-          sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2 }}
-        >
+        <Paper elevation={3} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2 }}>
           <Box sx={{ mb: 3, textAlign: 'center' }}>
-            <img
-              src="/logo.png"
-              alt="Abex Excelencia Robótica"
-              style={{ maxWidth: '200px', marginBottom: '16px' }}
-            />
-            <Typography variant="h4" component="h1" gutterBottom>
-              Registro de Usuario
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              Plataforma de Formación en Tecnologías del Robot da Vinci
-            </Typography>
+            <img src="/logo.png" alt="Abex Excelencia Robótica" style={{ maxWidth: '200px', marginBottom: '16px' }} />
+            <Typography variant="h4" component="h1" gutterBottom>Registro</Typography>
           </Box>
 
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+          <form onSubmit={onSubmit} style={{ width: '100%' }}>
+            <TextField margin="normal" fullWidth label="Nombre" name="nombre" value={nombre} onChange={onChange} disabled={loading} required />
+            <TextField margin="normal" fullWidth label="Apellidos" name="apellidos" value={apellidos} onChange={onChange} disabled={loading} required />
+            <TextField margin="normal" fullWidth label="Email" name="email" type="email" value={email} onChange={onChange} disabled={loading} required />
+            <TextField margin="normal" fullWidth label="Contraseña" name="password" type="password" value={password} onChange={onChange} disabled={loading} required />
+            <TextField margin="normal" fullWidth label="Confirmar Contraseña" name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
+            {passwordError && <Alert severity="warning">{passwordError}</Alert>}
 
-          {codigoError && (
-            <Alert severity="warning" sx={{ width: '100%', mb: 2 }}>
-              {codigoError}
-            </Alert>
-          )}
+            <TextField margin="normal" fullWidth name="codigoAcceso" label="Código de Acceso" value={codigoAcceso} onChange={onChange} disabled={loading} required />
+            {codigoError && <Alert severity="error">{codigoError}</Alert>}
 
-          <Box component="form" onSubmit={onSubmit} sx={{ width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="nombre"
-              label="Nombre"
-              name="nombre"
-              autoComplete="given-name"
-              autoFocus
-              value={nombre}
-              onChange={onChange}
-              disabled={loading}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="apellidos"
-              label="Apellidos"
-              name="apellidos"
-              autoComplete="family-name"
-              value={apellidos}
-              onChange={onChange}
-              disabled={loading}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={onChange}
-              disabled={loading}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Contraseña"
-              type="password"
-              id="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={onChange}
-              disabled={loading}
-              error={!!passwordError}
-              helperText={passwordError}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="confirmPassword"
-              label="Confirmar Contraseña"
-              type="password"
-              id="confirmPassword"
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={onChange}
-              disabled={loading}
-              error={!!passwordError}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="codigoAcceso"
-              label="Código de Acceso"
-              id="codigoAcceso"
-              value={codigoAcceso}
-              onChange={onChange}
-              disabled={loading}
-            />
             <FormControl fullWidth margin="normal" required disabled={loading}>
               <InputLabel id="hospital-label">Hospital</InputLabel>
-              <Select
-                labelId="hospital-label"
-                id="hospital"
-                name="hospital"
-                value={hospital}
-                label="Hospital"
-                onChange={onSelectHospital}
-              >
+              <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label="Hospital" onChange={onSelectHospital}>
                 {hospitales.map((h) => (
-                  <MenuItem key={h._id} value={h._id}>
-                    {h.nombre}
-                  </MenuItem>
+                  <MenuItem key={h._id} value={h._id}>{h.nombre}</MenuItem>
                 ))}
               </Select>
             </FormControl>
+                 {sociedades.length > 0 && (
+              <FormControl fullWidth margin="normal" disabled={loading}>
+                <InputLabel id="sociedad-label">Sociedad</InputLabel>
+                <Select
+                  labelId="sociedad-label"
+                  id="sociedad"
+                  name="sociedad"
+                  value={sociedad}
+                  label="Sociedad"
+                  onChange={onSelectSociedad}
+                >
+                  <MenuItem value="">
+                    <em>Ninguna</em>
+                  </MenuItem>
+                  {sociedades.map((s) => (
+                    <MenuItem key={s._id} value={s._id}>
+                      {s.titulo}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
             <FormControl fullWidth margin="normal" required disabled={loading}>
-  <InputLabel id="especialidad-label">Especialidad</InputLabel>
-  <Select
-    labelId="especialidad-label"
-    id="especialidad"
-    name="especialidad"
-    value={especialidad}
-    label="Especialidad"
-    onChange={onSelectEspecialidad}
-  >
-    <MenuItem value="URO">Urología (URO)</MenuItem>
-    <MenuItem value="GEN">Cirugía General (GEN)</MenuItem>
-    <MenuItem value="GYN">Ginecología (GYN)</MenuItem>
-    <MenuItem value="THOR">Torácica (THOR)</MenuItem>
-    <MenuItem value="ORL">Otorrino (ORL)</MenuItem>
-  </Select>
-</FormControl>
+              <InputLabel id="especialidad-label">Especialidad</InputLabel>
+              <Select labelId="especialidad-label" id="especialidad" name="especialidad" value={especialidad} label="Especialidad" onChange={onSelectEspecialidad}>
+                <MenuItem value="URO">Urología (URO)</MenuItem>
+                <MenuItem value="GEN">Cirugía General (GEN)</MenuItem>
+                <MenuItem value="GYN">Ginecología (GYN)</MenuItem>
+                <MenuItem value="THOR">Torácica (THOR)</MenuItem>
+                <MenuItem value="ORL">Otorrino (ORL)</MenuItem>
+              </Select>
+            </FormControl>
+
+            {tipo === 'Programa Sociedades' && (
+              <FormControl fullWidth margin="normal" required disabled={loading}>
+                <InputLabel id="sociedad-label">Sociedad</InputLabel>
+                <Select labelId="sociedad-label" id="sociedad" name="sociedad" value={sociedad} label="Sociedad" onChange={onSelectSociedad}>
+                  {sociedades.map((s) => (
+                    <MenuItem key={s._id} value={s._id}>{s.titulo}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+
             <FormControlLabel
               control={
                 <Checkbox
@@ -285,34 +239,22 @@ const Register: React.FC = () => {
               }
               label={
                 <Typography variant="body2">
-                  Acepto el tratamiento de mis datos personales de acuerdo con la{' '}
-                  <Link href="/politica-privacidad" target="_blank">
-                    Política de Privacidad
-                  </Link>
-                  {' '}y cumplo con la LOPD.
+                  Acepto el tratamiento de mis datos personales según la{' '}
+                  <Link href="/politica-privacidad" target="_blank">Política de Privacidad</Link> y cumplo con la LOPD.
                 </Typography>
               }
               sx={{ mt: 2 }}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={loading || !consentimientoDatos}
-            >
+
+            <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 3, mb: 2, py: 1.5 }} disabled={loading || !consentimientoDatos}>
               {loading ? <CircularProgress size={24} /> : 'Registrarse'}
             </Button>
-          </Box>
+          </form>
         </Paper>
+
         <Box sx={{ mt: 2, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} Abex Excelencia Robótica
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Powered by FARGV
-          </Typography>
+          <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} Abex Excelencia Robótica</Typography>
+          <Typography variant="body2" color="text.secondary">Powered by FARGV</Typography>
         </Box>
       </Container>
     </Box>

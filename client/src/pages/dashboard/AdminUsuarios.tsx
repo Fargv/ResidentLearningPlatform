@@ -39,6 +39,7 @@ const AdminUsuarios: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuariosLista] = useState<any[]>([]);
   const [hospitales, setHospitales] = useState<any[]>([]);
+  const [sociedades, setSociedades] = useState<any[]>([]);
   const [openInvitarDialog, setOpenInvitarDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
@@ -48,7 +49,9 @@ const AdminUsuarios: React.FC = () => {
     nombre: '',
     apellidos: '',
     rol: 'residente',
-    hospital: ''
+    hospital: '',
+    tipo: '',
+    sociedad: ''
   });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -64,12 +67,15 @@ const AdminUsuarios: React.FC = () => {
         setLoading(true);
   
         const usuariosRes = await api.get('/users');
-  
+
         setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
-  
+
         const hospitalesRes = await api.get('/hospitals');
-  
+
         setHospitales(hospitalesRes.data.data);
+
+        const sociedadesRes = await api.get('/sociedades');
+        setSociedades(sociedadesRes.data.filter((s: any) => s.status === 'ACTIVO'));
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar los datos');
       } finally {
@@ -87,7 +93,9 @@ const AdminUsuarios: React.FC = () => {
       nombre: '',
       apellidos: '',
       rol: 'residente',
-      hospital: hospitales.length > 0 ? hospitales[0]._id : ''
+      hospital: hospitales.length > 0 ? hospitales[0]._id : '',
+      tipo: '',
+      sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
     });
     setOpenInvitarDialog(true);
   };
@@ -103,7 +111,9 @@ const AdminUsuarios: React.FC = () => {
       nombre: usuario.nombre,
       apellidos: usuario.apellidos,
       rol: usuario.rol,
-      hospital: usuario.hospital?._id || ''
+      hospital: usuario.hospital?._id || '',
+      tipo: usuario.tipo || '',
+      sociedad: usuario.sociedad?._id || ''
     });
     setOpenEditarDialog(true);
   };
@@ -292,6 +302,8 @@ const AdminUsuarios: React.FC = () => {
               <TableRow>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Sociedad</TableCell>
                 <TableCell>Rol</TableCell>
                 <TableCell>Hospital</TableCell>
                 <TableCell>Estado</TableCell>
@@ -305,14 +317,16 @@ const AdminUsuarios: React.FC = () => {
                     {usuario.nombre} {usuario.apellidos}
                   </TableCell>
                   <TableCell>{usuario.email}</TableCell>
+                  <TableCell>{usuario.tipo || '-'}</TableCell>
+                  <TableCell>{usuario.sociedad?.titulo || '-'}</TableCell>
                   <TableCell>
-                    <Chip 
-                      label={usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)} 
+                    <Chip
+                      label={usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
                       color={
-                        usuario.rol === 'administrador' 
-                          ? 'primary' 
-                          : usuario.rol === 'formador' 
-                            ? 'secondary' 
+                        usuario.rol === 'administrador'
+                          ? 'primary'
+                          : usuario.rol === 'formador'
+                            ? 'secondary'
                             : 'default'
                       }
                       size="small"
@@ -408,6 +422,30 @@ const AdminUsuarios: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <TextField
+            margin="dense"
+            id="tipo"
+            name="tipo"
+            label="Tipo"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.tipo}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="tipo"
+            name="tipo"
+            label="Tipo"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.tipo}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
+          <TextField
             select
             margin="dense"
             id="rol"
@@ -450,6 +488,25 @@ const AdminUsuarios: React.FC = () => {
               ))}
             </TextField>
           )}
+          <TextField
+            select
+            margin="dense"
+            id="sociedad"
+            name="sociedad"
+            label="Sociedad"
+            fullWidth
+            variant="outlined"
+            value={formData.sociedad}
+            onChange={handleChange}
+            SelectProps={{ native: true }}
+            sx={{ mb: 2 }}
+          >
+            {sociedades.map((s) => (
+              <option key={s._id} value={s._id}>
+                {s.titulo}
+              </option>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseInvitarDialog} color="primary">
@@ -540,6 +597,25 @@ const AdminUsuarios: React.FC = () => {
               ))}
             </TextField>
           )}
+           <TextField
+            select
+            margin="dense"
+            id="sociedad"
+            name="sociedad"
+            label="Sociedad"
+            fullWidth
+            variant="outlined"
+            value={formData.sociedad}
+            onChange={handleChange}
+            SelectProps={{ native: true }}
+            sx={{ mb: 2 }}
+          >
+            {sociedades.map((s) => (
+              <option key={s._id} value={s._id}>
+                {s.titulo}
+              </option>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarDialog} color="primary">

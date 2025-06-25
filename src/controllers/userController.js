@@ -19,9 +19,11 @@ exports.getUsers = async (req, res, next) => {
     let users;
 
     if (req.user.rol === 'administrador') {
-      users = await User.find().populate('hospital');
+      users = await User.find().populate('hospital').populate('sociedad');
     } else if (req.user.rol === 'formador') {
-      users = await User.find({ hospital: req.user.hospital }).populate('hospital');
+      users = await User.find({ hospital: req.user.hospital })
+        .populate('hospital')
+        .populate('sociedad');
     } else {
       return next(new ErrorResponse('No autorizado para ver usuarios', 403));
     }
@@ -43,7 +45,9 @@ exports.getUsers = async (req, res, next) => {
 // @access  Private/Admin
 exports.getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).populate('hospital');
+    const user = await User.findById(req.params.id)
+      .populate('hospital')
+      .populate('sociedad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -69,7 +73,9 @@ exports.updateUser = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
-    }).populate('hospital');
+    })
+      .populate('hospital')
+      .populate('sociedad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -327,7 +333,9 @@ exports.getFormadorResidentes = async (req, res, next) => {
     const residentes = await User.find({
       hospital: formador.hospital,
       rol: 'residente'
-    }).populate('hospital');
+    })
+      .populate('hospital')
+      .populate('sociedad');
 
     res.status(200).json({
       success: true,
@@ -358,7 +366,9 @@ exports.getResidenteFormadores = async (req, res, next) => {
     const formadores = await User.find({
       hospital: residente.hospital,
       rol: 'formador'
-    }).populate('hospital');
+    })
+      .populate('hospital')
+      .populate('sociedad');
 
     res.status(200).json({
       success: true,
@@ -374,7 +384,9 @@ exports.getUsersByHospital = async (req, res) => {
   try {
     const { hospitalId } = req.params;
 
-    const users = await User.find({ hospital: hospitalId }).populate('hospital');
+    const users = await User.find({ hospital: hospitalId })
+      .populate('hospital')
+      .populate('sociedad');
 
     res.status(200).json({
       success: true,

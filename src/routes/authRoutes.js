@@ -6,7 +6,8 @@ const {
   updateDetails,
   updatePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  checkAccessCode
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 
@@ -17,6 +18,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
+router.get('/codigos/:codigo', checkAccessCode);
 
 // Rutas protegidas
 router.get('/me', protect, getMe);

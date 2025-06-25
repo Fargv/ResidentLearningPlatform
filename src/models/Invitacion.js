@@ -8,7 +8,7 @@ const invitacionSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['residente', 'formador', 'administrador'],
+    enum: ['residente', 'formador', 'administrador', 'alumno', 'instructor'],
     required: [true, 'Por favor especifique un rol']
   },
   hospital: {
