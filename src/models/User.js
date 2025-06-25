@@ -37,13 +37,7 @@ const userSchema = new mongoose.Schema({
       return this.rol === 'residente' || this.rol === 'formador';
     }
   },
-  tipo: {
-    type: String
-  },
-  sociedad: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Sociedades'
-  },
+  
   especialidad: {
     type: String,
     enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL'],

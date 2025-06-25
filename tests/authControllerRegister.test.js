@@ -10,7 +10,7 @@ describe('register access codes', () => {
     jest.restoreAllMocks();
   });
 
-  test('ABEXFOR2025 asigna rol formador y tipo hospital', async () => {
+  test('ABEXFOR2025 asigna rol formador y tipo Programa Residentes', async () => {
     const req = {
       body: {
         nombre: 'a',
@@ -24,22 +24,22 @@ describe('register access codes', () => {
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'formador', tipo: 'hospital', hospital: 'h1' });
+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'formador', tipo: 'Programa Residentes', hospital: 'h1' });
 
     await register(req, res, jest.fn());
 
-    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'formador', tipo: 'hospital', hospital: 'h1' }));
+    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'formador', tipo: 'Programa Residentes', hospital: 'h1' }));
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  test('ABEXSOC2025 requiere sociedad', async () => {
+  test('ABEXSOCUSER2025 requiere sociedad', async () => {
     const req = {
       body: {
         nombre: 'a',
         apellidos: 'b',
         email: 'soc@a.com',
         password: '12345678',
-        codigoAcceso: 'ABEXSOC2025',
+        codigoAcceso: 'ABEXSOCUSER2025',
         consentimientoDatos: true
       }
     };
@@ -48,25 +48,25 @@ describe('register access codes', () => {
     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
   });
 
-  test('ABEXSOC2025 crea usuario de sociedad', async () => {
+  test('ABEXSOCUSER2025 crea usuario de sociedad', async () => {
     const req = {
       body: {
         nombre: 'a',
         apellidos: 'b',
         email: 'soc@a.com',
         password: '12345678',
-        codigoAcceso: 'ABEXSOC2025',
+        codigoAcceso: 'ABEXSOCUSER2025',
         sociedad: 's1',
         consentimientoDatos: true
       }
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'residente', tipo: 'sociedad', sociedad: 's1' });
+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'alumno', tipo: 'Programa Sociedades', sociedad: 's1' });
 
     await register(req, res, jest.fn());
 
-    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'residente', tipo: 'sociedad', sociedad: 's1' }));
-    expect(inicializarProgresoFormativo).toHaveBeenCalled();
+    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'alumno', tipo: 'Programa Sociedades', sociedad: 's1' }));
+    expect(inicializarProgresoFormativo).not.toHaveBeenCalled();
   });
 });

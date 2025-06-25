@@ -110,10 +110,10 @@ const AdminFases: React.FC = () => {
       const hospitalesRes = await api.get('/hospitals');
       setHospitales(hospitalesRes.data.data);
 
-      const fasesRes = await api.get('/fases_soc');
+       const fasesRes = await api.get('/fasesSoc');
       setFases(fasesRes.data.data);
 
-      const actividadesRes = await api.get('/actividades_soc');
+      const actividadesRes = await api.get('/actividadesSoc');
       setActividades(actividadesRes.data.data);
 
     } catch (err: any) {
@@ -199,7 +199,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.post('/fases_soc', {
+      const res = await api.post('/fasesSoc', {
         ...faseFormData,
         numero: parseInt(faseFormData.numero)
       });
@@ -233,7 +233,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.put(`/fases_soc/${selectedFase._id}`, {
+      const res = await api.put(`/fasesSoc/${selectedFase._id}`, {
         ...faseFormData,
         numero: parseInt(faseFormData.numero)
       });
@@ -267,7 +267,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.delete(`/fases_soc/${selectedFase._id}`);
+      const res = await api.delete(`/fasesSoc/${selectedFase._id}`);
       
       // Actualizar lista de fases
       setFases(fases.filter(f => f._id !== selectedFase._id));
@@ -352,7 +352,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      const res = await api.post('/actividades_soc', {
+      const res = await api.post('/actividadesSoc', {
             ...actividadFormData,
             orden: parseInt(actividadFormData.orden)
           });
@@ -386,7 +386,7 @@ const AdminFases: React.FC = () => {
   try {
     setProcesando(true);
 
-    const res = await api.put(`/actividades_soc/${selectedActividad._id}`, {
+    const res = await api.put(`/actividadesSoc/${selectedActividad._id}`, {
       ...actividadFormData,
       orden: parseInt(actividadFormData.orden)
     });
@@ -422,7 +422,7 @@ const AdminFases: React.FC = () => {
     try {
       setProcesando(true);
       
-      await api.delete(`/actividades_soc/${selectedActividad._id}`);
+      await api.delete(`/actividadesSoc/${selectedActividad._id}`);
       
       // Actualizar lista de actividades
       setActividades(actividades.filter(a => a._id !== selectedActividad._id));
