@@ -3,11 +3,13 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const Fase = require('../models/Fase');
 const FaseSoc = require('../models/FaseSoc');
 const Actividad = require('../models/Actividad');
+const ActividadSoc = require('../models/ActividadSoc');
 
 const inicializarProgresoFormativo = async (usuario) => {
   try {
     const esProgramaSoc = usuario && usuario.tipo === 'Programa Sociedades';
     const ModeloFase = esProgramaSoc ? FaseSoc : Fase;
+    const ModeloActividad = esProgramaSoc ? ActividadSoc : Actividad;
 
     const fases = await ModeloFase.find().sort('numero').populate('actividades');
     console.log("📦 Fases encontradas:", fases.map(f => ({ id: f._id, nombre: f.nombre })));
@@ -17,7 +19,7 @@ const inicializarProgresoFormativo = async (usuario) => {
       const fase = fases[i];
       const actividadesDB = Array.isArray(fase.actividades)
         ? fase.actividades
-        : await Actividad.find({ fase: fase._id }).sort('orden');
+        : await ModeloActividad.find({ fase: fase._id }).sort('orden');
 
       if (!actividadesDB.length) {
         console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`);
@@ -25,6 +27,7 @@ const inicializarProgresoFormativo = async (usuario) => {
       }
 
       const actividades = actividadesDB.map(act => ({
+        actividadModel: esProgramaSoc ? 'ActividadSoc' : 'Actividad',
         actividad: mongoose.Types.ObjectId.isValid(act._id)
           ? new mongoose.Types.ObjectId(act._id)
           : act._id,
@@ -46,6 +49,7 @@ const inicializarProgresoFormativo = async (usuario) => {
       const creado = await ProgresoResidente.create({
         residente: usuario._id,
         fase: fase._id,
+        faseModel: esProgramaSoc ? 'FaseSoc' : 'Fase',
         actividades,
         estadoGeneral: i === 0 ? 'en progreso' : 'bloqueada',
         fechaRegistro: new Date(),

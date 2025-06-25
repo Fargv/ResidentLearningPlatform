@@ -83,11 +83,8 @@ const getAllProgreso = async (req, res, next) => {
         select: 'nombre apellidos email hospital',
         populate: { path: 'hospital', select: 'nombre' }
       })
-      .populate({
-        path: 'actividad',
-        select: 'nombre descripcion tipo fase',
-        populate: { path: 'fase', select: 'nombre numero' }
-      });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     res.status(200).json({
       success: true,
@@ -132,7 +129,8 @@ const getProgresoResidente = async (req, res, next) => {
     }
 
     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
-      .populate({ path: 'fase', select: 'nombre numero orden' });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     // Ordenar las fases por su campo 'orden'
     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
@@ -186,11 +184,8 @@ const getProgresoResidentePorFase = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
-      .populate({
-        path: 'actividad',
-        select: 'nombre descripcion tipo fase',
-        populate: { path: 'fase', select: 'nombre numero' }
-      });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     res.status(200).json({
       success: true,
@@ -278,11 +273,8 @@ const registrarProgreso = async (req, res, next) => {
         select: 'nombre apellidos email hospital',
         populate: { path: 'hospital', select: 'nombre' }
       })
-      .populate({
-        path: 'actividad',
-        select: 'nombre descripcion tipo fase',
-        populate: { path: 'fase', select: 'nombre numero' }
-      });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     res.status(201).json({
       success: true,
@@ -332,11 +324,8 @@ const actualizarProgreso = async (req, res, next) => {
         select: 'nombre apellidos email hospital',
         populate: { path: 'hospital', select: 'nombre' }
       })
-      .populate({
-        path: 'actividad',
-        select: 'nombre descripcion tipo fase',
-        populate: { path: 'fase', select: 'nombre numero' }
-      });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     // Crear registro de auditoría
     await createAuditLog({
@@ -430,8 +419,10 @@ const validarProgreso = async (req, res, next) => {
             select: 'nombre apellidos email'
           },
           {
-            path: 'actividad',
-            select: 'nombre descripcion'
+            path: 'fase'
+          },
+          {
+            path: 'actividades.actividad'
           }
         ]
       })
@@ -517,7 +508,8 @@ const getEstadisticasResidente = async (req, res, next) => {
     const residenteId = req.params.id;
 
     const progresos = await ProgresoResidente.find({ residente: residenteId })
-      .populate({ path: 'fase', select: 'nombre numero' });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     const estadisticas = progresos.map(item => {
       const total = item.actividades.length;
@@ -625,7 +617,8 @@ const getValidacionesPendientes = async (req, res, next) => {
           : { hospital: req.user.hospital },
         select: 'nombre apellidos hospital sociedad'
       })
-      .populate({ path: 'fase', select: 'nombre numero' });
+      .populate('fase')
+      .populate('actividades.actividad');
 
     const pendientes = [];
     const validadas = [];

@@ -1,4 +1,4 @@
-const { crearSociedad, actualizarSociedad, eliminarSociedad } = require('../src/controllers/sociedadesController');
+const { crearSociedad, actualizarSociedad, eliminarSociedad, obtenerSociedadesPublic } = require('../src/controllers/sociedadesController');
 const Sociedades = require('../src/models/Sociedades');
 const { authorize } = require('../src/middleware/auth');
 const ErrorResponse = require('../src/utils/errorResponse');
