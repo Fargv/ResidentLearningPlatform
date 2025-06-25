@@ -1,5 +1,6 @@
 const { register } = require('../src/controllers/authController');
 const User = require('../src/models/User');
+const Sociedades = require('../src/models/Sociedades');
 const { inicializarProgresoFormativo } = require('../src/utils/initProgreso');
 const ErrorResponse = require('../src/utils/errorResponse');
 
@@ -62,11 +63,12 @@ describe('register access codes', () => {
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
+    jest.spyOn(Sociedades, 'findOne').mockResolvedValue({ _id: 's1', status: 'ACTIVO' });
     jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'alumno', tipo: 'Programa Sociedades', sociedad: 's1' });
 
     await register(req, res, jest.fn());
 
     expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'alumno', tipo: 'Programa Sociedades', sociedad: 's1' }));
-    expect(inicializarProgresoFormativo).not.toHaveBeenCalled();
+    expect(inicializarProgresoFormativo).toHaveBeenCalled();
   });
 });
