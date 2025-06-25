@@ -92,7 +92,7 @@ const register = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    if (rol === 'residente') {
+    if (rol === 'residente' || rol === 'alumno') {
       await inicializarProgresoFormativo(newUser);
     }
 

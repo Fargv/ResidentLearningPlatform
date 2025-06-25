@@ -50,10 +50,10 @@ const updatePhaseStatus = async (progreso) => {
 
 const inicializarProgresoFormativo = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user || user.rol !== 'residente') {
-      return res.status(404).json({ success: false, error: 'Residente no válido' });
-    }
+  const user = await User.findById(req.params.id);
+  if (!user || (user.rol !== 'residente' && user.rol !== 'alumno')) {
+    return res.status(404).json({ success: false, error: 'Residente no válido' });
+  }
 
      if (req.body.tipo) user.tipo = req.body.tipo;
     const count = await inicializarProgresoFormativoDB(user);
@@ -114,13 +114,14 @@ const getProgresoResidente = async (req, res, next) => {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
     }
 
-    if (residente.rol !== 'residente') {
+  if (residente.rol !== 'residente' && residente.rol !== 'alumno') {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
-    }
+  }
 
-    if (req.user.rol === 'residente' && req.user.id !== req.params.id) {
+  if ((req.user.rol === 'residente' || req.user.rol === 'alumno') && req.user.id !== req.params.id) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
-    }
+  }
+
 
     if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
@@ -172,13 +173,13 @@ const getProgresoResidentePorFase = async (req, res, next) => {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
     }
 
-    if (residente.rol !== 'residente') {
+  if (residente.rol !== 'residente' && residente.rol !== 'alumno') {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
-    }
+  }
 
-    if (req.user.rol === 'residente' && req.user.id !== req.params.id) {
+  if ((req.user.rol === 'residente' || req.user.rol === 'alumno') && req.user.id !== req.params.id) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
-    }
+  }
 
     if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
@@ -212,9 +213,9 @@ const getProgresoResidentePorFase = async (req, res, next) => {
 const registrarProgreso = async (req, res, next) => {
   try {
     // Si el usuario es residente, solo puede registrar su propio progreso
-    if (req.user.rol === 'residente' && req.body.residente !== req.user.id) {
+  if ((req.user.rol === 'residente' || req.user.rol === 'alumno') && req.body.residente !== req.user.id) {
       return next(new ErrorResponse('No autorizado para registrar progreso de otro residente', 403));
-    }
+  }
 
     // Verificar que la actividad existe
     const actividad = await Actividad.findById(req.body.actividad);
@@ -228,9 +229,9 @@ const registrarProgreso = async (req, res, next) => {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.body.residente}`, 404));
     }
 
-    if (residente.rol !== 'residente') {
+  if (residente.rol !== 'residente' && residente.rol !== 'alumno') {
       return next(new ErrorResponse(`El usuario con id ${req.body.residente} no es un residente`, 400));
-    }
+  }
 
     // Crear el registro de progreso
     const progreso = await ProgresoResidente.create({
@@ -749,10 +750,10 @@ const crearProgresoParaUsuario = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const usuario = await User.findById(id);
-    if (!usuario || usuario.rol !== 'residente') {
+  const usuario = await User.findById(id);
+  if (!usuario || (usuario.rol !== 'residente' && usuario.rol !== 'alumno')) {
       return res.status(400).json({ success: false, error: 'Usuario no válido o no es residente' });
-    }
+  }
 
     const yaTiene = await ProgresoResidente.findOne({ residente: id });
     if (yaTiene) {

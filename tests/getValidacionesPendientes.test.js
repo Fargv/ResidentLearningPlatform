@@ -1,4 +1,4 @@
-const { getValidacionesPendientes } = require('../src/controllers/progresoController');
+const { crearSociedad, actualizarSociedad, eliminarSociedad, obtenerSociedadesPublic } = require('../src/controllers/sociedadesController');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 
 describe('getValidacionesPendientes filtro sociedad', () => {

@@ -76,13 +76,13 @@ const Dashboard: React.FC = () => {
 
   const getMenuItems = () => {
     const items = [
-      { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', roles: ['administrador', 'formador', 'residente'] }
+      { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', roles: ['administrador', 'formador', 'residente', 'alumno'] }
     ];
   
-    if (user?.rol === 'residente') {
+    if (user?.rol === 'residente' || user?.rol === 'alumno') {
       items.push(
-        { text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente'] },
-        { text: 'Fases Formativas', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente'] }
+        { text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente', 'alumno'] },
+        { text: 'Fases Formativas', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno'] }
       );
     }
     
@@ -256,9 +256,9 @@ const Dashboard: React.FC = () => {
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
-  {user?.rol === 'residente' && (
+  {user?.rol === 'residente' || user?.rol === 'alumno' ? (
     <Route path="/fases" element={<ResidenteFases />} />
-  )}
+  ) : null}
   <Route path="/perfil" element={<Perfil />} />
   <Route path="/notificaciones" element={<Notificaciones />} />
   <Route path="/debug" element={<DebugDashboard />} />
