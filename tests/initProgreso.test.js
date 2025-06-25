@@ -28,7 +28,11 @@ describe('inicializarProgresoFormativo', () => {
 
     expect(count).toBe(1);
     expect(createSpy).toHaveBeenCalledTimes(1);
-    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({ fase: 'f1' }));
+    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
+      fase: 'f1',
+      faseModel: 'Fase',
+      actividades: [expect.objectContaining({ actividadModel: 'Actividad' })]
+    }));
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('Fase 2')
     );
@@ -54,6 +58,10 @@ describe('inicializarProgresoFormativo', () => {
     expect(findSpy).toHaveBeenCalled();
     expect(otherSpy).not.toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
+      faseModel: 'FaseSoc',
+      actividades: [expect.objectContaining({ actividadModel: 'ActividadSoc' })]
+    }));
     expect(count).toBe(1);
   });
 });

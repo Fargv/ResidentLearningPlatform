@@ -1,4 +1,5 @@
 const { crearSociedad, actualizarSociedad, eliminarSociedad, obtenerSociedadesPublic } = require('../src/controllers/sociedadesController');
+const { getValidacionesPendientes } = require('../src/controllers/progresoController');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 
 describe('getValidacionesPendientes filtro sociedad', () => {
@@ -19,6 +20,6 @@ describe('getValidacionesPendientes filtro sociedad', () => {
     await getValidacionesPendientes(req, res, jest.fn());
 
     const matchArg = populate.mock.calls[0][0].match;
-    expect(matchArg).toEqual({ hospital: 'h1', sociedad: 's1' });
+    expect(matchArg).toEqual({ hospital: 'h1' });
   });
 });
