@@ -25,7 +25,7 @@ const {
 router.use(protect);
 
 // ✅ Validaciones pendientes del formador
-router.get('/formador/validaciones/pendientes', authorize('formador'), getValidacionesPendientes);
+router.get('/formador/validaciones/pendientes', authorize('formador', 'instructor'), getValidacionesPendientes);
 
 // ✅ Listado general y creación de progreso
 router.route('/')
@@ -51,15 +51,16 @@ router.route('/:id')
 // ✅ Marcar actividad completada
 router.put('/:id/actividad/:index', marcarActividadCompletada);
 
-router.post('/:id/actividad/:index/validar', authorize('formador', 'administrador'), validarActividad);
-router.post('/:id/actividad/:index/rechazar', authorize('formador', 'administrador'), rechazarActividad);
+router.post('/:id/actividad/:index/validar', authorize('formador', 'instructor', 'administrador'), validarActividad);
+router.post('/:id/actividad/:index/rechazar', authorize('formador', 'instructor', 'administrador'), rechazarActividad);
+
 
 // ✅ Validar o rechazar progreso
 router.route('/:id/validar')
-  .post(authorize('formador', 'administrador'), validarProgreso);
+  .post(authorize('formador', 'instructor', 'administrador'), validarProgreso);
 
 router.route('/:id/rechazar')
-  .post(authorize('formador', 'administrador'), rechazarProgreso);
+  .post(authorize('formador', 'instructor', 'administrador'), rechazarProgreso);
 
 // ✅ Inicializar progreso formativo de un residente
 router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);

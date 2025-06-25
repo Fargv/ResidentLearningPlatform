@@ -5,32 +5,71 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const Fase = require('../models/Fase');
 const ProgresoResidente = require('../models/ProgresoResidente');
+const Sociedades = require('../models/Sociedades');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
-
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 
+const accessCodes = {
+  ABEXRES2025: { rol: 'residente', tipo: 'hospital' },
+  ABEXFOR2025: { rol: 'formador', tipo: 'hospital' },
+  ABEXSOCUSER2025: { rol: 'alumno', tipo: 'sociedad' },
+  ABEXSOCFOR2025: { rol: 'instructor', tipo: 'sociedad' }
+};
+
+const checkAccessCode = async (req, res, next) => {
+  try {
+    const { codigo } = req.params;
+    const data = accessCodes[codigo];
+
+    if (!data) {
+      return next(new ErrorResponse('Código de acceso inválido', 400));
+    }
+
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
 
 const register = async (req, res, next) => {
   try {
-    const { nombre, apellidos, email, password, codigoAcceso, hospital, consentimientoDatos, especialidad} = req.body;
-    const accessCode = codigoAcceso;
+    const {
+      nombre,
+      apellidos,
+      email,
+      password,
+      codigoAcceso,
+      hospital,
+      sociedad,
+      consentimientoDatos,
+      especialidad
+    } = req.body;
 
-    if (!accessCode) {
-      return next(new ErrorResponse('Código de acceso requerido', 400));
+    const access = accessCodes[codigoAcceso];
+    if (!codigoAcceso || !access) {
+      return next(new ErrorResponse('Código de acceso inválido', 400));
     }
+
+    const { rol, tipo } = access;
 
     if (!consentimientoDatos) {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
     }
 
-    let rol = null;
-    if (accessCode === 'ABEXFOR2025') {
-      rol = 'formador';
-    } else if (accessCode === 'ABEXRES2025') {
-      rol = 'residente';
-    } else {
-      return next(new ErrorResponse('Código de acceso inválido', 400));
+    if (tipo === 'hospital' && !hospital) {
+      return next(new ErrorResponse('Hospital requerido', 400));
+    }
+
+    if (tipo === 'sociedad') {
+      if (!sociedad) {
+        return next(new ErrorResponse('Sociedad requerida', 400));
+      }
+
+      const sociedadActiva = await Sociedades.findOne({ _id: sociedad, status: 'ACTIVO' });
+      if (!sociedadActiva) {
+        return next(new ErrorResponse('Sociedad no válida o inactiva', 400));
+      }
     }
 
     const existingUser = await User.findOne({ email });
@@ -44,7 +83,9 @@ const register = async (req, res, next) => {
       email,
       password,
       rol,
-      hospital,
+      tipo,
+      hospital: tipo === 'hospital' ? hospital : undefined,
+      sociedad: tipo === 'sociedad' ? sociedad : undefined,
       especialidad,
       activo: true,
       consentimientoDatos: true,
@@ -52,8 +93,8 @@ const register = async (req, res, next) => {
     });
 
     if (rol === 'residente') {
-  await inicializarProgresoFormativo(newUser);
-      }
+      await inicializarProgresoFormativo(newUser);
+    }
 
     const jwtToken = generateToken(newUser);
 
@@ -66,7 +107,9 @@ const register = async (req, res, next) => {
         apellidos: newUser.apellidos,
         email: newUser.email,
         rol: newUser.rol,
-        hospital: newUser.hospital
+        hospital: newUser.hospital,
+        sociedad: newUser.sociedad,
+        tipo: newUser.tipo
       }
     });
   } catch (err) {
@@ -222,5 +265,6 @@ module.exports = {
   updateDetails,
   updatePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  checkAccessCode
 };

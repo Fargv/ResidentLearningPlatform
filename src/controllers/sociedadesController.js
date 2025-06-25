@@ -18,6 +18,15 @@ exports.obtenerSociedades = async (req, res) => {
   }
 };
 
+exports.obtenerSociedadesPublic = async (req, res) => {
+  try {
+    const activas = await Sociedades.find({ status: 'ACTIVO' });
+    res.json(activas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.obtenerSociedad = async (req, res) => {
   try {
     const item = await Sociedades.findById(req.params.id);
@@ -41,6 +50,15 @@ exports.eliminarSociedad = async (req, res) => {
   try {
     await Sociedades.findByIdAndDelete(req.params.id);
     res.json({ mensaje: 'Sociedad eliminada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.obtenerSociedadesActivas = async (req, res) => {
+  try {
+    const activas = await Sociedades.find({ status: 'ACTIVO' });
+    res.json(activas);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

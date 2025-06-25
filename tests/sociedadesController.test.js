@@ -48,6 +48,18 @@ describe('sociedadesController', () => {
   });
 });
 
+test('obtenerSociedadesPublicas devuelve solo activas', async () => {
+    const list = [{ _id: 's1' }];
+    const req = {};
+    const res = { json: jest.fn() };
+    jest.spyOn(Sociedades, 'find').mockResolvedValue(list);
+
+    await obtenerSociedadesPublic(req, res);
+
+    expect(Sociedades.find).toHaveBeenCalledWith({ status: 'ACTIVO' });
+    expect(res.json).toHaveBeenCalledWith(list);
+  });
+
 describe('authorization for sociedades', () => {
   test('bloquea a usuarios no administradores', () => {
     const esAdmin = authorize('administrador');

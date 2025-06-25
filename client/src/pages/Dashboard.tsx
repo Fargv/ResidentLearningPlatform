@@ -43,6 +43,7 @@ import FormadorValidaciones from './dashboard/FormadorValidaciones';
 import AdminUsuarios from './dashboard/AdminUsuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
+import AdminFasesSoc from './dashboard/AdminFasesSoc';
 import AdminSociedades from './dashboard/AdminSociedades';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
@@ -104,6 +105,7 @@ const Dashboard: React.FC = () => {
         { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitals', roles: ['administrador'] },
         { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
         { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
+        { text: 'Fases Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
         { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
     }
@@ -249,6 +251,9 @@ const Dashboard: React.FC = () => {
   <Route path="/hospitals" element={<AdminHospitales />} />
   {user?.rol === 'administrador' && (
     <Route path="/fases" element={<AdminFases />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/fases-soc" element={<AdminFasesSoc />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
   {user?.rol === 'residente' && (

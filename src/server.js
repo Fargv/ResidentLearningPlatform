@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/database');
-const sociedadesRoutes = require('./routes/sociedadesRoutes');
+
 
 // Cargar variables de entorno
 dotenv.config();
@@ -22,10 +22,13 @@ const userRoutes = require('./routes/userRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const faseRoutes = require('./routes/faseRoutes');
 const actividadRoutes = require('./routes/actividadRoutes');
+const faseSocRoutes = require('./routes/faseSocRoutes');
+const actividadSocRoutes = require('./routes/actividadSocRoutes');
 const progresoRoutes = require('./routes/progresoRoutes');
 const adjuntoRoutes = require('./routes/adjuntoRoutes');
 const notificacionRoutes = require('./routes/notificacionRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const sociedadesRoutes = require('./routes/sociedadesRoutes');
 
 // Inicializar app
 const app = express();
@@ -53,7 +56,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/fases', faseRoutes);
+app.use('/api/fasesSoc', faseSocRoutes);
 app.use('/api/actividades', actividadRoutes);
+app.use('/api/actividadesSoc', actividadSocRoutes);
 app.use('/api/progreso', progresoRoutes);
 app.use('/api/adjuntos', adjuntoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
