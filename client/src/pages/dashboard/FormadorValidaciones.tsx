@@ -57,6 +57,9 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+const formatFase = (fase: any) =>
+  fase ? `Fase ${fase.numero}: ${fase.nombre}` : 'Sin fase';
+
 const FormadorValidaciones: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -230,8 +233,8 @@ const handleRechazar = async () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Actividad</TableCell>
                     <TableCell>Fase</TableCell>
+                    <TableCell>Actividad</TableCell>
                     <TableCell>Residente</TableCell>
                     <TableCell>Fecha</TableCell>
                     <TableCell>Comentarios</TableCell>
@@ -241,8 +244,8 @@ const handleRechazar = async () => {
                 <TableBody>
                   {pendientes.map((progreso) => (
                     <TableRow key={progreso._id}>
+                      <TableCell>{formatFase(progreso.fase)}</TableCell>
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
-                      <TableCell>{progreso.fase?.nombre || 'Sin fase'}</TableCell>
                       <TableCell>
                         {progreso.residente.nombre} {progreso.residente.apellidos}
                       </TableCell>
@@ -300,8 +303,8 @@ const handleRechazar = async () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Actividad</TableCell>
                     <TableCell>Fase</TableCell>
+                    <TableCell>Actividad</TableCell>
                     <TableCell>Residente</TableCell>
                     <TableCell>Fecha</TableCell>
                     <TableCell>Comentarios</TableCell>
@@ -311,8 +314,8 @@ const handleRechazar = async () => {
                 <TableBody>
                   {validadas.map(progreso => (
                     <TableRow key={progreso._id}>
+                      <TableCell>{formatFase(progreso.fase)}</TableCell>
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
-                      <TableCell>{progreso.actividad?.fase?.nombre || 'Sin fase'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}</TableCell>
                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
@@ -339,8 +342,8 @@ const handleRechazar = async () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Actividad</TableCell>
                     <TableCell>Fase</TableCell>
+                    <TableCell>Actividad</TableCell>
                     <TableCell>Residente</TableCell>
                     <TableCell>Fecha</TableCell>
                     <TableCell>Motivo</TableCell>
@@ -350,8 +353,8 @@ const handleRechazar = async () => {
                 <TableBody>
                   {rechazadas.map(progreso => (
                     <TableRow key={progreso._id}>
+                      <TableCell>{formatFase(progreso.fase)}</TableCell>
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
-                      <TableCell>{progreso.actividad?.fase?.nombre || 'Sin fase'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}</TableCell>
                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
