@@ -210,6 +210,16 @@ const ResidenteFases: React.FC = () => {
           Fecha completada: {new Date(act.fecha).toLocaleDateString()}
         </Typography>
       )}
+       {act.comentariosFormador && (
+        <Typography variant="body2" color="text.secondary">
+          Comentario formador: {act.comentariosFormador}
+        </Typography>
+      )}
+      {act.fechaValidacion && (
+        <Typography variant="body2" color="text.secondary">
+          Validado el: {new Date(act.fechaValidacion).toLocaleDateString()}
+        </Typography>
+      )}
       <Typography variant="body2" color="text.secondary">
   Estado: {
     act.estado === 'validado' ? 'Validado' :
