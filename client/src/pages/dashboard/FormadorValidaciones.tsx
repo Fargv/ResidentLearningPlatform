@@ -3,17 +3,10 @@ import {
   Box,
   Typography,
   Paper,
-  //Grid,
-  //Card,
-  //CardContent,
-  //Divider,
   Button,
   Chip,
   LinearProgress,
   List,
-  //ListItem,
-  //ListItemText,
-  //ListItemAvatar,
   Avatar,
   Alert,
   Dialog,
@@ -23,7 +16,13 @@ import {
   DialogActions,
   TextField,
   Tab,
-  Tabs
+  Tabs,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
@@ -52,7 +51,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 2 }}>
           {children}
         </Box>
       )}
@@ -229,68 +228,66 @@ const handleRechazar = async () => {
               No hay validaciones pendientes
             </Typography>
           ) : (
-            <List>
-              {pendientes.map((progreso) => (
-                <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
-                  <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
-                    <Box
-                      sx={{
-                        p: 2,
-                        flexBasis: { xs: '100%', sm: '75%' },
-                        flexGrow: 1,
-                      }}
-                    >
-                      <Typography variant="h6" gutterBottom>
-                        Actividad: {progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Fase: {progreso.fase?.nombre || 'Sin fase'}
-                      </Typography>
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        Residente: {progreso.residente.nombre} {progreso.residente.apellidos}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Fecha: {new Date(progreso.fechaCreacion).toLocaleDateString()}
-                      </Typography>
-                      {progreso.actividad?.comentariosResidente && (
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        <strong>Comentarios:</strong> {progreso.actividad.comentariosResidente}
-                      </Typography>
-                    )}
-                    </Box>
-
-                    <Box
-                      sx={{
-                        p: 2,
-                        flexBasis: { xs: '100%', sm: '25%' },
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 1,
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        color="success"
-                        startIcon={<CheckCircleIcon />}
-                        onClick={() => handleOpenValidarDialog({ progresoId: progreso.progresoId || progreso._id.split('-')[0], index: progreso.index, ...progreso })}
-                        fullWidth
-                      >
-                        Validar
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        startIcon={<ErrorIcon />}
-                        onClick={() => handleOpenRechazarDialog({ progresoId: progreso.progresoId || progreso._id.split('-')[0], index: progreso.index, ...progreso })}
-                        fullWidth
-                      >
-                        Rechazar
-                      </Button>
-                    </Box>
-                  </Box>
-                </Paper>
-              ))}
-            </List>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Actividad</TableCell>
+                    <TableCell>Fase</TableCell>
+                    <TableCell>Residente</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Comentarios</TableCell>
+                    <TableCell align="right">Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {pendientes.map((progreso) => (
+                    <TableRow key={progreso._id}>
+                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
+                      <TableCell>{progreso.fase?.nombre || 'Sin fase'}</TableCell>
+                      <TableCell>
+                        {progreso.residente.nombre} {progreso.residente.apellidos}
+                      </TableCell>
+                      <TableCell>{new Date(progreso.fechaCreacion).toLocaleDateString()}</TableCell>
+                      <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
+                      <TableCell align="right">
+                        <Button
+                          variant="contained"
+                          color="success"
+                          size="small"
+                          startIcon={<CheckCircleIcon />}
+                          sx={{ mr: 1 }}
+                          onClick={() =>
+                            handleOpenValidarDialog({
+                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
+                              index: progreso.index,
+                              ...progreso
+                            })
+                          }
+                        >
+                          Validar
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          size="small"
+                          startIcon={<ErrorIcon />}
+                          onClick={() =>
+                            handleOpenRechazarDialog({
+                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
+                              index: progreso.index,
+                              ...progreso
+                            })
+                          }
+                        >
+                          Rechazar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </TabPanel>
         
@@ -301,42 +298,34 @@ const handleRechazar = async () => {
               No hay validaciones completadas
             </Typography>
           ) : (
-            <List>
-              {validadas.map(progreso => (
-                <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
-                  <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
-                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '75%' }, flexGrow: 1 }}>
-                      <Typography variant="h6">
-                        {progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Fase: {progreso.actividad?.fase?.nombre || 'Sin fase'}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                        <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
-                          {progreso.residente?.nombre?.charAt(0) || '?'}
-                        </Avatar>
-                        <Typography variant="body2">
-                          {progreso.residente?.nombre} {progreso.residente?.apellidos}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Validado el: {new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}
-                      </Typography>
-                      {progreso.validaciones?.[0]?.comentarios && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          <strong>Comentarios:</strong> {progreso.validaciones[0].comentarios}
-                        </Typography>
-                      )}
-                    </Box>
-
-                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '25%' }, display: 'flex', justifyContent: 'flex-end' }}>
-                      <Chip icon={<CheckCircleIcon />} label="Validado" color="success" variant="outlined" />
-                    </Box>
-                  </Box>
-                </Paper>
-              ))}
-            </List>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Actividad</TableCell>
+                    <TableCell>Fase</TableCell>
+                    <TableCell>Residente</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Comentarios</TableCell>
+                    <TableCell align="right">Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {validadas.map(progreso => (
+                    <TableRow key={progreso._id}>
+                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
+                      <TableCell>{progreso.actividad?.fase?.nombre || 'Sin fase'}</TableCell>
+                      <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
+                      <TableCell>{new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}</TableCell>
+                      <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
+                      <TableCell align="right">
+                        <Chip icon={<CheckCircleIcon />} label="Validado" color="success" size="small" variant="outlined" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </TabPanel>
 
@@ -348,42 +337,34 @@ const handleRechazar = async () => {
               No hay validaciones rechazadas
             </Typography>
           ) : (
-            <List>
-              {rechazadas.map(progreso => (
-                <Paper key={progreso._id} sx={{ mb: 2, p: 2 }}>
-                  <Box display="flex" flexWrap="wrap" alignItems="center" gap={2}>
-                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '75%' }, flexGrow: 1 }}>
-                      <Typography variant="h6">
-                        {progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Fase: {progreso.actividad?.fase?.nombre || 'Sin fase'}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                        <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
-                          {progreso.residente?.nombre?.charAt(0) || '?'}
-                        </Avatar>
-                        <Typography variant="body2">
-                          {progreso.residente?.nombre} {progreso.residente?.apellidos}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Rechazado el: {new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}
-                      </Typography>
-                      {progreso.comentariosRechazo && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          <strong>Motivo:</strong> {progreso.comentariosRechazo}
-                        </Typography>
-                      )}
-                    </Box>
-
-                    <Box sx={{ p: 2, flexBasis: { xs: '100%', sm: '25%' }, display: 'flex', justifyContent: 'flex-end' }}>
-                      <Chip icon={<ErrorIcon />} label="Rechazado" color="error" variant="outlined" />
-                    </Box>
-                  </Box>
-                </Paper>
-              ))}
-            </List>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Actividad</TableCell>
+                    <TableCell>Fase</TableCell>
+                    <TableCell>Residente</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Motivo</TableCell>
+                    <TableCell align="right">Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rechazadas.map(progreso => (
+                    <TableRow key={progreso._id}>
+                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
+                      <TableCell>{progreso.actividad?.fase?.nombre || 'Sin fase'}</TableCell>
+                      <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
+                      <TableCell>{new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}</TableCell>
+                      <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
+                      <TableCell align="right">
+                        <Chip icon={<ErrorIcon />} label="Rechazado" color="error" size="small" variant="outlined" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </TabPanel>
       </Paper>
