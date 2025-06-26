@@ -6,8 +6,6 @@ import {
   Button,
   Chip,
   LinearProgress,
-  List,
-  Avatar,
   Alert,
   Dialog,
   DialogTitle,
