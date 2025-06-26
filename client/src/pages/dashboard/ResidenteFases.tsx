@@ -215,6 +215,11 @@ const ResidenteFases: React.FC = () => {
           Comentario formador: {act.comentariosFormador}
         </Typography>
       )}
+      {act.estado === 'rechazado' && act.comentariosRechazo && (
+        <Typography variant="body2" color="error">
+          Motivo rechazo: {act.comentariosRechazo}
+        </Typography>
+      )}
       {act.fechaValidacion && (
         <Typography variant="body2" color="text.secondary">
           Validado el: {new Date(act.fechaValidacion).toLocaleDateString()}
