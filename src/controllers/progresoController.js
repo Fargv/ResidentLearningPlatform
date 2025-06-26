@@ -561,6 +561,7 @@ const marcarActividadCompletada = async (req, res, next) => {
 
 
     await progreso.save();
+    await progreso.populate(['fase', 'actividades.actividad']);
 
     res.status(200).json({ success: true, data: progreso });
   } catch (err) {
@@ -641,7 +642,8 @@ const getValidacionesPendientes = async (req, res, next) => {
           residente: progreso.residente,
           fase: progreso.fase,
           fechaCreacion: actividad.fechaRealizacion || progreso.fechaRegistro,
-          estado: actividad.estado
+          estado: actividad.estado,
+          comentariosRechazo: actividad.comentariosRechazo || ''
         };
 
         if (actividad.estado === 'completado') pendientes.push(item);
@@ -729,6 +731,8 @@ const rechazarActividad = async (req, res, next) => {
     actividad.fechaRechazo = new Date();
 
     await progreso.save();
+    await progreso.populate(['fase', 'actividades.actividad']);
+
 
     await Notificacion.create({
       usuario: progreso.residente._id,
