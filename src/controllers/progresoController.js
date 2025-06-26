@@ -144,7 +144,11 @@ const getProgresoResidente = async (req, res, next) => {
             nombre: act.nombre,
             completada: act.estado === 'validado',
             comentariosResidente: act.comentariosResidente || '',
+            comentariosFormador: act.comentariosFormador || '',
             fecha: act.fechaRealizacion,
+            fechaValidacion: act.fechaValidacion,
+            comentariosRechazo: act.comentariosRechazo || '',
+            fechaRechazo: act.fechaRechazo,
             estado: act.estado
           }))
         };

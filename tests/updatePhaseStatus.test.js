@@ -1,6 +1,7 @@
 const { updatePhaseStatus } = require('../src/controllers/progresoController');
 const Fase = require('../src/models/Fase');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
+const FaseSoc = require('../src/models/FaseSoc');
 
 describe('updatePhaseStatus', () => {
   afterEach(() => {
