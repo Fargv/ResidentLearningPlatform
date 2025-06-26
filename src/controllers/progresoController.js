@@ -25,7 +25,8 @@ const updatePhaseStatus = async (progreso) => {
     console.log(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
   }
 
-  const nextFase = await Fase.findOne({ orden: progreso.fase.orden + 1 });
+  const ModeloFase = mongoose.model(progreso.faseModel || 'Fase');
+  const nextFase = await ModeloFase.findOne({ orden: progreso.fase.orden + 1 });
   if (!nextFase) {
     console.log(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
     return;

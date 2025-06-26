@@ -16,5 +16,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-06-08: Script `scripts/addZonaField.js` para inicializar campo `zona` en hospitales.
 - 2025-06-09: Botón para crear progreso en `AdminValidaciones` y validaciones de coherencia en `adminController`.
 - 2025-06-24: Añadida página de Sociedades al Dashboard con nuevo icono y ruta
+- 2025-06-26: `updatePhaseStatus` usa modelo de fase dinámico para desbloquear fases en Sociedades
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.
