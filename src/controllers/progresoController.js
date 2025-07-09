@@ -252,7 +252,8 @@ const registrarProgreso = async (req, res, next) => {
         return Notificacion.create({
           usuario: formador._id,
           tipo: 'validacion',
-          mensaje: `El residente ${residente.nombre} ${residente.apellidos} ha completado la actividad "${actividad.nombre}" y requiere validación.`,
+           mensaje: `El residente ${residente.nombre} ${residente.apellidos} ha completado la actividad "${actividad.nombre}" y requiere validación.`,
+          enlace: '/dashboard/validaciones',
           entidadRelacionada: {
             tipo: 'progreso',
             id: progreso._id
@@ -395,6 +396,17 @@ const validarProgreso = async (req, res, next) => {
     progreso.estado = 'validado';
     await progreso.save();
 
+    // Eliminar notificaciones pendientes para los formadores
+    const formadoresIds = (await User.find({
+      hospital: progreso.residente.hospital,
+      rol: 'formador'
+    })).map(f => f._id);
+    await Notificacion.deleteMany({
+      usuario: { $in: formadoresIds },
+      'entidadRelacionada.tipo': 'progreso',
+      'entidadRelacionada.id': progreso._id
+    });
+
     // Crear notificación para el residente
     await Notificacion.create({
       usuario: progreso.residente._id,
@@ -476,6 +488,17 @@ const rechazarProgreso = async (req, res, next) => {
     // Actualizar estado del progreso
     progreso.estado = 'rechazado';
     await progreso.save();
+
+    // Eliminar notificaciones pendientes para los formadores
+    const formadoresIds = (await User.find({
+      hospital: progreso.residente.hospital,
+      rol: 'formador'
+    })).map(f => f._id);
+    await Notificacion.deleteMany({
+      usuario: { $in: formadoresIds },
+      'entidadRelacionada.tipo': 'progreso',
+      'entidadRelacionada.id': progreso._id
+    });
 
     // Crear notificación para el residente
     await Notificacion.create({
@@ -694,6 +717,16 @@ const getValidacionesPendientes = async (req, res, next) => {
     await progreso.save();
     await updatePhaseStatus(progreso);
 
+    const formadoresIds = (await User.find({
+      hospital: progreso.residente.hospital,
+      rol: 'formador'
+    })).map(f => f._id);
+    await Notificacion.deleteMany({
+      usuario: { $in: formadoresIds },
+      'entidadRelacionada.tipo': 'progreso',
+      'entidadRelacionada.id': progreso._id
+    });
+
     await Notificacion.create({
       usuario: progreso.residente._id,
       tipo: 'validacion',
@@ -732,7 +765,16 @@ const rechazarActividad = async (req, res, next) => {
 
     await progreso.save();
     await progreso.populate(['fase', 'actividades.actividad']);
-
+    
+    const formadoresIds = (await User.find({
+      hospital: progreso.residente.hospital,
+      rol: 'formador'
+    })).map(f => f._id);
+    await Notificacion.deleteMany({
+      usuario: { $in: formadoresIds },
+      'entidadRelacionada.tipo': 'progreso',
+      'entidadRelacionada.id': progreso._id
+    });
 
     await Notificacion.create({
       usuario: progreso.residente._id,

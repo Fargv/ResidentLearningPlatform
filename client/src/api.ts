@@ -17,3 +17,9 @@ api.interceptors.request.use(
 );
 
 export default api;
+
+export const getNotificaciones = () => api.get('/notificaciones');
+export const getNotificacionesNoLeidas = () => api.get('/notificaciones/no-leidas');
+export const marcarNotificacionLeida = (id: string) => api.put(`/notificaciones/${id}/leer`);
+export const eliminarNotificacion = (id: string) => api.delete(`/notificaciones/${id}`);
+

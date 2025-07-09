@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -35,6 +35,7 @@ import {
   Group as GroupIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { getNotificacionesNoLeidas } from '../api';
 
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
@@ -55,10 +56,24 @@ const drawerWidth = 240;
 const Dashboard: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const refreshUnreadCount = async () => {
+    try {
+      const res = await getNotificacionesNoLeidas();
+      setUnreadCount(res.data.count || 0);
+    } catch (err) {
+      console.error('Error obteniendo notificaciones no leidas', err);
+    }
+  };
+
+  useEffect(() => {
+    refreshUnreadCount();
+  }, []);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
@@ -138,7 +153,7 @@ const Dashboard: React.FC = () => {
             Plataforma de Formación da Vinci
           </Typography>
           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
-            <Badge badgeContent={4} color="secondary">
+            <Badge badgeContent={unreadCount} color="secondary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -226,7 +241,7 @@ const Dashboard: React.FC = () => {
           </ListItemButton>
           <ListItemButton onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}>
             <ListItemIcon>
-              <Badge badgeContent={4} color="secondary">
+              <Badge badgeContent={unreadCount} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </ListItemIcon>
@@ -260,7 +275,7 @@ const Dashboard: React.FC = () => {
     <Route path="/fases" element={<ResidenteFases />} />
   ) : null}
   <Route path="/perfil" element={<Perfil />} />
-  <Route path="/notificaciones" element={<Notificaciones />} />
+  <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
   <Route path="/debug" element={<DebugDashboard />} />
 </Routes>
 
