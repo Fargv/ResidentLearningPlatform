@@ -98,7 +98,8 @@ const ResidenteProgreso: React.FC = () => {
   const [comentarios, setComentarios] = useState('');
   const [registrando, setRegistrando] = useState(false);
   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
-const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+  const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+  const allValidado = progreso.length > 0 && progreso.every(p => p.estado === 'validado');
 
 useEffect(() => {
   if (!user?._id) return;
@@ -189,7 +190,23 @@ useEffect(() => {
     }
   };
   
-  
+  const handleDescargarCertificado = async () => {
+    if (!user?._id) return;
+    try {
+      const res = await api.get(`/certificado/${user._id}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'certificado.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Error al descargar certificado');
+    }
+  };
+
+
 
   const getActividadEstado = (actividadId: string) => {
     const actividadProgreso = progreso.find(p => p.actividad._id === actividadId);
@@ -268,6 +285,13 @@ useEffect(() => {
             </Card>
           </Box>
         </Box>
+        {allValidado && (
+          <Box textAlign="center" mt={2}>
+            <Button variant="contained" onClick={handleDescargarCertificado}>
+              Descargar certificado
+            </Button>
+          </Box>
+        )}
       </Paper>
 
       <Paper sx={{ width: '100%', mb: 3 }}>
