@@ -29,6 +29,7 @@ const adjuntoRoutes = require('./routes/adjuntoRoutes');
 const notificacionRoutes = require('./routes/notificacionRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const sociedadesRoutes = require('./routes/sociedadesRoutes');
+const certificadoRoutes = require('./routes/certificadoRoutes');
 
 // Inicializar app
 const app = express();
@@ -64,6 +65,7 @@ app.use('/api/adjuntos', adjuntoRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/sociedades', sociedadesRoutes);
+app.use('/api/certificado', certificadoRoutes);
 
 
 // Ruta test del servidor
