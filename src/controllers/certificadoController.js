@@ -1,4 +1,4 @@
-const PDFDocument = require('pdfkit');
+const pdf = require('html-pdf-node');
 const path = require('path');
 const fs = require('fs');
 const User = require('../models/User');
@@ -26,33 +26,38 @@ exports.descargarCertificado = async (req, res, next) => {
     const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
     const filePath = path.join(uploadDir, fileName);
 
-    const doc = new PDFDocument();
-    const stream = fs.createWriteStream(filePath);
-    doc.pipe(stream);
+    const templatePath = path.join(__dirname, '../templates/certificado.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
 
-    doc.fontSize(20).text('Certificado de Finalización', { align: 'center' });
-    doc.moveDown();
-    doc.fontSize(14).text(`Nombre: ${usuario.nombre} ${usuario.apellidos}`);
-    doc.text(`Hospital: ${usuario.hospital ? usuario.hospital.nombre : ''}`);
-    doc.text(`Programa: ${usuario.tipo}`);
-    doc.text(`Fecha de finalización: ${new Date().toLocaleDateString('es-ES')}`);
-    doc.end();
+    const programa = usuario.rol === 'residente'
+      ? 'Programa Residentes'
+      : usuario.rol === 'alumno'
+        ? 'Programa Sociedades'
+        : usuario.tipo;
 
-    stream.on('finish', async () => {
-      try {
-        const ultimoProgreso = progresos[progresos.length - 1];
-        await Adjunto.create({
-          progreso: ultimoProgreso._id,
-          nombreArchivo: fileName,
-          rutaArchivo: `/uploads/${fileName}`,
-          tipoArchivo: 'certificado'
-        });
-      } catch (e) {
-        console.error('Error guardando certificado', e);
-      }
-      res.set('Content-Type', 'application/pdf');
-      res.download(filePath, 'certificado.pdf');
-    });
+    html = html
+      .replace('{{NOMBRE}}', `${usuario.nombre} ${usuario.apellidos}`)
+      .replace('{{HOSPITAL}}', usuario.hospital ? usuario.hospital.nombre : '')
+      .replace('{{PROGRAMA}}', programa)
+      .replace('{{FECHA}}', new Date().toLocaleDateString('es-ES'));
+
+    const pdfBuffer = await pdf.generatePdf({ content: html }, { format: 'A4' });
+    fs.writeFileSync(filePath, pdfBuffer);
+
+    try {
+      const ultimoProgreso = progresos[progresos.length - 1];
+      await Adjunto.create({
+        progreso: ultimoProgreso._id,
+        nombreArchivo: fileName,
+        rutaArchivo: `/uploads/${fileName}`,
+        tipoArchivo: 'certificado'
+      });
+    } catch (e) {
+      console.error('Error guardando certificado', e);
+    }
+
+    res.set('Content-Type', 'application/pdf');
+    res.download(filePath, 'certificado.pdf');
   } catch (err) {
     next(err);
   }
