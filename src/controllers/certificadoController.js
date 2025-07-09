@@ -26,7 +26,11 @@ exports.descargarCertificado = async (req, res, next) => {
     const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
     const filePath = path.join(uploadDir, fileName);
 
-    const templatePath = path.join(__dirname, '../templates/certificado.html');
+    const templatePath = path.resolve(process.cwd(), 'client/src/templates/certificado.html');
+    if (!fs.existsSync(templatePath)) {
+      console.error(`Plantilla de certificado no encontrada: ${templatePath}`);
+      return res.status(500).json({ success: false, error: 'Plantilla no encontrada' });
+    }
     let html = fs.readFileSync(templatePath, 'utf8');
 
     const programa = usuario.rol === 'residente'

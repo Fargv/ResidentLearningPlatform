@@ -162,6 +162,25 @@ El modelo `Sociedades` almacena las fechas clave de las convocatorias de las dis
 
 El administrador puede gestionar estas convocatorias en `/dashboard/sociedades`.
 
+## Descarga de certificados
+
+La API permite descargar un certificado en PDF una vez validadas todas las fases
+del usuario. El archivo se genera con la librería `html-pdf-node` utilizando la
+plantilla `src/templates/certificado.html`.
+
+### Endpoint `/api/certificado/:id`
+
+- `GET /api/certificado/:id` genera el certificado y lo envía como descarga.
+  Puede acceder el propio residente o alumno, así como formadores, instructores
+  y administradores.
+
+### Consideraciones de despliegue
+
+- Asegúrate de incluir el archivo `src/templates/certificado.html` en el
+  servidor. En el repositorio está ubicado en `client/src/templates` y debe
+  copiarse a esa ruta al desplegar.
+- Los certificados se guardan de forma temporal en `public/uploads` antes de
+  enviarse al cliente.
 
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.
