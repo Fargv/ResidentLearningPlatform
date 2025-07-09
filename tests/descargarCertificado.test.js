@@ -1,18 +1,18 @@
-jest.mock('pdfkit');
+jest.mock('html-pdf-node');
 
 const { descargarCertificado } = require('../src/controllers/certificadoController');
 const User = require('../src/models/User');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 const Adjunto = require('../src/models/Adjunto');
+const pdf = require('html-pdf-node');
 const fs = require('fs');
 
 describe('descargarCertificado', () => {
   beforeEach(() => {
-    jest.spyOn(fs, 'createWriteStream').mockReturnValue({
-      on: (event, cb) => { if (event === 'finish') cb(); },
-    });
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+    jest.spyOn(fs, 'readFileSync').mockReturnValue('<html></html>');
   });
 
   afterEach(() => {
@@ -39,6 +39,7 @@ describe('descargarCertificado', () => {
     const res = { set: jest.fn(), download: jest.fn() };
 
     await descargarCertificado(req, res, jest.fn());
+    expect(pdf.generatePdf).toHaveBeenCalled();
     expect(res.set).toHaveBeenCalledWith('Content-Type', 'application/pdf');
     expect(res.download).toHaveBeenCalled();
   });
