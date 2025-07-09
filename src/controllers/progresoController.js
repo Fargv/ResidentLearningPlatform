@@ -239,7 +239,7 @@ const registrarProgreso = async (req, res, next) => {
       estado: actividad.requiereValidacion ? 'pendiente' : 'completado'
     });
 
-    // Si la actividad requiere validación, crear notificación para los formadores
+// Si la actividad requiere validación, crear notificación para formadores e instructores
     if (actividad.requiereValidacion) {
       // Obtener formadores del hospital del residente
       const formadores = await User.find({
@@ -247,12 +247,19 @@ const registrarProgreso = async (req, res, next) => {
         rol: 'formador'
       });
 
-      // Crear notificaciones para cada formador
-      const notificacionesPromises = formadores.map(formador => {
+      // Obtener instructores de la misma sociedad, si aplica
+      const instructores = residente.sociedad
+        ? await User.find({ sociedad: residente.sociedad, rol: 'instructor' })
+        : [];
+
+      const destinatarios = [...formadores, ...instructores];
+
+      // Crear notificaciones para cada destinatario
+      const notificacionesPromises = destinatarios.map(user => {
         return Notificacion.create({
-          usuario: formador._id,
+          usuario: user._id,
           tipo: 'validacion',
-           mensaje: `El residente ${residente.nombre} ${residente.apellidos} ha completado la actividad "${actividad.nombre}" y requiere validación.`,
+          mensaje: `El residente ${residente.nombre} ${residente.apellidos} ha completado la actividad "${actividad.nombre}" y requiere validación.`,
           enlace: '/dashboard/validaciones',
           entidadRelacionada: {
             tipo: 'progreso',
@@ -396,13 +403,16 @@ const validarProgreso = async (req, res, next) => {
     progreso.estado = 'validado';
     await progreso.save();
 
-    // Eliminar notificaciones pendientes para los formadores
+    // Eliminar notificaciones pendientes para formadores e instructores
     const formadoresIds = (await User.find({
       hospital: progreso.residente.hospital,
       rol: 'formador'
     })).map(f => f._id);
+    const instructoresIds = progreso.residente.sociedad
+      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
+      : [];
     await Notificacion.deleteMany({
-      usuario: { $in: formadoresIds },
+      usuario: { $in: [...formadoresIds, ...instructoresIds] },
       'entidadRelacionada.tipo': 'progreso',
       'entidadRelacionada.id': progreso._id
     });
@@ -489,16 +499,19 @@ const rechazarProgreso = async (req, res, next) => {
     progreso.estado = 'rechazado';
     await progreso.save();
 
-    // Eliminar notificaciones pendientes para los formadores
+    // Eliminar notificaciones pendientes para formadores e instructores
     const formadoresIds = (await User.find({
       hospital: progreso.residente.hospital,
       rol: 'formador'
     })).map(f => f._id);
+    const instructoresIds = progreso.residente.sociedad
+      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
+      : [];
     await Notificacion.deleteMany({
-      usuario: { $in: formadoresIds },
+      usuario: { $in: [...formadoresIds, ...instructoresIds] },
       'entidadRelacionada.tipo': 'progreso',
       'entidadRelacionada.id': progreso._id
-    });
+    })
 
     // Crear notificación para el residente
     await Notificacion.create({
@@ -721,8 +734,11 @@ const getValidacionesPendientes = async (req, res, next) => {
       hospital: progreso.residente.hospital,
       rol: 'formador'
     })).map(f => f._id);
+    const instructoresIds = progreso.residente.sociedad
+      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
+      : [];
     await Notificacion.deleteMany({
-      usuario: { $in: formadoresIds },
+      usuario: { $in: [...formadoresIds, ...instructoresIds] },
       'entidadRelacionada.tipo': 'progreso',
       'entidadRelacionada.id': progreso._id
     });
@@ -770,12 +786,15 @@ const rechazarActividad = async (req, res, next) => {
       hospital: progreso.residente.hospital,
       rol: 'formador'
     })).map(f => f._id);
+    const instructoresIds = progreso.residente.sociedad
+      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
+      : [];
     await Notificacion.deleteMany({
-      usuario: { $in: formadoresIds },
+      usuario: { $in: [...formadoresIds, ...instructoresIds] },
       'entidadRelacionada.tipo': 'progreso',
       'entidadRelacionada.id': progreso._id
     });
-
+    
     await Notificacion.create({
       usuario: progreso.residente._id,
       tipo: 'rechazo',
