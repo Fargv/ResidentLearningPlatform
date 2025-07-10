@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -50,6 +51,7 @@ interface Notificacion {
   fechaCreacion: string;
   leida: boolean;
   tipo?: string;
+  enlace?: string;
 }
 
 interface NotificacionesProps {
@@ -62,6 +64,7 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tabValue, setTabValue] = useState(0);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -159,14 +162,24 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
                   </TableHead>
                   <TableBody>
                     {pendientes.map((n) => (
-                      <TableRow key={n._id}>
+                      <TableRow
+                        key={n._id}
+                        onClick={() => n.enlace && navigate(n.enlace)}
+                        sx={{ cursor: n.enlace ? 'pointer' : 'default' }}
+                      >
                         <TableCell>{n.mensaje}</TableCell>
                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
                         <TableCell>
                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton aria-label="read" onClick={() => handleMarcarLeida(n._id)}>
+                          <IconButton
+                            aria-label="read"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMarcarLeida(n._id);
+                            }}
+                          >
                             <DoneIcon />
                           </IconButton>
                         </TableCell>

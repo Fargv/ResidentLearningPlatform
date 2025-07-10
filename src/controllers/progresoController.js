@@ -411,11 +411,14 @@ const validarProgreso = async (req, res, next) => {
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
       : [];
-    await Notificacion.deleteMany({
-      usuario: { $in: [...formadoresIds, ...instructoresIds] },
-      'entidadRelacionada.tipo': 'progreso',
-      'entidadRelacionada.id': progreso._id
-    });
+    await Notificacion.updateMany(
+      {
+        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        'entidadRelacionada.tipo': 'progreso',
+        'entidadRelacionada.id': progreso._id
+      },
+      { leida: true }
+    );
 
     // Crear notificación para el residente
     await Notificacion.create({
@@ -507,11 +510,14 @@ const rechazarProgreso = async (req, res, next) => {
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
       : [];
-    await Notificacion.deleteMany({
-      usuario: { $in: [...formadoresIds, ...instructoresIds] },
-      'entidadRelacionada.tipo': 'progreso',
-      'entidadRelacionada.id': progreso._id
-    })
+    await Notificacion.updateMany(
+      {
+        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        'entidadRelacionada.tipo': 'progreso',
+        'entidadRelacionada.id': progreso._id
+      },
+      { leida: true }
+    )
 
     // Crear notificación para el residente
     await Notificacion.create({
@@ -737,11 +743,14 @@ const getValidacionesPendientes = async (req, res, next) => {
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
       : [];
-    await Notificacion.deleteMany({
-      usuario: { $in: [...formadoresIds, ...instructoresIds] },
-      'entidadRelacionada.tipo': 'progreso',
-      'entidadRelacionada.id': progreso._id
-    });
+    await Notificacion.updateMany(
+      {
+        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        'entidadRelacionada.tipo': 'progreso',
+        'entidadRelacionada.id': progreso._id
+      },
+      { leida: true }
+    );
 
     await Notificacion.create({
       usuario: progreso.residente._id,
@@ -789,11 +798,14 @@ const rechazarActividad = async (req, res, next) => {
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
       : [];
-    await Notificacion.deleteMany({
-      usuario: { $in: [...formadoresIds, ...instructoresIds] },
-      'entidadRelacionada.tipo': 'progreso',
-      'entidadRelacionada.id': progreso._id
-    });
+    await Notificacion.updateMany(
+      {
+        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        'entidadRelacionada.tipo': 'progreso',
+        'entidadRelacionada.id': progreso._id
+      },
+      { leida: true }
+    );
     
     await Notificacion.create({
       usuario: progreso.residente._id,
