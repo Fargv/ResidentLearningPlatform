@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import api from '../../api';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 interface AccessCode {
   _id?: string;
@@ -74,15 +75,19 @@ const AdminAccessCodes: React.FC = () => {
 
   const handleClose = () => setOpen(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name as string]: value
-    });
-  };
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+  setFormData({
+    ...formData,
+    [event.target.name as keyof AccessCode]: event.target.value,
+  });
+};
+
+const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  setFormData({
+    ...formData,
+    [event.target.name as keyof AccessCode]: event.target.value,
+  });
+};
 
   const handleSave = async () => {
     try {
@@ -165,7 +170,7 @@ const AdminAccessCodes: React.FC = () => {
             type="text"
             fullWidth
             value={formData.codigo}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
           <FormControl fullWidth margin="dense">
             <InputLabel id="rol-label">Rol</InputLabel>
@@ -175,7 +180,7 @@ const AdminAccessCodes: React.FC = () => {
               name="rol"
               value={formData.rol}
               label="Rol"
-              onChange={handleChange}
+              onChange={handleSelectChange}
             >
               <MenuItem value="residente">Residente</MenuItem>
               <MenuItem value="formador">Formador</MenuItem>
@@ -192,7 +197,7 @@ const AdminAccessCodes: React.FC = () => {
               name="tipo"
               value={formData.tipo}
               label="Programa"
-              onChange={handleChange}
+              onChange={handleSelectChange}
             >
               <MenuItem value="Programa Residentes">Programa Residentes</MenuItem>
               <MenuItem value="Programa Sociedades">Programa Sociedades</MenuItem>
