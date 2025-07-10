@@ -40,6 +40,7 @@ const defaultData: AccessCode = {
 
 const AdminAccessCodes: React.FC = () => {
   const [codes, setCodes] = useState<AccessCode[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
