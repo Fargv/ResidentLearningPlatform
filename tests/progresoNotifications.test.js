@@ -1,8 +1,10 @@
+const { validarProgreso, rechazarActividad, registrarProgreso } = require('../src/controllers/progresoController');
 const { validarProgreso, rechazarActividad } = require('../src/controllers/progresoController');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 const Validacion = require('../src/models/Validacion');
 const User = require('../src/models/User');
 const Notificacion = require('../src/models/Notificacion');
+const Actividad = require('../src/models/Actividad');
 const { createAuditLog } = require('../src/utils/auditLog');
 
 jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
@@ -98,6 +100,62 @@ describe('progresoController notifications', () => {
         'entidadRelacionada.id': 'p2'
       },
       { leida: true }
+    );
+  });
+  test('registrarProgreso crea notificaciones de validacion', async () => {
+    jest.spyOn(Actividad, 'findById').mockResolvedValue({
+      _id: 'a1',
+      nombre: 'Act',
+      requiereValidacion: true
+    });
+    jest.spyOn(User, 'findById').mockResolvedValue({
+      _id: 'res1',
+      rol: 'residente',
+      hospital: 'h1',
+      sociedad: 's1',
+      nombre: 'Res',
+      apellidos: 'Dent'
+    });
+    jest
+      .spyOn(User, 'find')
+      .mockResolvedValueOnce([{ _id: 'f1' }])
+      .mockResolvedValueOnce([{ _id: 'i1' }]);
+    jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({ _id: 'p1' });
+    const populate = jest.fn();
+    populate
+      .mockImplementationOnce(() => ({ populate }))
+      .mockImplementationOnce(() => ({ populate }))
+      .mockResolvedValueOnce({});
+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({ populate });
+    const createSpy = jest
+      .spyOn(Notificacion, 'create')
+      .mockResolvedValue({});
+
+    const req = {
+      body: { residente: 'res1', actividad: 'a1' },
+      user: { rol: 'residente', id: 'res1', _id: 'res1' },
+      ip: '::1'
+    };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    await registrarProgreso(req, res, jest.fn());
+
+    expect(createSpy).toHaveBeenCalledTimes(2);
+    expect(createSpy).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        usuario: 'f1',
+        tipo: 'validacion',
+        enlace: '/dashboard/validaciones'
+      })
+    );
+    expect(createSpy).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        usuario: 'i1',
+        tipo: 'validacion',
+        enlace: '/dashboard/validaciones'
+      })
     );
   });
 });
