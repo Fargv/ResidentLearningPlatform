@@ -10,17 +10,17 @@ const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 
-const accessCodes = {
-  ABEXRES2025: { rol: 'residente', tipo: 'Programa Residentes' },
-  ABEXFOR2025: { rol: 'formador', tipo: 'Programa Residentes' },
-  ABEXSOCUSER2025: { rol: 'alumno', tipo: 'Programa Sociedades' },
-  ABEXSOCFOR2025: { rol: 'instructor', tipo: 'Programa Sociedades' }
-};
+// const accessCodes = {
+//   ABEXRES2025: { rol: 'residente', tipo: 'Programa Residentes' },
+//   ABEXFOR2025: { rol: 'formador', tipo: 'Programa Residentes' },
+//   ABEXSOCUSER2025: { rol: 'alumno', tipo: 'Programa Sociedades' },
+//   ABEXSOCFOR2025: { rol: 'instructor', tipo: 'Programa Sociedades' }
+// };
 
 const checkAccessCode = async (req, res, next) => {
   try {
     const { codigo } = req.params;
-    const data = accessCodes[codigo];
+    const data = await AccessCode.findOne({ codigo });
 
     if (!data) {
       return next(new ErrorResponse('Código de acceso inválido', 400));
@@ -46,7 +46,7 @@ const register = async (req, res, next) => {
       especialidad
     } = req.body;
 
-    const access = accessCodes[codigoAcceso];
+    const access = await AccessCode.findOne({ codigo: codigoAcceso });
     if (!codigoAcceso || !access) {
       return next(new ErrorResponse('Código de acceso inválido', 400));
     }
