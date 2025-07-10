@@ -42,6 +42,11 @@ app.use(cors({
   origin: 'https://residentlearningplatform.netlify.app',
   credentials: true
 }));
+// Asegura respuesta correcta a preflight requests (CORS OPTIONS)
+app.options('*', cors({
+  origin: 'https://residentlearningplatform.netlify.app',
+  credentials: true
+}));
 app.use(fileupload());
 
 // Middleware de desarrollo
