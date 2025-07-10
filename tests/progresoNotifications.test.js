@@ -1,5 +1,4 @@
 const { validarProgreso, rechazarActividad, registrarProgreso } = require('../src/controllers/progresoController');
-const { validarProgreso, rechazarActividad } = require('../src/controllers/progresoController');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 const Validacion = require('../src/models/Validacion');
 const User = require('../src/models/User');
