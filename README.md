@@ -65,6 +65,7 @@ davinci-platform/
 1. Clonar el repositorio
 2. Instalar dependencias del backend: `npm install`
 3. Instalar dependencias del frontend: `cd client && npm install`
+4. Copiar `.env.example` a `.env` y completar los valores requeridos
 
 ### Ejecución en desarrollo
 ```bash
@@ -95,7 +96,7 @@ nueva versión que lo indique.
 
 ### Prerrequisitos
 1. Configurar la variable `MONGO_URI` con la cadena de conexión a tu base de
-   datos (en un archivo `.env` o exportándola en la terminal).
+   datos (en un archivo `.env` –puedes usar `.env.example` como plantilla– o exportándola en la terminal).
 2. Tener instalado Node.js.
 
 ### Cómo ejecutarlos
@@ -132,8 +133,8 @@ orden con el número de la fase y vincula cada actividad de los registros de
 ## Carga inicial de fases y actividades
 Para empezar con una base de datos vacía, ejecuta los scripts `scripts/resetFases.js`
 y `scripts/resetActividades.js`. Antes de lanzarlos, configura la variable
-`MONGO_URI` con tu cadena de conexión (en un archivo `.env` o exportándola en la
-terminal).
+`MONGO_URI` con tu cadena de conexión (en un archivo `.env` –usa `.env.example`
+como base– o exportándola en la terminal).
 
 ```bash
 node scripts/resetFases.js
@@ -143,6 +144,15 @@ node scripts/resetActividades.js
 Las actividades deben referenciar los identificadores de las fases recién
 creadas; de lo contrario, la inicialización del progreso no podrá asociarlas
 correctamente.
+
+## Códigos de acceso iniciales
+Para registrar los códigos de acceso por defecto para **administrador**,
+**formador** y **residente**, ejecuta el script `scripts/insertAccessCodes.js`.
+Necesita la variable `MONGO_URI` configurada.
+
+```bash
+node scripts/insertAccessCodes.js
+```
 
 ## Gestión de sociedades
 
@@ -181,6 +191,34 @@ plantilla `src/templates/certificado.html`.
   copiarse a esa ruta al desplegar.
 - Los certificados se guardan de forma temporal en `public/uploads` antes de
   enviarse al cliente.
+
+  ## Gestión de códigos de acceso
+
+Los códigos de acceso definen el rol y el tipo de programa que se asignan al
+registrar un usuario. El frontend verifica su validez llamando a
+`/api/auth/codigos/:codigo` antes de completar el registro. Estos códigos se
+almacenan en la colección `AccessCode` y los administradores pueden gestionarlos
+a través de la API.
+
+### Endpoints `/api/access-codes`
+
+- `GET /api/access-codes` devuelve todos los códigos (requiere rol de
+  administrador).
+- `POST /api/access-codes` crea un nuevo código (requiere rol de
+  administrador).
+- `PUT /api/access-codes/:id` actualiza uno existente (requiere rol de
+  administrador).
+- `DELETE /api/access-codes/:id` elimina el código indicado (requiere rol de
+  administrador).
+
+Ejemplo de creación de código:
+
+```bash
+curl -X POST http://localhost:5000/api/access-codes \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token-admin>" \
+  -d '{"codigo":"ABEXRES2026","rol":"residente","tipo":"Programa Residentes"}'
+```
 
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.

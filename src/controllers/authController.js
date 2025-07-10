@@ -1,21 +1,14 @@
 const jwt = require('jsonwebtoken');
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const User = require('../models/User');
 const Fase = require('../models/Fase');
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
+const AccessCode = require('../models/AccessCode');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
-
-// const accessCodes = {
-//   ABEXRES2025: { rol: 'residente', tipo: 'Programa Residentes' },
-//   ABEXFOR2025: { rol: 'formador', tipo: 'Programa Residentes' },
-//   ABEXSOCUSER2025: { rol: 'alumno', tipo: 'Programa Sociedades' },
-//   ABEXSOCFOR2025: { rol: 'instructor', tipo: 'Programa Sociedades' }
-// };
 
 const checkAccessCode = async (req, res, next) => {
   try {
