@@ -19,5 +19,7 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-06-26: `updatePhaseStatus` usa modelo de fase dinámico para desbloquear fases en Sociedades
 - 2025-06-26: Verificación de que los usuarios del Programa Sociedades usan `getProgresoResidente`; sin variantes adicionales.
 - 2025-07-09: Añadido endpoint de descarga de certificado con generación de PDF y prueba unitaria.
+- 2025-07-10: Añadido patrón "*.log" en ".gitignore" y eliminado "backend.log" del repositorio.
+- 2025-07-10: Rutas CRUD para `AccessCode` y pruebas con Supertest.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

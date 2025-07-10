@@ -1,2 +1,5 @@
 # Ignorar directorios y archivos de dependencias
 node_modules/
+# Log files
+*.log
+backend.log

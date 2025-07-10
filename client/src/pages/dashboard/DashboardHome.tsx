@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Alert } from '@mui/material';
+import { Box, Typography, Alert, CircularProgress } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 
 const DashboardHome: React.FC = () => {
@@ -11,7 +11,13 @@ const DashboardHome: React.FC = () => {
   }, [user]);
 
   const renderContent = () => {
-    if (loading) return <Typography>Cargando...</Typography>;
+    if (loading) {
+      return (
+        <Box display="flex" justifyContent="center" mt={2}>
+          <CircularProgress />
+        </Box>
+      );
+    }
     if (error) return <Alert severity="error">{error}</Alert>;
 
     return null;

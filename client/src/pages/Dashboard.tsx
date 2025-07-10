@@ -32,7 +32,8 @@ import {
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
   BugReport as BugReportIcon,
-  Group as GroupIcon
+  Group as GroupIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -50,6 +51,7 @@ import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
 import DebugDashboard from './DebugDashboard';
 import ResidenteFases from './dashboard/ResidenteFases';
+import AdminAccessCodes from './dashboard/AdminAccessCodes';
 
 const drawerWidth = 240;
 
@@ -121,6 +123,7 @@ const Dashboard: React.FC = () => {
         { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
         { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
         { text: 'Fases Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
+        { text: 'Access Codes', icon: <SettingsIcon />, path: '/dashboard/access-codes', roles: ['administrador'] },
         { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
     }
@@ -266,6 +269,9 @@ const Dashboard: React.FC = () => {
   <Route path="/hospitals" element={<AdminHospitales />} />
   {user?.rol === 'administrador' && (
     <Route path="/fases" element={<AdminFases />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/access-codes" element={<AdminAccessCodes />} />
   )}
   {user?.rol === 'administrador' && (
     <Route path="/fases-soc" element={<AdminFasesSoc />} />

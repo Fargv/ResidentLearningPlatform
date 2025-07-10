@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Alert, Paper, Button } from '@mui/material';
+import { Box, Typography, Alert, Paper, Button, CircularProgress } from '@mui/material';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import PhaseProgressChart from '../../components/PhaseProgressChart';
@@ -55,7 +55,13 @@ const ResidenteProgreso: React.FC = () => {
     }
   };
 
-  if (loading) return <Typography>Cargando...</Typography>;
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={2}>
+        <CircularProgress />
+      </Box>
+    );
+  }
   if (error) return <Alert severity="error">{error}</Alert>;
 
   const phaseStats = progresos.map(p => {
