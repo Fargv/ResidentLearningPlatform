@@ -98,22 +98,33 @@ const actions: Action[] = [];
               : `Residente en ${user?.hospital?.nombre || 'Hospital'}`}
         </Typography>
       </Box>
-      <Grid container spacing={2} sx={{ mb: 2 }}>
-        {actions.map((action) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={action.label}>
-            <Card>
-              <CardActionArea onClick={() => navigate(action.path)}>
-                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
-                  {action.icon}
-                  <Typography variant="subtitle1" sx={{ mt: 1, textAlign: 'center' }}>
-                    {action.label}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+  {actions.map((action) => (
+    <Box
+      key={action.label}
+      sx={{
+        width: {
+          xs: '100%',
+          sm: '48%',
+          md: '31%',
+          lg: '23%'
+        }
+      }}
+    >
+      <Card>
+        <CardActionArea onClick={() => navigate(action.path)}>
+          <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
+            {action.icon}
+            <Typography variant="subtitle1" sx={{ mt: 1, textAlign: 'center' }}>
+              {action.label}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </Box>
+  ))}
+</Box>
+
       {renderContent()}
     </Box>
   );
