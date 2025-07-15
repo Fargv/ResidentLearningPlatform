@@ -14,6 +14,7 @@
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
+    "@mui/system": "^7.2.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -39,5 +40,8 @@
     "nodemon": "^2.0.22",
     "prettier": "^3.5.3",
     "supertest": "^6.3.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
