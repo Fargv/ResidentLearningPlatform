@@ -68,19 +68,25 @@ const AdminValidaciones: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const cargarResidentes = async () => {
-      try {
-        const res = await api.get('/users');
-        const validos = (res.data.data || []).filter(
-          (u: any) => u.rol === 'residente' || u.rol === 'alumno',
-        );
-        setResidentes(validos);
-      } catch (e: any) {
-        setError(e.response?.data?.error || 'Error al cargar usuarios');
-      }
-    };
-    cargarResidentes();
-  }, []);
+  const cargarResidentes = async () => {
+    try {
+      const res = await api.get('/users');
+      console.log('Respuesta de /users:', res.data); // 💥 Aquí
+
+      const validos = (res.data.data || []).filter(
+        (u: any) => u.rol === 'residente' || u.rol === 'alumno',
+      );
+
+      console.log('Residentes filtrados:', validos); // 💥 Y aquí
+
+      setResidentes(validos);
+    } catch (e: any) {
+      console.error("Error cargando residentes:", e);
+      setError(e.response?.data?.error || 'Error al cargar usuarios');
+    }
+  };
+  cargarResidentes();
+}, []);
 
   const fetchProgreso = async (id: string) => {
     try {
