@@ -19,7 +19,6 @@ import {
   Person as PersonIcon,
   Notifications as NotificationsIcon
 } from '@mui/icons-material';
-import Grid from '@mui/material/Grid';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
