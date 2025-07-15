@@ -8,6 +8,7 @@ Este proyecto implementa una plataforma web completa para llevar el seguimiento 
 - Seguimiento del progreso de los residentes a través de las diferentes fases del programa
 - Validación de actividades por parte de los formadores
 - Panel de administración para gestionar usuarios, hospitales, fases y actividades
+- Los administradores pueden revisar el progreso de los usuarios desde `/dashboard/validaciones-admin`
 - Diseño moderno y responsive con la identidad visual de Abex Excelencia Robótica e Intuitive Surgical
 
 ## Estructura del proyecto
@@ -58,14 +59,15 @@ davinci-platform/
 ## Instalación y ejecución
 
 ### Requisitos previos
-- Node.js (v14 o superior)
+- Node.js (v18 o superior)
 - MongoDB (local o Atlas)
 
 ### Instalación
 1. Clonar el repositorio
 2. Instalar dependencias del backend: `npm install`
 3. Instalar dependencias del frontend: `cd client && npm install`
-4. Copiar `.env.example` a `.env` y completar los valores requeridos
+4. Copiar `.env.example` a `.env` y completar los valores requeridos, incluida
+   la variable `MONGO_URI` con la cadena de conexión a tu base de datos
 
 ### Ejecución en desarrollo
 ```bash

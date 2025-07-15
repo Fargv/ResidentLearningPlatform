@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Actividad = require('../src/models/Actividad');
 require('dotenv').config();
 
-const MONGO_URI = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test';
+const MONGO_URI = process.env.MONGO_URI;
 
 async function fixFaseObjectIds() {
   try {

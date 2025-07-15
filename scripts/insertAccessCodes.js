@@ -3,9 +3,10 @@
 const mongoose = require('mongoose');
 const AccessCode = require('../src/models/AccessCode');
 
-// 🔒 Conexión directa a MongoDB Atlas (harcodeada para pruebas)
-const uri = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test';
+require('dotenv').config();
 
+// 🔒 Cadena de conexión a MongoDB obtenida de MONGO_URI
+const uri = process.env.MONGO_URI;
 async function run() {
   try {
     await mongoose.connect(uri, {

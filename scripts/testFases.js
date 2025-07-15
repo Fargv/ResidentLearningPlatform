@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const Fase = require('../src/models/Fase');
 
 dotenv.config();
-const MONGO_URI = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI;
 
 const main = async () => {
   await mongoose.connect(MONGO_URI);

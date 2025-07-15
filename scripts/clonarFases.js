@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const uri = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test';
+const uri = process.env.MONGO_URI;
 const dbName = 'test';
 
 async function resetYClonar() {
