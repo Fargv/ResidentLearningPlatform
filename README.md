@@ -67,7 +67,8 @@ davinci-platform/
 2. Instalar dependencias del backend: `npm install`
 3. Instalar dependencias del frontend: `cd client && npm install`
 4. Copiar `.env.example` a `.env` y completar los valores requeridos, incluida
-   la variable `MONGO_URI` con la cadena de conexión a tu base de datos
+   la variable `MONGO_URI` con la cadena de conexión a tu base de datos. Ajusta
+   `CLIENT_ORIGIN` con la URL desde la que se servirá el frontend
 
 ### Ejecución en desarrollo
 ```bash
@@ -221,6 +222,18 @@ curl -X POST http://localhost:5000/api/access-codes \
   -H "Authorization: Bearer <token-admin>" \
   -d '{"codigo":"ABEXRES2026","rol":"residente","tipo":"Programa Residentes"}'
 ```
+## Solución de problemas
+
+Si al iniciar la aplicación se muestra la advertencia de Mongoose sobre
+`strictQuery`, verifica que se haya desactivado el modo estricto antes de
+conectar a la base de datos:
+
+```javascript
+mongoose.set('strictQuery', false);
+```
+
+Este ajuste ya está incluido en `src/config/database.js`.
+
 
 ## Licencia
 Propiedad de Abex Excelencia Robótica. Todos los derechos reservados.
