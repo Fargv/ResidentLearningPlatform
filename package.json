@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+   "start": "npm start --prefix client",
+    "build": "npm run build --prefix client",
+    "server": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest"
   },

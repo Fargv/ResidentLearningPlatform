@@ -39,13 +39,14 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
+const clientOrigin = process.env.CLIENT_ORIGIN || 'https://residentlearningplatform.netlify.app';
 app.use(cors({
-  origin: 'https://residentlearningplatform.netlify.app',
+  origin: clientOrigin,
   credentials: true
 }));
 // Asegura respuesta correcta a preflight requests (CORS OPTIONS)
 app.options('*', cors({
-  origin: 'https://residentlearningplatform.netlify.app',
+  origin: clientOrigin,
   credentials: true
 }));
 app.use(fileupload());
