@@ -40,10 +40,25 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 const clientOrigin = process.env.CLIENT_ORIGIN || 'https://residentlearningplatform.netlify.app';
-app.use(cors({
-  origin: clientOrigin,
-  credentials: true
-}));
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://residentlearningplatform.netlify.app',
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
 // Asegura respuesta correcta a preflight requests (CORS OPTIONS)
 app.options('*', cors({
   origin: clientOrigin,

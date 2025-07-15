@@ -148,6 +148,14 @@ Las actividades deben referenciar los identificadores de las fases recién
 creadas; de lo contrario, la inicialización del progreso no podrá asociarlas
 correctamente.
 
+Para cargar algunos usuarios de ejemplo en la colección `User`, ejecuta el
+script `scripts/resetUsers.js`:
+
+```bash
+node scripts/resetUsers.js
+```
+
+
 ## Códigos de acceso iniciales
 Para registrar los códigos de acceso por defecto para **administrador**,
 **formador** y **residente**, ejecuta el script `scripts/insertAccessCodes.js`.

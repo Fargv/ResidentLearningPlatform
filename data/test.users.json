@@ -1,0 +1,29 @@
+[
+  {
+    "email": "admin@example.com",
+    "password": "12345678",
+    "nombre": "Admin",
+    "apellidos": "Ejemplo",
+    "rol": "administrador",
+    "tipo": "Programa Residentes"
+  },
+  {
+    "email": "formador@example.com",
+    "password": "12345678",
+    "nombre": "Formador",
+    "apellidos": "Ejemplo",
+    "rol": "formador",
+    "hospital": "ObjectId(\"64b000000000000000000001\")",
+    "tipo": "Programa Residentes"
+  },
+  {
+    "email": "residente@example.com",
+    "password": "12345678",
+    "nombre": "Residente",
+    "apellidos": "Ejemplo",
+    "rol": "residente",
+    "hospital": "ObjectId(\"64b000000000000000000001\")",
+    "especialidad": "URO",
+    "tipo": "Programa Residentes"
+  }
+]
