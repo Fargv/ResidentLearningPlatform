@@ -19,8 +19,8 @@ function extractOid(value) {
   return null;
 }
 
-// Puedes dejar esta URI en .env o pegarla directamente aquí si prefieres:
-const MONGO_URI = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0';
+// La URI se obtiene de la variable de entorno MONGO_URI
+const MONGO_URI = process.env.MONGO_URI;
 
 const main = async () => {
   try {

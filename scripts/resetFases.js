@@ -6,8 +6,8 @@ const path = require('path');
 
 dotenv.config();
 
-// Si no usas .env, puedes poner directamente tu URI aquí:
-const MONGO_URI = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0';
+// La URI se toma de la variable de entorno MONGO_URI
+const MONGO_URI = process.env.MONGO_URI;
 
 const main = async () => {
   try {

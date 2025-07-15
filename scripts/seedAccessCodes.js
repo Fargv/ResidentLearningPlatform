@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const AccessCode = require('../src/models/AccessCode');
+require('dotenv').config();
 
-const uri = 'mongodb+srv://fernandoacedorico:Fall061023!!@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority';
+const uri = process.env.MONGO_URI;
 
 const codes = [
   { codigo: 'ABEXRES2025', rol: 'residente', tipo: 'Programa Residentes' },
