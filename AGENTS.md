@@ -21,5 +21,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-07-09: Añadido endpoint de descarga de certificado con generación de PDF y prueba unitaria.
 - 2025-07-10: Añadido patrón "*.log" en ".gitignore" y eliminado "backend.log" del repositorio.
 - 2025-07-10: Rutas CRUD para `AccessCode` y pruebas con Supertest.
+- 2025-07-15: Permitir edición de estados en `AdminValidaciones` y mostrar errores de backend.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

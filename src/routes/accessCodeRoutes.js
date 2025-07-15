@@ -4,6 +4,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 const {
   getAccessCodes,
+  getAccessCode,
   createAccessCode,
   updateAccessCode,
   deleteAccessCode
@@ -17,6 +18,7 @@ router.route('/')
   .post(createAccessCode);
 
 router.route('/:id')
+  .get(getAccessCode)
   .put(updateAccessCode)
   .delete(deleteAccessCode);
 

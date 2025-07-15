@@ -13,6 +13,21 @@ exports.getAccessCodes = async (req, res, next) => {
   }
 };
 
+// @desc    Obtener un código de acceso por ID
+// @route   GET /api/access-codes/:id
+// @access  Private/Admin
+exports.getAccessCode = async (req, res, next) => {
+  try {
+    const code = await AccessCode.findById(req.params.id);
+    if (!code) {
+      return next(new ErrorResponse('Código de acceso no encontrado', 404));
+    }
+    res.status(200).json({ success: true, data: code });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Crear un código de acceso
 // @route   POST /api/access-codes
 // @access  Private/Admin

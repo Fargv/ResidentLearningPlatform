@@ -45,6 +45,10 @@ interface Usuario {
     _id: string;
     nombre: string;
   };
+  sociedad?: {
+    _id: string;
+    titulo: string;
+  };
 }
 
 const estadoColors: Record<string, string> = {
@@ -67,10 +71,10 @@ const AdminValidaciones: React.FC = () => {
     const cargarResidentes = async () => {
       try {
         const res = await api.get('/users');
-        const activos = (res.data.data || []).filter(
-          (u: any) => u.rol === 'residente' && u.activo,
+        const validos = (res.data.data || []).filter(
+          (u: any) => u.rol === 'residente' || u.rol === 'alumno',
         );
-        setResidentes(activos);
+        setResidentes(validos);
       } catch (e: any) {
         setError(e.response?.data?.error || 'Error al cargar usuarios');
       }
@@ -108,8 +112,9 @@ const AdminValidaciones: React.FC = () => {
         estado,
       });
       if (selected) fetchProgreso(selected._id);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setError(e.response?.data?.error || 'Error al actualizar actividad');
     }
   };
 
@@ -117,11 +122,11 @@ const AdminValidaciones: React.FC = () => {
     try {
       await api.post('/admin/cambiar-estado-fase', { progresoId, estadoGeneral });
       if (selected) fetchProgreso(selected._id);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setError(e.response?.data?.error || 'Error al actualizar fase');
     }
   };
-
   const crearProgreso = async () => {
     if (!selected) return;
     try {
@@ -155,7 +160,9 @@ const AdminValidaciones: React.FC = () => {
   value={selected}
   onChange={handleResidenteChange}
   getOptionLabel={(option) =>
-    `${option.nombre} ${option.apellidos} - ${option.hospital?.nombre || ''}`
+    `${option.nombre} ${option.apellidos} - ${
+      option.hospital?.nombre || option.sociedad?.titulo || ''
+    }`
   }
   renderInput={(params) => (
     <TextField
@@ -214,7 +221,7 @@ const AdminValidaciones: React.FC = () => {
             </Typography>
             <FormControl
               size="small"
-              disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
+              disabled={!selected}
             >
               <Select
                 value={fase.estadoGeneral}
@@ -239,7 +246,7 @@ const AdminValidaciones: React.FC = () => {
               <Typography sx={{ flexGrow: 1 }}>{act.nombre}</Typography>
               <FormControl
                 size="small"
-                disabled={selected ? !selected.activo || fase.estadoGeneral !== 'en progreso' : true}
+                disabled={!selected}
               >
                 <Select
                   value={act.estado}

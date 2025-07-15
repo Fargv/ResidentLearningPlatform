@@ -59,11 +59,11 @@ describe('access code routes', () => {
   });
 
   test('DELETE /api/access-codes/:id elimina código', async () => {
-    const code = { _id: '1', deleteOne: jest.fn().mockResolvedValue() };
+    const code = { _id: '1', remove: jest.fn().mockResolvedValue() };
     AccessCode.findById.mockResolvedValue(code);
     const res = await request(app).delete('/api/access-codes/1');
     expect(AccessCode.findById).toHaveBeenCalledWith('1');
-    expect(code.deleteOne).toHaveBeenCalled();
+    expect(code.remove).toHaveBeenCalled();
     expect(res.status).toBe(200);
     expect(res.body.data).toEqual({});
   });
