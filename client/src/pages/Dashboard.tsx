@@ -121,8 +121,8 @@ const Dashboard: React.FC = () => {
         { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
         { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitals', roles: ['administrador'] },
         { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
-        { text: 'Fases y Actividades', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
-        { text: 'Fases Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
+        { text: 'Programa Residentes', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
+        { text: 'Programa Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
         { text: 'Access Codes', icon: <SettingsIcon />, path: '/dashboard/access-codes', roles: ['administrador'] },
         { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
       );
