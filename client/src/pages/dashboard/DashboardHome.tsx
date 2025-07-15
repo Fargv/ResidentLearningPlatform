@@ -58,8 +58,8 @@ const actions: Action[] = [];
       { label: 'Usuarios', path: '/dashboard/usuarios', icon: <PeopleIcon sx={{ fontSize: 40 }} /> },
       { label: 'Hospitales', path: '/dashboard/hospitals', icon: <HospitalIcon sx={{ fontSize: 40 }} /> },
       { label: 'Sociedades', path: '/dashboard/sociedades', icon: <GroupIcon sx={{ fontSize: 40 }} /> },
-      { label: 'Fases y Actividades', path: '/dashboard/fases', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
-      { label: 'Fases Sociedades', path: '/dashboard/fases-soc', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
+      { label: 'Programa Residentes', path: '/dashboard/fases', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
+      { label: 'Programa Sociedades', path: '/dashboard/fases-soc', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
       { label: 'Access Codes', path: '/dashboard/access-codes', icon: <SettingsIcon sx={{ fontSize: 40 }} /> },
       { label: 'Debug', path: '/dashboard/debug', icon: <BugReportIcon sx={{ fontSize: 40 }} /> }
     );
