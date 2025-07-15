@@ -151,25 +151,21 @@ const AdminValidaciones: React.FC = () => {
         {error}
       </Alert>
     )}
-    <Box sx={{ mt: 3, mb: 4, ml: 2 }}>
-  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-    Buscar residente
-  </Typography>
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
   <Autocomplete
-  options={residentes}
-  value={selected}
-  onChange={handleResidenteChange}
-  getOptionLabel={(option) =>
-    `${option.nombre} ${option.apellidos} - ${
-      option.hospital?.nombre || option.sociedad?.titulo || ''
-    }`
-  }
-  renderInput={(params) => (
-    <TextField
+    options={residentes}
+    value={selected}
+    onChange={handleResidenteChange}
+    getOptionLabel={(option) =>
+      `${option.nombre} ${option.apellidos} - ${
+        option.hospital?.nombre || option.sociedad?.titulo || ''
+      }`
+    }
+    renderInput={(params) => (
+      <TextField
         {...params}
-        label="Seleccione un residente"
+        label="Buscar residente"
         variant="outlined"
-        size="small"
         InputProps={{
           ...params.InputProps,
           startAdornment: (
@@ -179,12 +175,12 @@ const AdminValidaciones: React.FC = () => {
           ),
         }}
       />
-  )}
-  sx={{ width: 320 }}
-  isOptionEqualToValue={(o, v) => o._id === v._id}
-/>
-
+    )}
+    sx={{ width: 360 }}
+    isOptionEqualToValue={(o, v) => o._id === v._id}
+  />
 </Box>
+
 
 
     {loading && <LinearProgress sx={{ mb: 2 }} />}
