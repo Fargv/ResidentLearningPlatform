@@ -80,14 +80,14 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
       return next(new ErrorResponse('Progreso no encontrado', 404));
     }
 
-    if (progreso.estadoGeneral === 'bloqueada' && estadoGeneral === 'en progreso') {
-      progreso.estadoGeneral = 'en progreso';
+   // Permitir cambios desde cualquier estado. Si se vuelve a 'en progreso' o
+    // a 'bloqueada', limpiamos campos de finalización o validación previos
+    if (estadoGeneral === 'en progreso' || estadoGeneral === 'bloqueada') {
+      progreso.estadoGeneral = estadoGeneral;
+      progreso.fechaFin = undefined;
+      progreso.validadoPor = undefined;
       await progreso.save();
       return res.status(200).json({ success: true, data: progreso });
-    }
-
-    if (progreso.estadoGeneral !== 'en progreso') {
-      return next(new ErrorResponse('La fase no está en progreso', 400));
     }
 
     if (estadoGeneral === 'completado') {
