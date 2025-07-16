@@ -58,8 +58,9 @@ exports.createUser = async (req, res, next) => {
     } = req.body;
     const hospitalId = hospital || undefined;
     const especialidadVal = especialidad || undefined;
+    const tipoVal = rol === 'administrador' ? undefined : tipo;
     const sociedadId =
-      tipo === 'Programa Sociedades' ? sociedad || undefined : undefined;
+      tipoVal === 'Programa Sociedades' ? sociedad || undefined : undefined;
 
     const rolesValidos = [
       'residente',
@@ -88,7 +89,10 @@ exports.createUser = async (req, res, next) => {
     }
 
 
-    if (!['Programa Residentes', 'Programa Sociedades'].includes(tipo)) {
+    if (
+      rol !== 'administrador' &&
+      !['Programa Residentes', 'Programa Sociedades'].includes(tipoVal)
+    ) {
       return next(new ErrorResponse('Tipo de programa inválido', 400));
     }
 
@@ -103,7 +107,7 @@ exports.createUser = async (req, res, next) => {
       }
     }
 
-    if (tipo === 'Programa Sociedades') {
+    if (tipoVal === 'Programa Sociedades') {
       if (!sociedad) {
         return next(new ErrorResponse('Sociedad requerida', 400));
       }
@@ -120,7 +124,7 @@ exports.createUser = async (req, res, next) => {
       email,
       password,
       rol,
-      tipo,
+      tipo: tipoVal,
       hospital: hospitalId,
       sociedad: sociedadId,
       especialidad: especialidadVal,
@@ -180,13 +184,7 @@ exports.updateUser = async (req, res, next) => {
     const hospitalId = updateData.hospital || undefined;
     const especialidadVal = updateData.especialidad || undefined;
     const currentUser = await User.findById(req.params.id);
-    if (updateData.tipo === 'Programa Residentes') {
-      updateData.sociedad = null;
-    }
-    const sociedadId =
-      (updateData.tipo || currentUser.tipo) === 'Programa Sociedades'
-        ? updateData.sociedad || undefined
-        : undefined;    if (!currentUser) {
+    if (!currentUser) {
       return next(
         new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
       );
@@ -194,6 +192,16 @@ exports.updateUser = async (req, res, next) => {
 
     const newTipo = updateData.tipo || currentUser.tipo;
     const newRol = updateData.rol || currentUser.rol;
+
+    if (newTipo === 'Programa Residentes') {
+      updateData.sociedad = null;
+    }
+    const sociedadId =
+      newTipo === 'Programa Sociedades' ? updateData.sociedad || undefined : undefined;
+
+    if (newRol === 'administrador') {
+      updateData.tipo = undefined;
+    }
 
     if (
       newTipo === 'Programa Residentes' &&

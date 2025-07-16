@@ -48,7 +48,9 @@ const userSchema = new mongoose.Schema({
    tipo: {
     type: String,
     enum: ['Programa Residentes', 'Programa Sociedades'],
-    required: [true, 'Por favor especifique un tipo de programa']
+    required: function() {
+      return this.rol !== 'administrador';
+    }
   },
   sociedad: {
     type: mongoose.Schema.Types.ObjectId,
