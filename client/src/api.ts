@@ -27,4 +27,9 @@ export const updateProfile = (data: { nombre: string; apellidos: string; email: 
 export const changePassword = (data: { currentPassword: string; newPassword: string }) =>
   api.put('/auth/updatepassword', data);
 
+// Admin user management
+export const createUser = (data: Record<string, any>) => api.post('/users', data);
+export const updateUserPassword = (id: string, newPassword: string) =>
+  api.put(`/users/${id}/password`, { password: newPassword });
+
 

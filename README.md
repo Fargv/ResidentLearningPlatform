@@ -238,6 +238,26 @@ curl -X POST http://localhost:5000/api/access-codes \
 - `POST /api/users/invite` envía una invitación para registrar un nuevo usuario (requiere rol de administrador).
 - `GET /api/users/invitations` lista las invitaciones pendientes (requiere rol de administrador).
 - `DELETE /api/users/invitations/:id` cancela la invitación indicada (requiere rol de administrador).
+- `POST /api/users` crea un usuario directamente (requiere rol de administrador).
+- `PUT /api/users/:id/password` cambia la contraseña de otro usuario (requiere rol de administrador).
+
+Ejemplo de creación de usuario:
+
+```bash
+curl -X POST http://localhost:5000/api/users \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token-admin>" \
+  -d '{"email":"nuevo@ejemplo.com","password":"Secreto1","rol":"residente","tipo":"Programa Residentes","hospital":"<id-hospital>"}'
+```
+
+Ejemplo de cambio de contraseña de otro usuario:
+
+```bash
+curl -X PUT http://localhost:5000/api/users/ID_USUARIO/password \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token-admin>" \
+  -d '{"password":"NuevaClave123"}'
+```
 
 ### Endpoint `/api/auth/updatepassword`
 

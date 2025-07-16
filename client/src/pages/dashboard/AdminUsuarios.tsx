@@ -26,12 +26,14 @@ import {
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  VpnKey as VpnKeyIcon
+  
   //Person as PersonIcon,
   //Email as EmailIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../api';
+import api, { createUser, updateUserPassword } from '../../api';
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -41,9 +43,12 @@ const AdminUsuarios: React.FC = () => {
   const [hospitales, setHospitales] = useState<any[]>([]);
   const [sociedades, setSociedades] = useState<any[]>([]);
   const [openInvitarDialog, setOpenInvitarDialog] = useState(false);
+  const [openCrearDialog, setOpenCrearDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
+  const [passwordValue, setPasswordValue] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     nombre: '',
@@ -85,7 +90,6 @@ const AdminUsuarios: React.FC = () => {
   
     fetchData();
   }, []);
-  
 
   const handleOpenInvitarDialog = () => {
     setFormData({
@@ -98,6 +102,24 @@ const AdminUsuarios: React.FC = () => {
       sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
     });
     setOpenInvitarDialog(true);
+  };
+
+const handleOpenCrearDialog = () => {
+    setFormData({
+      email: '',
+      nombre: '',
+      apellidos: '',
+      rol: 'residente',
+      hospital: hospitales.length > 0 ? hospitales[0]._id : '',
+      tipo: '',
+      sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
+    });
+    setPasswordValue('');
+    setOpenCrearDialog(true);
+  };
+
+  const handleCloseCrearDialog = () => {
+    setOpenCrearDialog(false);
   };
 
   const handleCloseInvitarDialog = () => {
@@ -130,6 +152,17 @@ const AdminUsuarios: React.FC = () => {
 
   const handleCloseEliminarDialog = () => {
     setOpenEliminarDialog(false);
+    setSelectedUsuario(null);
+  };
+
+  const handleOpenPasswordDialog = (usuario: any) => {
+    setSelectedUsuario(usuario);
+    setPasswordValue('');
+    setOpenPasswordDialog(true);
+  };
+
+  const handleClosePasswordDialog = () => {
+    setOpenPasswordDialog(false);
     setSelectedUsuario(null);
   };
 
@@ -170,6 +203,21 @@ const AdminUsuarios: React.FC = () => {
       setProcesando(false);
     }
   };
+
+   const handleCrear = async () => {
+    try {
+      setProcesando(true);
+      const res = await createUser({ ...formData, password: passwordValue });
+      setUsuariosLista([...usuarios, res.data.data]);
+      handleCloseCrearDialog();
+      setSnackbar({ open: true, message: 'Usuario creado correctamente', severity: 'success' });
+    } catch (err: any) {
+      setSnackbar({ open: true, message: err.response?.data?.error || 'Error al crear el usuario', severity: 'error' });
+    } finally {
+      setProcesando(false);
+    }
+  };
+
 
   const handleEditar = async () => {
     if (!selectedUsuario) return;
@@ -237,6 +285,21 @@ const AdminUsuarios: React.FC = () => {
       setProcesando(false);
     }
   };
+
+  const handleActualizarPassword = async () => {
+    if (!selectedUsuario) return;
+    try {
+      setProcesando(true);
+      await updateUserPassword(selectedUsuario._id, passwordValue);
+      handleClosePasswordDialog();
+      setSnackbar({ open: true, message: 'Contraseña actualizada', severity: 'success' });
+    } catch (err: any) {
+      setSnackbar({ open: true, message: err.response?.data?.error || 'Error al actualizar la contraseña', severity: 'error' });
+    } finally {
+      setProcesando(false);
+    }
+  };
+
   const handleCrearProgreso = async (usuarioId: string) => {
   try {
     setProcesando(true);
@@ -290,14 +353,27 @@ const AdminUsuarios: React.FC = () => {
             : 'Usuarios de Tu Hospital'}
         </Typography>
   
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleOpenInvitarDialog}
-        >
-          Invitar Usuario
-        </Button>
+        <Box>
+          {user?.rol === 'administrador' && (
+            <Button
+              variant="contained"
+              color="success"
+              startIcon={<AddIcon />}
+              onClick={handleOpenCrearDialog}
+              sx={{ mr: 1 }}
+            >
+              Crear Usuario
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleOpenInvitarDialog}
+          >
+            Invitar Usuario
+          </Button>
+        </Box>
       </Box>
       
       {/* Tabla de usuarios */}
@@ -354,13 +430,23 @@ const AdminUsuarios: React.FC = () => {
                       >
                         <EditIcon />
                       </IconButton>
-                      <IconButton 
-                        color="error" 
+                     <IconButton
+                        color="error"
                         onClick={() => handleOpenEliminarDialog(usuario)}
                         size="small"
                       >
                         <DeleteIcon />
                       </IconButton>
+                      {user?.rol === 'administrador' && (
+                        <IconButton
+                          color="secondary"
+                          onClick={() => handleOpenPasswordDialog(usuario)}
+                          size="small"
+                          title="Cambiar contraseña"
+                        >
+                          <VpnKeyIcon />
+                        </IconButton>
+                      )}
                       {usuario.rol === 'residente' && (
                         <IconButton
                           color="warning"
@@ -567,6 +653,191 @@ const AdminUsuarios: React.FC = () => {
         </DialogActions>
       </Dialog>
       
+          {/* Diálogo para actualizar contraseña */}
+      <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
+        <DialogTitle>Actualizar Contraseña</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password-update"
+            label="Nueva contraseña"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={passwordValue}
+            onChange={(e) => setPasswordValue(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePasswordDialog}>Cancelar</Button>
+          <Button
+            onClick={handleActualizarPassword}
+            variant="contained"
+            color="secondary"
+            disabled={procesando || !passwordValue}
+          >
+            {procesando ? 'Actualizando...' : 'Actualizar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo para crear usuario directamente */}
+      <Dialog open={openCrearDialog} onClose={handleCloseCrearDialog}>
+        <DialogTitle>Crear Usuario</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="email-create"
+            name="email"
+            label="Email"
+            type="email"
+            fullWidth
+            variant="outlined"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="password-create"
+            name="password"
+            label="Contraseña"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={passwordValue}
+            onChange={(e) => setPasswordValue(e.target.value)}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="nombre-create"
+            name="nombre"
+            label="Nombre"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.nombre}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            id="apellidos-create"
+            name="apellidos"
+            label="Apellidos"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.apellidos}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            select
+            margin="dense"
+            id="tipo-create"
+            name="tipo"
+            label="Tipo"
+            fullWidth
+            variant="outlined"
+            value={formData.tipo}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+            SelectProps={{ native: true }}
+          >
+            <option value="Programa Residentes">Programa Residentes</option>
+            <option value="Programa Sociedades">Programa Sociedades</option>
+          </TextField>
+          <TextField
+            select
+            margin="dense"
+            id="rol-create"
+            name="rol"
+            label="Rol"
+            fullWidth
+            variant="outlined"
+            value={formData.rol}
+            onChange={handleChange}
+            required
+            sx={{ mb: 2 }}
+            SelectProps={{ native: true }}
+          >
+            <option value="residente">Residente</option>
+            <option value="formador">Formador</option>
+            <option value="administrador">Administrador</option>
+          </TextField>
+          {(formData.rol === 'residente' || formData.rol === 'formador') && (
+            <TextField
+              select
+              margin="dense"
+              id="hospital-create"
+              name="hospital"
+              label="Hospital"
+              fullWidth
+              variant="outlined"
+              value={formData.hospital}
+              onChange={handleChange}
+              required
+              SelectProps={{ native: true }}
+            >
+              {hospitales.map((hospital) => (
+                <option key={hospital._id} value={hospital._id}>
+                  {hospital.nombre}
+                </option>
+              ))}
+            </TextField>
+          )}
+          {formData.tipo === 'Programa Sociedades' && (
+            <TextField
+              select
+              margin="dense"
+              id="sociedad-create"
+              name="sociedad"
+              label="Sociedad"
+              fullWidth
+              variant="outlined"
+              value={formData.sociedad}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              {sociedades.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.titulo}
+                </option>
+              ))}
+            </TextField>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCrearDialog}>Cancelar</Button>
+          <Button
+            onClick={handleCrear}
+            variant="contained"
+            color="success"
+            disabled={
+              procesando ||
+              !formData.email ||
+              !passwordValue ||
+              !formData.nombre ||
+              !formData.apellidos ||
+              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital)
+            }
+          >
+            {procesando ? 'Creando...' : 'Crear Usuario'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Diálogo para editar usuario */}
       <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
         <DialogTitle>Editar Usuario</DialogTitle>
