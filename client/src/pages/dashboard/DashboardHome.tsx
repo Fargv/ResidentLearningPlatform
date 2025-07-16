@@ -23,13 +23,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import { formatMonthYear } from '../../utils/date';
+import { Sociedad } from '../../types/Sociedad';
 
 const DashboardHome: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error] = useState<string | null>(null);
-  const [sociedadInfo, setSociedadInfo] = useState<any | null>(null);
-
+  const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   useEffect(() => {
     const loadSociedad = async () => {
       if (user?.tipo !== 'Programa Sociedades') {
