@@ -185,6 +185,11 @@ const handleOpenCrearDialog = () => {
         updated.rol = 'alumno';
         updated.sociedad = sociedades[0]?._id || '';
       }
+    } else if (name === 'rol' && value === 'administrador') {
+      updated.tipo = '';
+      updated.hospital = '';
+      updated.sociedad = '';
+      updated.especialidad = '';
     }
     setFormData(updated);
   };
@@ -222,6 +227,7 @@ const handleOpenCrearDialog = () => {
     try {
       setProcesando(true);
       const payload = { ...formData, password: passwordValue } as any;
+      if (payload.rol === 'administrador') delete payload.tipo;
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
@@ -236,6 +242,7 @@ const handleOpenCrearDialog = () => {
   };
 
 
+
   const handleEditar = async () => {
     if (!selectedUsuario) return;
     
@@ -243,6 +250,7 @@ const handleOpenCrearDialog = () => {
       setProcesando(true);
       
       const payload = { ...formData, password: passwordValue } as any;
+      if (payload.rol === 'administrador') delete payload.tipo;
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
@@ -530,47 +538,25 @@ const handleOpenCrearDialog = () => {
             required
             sx={{ mb: 2 }}
           />
-          <TextField
-            margin="dense"
-            id="tipo"
-            name="tipo"
-            label="Tipo"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.tipo}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            id="tipo"
-            name="tipo"
-            label="Tipo"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.tipo}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            select
-            margin="dense"
-            id="tipo"
-            name="tipo"
-            label="Tipo"
-            fullWidth
-            variant="outlined"
-            value={formData.tipo}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-            SelectProps={{ native: true }}
-          >
-            <option value="Programa Residentes">Programa Residentes</option>
-            <option value="Programa Sociedades">Programa Sociedades</option>
-          </TextField>
+          {formData.rol !== 'administrador' && (
+            <TextField
+              select
+              margin="dense"
+              id="tipo"
+              name="tipo"
+              label="Tipo"
+              fullWidth
+              variant="outlined"
+              value={formData.tipo}
+              onChange={handleChange}
+              required
+              sx={{ mb: 2 }}
+              SelectProps={{ native: true }}
+            >
+              <option value="Programa Residentes">Programa Residentes</option>
+              <option value="Programa Sociedades">Programa Sociedades</option>
+            </TextField>
+          )}
           <TextField
             select
             margin="dense"
@@ -591,7 +577,8 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
           </TextField>
-          {(formData.rol === 'residente' || formData.rol === 'formador') && (
+          {formData.rol !== 'administrador' &&
+            (formData.rol === 'residente' || formData.rol === 'formador') && (
             <TextField
               select
               margin="dense"
@@ -614,7 +601,7 @@ const handleOpenCrearDialog = () => {
               ))}
             </TextField>
           )}
-           {formData.tipo === 'Programa Sociedades' && (
+          {formData.rol !== 'administrador' && formData.tipo === 'Programa Sociedades' && (
             <TextField
               select
               margin="dense"
@@ -635,25 +622,28 @@ const handleOpenCrearDialog = () => {
               ))}
             </TextField>
           )}
-          <TextField
-            select
-            margin="dense"
-            id="sociedad"
-            name="sociedad"
-            label="Sociedad"
-            fullWidth
-            variant="outlined"
-            value={formData.sociedad}
-            onChange={handleChange}
-            SelectProps={{ native: true }}
-            sx={{ mb: 2 }}
-          >
-            {sociedades.map((s) => (
-              <option key={s._id} value={s._id}>
-                {s.titulo}
-              </option>
-            ))}
-          </TextField>
+          {formData.rol !== 'administrador' && (
+            <TextField
+              select
+              margin="dense"
+              id="sociedad"
+              name="sociedad"
+              label="Sociedad"
+              fullWidth
+              variant="outlined"
+              value={formData.sociedad}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              {sociedades.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.titulo}
+                </option>
+              ))}
+            </TextField>
+          )}
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseInvitarDialog} color="primary">
@@ -757,23 +747,25 @@ const handleOpenCrearDialog = () => {
             required
             sx={{ mb: 2 }}
           />
-          <TextField
-            select
-            margin="dense"
-            id="tipo-create"
-            name="tipo"
-            label="Tipo"
-            fullWidth
-            variant="outlined"
-            value={formData.tipo}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-            SelectProps={{ native: true }}
-          >
-            <option value="Programa Residentes">Programa Residentes</option>
-            <option value="Programa Sociedades">Programa Sociedades</option>
-          </TextField>
+          {formData.rol !== 'administrador' && (
+            <TextField
+              select
+              margin="dense"
+              id="tipo-create"
+              name="tipo"
+              label="Tipo"
+              fullWidth
+              variant="outlined"
+              value={formData.tipo}
+              onChange={handleChange}
+              required
+              sx={{ mb: 2 }}
+              SelectProps={{ native: true }}
+            >
+              <option value="Programa Residentes">Programa Residentes</option>
+              <option value="Programa Sociedades">Programa Sociedades</option>
+            </TextField>
+          )}
           <TextField
             select
             margin="dense"
@@ -794,9 +786,10 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
           </TextField>
-         {(formData.rol === 'residente' ||
-            formData.rol === 'formador' ||
-            formData.tipo === 'Programa Sociedades') && (
+         {formData.rol !== 'administrador' &&
+            (formData.rol === 'residente' ||
+              formData.rol === 'formador' ||
+              formData.tipo === 'Programa Sociedades') && (
             <TextField
               select
               margin="dense"
@@ -839,7 +832,7 @@ const handleOpenCrearDialog = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
-          {formData.tipo === 'Programa Sociedades' && (
+          {formData.rol !== 'administrador' && formData.tipo === 'Programa Sociedades' && (
             <TextField
               select
               margin="dense"
@@ -933,9 +926,10 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
           </TextField>
-          {(formData.rol === 'residente' ||
-            formData.rol === 'formador' ||
-            formData.tipo === 'Programa Sociedades') && (
+          {formData.rol !== 'administrador' &&
+            (formData.rol === 'residente' ||
+              formData.rol === 'formador' ||
+              formData.tipo === 'Programa Sociedades') && (
             <TextField
               select
               margin="dense"
@@ -980,25 +974,7 @@ const handleOpenCrearDialog = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
-          <TextField
-            select
-            margin="dense"
-            id="sociedad"
-            name="sociedad"
-            label="Sociedad"
-            fullWidth
-            variant="outlined"
-            value={formData.sociedad}
-            onChange={handleChange}
-            SelectProps={{ native: true }}
-            sx={{ mb: 2 }}
-          >
-            {sociedades.map((s) => (
-              <option key={s._id} value={s._id}>
-                {s.titulo}
-              </option>
-            ))}
-          </TextField>
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarDialog} color="primary">
