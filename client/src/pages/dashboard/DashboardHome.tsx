@@ -123,6 +123,44 @@ const actions: Action[] = [];
               : `Residente en ${user?.hospital?.nombre || 'Hospital'}`}
         </Typography>
       </Box>
+      {user?.tipo === 'Programa Sociedades' && sociedadInfo && (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            {sociedadInfo.titulo}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            {sociedadInfo.status}
+          </Typography>
+          <Typography variant="body2">
+            Convocatoria:{' '}
+            {formatMonthYear(sociedadInfo.fechaConvocatoria || '')}
+          </Typography>
+          <Typography variant="body2">
+            Presentación:{' '}
+            {formatMonthYear(sociedadInfo.fechaPresentacion || '')}
+          </Typography>
+          <Typography variant="body2">
+            Mod. Online:{' '}
+            {formatMonthYear(sociedadInfo.fechaModulosOnline || '')}
+          </Typography>
+          <Typography variant="body2">
+            Simulación:{' '}
+            {formatMonthYear(sociedadInfo.fechaSimulacion || '')}
+          </Typography>
+          <Typography variant="body2">
+            First Assistant:{' '}
+            {formatMonthYear(sociedadInfo.fechaAtividadesFirstAssistant || '')}
+          </Typography>
+          <Typography variant="body2">
+            Step By Step:{' '}
+            {formatMonthYear(sociedadInfo.fechaModuloOnlineStepByStep || '')}
+          </Typography>
+          <Typography variant="body2">
+            Hand On:{' '}
+            {formatMonthYear(sociedadInfo.fechaHandOn || '')}
+          </Typography>
+        </Box>
+      )}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
   {actions.map((action) => (
     <Box
