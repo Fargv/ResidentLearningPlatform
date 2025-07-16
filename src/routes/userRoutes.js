@@ -5,9 +5,11 @@ const { protect, authorize } = require('../middleware/auth');
 
 const {
   getUsers,
+  createUser,
   getUser,
   updateUser,
   updateUserStatus,
+  updateUserPassword,
   inviteUser,
   getInvitations,
   cancelInvitation,
@@ -25,7 +27,8 @@ router.get('/hospital/:hospitalId', authorize('administrador', 'formador'), getU
 
 // Rutas solo para administradores
 router.route('/')
-  .get(authorize('administrador', 'formador'), getUsers);
+  .get(authorize('administrador', 'formador'), getUsers)
+  .post(authorize('administrador'), createUser);
 
 router.route('/invite')
   .post(authorize('administrador'), inviteUser);
@@ -48,6 +51,9 @@ router.route('/:id')
   .get(authorize('administrador'), getUser)
   .put(authorize('administrador'), updateUser)
   .delete(authorize('administrador'), deleteUser);
+
+router.route('/:id/password')
+  .put(authorize('administrador'), updateUserPassword);
 
 router.route('/:id/status')
   .put(authorize('administrador'), updateUserStatus);
