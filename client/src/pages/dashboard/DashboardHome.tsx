@@ -31,21 +31,29 @@ const DashboardHome: React.FC = () => {
   const [sociedadInfo, setSociedadInfo] = useState<any | null>(null);
 
   useEffect(() => {
-    const fetchSociedad = async () => {
-      if (user?.tipo === 'Programa Sociedades') {
-        const sociedadId = (user as any)?.sociedad?._id || (user as any)?.sociedad;
-        if (!sociedadId) return;
-        try {
-          const res = await api.get(`/sociedades/${sociedadId}`);
-          setSociedadInfo(res.data);
-        } catch (err) {
-          console.error('Error cargando sociedad', err);
-        }
+    const loadSociedad = async () => {
+      if (user?.tipo !== 'Programa Sociedades') {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      const sociedadId = (user as any)?.sociedad?._id || (user as any)?.sociedad;
+      if (!sociedadId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await api.get(`/sociedades/${sociedadId}`);
+        setSociedadInfo(res.data);
+      } catch (err) {
+        console.error('Error cargando sociedad', err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchSociedad();
+    loadSociedad();
   }, [user]);
 
   const navigate = useNavigate();
