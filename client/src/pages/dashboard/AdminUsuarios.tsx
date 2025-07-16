@@ -183,6 +183,7 @@ const handleOpenCrearDialog = () => {
         updated.rol = 'residente';
       } else if (value === 'Programa Sociedades') {
         updated.rol = 'alumno';
+        updated.sociedad = sociedades[0]?._id || '';
       }
     }
     setFormData(updated);
@@ -220,8 +221,11 @@ const handleOpenCrearDialog = () => {
    const handleCrear = async () => {
     try {
       setProcesando(true);
-      const res = await createUser({ ...formData, password: passwordValue });
-      setUsuariosLista([...usuarios, res.data.data]);
+      const payload = { ...formData, password: passwordValue } as any;
+      if (!payload.hospital) delete payload.hospital;
+      if (!payload.especialidad) delete payload.especialidad;
+      if (!payload.sociedad) delete payload.sociedad;
+      const res = await createUser(payload);      setUsuariosLista([...usuarios, res.data.data]);
       handleCloseCrearDialog();
       setSnackbar({ open: true, message: 'Usuario creado correctamente', severity: 'success' });
     } catch (err: any) {
@@ -238,10 +242,10 @@ const handleOpenCrearDialog = () => {
     try {
       setProcesando(true);
       
-      const payload = { ...formData } as any;
-      if (payload.tipo === 'Programa Residentes') {
-        payload.sociedad = null;
-      }
+      const payload = { ...formData, password: passwordValue } as any;
+      if (!payload.hospital) delete payload.hospital;
+      if (!payload.especialidad) delete payload.especialidad;
+      if (!payload.sociedad) delete payload.sociedad;
 
       const res = await api.put(`/users/${selectedUsuario._id}`, payload);
       
@@ -790,7 +794,9 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
           </TextField>
-          {(formData.rol === 'residente' || formData.rol === 'formador') && (
+         {(formData.rol === 'residente' ||
+            formData.rol === 'formador' ||
+            formData.tipo === 'Programa Sociedades') && (
             <TextField
               select
               margin="dense"
@@ -927,7 +933,9 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
           </TextField>
-          {(formData.rol === 'residente' || formData.rol === 'formador') && (
+          {(formData.rol === 'residente' ||
+            formData.rol === 'formador' ||
+            formData.tipo === 'Programa Sociedades') && (
             <TextField
               select
               margin="dense"
