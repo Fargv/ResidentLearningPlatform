@@ -56,6 +56,10 @@ exports.createUser = async (req, res, next) => {
       sociedad,
       especialidad
     } = req.body;
+    const hospitalId = hospital || undefined;
+    const especialidadVal = especialidad || undefined;
+    const sociedadId =
+      tipo === 'Programa Sociedades' ? sociedad || undefined : undefined;
 
     const rolesValidos = [
       'residente',
@@ -110,16 +114,16 @@ exports.createUser = async (req, res, next) => {
       }
     }
 
-    const nuevoUsuario = await User.create({
+   const nuevoUsuario = await User.create({
       nombre,
       apellidos,
       email,
       password,
       rol,
       tipo,
-      hospital: tipo === 'Programa Residentes' ? hospital : undefined,
-      sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
-      especialidad,
+      hospital: hospitalId,
+      sociedad: sociedadId,
+      especialidad: especialidadVal,
       activo: true,
       consentimientoDatos: true,
       fechaRegistro: Date.now()
@@ -173,11 +177,16 @@ exports.updateUser = async (req, res, next) => {
   try {
     // Eliminar campos que no deben ser actualizados por esta ruta
     const { password, ...updateData } = req.body;
+    const hospitalId = updateData.hospital || undefined;
+    const especialidadVal = updateData.especialidad || undefined;
+    const currentUser = await User.findById(req.params.id);
     if (updateData.tipo === 'Programa Residentes') {
       updateData.sociedad = null;
     }
-    const currentUser = await User.findById(req.params.id);
-    if (!currentUser) {
+    const sociedadId =
+      (updateData.tipo || currentUser.tipo) === 'Programa Sociedades'
+        ? updateData.sociedad || undefined
+        : undefined;    if (!currentUser) {
       return next(
         new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
       );
@@ -199,6 +208,10 @@ exports.updateUser = async (req, res, next) => {
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
+
+    updateData.hospital = hospitalId;
+    updateData.especialidad = especialidadVal;
+    updateData.sociedad = sociedadId;
 
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
