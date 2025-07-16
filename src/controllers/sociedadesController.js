@@ -54,12 +54,3 @@ exports.eliminarSociedad = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-exports.obtenerSociedadesActivas = async (req, res) => {
-  try {
-    const activas = await Sociedades.find({ status: 'ACTIVO' });
-    res.json(activas);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
