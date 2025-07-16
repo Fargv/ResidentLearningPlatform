@@ -7,6 +7,8 @@ const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
 const ProgresoResidente = require('../models/ProgresoResidente');
+const Sociedades = require('../models/Sociedades');
+const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 
 
 
@@ -33,6 +35,86 @@ exports.getUsers = async (req, res, next) => {
       count: users.length,
       data: users
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Crear un usuario desde administración
+// @route   POST /api/users
+// @access  Private/Admin
+exports.createUser = async (req, res, next) => {
+  try {
+    const {
+      nombre,
+      apellidos,
+      email,
+      password,
+      rol,
+      tipo,
+      hospital,
+      sociedad,
+      especialidad
+    } = req.body;
+
+    const rolesValidos = ['residente', 'formador', 'administrador', 'alumno', 'instructor'];
+    if (!rolesValidos.includes(rol)) {
+      return next(new ErrorResponse('Rol inválido', 400));
+    }
+
+    if (!['Programa Residentes', 'Programa Sociedades'].includes(tipo)) {
+      return next(new ErrorResponse('Tipo de programa inválido', 400));
+    }
+
+    if ((rol === 'residente' || rol === 'formador') && !hospital) {
+      return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
+    }
+
+    if (hospital) {
+      const hosp = await Hospital.findById(hospital);
+      if (!hosp) {
+        return next(new ErrorResponse('Hospital no encontrado', 404));
+      }
+    }
+
+    if (tipo === 'Programa Sociedades') {
+      if (!sociedad) {
+        return next(new ErrorResponse('Sociedad requerida', 400));
+      }
+
+      const soc = await Sociedades.findOne({ _id: sociedad, status: 'ACTIVO' });
+      if (!soc) {
+        return next(new ErrorResponse('Sociedad no válida o inactiva', 400));
+      }
+    }
+
+    const nuevoUsuario = await User.create({
+      nombre,
+      apellidos,
+      email,
+      password,
+      rol,
+      tipo,
+      hospital: tipo === 'Programa Residentes' ? hospital : undefined,
+      sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
+      especialidad,
+      activo: true,
+      consentimientoDatos: true,
+      fechaRegistro: Date.now()
+    });
+
+    if (rol === 'residente' || rol === 'alumno') {
+      await inicializarProgresoFormativo(nuevoUsuario);
+    }
+
+    await createAuditLog({
+      usuario: req.user._id,
+      accion: 'crear_usuario',
+      descripcion: `Usuario creado: ${nuevoUsuario.email}`,
+      ip: req.ip
+    });
+
+    res.status(201).json({ success: true, data: nuevoUsuario });
   } catch (err) {
     next(err);
   }
@@ -137,6 +219,33 @@ exports.updateUserStatus = async (req, res, next) => {
       success: true,
       data: user
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Actualizar contraseña de un usuario
+// @route   PUT /api/users/:id/password
+// @access  Private/Admin
+exports.updateUserPassword = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
+    }
+
+    user.password = req.body.password;
+    await user.save();
+
+    await createAuditLog({
+      usuario: req.user._id,
+      accion: 'actualizar_password_usuario',
+      descripcion: `Contraseña actualizada para usuario: ${user.email}`,
+      ip: req.ip
+    });
+
+    res.status(200).json({ success: true, data: {} });
   } catch (err) {
     next(err);
   }

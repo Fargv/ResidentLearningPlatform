@@ -230,6 +230,19 @@ curl -X POST http://localhost:5000/api/access-codes \
   -H "Authorization: Bearer <token-admin>" \
   -d '{"codigo":"ABEXRES2026","rol":"residente","tipo":"Programa Residentes"}'
 ```
+
+## Gestión de usuarios
+
+### Endpoints `/api/users`
+
+- `POST /api/users/invite` envía una invitación para registrar un nuevo usuario (requiere rol de administrador).
+- `GET /api/users/invitations` lista las invitaciones pendientes (requiere rol de administrador).
+- `DELETE /api/users/invitations/:id` cancela la invitación indicada (requiere rol de administrador).
+
+### Endpoint `/api/auth/updatepassword`
+
+- `PUT /api/auth/updatepassword` cambia la contraseña del usuario autenticado.
+
 ## Solución de problemas
 
 Si al iniciar la aplicación se muestra la advertencia de Mongoose sobre
