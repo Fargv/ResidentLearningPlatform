@@ -21,13 +21,31 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../api';
+import { formatMonthYear } from '../../utils/date';
 
 const DashboardHome: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error] = useState<string | null>(null);
+  const [sociedadInfo, setSociedadInfo] = useState<any | null>(null);
+
   useEffect(() => {
-    setLoading(false);
+    const fetchSociedad = async () => {
+      if (user?.tipo === 'Programa Sociedades') {
+        const sociedadId = (user as any)?.sociedad?._id || (user as any)?.sociedad;
+        if (!sociedadId) return;
+        try {
+          const res = await api.get(`/sociedades/${sociedadId}`);
+          setSociedadInfo(res.data);
+        } catch (err) {
+          console.error('Error cargando sociedad', err);
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchSociedad();
   }, [user]);
 
   const navigate = useNavigate();

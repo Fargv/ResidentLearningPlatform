@@ -26,9 +26,12 @@ interface User {
     _id: string;
     nombre: string;
   };
+  tipo?: string; // ← Añadido para usuarios tipo "Programa Sociedades"
+  sociedad?: string | { _id: string }; // ← Añadido para compatibilidad flexible
   avatar?: string;
   activo: boolean;
 }
+
 
 interface AuthContextType {
   user: User | null;
