@@ -46,24 +46,20 @@ const allowedOrigins = [
   'https://residentlearningplatform.netlify.app',
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
 
 // Asegura respuesta correcta a preflight requests (CORS OPTIONS)
-app.options('*', cors({
-  origin: clientOrigin,
-  credentials: true
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // 🔁 Misma config aquí
 app.use(fileupload());
 
 // Middleware de desarrollo
