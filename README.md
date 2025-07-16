@@ -235,11 +235,13 @@ curl -X POST http://localhost:5000/api/access-codes \
 
 ### Endpoints `/api/users`
 
+Los administradores pueden crear usuarios o cambiar contraseñas mediante estos endpoints sin proporcionar un código de acceso.
+
 - `POST /api/users/invite` envía una invitación para registrar un nuevo usuario (requiere rol de administrador).
 - `GET /api/users/invitations` lista las invitaciones pendientes (requiere rol de administrador).
 - `DELETE /api/users/invitations/:id` cancela la invitación indicada (requiere rol de administrador).
-- `POST /api/users` crea un usuario directamente (requiere rol de administrador).
-- `PUT /api/users/:id/password` cambia la contraseña de otro usuario (requiere rol de administrador).
+- `POST /api/users` crea un usuario directamente (requiere rol de administrador y **no necesita código de acceso**).
+- `PUT /api/users/:id/password` cambia la contraseña de otro usuario (requiere rol de administrador y **no necesita código de acceso**).
 
 Ejemplo de creación de usuario:
 

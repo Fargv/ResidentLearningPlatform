@@ -37,6 +37,8 @@ import api, { createUser, updateUserPassword } from '../../api';
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
+  const rolesResidentes = ['residente', 'formador', 'administrador'];
+  const rolesSociedades = ['alumno', 'instructor', 'administrador'];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuariosLista] = useState<any[]>([]);
@@ -55,6 +57,7 @@ const AdminUsuarios: React.FC = () => {
     apellidos: '',
     rol: 'residente',
     hospital: '',
+    especialidad: '',
     tipo: '',
     sociedad: ''
   });
@@ -65,6 +68,8 @@ const AdminUsuarios: React.FC = () => {
     severity: 'success' as 'success' | 'error'
   });
   
+  const roleOptions =
+    formData.tipo === 'Programa Sociedades' ? rolesSociedades : rolesResidentes;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,6 +103,7 @@ const AdminUsuarios: React.FC = () => {
       apellidos: '',
       rol: 'residente',
       hospital: hospitales.length > 0 ? hospitales[0]._id : '',
+      especialidad: '',
       tipo: '',
       sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
     });
@@ -111,6 +117,7 @@ const handleOpenCrearDialog = () => {
       apellidos: '',
       rol: 'residente',
       hospital: hospitales.length > 0 ? hospitales[0]._id : '',
+      especialidad: '',
       tipo: '',
       sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
     });
@@ -134,6 +141,7 @@ const handleOpenCrearDialog = () => {
       apellidos: usuario.apellidos,
       rol: usuario.rol,
       hospital: usuario.hospital?._id || '',
+      especialidad: usuario.especialidad || '',
       tipo: usuario.tipo || '',
       sociedad: usuario.sociedad?._id || ''
     });
@@ -169,8 +177,13 @@ const handleOpenCrearDialog = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     const updated = { ...formData, [name as string]: value };
-    if (name === 'tipo' && value === 'Programa Residentes') {
-      updated.sociedad = '';
+    if (name === 'tipo') {
+      if (value === 'Programa Residentes') {
+        updated.sociedad = '';
+        updated.rol = 'residente';
+      } else if (value === 'Programa Sociedades') {
+        updated.rol = 'alumno';
+      }
     }
     setFormData(updated);
   };
@@ -566,13 +579,13 @@ const handleOpenCrearDialog = () => {
             onChange={handleChange}
             required
             sx={{ mb: 2 }}
-            SelectProps={{
-              native: true
-            }}
+            SelectProps={{ native: true }}
           >
-            <option value="residente">Residente</option>
-            <option value="formador">Formador</option>
-            <option value="administrador">Administrador</option>
+            {roleOptions.map((r) => (
+              <option key={r} value={r}>
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </option>
+            ))}
           </TextField>
           {(formData.rol === 'residente' || formData.rol === 'formador') && (
             <TextField
@@ -771,9 +784,11 @@ const handleOpenCrearDialog = () => {
             sx={{ mb: 2 }}
             SelectProps={{ native: true }}
           >
-            <option value="residente">Residente</option>
-            <option value="formador">Formador</option>
-            <option value="administrador">Administrador</option>
+            {roleOptions.map((r) => (
+              <option key={r} value={r}>
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </option>
+            ))}
           </TextField>
           {(formData.rol === 'residente' || formData.rol === 'formador') && (
             <TextField
@@ -794,6 +809,28 @@ const handleOpenCrearDialog = () => {
                   {hospital.nombre}
                 </option>
               ))}
+            </TextField>
+          )}
+          {formData.rol === 'residente' && (
+            <TextField
+              select
+              margin="dense"
+              id="especialidad-create"
+              name="especialidad"
+              label="Especialidad"
+              fullWidth
+              variant="outlined"
+              value={formData.especialidad}
+              onChange={handleChange}
+              required
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              <option value="URO">URO</option>
+              <option value="GEN">GEN</option>
+              <option value="GYN">GYN</option>
+              <option value="THOR">THOR</option>
+              <option value="ORL">ORL</option>
             </TextField>
           )}
           {formData.tipo === 'Programa Sociedades' && (
@@ -830,7 +867,8 @@ const handleOpenCrearDialog = () => {
               !passwordValue ||
               !formData.nombre ||
               !formData.apellidos ||
-              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital)
+              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
+              (formData.rol === 'residente' && !formData.especialidad)
             }
           >
             {procesando ? 'Creando...' : 'Crear Usuario'}
@@ -881,13 +919,13 @@ const handleOpenCrearDialog = () => {
             onChange={handleChange}
             required
             sx={{ mb: 2 }}
-            SelectProps={{
-              native: true
-            }}
+            SelectProps={{ native: true }}
           >
-            <option value="residente">Residente</option>
-            <option value="formador">Formador</option>
-            <option value="administrador">Administrador</option>
+            {roleOptions.map((r) => (
+              <option key={r} value={r}>
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </option>
+            ))}
           </TextField>
           {(formData.rol === 'residente' || formData.rol === 'formador') && (
             <TextField
@@ -912,7 +950,29 @@ const handleOpenCrearDialog = () => {
               ))}
             </TextField>
           )}
-           <TextField
+          {formData.rol === 'residente' && (
+            <TextField
+              select
+              margin="dense"
+              id="especialidad"
+              name="especialidad"
+              label="Especialidad"
+              fullWidth
+              variant="outlined"
+              value={formData.especialidad}
+              onChange={handleChange}
+              required
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              <option value="URO">URO</option>
+              <option value="GEN">GEN</option>
+              <option value="GYN">GYN</option>
+              <option value="THOR">THOR</option>
+              <option value="ORL">ORL</option>
+            </TextField>
+          )}
+          <TextField
             select
             margin="dense"
             id="sociedad"
@@ -940,8 +1000,13 @@ const handleOpenCrearDialog = () => {
             onClick={handleEditar} 
             color="primary"
             variant="contained"
-            disabled={procesando || !formData.nombre || !formData.apellidos || ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital)}
-          >
+            disabled={
+              procesando ||
+              !formData.nombre ||
+              !formData.apellidos ||
+              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
+              (formData.rol === 'residente' && !formData.especialidad)
+            }          >
             {procesando ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </DialogActions>

@@ -57,10 +57,32 @@ exports.createUser = async (req, res, next) => {
       especialidad
     } = req.body;
 
-    const rolesValidos = ['residente', 'formador', 'administrador', 'alumno', 'instructor'];
+    const rolesValidos = [
+      'residente',
+      'formador',
+      'administrador',
+      'alumno',
+      'instructor'
+    ];
     if (!rolesValidos.includes(rol)) {
       return next(new ErrorResponse('Rol inválido', 400));
     }
+
+    // Verificar combinaciones válidas de rol y tipo de programa
+    if (
+      tipo === 'Programa Residentes' &&
+      !['residente', 'formador', 'administrador'].includes(rol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
+    }
+
+    if (
+      tipo === 'Programa Sociedades' &&
+      !['alumno', 'instructor', 'administrador'].includes(rol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
+    }
+
 
     if (!['Programa Residentes', 'Programa Sociedades'].includes(tipo)) {
       return next(new ErrorResponse('Tipo de programa inválido', 400));
@@ -153,6 +175,29 @@ exports.updateUser = async (req, res, next) => {
     const { password, ...updateData } = req.body;
     if (updateData.tipo === 'Programa Residentes') {
       updateData.sociedad = null;
+    }
+    const currentUser = await User.findById(req.params.id);
+    if (!currentUser) {
+      return next(
+        new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
+      );
+    }
+
+    const newTipo = updateData.tipo || currentUser.tipo;
+    const newRol = updateData.rol || currentUser.rol;
+
+    if (
+      newTipo === 'Programa Residentes' &&
+      !['residente', 'formador', 'administrador'].includes(newRol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
+    }
+
+    if (
+      newTipo === 'Programa Sociedades' &&
+      !['alumno', 'instructor', 'administrador'].includes(newRol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
 
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
