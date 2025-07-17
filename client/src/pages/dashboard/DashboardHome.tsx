@@ -32,6 +32,8 @@ const DashboardHome: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+  const [phaseSummary, setPhaseSummary] = useState<{ name: string; percent: number }[]>([]);
+  const [progressLoading, setProgressLoading] = useState(false);
   useEffect(() => {
     const loadSociedad = async () => {
       if (user?.tipo !== 'Programa Sociedades') {
@@ -56,6 +58,30 @@ const DashboardHome: React.FC = () => {
     };
 
     loadSociedad();
+  }, [user]);
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      if (user?.tipo !== 'Programa Residentes' || !user?._id) return;
+      try {
+        setProgressLoading(true);
+        const res = await api.get(`/progreso/residente/${user._id}`);
+        const data = res.data.data || [];
+        const summary = data.map((p: any) => {
+          const total = p.actividades.length;
+          const validated = p.actividades.filter((a: any) => a.estado === 'validado').length;
+          const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+          return { name: p.fase.nombre, percent };
+        });
+        setPhaseSummary(summary);
+      } catch (err) {
+        console.error('Error cargando progreso', err);
+      } finally {
+        setProgressLoading(false);
+      }
+    };
+
+    loadProgress();
   }, [user]);
 
   const navigate = useNavigate();
@@ -99,7 +125,7 @@ const actions: Action[] = [];
   );
 
   const renderContent = () => {
-    if (loading) {
+    if (loading || progressLoading) {
       return (
         <Box display="flex" justifyContent="center" mt={2}>
           <CircularProgress />
@@ -186,8 +212,39 @@ const actions: Action[] = [];
   ))}
 </Box>
 
-        </Paper>
+       </Paper>
       )}
+      {user?.tipo === 'Programa Residentes' &&
+        (user?.rol === 'residente' || user?.rol === 'formador' || user?.rol === 'instructor') &&
+        phaseSummary.length > 0 && (
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Progreso por fase
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+              {phaseSummary.map((p) => (
+                <Paper
+                  key={p.name}
+                  elevation={2}
+                  sx={{
+                    p: 2,
+                    flex: '1 1 calc(50% - 16px)',
+                    minWidth: '250px',
+                    borderLeft: '6px solid #1E5B94',
+                    backgroundColor: 'background.paper'
+                  }}
+                >
+                  <Typography variant="subtitle2" color="text.secondary">
+                    {p.name}
+                  </Typography>
+                  <Typography variant="body1" fontWeight="bold">
+                    {p.percent}%
+                  </Typography>
+                </Paper>
+              ))}
+            </Box>
+          </Paper>
+        )}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
   {actions.map((action) => (
     <Box
