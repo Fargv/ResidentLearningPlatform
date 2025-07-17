@@ -28,6 +28,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
+import { Sociedad } from '../../types/Sociedad';
 
 const ResidenteFases: React.FC = () => {
   const { user } = useAuth();
@@ -42,6 +43,24 @@ const ResidenteFases: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState('');
   const [snackbarError, setSnackbarError] = useState(false);
+  const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+
+  const dateFieldMap: Record<number, keyof Sociedad> = {
+    1: 'fechaConvocatoria',
+    2: 'fechaPresentacion',
+    3: 'fechaModulosOnline',
+    4: 'fechaSimulacion',
+    5: 'fechaAtividadesFirstAssistant',
+    6: 'fechaModuloOnlineStepByStep',
+    7: 'fechaHandOn'
+  };
+
+  const getSociedadDate = (fase: number): string => {
+    if (!sociedadInfo) return '';
+    const field = dateFieldMap[fase];
+    const value = field ? (sociedadInfo as any)[field] : null;
+    return value ? new Date(value).toLocaleDateString('es-ES') : '';
+  };
 
   useEffect(() => {
     if (!user || !user._id) return;
@@ -64,6 +83,26 @@ const ResidenteFases: React.FC = () => {
     };
   
     fetchProgresos();
+  }, [user]);
+
+  useEffect(() => {
+    const loadSociedad = async () => {
+      if (user?.tipo !== 'Programa Sociedades') {
+        setSociedadInfo(null);
+        return;
+      }
+      const sociedadId = (user as any)?.sociedad?._id || (user as any)?.sociedad;
+      if (!sociedadId) return;
+      try {
+        const res = await api.get(`/sociedades/${sociedadId}`);
+        const data = res.data.data || res.data;
+        setSociedadInfo(data);
+      } catch (err) {
+        console.error('Error cargando sociedad', err);
+      }
+    };
+
+    loadSociedad();
   }, [user]);
 
   const handleOpenDialog = (progresoId: string, index: number) => {
@@ -155,6 +194,11 @@ const ResidenteFases: React.FC = () => {
           <Typography variant="h6">
             Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
           </Typography>
+          {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
+            <Typography sx={{ ml: 'auto', color: 'secondary.main' }}>
+              {getSociedadDate(item.fase.numero)}
+            </Typography>
+          )}
         </AccordionSummary>
         <AccordionDetails>
           <Chip
