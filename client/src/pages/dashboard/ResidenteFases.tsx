@@ -29,6 +29,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
+import { formatMonthYear } from '../../utils/date';
 
 const ResidenteFases: React.FC = () => {
   const { user } = useAuth();
@@ -55,12 +56,35 @@ const ResidenteFases: React.FC = () => {
     7: 'fechaHandOn'
   };
 
-  const getSociedadDate = (fase: number): string => {
-    if (!sociedadInfo) return '';
+  const getSociedadDateObj = (fase: number): Date | null => {
+    if (!sociedadInfo) return null;
     const field = dateFieldMap[fase];
     const value = field ? (sociedadInfo as any)[field] : null;
-    return value ? new Date(value).toLocaleDateString('es-ES') : '';
+    return value ? new Date(value) : null;
   };
+
+  const getSociedadDate = (fase: number): string => {
+    const date = getSociedadDateObj(fase);
+    return date ? formatMonthYear(date.toISOString()) : '';
+  };
+
+  const getDateColor = (fase: number, estado: string): string => {
+    if (estado === 'completado' || estado === 'validado') {
+      return 'success.main';
+    }
+    const current = getSociedadDateObj(fase);
+    if (!current) return 'secondary.main';
+    const prev = getSociedadDateObj(fase - 1);
+    const now = new Date();
+    if (now > current) {
+      return 'error.main';
+    }
+    if (prev && now > prev && now <= current) {
+      return 'warning.main';
+    }
+    return 'info.main';
+  };
+
 
   useEffect(() => {
     if (!user || !user._id) return;
@@ -195,7 +219,9 @@ const ResidenteFases: React.FC = () => {
             Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
           </Typography>
           {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
-            <Typography sx={{ ml: 'auto', color: 'secondary.main' }}>
+            <Typography
+              sx={{ ml: 'auto', color: getDateColor(item.fase.numero, item.estadoGeneral) }}
+            >
               {getSociedadDate(item.fase.numero)}
             </Typography>
           )}
