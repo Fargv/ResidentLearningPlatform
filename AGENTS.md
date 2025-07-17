@@ -27,5 +27,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
   actualizar usuarios.
 - 2025-07-17: Fechas de sociedades en `ResidenteFases` con formato "julio 2025"
   y color según estado y fecha.
+- 2025-07-17: Nuevo formateador `formatDayMonthYear` y fecha corta en `ResidenteFases`.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

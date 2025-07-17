@@ -29,7 +29,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
-import { formatMonthYear } from '../../utils/date';
+import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 
 const ResidenteFases: React.FC = () => {
   const { user } = useAuth();
@@ -66,6 +66,11 @@ const ResidenteFases: React.FC = () => {
   const getSociedadDate = (fase: number): string => {
     const date = getSociedadDateObj(fase);
     return date ? formatMonthYear(date.toISOString()) : '';
+  };
+
+  const getSociedadDateShort = (fase: number): string => {
+    const date = getSociedadDateObj(fase);
+    return date ? formatDayMonthYear(date.toISOString()) : '';
   };
 
   const getDateColor = (fase: number, estado: string): string => {
@@ -227,17 +232,23 @@ const ResidenteFases: React.FC = () => {
           )}
         </AccordionSummary>
         <AccordionDetails>
-          <Chip
-            label={item.estadoGeneral || '—'}
-            color={
-              item.estadoGeneral === 'validado'
-                ? 'success'
-                : item.estadoGeneral === 'completado'
-                ? 'primary'
-                : 'default'
-            }
-            sx={{ mb: 2 }}
-          />
+          <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
+            <Chip
+              label={item.estadoGeneral || '—'}
+              color={
+                item.estadoGeneral === 'validado'
+                  ? 'success'
+                  : item.estadoGeneral === 'completado'
+                  ? 'primary'
+                  : 'default'
+              }
+            />
+            {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
+              <Typography sx={{ ml: 2, color: getDateColor(item.fase.numero, item.estadoGeneral) }}>
+                Fecha límite: {getSociedadDateShort(item.fase.numero)}
+              </Typography>
+            )}
+          </Box>
 
           {(() => {
             const total = item.actividades.length;
@@ -277,7 +288,7 @@ const ResidenteFases: React.FC = () => {
       )}
       {act.fecha && (
         <Typography variant="body2" color="text.secondary">
-          Fecha completada: {new Date(act.fecha).toLocaleDateString()}
+          Fecha completada: {formatDayMonthYear(act.fecha)}
         </Typography>
       )}
        {act.comentariosFormador && (
@@ -292,7 +303,7 @@ const ResidenteFases: React.FC = () => {
       )}
       {act.fechaValidacion && (
         <Typography variant="body2" color="text.secondary">
-          Validado el: {new Date(act.fechaValidacion).toLocaleDateString()}
+          Validado el: {formatDayMonthYear(act.fechaValidacion)}
         </Typography>
       )}
       <Typography variant="body2" color="text.secondary">
