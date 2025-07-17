@@ -6,7 +6,9 @@ import {
   CircularProgress,
   Card,
   CardActionArea,
-  CardContent
+  CardContent,
+  Paper,
+  Chip
 } from '@mui/material';
 import {
   Assignment as AssignmentIcon,
@@ -109,6 +111,29 @@ const actions: Action[] = [];
     return null;
   };
 
+  const getRoleSubtitle = () => {
+    if (!user) return '';
+    const hospital = user.hospital?.nombre;
+    switch (user.rol) {
+      case 'administrador':
+        return 'Panel de Administración';
+      case 'formador':
+        return hospital ? `Formador de residentes del hospital ${hospital}` : '';
+      case 'residente':
+        return hospital ? `Residente del hospital ${hospital}` : '';
+      case 'alumno':
+        return sociedadInfo?.titulo
+          ? `Alumno del programa de sociedades ${sociedadInfo.titulo}`
+          : '';
+      case 'instructor':
+        return sociedadInfo?.titulo
+          ? `Instructor del programa de sociedades ${sociedadInfo.titulo}`
+          : '';
+      default:
+        return '';
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ mb: 4 }}>
@@ -116,50 +141,52 @@ const actions: Action[] = [];
           Bienvenido, {user?.nombre}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          {user?.rol === 'administrador' 
-            ? 'Panel de Administración' 
-            : user?.rol === 'formador' 
-              ? `Formador en ${user?.hospital?.nombre || 'Hospital'}` 
-              : `Residente en ${user?.hospital?.nombre || 'Hospital'}`}
+          {getRoleSubtitle()}
         </Typography>
       </Box>
       {user?.tipo === 'Programa Sociedades' && sociedadInfo && (
-        <Box sx={{ mb: 2 }}>
+        <Paper sx={{ p: 2, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
             {sociedadInfo.titulo}
           </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            {sociedadInfo.status}
-          </Typography>
-          <Typography variant="body2">
-            Convocatoria:{' '}
-            {formatMonthYear(sociedadInfo.fechaConvocatoria || '')}
-          </Typography>
-          <Typography variant="body2">
-            Presentación:{' '}
-            {formatMonthYear(sociedadInfo.fechaPresentacion || '')}
-          </Typography>
-          <Typography variant="body2">
-            Mod. Online:{' '}
-            {formatMonthYear(sociedadInfo.fechaModulosOnline || '')}
-          </Typography>
-          <Typography variant="body2">
-            Simulación:{' '}
-            {formatMonthYear(sociedadInfo.fechaSimulacion || '')}
-          </Typography>
-          <Typography variant="body2">
-            First Assistant:{' '}
-            {formatMonthYear(sociedadInfo.fechaAtividadesFirstAssistant || '')}
-          </Typography>
-          <Typography variant="body2">
-            Step By Step:{' '}
-            {formatMonthYear(sociedadInfo.fechaModuloOnlineStepByStep || '')}
-          </Typography>
-          <Typography variant="body2">
-            Hand On:{' '}
-            {formatMonthYear(sociedadInfo.fechaHandOn || '')}
-          </Typography>
-        </Box>
+          <Chip
+            label={sociedadInfo.status}
+            color={sociedadInfo.status === 'ACTIVO' ? 'success' : 'default'}
+            size="small"
+            sx={{ mb: 2 }}
+          />
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+  {[
+    { label: 'Convocatoria', value: formatMonthYear(sociedadInfo.fechaConvocatoria || '') },
+    { label: 'Presentación', value: formatMonthYear(sociedadInfo.fechaPresentacion || '') },
+    { label: 'Mod. Online', value: formatMonthYear(sociedadInfo.fechaModulosOnline || '') },
+    { label: 'Simulación', value: formatMonthYear(sociedadInfo.fechaSimulacion || '') },
+    { label: 'First Assistant', value: formatMonthYear(sociedadInfo.fechaAtividadesFirstAssistant || '') },
+    { label: 'Step By Step', value: formatMonthYear(sociedadInfo.fechaModuloOnlineStepByStep || '') },
+    { label: 'Hand On', value: formatMonthYear(sociedadInfo.fechaHandOn || '') }
+  ].map(({ label, value }) => (
+    <Paper
+      key={label}
+      elevation={2}
+      sx={{
+        p: 2,
+        flex: '1 1 calc(50% - 16px)', // 2 columnas en pantallas normales
+        minWidth: '250px',
+        borderLeft: '6px solid #1E5B94',
+        backgroundColor: 'background.paper'
+      }}
+    >
+      <Typography variant="subtitle2" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body1" fontWeight="bold">
+        {value || '—'}
+      </Typography>
+    </Paper>
+  ))}
+</Box>
+
+        </Paper>
       )}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
   {actions.map((action) => (
