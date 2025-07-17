@@ -8,7 +8,12 @@ import {
   CardActionArea,
   CardContent,
   Paper,
-  Chip
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
 } from '@mui/material';
 import {
   Assignment as AssignmentIcon,
@@ -24,7 +29,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
-import { formatMonthYear } from '../../utils/date';
+import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { Sociedad } from '../../types/Sociedad';
 
 const DashboardHome: React.FC = () => {
@@ -34,6 +39,55 @@ const DashboardHome: React.FC = () => {
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [phaseSummary, setPhaseSummary] = useState<{ name: string; percent: number }[]>([]);
   const [progressLoading, setProgressLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedPhase, setSelectedPhase] = useState<{ label: string; date?: string; description: string } | null>(null);
+
+  const societyMilestones = [
+    {
+      label: 'Convocatoria',
+      date: sociedadInfo?.fechaConvocatoria,
+      description: 'Inicio del proceso de convocatoria.'
+    },
+    {
+      label: 'Presentación',
+      date: sociedadInfo?.fechaPresentacion,
+      description: 'Sesión de presentación del programa.'
+    },
+    {
+      label: 'Mod. Online',
+      date: sociedadInfo?.fechaModulosOnline,
+      description: 'Módulos formativos online.'
+    },
+    {
+      label: 'Simulación',
+      date: sociedadInfo?.fechaSimulacion,
+      description: 'Prácticas de simulación.'
+    },
+    {
+      label: 'First Assistant',
+      date: sociedadInfo?.fechaAtividadesFirstAssistant,
+      description: 'Actividades como primer asistente.'
+    },
+    {
+      label: 'Step By Step',
+      date: sociedadInfo?.fechaModuloOnlineStepByStep,
+      description: 'Procedimientos Step By Step.'
+    },
+    {
+      label: 'Hand On',
+      date: sociedadInfo?.fechaHandOn,
+      description: 'Entrenamiento práctico Hands On.'
+    }
+  ];
+
+  const residentMilestones = societyMilestones;
+
+  const handleOpenDialog = (phase: { label: string; date?: string; description: string }) => {
+    setSelectedPhase(phase);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => setOpenDialog(false);
   useEffect(() => {
     const loadSociedad = async () => {
       if (user?.tipo !== 'Programa Sociedades') {
@@ -182,35 +236,31 @@ const actions: Action[] = [];
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-  {[
-    { label: 'Convocatoria', value: formatMonthYear(sociedadInfo.fechaConvocatoria || '') },
-    { label: 'Presentación', value: formatMonthYear(sociedadInfo.fechaPresentacion || '') },
-    { label: 'Mod. Online', value: formatMonthYear(sociedadInfo.fechaModulosOnline || '') },
-    { label: 'Simulación', value: formatMonthYear(sociedadInfo.fechaSimulacion || '') },
-    { label: 'First Assistant', value: formatMonthYear(sociedadInfo.fechaAtividadesFirstAssistant || '') },
-    { label: 'Step By Step', value: formatMonthYear(sociedadInfo.fechaModuloOnlineStepByStep || '') },
-    { label: 'Hand On', value: formatMonthYear(sociedadInfo.fechaHandOn || '') }
-  ].map(({ label, value }) => (
-    <Paper
-      key={label}
-      elevation={2}
-      sx={{
-        p: 2,
-        flex: '1 1 calc(50% - 16px)', // 2 columnas en pantallas normales
-        minWidth: '250px',
-        borderLeft: '6px solid #1E5B94',
-        backgroundColor: 'background.paper'
-      }}
-    >
-      <Typography variant="subtitle2" color="text.secondary">
-        {label}
-      </Typography>
-      <Typography variant="body1" fontWeight="bold">
-        {value || '—'}
-      </Typography>
-    </Paper>
-  ))}
-</Box>
+  {societyMilestones.map((m) => (
+              <CardActionArea
+                key={m.label}
+                onClick={() => handleOpenDialog(m)}
+                sx={{
+                  flex: '1 1 calc(50% - 16px)',
+                  minWidth: '250px',
+                  '&:hover': { backgroundColor: 'action.hover', transform: 'scale(1.02)' },
+                  cursor: 'pointer'
+                }}
+              >
+                <Paper
+                  elevation={2}
+                  sx={{ p: 2, borderLeft: '6px solid #1E5B94', backgroundColor: 'background.paper' }}
+                >
+                  <Typography variant="subtitle2" color="text.secondary">
+                    {m.label}
+                  </Typography>
+                  <Typography variant="body1" fontWeight="bold">
+                    {formatMonthYear(m.date || '') || '—'}
+                  </Typography>
+                </Paper>
+              </CardActionArea>
+            ))}
+          </Box>
 
        </Paper>
       )}
@@ -222,27 +272,31 @@ const actions: Action[] = [];
               Progreso por fase
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-              {phaseSummary.map((p) => (
-                <Paper
-                  key={p.name}
-                  elevation={2}
-                  sx={{
-                    p: 2,
-                    flex: '1 1 calc(50% - 16px)',
-                    minWidth: '250px',
-                    borderLeft: '6px solid #1E5B94',
-                    backgroundColor: 'background.paper'
-                  }}
-                >
-                  <Typography variant="subtitle2" color="text.secondary">
-                    {p.name}
-                  </Typography>
-                  <Typography variant="body1" fontWeight="bold">
-                    {p.percent}%
-                  </Typography>
-                </Paper>
-              ))}
-            </Box>
+                {phaseSummary.map((p, idx) => (
+                  <CardActionArea
+                    key={p.name}
+                    onClick={() => handleOpenDialog(residentMilestones[idx])}
+                    sx={{
+                      flex: '1 1 calc(50% - 16px)',
+                      minWidth: '250px',
+                      '&:hover': { backgroundColor: 'action.hover', transform: 'scale(1.02)' },
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Paper
+                      elevation={2}
+                      sx={{ p: 2, borderLeft: '6px solid #1E5B94', backgroundColor: 'background.paper' }}
+                    >
+                      <Typography variant="subtitle2" color="text.secondary">
+                        {p.name}
+                      </Typography>
+                      <Typography variant="body1" fontWeight="bold">
+                        {p.percent}%
+                      </Typography>
+                    </Paper>
+                  </CardActionArea>
+                ))}
+              </Box>
           </Paper>
         )}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
@@ -273,6 +327,20 @@ const actions: Action[] = [];
 </Box>
 
       {renderContent()}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{selectedPhase?.label}</DialogTitle>
+        <DialogContent>
+          <Typography gutterBottom>{selectedPhase?.description}</Typography>
+          {selectedPhase?.date && (
+            <Typography variant="body2" color="text.secondary">
+              {formatDayMonthYear(selectedPhase.date)}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
