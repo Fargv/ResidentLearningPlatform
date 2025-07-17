@@ -97,10 +97,11 @@ const Dashboard: React.FC = () => {
     ];
   
     if (user?.rol === 'residente' || user?.rol === 'alumno') {
-      items.push(
-        { text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente', 'alumno'] },
-        { text: 'Fases Formativas', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno'] }
-      );
+     items.push({ text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente', 'alumno'] });
+    }
+
+    if (user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor') {
+      items.push({ text: 'Fases Formativas', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno', 'instructor'] });
     }
     
   
@@ -277,7 +278,7 @@ const Dashboard: React.FC = () => {
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
-  {user?.rol === 'residente' || user?.rol === 'alumno' ? (
+  {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (
     <Route path="/fases" element={<ResidenteFases />} />
   ) : null}
   <Route path="/perfil" element={<Perfil />} />
