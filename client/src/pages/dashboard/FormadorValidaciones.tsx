@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
+import { formatDayMonthYear } from '../../utils/date';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -108,7 +109,7 @@ useEffect(() => {
   const handleOpenValidarDialog = (progreso: any) => {
     setSelectedProgreso(progreso);
     setComentarios('');
-    setFirmaDigital(`${user?.nombre} ${user?.apellidos} - ${new Date().toLocaleDateString()}`);
+    setFirmaDigital(`${user?.nombre} ${user?.apellidos} - ${formatDayMonthYear(new Date().toISOString())}`);
     setOpenValidarDialog(true);
   };
 
@@ -249,7 +250,7 @@ const handleRechazar = async () => {
                       <TableCell>
                         {progreso.residente.nombre} {progreso.residente.apellidos}
                       </TableCell>
-                      <TableCell>{new Date(progreso.fechaCreacion).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
                         <Button
@@ -317,7 +318,7 @@ const handleRechazar = async () => {
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
-                      <TableCell>{new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
                       <TableCell align="right">
                         <Chip icon={<CheckCircleIcon />} label="Validado" color="success" size="small" variant="outlined" />
@@ -356,7 +357,7 @@ const handleRechazar = async () => {
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
-                      <TableCell>{new Date(progreso.fechaActualizacion || progreso.fechaCreacion).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
                       <TableCell align="right">
                         <Chip icon={<ErrorIcon />} label="Rechazado" color="error" size="small" variant="outlined" />
