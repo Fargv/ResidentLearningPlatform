@@ -25,5 +25,7 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-07-15: Entrada "Progreso de usuarios" para administradores en el Dashboard.
 - 2025-07-16: Sanitización de payload en `AdminUsuarios.tsx` antes de crear o
   actualizar usuarios.
+- 2025-07-17: Fechas de sociedades en `ResidenteFases` con formato "julio 2025"
+  y color según estado y fecha.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.
