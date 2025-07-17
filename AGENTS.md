@@ -29,5 +29,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
   y color según estado y fecha.
 - 2025-07-17: Nuevo formateador `formatDayMonthYear` y fecha corta en `ResidenteFases`.
 - 2025-07-17: Milestones del Dashboard con diálogo y test de apertura al hacer clic.
+- 2025-07-22: npm test ahora ejecuta pruebas del cliente con react-scripts antes de las pruebas de backend.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.
