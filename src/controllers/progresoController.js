@@ -596,11 +596,31 @@ const marcarActividadCompletada = async (req, res, next) => {
 
     const actividadExistente = progreso.actividades[index];
 
-          actividadExistente.estado = 'completado';
-          actividadExistente.completada = true;
-          actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
-          actividadExistente.comentariosResidente = comentariosResidente;
+    actividadExistente.estado = 'completado';
+    actividadExistente.completada = true;
+    actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+    actividadExistente.comentariosResidente = comentariosResidente;
 
+    // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
+    if (req.files && req.files.adjunto) {
+      const file = req.files.adjunto;
+      const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
+      if (!allowed.includes(file.mimetype)) {
+        return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+      }
+      await Adjunto.create({
+        progreso: id,
+        usuario: req.user._id,
+        actividadIndex: Number(index),
+        nombreArchivo: file.name,
+        mimeType: file.mimetype,
+        datos: file.data,
+        tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+      });
+    }
 
     await progreso.save();
     await progreso.populate(['fase', 'actividades.actividad']);
@@ -757,6 +777,9 @@ const getValidacionesPendientes = async (req, res, next) => {
       tipo: 'validacion',
       mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido validada.`
     });
+
+    // Borrar adjuntos temporales asociados a la actividad
+    await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
 
     res.status(200).json({ success: true, data: progreso });
   } catch (err) {

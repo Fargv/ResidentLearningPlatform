@@ -41,6 +41,7 @@ const ResidenteFases: React.FC = () => {
   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
   const [comentario, setComentario] = useState('');
   const [fecha, setFecha] = useState('');
+  const [archivo, setArchivo] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState('');
   const [snackbarError, setSnackbarError] = useState(false);
@@ -139,6 +140,7 @@ const ResidenteFases: React.FC = () => {
     setSelectedActividadIndex(index);
     setComentario('');
     setFecha(new Date().toISOString().split('T')[0]);
+    setArchivo(null);
   
     // Mover el console.log al final para que acceda a los parámetros directamente
   
@@ -150,6 +152,14 @@ const ResidenteFases: React.FC = () => {
   selectedActividadIndex !== null &&
   Boolean(fecha);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setArchivo(e.target.files[0]);
+    } else {
+      setArchivo(null);
+    }
+  };
+
 
   const handleCompletarActividad = async () => {
     
@@ -160,12 +170,17 @@ const ResidenteFases: React.FC = () => {
       return;
     }
 
-    try {
-      const { data } = await api.put(`/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`, {
-        estado: 'completado',
-        fechaRealizacion: fecha,
-        comentariosResidente: comentario
-      });
+   try {
+      const form = new FormData();
+      form.append('fechaRealizacion', fecha);
+      form.append('comentariosResidente', comentario);
+      if (archivo) form.append('adjunto', archivo);
+
+      const { data } = await api.put(
+        `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
+        form,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
 
       if (!data?.success) {
         setSnackbarError(true);
@@ -190,6 +205,7 @@ const ResidenteFases: React.FC = () => {
       setSnackbarOpen(true);
     } finally {
       setDialogOpen(false);
+      setArchivo(null);
     }
   };
 
@@ -373,6 +389,15 @@ const ResidenteFases: React.FC = () => {
             rows={3}
             margin="normal"
           />
+          <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+            Seleccionar archivo
+            <input
+              type="file"
+              hidden
+              accept="application/pdf,image/png,image/jpeg"
+              onChange={handleFileChange}
+            />
+          </Button>
           <Typography variant="caption" color="text.secondary">
     progresoId: {selectedProgresoId || '—'} | actividadIndex: {selectedActividadIndex ?? '—'}
   </Typography>

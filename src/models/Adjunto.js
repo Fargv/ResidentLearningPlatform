@@ -12,8 +12,14 @@ const adjuntoSchema = new mongoose.Schema({
   },
   rutaArchivo: {
     type: String,
-    required: [true, 'Por favor proporcione la ruta de almacenamiento']
+    // Para adjuntos almacenados en la BD no se necesita ruta física
+    required: false
   },
+  // Contenido binario opcional para almacenamiento en MongoDB
+  datos: Buffer,
+  mimeType: String,
+  usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  actividadIndex: Number,
   tipoArchivo: {
     type: String,
     enum: ['certificado', 'imagen', 'documento', 'otro'],

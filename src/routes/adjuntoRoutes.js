@@ -4,6 +4,8 @@ const { protect, authorize } = require('../middleware/auth');
 
 const {
   subirAdjunto,
+  subirAdjuntoActividad,
+  getAdjuntoActividad,
   getAdjuntosProgreso,
   eliminarAdjunto,
   descargarAdjunto
@@ -16,6 +18,10 @@ router.use(protect);
 router.route('/:progresoId')
   .post(subirAdjunto);
 
+router.route('/actividad/:progresoId/:index')
+  .post(subirAdjuntoActividad)
+  .get(getAdjuntoActividad);
+
 router.route('/progreso/:progresoId')
   .get(getAdjuntosProgreso);
 
@@ -27,3 +33,4 @@ router.route('/:id/download')
   .get(descargarAdjunto);
 
 module.exports = router;
+
