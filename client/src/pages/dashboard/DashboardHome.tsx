@@ -51,7 +51,7 @@ const DashboardHome: React.FC = () => {
 
   const societyMilestones = [
     {
-      label: "Convocatoria 1",
+      label: "Convocatoria 6",
       date: sociedadInfo?.fechaConvocatoria,
       description: (
         <>
