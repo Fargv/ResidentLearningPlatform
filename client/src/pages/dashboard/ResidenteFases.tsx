@@ -42,6 +42,8 @@ const ResidenteFases: React.FC = () => {
   const [comentario, setComentario] = useState('');
   const [fecha, setFecha] = useState('');
   const [archivo, setArchivo] = useState<File | null>(null);
+  const [archivoError, setArchivoError] = useState(false);
+  const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState('');
   const [snackbarError, setSnackbarError] = useState(false);
@@ -141,6 +143,8 @@ const ResidenteFases: React.FC = () => {
     setComentario('');
     setFecha(new Date().toISOString().split('T')[0]);
     setArchivo(null);
+    setArchivoError(false);
+    setArchivoErrorMsg('');
   
     // Mover el console.log al final para que acceda a los parámetros directamente
   
@@ -148,17 +152,30 @@ const ResidenteFases: React.FC = () => {
   };
 
   const botonConfirmarHabilitado =
-  Boolean(selectedProgresoId) &&
-  selectedActividadIndex !== null &&
-  Boolean(fecha);
+    Boolean(selectedProgresoId) &&
+    selectedActividadIndex !== null &&
+    Boolean(fecha) &&
+    !archivoError;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setArchivo(e.target.files[0]);
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        setArchivo(null);
+        setArchivoError(true);
+        setArchivoErrorMsg('El archivo supera el tamaño máximo de 5MB.');
+      } else {
+        setArchivo(file);
+        setArchivoError(false);
+        setArchivoErrorMsg('');
+      }
     } else {
       setArchivo(null);
+      setArchivoError(false);
+      setArchivoErrorMsg('');
     }
   };
+
 
 
   const handleCompletarActividad = async () => {
@@ -398,21 +415,30 @@ const ResidenteFases: React.FC = () => {
               onChange={handleFileChange}
             />
           </Button>
-          <Typography variant="caption" color="text.secondary">
-    progresoId: {selectedProgresoId || '—'} | actividadIndex: {selectedActividadIndex ?? '—'}
-  </Typography>
+          {archivo && !archivoError && (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {archivo.name} – {(archivo.size / (1024 * 1024)).toFixed(1)} MB
+            </Typography>
+          )}
+          {archivoError && (
+            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+              {archivoErrorMsg}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
   <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
   <Tooltip
   title={
-    !selectedProgresoId
+    archivoError
+      ? archivoErrorMsg
+      : !selectedProgresoId
       ? 'Falta el ID del progreso'
       : selectedActividadIndex === null
       ? 'No se ha seleccionado ninguna actividad'
       : !fecha
       ? 'Selecciona una fecha de realización'
-      : ''
+      : 'Adjunta un archivo opcional (máx. 5MB)'
   }
   arrow
   disableHoverListener={botonConfirmarHabilitado}
