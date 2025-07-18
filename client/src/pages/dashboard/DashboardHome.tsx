@@ -51,7 +51,7 @@ const DashboardHome: React.FC = () => {
 
   const societyMilestones = [
     {
-      label: "Convocatoria 6",
+      label: "Convocatoria",
       date: sociedadInfo?.fechaConvocatoria,
       description: (
         <>
@@ -363,7 +363,7 @@ const DashboardHome: React.FC = () => {
     <Box>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Bienvenido, {user?.nombre}
+          Bienvenidos 1, {user?.nombre}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
           {getRoleSubtitle()}
