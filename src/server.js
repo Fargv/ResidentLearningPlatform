@@ -44,6 +44,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'https://residentlearningplatform.netlify.app',
+  'https://academicprogramdavinci.netlify.app',
 ];
 
 const corsOptions = {
