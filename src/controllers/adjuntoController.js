@@ -129,13 +129,87 @@ exports.getAdjuntosProgreso = async (req, res, next) => {
       return next(new ErrorResponse('No autorizado para ver adjuntos de este progreso', 403));
     }
 
-    const adjuntos = await Adjunto.find({ progreso: req.params.progresoId });
+   const adjuntos = await Adjunto.find({ progreso: req.params.progresoId });
 
     res.status(200).json({
       success: true,
       count: adjuntos.length,
       data: adjuntos
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Subir adjunto para una actividad concreta (almacenado en MongoDB)
+// @route   POST /api/adjuntos/actividad/:progresoId/:index
+// @access  Private
+exports.subirAdjuntoActividad = async (req, res, next) => {
+  try {
+    const { progresoId, index } = req.params;
+    const progreso = await ProgresoResidente.findById(progresoId).populate('residente');
+    if (!progreso || !progreso.actividades[index]) {
+      return next(new ErrorResponse('Progreso o actividad no válida', 404));
+    }
+
+    if (
+      req.user.rol !== 'administrador' &&
+      req.user.id !== progreso.residente._id.toString()
+    ) {
+      return next(new ErrorResponse('No autorizado para subir adjunto', 403));
+    }
+
+    if (!req.files || !req.files.adjunto) {
+      return next(new ErrorResponse('Archivo requerido', 400));
+    }
+
+    const file = req.files.adjunto;
+    const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
+    if (!allowed.includes(file.mimetype)) {
+      return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+    }
+
+    const adjunto = await Adjunto.create({
+      progreso: progresoId,
+      usuario: req.user._id,
+      actividadIndex: Number(index),
+      nombreArchivo: file.name,
+      mimeType: file.mimetype,
+      datos: file.data,
+      tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+    });
+
+    res.status(201).json({ success: true, data: adjunto._id });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Obtener adjunto de una actividad
+// @route   GET /api/adjuntos/actividad/:progresoId/:index
+// @access  Private
+exports.getAdjuntoActividad = async (req, res, next) => {
+  try {
+    const { progresoId, index } = req.params;
+    const adjunto = await Adjunto.findOne({ progreso: progresoId, actividadIndex: Number(index) });
+    if (!adjunto) return next(new ErrorResponse('Adjunto no encontrado', 404));
+
+    const progreso = await ProgresoResidente.findById(progresoId).populate('residente');
+    if (!progreso) return next(new ErrorResponse('Progreso no encontrado', 404));
+
+    if (
+      req.user.rol !== 'administrador' &&
+      req.user.id !== progreso.residente._id.toString() &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString())
+    ) {
+      return next(new ErrorResponse('No autorizado', 403));
+    }
+
+    res.set('Content-Type', adjunto.mimeType);
+    return res.send(adjunto.datos);
   } catch (err) {
     next(err);
   }

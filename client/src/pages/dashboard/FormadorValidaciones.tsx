@@ -113,6 +113,16 @@ useEffect(() => {
     setOpenValidarDialog(true);
   };
 
+  const handleVerAdjunto = async (progresoId: string, index: number) => {
+    try {
+      const res = await api.get(`/adjuntos/actividad/${progresoId}/${index}`, { responseType: 'blob' });
+      const url = URL.createObjectURL(res.data);
+      window.open(url, '_blank');
+    } catch (e) {
+      console.error('Error obteniendo adjunto', e);
+    }
+  };
+
   const handleCloseValidarDialog = () => {
     setOpenValidarDialog(false);
     setSelectedProgreso(null);
@@ -253,6 +263,16 @@ const handleRechazar = async () => {
                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          sx={{ mr: 1 }}
+                          onClick={() =>
+                            handleVerAdjunto(progreso.progresoId || progreso._id.split('-')[0], progreso.index)
+                          }
+                        >
+                          Ver adjunto
+                        </Button>
                         <Button
                           variant="contained"
                           color="success"
