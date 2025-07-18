@@ -263,16 +263,21 @@ const handleRechazar = async () => {
                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          sx={{ mr: 1 }}
-                          onClick={() =>
-                            handleVerAdjunto(progreso.progresoId || progreso._id.split('-')[0], progreso.index)
-                          }
-                        >
-                          Ver adjunto
-                        </Button>
+                        {progreso.tieneAdjunto && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            sx={{ mr: 1 }}
+                            onClick={() =>
+                              handleVerAdjunto(
+                                progreso.progresoId || progreso._id.split('-')[0],
+                                progreso.index
+                              )
+                            }
+                          >
+                            Ver adjunto
+                          </Button>
+                        )}
                         <Button
                           variant="contained"
                           color="success"
