@@ -695,7 +695,13 @@ const getValidacionesPendientes = async (req, res, next) => {
     for (const progreso of progresos) {
       if (!progreso.residente) continue;
 
-      progreso.actividades.forEach((actividad, index) => {
+      for (let index = 0; index < progreso.actividades.length; index++) {
+        const actividad = progreso.actividades[index];
+        const existeAdjunto = await Adjunto.exists({
+          progreso: progreso._id,
+          actividadIndex: index
+        });
+
         const item = {
           _id: `${progreso._id}-${index}`,
           progresoId: progreso._id,
@@ -703,15 +709,17 @@ const getValidacionesPendientes = async (req, res, next) => {
           actividad,
           residente: progreso.residente,
           fase: progreso.fase,
-          fechaCreacion: actividad.fechaRealizacion || progreso.fechaRegistro,
+          fechaCreacion:
+            actividad.fechaRealizacion || progreso.fechaRegistro,
           estado: actividad.estado,
-          comentariosRechazo: actividad.comentariosRechazo || ''
+          comentariosRechazo: actividad.comentariosRechazo || '',
+          tieneAdjunto: !!existeAdjunto
         };
 
         if (actividad.estado === 'completado') pendientes.push(item);
         if (actividad.estado === 'validado') validadas.push(item);
         if (actividad.estado === 'rechazado') rechazadas.push(item);
-      });
+      }
     }
 
     res.status(200).json({
