@@ -93,7 +93,7 @@ const ResidenteFases: React.FC = () => {
 
 
   useEffect(() => {
-    if (!user || !user._id) return;
+    if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'alumno')) return;
   
     const fetchProgresos = async () => {
       try {

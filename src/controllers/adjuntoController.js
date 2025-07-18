@@ -21,9 +21,10 @@ exports.subirAdjunto = async (req, res, next) => {
 
     // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== progreso.residente._id.toString() && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString())
+      req.user.rol !== 'administrador' &&
+      req.user.id !== progreso.residente._id.toString() &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para subir adjuntos a este progreso', 403));
     }
@@ -122,9 +123,10 @@ exports.getAdjuntosProgreso = async (req, res, next) => {
 
     // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== progreso.residente._id.toString() && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString())
+      req.user.rol !== 'administrador' &&
+      req.user.id !== progreso.residente._id.toString() &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para ver adjuntos de este progreso', 403));
     }
@@ -203,7 +205,8 @@ exports.getAdjuntoActividad = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString())
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado', 403));
     }
@@ -235,9 +238,10 @@ exports.eliminarAdjunto = async (req, res, next) => {
 
     // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== progreso.residente._id.toString() && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString())
+      req.user.rol !== 'administrador' &&
+      req.user.id !== progreso.residente._id.toString() &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para eliminar este adjunto', 403));
     }
@@ -288,9 +292,10 @@ exports.descargarAdjunto = async (req, res, next) => {
 
     // Verificar permisos: solo el propio residente, formadores de su hospital o administradores
     if (
-      req.user.rol !== 'administrador' && 
-      req.user.id !== progreso.residente._id.toString() && 
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString())
+      req.user.rol !== 'administrador' &&
+      req.user.id !== progreso.residente._id.toString() &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para descargar este adjunto', 403));
     }
