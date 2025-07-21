@@ -31,8 +31,6 @@ import Notificaciones from './pages/dashboard/Notificaciones';
 import DebugDashboard from './pages/DebugDashboard';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
 
-//const isDev = process.env.REACT_APP_ENV === 'dev';
-
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
   palette: {
@@ -114,12 +112,19 @@ const theme = createTheme({
   },
 });
 
+declare global {
+  interface Window {
+    REACT_APP_ENV?: string;
+  }
+}
+
 function App() {
   useEffect(() => {
     console.log("REACT_APP_API_URL cargada:", process.env.REACT_APP_API_URL);
   }, []);
 
-  const isDev = process.env.REACT_APP_ENV === 'dev';
+  const env = process.env.REACT_APP_ENV || window.REACT_APP_ENV;
+  const isDev = env === 'dev';
 
   useEffect(() => {
     document.title = isDev ? 'Academic Prog Dev' : 'Academic Prog Main';
