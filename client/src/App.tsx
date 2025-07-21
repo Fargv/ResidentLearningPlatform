@@ -31,6 +31,8 @@ import Notificaciones from './pages/dashboard/Notificaciones';
 import DebugDashboard from './pages/DebugDashboard';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
 
+const isDev = process.env.REACT_APP_ENV === 'dev';
+
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
   palette: {
@@ -118,10 +120,22 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <AuthProvider>
+    <div style={{ backgroundColor: isDev ? '#fdd' : undefined }}>
+      {isDev && (
+        <div style={{
+          background: 'red',
+          color: 'white',
+          textAlign: 'center',
+          padding: '0.5rem',
+          fontWeight: 'bold'
+        }}>
+          ⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️
+        </div>
+      )}
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <AuthProvider>
           <Routes>
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
@@ -195,6 +209,7 @@ function App() {
         </AuthProvider>
       </Router>
     </ThemeProvider>
+  </div>
   );
 }
 
