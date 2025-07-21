@@ -296,7 +296,7 @@ const DashboardHome: React.FC = () => {
         icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
       },
       {
-        label: "Access Codes",
+        label: "Códigos de acceso",
         path: "/dashboard/access-codes",
         icon: <SettingsIcon sx={{ fontSize: 40 }} />,
       },

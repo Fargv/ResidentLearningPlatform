@@ -119,21 +119,33 @@ function App() {
     console.log("REACT_APP_API_URL cargada:", process.env.REACT_APP_API_URL);
   }, []);
 
+  const isDev = process.env.REACT_APP_ENV === 'dev';
+
+  useEffect(() => {
+    document.title = isDev ? 'Academic Prog Dev' : 'Academic Prog Main';
+  }, [isDev]);
+
+  const wrapperStyle: React.CSSProperties | undefined =
+    isDev ? { backgroundColor: '#fdd', minHeight: '100vh' } : undefined;
+
   return (
-    <div style={{ backgroundColor: isDev ? '#fdd' : undefined }}>
+    <div style={wrapperStyle}>
       {isDev && (
-        <div style={{
-          background: 'red',
-          color: 'white',
-          textAlign: 'center',
-          padding: '0.5rem',
-          fontWeight: 'bold'
-        }}>
+        <div
+          style={{
+            background: 'red',
+            color: 'white',
+            textAlign: 'center',
+            padding: '0.5rem',
+            fontWeight: 'bold',
+          }}
+        >
           ⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️
         </div>
       )}
+
       <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <CssBaseline />
         <Router>
           <AuthProvider>
           <Routes>
