@@ -31,7 +31,7 @@ import Notificaciones from './pages/dashboard/Notificaciones';
 import DebugDashboard from './pages/DebugDashboard';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
 
-const isDev = process.env.REACT_APP_ENV === 'dev';
+//const isDev = process.env.REACT_APP_ENV === 'dev';
 
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
