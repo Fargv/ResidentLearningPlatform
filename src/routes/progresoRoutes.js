@@ -10,6 +10,7 @@ const {
   getProgresoResidente,
   getProgresoResidentePorFase,
   getValidacionesPendientes,
+  getValidacionesPendientesAdmin, 
   inicializarProgresoFormativo,
   marcarActividadCompletada,
   rechazarActividad,
