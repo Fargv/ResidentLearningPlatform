@@ -363,7 +363,7 @@ const DashboardHome: React.FC = () => {
     <Box>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Bienvenidos 1, {user?.nombre}
+          Bienvenido/a, {user?.nombre}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
           {getRoleSubtitle()}
