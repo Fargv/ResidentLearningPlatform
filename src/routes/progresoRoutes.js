@@ -26,6 +26,7 @@ router.use(protect);
 
 // ✅ Validaciones pendientes del formador
 router.get('/formador/validaciones/pendientes', authorize('formador', 'instructor'), getValidacionesPendientes);
+router.get('/admin/validaciones/pendientes', authorize('administrador'), getValidacionesPendientesAdmin);
 
 // ✅ Listado general y creación de progreso
 router.route('/')

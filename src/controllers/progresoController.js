@@ -735,6 +735,70 @@ const getValidacionesPendientes = async (req, res, next) => {
   }
 };
 
+// @desc Obtener lista de validaciones pendientes sin filtros
+// @route GET /api/progreso/admin/validaciones/pendientes
+// @access Private/Admin
+const getValidacionesPendientesAdmin = async (req, res, next) => {
+  try {
+    if (req.user.rol !== 'administrador') {
+      return res.status(403).json({ success: false, error: 'No autorizado' });
+    }
+
+    const progresos = await ProgresoResidente.find()
+      .populate({
+        path: 'residente',
+        select: 'nombre apellidos tipo hospital sociedad'
+      })
+      .populate('fase')
+      .populate('actividades.actividad');
+
+    const pendientes = [];
+    const validadas = [];
+    const rechazadas = [];
+
+    for (const progreso of progresos) {
+      if (!progreso.residente) continue;
+
+      for (let index = 0; index < progreso.actividades.length; index++) {
+        const actividad = progreso.actividades[index];
+        const existeAdjunto = await Adjunto.exists({
+          progreso: progreso._id,
+          actividadIndex: index
+        });
+
+        const item = {
+          _id: `${progreso._id}-${index}`,
+          progresoId: progreso._id,
+          index,
+          actividad,
+          residente: progreso.residente,
+          fase: progreso.fase,
+          fechaCreacion:
+            actividad.fechaRealizacion || progreso.fechaRegistro,
+          estado: actividad.estado,
+          comentariosRechazo: actividad.comentariosRechazo || '',
+          tieneAdjunto: !!existeAdjunto
+        };
+
+        if (actividad.estado === 'completado') pendientes.push(item);
+        if (actividad.estado === 'validado') validadas.push(item);
+        if (actividad.estado === 'rechazado') rechazadas.push(item);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        pendientes,
+        validadas,
+        rechazadas
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
   const validarActividad = async (req, res, next) => {
   try {
     const { id, index } = req.params;
@@ -907,6 +971,7 @@ module.exports = {
   marcarActividadCompletada,
   getProgresosPendientesDelHospital,
   getValidacionesPendientes,
+  getValidacionesPendientesAdmin,
   validarActividad,
   rechazarActividad,
   crearProgresoParaUsuario,

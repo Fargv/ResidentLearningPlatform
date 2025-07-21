@@ -1,24 +1,25 @@
-const { getValidacionesPendientes } = require('../src/controllers/progresoController');
+const { getValidacionesPendientesAdmin } = require('../src/controllers/progresoController');
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 
-describe('getValidacionesPendientes filtro sociedad', () => {
+describe('getValidacionesPendientesAdmin', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  test('incluye sociedad en match cuando se envía query', async () => {
+  test('no aplica match al populate de residente', async () => {
     const populate = jest.fn();
     populate
+      .mockReturnValueOnce({ populate })
       .mockReturnValueOnce({ populate })
       .mockResolvedValueOnce([]);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ populate });
 
-    const req = { user: { rol: 'formador', hospital: 'h1' }, query: { sociedad: 's1' } };
+    const req = { user: { rol: 'administrador' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
-    await getValidacionesPendientes(req, res, jest.fn());
+    await getValidacionesPendientesAdmin(req, res, jest.fn());
 
     const matchArg = populate.mock.calls[0][0].match;
-    expect(matchArg).toEqual({ hospital: 'h1' });
+    expect(matchArg).toBeUndefined();
   });
 });
