@@ -154,7 +154,7 @@ const Dashboard: React.FC = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-            Plataforma de Formación da Vinci
+            Academic Program daVinci
           </Typography>
           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
             <Badge badgeContent={unreadCount} color="secondary">

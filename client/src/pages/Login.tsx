@@ -67,7 +67,7 @@ const Login: React.FC = () => {
           style={{ maxWidth: '200px', marginBottom: '16px' }}
         />
         <Typography variant="h4" component="h1" gutterBottom>
-          Plataforma de Formación
+          Academic Program daVinci
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
           Tecnologías del Robot da Vinci
