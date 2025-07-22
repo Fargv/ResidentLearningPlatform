@@ -34,5 +34,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-07-21: Banner de desarrollo y fondo rojo claro en `App.tsx` cuando
   `REACT_APP_ENV` es `dev`.
 - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
+- 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.
