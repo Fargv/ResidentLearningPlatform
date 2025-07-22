@@ -128,13 +128,15 @@ const Register: React.FC = () => {
       [name]: value
     }));
 
-    if (rol === 'coordinador' && value) {
+     if (value) {
       try {
         const res = await api.get(`/hospitals/${value}`);
         setFormData((prev) => ({ ...prev, zona: res.data.data.zona || '' }));
       } catch (error) {
         console.error('Error cargando zona del hospital:', error);
       }
+    } else {
+      setFormData((prev) => ({ ...prev, zona: '' }));
     }
   };
 
@@ -195,10 +197,13 @@ const Register: React.FC = () => {
         sociedad,
         zona
       });
-    } catch (err: any) {
+     } catch (err: any) {
       setCodigoError(err.response?.data?.error || 'Código de acceso no válido');
     }
   };
+
+  const hospitalRequired =
+    rol === 'residente' || rol === 'formador' || rol === 'coordinador';
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'background.default', py: 4 }}>
@@ -222,8 +227,8 @@ const Register: React.FC = () => {
                 <TextField margin="normal" fullWidth label="Confirmar Contraseña" name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
                 {passwordError && <Alert severity="warning">{passwordError}</Alert>}
 
-                {(rol === 'residente' || rol === 'formador' || rol === 'coordinador') && (
-                  <FormControl fullWidth margin="normal" required disabled={loading}>
+                {(rol === 'residente' || rol === 'formador' || rol === 'coordinador' || rol === 'alumno' || rol === 'instructor') && (
+                  <FormControl fullWidth margin="normal" required={hospitalRequired} disabled={loading}>
                     <InputLabel id="hospital-label">Hospital</InputLabel>
                     <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label="Hospital" onChange={onSelectHospital}>
                       {hospitales.map((h) => (

@@ -49,7 +49,7 @@ const register = async (req, res, next) => {
     const { rol, tipo } = access;
 
     let zona = zonaInput;
-    if ((rol === 'residente' || rol === 'formador') && hospital) {
+    if (hospital) {
       const selectedHospital = await Hospital.findById(hospital);
       if (!selectedHospital) {
         return next(new ErrorResponse('Hospital no encontrado', 404));
