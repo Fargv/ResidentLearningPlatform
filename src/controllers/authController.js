@@ -6,6 +6,7 @@ const Fase = require('../models/Fase');
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const AccessCode = require('../models/AccessCode');
+const Hospital = require('../models/Hospital');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
