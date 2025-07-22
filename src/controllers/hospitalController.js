@@ -76,10 +76,16 @@ exports.updateHospital = async (req, res, next) => {
       return next(new ErrorResponse(`Hospital no encontrado con id ${req.params.id}`, 404));
     }
 
+    const prevZona = hospital.zona;
+
     hospital = await Hospital.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     });
+
+    if (req.body.zona && req.body.zona !== prevZona) {
+      await User.updateMany({ hospital: hospital._id }, { zona: req.body.zona });
+    }
     
     // Crear registro de auditoría
     await createAuditLog({

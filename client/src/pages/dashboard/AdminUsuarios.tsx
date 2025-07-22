@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -21,25 +21,43 @@ import {
   Chip,
   LinearProgress,
   Alert,
-  Snackbar
-} from '@mui/material';
+  Snackbar,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  VpnKey as VpnKeyIcon
-  
+  VpnKey as VpnKeyIcon,
+
   //Person as PersonIcon,
   //Email as EmailIcon
-} from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
-import api, { createUser, updateUserPassword } from '../../api';
+} from "@mui/icons-material";
+import { useAuth } from "../../context/AuthContext";
+import api, { createUser, updateUserPassword } from "../../api";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
-  const rolesResidentes = ['residente', 'formador', 'coordinador', 'administrador'];
-  const rolesSociedades = ['alumno', 'instructor', 'coordinador', 'administrador'];
-  const zonaOptions = ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS'];
+  const rolesResidentes = [
+    "residente",
+    "formador",
+    "coordinador",
+    "administrador",
+  ];
+  const rolesSociedades = [
+    "alumno",
+    "instructor",
+    "coordinador",
+    "administrador",
+  ];
+  const zonaOptions = [
+    "NORDESTE",
+    "NORTE",
+    "CENTRO",
+    "ANDALUCÍA",
+    "PORTUGAL",
+    "LEVANTE",
+    "CANARIAS",
+  ];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuariosLista] = useState<any[]>([]);
@@ -51,81 +69,83 @@ const AdminUsuarios: React.FC = () => {
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
-  const [passwordValue, setPasswordValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState("");
   const [formData, setFormData] = useState({
-    email: '',
-    nombre: '',
-    apellidos: '',
-    rol: 'residente',
-    hospital: '',
-    especialidad: '',
-    tipo: '',
-    sociedad: '',
-    zona: ''
+    email: "",
+    nombre: "",
+    apellidos: "",
+    rol: "residente",
+    hospital: "",
+    especialidad: "",
+    tipo: "Programa Residentes",
+    sociedad: "",
+    zona: "",
   });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error'
+    message: "",
+    severity: "success" as "success" | "error",
   });
-  
+
   const roleOptions =
-    formData.tipo === 'Programa Sociedades' ? rolesSociedades : rolesResidentes;
+    formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-  
-        const usuariosRes = await api.get('/users');
+
+        const usuariosRes = await api.get("/users");
 
         setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
 
-        const hospitalesRes = await api.get('/hospitals');
+        const hospitalesRes = await api.get("/hospitals");
 
         setHospitales(hospitalesRes.data.data);
 
-        const sociedadesRes = await api.get('/sociedades');
-        setSociedades(sociedadesRes.data.filter((s: any) => s.status === 'ACTIVO'));
+        const sociedadesRes = await api.get("/sociedades");
+        setSociedades(
+          sociedadesRes.data.filter((s: any) => s.status === "ACTIVO"),
+        );
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Error al cargar los datos');
+        setError(err.response?.data?.error || "Error al cargar los datos");
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
 
   const handleOpenInvitarDialog = () => {
     setFormData({
-      email: '',
-      nombre: '',
-      apellidos: '',
-      rol: 'residente',
-      hospital: hospitales.length > 0 ? hospitales[0]._id : '',
-      especialidad: '',
-      tipo: '',
-      sociedad: sociedades.length > 0 ? sociedades[0]._id : '',
-      zona: ''
+      email: "",
+      nombre: "",
+      apellidos: "",
+      rol: "residente",
+      hospital: hospitales.length > 0 ? hospitales[0]._id : "",
+      especialidad: "",
+      tipo: "Programa Residentes",
+      sociedad: sociedades.length > 0 ? sociedades[0]._id : "",
+      zona: "",
     });
     setOpenInvitarDialog(true);
   };
 
-const handleOpenCrearDialog = () => {
+  const handleOpenCrearDialog = () => {
     setFormData({
-      email: '',
-      nombre: '',
-      apellidos: '',
-      rol: 'residente',
-      hospital: hospitales.length > 0 ? hospitales[0]._id : '',
-      especialidad: '',
-      tipo: '',
-      sociedad: sociedades.length > 0 ? sociedades[0]._id : '',
-      zona: ''
+      email: "",
+      nombre: "",
+      apellidos: "",
+      rol: "residente",
+      hospital: hospitales.length > 0 ? hospitales[0]._id : "",
+      especialidad: "",
+      tipo: "Programa Residentes",
+      sociedad: sociedades.length > 0 ? sociedades[0]._id : "",
+      zona: "",
     });
-    setPasswordValue('');
+    setPasswordValue("");
     setOpenCrearDialog(true);
   };
 
@@ -144,11 +164,11 @@ const handleOpenCrearDialog = () => {
       nombre: usuario.nombre,
       apellidos: usuario.apellidos,
       rol: usuario.rol,
-      hospital: usuario.hospital?._id || '',
-      especialidad: usuario.especialidad || '',
-      tipo: usuario.tipo || '',
-      sociedad: usuario.sociedad?._id || '',
-      zona: usuario.zona || ''
+      hospital: usuario.hospital?._id || "",
+      especialidad: usuario.especialidad || "",
+      tipo: usuario.tipo || "",
+      sociedad: usuario.sociedad?._id || "",
+      zona: usuario.zona || "",
     });
     setOpenEditarDialog(true);
   };
@@ -170,7 +190,7 @@ const handleOpenCrearDialog = () => {
 
   const handleOpenPasswordDialog = (usuario: any) => {
     setSelectedUsuario(usuario);
-    setPasswordValue('');
+    setPasswordValue("");
     setOpenPasswordDialog(true);
   };
 
@@ -179,32 +199,45 @@ const handleOpenCrearDialog = () => {
     setSelectedUsuario(null);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>,
+  ) => {
     const { name, value } = e.target;
     const updated = { ...formData, [name as string]: value };
-    if (name === 'tipo') {
-      if (value === 'Programa Residentes') {
-        updated.sociedad = '';
-        updated.rol = 'residente';
-      } else if (value === 'Programa Sociedades') {
-        updated.rol = 'alumno';
-        updated.sociedad = sociedades[0]?._id || '';
+    if (name === "tipo") {
+      if (value === "Programa Residentes") {
+        updated.sociedad = "";
+        updated.rol = "residente";
+      } else if (value === "Programa Sociedades") {
+        updated.rol = "alumno";
+        updated.sociedad = sociedades[0]?._id || "";
       }
-    } else if (name === 'rol') {
-      if (value === 'administrador') {
-        updated.tipo = '';
-        updated.hospital = '';
-        updated.sociedad = '';
-        updated.especialidad = '';
-        updated.zona = '';
-      } else if (value === 'coordinador') {
-        updated.hospital = '';
-        updated.sociedad = '';
-        updated.especialidad = '';
+    } else if (name === "rol") {
+      if (value === "administrador") {
+        updated.tipo = "";
+        updated.hospital = "";
+        updated.sociedad = "";
+        updated.especialidad = "";
+        updated.zona = "";
+      } else {
+        if (value === "coordinador") {
+          updated.hospital = "";
+          updated.sociedad = "";
+          updated.especialidad = "";
+        }
+        if (
+          value === "residente" ||
+          value === "formador" ||
+          value === "coordinador"
+        ) {
+          updated.tipo = "Programa Residentes";
+        } else if (value === "alumno" || value === "instructor") {
+          updated.tipo = "Programa Sociedades";
+        }
       }
-    } else if (name === 'hospital') {
+    } else if (name === "hospital") {
       const selected = hospitales.find((h) => h._id === value);
-      updated.zona = selected?.zona || '';
+      updated.zona = selected?.zona || "";
     }
     setFormData(updated);
   };
@@ -212,85 +245,96 @@ const handleOpenCrearDialog = () => {
   const handleInvitar = async () => {
     try {
       setProcesando(true);
-      
-      const res = await api.post('/users/invite', formData);
-      
+
+      const res = await api.post("/users/invite", formData);
+
       // Actualizar lista de usuarios
       setUsuariosLista([...usuarios, res.data.data]);
-      
+
       handleCloseInvitarDialog();
-      
+
       setSnackbar({
         open: true,
-        message: 'Invitación enviada correctamente',
-        severity: 'success'
+        message: "Invitación enviada correctamente",
+        severity: "success",
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al enviar la invitación');
-      
+      setError(err.response?.data?.error || "Error al enviar la invitación");
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al enviar la invitación',
-        severity: 'error'
+        message: err.response?.data?.error || "Error al enviar la invitación",
+        severity: "error",
       });
     } finally {
       setProcesando(false);
     }
   };
 
-   const handleCrear = async () => {
+  const handleCrear = async () => {
     try {
       setProcesando(true);
       const payload = { ...formData, password: passwordValue } as any;
-      if (payload.rol === 'administrador') delete payload.tipo;
+      if (payload.rol === "administrador") delete payload.tipo;
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
       if (!payload.zona) delete payload.zona;
       if (!payload.zona) delete payload.zona;
-      const res = await createUser(payload);      setUsuariosLista([...usuarios, res.data.data]);
+      const res = await createUser(payload);
+      setUsuariosLista([...usuarios, res.data.data]);
       handleCloseCrearDialog();
-      setSnackbar({ open: true, message: 'Usuario creado correctamente', severity: 'success' });
+      setSnackbar({
+        open: true,
+        message: "Usuario creado correctamente",
+        severity: "success",
+      });
     } catch (err: any) {
-      setSnackbar({ open: true, message: err.response?.data?.error || 'Error al crear el usuario', severity: 'error' });
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || "Error al crear el usuario",
+        severity: "error",
+      });
     } finally {
       setProcesando(false);
     }
   };
 
-
-
   const handleEditar = async () => {
     if (!selectedUsuario) return;
-    
+
     try {
       setProcesando(true);
-      
+
       const payload = { ...formData, password: passwordValue } as any;
-      if (payload.rol === 'administrador') delete payload.tipo;
+      if (payload.rol === "administrador") delete payload.tipo;
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
 
       const res = await api.put(`/users/${selectedUsuario._id}`, payload);
-      
+
       // Actualizar lista de usuarios
-      setUsuariosLista(usuarios.map(u => u._id === selectedUsuario._id ? res.data.data : u));
-      
+      setUsuariosLista(
+        usuarios.map((u) =>
+          u._id === selectedUsuario._id ? res.data.data : u,
+        ),
+      );
+
       handleCloseEditarDialog();
-      
+
       setSnackbar({
         open: true,
-        message: 'Usuario actualizado correctamente',
-        severity: 'success'
+        message: "Usuario actualizado correctamente",
+        severity: "success",
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al actualizar el usuario');
-      
+      setError(err.response?.data?.error || "Error al actualizar el usuario");
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al actualizar el usuario',
-        severity: 'error'
+        message: err.response?.data?.error || "Error al actualizar el usuario",
+        severity: "error",
       });
     } finally {
       setProcesando(false);
@@ -299,29 +343,29 @@ const handleOpenCrearDialog = () => {
 
   const handleEliminar = async () => {
     if (!selectedUsuario) return;
-    
+
     try {
       setProcesando(true);
-      
+
       await api.delete(`/users/${selectedUsuario._id}`);
-      
+
       // Actualizar lista de usuarios
-      setUsuariosLista(usuarios.filter(u => u._id !== selectedUsuario._id));
-      
+      setUsuariosLista(usuarios.filter((u) => u._id !== selectedUsuario._id));
+
       handleCloseEliminarDialog();
-      
+
       setSnackbar({
         open: true,
-        message: 'Usuario eliminado correctamente',
-        severity: 'success'
+        message: "Usuario eliminado correctamente",
+        severity: "success",
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al eliminar el usuario');
-      
+      setError(err.response?.data?.error || "Error al eliminar el usuario");
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al eliminar el usuario',
-        severity: 'error'
+        message: err.response?.data?.error || "Error al eliminar el usuario",
+        severity: "error",
       });
     } finally {
       setProcesando(false);
@@ -334,44 +378,53 @@ const handleOpenCrearDialog = () => {
       setProcesando(true);
       await updateUserPassword(selectedUsuario._id, passwordValue);
       handleClosePasswordDialog();
-      setSnackbar({ open: true, message: 'Contraseña actualizada', severity: 'success' });
+      setSnackbar({
+        open: true,
+        message: "Contraseña actualizada",
+        severity: "success",
+      });
     } catch (err: any) {
-      setSnackbar({ open: true, message: err.response?.data?.error || 'Error al actualizar la contraseña', severity: 'error' });
+      setSnackbar({
+        open: true,
+        message:
+          err.response?.data?.error || "Error al actualizar la contraseña",
+        severity: "error",
+      });
     } finally {
       setProcesando(false);
     }
   };
 
   const handleCrearProgreso = async (usuarioId: string) => {
-  try {
-    setProcesando(true);
-    await api.post(`/progreso/crear/${usuarioId}`);
+    try {
+      setProcesando(true);
+      await api.post(`/progreso/crear/${usuarioId}`);
 
-    setSnackbar({
-      open: true,
-      message: 'Progreso formativo creado con éxito',
-      severity: 'success'
-    });
-  } catch (err: any) {
-    setSnackbar({
-      open: true,
-      message: err.response?.data?.error || 'Error al crear el progreso',
-      severity: 'error'
-    });
-  } finally {
-    setProcesando(false);
-  }
-};
+      setSnackbar({
+        open: true,
+        message: "Progreso formativo creado con éxito",
+        severity: "success",
+      });
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || "Error al crear el progreso",
+        severity: "error",
+      });
+    } finally {
+      setProcesando(false);
+    }
+  };
   const handleCloseSnackbar = () => {
     setSnackbar({
       ...snackbar,
-      open: false
+      open: false,
     });
   };
 
   if (loading) {
     return (
-      <Box sx={{ width: '100%', mt: 4 }}>
+      <Box sx={{ width: "100%", mt: 4 }}>
         <LinearProgress />
       </Box>
     );
@@ -386,17 +439,24 @@ const handleOpenCrearDialog = () => {
   }
 
   return (
-    <Box sx={{ px: 3, py: 2 }}>
+    <Box sx={{ px: 0, py: 2 }}>
       {/* Cabecera */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1" gutterBottom>
-          {user?.rol === 'administrador'
-            ? 'Gestión de Todos los Usuarios'
-            : 'Usuarios de Tu Hospital'}
+          {user?.rol === "administrador"
+            ? "Gestión de Todos los Usuarios"
+            : "Usuarios de Tu Hospital"}
         </Typography>
-  
+
         <Box>
-          {user?.rol === 'administrador' && (
+          {user?.rol === "administrador" && (
             <Button
               variant="contained"
               color="success"
@@ -417,10 +477,10 @@ const handleOpenCrearDialog = () => {
           </Button>
         </Box>
       </Box>
-      
+
       {/* Tabla de usuarios */}
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer>
           <Table stickyHeader aria-label="tabla de usuarios">
             <TableHead>
               <TableRow>
@@ -430,6 +490,7 @@ const handleOpenCrearDialog = () => {
                 <TableCell>Sociedad</TableCell>
                 <TableCell>Rol</TableCell>
                 <TableCell>Hospital</TableCell>
+                <TableCell>Zona</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell align="right">Acciones</TableCell>
               </TableRow>
@@ -441,79 +502,84 @@ const handleOpenCrearDialog = () => {
                     {usuario.nombre} {usuario.apellidos}
                   </TableCell>
                   <TableCell>{usuario.email}</TableCell>
-                  <TableCell>{usuario.tipo || '-'}</TableCell>
-                  <TableCell>{usuario.sociedad?.titulo || '-'}</TableCell>
+                  <TableCell>{usuario.tipo || "-"}</TableCell>
+                  <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
                   <TableCell>
                     <Chip
-                      label={usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
+                      label={
+                        usuario.rol.charAt(0).toUpperCase() +
+                        usuario.rol.slice(1)
+                      }
                       color={
-                        usuario.rol === 'administrador'
-                          ? 'primary'
-                          : usuario.rol === 'formador'
-                            ? 'secondary'
-                            : 'default'
+                        usuario.rol === "administrador"
+                          ? "primary"
+                          : usuario.rol === "formador"
+                            ? "secondary"
+                            : "default"
                       }
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
+                  <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
+                  <TableCell>{usuario.zona || '-'}</TableCell>
                   <TableCell>
-                    <Chip 
-                      label={usuario.activo ? 'Activo' : 'Inactivo'} 
-                      color={usuario.activo ? 'success' : 'error'}
+                    <Chip
+                      label={usuario.activo ? "Activo" : "Inactivo"}
+                      color={usuario.activo ? "success" : "error"}
                       size="small"
                     />
                   </TableCell>
                   <TableCell align="right">
-                      <IconButton 
-                        color="primary" 
-                        onClick={() => handleOpenEditarDialog(usuario)}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleOpenEditarDialog(usuario)}
+                      size="small"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleOpenEliminarDialog(usuario)}
+                      size="small"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    {user?.rol === "administrador" && (
+                      <IconButton
+                        color="secondary"
+                        onClick={() => handleOpenPasswordDialog(usuario)}
                         size="small"
+                        title="Cambiar contraseña"
                       >
-                        <EditIcon />
+                        <VpnKeyIcon />
                       </IconButton>
-                     <IconButton
-                        color="error"
-                        onClick={() => handleOpenEliminarDialog(usuario)}
+                    )}
+                    {usuario.rol === "residente" && (
+                      <IconButton
+                        color="warning"
+                        onClick={() => handleCrearProgreso(usuario._id)}
                         size="small"
+                        title="Crear Progreso Formativo"
                       >
-                        <DeleteIcon />
+                        ⚙️
                       </IconButton>
-                      {user?.rol === 'administrador' && (
-                        <IconButton
-                          color="secondary"
-                          onClick={() => handleOpenPasswordDialog(usuario)}
-                          size="small"
-                          title="Cambiar contraseña"
-                        >
-                          <VpnKeyIcon />
-                        </IconButton>
-                      )}
-                      {usuario.rol === 'residente' && (
-                        <IconButton
-                          color="warning"
-                          onClick={() => handleCrearProgreso(usuario._id)}
-                          size="small"
-                          title="Crear Progreso Formativo"
-                        >
-                          ⚙️
-                        </IconButton>
-                      )}
-                    </TableCell>
-
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Paper>
-      
+
+
       {/* Diálogo para invitar usuario */}
       <Dialog open={openInvitarDialog} onClose={handleCloseInvitarDialog}>
         <DialogTitle>Invitar Usuario</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Introduce los datos del usuario que deseas invitar. Se enviará un correo electrónico con un enlace para completar el registro.
+            Introduce los datos del usuario que deseas invitar. Se enviará un
+            correo electrónico con un enlace para completar el registro.
           </DialogContentText>
           <TextField
             autoFocus
@@ -555,7 +621,7 @@ const handleOpenCrearDialog = () => {
             required
             sx={{ mb: 2 }}
           />
-          {formData.rol !== 'administrador' && (
+          {formData.rol !== "administrador" && (
             <TextField
               select
               margin="dense"
@@ -593,106 +659,107 @@ const handleOpenCrearDialog = () => {
                 {r.charAt(0).toUpperCase() + r.slice(1)}
               </option>
             ))}
-         </TextField>
-          {formData.rol !== 'administrador' &&
-            formData.rol !== 'coordinador' &&
-            (formData.rol === 'residente' || formData.rol === 'formador') && (
-            <TextField
-              select
-              margin="dense"
-              id="hospital"
-              name="hospital"
-              label="Hospital"
-              fullWidth
-              variant="outlined"
-              value={formData.hospital}
-              onChange={handleChange}
-              required
-              SelectProps={{
-                native: true
-              }}
-            >
-              {hospitales.map((hospital) => (
-                <option key={hospital._id} value={hospital._id}>
-                  {hospital.nombre}
-                </option>
-              ))}
-            </TextField>
+          </TextField>
+          {formData.rol !== "administrador" &&
+            formData.rol !== "coordinador" &&
+            (formData.rol === "residente" || formData.rol === "formador") && (
+              <TextField
+                select
+                margin="dense"
+                id="hospital"
+                name="hospital"
+                label="Hospital"
+                fullWidth
+                variant="outlined"
+                value={formData.hospital}
+                onChange={handleChange}
+                required
+                SelectProps={{
+                  native: true,
+                }}
+              >
+                {hospitales.map((hospital) => (
+                  <option key={hospital._id} value={hospital._id}>
+                    {hospital.nombre}
+                  </option>
+                ))}
+              </TextField>
             )}
-          {formData.rol !== 'administrador' &&
-            formData.rol !== 'coordinador' &&
-            formData.tipo === 'Programa Sociedades' && (
-            <TextField
-              select
-              margin="dense"
-              id="sociedad"
-              name="sociedad"
-              label="Sociedad"
-              fullWidth
-              variant="outlined"
-              value={formData.sociedad}
-              onChange={handleChange}
-              SelectProps={{ native: true }}
-              sx={{ mb: 2 }}
-            >
-              {sociedades.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.titulo}
-                </option>
-              ))}
-            </TextField>
-          )}
-          {formData.rol !== 'administrador' && formData.rol === 'coordinador' && (
-            <TextField
-              select
-              margin="dense"
-              id="zona"
-              name="zona"
-              label="Zona"
-              fullWidth
-              variant="outlined"
-              value={formData.zona}
-              onChange={handleChange}
-              required
-              SelectProps={{ native: true }}
-              sx={{ mb: 2 }}
-            >
-              {zonaOptions.map((z) => (
-                <option key={z} value={z}>
-                  {z}
-                </option>
-              ))}
-            </TextField>
-          )}
-          {formData.rol !== 'administrador' && formData.rol !== 'coordinador' && (
-            <TextField
-              select
-              margin="dense"
-              id="sociedad"
-              name="sociedad"
-              label="Sociedad"
-              fullWidth
-              variant="outlined"
-              value={formData.sociedad}
-              onChange={handleChange}
-              SelectProps={{ native: true }}
-              sx={{ mb: 2 }}
-            >
-              {sociedades.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.titulo}
-                </option>
-              ))}
-            </TextField>
-          )}
-          
+          {formData.rol !== "administrador" &&
+            formData.rol !== "coordinador" &&
+            formData.tipo === "Programa Sociedades" && (
+              <TextField
+                select
+                margin="dense"
+                id="sociedad"
+                name="sociedad"
+                label="Sociedad"
+                fullWidth
+                variant="outlined"
+                value={formData.sociedad}
+                onChange={handleChange}
+                SelectProps={{ native: true }}
+                sx={{ mb: 2 }}
+              >
+                {sociedades.map((s) => (
+                  <option key={s._id} value={s._id}>
+                    {s.titulo}
+                  </option>
+                ))}
+              </TextField>
+            )}
+          {formData.rol !== "administrador" &&
+            formData.rol === "coordinador" && (
+              <TextField
+                select
+                margin="dense"
+                id="zona"
+                name="zona"
+                label="Zona"
+                fullWidth
+                variant="outlined"
+                value={formData.zona}
+                onChange={handleChange}
+                required
+                SelectProps={{ native: true }}
+                sx={{ mb: 2 }}
+              >
+                {zonaOptions.map((z) => (
+                  <option key={z} value={z}>
+                    {z}
+                  </option>
+                ))}
+              </TextField>
+            )}
+          {formData.rol !== "administrador" &&
+            formData.rol !== "coordinador" && (
+              <TextField
+                select
+                margin="dense"
+                id="sociedad"
+                name="sociedad"
+                label="Sociedad"
+                fullWidth
+                variant="outlined"
+                value={formData.sociedad}
+                onChange={handleChange}
+                SelectProps={{ native: true }}
+                sx={{ mb: 2 }}
+              >
+                {sociedades.map((s) => (
+                  <option key={s._id} value={s._id}>
+                    {s.titulo}
+                  </option>
+                ))}
+              </TextField>
+            )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseInvitarDialog} color="primary">
             Cancelar
           </Button>
-          <Button 
-            onClick={handleInvitar} 
+          <Button
+            onClick={handleInvitar}
             color="primary"
             variant="contained"
             disabled={
@@ -700,16 +767,17 @@ const handleOpenCrearDialog = () => {
               !formData.email ||
               !formData.nombre ||
               !formData.apellidos ||
-              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
-              (formData.rol === 'coordinador' && !formData.zona)
+              ((formData.rol === "residente" || formData.rol === "formador") &&
+                !formData.hospital) ||
+              (formData.rol === "coordinador" && !formData.zona)
             }
           >
-            {procesando ? 'Enviando...' : 'Enviar Invitación'}
+            {procesando ? "Enviando..." : "Enviar Invitación"}
           </Button>
         </DialogActions>
       </Dialog>
-      
-          {/* Diálogo para actualizar contraseña */}
+
+      {/* Diálogo para actualizar contraseña */}
       <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
         <DialogTitle>Actualizar Contraseña</DialogTitle>
         <DialogContent>
@@ -734,7 +802,7 @@ const handleOpenCrearDialog = () => {
             color="secondary"
             disabled={procesando || !passwordValue}
           >
-            {procesando ? 'Actualizando...' : 'Actualizar'}
+            {procesando ? "Actualizando..." : "Actualizar"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -796,7 +864,7 @@ const handleOpenCrearDialog = () => {
             required
             sx={{ mb: 2 }}
           />
-          {formData.rol !== 'administrador' && (
+          {formData.rol !== "administrador" && (
             <TextField
               select
               margin="dense"
@@ -835,32 +903,32 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
           </TextField>
-         {formData.rol !== 'administrador' &&
-            formData.rol !== 'coordinador' &&
-            (formData.rol === 'residente' ||
-              formData.rol === 'formador' ||
-              formData.tipo === 'Programa Sociedades') && (
-            <TextField
-              select
-              margin="dense"
-              id="hospital-create"
-              name="hospital"
-              label="Hospital"
-              fullWidth
-              variant="outlined"
-              value={formData.hospital}
-              onChange={handleChange}
-              required
-              SelectProps={{ native: true }}
-            >
-              {hospitales.map((hospital) => (
-                <option key={hospital._id} value={hospital._id}>
-                  {hospital.nombre}
-                </option>
-              ))}
-            </TextField>
-          )}
-          {formData.rol === 'residente' && (
+          {formData.rol !== "administrador" &&
+            formData.rol !== "coordinador" &&
+            (formData.rol === "residente" ||
+              formData.rol === "formador" ||
+              formData.tipo === "Programa Sociedades") && (
+              <TextField
+                select
+                margin="dense"
+                id="hospital-create"
+                name="hospital"
+                label="Hospital"
+                fullWidth
+                variant="outlined"
+                value={formData.hospital}
+                onChange={handleChange}
+                required
+                SelectProps={{ native: true }}
+              >
+                {hospitales.map((hospital) => (
+                  <option key={hospital._id} value={hospital._id}>
+                    {hospital.nombre}
+                  </option>
+                ))}
+              </TextField>
+            )}
+          {formData.rol === "residente" && (
             <TextField
               select
               margin="dense"
@@ -882,30 +950,30 @@ const handleOpenCrearDialog = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
-          {formData.rol !== 'administrador' &&
-            formData.rol !== 'coordinador' &&
-            formData.tipo === 'Programa Sociedades' && (
-            <TextField
-              select
-              margin="dense"
-              id="sociedad-create"
-              name="sociedad"
-              label="Sociedad"
-              fullWidth
-              variant="outlined"
-              value={formData.sociedad}
-              onChange={handleChange}
-              SelectProps={{ native: true }}
-              sx={{ mb: 2 }}
-            >
-              {sociedades.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.titulo}
-                </option>
-              ))}
-            </TextField>
-          )}
-          {formData.rol === 'coordinador' && (
+          {formData.rol !== "administrador" &&
+            formData.rol !== "coordinador" &&
+            formData.tipo === "Programa Sociedades" && (
+              <TextField
+                select
+                margin="dense"
+                id="sociedad-create"
+                name="sociedad"
+                label="Sociedad"
+                fullWidth
+                variant="outlined"
+                value={formData.sociedad}
+                onChange={handleChange}
+                SelectProps={{ native: true }}
+                sx={{ mb: 2 }}
+              >
+                {sociedades.map((s) => (
+                  <option key={s._id} value={s._id}>
+                    {s.titulo}
+                  </option>
+                ))}
+              </TextField>
+            )}
+          {formData.rol === "coordinador" && (
             <TextField
               select
               margin="dense"
@@ -940,12 +1008,13 @@ const handleOpenCrearDialog = () => {
               !passwordValue ||
               !formData.nombre ||
               !formData.apellidos ||
-              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
-              (formData.rol === 'residente' && !formData.especialidad) ||
-              (formData.rol === 'coordinador' && !formData.zona)
+              ((formData.rol === "residente" || formData.rol === "formador") &&
+                !formData.hospital) ||
+              (formData.rol === "residente" && !formData.especialidad) ||
+              (formData.rol === "coordinador" && !formData.zona)
             }
           >
-            {procesando ? 'Creando...' : 'Crear Usuario'}
+            {procesando ? "Creando..." : "Crear Usuario"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1001,34 +1070,34 @@ const handleOpenCrearDialog = () => {
               </option>
             ))}
            </TextField>
-          {formData.rol !== 'administrador' &&
-            formData.rol !== 'coordinador' &&
-            (formData.rol === 'residente' ||
-              formData.rol === 'formador' ||
-              formData.tipo === 'Programa Sociedades') && (
-            <TextField
-              select
-              margin="dense"
-              id="hospital"
-              name="hospital"
-              label="Hospital"
-              fullWidth
-              variant="outlined"
-              value={formData.hospital}
-              onChange={handleChange}
-              required
-              SelectProps={{
-                native: true
-              }}
-            >
-              {hospitales.map((hospital) => (
-                <option key={hospital._id} value={hospital._id}>
-                  {hospital.nombre}
-                </option>
-              ))}
-            </TextField>
-          )}
-          {formData.rol === 'coordinador' && (
+          {formData.rol !== "administrador" &&
+            formData.rol !== "coordinador" &&
+            (formData.rol === "residente" ||
+              formData.rol === "formador" ||
+              formData.tipo === "Programa Sociedades") && (
+              <TextField
+                select
+                margin="dense"
+                id="hospital"
+                name="hospital"
+                label="Hospital"
+                fullWidth
+                variant="outlined"
+                value={formData.hospital}
+                onChange={handleChange}
+                required
+                SelectProps={{
+                  native: true,
+                }}
+              >
+                {hospitales.map((hospital) => (
+                  <option key={hospital._id} value={hospital._id}>
+                    {hospital.nombre}
+                  </option>
+                ))}
+              </TextField>
+            )}
+          {formData.rol === "coordinador" && (
             <TextField
               select
               margin="dense"
@@ -1050,7 +1119,7 @@ const handleOpenCrearDialog = () => {
               ))}
             </TextField>
           )}
-          {formData.rol === 'residente' && (
+          {formData.rol === "residente" && (
             <TextField
               select
               margin="dense"
@@ -1072,59 +1141,68 @@ const handleOpenCrearDialog = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
-          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarDialog} color="primary">
             Cancelar
           </Button>
-          <Button 
-            onClick={handleEditar} 
+          <Button
+            onClick={handleEditar}
             color="primary"
             variant="contained"
             disabled={
               procesando ||
               !formData.nombre ||
               !formData.apellidos ||
-              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
-              (formData.rol === 'residente' && !formData.especialidad) ||
-              (formData.rol === 'coordinador' && !formData.zona)
-            }          >
-            {procesando ? 'Guardando...' : 'Guardar Cambios'}
+              ((formData.rol === "residente" || formData.rol === "formador") &&
+                !formData.hospital) ||
+              (formData.rol === "residente" && !formData.especialidad) ||
+              (formData.rol === "coordinador" && !formData.zona)
+            }
+          >
+            {procesando ? "Guardando..." : "Guardar Cambios"}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para eliminar usuario */}
       <Dialog open={openEliminarDialog} onClose={handleCloseEliminarDialog}>
         <DialogTitle>Eliminar Usuario</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar al usuario <strong>{selectedUsuario?.nombre} {selectedUsuario?.apellidos}</strong>? Esta acción no se puede deshacer.
+            ¿Estás seguro de que deseas eliminar al usuario{" "}
+            <strong>
+              {selectedUsuario?.nombre} {selectedUsuario?.apellidos}
+            </strong>
+            ? Esta acción no se puede deshacer.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEliminarDialog} color="primary">
             Cancelar
           </Button>
-          <Button 
-            onClick={handleEliminar} 
+          <Button
+            onClick={handleEliminar}
             color="error"
             variant="contained"
             disabled={procesando}
           >
-            {procesando ? 'Eliminando...' : 'Eliminar'}
+            {procesando ? "Eliminando..." : "Eliminar"}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Snackbar para notificaciones */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
