@@ -97,7 +97,7 @@ setRechazadas(rechazadas || []);
 };
 
 useEffect(() => {
-  if (user?.rol === 'formador' || user?.rol === 'instructor') {
+  if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
     fetchValidaciones();
   }
 }, [user]);

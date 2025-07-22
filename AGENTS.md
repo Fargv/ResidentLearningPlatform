@@ -33,5 +33,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-07-18: Validación de tamaño de archivo en `ResidenteFases` y mensaje de error.
 - 2025-07-21: Banner de desarrollo y fondo rojo claro en `App.tsx` cuando
   `REACT_APP_ENV` es `dev`.
+- 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

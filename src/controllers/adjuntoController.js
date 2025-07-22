@@ -12,7 +12,7 @@ const crypto = require('crypto');
 exports.subirAdjunto = async (req, res, next) => {
   try {
     const progreso = await ProgresoResidente.findById(req.params.progresoId)
-      .populate('residente')
+      .populate({ path: 'residente', populate: { path: 'hospital' } })
       .populate('actividad');
 
     if (!progreso) {
@@ -23,7 +23,8 @@ exports.subirAdjunto = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para subir adjuntos a este progreso', 403));
@@ -115,7 +116,7 @@ exports.subirAdjunto = async (req, res, next) => {
 exports.getAdjuntosProgreso = async (req, res, next) => {
   try {
     const progreso = await ProgresoResidente.findById(req.params.progresoId)
-      .populate('residente');
+      .populate({ path: 'residente', populate: { path: 'hospital' } });
 
     if (!progreso) {
       return next(new ErrorResponse(`Progreso no encontrado con id ${req.params.progresoId}`, 404));
@@ -125,7 +126,8 @@ exports.getAdjuntosProgreso = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para ver adjuntos de este progreso', 403));
@@ -149,7 +151,7 @@ exports.getAdjuntosProgreso = async (req, res, next) => {
 exports.subirAdjuntoActividad = async (req, res, next) => {
   try {
     const { progresoId, index } = req.params;
-    const progreso = await ProgresoResidente.findById(progresoId).populate('residente');
+    const progreso = await ProgresoResidente.findById(progresoId).populate({ path: 'residente', populate: { path: 'hospital' } });
     if (!progreso || !progreso.actividades[index]) {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
@@ -205,7 +207,8 @@ exports.getAdjuntoActividad = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado', 403));
@@ -230,7 +233,7 @@ exports.eliminarAdjunto = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.findById(adjunto.progreso)
-      .populate('residente');
+      .populate({ path: 'residente', populate: { path: 'hospital' } });
 
     if (!progreso) {
       return next(new ErrorResponse('Progreso asociado no encontrado', 404));
@@ -240,7 +243,8 @@ exports.eliminarAdjunto = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para eliminar este adjunto', 403));
@@ -284,7 +288,7 @@ exports.descargarAdjunto = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.findById(adjunto.progreso)
-      .populate('residente');
+      .populate({ path: 'residente', populate: { path: 'hospital' } });
 
     if (!progreso) {
       return next(new ErrorResponse('Progreso asociado no encontrado', 404));
@@ -294,7 +298,8 @@ exports.descargarAdjunto = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
       return next(new ErrorResponse('No autorizado para descargar este adjunto', 403));

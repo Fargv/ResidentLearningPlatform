@@ -16,10 +16,10 @@ router.use(protect);
 
 // Rutas para todos los roles
 router.route('/')
-  .get(authorize('administrador', 'formador', 'residente', 'alumno'), getActividades);
+  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getActividades);
 
 router.route('/:id')
-  .get(authorize('administrador', 'formador', 'residente', 'alumno'), getActividad);
+  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getActividad);
 // Rutas solo para administradores
 router.route('/')
   .post(authorize('administrador'), createActividad);

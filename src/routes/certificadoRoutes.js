@@ -5,6 +5,6 @@ const { descargarCertificado } = require('../controllers/certificadoController')
 
 router.use(protect);
 
-router.get('/:id', authorize('residente', 'alumno', 'formador', 'instructor', 'administrador'), descargarCertificado);
+router.get('/:id', authorize('residente', 'alumno', 'formador', 'coordinador', 'instructor', 'administrador'), descargarCertificado);
 
 module.exports = router;

@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['residente', 'formador', 'administrador', 'alumno', 'instructor'],
+    enum: ['residente', 'formador', 'administrador', 'alumno', 'instructor', 'coordinador'],
     required: [true, 'Por favor especifique un rol']
   },
   hospital: {
@@ -57,6 +57,13 @@ const userSchema = new mongoose.Schema({
     ref: 'Sociedades',
     required: function() {
       return this.tipo === 'Programa Sociedades';
+    }
+  },
+  zona: {
+    type: String,
+    enum: ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS'],
+    required: function() {
+      return this.rol === 'coordinador';
     }
   },
   activo: {

@@ -26,6 +26,12 @@ exports.getUsers = async (req, res, next) => {
       users = await User.find({ hospital: req.user.hospital })
         .populate('hospital')
         .populate('sociedad');
+    } else if (req.user.rol === 'coordinador') {
+      const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
+      const ids = hospitales.map(h => h._id);
+      users = await User.find({ hospital: { $in: ids } })
+        .populate('hospital')
+        .populate('sociedad');
     } else {
       return next(new ErrorResponse('No autorizado para ver usuarios', 403));
     }
@@ -43,7 +49,7 @@ exports.getUsers = async (req, res, next) => {
 // @desc    Crear un usuario desde administración
 // @route   POST /api/users
 // @access  Private/Admin
-exports.createUser = async (req, res, next) => {
+xports.createUser = async (req, res, next) => {
   try {
     const {
       nombre,
@@ -54,20 +60,23 @@ exports.createUser = async (req, res, next) => {
       tipo,
       hospital,
       sociedad,
-      especialidad
+      especialidad,
+      zona
     } = req.body;
     const hospitalId = hospital || undefined;
     const especialidadVal = especialidad || undefined;
     const tipoVal = rol === 'administrador' ? undefined : tipo;
     const sociedadId =
       tipoVal === 'Programa Sociedades' ? sociedad || undefined : undefined;
+    let zonaVal = zona || undefined;
 
     const rolesValidos = [
       'residente',
       'formador',
       'administrador',
       'alumno',
-      'instructor'
+      'instructor',
+      'coordinador'
     ];
     if (!rolesValidos.includes(rol)) {
       return next(new ErrorResponse('Rol inválido', 400));
@@ -76,7 +85,7 @@ exports.createUser = async (req, res, next) => {
     // Verificar combinaciones válidas de rol y tipo de programa
     if (
       tipo === 'Programa Residentes' &&
-      !['residente', 'formador', 'administrador'].includes(rol)
+      !['residente', 'formador', 'administrador', 'coordinador'].includes(rol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
@@ -105,6 +114,11 @@ exports.createUser = async (req, res, next) => {
       if (!hosp) {
         return next(new ErrorResponse('Hospital no encontrado', 404));
       }
+      zonaVal = hosp.zona;
+    }
+
+    if (rol === 'coordinador' && !zonaVal) {
+      return next(new ErrorResponse('Zona requerida para el rol coordinador', 400));
     }
 
     if (tipoVal === 'Programa Sociedades') {
@@ -128,6 +142,7 @@ exports.createUser = async (req, res, next) => {
       hospital: hospitalId,
       sociedad: sociedadId,
       especialidad: especialidadVal,
+      zona: zonaVal,
       activo: true,
       consentimientoDatos: true,
       fechaRegistro: Date.now()
@@ -183,6 +198,7 @@ exports.updateUser = async (req, res, next) => {
     const { password, ...updateData } = req.body;
     const hospitalId = updateData.hospital || undefined;
     const especialidadVal = updateData.especialidad || undefined;
+    let zonaVal = updateData.zona || undefined;
     const currentUser = await User.findById(req.params.id);
     if (!currentUser) {
       return next(
@@ -205,7 +221,7 @@ exports.updateUser = async (req, res, next) => {
 
     if (
       newTipo === 'Programa Residentes' &&
-      !['residente', 'formador', 'administrador'].includes(newRol)
+      !['residente', 'formador', 'administrador', 'coordinador'].includes(newRol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
@@ -217,9 +233,22 @@ exports.updateUser = async (req, res, next) => {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
 
+    if (hospitalId) {
+      const hosp = await Hospital.findById(hospitalId);
+      if (!hosp) {
+        return next(new ErrorResponse('Hospital no encontrado', 404));
+      }
+      zonaVal = hosp.zona;
+    }
+
+    if (newRol === 'coordinador' && !zonaVal) {
+      return next(new ErrorResponse('Zona requerida para el rol coordinador', 400));
+    }
+
     updateData.hospital = hospitalId;
     updateData.especialidad = especialidadVal;
     updateData.sociedad = sociedadId;
+    updateData.zona = zonaVal;
 
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
@@ -497,7 +526,7 @@ exports.cancelInvitation = async (req, res, next) => {
 // @access  Private/Admin,Formador
 exports.getFormadorResidentes = async (req, res, next) => {
   try {
-    const formador = await User.findById(req.params.id);
+    const formador = await User.findById(req.params.id).populate('hospital');
 
     if (!formador) {
       return next(new ErrorResponse(`Formador no encontrado con id ${req.params.id}`, 404));
@@ -505,6 +534,10 @@ exports.getFormadorResidentes = async (req, res, next) => {
 
     if (formador.rol !== 'formador') {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un formador`, 400));
+    }
+
+    if (req.user.rol === 'coordinador' && formador.hospital.zona !== req.user.zona) {
+      return next(new ErrorResponse('No autorizado para ver residentes de otra zona', 403));
     }
 
     // Obtener residentes del mismo hospital que el formador
@@ -530,7 +563,7 @@ exports.getFormadorResidentes = async (req, res, next) => {
 // @access  Private/Admin,Residente
 exports.getResidenteFormadores = async (req, res, next) => {
   try {
-    const residente = await User.findById(req.params.id);
+    const residente = await User.findById(req.params.id).populate('hospital');
 
     if (!residente) {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
@@ -538,6 +571,10 @@ exports.getResidenteFormadores = async (req, res, next) => {
 
     if (residente.rol !== 'residente') {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
+    }
+
+    if (req.user.rol === 'coordinador' && residente.hospital.zona !== req.user.zona) {
+      return next(new ErrorResponse('No autorizado para ver formadores de otra zona', 403));
     }
 
     // Obtener formadores del mismo hospital que el residente
@@ -561,6 +598,13 @@ exports.getResidenteFormadores = async (req, res, next) => {
 exports.getUsersByHospital = async (req, res) => {
   try {
     const { hospitalId } = req.params;
+
+    if (req.user.rol === 'coordinador') {
+      const hosp = await Hospital.findById(hospitalId);
+      if (!hosp || hosp.zona !== req.user.zona) {
+        return res.status(403).json({ success: false, error: 'No autorizado' });
+      }
+    }
 
     const users = await User.find({ hospital: hospitalId })
       .populate('hospital')

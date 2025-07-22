@@ -30,12 +30,12 @@ router.route('/:id')
   .delete(authorize('administrador'), deleteHospital);
 
 router.route('/:id/residentes')
-  .get(authorize('administrador', 'formador'), getHospitalResidentes);
+  .get(authorize('administrador', 'formador', 'coordinador'), getHospitalResidentes);
 
 router.route('/:id/formadores')
   .get(authorize('administrador'), getHospitalFormadores);
 
 router.route('/:id/stats')
-  .get(authorize('administrador', 'formador'), getHospitalStats);
+  .get(authorize('administrador', 'formador', 'coordinador'), getHospitalStats);
 
 module.exports = router;

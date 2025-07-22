@@ -36,7 +36,8 @@ const register = async (req, res, next) => {
       hospital,
       sociedad,
       consentimientoDatos,
-      especialidad
+      especialidad,
+      zona: zonaInput
     } = req.body;
 
     const access = await AccessCode.findOne({ codigo: codigoAcceso });
@@ -45,6 +46,19 @@ const register = async (req, res, next) => {
     }
 
     const { rol, tipo } = access;
+
+    let zona = zonaInput;
+    if ((rol === 'residente' || rol === 'formador') && hospital) {
+      const selectedHospital = await Hospital.findById(hospital);
+      if (!selectedHospital) {
+        return next(new ErrorResponse('Hospital no encontrado', 404));
+      }
+      zona = selectedHospital.zona;
+    }
+
+    if (rol === 'coordinador' && !zona) {
+      return next(new ErrorResponse('Zona requerida', 400));
+    }
 
     if (!consentimientoDatos) {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
@@ -80,6 +94,7 @@ const register = async (req, res, next) => {
       hospital: tipo === 'Programa Residentes' ? hospital : undefined,
       sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
       especialidad,
+      zona,
       activo: true,
       consentimientoDatos: true,
       fechaRegistro: Date.now()
@@ -102,7 +117,8 @@ const register = async (req, res, next) => {
         rol: newUser.rol,
         hospital: newUser.hospital,
         sociedad: newUser.sociedad,
-        tipo: newUser.tipo
+        tipo: newUser.tipo,
+        zona: newUser.zona
       }
     });
   } catch (err) {
@@ -140,7 +156,8 @@ const login = async (req, res, next) => {
         apellidos: user.apellidos,
         email: user.email,
         rol: user.rol,
-        hospital: user.hospital
+        hospital: user.hospital,
+        zona: user.zona
       }
     });
   } catch (err) {

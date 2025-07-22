@@ -93,7 +93,12 @@ const Dashboard: React.FC = () => {
 
   const getMenuItems = () => {
     const items = [
-      { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', roles: ['administrador', 'formador', 'residente', 'alumno'] }
+      {
+        text: 'Dashboard',
+        icon: <DashboardIcon />,
+        path: '/dashboard',
+        roles: ['administrador', 'formador', 'coordinador', 'residente', 'alumno']
+      }
     ];
   
     if (user?.rol === 'residente' || user?.rol === 'alumno') {
@@ -105,16 +110,16 @@ const Dashboard: React.FC = () => {
     }
     
   
-        if (user?.rol === 'formador' || user?.rol === 'instructor') {
-      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'instructor'] });
+        if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
+      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
     }
 
     if (user?.rol === 'administrador') {
       items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] });
     }
   
-    if (user?.rol === 'formador') {
-      items.push({ text: 'Mis Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador'] });
+    if (user?.rol === 'formador' || user?.rol === 'coordinador') {
+      items.push({ text: 'Mis Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador'] });
     }
   
     if (user?.rol === 'administrador') {

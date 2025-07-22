@@ -255,7 +255,7 @@ const DashboardHome: React.FC = () => {
     );
   }
 
-  if (user?.rol === "formador" || user?.rol === "instructor") {
+  if (user?.rol === "formador" || user?.rol === "coordinador" || user?.rol === "instructor") {
     actions.push({
       label: "Validaciones",
       path: "/dashboard/validaciones",
@@ -344,6 +344,10 @@ const DashboardHome: React.FC = () => {
         return hospital
           ? `Formador de residentes del hospital ${hospital}`
           : "";
+      case "coordinador":
+        return hospital
+          ? `Coordinador de residentes del hospital ${hospital}`
+          : "";
       case "residente":
         return hospital ? `Residente del hospital ${hospital}` : "";
       case "alumno":
@@ -418,6 +422,7 @@ const DashboardHome: React.FC = () => {
       {user?.tipo === "Programa Residentes" &&
         (user?.rol === "residente" ||
           user?.rol === "formador" ||
+          user?.rol === "coordinador" ||
           user?.rol === "instructor") &&
         phaseSummary.length > 0 && (
           <Paper sx={{ p: 2, mb: 3 }}>

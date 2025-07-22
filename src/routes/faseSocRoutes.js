@@ -17,13 +17,13 @@ router.use(protect);
 
 // Rutas para todos los roles
 router.route('/')
-  .get(authorize('administrador', 'formador', 'residente', 'alumno'), getFases);
+  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getFases);
 
 router.route('/:id')
-  .get(authorize('administrador', 'formador', 'residente', 'alumno'), getFase);
+  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getFase);
 
 router.route('/:id/actividades')
-  .get(authorize('administrador', 'formador', 'residente', 'alumno'), getFaseActividades);
+  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getFaseActividades);
 
 // Rutas solo para administradores
 router.route('/')
@@ -37,3 +37,4 @@ router.route('/reorder')
   .put(authorize('administrador'), reorderFases);
 
 module.exports = router;
+

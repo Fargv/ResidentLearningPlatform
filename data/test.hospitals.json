@@ -1,0 +1,28 @@
+[
+  {
+    "_id": "ObjectId(\"64b000000000000000000001\")",
+    "nombre": "Hospital Central",
+    "codigoNumerico": 123,
+    "direccion": "Calle Central 1",
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "zona": "CENTRO",
+    "codigoPostal": "28000",
+    "telefono": "912345678",
+    "email": "central@hospital.com",
+    "tipoSistema": "Xi"
+  },
+  {
+    "_id": "ObjectId(\"64b000000000000000000002\")",
+    "nombre": "Hospital Norte",
+    "codigoNumerico": 456,
+    "direccion": "Avenida Norte 1",
+    "ciudad": "Bilbao",
+    "provincia": "Vizcaya",
+    "zona": "NORTE",
+    "codigoPostal": "48000",
+    "telefono": "944123456",
+    "email": "norte@hospital.com",
+    "tipoSistema": "X"
+  }
+]
