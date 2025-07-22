@@ -49,7 +49,7 @@ exports.getUsers = async (req, res, next) => {
 // @desc    Crear un usuario desde administración
 // @route   POST /api/users
 // @access  Private/Admin
-xports.createUser = async (req, res, next) => {
+exports.createUser = async (req, res, next) => {
   try {
     const {
       nombre,
