@@ -185,6 +185,7 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             >
               <MenuItem value="residente">Residente</MenuItem>
               <MenuItem value="formador">Formador</MenuItem>
+              <MenuItem value="coordinador">Coordinador</MenuItem>
               <MenuItem value="alumno">Alumno</MenuItem>
               <MenuItem value="instructor">Instructor</MenuItem>
               <MenuItem value="administrador">Administrador</MenuItem>
