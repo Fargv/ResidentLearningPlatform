@@ -106,7 +106,7 @@ const getAllProgreso = async (req, res, next) => {
 
 const getProgresoResidente = async (req, res, next) => {
   try {
-    const residente = await User.findById(req.params.id);
+    const residente = await User.findById(req.params.id).populate('hospital');
 
     if (!residente) {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
@@ -121,8 +121,11 @@ const getProgresoResidente = async (req, res, next) => {
   }
 
 
-    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()) {
+    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital._id.toString()) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+    }
+    if (req.user.rol === 'coordinador' && req.user.zona !== residente.hospital.zona) {
+      return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
     }
 
     if (req.user.rol === 'instructor' && (!residente.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString())) {
@@ -170,7 +173,7 @@ const getProgresoResidente = async (req, res, next) => {
 
 const getProgresoResidentePorFase = async (req, res, next) => {
   try {
-    const residente = await User.findById(req.params.id);
+    const residente = await User.findById(req.params.id).populate('hospital');
 
     if (!residente) {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
@@ -184,8 +187,11 @@ const getProgresoResidentePorFase = async (req, res, next) => {
       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
   }
 
-    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital.toString()) {
+    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital._id.toString()) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+    }
+    if (req.user.rol === 'coordinador' && req.user.zona !== residente.hospital.zona) {
+      return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
@@ -304,7 +310,7 @@ const registrarProgreso = async (req, res, next) => {
 const actualizarProgreso = async (req, res, next) => {
   try {
     let progreso = await ProgresoResidente.findById(req.params.id)
-      .populate('residente')
+      .populate({ path: 'residente', populate: { path: 'hospital' } })
       .populate('actividad');
 
     if (!progreso) {
@@ -316,7 +322,8 @@ const actualizarProgreso = async (req, res, next) => {
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
       (
-        (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital.toString()) &&
+        (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+        (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
         (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
       )
     ) {
@@ -368,7 +375,7 @@ const validarProgreso = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.findById(req.params.id)
-      .populate('residente')
+      .populate({ path: 'residente', populate: { path: 'hospital' } })
       .populate('actividad');
 
     if (!progreso) {
@@ -377,7 +384,8 @@ const validarProgreso = async (req, res, next) => {
 
     // Si es formador o instructor, verificar que pertenece al mismo hospital o sociedad que el residente
     if (
-      (req.user.rol === 'formador' && req.user.hospital.toString() !== progreso.residente.hospital.toString()) ||
+      (req.user.rol === 'formador' && req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) ||
+      (req.user.rol === 'coordinador' && req.user.zona !== progreso.residente.hospital.zona) ||
       (req.user.rol === 'instructor' && (!progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString()))
     ) {
       return next(new ErrorResponse('No autorizado para validar progreso de residentes de otro centro', 403));
@@ -478,7 +486,7 @@ const rechazarProgreso = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.findById(req.params.id)
-      .populate('residente')
+      .populate({ path: 'residente', populate: { path: 'hospital' } })
       .populate('actividad');
 
     if (!progreso) {
@@ -487,7 +495,8 @@ const rechazarProgreso = async (req, res, next) => {
 
     // Si es formador o instructor, verificar que pertenece al mismo hospital o sociedad que el residente
     if (
-      (req.user.rol === 'formador' && req.user.hospital.toString() !== progreso.residente.hospital.toString()) ||
+      (req.user.rol === 'formador' && req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) ||
+      (req.user.rol === 'coordinador' && req.user.zona !== progreso.residente.hospital.zona) ||
       (req.user.rol === 'instructor' && (!progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString()))
     ) {
       return next(new ErrorResponse('No autorizado para rechazar progreso de residentes de otro centro', 403));
@@ -635,7 +644,7 @@ const marcarActividadCompletada = async (req, res, next) => {
 // @access Private/Formador|Instructor
 const getProgresosPendientesDelHospital = async (req, res, next) => {
   try {
-    if (req.user.rol !== 'formador' && req.user.rol !== 'instructor') {
+    if (req.user.rol !== 'formador' && req.user.rol !== 'instructor' && req.user.rol !== 'coordinador') {
       return res.status(403).json({ success: false, error: 'No autorizado' });
     }
 
@@ -646,8 +655,11 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
       path: 'residente',
       select: 'nombre apellidos hospital sociedad',
       match: req.user.rol === 'instructor'
-        ? { sociedad: req.user.sociedad } // Filtra por sociedad para instructores
-        : { hospital: req.user.hospital } // Filtra por hospital para formadores
+        ? { sociedad: req.user.sociedad }
+        : req.user.rol === 'formador'
+        ? { hospital: req.user.hospital }
+        : {},
+      populate: { path: 'hospital', select: 'zona' }
     })
     .populate({
       path: 'actividad',
@@ -656,7 +668,12 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
     });
 
     // Filtrar los que sí pertenecen al hospital (match no quita nulls automáticamente)
-    const filtrados = pendientes.filter(p => p.residente !== null);
+    const filtrados = pendientes.filter(p => {
+      if (!p.residente) return false;
+      if (req.user.rol === 'coordinador') return p.residente.hospital && p.residente.hospital.zona === req.user.zona;
+      if (req.user.rol === 'formador') return p.residente.hospital && p.residente.hospital._id.toString() === req.user.hospital.toString();
+      return true;
+    });
 
     res.status(200).json({
       success: true,
@@ -668,12 +685,13 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
   }
 };
 
+
 // @desc Obtener lista plana de validaciones pendientes por actividad
 // @route GET /api/progreso/formador/validaciones/pendientes
 // @access Private/Formador|Instructor
 const getValidacionesPendientes = async (req, res, next) => {
   try {
-    if (req.user.rol !== 'formador' && req.user.rol !== 'instructor') {
+    if (req.user.rol !== 'formador' && req.user.rol !== 'instructor' && req.user.rol !== 'coordinador') {
       return res.status(403).json({ success: false, error: 'No autorizado' });
     }
 
@@ -682,8 +700,11 @@ const getValidacionesPendientes = async (req, res, next) => {
         path: 'residente',
         match: req.user.rol === 'instructor'
           ? { sociedad: req.user.sociedad }
-          : { hospital: req.user.hospital },
-        select: 'nombre apellidos hospital sociedad'
+          : req.user.rol === 'formador'
+          ? { hospital: req.user.hospital }
+          : {},
+        select: 'nombre apellidos hospital sociedad',
+        populate: { path: 'hospital', select: 'zona' }
       })
       .populate('fase')
       .populate('actividades.actividad');
@@ -692,8 +713,13 @@ const getValidacionesPendientes = async (req, res, next) => {
     const validadas = [];
     const rechazadas = [];
 
-    for (const progreso of progresos) {
-      if (!progreso.residente) continue;
+    const filtrados = progresos.filter(p => {
+      if (!p.residente) return false;
+      if (req.user.rol === 'coordinador') return p.residente.hospital && p.residente.hospital.zona === req.user.zona;
+      return true;
+    });
+
+    for (const progreso of filtrados) {
 
       for (let index = 0; index < progreso.actividades.length; index++) {
         const actividad = progreso.actividades[index];

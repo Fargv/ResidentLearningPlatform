@@ -37,8 +37,9 @@ import api, { createUser, updateUserPassword } from '../../api';
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
-  const rolesResidentes = ['residente', 'formador', 'administrador'];
-  const rolesSociedades = ['alumno', 'instructor', 'administrador'];
+  const rolesResidentes = ['residente', 'formador', 'coordinador', 'administrador'];
+  const rolesSociedades = ['alumno', 'instructor', 'coordinador', 'administrador'];
+  const zonaOptions = ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS'];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuariosLista] = useState<any[]>([]);
@@ -59,7 +60,8 @@ const AdminUsuarios: React.FC = () => {
     hospital: '',
     especialidad: '',
     tipo: '',
-    sociedad: ''
+    sociedad: '',
+    zona: ''
   });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -105,7 +107,8 @@ const AdminUsuarios: React.FC = () => {
       hospital: hospitales.length > 0 ? hospitales[0]._id : '',
       especialidad: '',
       tipo: '',
-      sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
+      sociedad: sociedades.length > 0 ? sociedades[0]._id : '',
+      zona: ''
     });
     setOpenInvitarDialog(true);
   };
@@ -119,7 +122,8 @@ const handleOpenCrearDialog = () => {
       hospital: hospitales.length > 0 ? hospitales[0]._id : '',
       especialidad: '',
       tipo: '',
-      sociedad: sociedades.length > 0 ? sociedades[0]._id : ''
+      sociedad: sociedades.length > 0 ? sociedades[0]._id : '',
+      zona: ''
     });
     setPasswordValue('');
     setOpenCrearDialog(true);
@@ -143,7 +147,8 @@ const handleOpenCrearDialog = () => {
       hospital: usuario.hospital?._id || '',
       especialidad: usuario.especialidad || '',
       tipo: usuario.tipo || '',
-      sociedad: usuario.sociedad?._id || ''
+      sociedad: usuario.sociedad?._id || '',
+      zona: usuario.zona || ''
     });
     setOpenEditarDialog(true);
   };
@@ -185,11 +190,21 @@ const handleOpenCrearDialog = () => {
         updated.rol = 'alumno';
         updated.sociedad = sociedades[0]?._id || '';
       }
-    } else if (name === 'rol' && value === 'administrador') {
-      updated.tipo = '';
-      updated.hospital = '';
-      updated.sociedad = '';
-      updated.especialidad = '';
+    } else if (name === 'rol') {
+      if (value === 'administrador') {
+        updated.tipo = '';
+        updated.hospital = '';
+        updated.sociedad = '';
+        updated.especialidad = '';
+        updated.zona = '';
+      } else if (value === 'coordinador') {
+        updated.hospital = '';
+        updated.sociedad = '';
+        updated.especialidad = '';
+      }
+    } else if (name === 'hospital') {
+      const selected = hospitales.find((h) => h._id === value);
+      updated.zona = selected?.zona || '';
     }
     setFormData(updated);
   };
@@ -231,6 +246,8 @@ const handleOpenCrearDialog = () => {
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
+      if (!payload.zona) delete payload.zona;
+      if (!payload.zona) delete payload.zona;
       const res = await createUser(payload);      setUsuariosLista([...usuarios, res.data.data]);
       handleCloseCrearDialog();
       setSnackbar({ open: true, message: 'Usuario creado correctamente', severity: 'success' });
@@ -576,8 +593,9 @@ const handleOpenCrearDialog = () => {
                 {r.charAt(0).toUpperCase() + r.slice(1)}
               </option>
             ))}
-          </TextField>
+         </TextField>
           {formData.rol !== 'administrador' &&
+            formData.rol !== 'coordinador' &&
             (formData.rol === 'residente' || formData.rol === 'formador') && (
             <TextField
               select
@@ -600,8 +618,10 @@ const handleOpenCrearDialog = () => {
                 </option>
               ))}
             </TextField>
-          )}
-          {formData.rol !== 'administrador' && formData.tipo === 'Programa Sociedades' && (
+            )}
+          {formData.rol !== 'administrador' &&
+            formData.rol !== 'coordinador' &&
+            formData.tipo === 'Programa Sociedades' && (
             <TextField
               select
               margin="dense"
@@ -622,7 +642,29 @@ const handleOpenCrearDialog = () => {
               ))}
             </TextField>
           )}
-          {formData.rol !== 'administrador' && (
+          {formData.rol !== 'administrador' && formData.rol === 'coordinador' && (
+            <TextField
+              select
+              margin="dense"
+              id="zona"
+              name="zona"
+              label="Zona"
+              fullWidth
+              variant="outlined"
+              value={formData.zona}
+              onChange={handleChange}
+              required
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              {zonaOptions.map((z) => (
+                <option key={z} value={z}>
+                  {z}
+                </option>
+              ))}
+            </TextField>
+          )}
+          {formData.rol !== 'administrador' && formData.rol !== 'coordinador' && (
             <TextField
               select
               margin="dense"
@@ -653,7 +695,14 @@ const handleOpenCrearDialog = () => {
             onClick={handleInvitar} 
             color="primary"
             variant="contained"
-            disabled={procesando || !formData.email || !formData.nombre || !formData.apellidos || ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital)}
+            disabled={
+              procesando ||
+              !formData.email ||
+              !formData.nombre ||
+              !formData.apellidos ||
+              ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
+              (formData.rol === 'coordinador' && !formData.zona)
+            }
           >
             {procesando ? 'Enviando...' : 'Enviar Invitación'}
           </Button>
@@ -787,6 +836,7 @@ const handleOpenCrearDialog = () => {
             ))}
           </TextField>
          {formData.rol !== 'administrador' &&
+            formData.rol !== 'coordinador' &&
             (formData.rol === 'residente' ||
               formData.rol === 'formador' ||
               formData.tipo === 'Programa Sociedades') && (
@@ -832,7 +882,9 @@ const handleOpenCrearDialog = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
-          {formData.rol !== 'administrador' && formData.tipo === 'Programa Sociedades' && (
+          {formData.rol !== 'administrador' &&
+            formData.rol !== 'coordinador' &&
+            formData.tipo === 'Programa Sociedades' && (
             <TextField
               select
               margin="dense"
@@ -853,6 +905,28 @@ const handleOpenCrearDialog = () => {
               ))}
             </TextField>
           )}
+          {formData.rol === 'coordinador' && (
+            <TextField
+              select
+              margin="dense"
+              id="zona-create"
+              name="zona"
+              label="Zona"
+              fullWidth
+              variant="outlined"
+              value={formData.zona}
+              onChange={handleChange}
+              required
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              {zonaOptions.map((z) => (
+                <option key={z} value={z}>
+                  {z}
+                </option>
+              ))}
+            </TextField>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearDialog}>Cancelar</Button>
@@ -867,7 +941,8 @@ const handleOpenCrearDialog = () => {
               !formData.nombre ||
               !formData.apellidos ||
               ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
-              (formData.rol === 'residente' && !formData.especialidad)
+              (formData.rol === 'residente' && !formData.especialidad) ||
+              (formData.rol === 'coordinador' && !formData.zona)
             }
           >
             {procesando ? 'Creando...' : 'Crear Usuario'}
@@ -925,8 +1000,9 @@ const handleOpenCrearDialog = () => {
                 {r.charAt(0).toUpperCase() + r.slice(1)}
               </option>
             ))}
-          </TextField>
+           </TextField>
           {formData.rol !== 'administrador' &&
+            formData.rol !== 'coordinador' &&
             (formData.rol === 'residente' ||
               formData.rol === 'formador' ||
               formData.tipo === 'Programa Sociedades') && (
@@ -948,6 +1024,28 @@ const handleOpenCrearDialog = () => {
               {hospitales.map((hospital) => (
                 <option key={hospital._id} value={hospital._id}>
                   {hospital.nombre}
+                </option>
+              ))}
+            </TextField>
+          )}
+          {formData.rol === 'coordinador' && (
+            <TextField
+              select
+              margin="dense"
+              id="zona-edit"
+              name="zona"
+              label="Zona"
+              fullWidth
+              variant="outlined"
+              value={formData.zona}
+              onChange={handleChange}
+              required
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              {zonaOptions.map((z) => (
+                <option key={z} value={z}>
+                  {z}
                 </option>
               ))}
             </TextField>
@@ -989,7 +1087,8 @@ const handleOpenCrearDialog = () => {
               !formData.nombre ||
               !formData.apellidos ||
               ((formData.rol === 'residente' || formData.rol === 'formador') && !formData.hospital) ||
-              (formData.rol === 'residente' && !formData.especialidad)
+              (formData.rol === 'residente' && !formData.especialidad) ||
+              (formData.rol === 'coordinador' && !formData.zona)
             }          >
             {procesando ? 'Guardando...' : 'Guardar Cambios'}
           </Button>

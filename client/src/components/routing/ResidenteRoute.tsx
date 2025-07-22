@@ -29,6 +29,7 @@ const ResidenteRoute: React.FC<ResidenteRouteProps> = ({ children }) => {
     user?.rol !== 'residente' &&
     user?.rol !== 'alumno' &&
     user?.rol !== 'formador' &&
+    user?.rol !== 'coordinador' &&
     user?.rol !== 'administrador'
   ) {
     // Redirigir al dashboard si no tiene permisos
