@@ -1,6 +1,3 @@
-+48
--0
-
 const { register } = require('../src/controllers/authController');
 const User = require('../src/models/User');
 
@@ -25,7 +22,7 @@ describe('register coordinador access code', () => {
     await AccessCode.deleteMany();
   });
 
-  test('ABEXCOOR2025 asigna rol coordinador', async () => {
+  test('ABEXCOOR2025 asigna rol coordinador con zona', async () => {
     const req = {
       body: {
         nombre: 'c',
@@ -33,18 +30,26 @@ describe('register coordinador access code', () => {
         email: 'c@d.com',
         password: '12345678',
         codigoAcceso: 'ABEXCOOR2025',
-        hospital: 'h1',
+        zona: 'NORTE',
         consentimientoDatos: true
       }
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     await AccessCode.create({ codigo: 'ABEXCOOR2025', rol: 'coordinador', tipo: 'Programa Residentes' });
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'coordinador', tipo: 'Programa Residentes', hospital: 'h1' });
+    jest.spyOn(User, 'create').mockResolvedValue({
+      _id: 'u1',
+      rol: 'coordinador',
+      tipo: 'Programa Residentes',
+      zona: 'NORTE',
+      hospital: null
+    });
 
     await register(req, res, jest.fn());
 
-    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'coordinador', tipo: 'Programa Residentes', hospital: 'h1' }));
+    expect(User.create).toHaveBeenCalledWith(
+      expect.objectContaining({ rol: 'coordinador', tipo: 'Programa Residentes', zona: 'NORTE', hospital: undefined })
+    );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXCOOR2025' });
   });
