@@ -527,7 +527,7 @@ const AdminUsuarios: React.FC = () => {
                       onClick={() => handleOpenEditarDialog(usuario)}
                       size="small"
                       startIcon={<EditIcon />}
-                      sx={{ mr: 1 }}
+                      sx={{ mr: 1, minWidth: 150 }}
                     >
                       Editar
                     </Button>
@@ -537,7 +537,7 @@ const AdminUsuarios: React.FC = () => {
                       onClick={() => handleOpenEliminarDialog(usuario)}
                       size="small"
                       startIcon={<DeleteIcon />}
-                      sx={{ mr: 1 }}
+                      sx={{ mr: 1, minWidth: 150 }}
                     >
                       Eliminar
                     </Button>
@@ -548,7 +548,7 @@ const AdminUsuarios: React.FC = () => {
                         onClick={() => handleOpenPasswordDialog(usuario)}
                         size="small"
                         startIcon={<VpnKeyIcon />}
-                        sx={{ mr: 1 }}
+                        sx={{ mr: 1, minWidth: 150 }}
                       >
                         Cambiar contraseña
                       </Button>
@@ -559,6 +559,7 @@ const AdminUsuarios: React.FC = () => {
                           variant="outlined"
                           onClick={() => handleCrearProgreso(usuario._id)}
                           size="small"
+                          sx={{ mr: 1, minWidth: 150 }}
                         >
                           Crear progreso
                         </Button>
