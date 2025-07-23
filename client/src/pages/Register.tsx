@@ -135,21 +135,14 @@ const Register: React.FC = () => {
     }
   };
 
-  const onSelectHospital = async (event: SelectChangeEvent<string>) => {
+  const onSelectHospital = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
-
-     if (value) {
-      try {
-        const res = await api.get(`/hospitals/${value}`);
-        setFormData((prev) => ({ ...prev, zona: res.data.data.zona || '' }));
-      } catch (error) {
-        console.error('Error cargando zona del hospital:', error);
-      }
-    } else {
+    // La zona se completará en el backend usando el hospital seleccionado
+    if (!value) {
       setFormData((prev) => ({ ...prev, zona: '' }));
     }
   };
@@ -197,20 +190,22 @@ const Register: React.FC = () => {
     if (!consentimientoDatos) return;
 
     try {
-      await register({
+      const payload: any = {
         nombre,
         apellidos,
         email,
         password,
         rol,
-        hospital,
         codigoAcceso,
         consentimientoDatos,
-        especialidad,
-        tipo,
-        sociedad,
-        zona
-      });
+        tipo
+      };
+      if (hospital) payload.hospital = hospital;
+      if (especialidad) payload.especialidad = especialidad;
+      if (sociedad) payload.sociedad = sociedad;
+      if (zona) payload.zona = zona;
+
+      await register(payload);
      } catch (err: any) {
       setCodigoError(err.response?.data?.error || 'Código de acceso no válido');
     }
