@@ -65,7 +65,7 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
     }
 
-    if (tipo === 'Programa Residentes' && !hospital) {
+    if (tipo === 'Programa Residentes' && !hospital && rol !== 'coordinador') {
       return next(new ErrorResponse('Hospital requerido', 400));
     }
 
