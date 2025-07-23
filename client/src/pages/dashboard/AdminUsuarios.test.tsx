@@ -58,3 +58,16 @@ test('muestra boton Cambiar contraseña para administradores', async () => {
   render(<AdminUsuarios />);
   expect(await screen.findByText('Cambiar contraseña')).toBeInTheDocument();
 });
+
+test('muestra botones Editar y Eliminar', async () => {
+  mockedGet
+    .mockResolvedValueOnce({ data: { data: [
+      { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+    ] } })
+    .mockResolvedValueOnce({ data: { data: [] } })
+    .mockResolvedValueOnce({ data: [] });
+
+  render(<AdminUsuarios />);
+  expect(await screen.findByText('Editar')).toBeInTheDocument();
+  expect(screen.getByText('Eliminar')).toBeInTheDocument();
+});
