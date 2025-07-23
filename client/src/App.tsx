@@ -15,6 +15,7 @@ import ResidenteRoute from './components/routing/ResidenteRoute';
 // Páginas públicas
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import NotFound from './pages/NotFound';
 
 // Páginas del dashboard
@@ -127,7 +128,7 @@ function App() {
   const isDev = env === 'dev';
 
   useEffect(() => {
-    document.title = isDev ? 'DEV Academic Prog.' : 'Academic Program';
+    document.title = isDev ? 'DEV Academic Prog' : 'Academic Program';
   }, [isDev]);
 
   const wrapperStyle: React.CSSProperties | undefined =
@@ -157,6 +158,7 @@ function App() {
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
             {/* Ruta raíz redirige a dashboard o login */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
