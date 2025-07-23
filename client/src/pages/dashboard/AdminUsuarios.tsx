@@ -545,25 +545,27 @@ const AdminUsuarios: React.FC = () => {
                       <DeleteIcon />
                     </IconButton>
                     {user?.rol === "administrador" && (
-                      <IconButton
+                      <Button
+                        variant="outlined"
                         color="secondary"
                         onClick={() => handleOpenPasswordDialog(usuario)}
                         size="small"
-                        title="Cambiar contraseña"
+                        startIcon={<VpnKeyIcon />}
+                        sx={{ mr: 1 }}
                       >
-                        <VpnKeyIcon />
-                      </IconButton>
+                        Cambiar contraseña
+                      </Button>
                     )}
-                    {usuario.rol === "residente" && (
-                      <IconButton
-                        color="warning"
-                        onClick={() => handleCrearProgreso(usuario._id)}
-                        size="small"
-                        title="Crear Progreso Formativo"
-                      >
-                        ⚙️
-                      </IconButton>
-                    )}
+                    {['residente', 'alumno'].includes(usuario.rol) &&
+                      !usuario.tieneProgreso && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleCrearProgreso(usuario._id)}
+                          size="small"
+                        >
+                          Crear progreso
+                        </Button>
+                      )}
                   </TableCell>
                 </TableRow>
               ))}

@@ -43,10 +43,21 @@ exports.getUsers = async (req, res, next) => {
       return next(new ErrorResponse('No autorizado para ver usuarios', 403));
     }
 
+    const usersWithFlag = await Promise.all(
+      users.map(async (u) => {
+        const obj = u.toObject();
+        if (u.rol === 'residente' || u.rol === 'alumno') {
+          const existe = await ProgresoResidente.exists({ residente: u._id });
+          obj.tieneProgreso = !!existe;
+        }
+        return obj;
+      })
+    );
+
     res.status(200).json({
       success: true,
-      count: users.length,
-      data: users
+      count: usersWithFlag.length,
+      data: usersWithFlag
     });
   } catch (err) {
     next(err);
