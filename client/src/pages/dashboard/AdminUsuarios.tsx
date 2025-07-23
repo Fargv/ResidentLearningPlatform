@@ -491,7 +491,6 @@ const AdminUsuarios: React.FC = () => {
                 <TableCell>Rol</TableCell>
                 <TableCell>Hospital</TableCell>
                 <TableCell>Zona</TableCell>
-                <TableCell>Estado</TableCell>
                 <TableCell align="right">Acciones</TableCell>
               </TableRow>
             </TableHead>
@@ -522,28 +521,27 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
                   <TableCell>{usuario.zona || '-'}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={usuario.activo ? "Activo" : "Inactivo"}
-                      color={usuario.activo ? "success" : "error"}
-                      size="small"
-                    />
-                  </TableCell>
                   <TableCell align="right">
-                    <IconButton
+                    <Button
+                      variant="outlined"
                       color="primary"
                       onClick={() => handleOpenEditarDialog(usuario)}
                       size="small"
+                      startIcon={<EditIcon />}
+                      sx={{ mr: 1 }}
                     >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
+                      Editar
+                    </Button>
+                    <Button
+                      variant="outlined"
                       color="error"
                       onClick={() => handleOpenEliminarDialog(usuario)}
                       size="small"
+                      startIcon={<DeleteIcon />}
+                      sx={{ mr: 1 }}
                     >
-                      <DeleteIcon />
-                    </IconButton>
+                      Eliminar
+                    </Button>
                     {user?.rol === "administrador" && (
                       <Button
                         variant="outlined"
