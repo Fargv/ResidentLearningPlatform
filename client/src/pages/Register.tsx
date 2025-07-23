@@ -31,6 +31,15 @@ interface Sociedad {
 }
 
 const Register: React.FC = () => {
+  const zonaOptions = [
+    'NORDESTE',
+    'NORTE',
+    'CENTRO',
+    'ANDALUCÍA',
+    'PORTUGAL',
+    'LEVANTE',
+    'CANARIAS'
+  ];
   const [formData, setFormData] = useState({
     nombre: '',
     apellidos: '',
@@ -91,7 +100,12 @@ const Register: React.FC = () => {
       try {
         const res = await api.get(`/auth/codigos/${codigoAcceso}`);
         const { rol: rolResp, tipo: tipoResp } = res.data.data;
-        setFormData((prev) => ({ ...prev, rol: rolResp, tipo: tipoResp }));
+        setFormData((prev) => ({
+          ...prev,
+          rol: rolResp,
+          tipo: tipoResp,
+          ...(rolResp === 'coordinador' && { hospital: '', sociedad: '' })
+        }));
         setCodigoError(null);
         setShowForm(true);
       } catch (err) {
@@ -168,7 +182,7 @@ const Register: React.FC = () => {
       return setCodigoError('Hospital y especialidad requeridos');
     }
 
-    if ((rol === 'formador' || rol === 'coordinador') && !hospital) {
+    if (rol === 'formador' && !hospital) {
       return setCodigoError('Hospital requerido');
     }
 
@@ -202,8 +216,7 @@ const Register: React.FC = () => {
     }
   };
 
-  const hospitalRequired =
-    rol === 'residente' || rol === 'formador' || rol === 'coordinador';
+  const hospitalRequired = rol === 'residente' || rol === 'formador';
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'background.default', py: 4 }}>
@@ -227,7 +240,7 @@ const Register: React.FC = () => {
                 <TextField margin="normal" fullWidth label="Confirmar Contraseña" name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
                 {passwordError && <Alert severity="warning">{passwordError}</Alert>}
 
-                {(rol === 'residente' || rol === 'formador' || rol === 'coordinador' || rol === 'alumno' || rol === 'instructor') && (
+                {(rol === 'residente' || rol === 'formador' || rol === 'alumno' || rol === 'instructor') && (
                   <FormControl fullWidth margin="normal" required={hospitalRequired} disabled={loading}>
                     <InputLabel id="hospital-label">Hospital</InputLabel>
                     <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label="Hospital" onChange={onSelectHospital}>
@@ -239,7 +252,16 @@ const Register: React.FC = () => {
                 )}
 
                 {rol === 'coordinador' && (
-                  <TextField margin="normal" fullWidth label="Zona" name="zona" value={zona} disabled />
+                  <FormControl fullWidth margin="normal" required disabled={loading}>
+                    <InputLabel id="zona-label">Zona</InputLabel>
+                    <Select labelId="zona-label" id="zona" name="zona" value={zona} label="Zona" onChange={(e) => onChange(e as any)}>
+                      {zonaOptions.map((z) => (
+                        <MenuItem key={z} value={z}>
+                          {z}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
 
                 {rol === 'residente' && (
