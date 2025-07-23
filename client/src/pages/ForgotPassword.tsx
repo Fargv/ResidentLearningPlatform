@@ -7,8 +7,8 @@ const ForgotPassword: React.FC = () => {
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const adminUrl =
     env === 'dev'
-      ? 'http://localhost:3000/dashboard/usuarios'
-      : 'https://residentlearningplatform.netlify.app/dashboard/usuarios';
+      ? 'https://residentlearningplatform.netlify.app/dashboard/usuarios'
+      : 'https://academicprogramdavinci.netlify.app/dashboard/usuarios';
   const mailtoLink =
     `mailto:fernando.acedorico@abexsl.es` +
     `?subject=${encodeURIComponent('Solicitud de reseteo de contraseña')}` +
