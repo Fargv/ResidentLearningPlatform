@@ -127,7 +127,7 @@ function App() {
   const isDev = env === 'dev';
 
   useEffect(() => {
-    document.title = isDev ? 'Academic Prog Dev' : 'Academic Prog Main';
+    document.title = isDev ? 'DEV Academic Prog.' : 'Academic Program';
   }, [isDev]);
 
   const wrapperStyle: React.CSSProperties | undefined =
