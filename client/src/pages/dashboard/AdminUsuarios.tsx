@@ -17,7 +17,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
   Chip,
   LinearProgress,
   Alert,
@@ -491,7 +490,6 @@ const AdminUsuarios: React.FC = () => {
                 <TableCell>Rol</TableCell>
                 <TableCell>Hospital</TableCell>
                 <TableCell>Zona</TableCell>
-                <TableCell>Estado</TableCell>
                 <TableCell align="right">Acciones</TableCell>
               </TableRow>
             </TableHead>
@@ -522,48 +520,50 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
                   <TableCell>{usuario.zona || '-'}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={usuario.activo ? "Activo" : "Inactivo"}
-                      color={usuario.activo ? "success" : "error"}
-                      size="small"
-                    />
-                  </TableCell>
                   <TableCell align="right">
-                    <IconButton
+                    <Button
+                      variant="outlined"
                       color="primary"
                       onClick={() => handleOpenEditarDialog(usuario)}
                       size="small"
+                      startIcon={<EditIcon />}
+                      sx={{ mr: 1, minWidth: 150 }}
                     >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
+                      Editar
+                    </Button>
+                    <Button
+                      variant="outlined"
                       color="error"
                       onClick={() => handleOpenEliminarDialog(usuario)}
                       size="small"
+                      startIcon={<DeleteIcon />}
+                      sx={{ mr: 1, minWidth: 150 }}
                     >
-                      <DeleteIcon />
-                    </IconButton>
+                      Eliminar
+                    </Button>
                     {user?.rol === "administrador" && (
-                      <IconButton
+                      <Button
+                        variant="outlined"
                         color="secondary"
                         onClick={() => handleOpenPasswordDialog(usuario)}
                         size="small"
-                        title="Cambiar contraseña"
+                        startIcon={<VpnKeyIcon />}
+                        sx={{ mr: 1, minWidth: 150 }}
                       >
-                        <VpnKeyIcon />
-                      </IconButton>
+                        Cambiar contraseña
+                      </Button>
                     )}
-                    {usuario.rol === "residente" && (
-                      <IconButton
-                        color="warning"
-                        onClick={() => handleCrearProgreso(usuario._id)}
-                        size="small"
-                        title="Crear Progreso Formativo"
-                      >
-                        ⚙️
-                      </IconButton>
-                    )}
+                    {['residente', 'alumno'].includes(usuario.rol) &&
+                      !usuario.tieneProgreso && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleCrearProgreso(usuario._id)}
+                          size="small"
+                          sx={{ mr: 1, minWidth: 150 }}
+                        >
+                          Crear progreso
+                        </Button>
+                      )}
                   </TableCell>
                 </TableRow>
               ))}
