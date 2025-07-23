@@ -23,13 +23,20 @@ exports.getUsers = async (req, res, next) => {
     if (req.user.rol === 'administrador') {
       users = await User.find().populate('hospital').populate('sociedad');
     } else if (req.user.rol === 'formador') {
-      users = await User.find({ hospital: req.user.hospital })
+      users = await User.find({
+        hospital: req.user.hospital,
+        rol: { $ne: 'administrador' }
+      })
         .populate('hospital')
         .populate('sociedad');
     } else if (req.user.rol === 'coordinador') {
       const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
       const ids = hospitales.map(h => h._id);
-      users = await User.find({ hospital: { $in: ids } })
+      users = await User.find({
+        hospital: { $in: ids },
+        rol: { $in: ['residente', 'formador'] },
+        tipo: 'Programa Residentes'
+      })
         .populate('hospital')
         .populate('sociedad');
     } else {
@@ -606,7 +613,14 @@ exports.getUsersByHospital = async (req, res) => {
       }
     }
 
-    const users = await User.find({ hospital: hospitalId })
+    let query = { hospital: hospitalId };
+    if (req.user.rol === 'formador') {
+      query.rol = { $ne: 'administrador' };
+    } else if (req.user.rol === 'coordinador') {
+      query.rol = { $in: ['residente', 'formador'] };
+    }
+
+    const users = await User.find(query)
       .populate('hospital')
       .populate('sociedad');
 
