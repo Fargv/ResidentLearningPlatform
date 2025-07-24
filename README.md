@@ -232,6 +232,7 @@ curl -X POST http://localhost:5000/api/access-codes \
 ```
 
 ## Gestión de usuarios
+Los administradores cuentan con un formulario de invitaciones desde el que pueden seleccionar un rol y escribir varias direcciones de correo electrónico. Al enviar el formulario se abre el cliente de correo predeterminado del dispositivo con un mensaje que incluye el código de acceso y el enlace de registro para dicho rol. Los campos de correo en blanco se ignoran y todas las invitaciones se envían para un único rol cada vez.
 
 ### Endpoints `/api/users`
 

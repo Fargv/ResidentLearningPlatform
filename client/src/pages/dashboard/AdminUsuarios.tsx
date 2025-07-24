@@ -33,6 +33,7 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import api, { createUser, updateUserPassword } from "../../api";
+import InviteUsersMail from "../../components/InviteUsersMail";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -118,17 +119,6 @@ const AdminUsuarios: React.FC = () => {
   }, []);
 
   const handleOpenInvitarDialog = () => {
-    setFormData({
-      email: "",
-      nombre: "",
-      apellidos: "",
-      rol: "residente",
-      hospital: hospitales.length > 0 ? hospitales[0]._id : "",
-      especialidad: "",
-      tipo: "Programa Residentes",
-      sociedad: sociedades.length > 0 ? sociedades[0]._id : "",
-      zona: "",
-    });
     setOpenInvitarDialog(true);
   };
 
@@ -239,35 +229,6 @@ const AdminUsuarios: React.FC = () => {
       updated.zona = selected?.zona || "";
     }
     setFormData(updated);
-  };
-
-  const handleInvitar = async () => {
-    try {
-      setProcesando(true);
-
-      const res = await api.post("/users/invite", formData);
-
-      // Actualizar lista de usuarios
-      setUsuariosLista([...usuarios, res.data.data]);
-
-      handleCloseInvitarDialog();
-
-      setSnackbar({
-        open: true,
-        message: "Invitación enviada correctamente",
-        severity: "success",
-      });
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Error al enviar la invitación");
-
-      setSnackbar({
-        open: true,
-        message: err.response?.data?.error || "Error al enviar la invitación",
-        severity: "error",
-      });
-    } finally {
-      setProcesando(false);
-    }
   };
 
   const handleCrear = async () => {
@@ -574,208 +535,10 @@ const AdminUsuarios: React.FC = () => {
 
 
       {/* Diálogo para invitar usuario */}
-      <Dialog open={openInvitarDialog} onClose={handleCloseInvitarDialog}>
-        <DialogTitle>Invitar Usuario</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Introduce los datos del usuario que deseas invitar. Se enviará un
-            correo electrónico con un enlace para completar el registro.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            fullWidth
-            variant="outlined"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            id="nombre"
-            name="nombre"
-            label="Nombre"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.nombre}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            id="apellidos"
-            name="apellidos"
-            label="Apellidos"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.apellidos}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          {formData.rol !== "administrador" && (
-            <TextField
-              select
-              margin="dense"
-              id="tipo"
-              name="tipo"
-              label="Tipo"
-              fullWidth
-              variant="outlined"
-              value={formData.tipo}
-              onChange={handleChange}
-              required
-              sx={{ mb: 2 }}
-              SelectProps={{ native: true }}
-            >
-              <option value="Programa Residentes">Programa Residentes</option>
-              <option value="Programa Sociedades">Programa Sociedades</option>
-            </TextField>
-          )}
-          <TextField
-            select
-            margin="dense"
-            id="rol"
-            name="rol"
-            label="Rol"
-            fullWidth
-            variant="outlined"
-            value={formData.rol}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-            SelectProps={{ native: true }}
-          >
-            {roleOptions.map((r) => (
-              <option key={r} value={r}>
-                {r.charAt(0).toUpperCase() + r.slice(1)}
-              </option>
-            ))}
-          </TextField>
-          {formData.rol !== "administrador" &&
-            formData.rol !== "coordinador" &&
-            (formData.rol === "residente" || formData.rol === "formador") && (
-              <TextField
-                select
-                margin="dense"
-                id="hospital"
-                name="hospital"
-                label="Hospital"
-                fullWidth
-                variant="outlined"
-                value={formData.hospital}
-                onChange={handleChange}
-                required
-                SelectProps={{
-                  native: true,
-                }}
-              >
-                {hospitales.map((hospital) => (
-                  <option key={hospital._id} value={hospital._id}>
-                    {hospital.nombre}
-                  </option>
-                ))}
-              </TextField>
-            )}
-          {formData.rol !== "administrador" &&
-            formData.rol !== "coordinador" &&
-            formData.tipo === "Programa Sociedades" && (
-              <TextField
-                select
-                margin="dense"
-                id="sociedad"
-                name="sociedad"
-                label="Sociedad"
-                fullWidth
-                variant="outlined"
-                value={formData.sociedad}
-                onChange={handleChange}
-                SelectProps={{ native: true }}
-                sx={{ mb: 2 }}
-              >
-                {sociedades.map((s) => (
-                  <option key={s._id} value={s._id}>
-                    {s.titulo}
-                  </option>
-                ))}
-              </TextField>
-            )}
-          {formData.rol !== "administrador" &&
-            formData.rol === "coordinador" && (
-              <TextField
-                select
-                margin="dense"
-                id="zona"
-                name="zona"
-                label="Zona"
-                fullWidth
-                variant="outlined"
-                value={formData.zona}
-                onChange={handleChange}
-                required
-                SelectProps={{ native: true }}
-                sx={{ mb: 2 }}
-              >
-                {zonaOptions.map((z) => (
-                  <option key={z} value={z}>
-                    {z}
-                  </option>
-                ))}
-              </TextField>
-            )}
-          {formData.rol !== "administrador" &&
-            formData.rol !== "coordinador" && (
-              <TextField
-                select
-                margin="dense"
-                id="sociedad"
-                name="sociedad"
-                label="Sociedad"
-                fullWidth
-                variant="outlined"
-                value={formData.sociedad}
-                onChange={handleChange}
-                SelectProps={{ native: true }}
-                sx={{ mb: 2 }}
-              >
-                {sociedades.map((s) => (
-                  <option key={s._id} value={s._id}>
-                    {s.titulo}
-                  </option>
-                ))}
-              </TextField>
-            )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseInvitarDialog} color="primary">
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleInvitar}
-            color="primary"
-            variant="contained"
-            disabled={
-              procesando ||
-              !formData.email ||
-              !formData.nombre ||
-              !formData.apellidos ||
-              ((formData.rol === "residente" || formData.rol === "formador") &&
-                !formData.hospital) ||
-              (formData.rol === "coordinador" && !formData.zona)
-            }
-          >
-            {procesando ? "Enviando..." : "Enviar Invitación"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <InviteUsersMail
+        open={openInvitarDialog}
+        onClose={handleCloseInvitarDialog}
+      />
 
       {/* Diálogo para actualizar contraseña */}
       <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
