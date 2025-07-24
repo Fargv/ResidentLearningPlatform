@@ -70,23 +70,44 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({ open, onClose }) => {
   };
 
   const handleSend = () => {
-    const bcc = emails.filter((e) => e.trim()).join(',');
-    if (!bcc || !role || !code) {
-      return;
-    }
-    const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
-    const registerUrl =
-      env === 'dev'
-        ? 'https://residentlearningplatform.netlify.app/register'
-        : 'https://academicprogramdavinci.netlify.app/register';
-    const body = `Te has sido invitado como ${role} en la plataforma.\n\nCódigo de acceso: ${code}\nRegistro: ${registerUrl}`;
-    const mailtoLink =
-      `mailto:?bcc=${encodeURIComponent(bcc)}` +
-      `&subject=${encodeURIComponent('Invitación plataforma')}` +
-      `&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
-    onClose();
-  };
+  const bcc = emails.filter((e) => e.trim()).join(',');
+  if (!bcc || !role || !code) return;
+
+  const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
+  const registerUrl =
+    env === 'dev'
+      ? 'https://residentlearningplatform.netlify.app/register'
+      : 'https://academicprogramdavinci.netlify.app/register';
+
+  const htmlBody = `
+  <html>
+    <body style="font-family: Arial, sans-serif; color: #1E5B94;">
+      <h2 style="color:#1E5B94;">Bienvenido/a a la Plataforma de Formación Da Vinci</h2>
+      <p>Has sido invitado/a a unirte como <strong style="color:#6AB023">${role}</strong> a nuestra plataforma de formación en cirugía robótica.</p>
+      <p>Tu código de acceso es:</p>
+      <p style="font-size:18px; font-weight:bold; color:#6AB023; background-color:#f4f4f4; padding:10px; border-left:4px solid #1E5B94;">
+        ${code}
+      </p>
+      <p>Puedes registrarte directamente en el siguiente enlace:</p>
+      <p>
+        <a href="${registerUrl}" style="display:inline-block; background-color:#1E5B94; color:#ffffff; padding:10px 20px; text-decoration:none; border-radius:5px;">
+          Ir al Registro
+        </a>
+      </p>
+      <p style="margin-top:30px; font-size:12px; color:#888;">© Abex Excelencia Robótica - Plataforma de Formación Da Vinci</p>
+    </body>
+  </html>
+  `;
+
+  const mailtoLink =
+    `mailto:?bcc=${encodeURIComponent(bcc)}` +
+    `&subject=${encodeURIComponent('Invitación a la Plataforma de Formación Da Vinci')}` +
+    `&body=${encodeURIComponent(htmlBody)}`;
+
+  window.location.href = mailtoLink;
+  onClose();
+};
+
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
