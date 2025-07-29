@@ -46,5 +46,21 @@ test('clicking milestone opens dialog', async () => {
   expect(await screen.findByRole('dialog')).toBeInTheDocument();
 });
 
+test('no progress fetch for admin resident program user', async () => {
+  mockedUseAuth.mockReturnValue({
+    user: {
+      _id: 'admin1',
+      nombre: 'Admin',
+      rol: 'administrador',
+      tipo: 'Programa Residentes'
+    }
+  } as any);
+
+  render(<DashboardHome />);
+
+  expect(mockedGet).not.toHaveBeenCalledWith(
+    expect.stringContaining('/progreso/residente')
+  );
+});
 
 

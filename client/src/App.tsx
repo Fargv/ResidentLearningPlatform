@@ -29,7 +29,6 @@ import AdminFases from './pages/dashboard/AdminFases';
 import AdminValidaciones from './pages/dashboard/AdminValidaciones';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
-import DebugDashboard from './pages/DebugDashboard';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
 
 // Tema personalizado con colores de Abex e Intuitive
@@ -217,9 +216,6 @@ function App() {
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
               <Route path="notificaciones" element={<Notificaciones />} />
-
-              {/* Ruta de depuración */}
-              <Route path="debug" element={<DebugDashboard />} />
             </Route>
 
             {/* Ruta 404 */}

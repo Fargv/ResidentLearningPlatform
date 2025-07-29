@@ -4,8 +4,7 @@
     "password": "12345678",
     "nombre": "Admin",
     "apellidos": "Ejemplo",
-    "rol": "administrador",
-    "tipo": "Programa Residentes"
+    "rol": "administrador"
   },
   {
     "email": "formador@example.com",

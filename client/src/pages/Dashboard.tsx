@@ -63,6 +63,8 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
+  const isDev = env === 'dev';
 
   const refreshUnreadCount = async () => {
     try {
@@ -130,7 +132,7 @@ const Dashboard: React.FC = () => {
         { text: 'Programa Residentes', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
         { text: 'Programa Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
         { text: 'Access Codes', icon: <SettingsIcon />, path: '/dashboard/access-codes', roles: ['administrador'] },
-        { text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }
+        ...(isDev ? [{ text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }] : [])
       );
     }
   
@@ -288,7 +290,7 @@ const Dashboard: React.FC = () => {
   ) : null}
   <Route path="/perfil" element={<Perfil />} />
   <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
-  <Route path="/debug" element={<DebugDashboard />} />
+  {isDev && <Route path="/debug" element={<DebugDashboard />} />}
 </Routes>
 
       </Box>
