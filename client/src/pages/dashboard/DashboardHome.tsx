@@ -24,7 +24,8 @@ import {
   Settings as SettingsIcon,
   BugReport as BugReportIcon,
   Person as PersonIcon,
-  Notifications as NotificationsIcon
+  Notifications as NotificationsIcon,
+  BarChart as BarChartIcon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -302,6 +303,11 @@ const DashboardHome: React.FC = () => {
         label: "Programa Sociedades",
         path: "/dashboard/fases-soc",
         icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+      },
+      {
+        label: "Informes",
+        path: "/dashboard/informes",
+        icon: <BarChartIcon sx={{ fontSize: 40 }} />,
       },
       {
         label: "Códigos de acceso",

@@ -9,6 +9,7 @@ Este proyecto implementa una plataforma web completa para llevar el seguimiento 
 - Validación de actividades por parte de los formadores
 - Panel de administración para gestionar usuarios, hospitales, fases y actividades
 - Los administradores pueden revisar el progreso de los usuarios desde `/dashboard/validaciones-admin`
+- También disponen de un apartado de informes globales en `/dashboard/informes`
 - Diseño moderno y responsive con la identidad visual de Abex Excelencia Robótica e Intuitive Surgical
 
 ## Estructura del proyecto
