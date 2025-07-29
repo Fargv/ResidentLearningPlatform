@@ -299,9 +299,14 @@ const DashboardHome: React.FC = () => {
         path: "/dashboard/fases",
         icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
       },
-      {
+     {
         label: "Programa Sociedades",
         path: "/dashboard/fases-soc",
+        icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+      },
+      {
+        label: "Progreso Usuarios",
+        path: "/dashboard/progreso-usuarios",
         icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
       },
       {

@@ -49,6 +49,9 @@ import AdminFases from './dashboard/AdminFases';
 import AdminFasesSoc from './dashboard/AdminFasesSoc';
 import AdminSociedades from './dashboard/AdminSociedades';
 import AdminInformes from './dashboard/AdminInformes';
+import AdminInformeUsuario from './dashboard/AdminInformeUsuario';
+import AdminProgresoUsuarios from './dashboard/AdminProgresoUsuarios';
+import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
 import DebugDashboard from './DebugDashboard';
@@ -133,6 +136,7 @@ const Dashboard: React.FC = () => {
         { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
         { text: 'Programa Residentes', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
         { text: 'Programa Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
+        { text: 'Progreso Usuarios', icon: <AssignmentIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
         { text: 'Informes', icon: <BarChartIcon />, path: '/dashboard/informes', roles: ['administrador'] },
         { text: 'Access Codes', icon: <SettingsIcon />, path: '/dashboard/access-codes', roles: ['administrador'] },
         ...(isDev ? [{ text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }] : [])
@@ -288,7 +292,16 @@ const Dashboard: React.FC = () => {
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
   )}
   {user?.rol === 'administrador' && (
-    <Route path="/informes" element={<AdminInformes />} />
+    <Route path="/progreso-usuarios" element={<AdminProgresoUsuarios />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <>
+      <Route path="/informes" element={<AdminInformes />} />
+      <Route path="/informes/:id" element={<AdminInformeUsuario />} />
+    </>
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
   {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (
