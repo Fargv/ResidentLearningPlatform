@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import AdminInformes from '../AdminInformes';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../../api');
 
@@ -13,11 +14,12 @@ beforeEach(() => {
     data: {
       data: [
         {
-          _id: 'p1',
-          residente: { nombre: 'Test', apellidos: 'User', hospital: { nombre: 'H1' } },
-          fase: { nombre: 'F1' },
-          estadoGeneral: 'en progreso',
-          actividades: [{ estado: 'pendiente' }]
+          _id: 'u1',
+          nombre: 'Test',
+          apellidos: 'User',
+          email: 'test@example.com',
+          tipo: 'Programa Residentes',
+          hospital: { nombre: 'H1' }
         }
       ]
     }
@@ -29,6 +31,10 @@ afterEach(() => {
 });
 
 it('carga y muestra los informes', async () => {
-  render(<AdminInformes />);
+  render(
+    <MemoryRouter>
+      <AdminInformes />
+    </MemoryRouter>
+  );
   expect(await screen.findByText(/Test User/)).toBeInTheDocument();
 });

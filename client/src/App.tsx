@@ -30,6 +30,8 @@ import AdminValidaciones from './pages/dashboard/AdminValidaciones';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
+import AdminProgresoUsuarios from './pages/dashboard/AdminProgresoUsuarios';
+import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
 
 // Tema personalizado con colores de Abex e Intuitive
 const theme = createTheme({
@@ -201,9 +203,19 @@ function App() {
                   <AdminFases />
                 </AdminRoute>
               } />
-              <Route path="validaciones-admin" element={
+             <Route path="validaciones-admin" element={
                 <AdminRoute>
                   <AdminValidaciones />
+                </AdminRoute>
+              } />
+              <Route path="progreso-usuarios" element={
+                <AdminRoute>
+                  <AdminProgresoUsuarios />
+                </AdminRoute>
+              } />
+              <Route path="progreso-usuario/:userId" element={
+                <AdminRoute>
+                  <AdminProgresoDetalle />
                 </AdminRoute>
               } />
               <Route path="sociedades" element={

@@ -1,49 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Alert,
-  CircularProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 
-interface Usuario {
+interface User {
   _id: string;
   nombre: string;
   apellidos: string;
   email: string;
-  tipo?: string;
+  rol: string;
   hospital?: { nombre: string } | null;
   sociedad?: { titulo: string } | null;
 }
 
-const AdminInformes: React.FC = () => {
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+const AdminProgresoUsuarios: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUsers = async () => {
       try {
         const res = await api.get('/users');
-        setUsuarios(res.data.data || []);
+        setUsers(res.data.data || res.data);
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Error al cargar los informes');
+        setError(err.response?.data?.error || 'Error al cargar usuarios');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchUsers();
   }, []);
 
   if (loading) {
@@ -58,31 +46,31 @@ const AdminInformes: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography variant="h4" gutterBottom>
         Progreso de Usuarios
       </Typography>
       <TableContainer component={Paper}>
-        <Table size="small" stickyHeader aria-label="tabla de usuarios">
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Nombre</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Programa</TableCell>
               <TableCell>Hospital/Sociedad</TableCell>
+              <TableCell>Rol</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {usuarios.map((u) => (
+            {users.map((u) => (
               <TableRow
                 key={u._id}
                 hover
                 sx={{ cursor: 'pointer' }}
-                onClick={() => navigate(`/dashboard/informes/${u._id}`)}
+                onClick={() => navigate(`/dashboard/progreso-usuario/${u._id}`)}
               >
                 <TableCell>{u.nombre} {u.apellidos}</TableCell>
                 <TableCell>{u.email}</TableCell>
-                <TableCell>{u.tipo || '-'}</TableCell>
                 <TableCell>{u.hospital?.nombre || u.sociedad?.titulo || '-'}</TableCell>
+                <TableCell>{u.rol}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -92,4 +80,4 @@ const AdminInformes: React.FC = () => {
   );
 };
 
-export default AdminInformes;
+export default AdminProgresoUsuarios;
