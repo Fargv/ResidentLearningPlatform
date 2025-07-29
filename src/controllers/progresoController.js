@@ -7,6 +7,7 @@ const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const Fase = require('../models/Fase');
 const { createAuditLog } = require('../utils/auditLog');
+const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 const { inicializarProgresoFormativo: inicializarProgresoFormativoDB } = require('../utils/initProgreso');
 
@@ -15,20 +16,20 @@ const updatePhaseStatus = async (progreso) => {
 
   const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
   if (!todasValidadas) {
-    console.log(`⏳ No todas las actividades están validadas aún en fase "${progreso.fase.nombre}" para ${progreso.residente.email}`);
+    logger.info(`⏳ No todas las actividades están validadas aún en fase "${progreso.fase.nombre}" para ${progreso.residente.email}`);
     return;
   }
 
   if (progreso.estadoGeneral !== 'validado') {
     progreso.estadoGeneral = 'validado';
     await progreso.save();
-    console.log(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
+    logger.info(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
   }
 
   const ModeloFase = mongoose.model(progreso.faseModel || 'Fase');
   const nextFase = await ModeloFase.findOne({ orden: progreso.fase.orden + 1 });
   if (!nextFase) {
-    console.log(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
+    logger.info(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
     return;
   }
 
@@ -40,12 +41,11 @@ const updatePhaseStatus = async (progreso) => {
   if (nextProgreso && nextProgreso.estadoGeneral === 'bloqueada') {
     nextProgreso.estadoGeneral = 'en progreso';
     await nextProgreso.save();
-    console.log(`🚀 Fase "${nextFase.nombre}" DESBLOQUEADA para ${progreso.residente.email}`);
+    logger.info(`🚀 Fase "${nextFase.nombre}" DESBLOQUEADA para ${progreso.residente.email}`);
   } else {
-    console.log(`ℹ️ Fase "${nextFase.nombre}" ya estaba desbloqueada o no encontrada`);
+    logger.info(`ℹ️ Fase "${nextFase.nombre}" ya estaba desbloqueada o no encontrada`);
   }
 };
-
 
 
 
@@ -84,13 +84,16 @@ const getAllProgreso = async (req, res, next) => {
         select: 'nombre apellidos email hospital',
         populate: { path: 'hospital', select: 'nombre' }
       })
-      .populate('fase')
-      .populate('actividades.actividad');
+     .populate('fase')
+      .populate('actividades.actividad')
+      .lean();
+
+    const filtered = progreso.filter(p => p.residente);
 
     res.status(200).json({
       success: true,
-      count: progreso.length,
-      data: progreso
+      count: filtered.length,
+      data: filtered
     });
   } catch (err) {
     next(err);
@@ -195,13 +198,16 @@ const getProgresoResidentePorFase = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
-      .populate('fase')
-      .populate('actividades.actividad');
+     .populate('fase')
+      .populate('actividades.actividad')
+      .lean();
+
+    const filtered = progreso.filter(p => p.residente);
 
     res.status(200).json({
       success: true,
-      count: progreso.length,
-      data: progreso
+      count: filtered.length,
+      data: filtered
     });
   } catch (err) {
     next(err);

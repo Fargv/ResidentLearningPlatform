@@ -258,7 +258,7 @@ const handleRechazar = async () => {
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || 'Sin nombre'}</TableCell>
                       <TableCell>
-                        {progreso.residente.nombre} {progreso.residente.apellidos}
+                        {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
                       </TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
