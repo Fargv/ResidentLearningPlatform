@@ -206,7 +206,15 @@ const DashboardHome: React.FC = () => {
 
   useEffect(() => {
     const loadProgress = async () => {
-      if (user?.tipo !== "Programa Residentes" || !user?._id) return;
+      if (
+        user?.tipo !== "Programa Residentes" ||
+        !user?._id ||
+        !["residente", "formador", "coordinador", "instructor", "alumno"].includes(
+          user.rol,
+        )
+      ) {
+        return;
+      }
       try {
         setProgressLoading(true);
         const res = await api.get(`/progreso/residente/${user._id}`);
