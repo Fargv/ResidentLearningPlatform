@@ -24,6 +24,7 @@ import {
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import api from '../../api';
 import { SelectChangeEvent } from '@mui/material/Select';
+import BackButton from '../../components/BackButton';
 
 interface AccessCode {
   _id?: string;
@@ -119,9 +120,12 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         <Typography variant="h4" gutterBottom>
           Códigos de Acceso
         </Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpen()}>
-          Nuevo Código
-        </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <BackButton sx={{ mr: 1 }} />
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpen()}>
+            Nuevo Código
+          </Button>
+        </Box>
       </Box>
       {error && (
         <Typography color="error" sx={{ mb: 2 }}>
@@ -129,7 +133,7 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         </Typography>
       )}
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
