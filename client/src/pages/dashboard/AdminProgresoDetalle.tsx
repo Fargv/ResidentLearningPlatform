@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
   Alert,
+  Snackbar,
+  Button,
   List,
   ListItem,
   ListItemText,
@@ -41,20 +43,36 @@ interface ProgresoFase {
   actividades: Actividad[];
 }
 
+interface UserInfo {
+  nombre: string;
+  apellidos: string;
+}
+
 const AdminProgresoDetalle: React.FC = () => {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.rol === 'administrador';
   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'error' as 'error' | 'success'
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get(`/progreso/residente/${userId}`);
-        setProgresos(res.data.data || []);
+        const [userRes, progRes] = await Promise.all([
+          api.get(`/users/${userId}`),
+          api.get(`/progreso/residente/${userId}`)
+        ]);
+        setUserInfo(userRes.data.data || userRes.data);
+        setProgresos(progRes.data.data || progRes.data || []);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar el progreso');
       } finally {
@@ -63,6 +81,10 @@ const AdminProgresoDetalle: React.FC = () => {
     };
     fetchData();
   }, [userId]);
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handlePhaseStatusChange = async (
     progresoId: string,
@@ -78,10 +100,11 @@ const AdminProgresoDetalle: React.FC = () => {
       setProgresos((prev) =>
         prev.map((p) => (p._id === updated._id ? updated : p))
       );
+      setSnackbar({ open: true, message: 'Fase actualizada correctamente', severity: 'success' });
     } catch (err: any) {
-      setApiError(
-        err.response?.data?.error || 'Error al actualizar la fase'
-      );
+      const message = err.response?.data?.error || 'Error al actualizar la fase';
+      setApiError(message);
+      setSnackbar({ open: true, message, severity: 'error' });
     }
   };
 
@@ -101,10 +124,11 @@ const AdminProgresoDetalle: React.FC = () => {
       setProgresos((prev) =>
         prev.map((p) => (p._id === updated._id ? updated : p))
       );
+      setSnackbar({ open: true, message: 'Actividad actualizada correctamente', severity: 'success' });
     } catch (err: any) {
-      setApiError(
-        err.response?.data?.error || 'Error al actualizar actividad'
-      );
+      const message = err.response?.data?.error || 'Error al actualizar actividad';
+      setApiError(message);
+      setSnackbar({ open: true, message, severity: 'error' });
     }
   };
 
@@ -120,9 +144,28 @@ const AdminProgresoDetalle: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
-        Progreso del Usuario
-      </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h4" gutterBottom>
+          {userInfo
+            ? `Progreso de ${userInfo.nombre} ${userInfo.apellidos}`
+            : 'Progreso del Usuario'}
+        </Typography>
+        <Button variant="contained" onClick={() => navigate('/dashboard/progreso-usuarios')}>
+          Atrás
+        </Button>
+      </Box>
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
       {apiError && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {apiError}
@@ -162,10 +205,7 @@ const AdminProgresoDetalle: React.FC = () => {
                         value={item.estadoGeneral}
                         label="Estado fase"
                         onChange={(e) =>
-                          handlePhaseStatusChange(
-                            item._id,
-                            e.target.value as string
-                          )
+                          handlePhaseStatusChange(item._id, e.target.value as string)
                         }
                       >
                         <MenuItem value="bloqueada">Bloqueada</MenuItem>
@@ -217,11 +257,7 @@ const AdminProgresoDetalle: React.FC = () => {
                             value={act.estado}
                             label="Estado actividad"
                             onChange={(e) =>
-                              handleActivityStatusChange(
-                                item._id,
-                                idx,
-                                e.target.value as string
-                              )
+                              handleActivityStatusChange(item._id, idx, e.target.value as string)
                             }
                           >
                             <MenuItem value="pendiente">Pendiente</MenuItem>

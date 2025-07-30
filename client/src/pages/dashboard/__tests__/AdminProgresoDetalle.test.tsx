@@ -25,26 +25,46 @@ afterEach(() => {
 });
 
 it('muestra las fases del usuario', async () => {
-  mockedGet.mockResolvedValue({
-    data: { data: [{ _id: 'p1', fase: { numero: 1, nombre: 'F1' }, estadoGeneral: 'en progreso', actividades: [] }] }
-  });
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'p1',
+            fase: { numero: 1, nombre: 'F1' },
+            estadoGeneral: 'en progreso',
+            actividades: []
+          }
+        ]
+      }
+    })
+    .mockResolvedValueOnce({
+      data: { data: { nombre: 'A', apellidos: 'B' } }
+    });
+
   render(<AdminProgresoDetalle />);
+
+  expect(await screen.findByText('Progreso de A B')).toBeInTheDocument();
   expect(await screen.findByText(/Fase 1/)).toBeInTheDocument();
 });
 
 it('muestra controles para administradores', async () => {
-  mockedGet.mockResolvedValue({
-    data: {
-      data: [
-        {
-          _id: 'p1',
-          fase: { numero: 1, nombre: 'F1' },
-          estadoGeneral: 'en progreso',
-          actividades: [{ nombre: 'A1', estado: 'pendiente' }]
-        }
-      ]
-    }
-  });
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'p1',
+            fase: { numero: 1, nombre: 'F1' },
+            estadoGeneral: 'en progreso',
+            actividades: [{ nombre: 'A1', estado: 'pendiente' }]
+          }
+        ]
+      }
+    })
+    .mockResolvedValueOnce({
+      data: { data: { nombre: 'A', apellidos: 'B' } }
+    });
 
   render(<AdminProgresoDetalle />);
 
@@ -55,9 +75,22 @@ it('muestra controles para administradores', async () => {
 
 it('oculta controles para usuarios no administradores', async () => {
   mockedUseAuth.mockReturnValue({ user: { rol: 'residente' } } as any);
-  mockedGet.mockResolvedValue({
-    data: { data: [{ _id: 'p1', fase: { numero: 1, nombre: 'F1' }, estadoGeneral: 'en progreso', actividades: [] }] }
-  });
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'p1',
+            fase: { numero: 1, nombre: 'F1' },
+            estadoGeneral: 'en progreso',
+            actividades: []
+          }
+        ]
+      }
+    })
+    .mockResolvedValueOnce({
+      data: { data: { nombre: 'A', apellidos: 'B' } }
+    });
 
   render(<AdminProgresoDetalle />);
 
@@ -66,18 +99,22 @@ it('oculta controles para usuarios no administradores', async () => {
 });
 
 it('muestra mensaje de error si la actualización falla', async () => {
-  mockedGet.mockResolvedValue({
-    data: {
-      data: [
-        {
-          _id: 'p1',
-          fase: { numero: 1, nombre: 'F1' },
-          estadoGeneral: 'en progreso',
-          actividades: []
-        }
-      ]
-    }
-  });
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'p1',
+            fase: { numero: 1, nombre: 'F1' },
+            estadoGeneral: 'en progreso',
+            actividades: []
+          }
+        ]
+      }
+    })
+    .mockResolvedValueOnce({
+      data: { data: { nombre: 'A', apellidos: 'B' } }
+    });
 
   mockedPost.mockRejectedValue({ response: { data: { error: 'No permitido' } } });
 
