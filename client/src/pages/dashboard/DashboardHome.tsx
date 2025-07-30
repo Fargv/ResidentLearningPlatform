@@ -25,7 +25,7 @@ import {
   BugReport as BugReportIcon,
   Person as PersonIcon,
   Notifications as NotificationsIcon,
-  BarChart as BarChartIcon
+  TrendingUp as TrendingUpIcon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -303,12 +303,7 @@ const DashboardHome: React.FC = () => {
       {
         label: "Progreso Usuarios",
         path: "/dashboard/progreso-usuarios",
-        icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Informes",
-        path: "/dashboard/informes",
-        icon: <BarChartIcon sx={{ fontSize: 40 }} />,
+        icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
       },
       {
         label: "Códigos de acceso",

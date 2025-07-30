@@ -32,13 +32,16 @@ const AdminProgresoUsuarios: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState<'nombre' | 'email' | 'hospital' | 'rol'>('nombre');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await api.get('/users');
-        setUsers(res.data.data || res.data);
+        const all = res.data.data || res.data;
+        setUsers(all.filter((u: User) => u.rol === 'residente' || u.rol === 'alumno'));
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar usuarios');
       } finally {
@@ -59,6 +62,46 @@ const AdminProgresoUsuarios: React.FC = () => {
 
   if (error) return <Alert severity="error">{error}</Alert>;
 
+  const handleSort = (field: 'nombre' | 'email' | 'hospital' | 'rol') => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
+  const displayUsers = users
+    .filter((u) => {
+      const q = search.toLowerCase();
+      return (
+        u.nombre.toLowerCase().includes(q) ||
+        u.apellidos.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      let aVal: string = '';
+      let bVal: string = '';
+      switch (sortField) {
+        case 'email':
+        case 'nombre':
+        case 'rol':
+          aVal = (a as any)[sortField] || '';
+          bVal = (b as any)[sortField] || '';
+          break;
+        case 'hospital':
+          aVal = a.hospital?.nombre || a.sociedad?.titulo || '';
+          bVal = b.hospital?.nombre || b.sociedad?.titulo || '';
+          break;
+        default:
+          break;
+      }
+      return sortOrder === 'asc'
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
+    });
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -76,29 +119,45 @@ const AdminProgresoUsuarios: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Hospital/Sociedad</TableCell>
-              <TableCell>Rol</TableCell>
-              <TableCell align="right">Acciones</TableCell>
+              <TableCell
+                onClick={() => handleSort('nombre')}
+                sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+              >
+                Nombre
+              </TableCell>
+              <TableCell
+                onClick={() => handleSort('email')}
+                sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+              >
+                Email
+              </TableCell>
+              <TableCell
+                onClick={() => handleSort('hospital')}
+                sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+              >
+                Hospital/Sociedad
+              </TableCell>
+              <TableCell
+                onClick={() => handleSort('rol')}
+                sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+              >
+                Rol
+              </TableCell>
+              <TableCell
+                align="right"
+                sx={{ backgroundColor: 'primary.light', color: 'common.white' }}
+              >
+                Acciones
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users
-              .filter((u) => {
-                const q = search.toLowerCase();
-                return (
-                  u.nombre.toLowerCase().includes(q) ||
-                  u.apellidos.toLowerCase().includes(q) ||
-                  u.email.toLowerCase().includes(q)
-                );
-              })
-              .map((u) => (
-                <TableRow key={u._id} hover>
-                  <TableCell>{u.nombre} {u.apellidos}</TableCell>
-                  <TableCell>{u.email}</TableCell>
-                  <TableCell>{u.hospital?.nombre || u.sociedad?.titulo || '-'}</TableCell>
-                  <TableCell>{u.rol}</TableCell>
+            {displayUsers.map((u) => (
+              <TableRow key={u._id} hover>
+                <TableCell>{u.nombre} {u.apellidos}</TableCell>
+                <TableCell>{u.email}</TableCell>
+                <TableCell>{u.hospital?.nombre || u.sociedad?.titulo || '-'}</TableCell>
+                <TableCell>{u.rol}</TableCell>
                   <TableCell align="right">
                     <Button
                       variant="outlined"
