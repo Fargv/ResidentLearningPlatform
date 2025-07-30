@@ -25,15 +25,12 @@ import {
   ChevronLeft as ChevronLeftIcon,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
-  LocalHospital as HospitalIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
   TrendingUp as TrendingUpIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
-  BugReport as BugReportIcon,
-  Group as GroupIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
