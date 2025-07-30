@@ -49,7 +49,6 @@ import AdminFases from './dashboard/AdminFases';
 import AdminFasesSoc from './dashboard/AdminFasesSoc';
 import AdminSociedades from './dashboard/AdminSociedades';
 import AdminInformes from './dashboard/AdminInformes';
-import AdminInformeUsuario from './dashboard/AdminInformeUsuario';
 import AdminProgresoUsuarios from './dashboard/AdminProgresoUsuarios';
 import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
 import Perfil from './dashboard/Perfil';
@@ -298,10 +297,7 @@ const Dashboard: React.FC = () => {
     <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
   )}
   {user?.rol === 'administrador' && (
-    <>
       <Route path="/informes" element={<AdminInformes />} />
-      <Route path="/informes/:id" element={<AdminInformeUsuario />} />
-    </>
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
   {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (
