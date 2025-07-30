@@ -35,5 +35,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
   `REACT_APP_ENV` es `dev`.
 - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
 - 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
+- 2025-07-30: Eliminada la vista `AdminValidaciones` y ruta `/dashboard/validaciones-admin`; se reemplaza por `informes`.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

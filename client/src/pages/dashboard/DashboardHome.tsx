@@ -274,11 +274,7 @@ const DashboardHome: React.FC = () => {
 
   if (user?.rol === "administrador") {
     actions.push(
-      {
-        label: "Validaciones",
-        path: "/dashboard/validaciones-admin",
-        icon: <SchoolIcon sx={{ fontSize: 40 }} />,
-      },
+      
       {
         label: "Usuarios",
         path: "/dashboard/usuarios",
