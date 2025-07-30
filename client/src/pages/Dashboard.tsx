@@ -123,6 +123,7 @@ const Dashboard: React.FC = () => {
   
     if (user?.rol === 'administrador') {
       items.push(
+        { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
         { text: 'Progreso Usuarios', icon: <TrendingUpIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
         { text: 'Configuración', icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
