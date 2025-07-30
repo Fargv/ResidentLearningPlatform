@@ -28,13 +28,13 @@ import {
   LocalHospital as HospitalIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
+  TrendingUp as TrendingUpIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
   BugReport as BugReportIcon,
   Group as GroupIcon,
-  Settings as SettingsIcon,
-  BarChart as BarChartIcon
+  Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -48,7 +48,6 @@ import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
 import AdminFasesSoc from './dashboard/AdminFasesSoc';
 import AdminSociedades from './dashboard/AdminSociedades';
-import AdminInformes from './dashboard/AdminInformes';
 import AdminProgresoUsuarios from './dashboard/AdminProgresoUsuarios';
 import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
 import Perfil from './dashboard/Perfil';
@@ -131,8 +130,7 @@ const Dashboard: React.FC = () => {
         { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
         { text: 'Programa Residentes', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
         { text: 'Programa Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
-        { text: 'Progreso Usuarios', icon: <AssignmentIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
-        { text: 'Informes', icon: <BarChartIcon />, path: '/dashboard/informes', roles: ['administrador'] },
+        { text: 'Progreso Usuarios', icon: <TrendingUpIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
         { text: 'Access Codes', icon: <SettingsIcon />, path: '/dashboard/access-codes', roles: ['administrador'] },
         ...(isDev ? [{ text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }] : [])
       );
@@ -291,9 +289,6 @@ const Dashboard: React.FC = () => {
   )}
   {user?.rol === 'administrador' && (
     <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
-  )}
-  {user?.rol === 'administrador' && (
-      <Route path="/informes" element={<AdminInformes />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
   {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (

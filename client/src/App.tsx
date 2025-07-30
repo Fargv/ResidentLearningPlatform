@@ -26,7 +26,6 @@ import FormadorValidaciones from './pages/dashboard/FormadorValidaciones';
 import Usuarios from './pages/dashboard/Usuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
-import AdminInformes from './pages/dashboard/AdminInformes';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
@@ -201,11 +200,6 @@ function App() {
               <Route path="fases" element={
                 <AdminRoute>
                   <AdminFases />
-                </AdminRoute>
-              } />
-             <Route path="informes" element={
-                <AdminRoute>
-                  <AdminInformes />
                 </AdminRoute>
               } />
               <Route path="progreso-usuarios" element={

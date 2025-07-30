@@ -8,7 +8,6 @@ Este proyecto implementa una plataforma web completa para llevar el seguimiento 
 - Seguimiento del progreso de los residentes a través de las diferentes fases del programa
 - Validación de actividades por parte de los formadores
 - Panel de administración para gestionar usuarios, hospitales, fases y actividades
-- Nuevo apartado de informes en `/dashboard/informes` para consultar el progreso de cada usuario
 - Diseño moderno y responsive con la identidad visual de Abex Excelencia Robótica e Intuitive Surgical
 
 ## Estructura del proyecto
