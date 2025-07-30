@@ -21,6 +21,7 @@ import {
   MenuItem
 } from '@mui/material';
 import api from '../../api';
+import BackButton from '../../components/BackButton';
 
 interface Sociedad {
   _id?: string;
@@ -38,6 +39,9 @@ interface Sociedad {
 const AdminSociedades = () => {
   const [sociedades, setSociedades] = useState<Sociedad[]>([]);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState<keyof Sociedad>('titulo');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [formData, setFormData] = useState<Sociedad>({
     titulo: '',
     status: 'ACTIVO',
@@ -125,41 +129,119 @@ const AdminSociedades = () => {
     handleClose();
   };
 
+  const handleSort = (field: keyof Sociedad) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
   const handleDelete = async (id: string) => {
     await api.delete(`/sociedades/${id}`);
     fetchSociedades();
   };
 
-  return (
+  const displaySociedades = sociedades
+    .filter((s) => s.titulo.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      const aVal = (a as any)[sortField] || '';
+      const bVal = (b as any)[sortField] || '';
+      return sortOrder === 'asc'
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
+    });
+
+ return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" gutterBottom>
           Gestión de Sociedades
         </Typography>
-        <Button variant="contained" onClick={() => handleOpen()}>
-          Nueva sociedad
-        </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <BackButton sx={{ mr: 1 }} />
+          <Button variant="contained" onClick={() => handleOpen()}>
+            Nueva sociedad
+          </Button>
+        </Box>
       </Box>
+
+      <TextField
+        variant="outlined"
+        placeholder="Buscar por Nombre"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>Título</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Convocatoria</TableCell>
-                <TableCell>Presentación</TableCell>
-                <TableCell>Mod. Online</TableCell>
-                <TableCell>Simulación</TableCell>
-                <TableCell>First Assistant</TableCell>
-                <TableCell>Step By Step</TableCell>
-                <TableCell>Hand On</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell
+                  onClick={() => handleSort('titulo')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Título
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('status')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Estado
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaConvocatoria')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Convocatoria
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaPresentacion')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Presentación
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaModulosOnline')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Mod. Online
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaSimulacion')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Simulación
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaAtividadesFirstAssistant')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  First Assistant
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaModuloOnlineStepByStep')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Step By Step
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('fechaHandOn')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Hand On
+                </TableCell>
+                <TableCell align="right" sx={{ backgroundColor: 'primary.light', color: 'common.white' }}>
+                  Acciones
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {sociedades.map((s) => (
+              {displaySociedades.map((s) => (
                 <TableRow key={s._id} hover>
                   <TableCell>{s.titulo}</TableCell>
                   <TableCell>{s.status || '-'}</TableCell>

@@ -36,6 +36,7 @@ import {
   Delete as DeleteIcon
   //LocalHospital as HospitalIcon
 } from '@mui/icons-material';
+import BackButton from '../../components/BackButton';
 import api from '../../api';
 
 interface Hospital {
@@ -57,6 +58,11 @@ const AdminHospitales: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hospitales, setHospitales] = useState<Hospital[]>([]);
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState<
+    'nombre' | 'ciudad' | 'provincia' | 'zona' | 'telefono' | 'email'
+  >('nombre');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [openCrearDialog, setOpenCrearDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
@@ -275,6 +281,27 @@ const AdminHospitales: React.FC = () => {
     });
   };
 
+  const handleSort = (
+    field: 'nombre' | 'ciudad' | 'provincia' | 'zona' | 'telefono' | 'email'
+  ) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
+  const displayHospitales = hospitales
+    .filter((h) => h.nombre.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      const aVal = ((a as any)[sortField] || '') as string;
+      const bVal = ((b as any)[sortField] || '') as string;
+      return sortOrder === 'asc'
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
+    });
+
   if (loading) {
     return (
       <Box sx={{ width: '100%', mt: 4 }}>
@@ -297,33 +324,75 @@ const AdminHospitales: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Gestión de Hospitales
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleOpenCrearDialog}
-        >
-          Nuevo Hospital
-        </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <BackButton sx={{ mr: 1 }} />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleOpenCrearDialog}
+          >
+            Nuevo Hospital
+          </Button>
+        </Box>
       </Box>
-      
+
+      <TextField
+        variant="outlined"
+        placeholder="Buscar por Nombre"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+
       {/* Tabla de hospitales */}
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="tabla de hospitales">
             <TableHead>
               <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Ciudad</TableCell>
-                <TableCell>Provincia</TableCell>
-                <TableCell>Zona</TableCell>
-                <TableCell>Teléfono</TableCell>
-                <TableCell>Email</TableCell>
+                <TableCell
+                  onClick={() => handleSort('nombre')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Nombre
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('ciudad')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Ciudad
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('provincia')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Provincia
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('zona')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Zona
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('telefono')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Teléfono
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort('email')}
+                  sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
+                >
+                  Email
+                </TableCell>
                 <TableCell align="right">Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {hospitales.map((hospital) => (
+              {displayHospitales.map((hospital) => (
                 <TableRow key={hospital._id} hover>
                   <TableCell>{hospital.nombre}</TableCell>
                   <TableCell>{hospital.ciudad || '-'}</TableCell>

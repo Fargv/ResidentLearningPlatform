@@ -44,9 +44,20 @@ const updateActivityStatus = async (req, res, next) => {
   try {
     const { progresoId, index, estado } = req.body;
 
-    const progreso = await ProgresoResidente.findById(progresoId).populate(['fase', 'residente']);
+    const progreso = await ProgresoResidente
+      .findById(progresoId)
+      .populate(['fase', 'residente']);
     if (!progreso || !progreso.actividades[index]) {
       return next(new ErrorResponse('Actividad no encontrada', 404));
+    }
+
+    if (progreso.estadoGeneral !== 'en progreso') {
+      return next(
+        new ErrorResponse(
+          'Solo se puede editar el estado de la actividad mientras la fase está en progreso',
+          400
+        )
+      );
     }
 
     const actividad = progreso.actividades[index];
@@ -80,8 +91,8 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
       return next(new ErrorResponse('Progreso no encontrado', 404));
     }
 
-   // Permitir cambios desde cualquier estado. Si se vuelve a 'en progreso' o
-    // a 'bloqueada', limpiamos campos de finalización o validación previos
+   // Permitir cambios desde cualquier estado a 'en progreso' o 'bloqueada'.
+    // Al volver a estos estados limpiamos fechaFin y validadoPor
     if (estadoGeneral === 'en progreso' || estadoGeneral === 'bloqueada') {
       progreso.estadoGeneral = estadoGeneral;
       progreso.fechaFin = undefined;
@@ -90,10 +101,16 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
       return res.status(200).json({ success: true, data: progreso });
     }
 
+    // No se permite pasar de bloqueada directamente a completado o validado
+    if (progreso.estadoGeneral === 'bloqueada' &&
+        (estadoGeneral === 'completado' || estadoGeneral === 'validado')) {
+      return next(new ErrorResponse('No se puede pasar de bloqueada directamente a completado o validado', 400));
+    }
+
     if (estadoGeneral === 'completado') {
-      const todasCompletadas = progreso.actividades.every(a => a.estado === 'completado' || a.estado === 'validado');
-      if (!todasCompletadas) {
-        return next(new ErrorResponse('Todas las actividades deben estar completadas para marcar la fase como completada', 400));
+      const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
+      if (!todasValidadas) {
+        return next(new ErrorResponse('Todas las actividades deben estar validadas para marcar la fase como completada', 400));
       }
       if (!progreso.fechaFin) {
         progreso.fechaFin = new Date();
@@ -101,6 +118,9 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
     }
 
     if (estadoGeneral === 'validado') {
+      if (progreso.estadoGeneral !== 'completado') {
+        return next(new ErrorResponse('La fase debe estar completada antes de validarla', 400));
+      }
       const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
       if (!todasValidadas) {
         return next(new ErrorResponse('Todas las actividades deben estar validadas para marcar la fase como validada', 400));
