@@ -19,12 +19,10 @@ import {
   Assignment as AssignmentIcon,
   School as SchoolIcon,
   People as PeopleIcon,
-  LocalHospital as HospitalIcon,
-  Group as GroupIcon,
   Settings as SettingsIcon,
-  BugReport as BugReportIcon,
   Person as PersonIcon,
-  Notifications as NotificationsIcon
+  Notifications as NotificationsIcon,
+  TrendingUp as TrendingUpIcon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -249,18 +247,23 @@ const DashboardHome: React.FC = () => {
   const actions: Action[] = [];
 
   if (user?.rol === "residente" || user?.rol === "alumno") {
-    actions.push(
-      {
-        label: "Mi Progreso",
-        path: "/dashboard/progreso",
-        icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Fases Formativas",
-        path: "/dashboard/fases",
-        icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      },
-    );
+    actions.push({
+      label: "Mi Progreso",
+      path: "/dashboard/progreso",
+      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+    });
+  }
+
+  if (
+    user?.rol === "residente" ||
+    user?.rol === "alumno" ||
+    user?.rol === "instructor"
+  ) {
+    actions.push({
+      label: "Fases Formativas",
+      path: "/dashboard/fases",
+      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+    });
   }
 
   if (user?.rol === "formador" || user?.rol === "coordinador" || user?.rol === "instructor") {
@@ -271,48 +274,26 @@ const DashboardHome: React.FC = () => {
     });
   }
 
+  if (user?.rol === "formador" || user?.rol === "coordinador") {
+    actions.push({
+      label: "Mis Usuarios",
+      path: "/dashboard/usuarios",
+      icon: <PeopleIcon sx={{ fontSize: 40 }} />,
+    });
+  }
+
   if (user?.rol === "administrador") {
     actions.push(
       {
-        label: "Validaciones",
-        path: "/dashboard/validaciones-admin",
-        icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+        label: "Progreso Usuarios",
+        path: "/dashboard/progreso-usuarios",
+        icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
       },
       {
-        label: "Usuarios",
-        path: "/dashboard/usuarios",
-        icon: <PeopleIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Hospitales",
-        path: "/dashboard/hospitals",
-        icon: <HospitalIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Sociedades",
-        path: "/dashboard/sociedades",
-        icon: <GroupIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Programa Residentes",
-        path: "/dashboard/fases",
-        icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Programa Sociedades",
-        path: "/dashboard/fases-soc",
-        icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Códigos de acceso",
-        path: "/dashboard/access-codes",
+        label: "Configuración",
+        path: "/dashboard/config",
         icon: <SettingsIcon sx={{ fontSize: 40 }} />,
-      },
-      {
-        label: "Debug",
-        path: "/dashboard/debug",
-        icon: <BugReportIcon sx={{ fontSize: 40 }} />,
-      },
+      }
     );
   }
 

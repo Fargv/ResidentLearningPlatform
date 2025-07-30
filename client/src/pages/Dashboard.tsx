@@ -25,14 +25,12 @@ import {
   ChevronLeft as ChevronLeftIcon,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
-  LocalHospital as HospitalIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
+  TrendingUp as TrendingUpIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
-  BugReport as BugReportIcon,
-  Group as GroupIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
@@ -47,11 +45,14 @@ import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
 import AdminFasesSoc from './dashboard/AdminFasesSoc';
 import AdminSociedades from './dashboard/AdminSociedades';
+import AdminProgresoUsuarios from './dashboard/AdminProgresoUsuarios';
+import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
 import DebugDashboard from './DebugDashboard';
 import ResidenteFases from './dashboard/ResidenteFases';
 import AdminAccessCodes from './dashboard/AdminAccessCodes';
+import AdminConfiguracion from './dashboard/AdminConfiguracion';
 
 const drawerWidth = 240;
 
@@ -116,10 +117,6 @@ const Dashboard: React.FC = () => {
       items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
     }
 
-    if (user?.rol === 'administrador') {
-      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] });
-    }
-  
     if (user?.rol === 'formador' || user?.rol === 'coordinador') {
       items.push({ text: 'Mis Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador'] });
     }
@@ -127,12 +124,8 @@ const Dashboard: React.FC = () => {
     if (user?.rol === 'administrador') {
       items.push(
         { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-        { text: 'Hospitales', icon: <HospitalIcon />, path: '/dashboard/hospitals', roles: ['administrador'] },
-        { text: 'Sociedades', icon: <GroupIcon />, path: '/dashboard/sociedades', roles: ['administrador'] },
-        { text: 'Programa Residentes', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['administrador'] },
-        { text: 'Programa Sociedades', icon: <AssignmentIcon />, path: '/dashboard/fases-soc', roles: ['administrador'] },
-        { text: 'Access Codes', icon: <SettingsIcon />, path: '/dashboard/access-codes', roles: ['administrador'] },
-        ...(isDev ? [{ text: 'Debug', icon: <BugReportIcon />, path: '/dashboard/debug', roles: ['administrador'] }] : [])
+        { text: 'Progreso Usuarios', icon: <TrendingUpIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
+        { text: 'Configuración', icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
     }
   
@@ -283,6 +276,15 @@ const Dashboard: React.FC = () => {
   )}
   {user?.rol === 'administrador' && (
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/progreso-usuarios" element={<AdminProgresoUsuarios />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/config" element={<AdminConfiguracion />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
   {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (

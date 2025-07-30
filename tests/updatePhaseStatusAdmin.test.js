@@ -56,6 +56,101 @@ describe('updatePhaseStatusAdmin', () => {
     expect(progreso.save).not.toHaveBeenCalled();
   });
 
+  test('rejects change from bloqueada to completado', async () => {
+    const progreso = {
+      estadoGeneral: 'bloqueada',
+      actividades: [{ estado: 'validado' }],
+      save: jest.fn(),
+      populate: jest.fn().mockResolvedValue({})
+    };
+
+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({
+      populate: jest.fn().mockResolvedValue(progreso)
+    });
+
+    const req = { body: { progresoId: 'p1', estadoGeneral: 'completado' } };
+    const next = jest.fn();
+
+    await updatePhaseStatusAdmin(req, {}, next);
+
+    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+    expect(progreso.estadoGeneral).toBe('bloqueada');
+    expect(progreso.save).not.toHaveBeenCalled();
+  });
+
+  test('rejects change from bloqueada to validado', async () => {
+    const progreso = {
+      estadoGeneral: 'bloqueada',
+      actividades: [{ estado: 'validado' }],
+      save: jest.fn(),
+      populate: jest.fn().mockResolvedValue({})
+    };
+
+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({
+      populate: jest.fn().mockResolvedValue(progreso)
+    });
+
+    const req = { body: { progresoId: 'p1', estadoGeneral: 'validado' } };
+    const next = jest.fn();
+
+    await updatePhaseStatusAdmin(req, {}, next);
+
+    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+    expect(progreso.estadoGeneral).toBe('bloqueada');
+    expect(progreso.save).not.toHaveBeenCalled();
+  });
+
+  test('rejects moving to validado if not completado', async () => {
+    const progreso = {
+      estadoGeneral: 'en progreso',
+      actividades: [{ estado: 'validado' }],
+      save: jest.fn(),
+      populate: jest.fn().mockResolvedValue({})
+    };
+
+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({
+      populate: jest.fn().mockResolvedValue(progreso)
+    });
+
+    const req = { body: { progresoId: 'p1', estadoGeneral: 'validado' } };
+    const next = jest.fn();
+
+    await updatePhaseStatusAdmin(req, {}, next);
+
+    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+    expect(progreso.estadoGeneral).toBe('en progreso');
+    expect(progreso.save).not.toHaveBeenCalled();
+  });
+
+  test('allows completado then validado sequentially', async () => {
+    const progreso = {
+      estadoGeneral: 'en progreso',
+      actividades: [{ estado: 'validado' }],
+      save: jest.fn(),
+      populate: jest.fn().mockResolvedValue({})
+    };
+
+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({
+      populate: jest.fn().mockResolvedValue(progreso)
+    });
+
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const next = jest.fn();
+
+    await updatePhaseStatusAdmin({ body: { progresoId: 'p1', estadoGeneral: 'completado' } }, res, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(progreso.estadoGeneral).toBe('completado');
+
+    next.mockClear();
+    await updatePhaseStatusAdmin({ body: { progresoId: 'p1', estadoGeneral: 'validado' } }, res, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(progreso.estadoGeneral).toBe('validado');
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true, data: progreso });
+  });
+
    test('allows reverting from completado to en progreso', async () => {
     const progreso = {
       estadoGeneral: 'completado',

@@ -34,6 +34,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import api, { createUser, updateUserPassword } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
+import BackButton from "../../components/BackButton";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -87,6 +88,11 @@ const AdminUsuarios: React.FC = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+  const [search, setSearch] = useState("");
+  const [sortField, setSortField] = useState<
+    "nombre" | "email" | "hospital" | "rol"
+  >("nombre");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const roleOptions =
     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
@@ -382,6 +388,17 @@ const AdminUsuarios: React.FC = () => {
     });
   };
 
+  const handleSort = (
+    field: "nombre" | "email" | "hospital" | "rol",
+  ) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ width: "100%", mt: 4 }}>
@@ -390,13 +407,43 @@ const AdminUsuarios: React.FC = () => {
     );
   }
 
-  if (error) {
+ if (error) {
     return (
       <Alert severity="error" sx={{ mt: 2 }}>
         {error}
       </Alert>
     );
   }
+
+  const displayUsuarios = usuarios
+    .filter((u) => {
+      const q = search.toLowerCase();
+      return (
+        u.nombre.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      let aVal = "";
+      let bVal = "";
+      switch (sortField) {
+        case "email":
+        case "nombre":
+        case "rol":
+          aVal = (a as any)[sortField] || "";
+          bVal = (b as any)[sortField] || "";
+          break;
+        case "hospital":
+          aVal = a.hospital?.nombre || a.sociedad?.titulo || "";
+          bVal = b.hospital?.nombre || b.sociedad?.titulo || "";
+          break;
+        default:
+          break;
+      }
+      return sortOrder === "asc"
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
+    });
 
   return (
     <Box sx={{ px: 0, py: 2 }}>
@@ -414,8 +461,8 @@ const AdminUsuarios: React.FC = () => {
             ? "Gestión de Todos los Usuarios"
             : "Usuarios de Tu Hospital"}
         </Typography>
-
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <BackButton sx={{ mr: 1 }} />
           {user?.rol === "administrador" && (
             <Button
               variant="contained"
@@ -438,24 +485,53 @@ const AdminUsuarios: React.FC = () => {
         </Box>
       </Box>
 
+      <TextField
+        variant="outlined"
+        placeholder="Buscar por nombre o email"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+
       {/* Tabla de usuarios */}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer>
           <Table stickyHeader aria-label="tabla de usuarios">
             <TableHead>
               <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Email</TableCell>
+                <TableCell
+                  onClick={() => handleSort("nombre")}
+                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                >
+                  Nombre
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort("email")}
+                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                >
+                  Email
+                </TableCell>
                 <TableCell>Tipo</TableCell>
                 <TableCell>Sociedad</TableCell>
-                <TableCell>Rol</TableCell>
-                <TableCell>Hospital</TableCell>
+                <TableCell
+                  onClick={() => handleSort("rol")}
+                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                >
+                  Rol
+                </TableCell>
+                <TableCell
+                  onClick={() => handleSort("hospital")}
+                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                >
+                  Hospital
+                </TableCell>
                 <TableCell>Zona</TableCell>
                 <TableCell align="right">Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {usuarios.map((usuario) => (
+              {displayUsuarios.map((usuario) => (
                 <TableRow key={usuario._id} hover>
                   <TableCell>
                     {usuario.nombre} {usuario.apellidos}
