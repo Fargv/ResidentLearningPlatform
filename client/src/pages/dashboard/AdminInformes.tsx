@@ -10,7 +10,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  TextField
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
@@ -29,6 +30,7 @@ const AdminInformes: React.FC = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,6 +63,14 @@ const AdminInformes: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Progreso de Usuarios
       </Typography>
+      <TextField
+        variant="outlined"
+        placeholder="Buscar por nombre o email"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
       <TableContainer component={Paper}>
         <Table size="small" stickyHeader aria-label="tabla de usuarios">
           <TableHead>
@@ -72,12 +82,21 @@ const AdminInformes: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {usuarios.map((u) => (
+            {usuarios
+              .filter((u) => {
+                const query = search.toLowerCase();
+                return (
+                  u.nombre.toLowerCase().includes(query) ||
+                  u.apellidos.toLowerCase().includes(query) ||
+                  u.email.toLowerCase().includes(query)
+                );
+              })
+              .map((u) => (
               <TableRow
                 key={u._id}
                 hover
                 sx={{ cursor: 'pointer' }}
-                onClick={() => navigate(`/dashboard/informes/${u._id}`)}
+                onClick={() => navigate(`/dashboard/progreso-usuario/${u._id}`)}
               >
                 <TableCell>{u.nombre} {u.apellidos}</TableCell>
                 <TableCell>{u.email}</TableCell>
