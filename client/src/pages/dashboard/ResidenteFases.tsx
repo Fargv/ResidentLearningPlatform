@@ -30,9 +30,11 @@ import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
+import { useTranslation } from 'react-i18next';
 
 const ResidenteFases: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [progresos, setProgresos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,6 +95,9 @@ const ResidenteFases: React.FC = () => {
     return 'info.main';
   };
 
+  const phaseStatusKey = (status: string): string =>
+    status === 'en progreso' ? 'enProgreso' : status;
+
 
   useEffect(() => {
     if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'alumno')) return;
@@ -107,8 +112,8 @@ const ResidenteFases: React.FC = () => {
 
         setProgresos(data);
       } catch (err: any) {
-        console.error("Error cargando progreso:", err);
-        setError(err.response?.data?.error || 'Error al cargar el progreso');
+        console.error('Error cargando progreso:', err);
+        setError(err.response?.data?.error || t('residentPhases.errorLoad'));
       } finally {
         setLoading(false);
       }
@@ -163,7 +168,7 @@ const ResidenteFases: React.FC = () => {
       if (file.size > 5 * 1024 * 1024) {
         setArchivo(null);
         setArchivoError(true);
-        setArchivoErrorMsg('El archivo supera el tamaño máximo de 5MB.');
+        setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
       } else {
         setArchivo(file);
         setArchivoError(false);
@@ -182,7 +187,7 @@ const ResidenteFases: React.FC = () => {
     
     if (!selectedProgresoId || selectedActividadIndex === null) {
       setSnackbarError(true);
-      setSnackbarMsg('Error interno: No se ha seleccionado ninguna actividad.');
+      setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
       setSnackbarOpen(true);
       return;
     }
@@ -201,7 +206,7 @@ const ResidenteFases: React.FC = () => {
 
       if (!data?.success) {
         setSnackbarError(true);
-        setSnackbarMsg('No se pudo completar la actividad.');
+        setSnackbarMsg(t('residentPhases.activityFail'));
         setSnackbarOpen(true);
         return;
       }
@@ -213,12 +218,12 @@ const ResidenteFases: React.FC = () => {
       );
 
       setSnackbarError(false);
-      setSnackbarMsg('✅ Actividad registrada con éxito');
+      setSnackbarMsg(t('residentPhases.activitySuccess'));
       setSnackbarOpen(true);
     } catch (err) {
       console.error('Error actualizando actividad:', err);
       setSnackbarError(true);
-      setSnackbarMsg('Error al guardar la actividad.');
+      setSnackbarMsg(t('residentPhases.activitySaveError'));
       setSnackbarOpen(true);
     } finally {
       setDialogOpen(false);
@@ -233,7 +238,7 @@ const ResidenteFases: React.FC = () => {
   if (loading) {
     return (
       <Box>
-        <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
+        <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
         ))}
@@ -245,7 +250,7 @@ const ResidenteFases: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>Mis Fases Formativas</Typography>
+      <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
       
       {Array.isArray(progresos) && progresos.length > 0 ? (
   progresos.map((item, index) => {
@@ -254,7 +259,10 @@ const ResidenteFases: React.FC = () => {
       <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">
-            Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
+            {t('residentPhases.phaseTitle', {
+              number: item.fase?.numero || '—',
+              name: item.fase?.nombre || t('residentPhases.noTitle')
+            })}
           </Typography>
           {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
             <Typography
@@ -267,7 +275,7 @@ const ResidenteFases: React.FC = () => {
         <AccordionDetails>
           <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
             <Chip
-              label={item.estadoGeneral || '—'}
+              label={item.estadoGeneral ? t(`status.${phaseStatusKey(item.estadoGeneral)}`) : '—'}
               color={
                 item.estadoGeneral === 'validado'
                   ? 'success'
@@ -278,7 +286,7 @@ const ResidenteFases: React.FC = () => {
             />
             {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
               <Typography sx={{ ml: 2, color: getDateColor(item.fase.numero, item.estadoGeneral) }}>
-                Fecha límite: {getSociedadDateShort(item.fase.numero)}
+                {t('residentPhases.deadline')}: {getSociedadDateShort(item.fase.numero)}
               </Typography>
             )}
           </Box>
@@ -295,7 +303,7 @@ const ResidenteFases: React.FC = () => {
                   sx={{ height: 8, borderRadius: 5, mb: 1 }}
                 />
                 <Typography variant="body2" sx={{ mb: 2 }}>
-                  Progreso validado: {porcentaje}%
+                  {t('residentPhases.validatedProgress', { percent: porcentaje })}
                 </Typography>
               </>
             );
@@ -311,45 +319,48 @@ const ResidenteFases: React.FC = () => {
                   {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
                   {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
                   <ListItemText
-  primary={act.nombre || 'Actividad sin nombre'}
-  secondary={
-    <>
-      {act.comentariosResidente && (
-        <Typography variant="body2" color="text.secondary">
-          Comentario: {act.comentariosResidente}
-        </Typography>
-      )}
-      {act.fecha && (
-        <Typography variant="body2" color="text.secondary">
-          Fecha completada: {formatDayMonthYear(act.fecha)}
-        </Typography>
-      )}
-       {act.comentariosFormador && (
-        <Typography variant="body2" color="text.secondary">
-          Comentario formador: {act.comentariosFormador}
-        </Typography>
-      )}
-      {act.estado === 'rechazado' && act.comentariosRechazo && (
-        <Typography variant="body2" color="error">
-          Motivo rechazo: {act.comentariosRechazo}
-        </Typography>
-      )}
-      {act.fechaValidacion && (
-        <Typography variant="body2" color="text.secondary">
-          Validado el: {formatDayMonthYear(act.fechaValidacion)}
-        </Typography>
-      )}
-      <Typography variant="body2" color="text.secondary">
-  Estado: {
-    act.estado === 'validado' ? 'Validado' :
-    act.estado === 'rechazado' ? 'Rechazado' :
-    act.estado === 'completado' ? 'Pendiente de validación' :
-    'No completada'
-  }
-</Typography>
-    </>
-  }
-/>
+                    primary={act.nombre || t('residentPhases.unnamedActivity')}
+                    secondary={
+                      <>
+                        {act.comentariosResidente && (
+                          <Typography variant="body2" color="text.secondary">
+                            {t('residentPhases.comment')}: {act.comentariosResidente}
+                          </Typography>
+                        )}
+                        {act.fecha && (
+                          <Typography variant="body2" color="text.secondary">
+                            {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
+                          </Typography>
+                        )}
+                        {act.comentariosFormador && (
+                          <Typography variant="body2" color="text.secondary">
+                            {t('residentPhases.trainerComment')}: {act.comentariosFormador}
+                          </Typography>
+                        )}
+                        {act.estado === 'rechazado' && act.comentariosRechazo && (
+                          <Typography variant="body2" color="error">
+                            {t('residentPhases.rejectionReason')}: {act.comentariosRechazo}
+                          </Typography>
+                        )}
+                        {act.fechaValidacion && (
+                          <Typography variant="body2" color="text.secondary">
+                            {t('residentPhases.validatedOn')}: {formatDayMonthYear(act.fechaValidacion)}
+                          </Typography>
+                        )}
+                        <Typography variant="body2" color="text.secondary">
+                          {t('residentPhases.status')}: {
+                            act.estado === 'validado'
+                              ? t('status.validado')
+                              : act.estado === 'rechazado'
+                              ? t('status.rechazado')
+                              : act.estado === 'completado'
+                              ? t('status.pendingValidation')
+                              : t('status.noCompletada')
+                          }
+                        </Typography>
+                      </>
+                    }
+                  />
                   {((!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada') && (
                     <Button
                       size="small"
@@ -359,20 +370,20 @@ const ResidenteFases: React.FC = () => {
                       }}
                       sx={{ ml: 2 }}
                     >
-                      Marcar como completada
+                      {t('residentPhases.markAsCompleted')}
                     </Button>
                   )}
                   </ListItem>
                 ))
               ) : (
                 <ListItem>
-                  <ListItemText primary="No hay actividades disponibles" />
+                  <ListItemText primary={t('residentPhases.noActivities')} />
                 </ListItem>
               )}
             </List>
           ) : (
             <Typography variant="body2" color="text.secondary">
-              Fase bloqueada
+              {t('residentPhases.phaseLocked')}
             </Typography>
           )}
         </AccordionDetails>
@@ -380,16 +391,16 @@ const ResidenteFases: React.FC = () => {
     );
   })
 ) : (
-  <Alert severity="info">No hay progreso formativo disponible.</Alert>
+  <Alert severity="info">{t('residentPhases.noProgress')}</Alert>
 )}
 
 
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Marcar actividad como completada</DialogTitle>
+        <DialogTitle>{t('residentPhases.dialog.completeActivity')}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Fecha de realización"
+            label={t('residentPhases.dialog.completionDate')}
             type="date"
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
@@ -398,7 +409,7 @@ const ResidenteFases: React.FC = () => {
             InputLabelProps={{ shrink: true }}
           />
           <TextField
-            label="Comentario"
+            label={t('residentPhases.dialog.comment')}
             value={comentario}
             onChange={(e) => setComentario(e.target.value)}
             fullWidth
@@ -407,7 +418,7 @@ const ResidenteFases: React.FC = () => {
             margin="normal"
           />
           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
-            Seleccionar archivo
+            {t('residentPhases.dialog.selectFile')}
             <input
               type="file"
               hidden
@@ -427,33 +438,33 @@ const ResidenteFases: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-  <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-  <Tooltip
-  title={
-    archivoError
-      ? archivoErrorMsg
-      : !selectedProgresoId
-      ? 'Falta el ID del progreso'
-      : selectedActividadIndex === null
-      ? 'No se ha seleccionado ninguna actividad'
-      : !fecha
-      ? 'Selecciona una fecha de realización'
-      : 'Adjunta un archivo opcional (máx. 5MB)'
-  }
-  arrow
-  disableHoverListener={botonConfirmarHabilitado}
->
-  <span>
-    <Button
-      onClick={handleCompletarActividad}
-      variant="contained"
-      disabled={!botonConfirmarHabilitado}
-    >
-      Confirmar
-    </Button>
-  </span>
-</Tooltip>
-</DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>{t('residentPhases.dialog.cancel')}</Button>
+          <Tooltip
+            title={
+              archivoError
+                ? archivoErrorMsg
+                : !selectedProgresoId
+                ? t('residentPhases.dialog.missingProgressId')
+                : selectedActividadIndex === null
+                ? t('residentPhases.dialog.noActivitySelected')
+                : !fecha
+                ? t('residentPhases.dialog.selectDate')
+                : t('residentPhases.dialog.optionalFileHint')
+            }
+            arrow
+            disableHoverListener={botonConfirmarHabilitado}
+          >
+            <span>
+              <Button
+                onClick={handleCompletarActividad}
+                variant="contained"
+                disabled={!botonConfirmarHabilitado}
+              >
+                {t('residentPhases.dialog.confirm')}
+              </Button>
+            </span>
+          </Tooltip>
+        </DialogActions>
 
       </Dialog>
 
