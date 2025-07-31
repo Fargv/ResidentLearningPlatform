@@ -78,9 +78,143 @@
       "label": "Fase 3 - Asistencia Quirúrgica",
       "description": "Participación como asistente en quirófano."
     },
-    "phase4": {
+   "phase4": {
       "label": "Fase 4 - Cirugía en Consola",
       "description": "Procedimientos realizados por el residente con supervisión."
     }
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "creating": "Creando...",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando...",
+    "delete": "Eliminar",
+    "deleting": "Eliminando..."
+  },
+  "adminHospitals": {
+    "title": "Gestión de Hospitales",
+    "new": "Nuevo Hospital",
+    "searchPlaceholder": "Buscar por Nombre",
+    "loadError": "Error al cargar los hospitales",
+    "createSuccess": "Hospital creado correctamente",
+    "createError": "Error al crear el hospital",
+    "updateSuccess": "Hospital actualizado correctamente",
+    "updateError": "Error al actualizar el hospital",
+    "deleteSuccess": "Hospital eliminado correctamente",
+    "deleteError": "Error al eliminar el hospital",
+    "table": {
+      "aria": "tabla de hospitales",
+      "name": "Nombre",
+      "city": "Ciudad",
+      "province": "Provincia",
+      "zone": "Zona",
+      "phone": "Teléfono",
+      "email": "Email",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "name": "Nombre",
+      "numericCode": "Código Numérico",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "province": "Provincia",
+      "zone": "Zona",
+      "postalCode": "Código Postal",
+      "phone": "Teléfono",
+      "systemType": "Tipo de Sistema",
+      "email": "Email"
+    },
+    "system": {
+      "other": "Otro"
+    },
+    "create": {
+      "title": "Nuevo Hospital"
+    },
+    "edit": {
+      "title": "Editar Hospital"
+    },
+    "delete": {
+      "title": "Eliminar Hospital",
+      "confirm": "¿Estás seguro de que deseas eliminar el hospital <strong>{{name}}</strong>? Se eliminarán {{count}} usuarios y sus progresos. Esta acción no se puede deshacer."
+    }
+  },
+  "brand": {
+    "name": "Abex Excelencia Robótica"
+  },
+  "regions": {
+    "andalucia": "ANDALUCÍA"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "password": "Contraseña",
+    "passwordCurrent": "Contraseña Actual",
+    "passwordNew": "Nueva Contraseña",
+    "passwordConfirm": "Confirmar Contraseña",
+    "passwordUpdated": "Contraseña actualizada",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "accessCode": "Código de Acceso",
+    "invalidAccessCode": "Código de acceso no válido",
+    "changePassword": "Cambiar Contraseña",
+    "resetRequest": "Solicitud de reseteo de contraseña",
+    "errorLogin": "Error al iniciar sesión",
+    "errorChangePassword": "Error al cambiar la contraseña",
+    "errorUpdatePassword": "Error al actualizar la contraseña"
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestión de Todos los Usuarios",
+    "noPermissions": "No tienes permisos para ver esta sección"
+  },
+  "forms": {
+    "code": "Código",
+    "numericCode": "Código Numérico",
+    "postalCode": "Código Postal",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "description": "Descripción",
+    "number": "Número",
+    "title": "Título",
+    "completionDate": "Fecha de realización",
+    "selectDate": "Selecciona una fecha de realización",
+    "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+    "fileTooLarge": "El archivo supera el tamaño máximo de 5MB."
+  },
+  "types": {
+    "theoretical": "Teórica",
+    "practical": "Práctica",
+    "evaluation": "Evaluación",
+    "observation": "Observación",
+    "theoreticalLower": "teórica",
+    "practicalLower": "práctica",
+    "evaluationLower": "evaluación",
+    "observationLower": "observación"
+  },
+  "notifications": {
+    "errorMarkAsRead": "Error marcando notificación como leída"
+  },
+  "codes": {
+    "new": "Nuevo Código",
+    "edit": "Editar Código",
+    "errorLoad": "Error al cargar los códigos",
+    "errorDelete": "Error al eliminar el código",
+    "errorSave": "Error al guardar el código"
+  },
+  "progress": {
+    "createSuccess": "Progreso formativo creado con éxito"
+  },
+  "residenteFases": {
+    "activitySuccess": "✅ Actividad registrada con éxito",
+    "noTitle": "Sin título"
+  },
+  "emails": {
+    "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
+  },
+  "debug": {
+    "tokenValid": "✅ Token válido y decodificado",
+    "tokenInvalid": "❌ Token no válido o corrupto"
+  },
+  "status": {
+    "pendingValidation": "Pendiente de validación"
   }
 }

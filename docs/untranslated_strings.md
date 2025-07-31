@@ -1,0 +1,86 @@
+# Untranslated strings
+
+List of user-facing strings not yet localized (audit on 2025-07-31).
+
+- client/src/components/InviteUsersMail.tsx:'Invitación a la Plataforma de Formación Da Vinci'
+- client/src/context/AuthContext.tsx:'Error al iniciar sesión'
+- client/src/pages/Dashboard.tsx:"Cerrar Sesión"
+- client/src/pages/Dashboard.tsx:'Configuración'
+- client/src/pages/DebugDashboard.tsx:'✅ Token válido y decodificado'
+- client/src/pages/DebugDashboard.tsx:'❌ Token no válido o corrupto'
+- client/src/pages/ForgotPassword.tsx:'Solicitud de reseteo de contraseña'
+- client/src/pages/Login.tsx:"Abex Excelencia Robótica"
+- client/src/pages/Login.tsx:"Contraseña"
+- client/src/pages/Login.tsx:'Iniciar Sesión'
+- client/src/pages/Register.tsx:"Abex Excelencia Robótica"
+- client/src/pages/Register.tsx:"Confirmar Contraseña"
+- client/src/pages/Register.tsx:"Contraseña"
+- client/src/pages/Register.tsx:"Código de Acceso"
+- client/src/pages/Register.tsx:'ANDALUCÍA'
+- client/src/pages/Register.tsx:'Código de acceso no válido'
+- client/src/pages/Register.tsx:'Las contraseñas no coinciden'
+- client/src/pages/dashboard/AdminAccessCodes.tsx:"Código"
+- client/src/pages/dashboard/AdminAccessCodes.tsx:'Editar Código'
+- client/src/pages/dashboard/AdminAccessCodes.tsx:'Error al cargar los códigos'
+- client/src/pages/dashboard/AdminAccessCodes.tsx:'Error al eliminar el código'
+- client/src/pages/dashboard/AdminAccessCodes.tsx:'Error al guardar el código'
+- client/src/pages/dashboard/AdminAccessCodes.tsx:'Nuevo Código'
+- client/src/pages/dashboard/AdminFases.tsx:"Descripción"
+- client/src/pages/dashboard/AdminFases.tsx:"Número"
+- client/src/pages/dashboard/AdminFases.tsx:"evaluación"
+- client/src/pages/dashboard/AdminFases.tsx:"observación"
+- client/src/pages/dashboard/AdminFases.tsx:"práctica"
+- client/src/pages/dashboard/AdminFases.tsx:"teórica"
+- client/src/pages/dashboard/AdminFases.tsx:'Evaluación'
+- client/src/pages/dashboard/AdminFases.tsx:'No tienes permisos para ver esta sección'
+- client/src/pages/dashboard/AdminFases.tsx:'Observación'
+- client/src/pages/dashboard/AdminFases.tsx:'Práctica'
+- client/src/pages/dashboard/AdminFases.tsx:'Teórica'
+- client/src/pages/dashboard/AdminFases.tsx:'evaluación'
+- client/src/pages/dashboard/AdminFases.tsx:'observación'
+- client/src/pages/dashboard/AdminFases.tsx:'práctica'
+- client/src/pages/dashboard/AdminFases.tsx:'teórica'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:"Descripción"
+- client/src/pages/dashboard/AdminFasesSoc.tsx:"Número"
+- client/src/pages/dashboard/AdminFasesSoc.tsx:"evaluación"
+- client/src/pages/dashboard/AdminFasesSoc.tsx:"observación"
+- client/src/pages/dashboard/AdminFasesSoc.tsx:"práctica"
+- client/src/pages/dashboard/AdminFasesSoc.tsx:"teórica"
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'Evaluación'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'No tienes permisos para ver esta sección'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'Observación'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'Práctica'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'Teórica'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'evaluación'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'observación'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'práctica'
+- client/src/pages/dashboard/AdminFasesSoc.tsx:'teórica'
+- client/src/pages/dashboard/AdminHospitales.tsx:"ANDALUCÍA"
+- client/src/pages/dashboard/AdminHospitales.tsx:"Código Numérico"
+- client/src/pages/dashboard/AdminHospitales.tsx:"Código Postal"
+- client/src/pages/dashboard/AdminHospitales.tsx:"Dirección"
+- client/src/pages/dashboard/AdminHospitales.tsx:"Teléfono"
+- client/src/pages/dashboard/AdminProgresoDetalle.tsx:'Sin título'
+- client/src/pages/dashboard/AdminSociedades.tsx:"Título"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"ANDALUCÍA"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"Contraseña actualizada"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"Contraseña"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"Error al actualizar la contraseña"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"Gestión de Todos los Usuarios"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"Nueva contraseña"
+- client/src/pages/dashboard/AdminUsuarios.tsx:"Progreso formativo creado con éxito"
+- client/src/pages/dashboard/Notificaciones.tsx:'Error marcando notificación como leída'
+- client/src/pages/dashboard/Perfil.tsx:"Confirmar Contraseña"
+- client/src/pages/dashboard/Perfil.tsx:"Contraseña Actual"
+- client/src/pages/dashboard/Perfil.tsx:"Nueva Contraseña"
+- client/src/pages/dashboard/Perfil.tsx:'Cambiar Contraseña'
+- client/src/pages/dashboard/Perfil.tsx:'Contraseña actualizada'
+- client/src/pages/dashboard/Perfil.tsx:'Error al cambiar la contraseña'
+- client/src/pages/dashboard/Perfil.tsx:'Las contraseñas no coinciden'
+- client/src/pages/dashboard/ResidenteFases.tsx:"Fecha de realización"
+- client/src/pages/dashboard/ResidenteFases.tsx:'Adjunta un archivo opcional (máx. 5MB)'
+- client/src/pages/dashboard/ResidenteFases.tsx:'El archivo supera el tamaño máximo de 5MB.'
+- client/src/pages/dashboard/ResidenteFases.tsx:'Pendiente de validación'
+- client/src/pages/dashboard/ResidenteFases.tsx:'Selecciona una fecha de realización'
+- client/src/pages/dashboard/ResidenteFases.tsx:'Sin título'
+- client/src/pages/dashboard/ResidenteFases.tsx:'✅ Actividad registrada con éxito'

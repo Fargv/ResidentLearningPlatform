@@ -82,5 +82,139 @@
       "label": "Phase 4 - Console Surgery",
       "description": "Procedures performed by the resident with supervision."
     }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "deleting": "Deleting..."
+  },
+  "adminHospitals": {
+    "title": "Hospital Management",
+    "new": "New Hospital",
+    "searchPlaceholder": "Search by Name",
+    "loadError": "Error loading hospitals",
+    "createSuccess": "Hospital created successfully",
+    "createError": "Error creating hospital",
+    "updateSuccess": "Hospital updated successfully",
+    "updateError": "Error updating hospital",
+    "deleteSuccess": "Hospital deleted successfully",
+    "deleteError": "Error deleting hospital",
+    "table": {
+      "aria": "hospitals table",
+      "name": "Name",
+      "city": "City",
+      "province": "Province",
+      "zone": "Zone",
+      "phone": "Phone",
+      "email": "Email",
+      "actions": "Actions"
+    },
+    "fields": {
+      "name": "Name",
+      "numericCode": "Numeric Code",
+      "address": "Address",
+      "city": "City",
+      "province": "Province",
+      "zone": "Zone",
+      "postalCode": "Postal Code",
+      "phone": "Phone",
+      "systemType": "System Type",
+      "email": "Email"
+    },
+    "system": {
+      "other": "Other"
+    },
+    "create": {
+      "title": "New Hospital"
+    },
+    "edit": {
+      "title": "Edit Hospital"
+    },
+    "delete": {
+      "title": "Delete Hospital",
+      "confirm": "Are you sure you want to delete hospital <strong>{{name}}</strong>? {{count}} users and their progress will be removed. This action cannot be undone."
+    }
+  },
+  "brand": {
+    "name": "Abex Excelencia Robótica"
+  },
+  "regions": {
+    "andalucia": "Andalusia"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "password": "Password",
+    "passwordCurrent": "Current Password",
+    "passwordNew": "New Password",
+    "passwordConfirm": "Confirm Password",
+    "passwordUpdated": "Password updated",
+    "passwordMismatch": "Passwords do not match",
+    "accessCode": "Access Code",
+    "invalidAccessCode": "Invalid access code",
+    "changePassword": "Change Password",
+    "resetRequest": "Password reset request",
+    "errorLogin": "Login error",
+    "errorChangePassword": "Error changing password",
+    "errorUpdatePassword": "Error updating password"
+  },
+  "dashboard": {
+    "manageAllUsers": "Manage All Users",
+    "noPermissions": "You do not have permission to view this section"
+  },
+  "forms": {
+    "code": "Code",
+    "numericCode": "Numeric Code",
+    "postalCode": "Postal Code",
+    "address": "Address",
+    "phone": "Phone",
+    "description": "Description",
+    "number": "Number",
+    "title": "Title",
+    "completionDate": "Completion date",
+    "selectDate": "Select a completion date",
+    "optionalFileHint": "Attach an optional file (max 5MB)",
+    "fileTooLarge": "The file exceeds the maximum size of 5MB"
+  },
+  "types": {
+    "theoretical": "Theoretical",
+    "practical": "Practical",
+    "evaluation": "Evaluation",
+    "observation": "Observation",
+    "theoreticalLower": "theoretical",
+    "practicalLower": "practical",
+    "evaluationLower": "evaluation",
+    "observationLower": "observation"
+  },
+  "notifications": {
+    "errorMarkAsRead": "Error marking notification as read"
+  },
+  "codes": {
+    "new": "New Code",
+    "edit": "Edit Code",
+    "errorLoad": "Error loading codes",
+    "errorDelete": "Error deleting code",
+    "errorSave": "Error saving code"
+  },
+  "progress": {
+    "createSuccess": "Training progress created successfully"
+  },
+  "residenteFases": {
+    "activitySuccess": "✅ Activity recorded successfully",
+    "noTitle": "No title"
+  },
+  "emails": {
+    "inviteSubject": "Invitation to the Da Vinci Training Platform"
+  },
+  "debug": {
+    "tokenValid": "✅ Token valid and decoded",
+    "tokenInvalid": "❌ Token invalid or corrupt"
+  },
+  "status": {
+    "pendingValidation": "Pending validation"
   }
 }
