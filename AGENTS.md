@@ -36,5 +36,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
 - 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
 - 2025-07-30: Eliminada la vista `AdminValidaciones` y ruta `/dashboard/validaciones-admin`; se reemplaza por `informes`.
+- 2025-07-31: Añadidas dependencias `ajv` y `ajv-keywords` al cliente e intento de regenerar el lockfile.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.
