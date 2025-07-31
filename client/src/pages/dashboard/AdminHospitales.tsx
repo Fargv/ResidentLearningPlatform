@@ -90,21 +90,20 @@ const AdminHospitales: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchHospitales = async () => {
-      try {
-        setLoading(true);
-        
-       const res = await api.get('/hospitals');
-        setHospitales(res.data.data);
-      } catch (err: any) {
-        setError(err.response?.data?.error || t('adminHospitals.loadError'));
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchHospitales = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/hospitals');
+      setHospitales(res.data.data);
+    } catch (err: any) {
+      setError(err.response?.data?.error || t('adminHospitals.loadError'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchHospitales();
-  }, []);
+  fetchHospitales();
+}, [t]);
 
   const handleOpenCrearDialog = () => {
     setFormData({
