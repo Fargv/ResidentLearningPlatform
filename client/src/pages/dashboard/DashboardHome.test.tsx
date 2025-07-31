@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DashboardHome from './DashboardHome';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../../i18n';
 
 jest.mock('../../api');
 jest.mock('../../context/AuthContext');
@@ -40,7 +42,12 @@ afterEach(() => {
 });
 
 test('clicking milestone opens dialog', async () => {
-  render(<DashboardHome />);
+  i18n.changeLanguage('es');
+  render(
+    <I18nextProvider i18n={i18n}>
+      <DashboardHome />
+    </I18nextProvider>
+  );
   const item = await screen.findByText('Convocatoria');
   await userEvent.click(item);
   expect(await screen.findByRole('dialog')).toBeInTheDocument();
@@ -56,11 +63,14 @@ test('no progress fetch for admin resident program user', async () => {
     }
   } as any);
 
-  render(<DashboardHome />);
+  i18n.changeLanguage('es');
+  render(
+    <I18nextProvider i18n={i18n}>
+      <DashboardHome />
+    </I18nextProvider>
+  );
 
   expect(mockedGet).not.toHaveBeenCalledWith(
     expect.stringContaining('/progreso/residente')
   );
 });
-
-
