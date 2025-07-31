@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Box } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import LanguageSelector from './components/LanguageSelector';
+//import { Box } from '@mui/material';
+//import { useTranslation } from 'react-i18next';
+//import LanguageSelector from './components/LanguageSelector';
 
 // Contexto de autenticación
 import { AuthProvider } from './context/AuthContext';
