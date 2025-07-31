@@ -494,21 +494,21 @@ const AdminUsuarios: React.FC = () => {
         margin="normal"
       />
 
-      {/* Tabla de usuarios */}
+     {/* Tabla de usuarios */}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer>
           <Table stickyHeader aria-label="tabla de usuarios">
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
                 <TableCell
                   onClick={() => handleSort("nombre")}
-                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                  sx={{ cursor: "pointer" }}
                 >
                   Nombre
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("email")}
-                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                  sx={{ cursor: "pointer" }}
                 >
                   Email
                 </TableCell>
@@ -516,13 +516,13 @@ const AdminUsuarios: React.FC = () => {
                 <TableCell>Sociedad</TableCell>
                 <TableCell
                   onClick={() => handleSort("rol")}
-                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                  sx={{ cursor: "pointer" }}
                 >
                   Rol
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("hospital")}
-                  sx={{ cursor: "pointer", backgroundColor: "primary.light", color: "common.white" }}
+                  sx={{ cursor: "pointer" }}
                 >
                   Hospital
                 </TableCell>
