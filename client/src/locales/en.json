@@ -1,0 +1,86 @@
+{
+  "welcome": "Welcome, {{name}}",
+  "role": {
+    "adminPanel": "Administration Panel",
+    "trainer": "Trainer of residents at {{hospital}} hospital",
+    "coordinator": "Coordinator of residents at {{hospital}} hospital",
+    "resident": "Resident at {{hospital}} hospital",
+    "student": "Student of the societies program {{title}}",
+    "instructor": "Instructor of the societies program {{title}}"
+  },
+  "actions": {
+    "myProgress": "My Progress",
+    "trainingPhases": "Training Phases",
+    "validations": "Validations",
+    "myUsers": "My Users",
+    "usersProgress": "Users Progress",
+    "settings": "Settings",
+    "myProfile": "My Profile",
+    "notifications": "Notifications"
+  },
+  "progressByPhase": "Progress by phase",
+  "close": "Close",
+  "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
+  "society": {
+    "convocatoria": {
+      "label": "Call",
+      "intro": "Start of the call process.",
+      "item1": "Sending invitations",
+      "item2": "Receiving applications"
+    },
+    "presentacion": {
+      "label": "Presentation",
+      "intro": "Program presentation session.",
+      "item1": "Program introduction",
+      "item2": "Instructor presentation"
+    },
+    "modOnline": {
+      "label": "Online Modules",
+      "intro": "Online training modules.",
+      "item1": "Platform access",
+      "item2": "Theoretical content"
+    },
+    "simulacion": {
+      "label": "Simulation",
+      "intro": "Simulation practices.",
+      "item1": "Practical sessions",
+      "item2": "Skills evaluation"
+    },
+    "firstAssistant": {
+      "label": "First Assistant",
+      "intro": "Activities as first assistant.",
+      "item1": "Participation in operating rooms",
+      "item2": "Activity logging"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Step By Step procedures.",
+      "item1": "Support material",
+      "item2": "Guided review"
+    },
+    "handsOn": {
+      "label": "Hands On",
+      "intro": "Hands On practical training.",
+      "item1": "Intensive practice",
+      "item2": "Personalized feedback"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Phase 1 - Initial Preparation",
+      "description": "Familiarization with the Da Vinci system and initial theoretical aspects."
+    },
+    "phase2": {
+      "label": "Phase 2 - Preclinical Training",
+      "description": "Simulation exercises and training in a safe environment."
+    },
+    "phase3": {
+      "label": "Phase 3 - Surgical Assistance",
+      "description": "Participation as an assistant in the operating room."
+    },
+    "phase4": {
+      "label": "Phase 4 - Console Surgery",
+      "description": "Procedures performed by the resident with supervision."
+    }
+  }
+}

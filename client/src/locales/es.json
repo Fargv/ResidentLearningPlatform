@@ -1,0 +1,86 @@
+{
+  "welcome": "Bienvenido/a, {{name}}",
+  "role": {
+    "adminPanel": "Panel de Administración",
+    "trainer": "Formador de residentes del hospital {{hospital}}",
+    "coordinator": "Coordinador de residentes del hospital {{hospital}}",
+    "resident": "Residente del hospital {{hospital}}",
+    "student": "Alumno del programa de sociedades {{title}}",
+    "instructor": "Instructor del programa de sociedades {{title}}"
+  },
+  "actions": {
+    "myProgress": "Mi Progreso",
+    "trainingPhases": "Fases Formativas",
+    "validations": "Validaciones",
+    "myUsers": "Mis Usuarios",
+    "usersProgress": "Progreso Usuarios",
+    "settings": "Configuración",
+    "myProfile": "Mi Perfil",
+    "notifications": "Notificaciones"
+  },
+  "progressByPhase": "Progreso por fase",
+  "close": "Cerrar",
+  "devWarning": "⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️",
+  "society": {
+    "convocatoria": {
+      "label": "Convocatoria",
+      "intro": "Inicio del proceso de convocatoria.",
+      "item1": "Envío de invitaciones",
+      "item2": "Recepción de solicitudes"
+    },
+    "presentacion": {
+      "label": "Presentación",
+      "intro": "Sesión de presentación del programa.",
+      "item1": "Introducción al programa",
+      "item2": "Presentación de instructores"
+    },
+    "modOnline": {
+      "label": "Mod. Online",
+      "intro": "Módulos formativos online.",
+      "item1": "Acceso a la plataforma",
+      "item2": "Contenido teórico"
+    },
+    "simulacion": {
+      "label": "Simulación",
+      "intro": "Prácticas de simulación.",
+      "item1": "Sesiones prácticas",
+      "item2": "Evaluación de destrezas"
+    },
+    "firstAssistant": {
+      "label": "First Assistant",
+      "intro": "Actividades como primer asistente.",
+      "item1": "Participación en quirófanos",
+      "item2": "Registro de actividades"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Procedimientos Step By Step.",
+      "item1": "Material de apoyo",
+      "item2": "Revisión guiada"
+    },
+    "handsOn": {
+      "label": "Hand On",
+      "intro": "Entrenamiento práctico Hands On.",
+      "item1": "Práctica intensiva",
+      "item2": "Retroalimentación personalizada"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparación Inicial",
+      "description": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formación Preclínica",
+      "description": "Ejercicios de simulación y entrenamientos en entorno seguro."
+    },
+    "phase3": {
+      "label": "Fase 3 - Asistencia Quirúrgica",
+      "description": "Participación como asistente en quirófano."
+    },
+    "phase4": {
+      "label": "Fase 4 - Cirugía en Consola",
+      "description": "Procedimientos realizados por el residente con supervisión."
+    }
+  }
+}
