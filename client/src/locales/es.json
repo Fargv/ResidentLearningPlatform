@@ -78,7 +78,7 @@
       "label": "Fase 3 - Asistencia Quirúrgica",
       "description": "Participación como asistente en quirófano."
     },
-   "phase4": {
+    "phase4": {
       "label": "Fase 4 - Cirugía en Consola",
       "description": "Procedimientos realizados por el residente con supervisión."
     }
@@ -90,7 +90,11 @@
     "saveChanges": "Guardar Cambios",
     "saving": "Guardando...",
     "delete": "Eliminar",
-    "deleting": "Eliminando..."
+    "deleting": "Eliminando...",
+    "phase": "Fase",
+    "validate": "Validar",
+    "reject": "Rechazar",
+    "processing": "Procesando..."
   },
   "adminHospitals": {
     "title": "Gestión de Hospitales",
@@ -137,6 +141,101 @@
     "delete": {
       "title": "Eliminar Hospital",
       "confirm": "¿Estás seguro de que deseas eliminar el hospital <strong>{{name}}</strong>? Se eliminarán {{count}} usuarios y sus progresos. Esta acción no se puede deshacer."
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Gestión de Todos los Usuarios",
+    "titleHospital": "Usuarios de Tu Hospital",
+    "searchPlaceholder": "Buscar por nombre o email",
+    "loadError": "Error al cargar los datos",
+    "actions": {
+      "create": "Crear Usuario",
+      "invite": "Invitar Usuario",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "changePassword": "Cambiar contraseña",
+      "createProgress": "Crear progreso"
+    },
+    "createSuccess": "Usuario creado correctamente",
+    "createError": "Error al crear el usuario",
+    "updateSuccess": "Usuario actualizado correctamente",
+    "updateError": "Error al actualizar el usuario",
+    "deleteSuccess": "Usuario eliminado correctamente",
+    "deleteError": "Error al eliminar el usuario",
+    "passwordUpdated": "Contraseña actualizada",
+    "passwordError": "Error al actualizar la contraseña",
+    "createProgressSuccess": "Progreso formativo creado con éxito",
+    "createProgressError": "Error al crear el progreso",
+    "table": {
+      "aria": "tabla de usuarios",
+      "name": "Nombre",
+      "email": "Email",
+      "type": "Tipo",
+      "society": "Sociedad",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "zone": "Zona",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Contraseña",
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "type": "Tipo",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "specialty": "Especialidad",
+      "society": "Sociedad",
+      "zone": "Zona"
+    },
+    "create": {
+      "title": "Crear Usuario"
+    },
+    "edit": {
+      "title": "Editar Usuario"
+    },
+    "delete": {
+      "title": "Eliminar Usuario",
+      "confirm": "¿Estás seguro de que deseas eliminar al usuario <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+    },
+    "password": {
+      "title": "Actualizar Contraseña",
+      "label": "Nueva contraseña",
+      "updating": "Actualizando...",
+      "update": "Actualizar"
+    },
+    "_comment": "Gestión de usuarios para administradores",
+    "buttons": {
+      "create": "Crear Usuario",
+      "creating": "Creando...",
+      "invite": "Invitar Usuario",
+      "cancel": "Cancelar",
+      "save": "Guardar Cambios",
+      "saving": "Guardando...",
+      "delete": "Eliminar",
+      "deleting": "Eliminando...",
+      "update": "Actualizar",
+      "updating": "Actualizando..."
+    },
+    "dialogs": {
+      "createTitle": "Crear Usuario",
+      "editTitle": "Editar Usuario",
+      "deleteTitle": "Eliminar Usuario",
+      "passwordTitle": "Actualizar Contraseña",
+      "passwordLabel": "Nueva contraseña",
+      "deleteConfirm": "¿Estás seguro de que deseas eliminar al usuario {{name}} {{lastName}}? Esta acción no se puede deshacer."
+    },
+    "messages": {
+      "loadError": "Error al cargar los datos",
+      "userCreated": "Usuario creado correctamente",
+      "createError": "Error al crear el usuario",
+      "userUpdated": "Usuario actualizado correctamente",
+      "updateError": "Error al actualizar el usuario",
+      "userDeleted": "Usuario eliminado correctamente",
+      "deleteError": "Error al eliminar el usuario",
+      "passwordUpdated": "Contraseña actualizada",
+      "passwordError": "Error al actualizar la contraseña"
     }
   },
   "brand": {
@@ -188,7 +287,17 @@
     "theoreticalLower": "teórica",
     "practicalLower": "práctica",
     "evaluationLower": "evaluación",
-    "observationLower": "observación"
+    "observationLower": "observación",
+    "programaResidentes": "Programa Residentes",
+    "programaSociedades": "Programa Sociedades"
+  },
+  "roles": {
+    "residente": "Residente",
+    "formador": "Formador",
+    "coordinador": "Coordinador",
+    "administrador": "Administrador",
+    "alumno": "Alumno",
+    "instructor": "Instructor"
   },
   "notifications": {
     "errorMarkAsRead": "Error marcando notificación como leída"
@@ -200,12 +309,204 @@
     "errorDelete": "Error al eliminar el código",
     "errorSave": "Error al guardar el código"
   },
+  "trainerUsers": {
+    "title": "Mis Usuarios",
+    "invite": "Invitar Usuario",
+    "edit": "Editar Usuario",
+    "updated": "Usuario actualizado",
+    "invited": "Usuario invitado",
+    "deleted": "Usuario eliminado",
+    "error": "Error",
+    "deleteError": "Error al eliminar",
+    "loadError": "Error al cargar usuarios",
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "status": "Estado",
+      "actions": "Acciones",
+      "state": "Estado"
+    },
+    "form": {
+      "email": "Email",
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "role": "Rol",
+      "roles": {
+        "resident": "Residente",
+        "trainer": "Formador"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+      "save": "Guardar",
+      "invite": "Invitar"
+    },
+    "_comment": "Gestión de usuarios para formadores",
+    "buttons": {
+      "invite": "Invitar Usuario",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "delete": "Eliminar"
+    },
+    "fields": {
+      "email": "Email",
+      "name": "Nombre",
+      "lastName": "Apellidos",
+      "role": "Rol"
+    },
+    "roles": {
+      "resident": "Residente",
+      "trainer": "Formador"
+    },
+    "states": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "dialogs": {
+      "editTitle": "Editar Usuario",
+      "inviteTitle": "Invitar Usuario"
+    },
+    "messages": {
+      "loadError": "Error al cargar usuarios",
+      "updateSuccess": "Usuario actualizado",
+      "inviteSuccess": "Usuario invitado",
+      "deleteSuccess": "Usuario eliminado",
+      "deleteError": "Error al eliminar",
+      "genericError": "Error"
+    }
+  },
   "progress": {
     "createSuccess": "Progreso formativo creado con éxito"
   },
-  "residenteFases": {
+  "trainerValidations": {
+    "title": "Validaciones",
+    "tabs": {
+      "pending": "Pendientes ({{count}})",
+      "validated": "Validadas ({{count}})",
+      "rejected": "Rechazadas ({{count}})",
+      "aria": "pestañas de validaciones"
+    },
+    "table": {
+      "activity": "Actividad",
+      "resident": "Residente",
+      "date": "Fecha",
+      "comments": "Comentarios",
+      "actions": "Acciones",
+      "status": "Estado",
+      "reason": "Motivo",
+      "noPhase": "Sin fase",
+      "noName": "Sin nombre",
+      "phase": "Fase",
+      "state": "Estado"
+    },
+    "empty": {
+      "pending": "No hay validaciones pendientes",
+      "validated": "No hay validaciones completadas",
+      "rejected": "No hay validaciones rechazadas"
+    },
+    "actions": {
+      "viewAttachment": "Ver adjunto"
+    },
+    "dialog": {
+      "validateTitle": "Validar Actividad",
+      "validateMessage": "Estás validando la actividad {{activity}} del residente {{name}}.",
+      "optionalComments": "Comentarios (opcional)",
+      "digitalSignature": "Firma Digital",
+      "rejectTitle": "Rechazar Actividad",
+      "rejectMessage": "Estás rechazando la actividad {{activity}} del residente {{name}}.",
+      "rejectReason": "Motivo del rechazo"
+    },
+    "errorLoad": "Error al cargar las validaciones",
+    "_comment": "Validaciones gestionadas por formadores",
+    "buttons": {
+      "viewAttachment": "Ver adjunto",
+      "validate": "Validar",
+      "reject": "Rechazar",
+      "cancel": "Cancelar"
+    },
+    "states": {
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "dialogs": {
+      "validateTitle": "Validar Actividad",
+      "rejectTitle": "Rechazar Actividad",
+      "validateConfirm": "Estás validando la actividad {{activity}} del residente {{resident}}.",
+      "rejectConfirm": "Estás rechazando la actividad {{activity}} del residente {{resident}}.",
+      "commentsOptional": "Comentarios (opcional)",
+      "digitalSignature": "Firma Digital",
+      "rejectReason": "Motivo del rechazo",
+      "processing": "Procesando..."
+    },
+    "messages": {
+      "loadError": "Error al cargar las validaciones"
+    }
+  },
+  "residentPhases": {
+    "title": "Mis Fases Formativas",
+    "errorLoad": "Error al cargar el progreso",
+    "activityFail": "No se pudo completar la actividad.",
+    "activitySaveError": "Error al guardar la actividad.",
     "activitySuccess": "✅ Actividad registrada con éxito",
-    "noTitle": "Sin título"
+    "noActivitySelectedError": "Error interno: No se ha seleccionado ninguna actividad.",
+    "noTitle": "Sin título",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "deadline": "Fecha límite",
+    "validatedProgress": "Progreso validado: {{percent}}%",
+    "noActivities": "No hay actividades disponibles",
+    "phaseLocked": "Fase bloqueada",
+    "noProgress": "No hay progreso formativo disponible.",
+    "markAsCompleted": "Marcar como completada",
+    "unnamedActivity": "Actividad sin nombre",
+    "comment": "Comentario",
+    "trainerComment": "Comentario formador",
+    "rejectionReason": "Motivo rechazo",
+    "completedOn": "Fecha completada",
+    "validatedOn": "Validado el",
+    "status": "Estado",
+    "dialog": {
+      "completeActivity": "Marcar actividad como completada",
+      "completionDate": "Fecha de realización",
+      "comment": "Comentario",
+      "selectFile": "Seleccionar archivo",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "missingProgressId": "Falta el ID del progreso",
+      "noActivitySelected": "No se ha seleccionado ninguna actividad",
+      "selectDate": "Selecciona una fecha de realización",
+      "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+      "fileTooLarge": "El archivo supera el tamaño máximo de 5MB.",
+      "title": "Marcar actividad como completada",
+      "date": "Fecha de realización"
+    },
+    "_comment": "Fases y actividades para residentes",
+    "messages": {
+      "noActivities": "No hay actividades disponibles",
+      "blocked": "Fase bloqueada",
+      "noProgress": "No hay progreso formativo disponible.",
+      "loadError": "Error al cargar el progreso"
+    },
+    "tooltip": {
+      "missingProgress": "Falta el ID del progreso",
+      "noActivity": "No se ha seleccionado ninguna actividad"
+    },
+    "labels": {
+      "comment": "Comentario",
+      "trainerComment": "Comentario formador",
+      "rejectionReason": "Motivo rechazo",
+      "completedDate": "Fecha completada",
+      "validatedDate": "Validado el",
+      "state": "Estado"
+    },
+    "states": {
+      "validated": "Validado",
+      "rejected": "Rechazado",
+      "pending": "Pendiente de validación",
+      "notCompleted": "No completada"
+    }
   },
   "emails": {
     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
@@ -215,6 +516,17 @@
     "tokenInvalid": "❌ Token no válido o corrupto"
   },
   "status": {
-    "pendingValidation": "Pendiente de validación"
+    "pendingValidation": "Pendiente de validación",
+    "validado": "Validado",
+    "rechazado": "Rechazado",
+    "completado": "Completado",
+    "pendiente": "Pendiente",
+    "noCompletada": "No completada",
+    "enProgreso": "En progreso",
+    "bloqueada": "Bloqueada",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "validated": "Validado",
+    "rejected": "Rechazado"
   }
 }

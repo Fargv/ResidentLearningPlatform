@@ -65,9 +65,11 @@ The following i18n keys were introduced during the 2025-07-31 translation audit.
 ## progress
 - **progress.createSuccess** – Success message when creating progress.
 
-## residenteFases
-- **residenteFases.activitySuccess** – Success message after registering an activity.
-- **residenteFases.noTitle** – Placeholder when a phase has no title.
+## residentPhases
+- **residentPhases.title** – Page heading for resident phases.
+- **residentPhases.noProgress** – Message shown when no training progress is available.
+- **residentPhases.markAsCompleted** – Button label to mark an activity as completed.
+- **residentPhases.dialog.completeActivity** – Dialog title for completing an activity.
 
 ## emails
 - **emails.inviteSubject** – Subject line for invitation emails.

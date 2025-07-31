@@ -28,16 +28,24 @@ import {
   Delete as DeleteIcon,
   VpnKey as VpnKeyIcon,
 
-  //Person as PersonIcon,
+   //Person as PersonIcon,
   //Email as EmailIcon
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import api, { createUser, updateUserPassword } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
+import { useTranslation, Trans } from "react-i18next";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
+  const typeKey = (tipo?: string) =>
+    tipo === "Programa Sociedades"
+      ? "programaSociedades"
+      : tipo === "Programa Residentes"
+      ? "programaResidentes"
+      : "";
   const rolesResidentes = [
     "residente",
     "formador",
@@ -115,14 +123,15 @@ const AdminUsuarios: React.FC = () => {
           sociedadesRes.data.filter((s: any) => s.status === "ACTIVO"),
         );
       } catch (err: any) {
-        setError(err.response?.data?.error || "Error al cargar los datos");
+        setError(err.response?.data?.error || t("adminUsers.loadError"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [t]);
+
 
   const handleOpenInvitarDialog = () => {
     setOpenInvitarDialog(true);
@@ -252,13 +261,14 @@ const AdminUsuarios: React.FC = () => {
       handleCloseCrearDialog();
       setSnackbar({
         open: true,
-        message: "Usuario creado correctamente",
+        message: t("adminUsers.createSuccess"),
         severity: "success",
       });
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || "Error al crear el usuario",
+        message:
+          err.response?.data?.error || t("adminUsers.createError"),
         severity: "error",
       });
     } finally {
@@ -291,15 +301,16 @@ const AdminUsuarios: React.FC = () => {
 
       setSnackbar({
         open: true,
-        message: "Usuario actualizado correctamente",
+        message: t("adminUsers.updateSuccess"),
         severity: "success",
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || "Error al actualizar el usuario");
+      setError(err.response?.data?.error || t("adminUsers.updateError"));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || "Error al actualizar el usuario",
+        message:
+          err.response?.data?.error || t("adminUsers.updateError"),
         severity: "error",
       });
     } finally {
@@ -322,15 +333,16 @@ const AdminUsuarios: React.FC = () => {
 
       setSnackbar({
         open: true,
-        message: "Usuario eliminado correctamente",
+        message: t("adminUsers.deleteSuccess"),
         severity: "success",
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || "Error al eliminar el usuario");
+      setError(err.response?.data?.error || t("adminUsers.deleteError"));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || "Error al eliminar el usuario",
+        message:
+          err.response?.data?.error || t("adminUsers.deleteError"),
         severity: "error",
       });
     } finally {
@@ -346,14 +358,14 @@ const AdminUsuarios: React.FC = () => {
       handleClosePasswordDialog();
       setSnackbar({
         open: true,
-        message: "Contraseña actualizada",
+        message: t("adminUsers.passwordUpdated"),
         severity: "success",
       });
     } catch (err: any) {
       setSnackbar({
         open: true,
         message:
-          err.response?.data?.error || "Error al actualizar la contraseña",
+          err.response?.data?.error || t("adminUsers.passwordError"),
         severity: "error",
       });
     } finally {
@@ -368,13 +380,14 @@ const AdminUsuarios: React.FC = () => {
 
       setSnackbar({
         open: true,
-        message: "Progreso formativo creado con éxito",
+        message: t("adminUsers.createProgressSuccess"),
         severity: "success",
       });
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || "Error al crear el progreso",
+        message:
+          err.response?.data?.error || t("adminUsers.createProgressError"),
         severity: "error",
       });
     } finally {
@@ -458,8 +471,8 @@ const AdminUsuarios: React.FC = () => {
       >
         <Typography variant="h4" component="h1" gutterBottom>
           {user?.rol === "administrador"
-            ? "Gestión de Todos los Usuarios"
-            : "Usuarios de Tu Hospital"}
+            ? t("adminUsers.titleAll")
+            : t("adminUsers.titleHospital")}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <BackButton sx={{ mr: 1 }} />
@@ -471,7 +484,7 @@ const AdminUsuarios: React.FC = () => {
               onClick={handleOpenCrearDialog}
               sx={{ mr: 1 }}
             >
-              Crear Usuario
+              {t("adminUsers.actions.create")}
             </Button>
           )}
           <Button
@@ -480,14 +493,14 @@ const AdminUsuarios: React.FC = () => {
             startIcon={<AddIcon />}
             onClick={handleOpenInvitarDialog}
           >
-            Invitar Usuario
+            {t("adminUsers.actions.invite")}
           </Button>
         </Box>
       </Box>
 
       <TextField
         variant="outlined"
-        placeholder="Buscar por nombre o email"
+        placeholder={t("adminUsers.searchPlaceholder")}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         fullWidth
@@ -497,37 +510,37 @@ const AdminUsuarios: React.FC = () => {
      {/* Tabla de usuarios */}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer>
-          <Table stickyHeader aria-label="tabla de usuarios">
+          <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
                 <TableCell
                   onClick={() => handleSort("nombre")}
                   sx={{ cursor: "pointer" }}
                 >
-                  Nombre
+                  {t("adminUsers.table.name")}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("email")}
                   sx={{ cursor: "pointer" }}
                 >
-                  Email
+                  {t("adminUsers.table.email")}
                 </TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Sociedad</TableCell>
+                <TableCell>{t("adminUsers.table.type")}</TableCell>
+                <TableCell>{t("adminUsers.table.society")}</TableCell>
                 <TableCell
                   onClick={() => handleSort("rol")}
                   sx={{ cursor: "pointer" }}
                 >
-                  Rol
+                  {t("adminUsers.table.role")}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort("hospital")}
                   sx={{ cursor: "pointer" }}
                 >
-                  Hospital
+                  {t("adminUsers.table.hospital")}
                 </TableCell>
-                <TableCell>Zona</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell>{t("adminUsers.table.zone")}</TableCell>
+                <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -537,26 +550,27 @@ const AdminUsuarios: React.FC = () => {
                     {usuario.nombre} {usuario.apellidos}
                   </TableCell>
                   <TableCell>{usuario.email}</TableCell>
-                  <TableCell>{usuario.tipo || "-"}</TableCell>
+                  <TableCell>
+                    {usuario.tipo
+                      ? t(`types.${typeKey(usuario.tipo)}`)
+                      : "-"}
+                  </TableCell>
                   <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
                   <TableCell>
                     <Chip
-                      label={
-                        usuario.rol.charAt(0).toUpperCase() +
-                        usuario.rol.slice(1)
-                      }
+                      label={t(`roles.${usuario.rol}`)}
                       color={
                         usuario.rol === "administrador"
                           ? "primary"
                           : usuario.rol === "formador"
-                            ? "secondary"
-                            : "default"
+                          ? "secondary"
+                          : "default"
                       }
                       size="small"
                     />
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
-                  <TableCell>{usuario.zona || '-'}</TableCell>
+                  <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell align="right">
                     <Button
                       variant="outlined"
@@ -566,7 +580,7 @@ const AdminUsuarios: React.FC = () => {
                       startIcon={<EditIcon />}
                       sx={{ mr: 1, minWidth: 150 }}
                     >
-                      Editar
+                      {t("adminUsers.actions.edit")}
                     </Button>
                     <Button
                       variant="outlined"
@@ -576,7 +590,7 @@ const AdminUsuarios: React.FC = () => {
                       startIcon={<DeleteIcon />}
                       sx={{ mr: 1, minWidth: 150 }}
                     >
-                      Eliminar
+                      {t("adminUsers.actions.delete")}
                     </Button>
                     {user?.rol === "administrador" && (
                       <Button
@@ -587,7 +601,7 @@ const AdminUsuarios: React.FC = () => {
                         startIcon={<VpnKeyIcon />}
                         sx={{ mr: 1, minWidth: 150 }}
                       >
-                        Cambiar contraseña
+                        {t("adminUsers.actions.changePassword")}
                       </Button>
                     )}
                     {['residente', 'alumno'].includes(usuario.rol) &&
@@ -598,7 +612,7 @@ const AdminUsuarios: React.FC = () => {
                           size="small"
                           sx={{ mr: 1, minWidth: 150 }}
                         >
-                          Crear progreso
+                          {t("adminUsers.actions.createProgress")}
                         </Button>
                       )}
                   </TableCell>
@@ -618,13 +632,13 @@ const AdminUsuarios: React.FC = () => {
 
       {/* Diálogo para actualizar contraseña */}
       <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
-        <DialogTitle>Actualizar Contraseña</DialogTitle>
+        <DialogTitle>{t("adminUsers.password.title")}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="password-update"
-            label="Nueva contraseña"
+            label={t("adminUsers.password.label")}
             type="password"
             fullWidth
             variant="outlined"
@@ -634,28 +648,30 @@ const AdminUsuarios: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClosePasswordDialog}>Cancelar</Button>
+          <Button onClick={handleClosePasswordDialog}>{t("common.cancel")}</Button>
           <Button
             onClick={handleActualizarPassword}
             variant="contained"
             color="secondary"
             disabled={procesando || !passwordValue}
           >
-            {procesando ? "Actualizando..." : "Actualizar"}
+            {procesando
+              ? t("adminUsers.password.updating")
+              : t("adminUsers.password.update")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Diálogo para crear usuario directamente */}
       <Dialog open={openCrearDialog} onClose={handleCloseCrearDialog}>
-        <DialogTitle>Crear Usuario</DialogTitle>
+        <DialogTitle>{t("adminUsers.create.title")}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="email-create"
             name="email"
-            label="Email"
+            label={t("adminUsers.fields.email")}
             type="email"
             fullWidth
             variant="outlined"
@@ -668,7 +684,7 @@ const AdminUsuarios: React.FC = () => {
             margin="dense"
             id="password-create"
             name="password"
-            label="Contraseña"
+            label={t("adminUsers.fields.password")}
             type="password"
             fullWidth
             variant="outlined"
@@ -681,7 +697,7 @@ const AdminUsuarios: React.FC = () => {
             margin="dense"
             id="nombre-create"
             name="nombre"
-            label="Nombre"
+            label={t("adminUsers.fields.name")}
             type="text"
             fullWidth
             variant="outlined"
@@ -694,7 +710,7 @@ const AdminUsuarios: React.FC = () => {
             margin="dense"
             id="apellidos-create"
             name="apellidos"
-            label="Apellidos"
+            label={t("adminUsers.fields.surname")}
             type="text"
             fullWidth
             variant="outlined"
@@ -709,7 +725,7 @@ const AdminUsuarios: React.FC = () => {
               margin="dense"
               id="tipo-create"
               name="tipo"
-              label="Tipo"
+              label={t("adminUsers.fields.type")}
               fullWidth
               variant="outlined"
               value={formData.tipo}
@@ -718,8 +734,12 @@ const AdminUsuarios: React.FC = () => {
               sx={{ mb: 2 }}
               SelectProps={{ native: true }}
             >
-              <option value="Programa Residentes">Programa Residentes</option>
-              <option value="Programa Sociedades">Programa Sociedades</option>
+              <option value="Programa Residentes">
+                {t("types.programaResidentes")}
+              </option>
+              <option value="Programa Sociedades">
+                {t("types.programaSociedades")}
+              </option>
             </TextField>
           )}
           <TextField
@@ -727,7 +747,7 @@ const AdminUsuarios: React.FC = () => {
             margin="dense"
             id="rol-create"
             name="rol"
-            label="Rol"
+            label={t("adminUsers.fields.role")}
             fullWidth
             variant="outlined"
             value={formData.rol}
@@ -738,7 +758,7 @@ const AdminUsuarios: React.FC = () => {
           >
             {roleOptions.map((r) => (
               <option key={r} value={r}>
-                {r.charAt(0).toUpperCase() + r.slice(1)}
+                {t(`roles.${r}`)}
               </option>
             ))}
           </TextField>
@@ -752,7 +772,7 @@ const AdminUsuarios: React.FC = () => {
                 margin="dense"
                 id="hospital-create"
                 name="hospital"
-                label="Hospital"
+                label={t("adminUsers.fields.hospital")}
                 fullWidth
                 variant="outlined"
                 value={formData.hospital}
@@ -773,7 +793,7 @@ const AdminUsuarios: React.FC = () => {
               margin="dense"
               id="especialidad-create"
               name="especialidad"
-              label="Especialidad"
+              label={t("adminUsers.fields.specialty")}
               fullWidth
               variant="outlined"
               value={formData.especialidad}
@@ -797,7 +817,7 @@ const AdminUsuarios: React.FC = () => {
                 margin="dense"
                 id="sociedad-create"
                 name="sociedad"
-                label="Sociedad"
+                label={t("adminUsers.fields.society")}
                 fullWidth
                 variant="outlined"
                 value={formData.sociedad}
@@ -818,7 +838,7 @@ const AdminUsuarios: React.FC = () => {
               margin="dense"
               id="zona-create"
               name="zona"
-              label="Zona"
+              label={t("adminUsers.fields.zone")}
               fullWidth
               variant="outlined"
               value={formData.zona}
@@ -836,7 +856,7 @@ const AdminUsuarios: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCrearDialog}>Cancelar</Button>
+          <Button onClick={handleCloseCrearDialog}>{t("common.cancel")}</Button>
           <Button
             onClick={handleCrear}
             variant="contained"
@@ -853,21 +873,23 @@ const AdminUsuarios: React.FC = () => {
               (formData.rol === "coordinador" && !formData.zona)
             }
           >
-            {procesando ? "Creando..." : "Crear Usuario"}
+            {procesando
+              ? t("common.creating")
+              : t("adminUsers.actions.create")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Diálogo para editar usuario */}
       <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
-        <DialogTitle>Editar Usuario</DialogTitle>
+        <DialogTitle>{t("adminUsers.edit.title")}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t("adminUsers.fields.name")}
             type="text"
             fullWidth
             variant="outlined"
@@ -880,7 +902,7 @@ const AdminUsuarios: React.FC = () => {
             margin="dense"
             id="apellidos"
             name="apellidos"
-            label="Apellidos"
+            label={t("adminUsers.fields.surname")}
             type="text"
             fullWidth
             variant="outlined"
@@ -894,7 +916,7 @@ const AdminUsuarios: React.FC = () => {
             margin="dense"
             id="rol"
             name="rol"
-            label="Rol"
+            label={t("adminUsers.fields.role")}
             fullWidth
             variant="outlined"
             value={formData.rol}
@@ -905,10 +927,10 @@ const AdminUsuarios: React.FC = () => {
           >
             {roleOptions.map((r) => (
               <option key={r} value={r}>
-                {r.charAt(0).toUpperCase() + r.slice(1)}
+                {t(`roles.${r}`)}
               </option>
             ))}
-           </TextField>
+          </TextField>
           {formData.rol !== "administrador" &&
             formData.rol !== "coordinador" &&
             (formData.rol === "residente" ||
@@ -919,7 +941,7 @@ const AdminUsuarios: React.FC = () => {
                 margin="dense"
                 id="hospital"
                 name="hospital"
-                label="Hospital"
+                label={t("adminUsers.fields.hospital")}
                 fullWidth
                 variant="outlined"
                 value={formData.hospital}
@@ -942,7 +964,7 @@ const AdminUsuarios: React.FC = () => {
               margin="dense"
               id="zona-edit"
               name="zona"
-              label="Zona"
+              label={t("adminUsers.fields.zone")}
               fullWidth
               variant="outlined"
               value={formData.zona}
@@ -964,7 +986,7 @@ const AdminUsuarios: React.FC = () => {
               margin="dense"
               id="especialidad"
               name="especialidad"
-              label="Especialidad"
+              label={t("adminUsers.fields.specialty")}
               fullWidth
               variant="outlined"
               value={formData.especialidad}
@@ -983,7 +1005,7 @@ const AdminUsuarios: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarDialog} color="primary">
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleEditar}
@@ -999,26 +1021,28 @@ const AdminUsuarios: React.FC = () => {
               (formData.rol === "coordinador" && !formData.zona)
             }
           >
-            {procesando ? "Guardando..." : "Guardar Cambios"}
+            {procesando ? t("common.saving") : t("common.saveChanges")}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Diálogo para eliminar usuario */}
       <Dialog open={openEliminarDialog} onClose={handleCloseEliminarDialog}>
-        <DialogTitle>Eliminar Usuario</DialogTitle>
+        <DialogTitle>{t("adminUsers.delete.title")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar al usuario{" "}
-            <strong>
-              {selectedUsuario?.nombre} {selectedUsuario?.apellidos}
-            </strong>
-            ? Esta acción no se puede deshacer.
+            <Trans
+              i18nKey="adminUsers.delete.confirm"
+              values={{
+                name: `${selectedUsuario?.nombre} ${selectedUsuario?.apellidos}`,
+              }}
+              components={{ strong: <strong /> }}
+            />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEliminarDialog} color="primary">
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleEliminar}
@@ -1026,7 +1050,7 @@ const AdminUsuarios: React.FC = () => {
             variant="contained"
             disabled={procesando}
           >
-            {procesando ? "Eliminando..." : "Eliminar"}
+            {procesando ? t("common.deleting") : t("common.delete")}
           </Button>
         </DialogActions>
       </Dialog>

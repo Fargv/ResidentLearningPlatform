@@ -90,7 +90,11 @@
     "saveChanges": "Save Changes",
     "saving": "Saving...",
     "delete": "Delete",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "phase": "Phase",
+    "validate": "Validate",
+    "reject": "Reject",
+    "processing": "Processing..."
   },
   "adminHospitals": {
     "title": "Hospital Management",
@@ -137,6 +141,101 @@
     "delete": {
       "title": "Delete Hospital",
       "confirm": "Are you sure you want to delete hospital <strong>{{name}}</strong>? {{count}} users and their progress will be removed. This action cannot be undone."
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Manage All Users",
+    "titleHospital": "Users of Your Hospital",
+    "searchPlaceholder": "Search by name or email",
+    "loadError": "Error loading data",
+    "actions": {
+      "create": "Create User",
+      "invite": "Invite User",
+      "edit": "Edit",
+      "delete": "Delete",
+      "changePassword": "Change password",
+      "createProgress": "Create progress"
+    },
+    "createSuccess": "User created successfully",
+    "createError": "Error creating user",
+    "updateSuccess": "User updated successfully",
+    "updateError": "Error updating user",
+    "deleteSuccess": "User deleted successfully",
+    "deleteError": "Error deleting user",
+    "passwordUpdated": "Password updated",
+    "passwordError": "Error updating password",
+    "createProgressSuccess": "Training progress created successfully",
+    "createProgressError": "Error creating progress",
+    "table": {
+      "aria": "users table",
+      "name": "Name",
+      "email": "Email",
+      "type": "Type",
+      "society": "Society",
+      "role": "Role",
+      "hospital": "Hospital",
+      "zone": "Zone",
+      "actions": "Actions"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "name": "Name",
+      "surname": "Surname",
+      "type": "Type",
+      "role": "Role",
+      "hospital": "Hospital",
+      "specialty": "Specialty",
+      "society": "Society",
+      "zone": "Zone"
+    },
+    "create": {
+      "title": "Create User"
+    },
+    "edit": {
+      "title": "Edit User"
+    },
+    "delete": {
+      "title": "Delete User",
+      "confirm": "Are you sure you want to delete user <strong>{{name}}</strong>? This action cannot be undone."
+    },
+    "password": {
+      "title": "Update Password",
+      "label": "New password",
+      "updating": "Updating...",
+      "update": "Update"
+    },
+    "_comment": "Admin user management",
+    "buttons": {
+      "create": "Create User",
+      "creating": "Creating...",
+      "invite": "Invite User",
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "update": "Update",
+      "updating": "Updating..."
+    },
+    "dialogs": {
+      "createTitle": "Create User",
+      "editTitle": "Edit User",
+      "deleteTitle": "Delete User",
+      "passwordTitle": "Update Password",
+      "passwordLabel": "New password",
+      "deleteConfirm": "Are you sure you want to delete user {{name}} {{lastName}}? This action cannot be undone."
+    },
+    "messages": {
+      "loadError": "Error loading data",
+      "userCreated": "User created successfully",
+      "createError": "Error creating user",
+      "userUpdated": "User updated successfully",
+      "updateError": "Error updating user",
+      "userDeleted": "User deleted successfully",
+      "deleteError": "Error deleting user",
+      "passwordUpdated": "Password updated",
+      "passwordError": "Error updating password"
     }
   },
   "brand": {
@@ -188,7 +287,17 @@
     "theoreticalLower": "theoretical",
     "practicalLower": "practical",
     "evaluationLower": "evaluation",
-    "observationLower": "observation"
+    "observationLower": "observation",
+    "programaResidentes": "Residents Program",
+    "programaSociedades": "Societies Program"
+  },
+  "roles": {
+    "residente": "Resident",
+    "formador": "Trainer",
+    "coordinador": "Coordinator",
+    "administrador": "Administrator",
+    "alumno": "Student",
+    "instructor": "Instructor"
   },
   "notifications": {
     "errorMarkAsRead": "Error marking notification as read"
@@ -200,12 +309,144 @@
     "errorDelete": "Error deleting code",
     "errorSave": "Error saving code"
   },
+  "trainerUsers": {
+    "title": "My Users",
+    "invite": "Invite User",
+    "edit": "Edit User",
+    "updated": "User updated",
+    "invited": "User invited",
+    "deleted": "User deleted",
+    "error": "Error",
+    "deleteError": "Error deleting",
+    "loadError": "Error loading users",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "email": "Email",
+      "name": "Name",
+      "surname": "Surname",
+      "role": "Role",
+      "roles": {
+        "resident": "Resident",
+        "trainer": "Trainer"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save",
+      "invite": "Invite"
+    },
+    "_comment": "Trainer user management",
+    "dialogs": {
+      "editTitle": "Edit User",
+      "inviteTitle": "Invite User"
+    },
+    "messages": {
+      "loadError": "Error loading users",
+      "updateSuccess": "User updated",
+      "inviteSuccess": "User invited",
+      "deleteSuccess": "User deleted",
+      "deleteError": "Error deleting",
+      "genericError": "Error"
+    }
+  },
   "progress": {
     "createSuccess": "Training progress created successfully"
   },
-  "residenteFases": {
+  "trainerValidations": {
+    "title": "Validations",
+    "tabs": {
+      "pending": "Pending",
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "aria": "validations tabs"
+    },
+    "table": {
+      "activity": "Activity",
+      "resident": "Resident",
+      "date": "Date",
+      "comments": "Comments",
+      "actions": "Actions",
+      "status": "Status",
+      "reason": "Reason",
+      "noPhase": "No phase",
+      "noName": "No name"
+    },
+    "empty": {
+      "pending": "No pending validations",
+      "validated": "No completed validations",
+      "rejected": "No rejected validations"
+    },
+    "actions": {
+      "viewAttachment": "View attachment"
+    },
+    "dialog": {
+      "validateTitle": "Validate Activity",
+      "validateMessage": "You are validating the activity {{activity}} of resident {{name}}.",
+      "optionalComments": "Comments (optional)",
+      "digitalSignature": "Digital Signature",
+      "rejectTitle": "Reject Activity",
+      "rejectMessage": "You are rejecting the activity {{activity}} of resident {{name}}.",
+      "rejectReason": "Reason for rejection"
+    },
+    "errorLoad": "Error loading validations",
+    "_comment": "Validations managed by trainers",
+    "dialogs": {
+      "validateTitle": "Validate Activity",
+      "rejectTitle": "Reject Activity",
+      "validateConfirm": "You are validating activity {{activity}} for resident {{resident}}.",
+      "rejectConfirm": "You are rejecting activity {{activity}} for resident {{resident}}.",
+      "commentsOptional": "Comments (optional)",
+      "digitalSignature": "Digital Signature",
+      "rejectReason": "Rejection reason",
+      "processing": "Processing..."
+    },
+    "messages": {
+      "loadError": "Error loading validations"
+    }
+  },
+  "residentPhases": {
+    "title": "My Training Phases",
+    "errorLoad": "Error loading progress",
+    "activityFail": "Could not complete the activity.",
+    "activitySaveError": "Error saving the activity.",
     "activitySuccess": "✅ Activity recorded successfully",
-    "noTitle": "No title"
+    "noActivitySelectedError": "Internal error: No activity selected.",
+    "noTitle": "No title",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "deadline": "Deadline",
+    "validatedProgress": "Validated progress: {{percent}}%",
+    "noActivities": "No activities available",
+    "phaseLocked": "Phase locked",
+    "noProgress": "No training progress available.",
+    "markAsCompleted": "Mark as completed",
+    "unnamedActivity": "Unnamed activity",
+    "comment": "Comment",
+    "trainerComment": "Trainer comment",
+    "rejectionReason": "Rejection reason",
+    "completedOn": "Completed on",
+    "validatedOn": "Validated on",
+    "status": "Status",
+    "dialog": {
+      "completeActivity": "Mark activity as completed",
+      "completionDate": "Completion date",
+      "comment": "Comment",
+      "selectFile": "Select file",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "missingProgressId": "Missing progress ID",
+      "noActivitySelected": "No activity selected",
+      "selectDate": "Select a completion date",
+      "optionalFileHint": "Attach an optional file (max 5MB)",
+      "fileTooLarge": "The file exceeds the maximum size of 5MB."
+    },
+    "_comment": "Resident phases and activities"
   },
   "emails": {
     "inviteSubject": "Invitation to the Da Vinci Training Platform"
@@ -215,6 +456,17 @@
     "tokenInvalid": "❌ Token invalid or corrupt"
   },
   "status": {
-    "pendingValidation": "Pending validation"
+    "pendingValidation": "Pending validation",
+    "validado": "Validated",
+    "rechazado": "Rejected",
+    "completado": "Completed",
+    "pendiente": "Pending",
+    "noCompletada": "Not completed",
+    "enProgreso": "In progress",
+    "bloqueada": "Blocked",
+    "active": "Active",
+    "inactive": "Inactive",
+    "validated": "Validated",
+    "rejected": "Rejected"
   }
 }

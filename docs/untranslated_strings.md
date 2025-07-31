@@ -77,10 +77,4 @@ List of user-facing strings not yet localized (audit on 2025-07-31).
 - client/src/pages/dashboard/Perfil.tsx:'Contraseña actualizada'
 - client/src/pages/dashboard/Perfil.tsx:'Error al cambiar la contraseña'
 - client/src/pages/dashboard/Perfil.tsx:'Las contraseñas no coinciden'
-- client/src/pages/dashboard/ResidenteFases.tsx:"Fecha de realización"
-- client/src/pages/dashboard/ResidenteFases.tsx:'Adjunta un archivo opcional (máx. 5MB)'
-- client/src/pages/dashboard/ResidenteFases.tsx:'El archivo supera el tamaño máximo de 5MB.'
-- client/src/pages/dashboard/ResidenteFases.tsx:'Pendiente de validación'
-- client/src/pages/dashboard/ResidenteFases.tsx:'Selecciona una fecha de realización'
-- client/src/pages/dashboard/ResidenteFases.tsx:'Sin título'
-- client/src/pages/dashboard/ResidenteFases.tsx:'✅ Actividad registrada con éxito'
+
