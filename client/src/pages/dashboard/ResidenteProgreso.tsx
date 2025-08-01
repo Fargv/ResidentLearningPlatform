@@ -3,6 +3,7 @@ import { Box, Typography, Alert, Paper, Button, CircularProgress } from '@mui/ma
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import PhaseProgressChart from '../../components/PhaseProgressChart';
+import { useTranslation } from 'react-i18next';
 
 interface Actividad {
   estado: 'pendiente' | 'completado' | 'rechazado' | 'validado';
@@ -20,6 +21,7 @@ interface ProgresoFase {
 
 const ResidenteProgreso: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +33,7 @@ const ResidenteProgreso: React.FC = () => {
         const res = await api.get(`/progreso/residente/${user._id}`);
         setProgresos(res.data.data);
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Error al cargar el progreso');
+        setError(err.response?.data?.error || t('residentProgress.errorLoad'));
       } finally {
         setLoading(false);
       }
@@ -51,7 +53,7 @@ const ResidenteProgreso: React.FC = () => {
       link.click();
       link.remove();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al descargar certificado');
+      setError(err.response?.data?.error || t('residentProgress.downloadError'));
     }
   };
 
@@ -80,7 +82,7 @@ const ResidenteProgreso: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
-        Mi Progreso
+        {t('residentProgress.title')}
       </Typography>
       <Box display="flex" flexWrap="wrap" gap={2}>
         {phaseStats.map(p => (
@@ -98,7 +100,7 @@ const ResidenteProgreso: React.FC = () => {
       {allValidado && (
         <Box textAlign="center" mt={2}>
           <Button variant="contained" onClick={handleDescargarCertificado}>
-            Descargar certificado
+            {t('residentProgress.downloadCertificate')}
           </Button>
         </Box>
       )}

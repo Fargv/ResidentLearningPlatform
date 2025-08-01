@@ -32,6 +32,17 @@
     "accessCodes": "Access Codes",
     "debug": "Debug"
   },
+  "adminPhases": {
+    "description": "Description",
+    "number": "Number",
+    "evaluation": "Evaluation",
+    "observation": "Observation",
+    "practice": "Practice",
+    "theory": "Theory",
+    "procedure": "Procedure",
+    "errorForbidden": "You do not have permission to view this section",
+    "errorLoadData": "Error loading data"
+  },
   "progressByPhase": "Progress by phase",
   "close": "Close",
  "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
@@ -213,6 +224,44 @@
       "confirm": "Are you sure you want to delete hospital <strong>{{name}}</strong>? {{count}} users and their progress will be removed. This action cannot be undone."
     }
   },
+  "adminSocieties": {
+    "title": "Societies Management",
+    "new": "New society",
+    "searchPlaceholder": "Search by name",
+    "table": {
+      "title": "Title",
+      "status": "Status",
+      "convocatoria": "Call",
+      "presentacion": "Presentation",
+      "modOnline": "Online Modules",
+      "simulacion": "Simulation",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hands On",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "dialog": {
+      "editTitle": "Edit Society",
+      "createTitle": "New Society"
+    },
+    "fields": {
+      "titulo": "Title",
+      "status": "Status",
+      "fechaConvocatoria": "Call Date",
+      "fechaPresentacion": "Presentation Date",
+      "fechaModulosOnline": "Online Modules",
+      "fechaSimulacion": "Simulation",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hands On"
+    }
+  },
   "adminUsers": {
     "titleAll": "Manage All Users",
     "titleHospital": "Users of Your Hospital",
@@ -308,6 +357,36 @@
       "passwordError": "Error updating password"
     }
   },
+  "adminPhasesSoc": {
+    "phase": "Phase",
+    "activities": "Activities",
+    "newPhase": "New Phase",
+    "editPhase": "Edit Phase",
+    "deletePhase": "Delete Phase",
+    "newActivity": "New Activity",
+    "editActivity": "Edit Activity",
+    "deleteActivity": "Delete Activity",
+    "order": "Order",
+    "name": "Name",
+    "type": "Type",
+    "description": "Description",
+    "actions": "Actions",
+    "noPermission": "You do not have permission to view this section",
+    "loadError": "Error loading data",
+    "progressCheckError": "Error checking linked progress",
+    "phaseCreated": "Phase created successfully",
+    "phaseCreateError": "Error creating phase",
+    "phaseUpdated": "Phase updated successfully",
+    "phaseUpdateError": "Error updating phase",
+    "phaseDeleted": "Phase deleted successfully. Removed progress: {{removed}}. Validated preserved: {{preserved}}",
+    "phaseDeleteError": "Error deleting phase",
+    "activityCreated": "Activity created successfully",
+    "activityCreateError": "Error creating activity",
+    "activityUpdated": "Activity updated successfully",
+    "activityUpdateError": "Error updating activity",
+    "activityDeleted": "Activity deleted successfully",
+    "activityDeleteError": "Error deleting activity"
+  },
   "adminUserProgress": {
     "title": "User Progress",
     "searchPlaceholder": "Search by name or email",
@@ -319,6 +398,38 @@
       "actions": "Actions"
     },
     "viewProgress": "View Progress"
+  },
+  "adminProgressDetail": {
+    "loadError": "Error loading progress",
+    "phaseUpdateSuccess": "Phase updated successfully",
+    "phaseUpdateError": "Error updating phase",
+    "activityUpdateSuccess": "Activity updated successfully",
+    "activityUpdateError": "Error updating activity",
+    "title": "User Progress",
+    "titleWithName": "Progress of {{name}} {{surname}}",
+    "back": "Back",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "noTitle": "Untitled",
+    "phaseStatusLabel": "Phase status",
+    "activityStatusLabel": "Activity status",
+    "phaseStatus": {
+      "blocked": "Blocked",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "validated": "Validated"
+    },
+    "activityStatus": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
+    "validatedProgress": "Validated progress: {{percent}}%",
+    "noActivityName": "Unnamed activity",
+    "completedOn": "Completed on: {{date}}",
+    "validatedOn": "Validated on: {{date}}",
+    "statusWithValue": "Status: {{status}}",
+    "noProgress": "No progress available."
   },
   "brand": {
     "name": "Abex Excelencia Robótica"
@@ -567,6 +678,12 @@
       "fileTooLarge": "The file exceeds the maximum size of 5MB."
     },
     "_comment": "Resident phases and activities"
+  },
+  "residentProgress": {
+    "title": "My Progress",
+    "errorLoad": "Error loading progress",
+    "downloadError": "Error downloading certificate",
+    "downloadCertificate": "Download certificate"
   },
   "emails": {
     "inviteSubject": "Invitation to the Da Vinci Training Platform"

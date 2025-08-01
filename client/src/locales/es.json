@@ -32,6 +32,17 @@
     "accessCodes": "Códigos de Acceso",
     "debug": "Debug"
   },
+  "adminPhases": {
+    "description": "Descripción",
+    "number": "Número",
+    "evaluation": "Evaluación",
+    "observation": "Observación",
+    "practice": "Práctica",
+    "theory": "Teórica",
+    "procedure": "Procedimiento",
+    "errorForbidden": "No tienes permisos para ver esta sección",
+    "errorLoadData": "Error al cargar los datos"
+  },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
  "devWarning": "⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️",
@@ -213,6 +224,44 @@
       "confirm": "¿Estás seguro de que deseas eliminar el hospital <strong>{{name}}</strong>? Se eliminarán {{count}} usuarios y sus progresos. Esta acción no se puede deshacer."
     }
   },
+  "adminSocieties": {
+    "title": "Gestión de Sociedades",
+    "new": "Nueva sociedad",
+    "searchPlaceholder": "Buscar por nombre",
+    "table": {
+      "title": "Título",
+      "status": "Estado",
+      "convocatoria": "Convocatoria",
+      "presentacion": "Presentación",
+      "modOnline": "Mod. Online",
+      "simulacion": "Simulación",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hand On",
+      "actions": "Acciones"
+    },
+    "buttons": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "dialog": {
+      "editTitle": "Editar Sociedad",
+      "createTitle": "Nueva Sociedad"
+    },
+    "fields": {
+      "titulo": "Título",
+      "status": "Estado",
+      "fechaConvocatoria": "Fecha de convocatoria",
+      "fechaPresentacion": "Fecha de presentación",
+      "fechaModulosOnline": "Módulos online",
+      "fechaSimulacion": "Simulación",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hand On"
+    }
+  },
   "adminUsers": {
     "titleAll": "Gestión de Todos los Usuarios",
     "titleHospital": "Usuarios de Tu Hospital",
@@ -308,6 +357,36 @@
      "passwordError": "Error al actualizar la contraseña"
     }
   },
+  "adminPhasesSoc": {
+    "phase": "Fase",
+    "activities": "Actividades",
+    "newPhase": "Nueva Fase",
+    "editPhase": "Editar Fase",
+    "deletePhase": "Eliminar Fase",
+    "newActivity": "Nueva Actividad",
+    "editActivity": "Editar Actividad",
+    "deleteActivity": "Eliminar Actividad",
+    "order": "Orden",
+    "name": "Nombre",
+    "type": "Tipo",
+    "description": "Descripción",
+    "actions": "Acciones",
+    "noPermission": "No tienes permisos para ver esta sección",
+    "loadError": "Error al cargar los datos",
+    "progressCheckError": "Error al comprobar progresos vinculados",
+    "phaseCreated": "Fase creada correctamente",
+    "phaseCreateError": "Error al crear la fase",
+    "phaseUpdated": "Fase actualizada correctamente",
+    "phaseUpdateError": "Error al actualizar la fase",
+    "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados preservados: {{preserved}}",
+    "phaseDeleteError": "Error al eliminar la fase",
+    "activityCreated": "Actividad creada correctamente",
+    "activityCreateError": "Error al crear la actividad",
+    "activityUpdated": "Actividad actualizada correctamente",
+    "activityUpdateError": "Error al actualizar la actividad",
+    "activityDeleted": "Actividad eliminada correctamente",
+    "activityDeleteError": "Error al eliminar la actividad"
+  },
   "adminUserProgress": {
     "title": "Progreso de Usuarios",
     "searchPlaceholder": "Buscar por nombre o email",
@@ -319,6 +398,40 @@
       "actions": "Acciones"
     },
     "viewProgress": "Ver Progreso"
+  },
+   "adminProgressDetail": {
+    "loadError": "Error al cargar el progreso",
+    "phaseUpdateSuccess": "Fase actualizada correctamente",
+    "phaseUpdateError": "Error al actualizar la fase",
+    "activityUpdateSuccess": "Actividad actualizada correctamente",
+    "activityUpdateError": "Error al actualizar actividad",
+    "title": "Progreso del Usuario",
+    "titleWithName": "Progreso de {{name}} {{surname}}",
+    "back": "Atrás",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "noTitle": "Sin título",
+    "phaseStatusLabel": "Estado fase",
+    "activityStatusLabel": "Estado actividad",
+    "phaseStatus": {
+  "blocked": "Bloqueada",
+  "inProgress": "En progreso",
+  "completed": "Completado",
+  "validated": "Validado",
+  "pending": "Pendiente",
+  "rejected": "Rechazado"
+},
+    "activityStatus": {
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "validatedProgress": "Progreso validado: {{percent}}%",
+    "noActivityName": "Actividad sin nombre",
+    "completedOn": "Fecha completada: {{date}}",
+    "validatedOn": "Validado el: {{date}}",
+    "statusWithValue": "Estado: {{status}}",
+    "noProgress": "No hay progreso disponible."
   },
   "brand": {
     "name": "Abex Excelencia Robótica"
@@ -627,6 +740,12 @@
       "pending": "Pendiente de validación",
       "notCompleted": "No completada"
     }
+  },
+  "residentProgress": {
+    "title": "Mi Progreso",
+    "errorLoad": "Error al cargar el progreso",
+    "downloadError": "Error al descargar certificado",
+    "downloadCertificate": "Descargar certificado"
   },
   "emails": {
     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
