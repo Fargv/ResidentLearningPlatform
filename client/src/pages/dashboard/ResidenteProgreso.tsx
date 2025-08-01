@@ -39,7 +39,7 @@ const ResidenteProgreso: React.FC = () => {
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, t]);
 
   const handleDescargarCertificado = async () => {
     if (!user?._id) return;
