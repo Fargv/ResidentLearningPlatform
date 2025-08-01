@@ -118,7 +118,7 @@ const Register: React.FC = () => {
     };
 
     validateCode();
-  }, [codigoAcceso]);
+  }, [codigoAcceso, t]);
 
   const onChange = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
