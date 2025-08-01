@@ -120,7 +120,7 @@ const ResidenteFases: React.FC = () => {
     };
   
     fetchProgresos();
-  }, [user]);
+  }, [user, t]);
 
   useEffect(() => {
     const loadSociedad = async () => {

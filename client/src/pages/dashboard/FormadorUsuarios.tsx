@@ -47,7 +47,7 @@ const FormadorUsuarios: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.hospital?._id]);
+  }, [user?.hospital?._id, t]);
 
   useEffect(() => {
     fetchUsuarios();

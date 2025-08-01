@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -80,30 +80,30 @@ const FormadorValidaciones: React.FC = () => {
       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
       : t('trainerValidations.table.noPhase');
 
-  const fetchValidaciones = async () => {
-  try {
-    setLoading(true);
+  const fetchValidaciones = useCallback(async () => {
+    try {
+      setLoading(true);
 
-    const respuesta = await api.get(
+      const respuesta = await api.get(
         '/progreso/formador/validaciones/pendientes'
       );
 
-    const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
-    setPendientes(pendientes || []);
-    setValidadas(validadas || []);
-    setRechazadas(rechazadas || []);
-  } catch (err: any) {
-    setError(err.response?.data?.error || t('trainerValidations.errorLoad'));
-  } finally {
-    setLoading(false);
-  }
-};
+      const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
+      setPendientes(pendientes || []);
+      setValidadas(validadas || []);
+      setRechazadas(rechazadas || []);
+    } catch (err: any) {
+      setError(err.response?.data?.error || t('trainerValidations.errorLoad'));
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
 
 useEffect(() => {
   if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
     fetchValidaciones();
   }
-}, [user]);
+}, [user, fetchValidaciones]);
   
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
