@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -68,7 +68,7 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getNotificaciones();
@@ -80,11 +80,11 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleMarcarLeida = async (id: string) => {
     try {
