@@ -9,6 +9,7 @@
     "instructor": "Instructor del programa de sociedades {{title}}"
   },
   "actions": {
+    "dashboard": "Dashboard",
     "myProgress": "Mi Progreso",
     "trainingPhases": "Fases Formativas",
     "validations": "Validaciones",
@@ -16,11 +17,55 @@
     "usersProgress": "Progreso Usuarios",
     "settings": "Configuración",
     "myProfile": "Mi Perfil",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "profile": "Perfil",
+    "users": "Usuarios",
+    "logout": "Cerrar sesión"
+  },
+  "adminConfig": {
+    "title": "Configuración",
+    "hospitals": "Hospitales",
+    "societies": "Sociedades",
+    "residentProgram": "Programa Residentes",
+    "societiesProgram": "Programa Sociedades",
+    "users": "Usuarios",
+    "accessCodes": "Códigos de Acceso",
+    "debug": "Debug"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
-  "devWarning": "⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️",
+ "devWarning": "⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️",
+  "register": {
+    "title": "Registro",
+    "accessCode": "Código de Acceso",
+    "name": "Nombre",
+    "surname": "Apellidos",
+    "email": "Email",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "hospital": "Hospital",
+    "zone": "Zona",
+    "specialty": "Especialidad",
+    "specialties": {
+      "URO": "Urología (URO)",
+      "GEN": "Cirugía General (GEN)",
+      "GYN": "Ginecología (GYN)",
+      "THOR": "Torácica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
+    "society": "Sociedad",
+    "none": "Ninguna",
+    "invalidAccessCode": "Código de acceso no válido",
+    "requiredFields": "Por favor, completa todos los campos obligatorios.",
+    "hospitalAndSpecialtyRequired": "Hospital y especialidad requeridos",
+    "hospitalRequired": "Hospital requerido",
+    "societyRequired": "Sociedad requerida",
+    "passwordsMismatch": "Las contraseñas no coinciden",
+    "consentPrefix": "Acepto el tratamiento de mis datos personales según la ",
+    "privacyPolicy": "Política de Privacidad",
+    "consentSuffix": " y cumplo con la LOPD.",
+    "registerButton": "Registrarse"
+  },
   "society": {
     "convocatoria": {
       "label": "Convocatoria",
@@ -95,6 +140,31 @@
     "validate": "Validar",
     "reject": "Rechazar",
     "processing": "Procesando..."
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "personalData": "Datos personales",
+    "changePassword": "Cambiar Contraseña",
+    "fields": {
+      "name": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Email",
+      "hospital": "Hospital",
+      "society": "Sociedad",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña"
+    },
+    "messages": {
+      "updateSuccess": "Perfil actualizado",
+      "updateError": "Error al actualizar el perfil",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "passwordUpdateSuccess": "Contraseña actualizada",
+      "passwordUpdateError": "Error al cambiar la contraseña"
+    },
+    "buttons": {
+      "changePassword": "Cambiar Contraseña"
+    }
   },
   "adminHospitals": {
     "title": "Gestión de Hospitales",
@@ -235,8 +305,20 @@
       "userDeleted": "Usuario eliminado correctamente",
       "deleteError": "Error al eliminar el usuario",
       "passwordUpdated": "Contraseña actualizada",
-      "passwordError": "Error al actualizar la contraseña"
+     "passwordError": "Error al actualizar la contraseña"
     }
+  },
+  "adminUserProgress": {
+    "title": "Progreso de Usuarios",
+    "searchPlaceholder": "Buscar por nombre o email",
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "hospitalSociety": "Hospital/Sociedad",
+      "role": "Rol",
+      "actions": "Acciones"
+    },
+    "viewProgress": "Ver Progreso"
   },
   "brand": {
     "name": "Abex Excelencia Robótica"
@@ -260,6 +342,26 @@
     "errorLogin": "Error al iniciar sesión",
     "errorChangePassword": "Error al cambiar la contraseña",
     "errorUpdatePassword": "Error al actualizar la contraseña"
+  },
+  "forgotPassword": {
+    "heading": "¿Olvidaste tu contraseña?",
+    "description": "Para resetear la contraseña póngase en contacto con el administrador del sistema.",
+    "emailLabel": "Tu email",
+    "submit": "Enviar correo al administrador",
+    "backToLogin": "Volver al inicio de sesión"
+  },
+  "login": {
+    "title": "Programa Académico daVinci",
+    "subtitle": "Tecnologías del Robot da Vinci",
+    "email": "Email",
+    "password": "Contraseña",
+    "signIn": "Iniciar Sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "registerHere": "Regístrate aquí",
+    "copyright": "© {{year}} Abex Excelencia Robótica",
+    "poweredBy": "Desarrollado por FARGV",
+    "logoAlt": "Abex Excelencia Robótica"
   },
   "dashboard": {
     "manageAllUsers": "Gestión de Todos los Usuarios",
@@ -300,6 +402,24 @@
     "instructor": "Instructor"
   },
   "notifications": {
+    "title": "Notificaciones",
+    "tabs": {
+      "aria": "pestañas de notificaciones",
+      "pending": "Pendientes",
+      "viewed": "Vistas"
+    },
+    "table": {
+      "message": "Mensaje",
+      "date": "Fecha",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "empty": {
+      "all": "No hay notificaciones",
+      "pending": "No hay notificaciones pendientes",
+      "viewed": "No hay notificaciones vistas"
+    },
+    "errorLoad": "Error al cargar notificaciones",
     "errorMarkAsRead": "Error marcando notificación como leída"
   },
   "codes": {

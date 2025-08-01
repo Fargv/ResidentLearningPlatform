@@ -5,11 +5,11 @@ import {
   Paper,
   TextField,
   Button,
-  Alert,
-  CircularProgress
+  Alert
 } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import api, { updateProfile, changePassword } from '../../api';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileForm {
   nombre: string;
@@ -27,6 +27,7 @@ interface PasswordForm {
 
 const Perfil: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<ProfileForm>({
     nombre: '',
     apellidos: '',
@@ -85,9 +86,9 @@ const Perfil: React.FC = () => {
         apellidos: formData.apellidos,
         email: formData.email
       });
-      setFormSuccess('Perfil actualizado');
+      setFormSuccess(t('profile.messages.updateSuccess'));
     } catch (err: any) {
-      setFormError(err.response?.data?.error || 'Error al actualizar el perfil');
+      setFormError(err.response?.data?.error || t('profile.messages.updateError'));
     } finally {
       setFormLoading(false);
     }
@@ -101,7 +102,7 @@ const Perfil: React.FC = () => {
   const onPassSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (passData.newPassword !== passData.confirmPassword) {
-      setPassError('Las contraseñas no coinciden');
+      setPassError(t('profile.messages.passwordMismatch'));
       return;
     }
     try {
@@ -111,10 +112,10 @@ const Perfil: React.FC = () => {
         currentPassword: passData.currentPassword,
         newPassword: passData.newPassword
       });
-      setPassSuccess('Contraseña actualizada');
+      setPassSuccess(t('profile.messages.passwordUpdateSuccess'));
       setPassData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err: any) {
-      setPassError(err.response?.data?.error || 'Error al cambiar la contraseña');
+      setPassError(err.response?.data?.error || t('profile.messages.passwordUpdateError'));
     } finally {
       setPassLoading(false);
     }
@@ -123,19 +124,19 @@ const Perfil: React.FC = () => {
   return (
     <Box sx={{ px: 3, py: 2 }}>
       <Typography variant="h4" gutterBottom>
-        Mi Perfil
+        {t('profile.title')}
       </Typography>
 
       <Paper sx={{ p: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
-          Datos personales
+          {t('profile.personalData')}
         </Typography>
         {formSuccess && <Alert severity="success" sx={{ mb: 2 }}>{formSuccess}</Alert>}
         {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
         <Box component="form" onSubmit={onSubmit}>
           <TextField
             name="nombre"
-            label="Nombre"
+            label={t('profile.fields.name')}
             fullWidth
             margin="normal"
             value={formData.nombre}
@@ -145,7 +146,7 @@ const Perfil: React.FC = () => {
           />
           <TextField
             name="apellidos"
-            label="Apellidos"
+            label={t('profile.fields.lastName')}
             fullWidth
             margin="normal"
             value={formData.apellidos}
@@ -155,7 +156,7 @@ const Perfil: React.FC = () => {
           />
           <TextField
             name="email"
-            label="Email"
+            label={t('profile.fields.email')}
             fullWidth
             margin="normal"
             value={formData.email}
@@ -164,7 +165,7 @@ const Perfil: React.FC = () => {
             required
           />
           <TextField
-            label="Hospital"
+            label={t('profile.fields.hospital')}
             fullWidth
             margin="normal"
             value={formData.hospital}
@@ -172,7 +173,7 @@ const Perfil: React.FC = () => {
           />
           {formData.sociedad && (
             <TextField
-              label="Sociedad"
+              label={t('profile.fields.society')}
               fullWidth
               margin="normal"
               value={formData.sociedad}
@@ -180,21 +181,21 @@ const Perfil: React.FC = () => {
             />
           )}
           <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={formLoading}>
-            {formLoading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
+            {formLoading ? t('common.processing') : t('common.saveChanges')}
           </Button>
         </Box>
       </Paper>
 
       <Paper sx={{ p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Cambiar Contraseña
+          {t('profile.changePassword')}
         </Typography>
         {passSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passSuccess}</Alert>}
         {passError && <Alert severity="error" sx={{ mb: 2 }}>{passError}</Alert>}
         <Box component="form" onSubmit={onPassSubmit}>
           <TextField
             name="currentPassword"
-            label="Contraseña Actual"
+            label={t('profile.fields.currentPassword')}
             type="password"
             fullWidth
             margin="normal"
@@ -205,7 +206,7 @@ const Perfil: React.FC = () => {
           />
           <TextField
             name="newPassword"
-            label="Nueva Contraseña"
+            label={t('profile.fields.newPassword')}
             type="password"
             fullWidth
             margin="normal"
@@ -216,7 +217,7 @@ const Perfil: React.FC = () => {
           />
           <TextField
             name="confirmPassword"
-            label="Confirmar Contraseña"
+            label={t('profile.fields.confirmPassword')}
             type="password"
             fullWidth
             margin="normal"
@@ -226,7 +227,7 @@ const Perfil: React.FC = () => {
             required
           />
           <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={passLoading}>
-            {passLoading ? <CircularProgress size={24} /> : 'Cambiar Contraseña'}
+            {passLoading ? t('common.processing') : t('profile.buttons.changePassword')}
           </Button>
         </Box>
       </Paper>
