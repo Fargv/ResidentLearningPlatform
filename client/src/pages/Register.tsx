@@ -19,6 +19,7 @@ import {
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
+import { useTranslation } from 'react-i18next';
 
 interface Hospital {
   _id: string;
@@ -31,6 +32,7 @@ interface Sociedad {
 }
 
 const Register: React.FC = () => {
+  const { t } = useTranslation();
   const zonaOptions = [
     'NORDESTE',
     'NORTE',
@@ -111,7 +113,7 @@ const Register: React.FC = () => {
       } catch (err) {
         setShowForm(false);
         setFormData((prev) => ({ ...prev, rol: '', tipo: '' }));
-        setCodigoError('Código de acceso no válido');
+        setCodigoError(t('register.invalidAccessCode'));
       }
     };
 
@@ -129,7 +131,7 @@ const Register: React.FC = () => {
     if (error) clearError();
 
     if ((name === 'password' || name === 'confirmPassword') && value !== formData.password) {
-      setPasswordError('Las contraseñas no coinciden');
+      setPasswordError(t('register.passwordsMismatch'));
     } else {
       setPasswordError(null);
     }
@@ -168,23 +170,23 @@ const Register: React.FC = () => {
     setCodigoError(null);
 
     if (!nombre || !apellidos || !email || !password || !codigoAcceso) {
-      return setCodigoError('Por favor, completa todos los campos obligatorios.');
+      return setCodigoError(t('register.requiredFields'));
     }
 
     if (rol === 'residente' && (!hospital || !especialidad)) {
-      return setCodigoError('Hospital y especialidad requeridos');
+      return setCodigoError(t('register.hospitalAndSpecialtyRequired'));
     }
 
     if (rol === 'formador' && !hospital) {
-      return setCodigoError('Hospital requerido');
+      return setCodigoError(t('register.hospitalRequired'));
     }
 
     if (tipo === 'Programa Sociedades' && !sociedad) {
-      return setCodigoError('Sociedad requerida');
+      return setCodigoError(t('register.societyRequired'));
     }
 
     if (password !== confirmPassword) {
-      return setPasswordError('Las contraseñas no coinciden');
+      return setPasswordError(t('register.passwordsMismatch'));
     }
 
     if (!consentimientoDatos) return;
@@ -206,8 +208,8 @@ const Register: React.FC = () => {
       if (zona) payload.zona = zona;
 
       await register(payload);
-     } catch (err: any) {
-      setCodigoError(err.response?.data?.error || 'Código de acceso no válido');
+    } catch (err: any) {
+      setCodigoError(err.response?.data?.error || t('register.invalidAccessCode'));
     }
   };
 
@@ -219,26 +221,26 @@ const Register: React.FC = () => {
         <Paper elevation={3} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2 }}>
           <Box sx={{ mb: 3, textAlign: 'center' }}>
             <img src="/logo.png" alt="Abex Excelencia Robótica" style={{ maxWidth: '200px', marginBottom: '16px' }} />
-            <Typography variant="h4" component="h1" gutterBottom>Registro</Typography>
+            <Typography variant="h4" component="h1" gutterBottom>{t('register.title')}</Typography>
           </Box>
 
           <form onSubmit={onSubmit} style={{ width: '100%' }}>
-            <TextField margin="normal" fullWidth name="codigoAcceso" label="Código de Acceso" value={codigoAcceso} onChange={onChange} disabled={loading} required />
+            <TextField margin="normal" fullWidth name="codigoAcceso" label={t('register.accessCode')} value={codigoAcceso} onChange={onChange} disabled={loading} required />
             {codigoError && <Alert severity="error">{codigoError}</Alert>}
 
             {showForm && (
               <>
-                <TextField margin="normal" fullWidth label="Nombre" name="nombre" value={nombre} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label="Apellidos" name="apellidos" value={apellidos} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label="Email" name="email" type="email" value={email} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label="Contraseña" name="password" type="password" value={password} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label="Confirmar Contraseña" name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
+                <TextField margin="normal" fullWidth label={t('register.name')} name="nombre" value={nombre} onChange={onChange} disabled={loading} required />
+                <TextField margin="normal" fullWidth label={t('register.surname')} name="apellidos" value={apellidos} onChange={onChange} disabled={loading} required />
+                <TextField margin="normal" fullWidth label={t('register.email')} name="email" type="email" value={email} onChange={onChange} disabled={loading} required />
+                <TextField margin="normal" fullWidth label={t('register.password')} name="password" type="password" value={password} onChange={onChange} disabled={loading} required />
+                <TextField margin="normal" fullWidth label={t('register.confirmPassword')} name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
                 {passwordError && <Alert severity="warning">{passwordError}</Alert>}
 
                 {(rol === 'residente' || rol === 'formador' || rol === 'alumno' || rol === 'instructor') && (
                   <FormControl fullWidth margin="normal" required={hospitalRequired} disabled={loading}>
-                    <InputLabel id="hospital-label">Hospital</InputLabel>
-                    <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label="Hospital" onChange={onSelectHospital}>
+                    <InputLabel id="hospital-label">{t('register.hospital')}</InputLabel>
+                    <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label={t('register.hospital')} onChange={onSelectHospital}>
                       {hospitales.map((h) => (
                         <MenuItem key={h._id} value={h._id}>{h.nombre}</MenuItem>
                       ))}
@@ -248,8 +250,8 @@ const Register: React.FC = () => {
 
                 {rol === 'coordinador' && (
                   <FormControl fullWidth margin="normal" required disabled={loading}>
-                    <InputLabel id="zona-label">Zona</InputLabel>
-                    <Select labelId="zona-label" id="zona" name="zona" value={zona} label="Zona" onChange={(e) => onChange(e as any)}>
+                    <InputLabel id="zona-label">{t('register.zone')}</InputLabel>
+                    <Select labelId="zona-label" id="zona" name="zona" value={zona} label={t('register.zone')} onChange={(e) => onChange(e as any)}>
                       {zonaOptions.map((z) => (
                         <MenuItem key={z} value={z}>
                           {z}
@@ -261,23 +263,23 @@ const Register: React.FC = () => {
 
                 {rol === 'residente' && (
                   <FormControl fullWidth margin="normal" required disabled={loading}>
-                    <InputLabel id="especialidad-label">Especialidad</InputLabel>
-                    <Select labelId="especialidad-label" id="especialidad" name="especialidad" value={especialidad} label="Especialidad" onChange={onSelectEspecialidad}>
-                      <MenuItem value="URO">Urología (URO)</MenuItem>
-                      <MenuItem value="GEN">Cirugía General (GEN)</MenuItem>
-                      <MenuItem value="GYN">Ginecología (GYN)</MenuItem>
-                      <MenuItem value="THOR">Torácica (THOR)</MenuItem>
-                      <MenuItem value="ORL">Otorrino (ORL)</MenuItem>
+                    <InputLabel id="especialidad-label">{t('register.specialty')}</InputLabel>
+                    <Select labelId="especialidad-label" id="especialidad" name="especialidad" value={especialidad} label={t('register.specialty')} onChange={onSelectEspecialidad}>
+                      <MenuItem value="URO">{t('register.specialties.URO')}</MenuItem>
+                      <MenuItem value="GEN">{t('register.specialties.GEN')}</MenuItem>
+                      <MenuItem value="GYN">{t('register.specialties.GYN')}</MenuItem>
+                      <MenuItem value="THOR">{t('register.specialties.THOR')}</MenuItem>
+                      <MenuItem value="ORL">{t('register.specialties.ORL')}</MenuItem>
                     </Select>
                   </FormControl>
                 )}
 
                 {tipo === 'Programa Sociedades' && sociedades.length > 0 && (
                   <FormControl fullWidth margin="normal" required disabled={loading}>
-                    <InputLabel id="sociedad-label">Sociedad</InputLabel>
-                    <Select labelId="sociedad-label" id="sociedad" name="sociedad" value={sociedad} label="Sociedad" onChange={onSelectSociedad}>
+                    <InputLabel id="sociedad-label">{t('register.society')}</InputLabel>
+                    <Select labelId="sociedad-label" id="sociedad" name="sociedad" value={sociedad} label={t('register.society')} onChange={onSelectSociedad}>
                       <MenuItem value="">
-                        <em>Ninguna</em>
+                        <em>{t('register.none')}</em>
                       </MenuItem>
                       {sociedades.map((s) => (
                         <MenuItem key={s._id} value={s._id}>{s.titulo}</MenuItem>
@@ -298,15 +300,16 @@ const Register: React.FC = () => {
                   }
                   label={
                     <Typography variant="body2">
-                      Acepto el tratamiento de mis datos personales según la{' '}
-                      <Link href="/politica-privacidad" target="_blank">Política de Privacidad</Link> y cumplo con la LOPD.
+                      {t('register.consentPrefix')}
+                      <Link href="/politica-privacidad" target="_blank">{t('register.privacyPolicy')}</Link>
+                      {t('register.consentSuffix')}
                     </Typography>
                   }
                   sx={{ mt: 2 }}
                 />
 
                 <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 3, mb: 2, py: 1.5 }} disabled={loading || !consentimientoDatos}>
-                  {loading ? <CircularProgress size={24} /> : 'Registrarse'}
+                  {loading ? <CircularProgress size={24} /> : t('register.registerButton')}
                 </Button>
               </>
             )}

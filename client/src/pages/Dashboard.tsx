@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
+import { useTranslation } from 'react-i18next';
 
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
@@ -57,6 +58,7 @@ import AdminConfiguracion from './dashboard/AdminConfiguracion';
 const drawerWidth = 240;
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -97,38 +99,38 @@ const Dashboard: React.FC = () => {
   const getMenuItems = () => {
     const items = [
       {
-        text: 'Dashboard',
+        text: t('actions.dashboard'),
         icon: <DashboardIcon />,
         path: '/dashboard',
         roles: ['administrador', 'formador', 'coordinador', 'residente', 'alumno']
       }
     ];
-  
+
     if (user?.rol === 'residente' || user?.rol === 'alumno') {
-     items.push({ text: 'Mi Progreso', icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente', 'alumno'] });
+     items.push({ text: t('actions.myProgress'), icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente', 'alumno'] });
     }
 
     if (user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor') {
-      items.push({ text: 'Fases Formativas', icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno', 'instructor'] });
+      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno', 'instructor'] });
     }
-    
-  
+
+
         if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
-      items.push({ text: 'Validaciones', icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
+      items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
     }
 
     if (user?.rol === 'formador' || user?.rol === 'coordinador') {
-      items.push({ text: 'Mis Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador'] });
+      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador'] });
     }
-  
+
     if (user?.rol === 'administrador') {
       items.push(
-        { text: 'Usuarios', icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-        { text: 'Progreso Usuarios', icon: <TrendingUpIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
-        { text: 'Configuración', icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
+        { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+        { text: t('actions.usersProgress'), icon: <TrendingUpIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
+        { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
     }
-  
+
     return items;
   };
   
@@ -166,12 +168,12 @@ const Dashboard: React.FC = () => {
               {user?.nombre?.charAt(0)}
             </Avatar>
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            onClick={handleMenuClose}
-            PaperProps={{
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              onClick={handleMenuClose}
+              PaperProps={{
               elevation: 0,
               sx: {
                 overflow: 'visible',
@@ -193,20 +195,20 @@ const Dashboard: React.FC = () => {
               }
             }}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem onClick={handleProfileClick}>
-              <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
-              Perfil
-            </MenuItem>
-            <Divider />
-            <MenuItem onClick={handleLogout}>
-              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
-              Cerrar sesión
-            </MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem onClick={handleProfileClick}>
+                <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+                {t('actions.profile')}
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+                {t('actions.logout')}
+              </MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
         open={isMobile ? open : true}
@@ -231,7 +233,7 @@ const Dashboard: React.FC = () => {
         <Divider />
         <List>
           {menuItems.map((item) => (
-            <ListItemButton key={item.text} onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}>
+            <ListItemButton key={item.path} onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
@@ -241,7 +243,7 @@ const Dashboard: React.FC = () => {
         <List>
           <ListItemButton onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}>
             <ListItemIcon><PersonIcon /></ListItemIcon>
-            <ListItemText primary="Mi Perfil" />
+            <ListItemText primary={t('actions.myProfile')} />
           </ListItemButton>
           <ListItemButton onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}>
             <ListItemIcon>
@@ -249,11 +251,11 @@ const Dashboard: React.FC = () => {
                 <NotificationsIcon />
               </Badge>
             </ListItemIcon>
-            <ListItemText primary="Notificaciones" />
+            <ListItemText primary={t('actions.notifications')} />
           </ListItemButton>
           <ListItemButton onClick={handleLogout}>
             <ListItemIcon><LogoutIcon /></ListItemIcon>
-            <ListItemText primary="Cerrar Sesión" />
+            <ListItemText primary={t('actions.logout')} />
           </ListItemButton>
         </List>
       </Drawer>

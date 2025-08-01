@@ -53,6 +53,18 @@ The following i18n keys were introduced during the 2025-07-31 translation audit.
 - **types.observation** / **types.observationLower** – Labels for observation activities.
 
 ## notifications
+- **notifications.title** – Page heading for notifications.
+- **notifications.tabs.pending** – Tab label for pending notifications.
+- **notifications.tabs.viewed** – Tab label for viewed notifications.
+- **notifications.tabs.aria** – Aria label for notifications tabs.
+- **notifications.table.message** – Table header for notification message.
+- **notifications.table.date** – Table header for notification date.
+- **notifications.table.type** – Table header for notification type.
+- **notifications.table.actions** – Table header for actions column.
+- **notifications.empty.all** – Message shown when there are no notifications.
+- **notifications.empty.pending** – Message shown when there are no pending notifications.
+- **notifications.empty.viewed** – Message shown when there are no viewed notifications.
+- **notifications.errorLoad** – Error loading notifications.
 - **notifications.errorMarkAsRead** – Error marking notification as read.
 
 ## codes

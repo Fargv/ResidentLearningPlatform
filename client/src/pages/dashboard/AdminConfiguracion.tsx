@@ -9,26 +9,28 @@ import {
   People as PeopleIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const AdminConfiguracion: React.FC = () => {
   const navigate = useNavigate();
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const isDev = env === 'dev';
+  const { t } = useTranslation();
 
   const actions = [
-    { label: 'Hospitales', path: '/dashboard/hospitals', icon: <HospitalIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Sociedades', path: '/dashboard/sociedades', icon: <GroupIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Programa Residentes', path: '/dashboard/fases', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Programa Sociedades', path: '/dashboard/fases-soc', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Usuarios', path: '/dashboard/usuarios', icon: <PeopleIcon sx={{ fontSize: 40 }} /> },
-    { label: 'Access Codes', path: '/dashboard/access-codes', icon: <SettingsIcon sx={{ fontSize: 40 }} /> },
-    ...(isDev ? [{ label: 'Debug', path: '/dashboard/debug', icon: <BugReportIcon sx={{ fontSize: 40 }} /> }] : [])
+    { label: t('adminConfig.hospitals'), path: '/dashboard/hospitals', icon: <HospitalIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.societies'), path: '/dashboard/sociedades', icon: <GroupIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.residentProgram'), path: '/dashboard/fases', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.societiesProgram'), path: '/dashboard/fases-soc', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.users'), path: '/dashboard/usuarios', icon: <PeopleIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.accessCodes'), path: '/dashboard/access-codes', icon: <SettingsIcon sx={{ fontSize: 40 }} /> },
+    ...(isDev ? [{ label: t('adminConfig.debug'), path: '/dashboard/debug', icon: <BugReportIcon sx={{ fontSize: 40 }} /> }] : [])
   ];
 
   return (
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
-        Configuración
+        {t('adminConfig.title')}
       </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         {actions.map(action => (

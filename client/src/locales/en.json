@@ -9,6 +9,7 @@
     "instructor": "Instructor of the societies program {{title}}"
   },
   "actions": {
+    "dashboard": "Dashboard",
     "myProgress": "My Progress",
     "trainingPhases": "Training Phases",
     "validations": "Validations",
@@ -16,11 +17,55 @@
     "usersProgress": "Users Progress",
     "settings": "Settings",
     "myProfile": "My Profile",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "users": "Users",
+    "logout": "Logout"
+  },
+  "adminConfig": {
+    "title": "Settings",
+    "hospitals": "Hospitals",
+    "societies": "Societies",
+    "residentProgram": "Resident Program",
+    "societiesProgram": "Societies Program",
+    "users": "Users",
+    "accessCodes": "Access Codes",
+    "debug": "Debug"
   },
   "progressByPhase": "Progress by phase",
   "close": "Close",
-  "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
+ "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
+  "register": {
+    "title": "Register",
+    "accessCode": "Access Code",
+    "name": "Name",
+    "surname": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "hospital": "Hospital",
+    "zone": "Zone",
+    "specialty": "Specialty",
+    "specialties": {
+      "URO": "Urology (URO)",
+      "GEN": "General Surgery (GEN)",
+      "GYN": "Gynecology (GYN)",
+      "THOR": "Thoracic (THOR)",
+      "ORL": "ENT (ORL)"
+    },
+    "society": "Society",
+    "none": "None",
+    "invalidAccessCode": "Invalid access code",
+    "requiredFields": "Please fill out all required fields.",
+    "hospitalAndSpecialtyRequired": "Hospital and specialty required",
+    "hospitalRequired": "Hospital required",
+    "societyRequired": "Society required",
+    "passwordsMismatch": "Passwords do not match",
+    "consentPrefix": "I accept the processing of my personal data according to the ",
+    "privacyPolicy": "Privacy Policy",
+    "consentSuffix": " and comply with the LOPD.",
+    "registerButton": "Register"
+  },
   "society": {
     "convocatoria": {
       "label": "Call",
@@ -95,6 +140,31 @@
     "validate": "Validate",
     "reject": "Reject",
     "processing": "Processing..."
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalData": "Personal Data",
+    "changePassword": "Change Password",
+    "fields": {
+      "name": "Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "hospital": "Hospital",
+      "society": "Society",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "messages": {
+      "updateSuccess": "Profile updated",
+      "updateError": "Error updating profile",
+      "passwordMismatch": "Passwords do not match",
+      "passwordUpdateSuccess": "Password updated",
+      "passwordUpdateError": "Error changing password"
+    },
+    "buttons": {
+      "changePassword": "Change Password"
+    }
   },
   "adminHospitals": {
     "title": "Hospital Management",
@@ -238,6 +308,18 @@
       "passwordError": "Error updating password"
     }
   },
+  "adminUserProgress": {
+    "title": "User Progress",
+    "searchPlaceholder": "Search by name or email",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "hospitalSociety": "Hospital/Society",
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "viewProgress": "View Progress"
+  },
   "brand": {
     "name": "Abex Excelencia Robótica"
   },
@@ -259,7 +341,27 @@
     "resetRequest": "Password reset request",
     "errorLogin": "Login error",
     "errorChangePassword": "Error changing password",
-    "errorUpdatePassword": "Error updating password"
+   "errorUpdatePassword": "Error updating password"
+  },
+  "forgotPassword": {
+    "heading": "Forgot your password?",
+    "description": "To reset the password please contact the system administrator.",
+    "emailLabel": "Your email",
+    "submit": "Send email to administrator",
+    "backToLogin": "Back to login"
+  },
+  "login": {
+    "title": "Academic Program daVinci",
+    "subtitle": "Technologies of the da Vinci Robot",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Log In",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "copyright": "© {{year}} Abex Excelencia Robótica",
+    "poweredBy": "Powered by FARGV",
+    "logoAlt": "Abex Excelencia Robótica"
   },
   "dashboard": {
     "manageAllUsers": "Manage All Users",
@@ -300,6 +402,24 @@
     "instructor": "Instructor"
   },
   "notifications": {
+    "title": "Notifications",
+    "tabs": {
+      "aria": "notifications tabs",
+      "pending": "Pending",
+      "viewed": "Viewed"
+    },
+    "table": {
+      "message": "Message",
+      "date": "Date",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "empty": {
+      "all": "No notifications",
+      "pending": "No pending notifications",
+      "viewed": "No viewed notifications"
+    },
+    "errorLoad": "Error loading notifications",
     "errorMarkAsRead": "Error marking notification as read"
   },
   "codes": {
