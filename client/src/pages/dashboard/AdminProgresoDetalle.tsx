@@ -28,7 +28,22 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { formatDayMonthYear } from '../../utils/date';
+import { useTranslation } from 'react-i18next';
 
+const activityStatusMap: Record<string, string> = {
+  pendiente: 'pending',
+  completado: 'completed',
+  rechazado: 'rejected',
+  validado: 'validated'
+};
+const phaseStatusMap: Record<string, string> = {
+  bloqueada: 'blocked',
+  'en progreso': 'inProgress',
+  completado: 'completed',
+  validado: 'validated',
+  pendiente: 'pending',
+  rechazado: 'rejected'
+};
 interface Actividad {
   nombre?: string;
   estado?: 'pendiente' | 'completado' | 'rechazado' | 'validado';
@@ -53,6 +68,7 @@ const AdminProgresoDetalle: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.rol === 'administrador';
+  const { t } = useTranslation();
   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,9 +116,9 @@ const AdminProgresoDetalle: React.FC = () => {
       setProgresos((prev) =>
         prev.map((p) => (p._id === updated._id ? updated : p))
       );
-      setSnackbar({ open: true, message: 'Fase actualizada correctamente', severity: 'success' });
+      setSnackbar({ open: true, message: t('adminProgressDetail.phaseUpdateSuccess'), severity: 'success' });
     } catch (err: any) {
-      const message = err.response?.data?.error || 'Error al actualizar la fase';
+      const message = err.response?.data?.error || t('adminProgressDetail.phaseUpdateError');
       setApiError(message);
       setSnackbar({ open: true, message, severity: 'error' });
     }
@@ -124,9 +140,9 @@ const AdminProgresoDetalle: React.FC = () => {
       setProgresos((prev) =>
         prev.map((p) => (p._id === updated._id ? updated : p))
       );
-      setSnackbar({ open: true, message: 'Actividad actualizada correctamente', severity: 'success' });
+      setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
     } catch (err: any) {
-      const message = err.response?.data?.error || 'Error al actualizar actividad';
+      const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
       setApiError(message);
       setSnackbar({ open: true, message, severity: 'error' });
     }
@@ -147,11 +163,14 @@ const AdminProgresoDetalle: React.FC = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h4" gutterBottom>
           {userInfo
-            ? `Progreso de ${userInfo.nombre} ${userInfo.apellidos}`
-            : 'Progreso del Usuario'}
+            ? t('adminProgressDetail.titleWithName', {
+                name: userInfo.nombre,
+                surname: userInfo.apellidos
+              })
+            : t('adminProgressDetail.title')}
         </Typography>
         <Button variant="contained" onClick={() => navigate('/dashboard/progreso-usuarios')}>
-          Atrás
+          {t('adminProgressDetail.back')}
         </Button>
       </Box>
 
@@ -173,20 +192,27 @@ const AdminProgresoDetalle: React.FC = () => {
       )}
       {progresos.length ? (
         progresos.map((item) => {
-          const total = item.actividades.length;
-          const validadas = item.actividades.filter(a => a.estado === 'validado').length;
+          const total = item.actividades?.length || 0;
+          const validadas = item.actividades?.filter(a => a.estado === 'validado').length || 0;
           const porcentaje = total ? Math.round((validadas / total) * 100) : 0;
           return (
             <Accordion key={item._id} defaultExpanded>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography variant="h6">
-                  Fase {item.fase?.numero || '—'}: {item.fase?.nombre || 'Sin título'}
+                  {t('adminProgressDetail.phaseTitle', {
+                    number: item.fase?.numero || '—',
+                    name: item.fase?.nombre || t('adminProgressDetail.noTitle')
+                  })}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
                   <Chip
-                    label={item.estadoGeneral || '—'}
+                    label={
+                      item.estadoGeneral
+                        ? t(`adminProgressDetail.phaseStatus.${phaseStatusMap[item.estadoGeneral]}`)
+                        : '—'
+                    }
                     color={
                       item.estadoGeneral === 'validado'
                         ? 'success'
@@ -198,27 +224,35 @@ const AdminProgresoDetalle: React.FC = () => {
                   {isAdmin && (
                     <FormControl size="small" sx={{ ml: 2, minWidth: 160 }}>
                       <InputLabel id={`fase-${item._id}-estado-label`}>
-                        Estado fase
+                        {t('adminProgressDetail.phaseStatusLabel')}
                       </InputLabel>
                       <Select
                         labelId={`fase-${item._id}-estado-label`}
                         value={item.estadoGeneral}
-                        label="Estado fase"
+                        label={t('adminProgressDetail.phaseStatusLabel')}
                         onChange={(e) =>
                           handlePhaseStatusChange(item._id, e.target.value as string)
                         }
                       >
-                        <MenuItem value="bloqueada">Bloqueada</MenuItem>
-                        <MenuItem value="en progreso">En progreso</MenuItem>
-                        <MenuItem value="completado">Completado</MenuItem>
-                        <MenuItem value="validado">Validado</MenuItem>
+                        <MenuItem value="bloqueada">
+                          {t('adminProgressDetail.phaseStatus.blocked')}
+                        </MenuItem>
+                        <MenuItem value="en progreso">
+                          {t('adminProgressDetail.phaseStatus.inProgress')}
+                        </MenuItem>
+                        <MenuItem value="completado">
+                          {t('adminProgressDetail.phaseStatus.completed')}
+                        </MenuItem>
+                        <MenuItem value="validado">
+                          {t('adminProgressDetail.phaseStatus.validated')}
+                        </MenuItem>
                       </Select>
                     </FormControl>
                   )}
                 </Box>
                 <LinearProgress variant="determinate" value={porcentaje} sx={{ height: 8, borderRadius: 5, mb: 1 }} />
                 <Typography variant="body2" sx={{ mb: 2 }}>
-                  Progreso validado: {porcentaje}%
+                  {t('adminProgressDetail.validatedProgress', { percent: porcentaje })}
                 </Typography>
                 <List>
                   {item.actividades.map((act, idx) => (
@@ -228,21 +262,30 @@ const AdminProgresoDetalle: React.FC = () => {
                       {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
                       {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
                       <ListItemText
-                        primary={act.nombre || 'Actividad sin nombre'}
+                        primary={act.nombre || t('adminProgressDetail.noActivityName')}
                         secondary={
                           <>
                             {act.fecha && (
                               <Typography variant="body2" color="text.secondary">
-                                Fecha completada: {formatDayMonthYear(act.fecha)}
+                                {t('adminProgressDetail.completedOn', {
+                                  date: formatDayMonthYear(act.fecha)
+                                })}
                               </Typography>
                             )}
                             {act.fechaValidacion && (
                               <Typography variant="body2" color="text.secondary">
-                                Validado el: {formatDayMonthYear(act.fechaValidacion)}
+                                {t('adminProgressDetail.validatedOn', {
+                                  date: formatDayMonthYear(act.fechaValidacion)
+                                })}
                               </Typography>
                             )}
                             <Typography variant="body2" color="text.secondary">
-                              Estado: {act.estado}
+                              {t('adminProgressDetail.statusWithValue', {
+                                status: t(
+                                  `adminProgressDetail.activityStatus.${activityStatusMap[act.estado || 'pendiente']}`
+                                )
+                              })
+                              }
                             </Typography>
                           </>
                         }
@@ -250,20 +293,28 @@ const AdminProgresoDetalle: React.FC = () => {
                       {isAdmin && (
                         <FormControl size="small" sx={{ ml: 2, minWidth: 140 }}>
                           <InputLabel id={`act-${item._id}-${idx}-estado-label`}>
-                            Estado actividad
+                            {t('adminProgressDetail.activityStatusLabel')}
                           </InputLabel>
                           <Select
                             labelId={`act-${item._id}-${idx}-estado-label`}
                             value={act.estado}
-                            label="Estado actividad"
+                            label={t('adminProgressDetail.activityStatusLabel')}
                             onChange={(e) =>
                               handleActivityStatusChange(item._id, idx, e.target.value as string)
                             }
                           >
-                            <MenuItem value="pendiente">Pendiente</MenuItem>
-                            <MenuItem value="completado">Completado</MenuItem>
-                            <MenuItem value="validado">Validado</MenuItem>
-                            <MenuItem value="rechazado">Rechazado</MenuItem>
+                            <MenuItem value="pendiente">
+                              {t('adminProgressDetail.activityStatus.pending')}
+                            </MenuItem>
+                            <MenuItem value="completado">
+                              {t('adminProgressDetail.activityStatus.completed')}
+                            </MenuItem>
+                            <MenuItem value="validado">
+                              {t('adminProgressDetail.activityStatus.validated')}
+                            </MenuItem>
+                            <MenuItem value="rechazado">
+                              {t('adminProgressDetail.activityStatus.rejected')}
+                            </MenuItem>
                           </Select>
                         </FormControl>
                       )}
@@ -275,10 +326,11 @@ const AdminProgresoDetalle: React.FC = () => {
           );
         })
       ) : (
-        <Alert severity="info">No hay progreso disponible.</Alert>
+        <Alert severity="info">{t('adminProgressDetail.noProgress')}</Alert>
       )}
     </Box>
   );
 };
 
 export default AdminProgresoDetalle;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -31,7 +31,8 @@ import {
   Delete as DeleteIcon,
   //Assignment as AssignmentIcon
 } from '@mui/icons-material';
-  import api from '../../api';
+import api from '../../api';
+import { useTranslation } from 'react-i18next';
 
 
 interface TabPanelProps {
@@ -61,6 +62,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 const AdminFases: React.FC = () => {
+  const { t } = useTranslation();
   //const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,9 +100,7 @@ const AdminFases: React.FC = () => {
   });
   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
 
-  //eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -115,20 +115,20 @@ const AdminFases: React.FC = () => {
 
       const actividadesRes = await api.get('/actividades');
       setActividades(actividadesRes.data.data);
-
     } catch (err: any) {
       if (err.response?.status === 403) {
-        setError('No tienes permisos para ver esta sección');
+        setError(t('adminPhases.errorForbidden'));
       } else {
-        setError(err.response?.data?.error || 'Error al cargar los datos');
+        setError(err.response?.data?.error || t('adminPhases.errorLoadData'));
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
-  fetchData();
-}, []);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -571,7 +571,7 @@ const AdminFases: React.FC = () => {
                     <TableCell>Orden</TableCell>
                     <TableCell>Nombre</TableCell>
                     <TableCell>Tipo</TableCell>
-                    <TableCell>Descripción</TableCell>
+                    <TableCell>{t('adminPhases.description')}</TableCell>
                     <TableCell align="right">Acciones</TableCell>
                   </TableRow>
                 </TableHead>
@@ -587,15 +587,15 @@ const AdminFases: React.FC = () => {
                          <Chip
                             label={
                               actividad.tipo === 'teórica'
-                                ? 'Teórica'
+                                ? t('adminPhases.theory')
                                 : actividad.tipo === 'práctica'
-                                  ? 'Práctica'
+                                  ? t('adminPhases.practice')
                                   : actividad.tipo === 'evaluación'
-                                    ? 'Evaluación'
+                                    ? t('adminPhases.evaluation')
                                     : actividad.tipo === 'observación'
-                                      ? 'Observación'
-                                      : 'Procedimiento'
-                            } 
+                                      ? t('adminPhases.observation')
+                                      : t('adminPhases.procedure')
+                            }
                             color={
                               actividad.tipo === 'teórica'
                                 ? 'primary'
@@ -660,7 +660,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="numero"
             name="numero"
-            label="Número"
+            label={t('adminPhases.number')}
             type="number"
             fullWidth
             variant="outlined"
@@ -686,7 +686,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="descripcion"
             name="descripcion"
-            label="Descripción"
+            label={t('adminPhases.description')}
             type="text"
             fullWidth
             multiline
@@ -720,7 +720,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="numero"
             name="numero"
-            label="Número"
+            label={t('adminPhases.number')}
             type="number"
             fullWidth
             variant="outlined"
@@ -746,7 +746,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="descripcion"
             name="descripcion"
-            label="Descripción"
+            label={t('adminPhases.description')}
             type="text"
             fullWidth
             multiline
@@ -823,7 +823,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="descripcion"
             name="descripcion"
-            label="Descripción"
+            label={t('adminPhases.description')}
             type="text"
             fullWidth
             multiline
@@ -851,11 +851,11 @@ const AdminFases: React.FC = () => {
               }
             }}
           >
-                <option value="teórica">Teórica</option>
-                <option value="práctica">Práctica</option>
-                <option value="evaluación">Evaluación</option>
-                <option value="observación">Observación</option>
-                <option value="procedimiento">Procedimiento</option>
+                <option value="teórica">{t('adminPhases.theory')}</option>
+                <option value="práctica">{t('adminPhases.practice')}</option>
+                <option value="evaluación">{t('adminPhases.evaluation')}</option>
+                <option value="observación">{t('adminPhases.observation')}</option>
+                <option value="procedimiento">{t('adminPhases.procedure')}</option>
           </TextField>
           <TextField
             margin="dense"
@@ -907,7 +907,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="descripcion"
             name="descripcion"
-            label="Descripción"
+            label={t('adminPhases.description')}
             type="text"
             fullWidth
             multiline
@@ -935,11 +935,11 @@ const AdminFases: React.FC = () => {
                 }
               }}
           >
-            <option value="teórica">Teórica</option>
-            <option value="práctica">Práctica</option>
-            <option value="evaluación">Evaluación</option>
-            <option value="observación">Observación</option>
-            <option value="procedimiento">Procedimiento</option>
+            <option value="teórica">{t('adminPhases.theory')}</option>
+            <option value="práctica">{t('adminPhases.practice')}</option>
+            <option value="evaluación">{t('adminPhases.evaluation')}</option>
+            <option value="observación">{t('adminPhases.observation')}</option>
+            <option value="procedimiento">{t('adminPhases.procedure')}</option>
           </TextField>
           <TextField
             select
