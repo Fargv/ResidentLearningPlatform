@@ -36,11 +36,24 @@
     "_comment": "Gestión de fases para administradores",
     "phase": "Fase",
     "activity": "Actividad",
+    "activities": "Actividades",
+    "name": "Nombre",
+    "order": "Orden",
+    "type": "Tipo",
+    "description": "Descripción",
+    "number": "Número",
+    "tabs": {
+      "aria": "pestañas de fases",
+      "activities": "Actividades"
+    },
     "table": {
+      "aria": "actividades de la fase {{number}}",
       "order": "Orden",
       "name": "Nombre",
       "type": "Tipo",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "description": "Descripción",
+      "empty": "No hay actividades en esta fase"
     },
     "messages": {
       "noActivities": "No hay actividades en esta fase",
@@ -51,6 +64,14 @@
       "updateError": "Error al actualizar {{item}}",
       "deleted": "{{item}} eliminada correctamente",
       "deleteError": "Error al eliminar {{item}}"
+    },
+    "actions": {
+      "newPhase": "Nueva Fase",
+      "editPhase": "Editar Fase",
+      "deletePhase": "Eliminar Fase",
+      "newActivity": "Nueva Actividad",
+      "editActivity": "Editar Actividad",
+      "deleteActivity": "Eliminar Actividad"
     },
     "dialogs": {
       "newPhase": {
@@ -65,13 +86,17 @@
       },
       "deletePhase": {
         "title": "Eliminar Fase",
-        "confirm": "Eliminar",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "content": "¿Seguro que quieres eliminar la fase <strong>{{name}}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase.",
+        "contentWithProgress": "La fase <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Quieres eliminarla? El progreso validado se conservará.",
+        "hasProgress": "La fase <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Quieres eliminarla? El progreso validado se conservará.",
+        "confirm": "¿Seguro que quieres eliminar la fase <strong>{{name}}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase."
       },
       "newActivity": {
         "title": "Nueva Actividad",
         "create": "Crear",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "content": "Creando actividad para la fase: <strong>{{phase}}</strong>"
       },
       "editActivity": {
         "title": "Editar Actividad",
@@ -80,12 +105,14 @@
       },
       "deleteActivity": {
         "title": "Eliminar Actividad",
-        "confirm": "Eliminar",
-        "cancel": "Cancelar"
-      }
+        "cancel": "Cancelar",
+        "content": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer.",
+        "contentWithProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
+        "hasProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
+        "confirm": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+      },
+      "createActivity": "Creando actividad para la fase: <strong>{{phase}}</strong>"
     },
-    "description": "Descripción",
-    "number": "Número",
     "evaluation": "Evaluación",
     "observation": "Observación",
     "practice": "Práctica",
@@ -427,6 +454,18 @@
       "updateError": "Error al actualizar {{item}}",
       "deleted": "{{item}} eliminada correctamente",
       "deleteError": "Error al eliminar {{item}}",
+      "phaseCreated": "Fase creada correctamente",
+      "phaseCreateError": "Error al crear la fase",
+      "phaseUpdated": "Fase actualizada correctamente",
+      "phaseUpdateError": "Error al actualizar la fase",
+      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados preservados: {{preserved}}",
+      "phaseDeleteError": "Error al eliminar la fase",
+      "activityCreated": "Actividad creada correctamente",
+      "activityCreateError": "Error al crear la actividad",
+      "activityUpdated": "Actividad actualizada correctamente",
+      "activityUpdateError": "Error al actualizar la actividad",
+      "activityDeleted": "Actividad eliminada correctamente",
+      "activityDeleteError": "Error al eliminar la actividad",
       "progressCheckError": "Error al comprobar progresos vinculados"
     },
     "dialogs": {
