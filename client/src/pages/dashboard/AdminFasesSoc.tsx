@@ -32,7 +32,7 @@ import {
   //Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import api from '../../api';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 
 interface TabPanelProps {
@@ -173,7 +173,7 @@ const AdminFases: React.FC = () => {
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: 'Error al comprobar progresos vinculados',
+        message: t('adminPhasesSoc.progressCheckError'),
         severity: 'error'
       });
     } finally {
@@ -210,15 +210,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Fase creada correctamente',
+        message: t('adminPhasesSoc.phaseCreated'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al crear la fase');
-      
+      setError(err.response?.data?.error || t('adminPhasesSoc.phaseCreateError'));
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al crear la fase',
+        message: err.response?.data?.error || t('adminPhasesSoc.phaseCreateError'),
         severity: 'error'
       });
     } finally {
@@ -244,15 +244,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Fase actualizada correctamente',
+        message: t('adminPhasesSoc.phaseUpdated'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al actualizar la fase');
-      
+      setError(err.response?.data?.error || t('adminPhasesSoc.phaseUpdateError'));
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al actualizar la fase',
+        message: err.response?.data?.error || t('adminPhasesSoc.phaseUpdateError'),
         severity: 'error'
       });
     } finally {
@@ -278,15 +278,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: `Fase eliminada correctamente. Progresos eliminados: ${res.data.removedCount || 0}. Validados preservados: ${res.data.preservedCount || 0}`,
+        message: t('adminPhasesSoc.phaseDeleted', { removed: res.data.removedCount || 0, preserved: res.data.preservedCount || 0 }),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al eliminar la fase');
-      
+      setError(err.response?.data?.error || t('adminPhasesSoc.phaseDeleteError'));
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al eliminar la fase',
+        message: err.response?.data?.error || t('adminPhasesSoc.phaseDeleteError'),
         severity: 'error'
       });
     } finally {
@@ -363,15 +363,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Actividad creada correctamente',
+        message: t('adminPhasesSoc.activityCreated'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al crear la actividad');
-      
+      setError(err.response?.data?.error || t('adminPhasesSoc.activityCreateError'));
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al crear la actividad',
+        message: err.response?.data?.error || t('adminPhasesSoc.activityCreateError'),
         severity: 'error'
       });
     } finally {
@@ -399,15 +399,15 @@ const AdminFases: React.FC = () => {
 
     setSnackbar({
       open: true,
-      message: 'Actividad actualizada correctamente',
+      message: t('adminPhasesSoc.activityUpdated'),
       severity: 'success'
     });
   } catch (err: any) {
-    setError(err.response?.data?.error || 'Error al actualizar la actividad');
+    setError(err.response?.data?.error || t('adminPhasesSoc.activityUpdateError'));
 
     setSnackbar({
       open: true,
-      message: err.response?.data?.error || 'Error al actualizar la actividad',
+      message: err.response?.data?.error || t('adminPhasesSoc.activityUpdateError'),
       severity: 'error'
     });
   } finally {
@@ -430,15 +430,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Actividad eliminada correctamente',
+        message: t('adminPhasesSoc.activityDeleted'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al eliminar la actividad');
-      
+      setError(err.response?.data?.error || t('adminPhasesSoc.activityDeleteError'));
+
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al eliminar la actividad',
+        message: err.response?.data?.error || t('adminPhasesSoc.activityDeleteError'),
         severity: 'error'
       });
     } finally {
@@ -463,7 +463,7 @@ const AdminFases: React.FC = () => {
   } catch (err: any) {
     setSnackbar({
       open: true,
-      message: 'Error al comprobar progresos vinculados',
+      message: t('adminPhasesSoc.progressCheckError'),
       severity: 'error'
     });
   } finally {
@@ -522,7 +522,7 @@ const AdminFases: React.FC = () => {
                 onClick={handleOpenCrearFaseDialog}
                 sx={{ mr: 1 }}
               >
-                Nueva Fase
+                {t('adminPhases.dialogs.newPhase.title')}
               </Button>
               <Button
                 variant="outlined"
@@ -531,7 +531,7 @@ const AdminFases: React.FC = () => {
                 onClick={() => handleOpenEditarFaseDialog(fase)}
                 sx={{ mr: 1 }}
               >
-                Editar Fase
+                {t('adminPhases.dialogs.editPhase.title')}
               </Button>
               <Button
                 variant="outlined"
@@ -539,7 +539,7 @@ const AdminFases: React.FC = () => {
                 startIcon={<DeleteIcon />}
                 onClick={() => handleConfirmarEliminarFase(fase)}
               >
-                Eliminar Fase
+                {t('adminPhases.dialogs.deletePhase.title')}
               </Button>
             </Box>
             
@@ -551,7 +551,7 @@ const AdminFases: React.FC = () => {
             
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" component="h3">
-                Actividades
+                {t('adminPhases.activities')}
               </Typography>
               <Button
                 variant="contained"
@@ -559,7 +559,7 @@ const AdminFases: React.FC = () => {
                 startIcon={<AddIcon />}
                 onClick={() => handleOpenCrearActividadDialog(fase)}
               >
-                Nueva Actividad
+                {t('adminPhases.dialogs.newActivity.title')}
               </Button>
             </Box>
             
@@ -567,11 +567,11 @@ const AdminFases: React.FC = () => {
               <Table aria-label={`actividades de fase ${fase.numero}`}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Orden</TableCell>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Tipo</TableCell>
+                    <TableCell>{t('adminPhases.table.order')}</TableCell>
+                    <TableCell>{t('adminPhases.table.name')}</TableCell>
+                    <TableCell>{t('adminPhases.table.type')}</TableCell>
                     <TableCell>{t('adminPhases.description')}</TableCell>
-                    <TableCell align="right">Acciones</TableCell>
+                    <TableCell align="right">{t('adminPhases.table.actions')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -631,7 +631,7 @@ const AdminFases: React.FC = () => {
                   {actividades.filter(actividad => actividad.fase._id === fase._id).length === 0 && (
                     <TableRow>
                       <TableCell colSpan={5} align="center">
-                        No hay actividades en esta fase
+                        {t('adminPhases.messages.noActivities')}
                       </TableCell>
                     </TableRow>
                   )}
@@ -644,7 +644,7 @@ const AdminFases: React.FC = () => {
         {fases.length === 0 && (
           <Box sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="body1" color="text.secondary">
-              No hay fases creadas. Crea una nueva fase para comenzar.
+              {t('adminPhases.messages.noPhases')}
             </Typography>
           </Box>
         )}
@@ -652,7 +652,7 @@ const AdminFases: React.FC = () => {
       
       {/* Diálogo para crear fase */}
       <Dialog open={openCrearFaseDialog} onClose={handleCloseCrearFaseDialog}>
-        <DialogTitle>Nueva Fase</DialogTitle>
+        <DialogTitle>{t('adminPhases.dialogs.newPhase.title')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -672,7 +672,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t('adminPhases.table.name')}
             type="text"
             fullWidth
             variant="outlined"
@@ -697,22 +697,22 @@ const AdminFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearFaseDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleCrearFase} 
+          <Button
+            onClick={handleCrearFase}
             color="primary"
             variant="contained"
             disabled={procesando || !faseFormData.numero || !faseFormData.nombre}
           >
-            {procesando ? 'Creando...' : 'Crear'}
+            {procesando ? t('common.creating') : t('common.create')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para editar fase */}
       <Dialog open={openEditarFaseDialog} onClose={handleCloseEditarFaseDialog}>
-        <DialogTitle>Editar Fase</DialogTitle>
+        <DialogTitle>{t('adminPhases.dialogs.editPhase.title')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -732,7 +732,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t('adminPhases.table.name')}
             type="text"
             fullWidth
             variant="outlined"
@@ -757,59 +757,71 @@ const AdminFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarFaseDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleEditarFase} 
+          <Button
+            onClick={handleEditarFase}
             color="primary"
             variant="contained"
             disabled={procesando || !faseFormData.numero || !faseFormData.nombre}
           >
-            {procesando ? 'Guardando...' : 'Guardar Cambios'}
+            {procesando ? t('common.saving') : t('common.saveChanges')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para eliminar fase */}
       <Dialog open={openEliminarFaseDialog} onClose={handleCloseEliminarFaseDialog}>
-        <DialogTitle>Eliminar Fase</DialogTitle>
+        <DialogTitle>{t('adminPhases.dialogs.deletePhase.title')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             {progresoVinculado !== null && progresoVinculado > 0 ? (
-              <>La fase <strong>{selectedFase?.nombre}</strong> tiene <strong>{progresoVinculado}</strong> registros de progreso. ¿Deseas eliminarla? Los progresos validados se mantendrán.</>
+              <Trans
+                i18nKey="adminPhases.dialogs.deletePhase.contentWithProgress"
+                values={{ name: selectedFase?.nombre, count: progresoVinculado }}
+                components={{ strong: <strong /> }}
+              />
             ) : (
-              <>¿Estás seguro de que deseas eliminar la fase <strong>{selectedFase?.nombre}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase.</>
+              <Trans
+                i18nKey="adminPhases.dialogs.deletePhase.content"
+                values={{ name: selectedFase?.nombre }}
+                components={{ strong: <strong /> }}
+              />
             )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEliminarFaseDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleEliminarFase} 
+          <Button
+            onClick={handleEliminarFase}
             color="error"
             variant="contained"
             disabled={procesando}
           >
-            {procesando ? 'Eliminando...' : 'Eliminar'}
+            {procesando ? t('common.deleting') : t('common.delete')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para crear actividad */}
       <Dialog open={openCrearActividadDialog} onClose={handleCloseCrearActividadDialog}>
-        <DialogTitle>Nueva Actividad</DialogTitle>
+        <DialogTitle>{t('adminPhases.dialogs.newActivity.title')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Creando actividad para la fase: <strong>{selectedFase?.nombre}</strong>
+            <Trans
+              i18nKey="adminPhases.dialogs.newActivity.content"
+              values={{ phase: selectedFase?.nombre }}
+              components={{ strong: <strong /> }}
+            />
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t('adminPhases.table.name')}
             type="text"
             fullWidth
             variant="outlined"
@@ -837,7 +849,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="tipo"
             name="tipo"
-            label="Tipo"
+            label={t('adminPhases.table.type')}
             fullWidth
             variant="outlined"
             value={actividadFormData.tipo}
@@ -860,7 +872,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="orden"
             name="orden"
-            label="Orden"
+            label={t('adminPhases.table.order')}
             type="number"
             fullWidth
             variant="outlined"
@@ -871,29 +883,29 @@ const AdminFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearActividadDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleCrearActividad} 
+          <Button
+            onClick={handleCrearActividad}
             color="primary"
             variant="contained"
             disabled={procesando || !actividadFormData.nombre || !actividadFormData.orden}
           >
-            {procesando ? 'Creando...' : 'Crear'}
+            {procesando ? t('common.creating') : t('common.create')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para editar actividad */}
       <Dialog open={openEditarActividadDialog} onClose={handleCloseEditarActividadDialog}>
-        <DialogTitle>Editar Actividad</DialogTitle>
+        <DialogTitle>{t('adminPhases.dialogs.editActivity.title')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t('adminPhases.table.name')}
             type="text"
             fullWidth
             variant="outlined"
@@ -921,7 +933,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="tipo"
             name="tipo"
-            label="Tipo"
+            label={t('adminPhases.table.type')}
             fullWidth
             variant="outlined"
             value={actividadFormData.tipo}
@@ -945,7 +957,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="fase"
             name="fase"
-            label="Fase"
+            label={t('common.phase')}
             fullWidth
             variant="outlined"
             value={actividadFormData.fase}
@@ -960,7 +972,7 @@ const AdminFases: React.FC = () => {
           >
             {fases.sort((a, b) => a.numero - b.numero).map((fase) => (
               <option key={fase._id} value={fase._id}>
-                Fase {fase.numero}: {fase.nombre}
+                {t('common.phase')} {fase.numero}: {fase.nombre}
               </option>
             ))}
           </TextField>
@@ -968,7 +980,7 @@ const AdminFases: React.FC = () => {
             margin="dense"
             id="orden"
             name="orden"
-            label="Orden"
+            label={t('adminPhases.table.order')}
             type="number"
             fullWidth
             variant="outlined"
@@ -979,47 +991,50 @@ const AdminFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarActividadDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleEditarActividad} 
+          <Button
+            onClick={handleEditarActividad}
             color="primary"
             variant="contained"
             disabled={procesando || !actividadFormData.nombre || !actividadFormData.orden || !actividadFormData.fase}
           >
-            {procesando ? 'Guardando...' : 'Guardar Cambios'}
+            {procesando ? t('common.saving') : t('common.saveChanges')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para eliminar actividad */}
       <Dialog open={openEliminarActividadDialog} onClose={handleCloseEliminarActividadDialog}>
-        <DialogTitle>Eliminar Actividad</DialogTitle>
+        <DialogTitle>{t('adminPhases.dialogs.deleteActivity.title')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             {progresoVinculado !== null && progresoVinculado > 0 ? (
-              <>
-                La actividad <strong>{selectedActividad?.nombre}</strong> tiene <strong>{progresoVinculado}</strong> registros de progreso.
-                ¿Estás seguro de que deseas eliminarla? Esto eliminará también esos progresos de todos los usuarios.
-              </>
+              <Trans
+                i18nKey="adminPhases.dialogs.deleteActivity.contentWithProgress"
+                values={{ name: selectedActividad?.nombre, count: progresoVinculado }}
+                components={{ strong: <strong /> }}
+              />
             ) : (
-              <>
-                ¿Estás seguro de que deseas eliminar la actividad <strong>{selectedActividad?.nombre}</strong>? Esta acción no se puede deshacer.
-              </>
+              <Trans
+                i18nKey="adminPhases.dialogs.deleteActivity.content"
+                values={{ name: selectedActividad?.nombre }}
+                components={{ strong: <strong /> }}
+              />
             )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEliminarActividadDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleEliminarActividad} 
+          <Button
+            onClick={handleEliminarActividad}
             color="error"
             variant="contained"
             disabled={procesando}
           >
-            {procesando ? 'Eliminando...' : 'Eliminar'}
+            {procesando ? t('common.deleting') : t('common.delete')}
           </Button>
         </DialogActions>
       </Dialog>

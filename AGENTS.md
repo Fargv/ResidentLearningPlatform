@@ -19,7 +19,7 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-06-26: `updatePhaseStatus` usa modelo de fase dinámico para desbloquear fases en Sociedades
 - 2025-06-26: Verificación de que los usuarios del Programa Sociedades usan `getProgresoResidente`; sin variantes adicionales.
 - 2025-07-09: Añadido endpoint de descarga de certificado con generación de PDF y prueba unitaria.
-- 2025-07-10: Añadido patrón "*.log" en ".gitignore" y eliminado "backend.log" del repositorio.
+- 2025-07-10: Añadido patrón "\*.log" en ".gitignore" y eliminado "backend.log" del repositorio.
 - 2025-07-10: Rutas CRUD para `AccessCode` y pruebas con Supertest.
 - 2025-07-15: Permitir edición de estados en `AdminValidaciones` y mostrar errores de backend.
 - 2025-07-15: Entrada "Progreso de usuarios" para administradores en el Dashboard.
@@ -39,5 +39,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-07-31: Añadidas dependencias `ajv` y `ajv-keywords` al cliente e intento de regenerar el lockfile.
 - 2025-08-01: Localización de AdminConfiguracion y claves `adminConfig` en los archivos de idioma.
 - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
+- 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

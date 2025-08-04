@@ -33,6 +33,9 @@
     "debug": "Debug"
   },
   "adminPhases": {
+    "_comment": "Admin phases management",
+    "phase": "Phase",
+    "activity": "Activity",
     "description": "Description",
     "number": "Number",
     "evaluation": "Evaluation",
@@ -41,11 +44,93 @@
     "theory": "Theory",
     "procedure": "Procedure",
     "errorForbidden": "You do not have permission to view this section",
-    "errorLoadData": "Error loading data"
+    "errorLoadData": "Error loading data",
+    "tabs": {
+      "aria": "phases tabs",
+      "activities": "Activities"
+    },
+    "table": {
+      "aria": "activities of phase {{number}}",
+      "order": "Order",
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions",
+      "description": "Description",
+      "empty": "No activities in this phase"
+    },
+    "messages": {
+      "noActivities": "No activities in this phase",
+      "noPhases": "No phases created. Create a new phase to get started.",
+      "created": "{{item}} created successfully",
+      "createError": "Error creating {{item}}",
+      "updated": "{{item}} updated successfully",
+      "updateError": "Error updating {{item}}",
+      "deleted": "{{item}} deleted successfully",
+      "deleteError": "Error deleting {{item}}",
+      "phaseCreated": "Phase created successfully",
+      "phaseCreateError": "Error creating phase",
+      "phaseUpdated": "Phase updated successfully",
+      "phaseUpdateError": "Error updating phase",
+      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
+      "phaseDeleteError": "Error deleting phase",
+      "activityCreated": "Activity created successfully",
+      "activityCreateError": "Error creating activity",
+      "activityUpdated": "Activity updated successfully",
+      "activityUpdateError": "Error updating activity",
+      "activityDeleted": "Activity deleted successfully",
+      "activityDeleteError": "Error deleting activity",
+      "checkProgressError": "Error checking linked progress"
+    },
+    "actions": {
+      "newPhase": "New Phase",
+      "editPhase": "Edit Phase",
+      "deletePhase": "Delete Phase",
+      "newActivity": "New Activity",
+      "editActivity": "Edit Activity",
+      "deleteActivity": "Delete Activity"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "New Phase",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editPhase": {
+        "title": "Edit Phase",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deletePhase": {
+        "title": "Delete Phase",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "content": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase.",
+        "contentWithProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept."
+      },
+      "newActivity": {
+        "title": "New Activity",
+        "create": "Create",
+        "cancel": "Cancel",
+        "content": "Creating activity for the phase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Edit Activity",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteActivity": {
+        "title": "Delete Activity",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "content": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone.",
+        "contentWithProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users."
+      }
+    },
+    "empty": "No phases created. Create a new phase to begin."
   },
   "progressByPhase": "Progress by phase",
   "close": "Close",
- "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
+  "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
   "register": {
     "title": "Register",
     "accessCode": "Access Code",
@@ -358,34 +443,58 @@
     }
   },
   "adminPhasesSoc": {
+    "_comment": "Admin phases for Societies program",
     "phase": "Phase",
-    "activities": "Activities",
-    "newPhase": "New Phase",
-    "editPhase": "Edit Phase",
-    "deletePhase": "Delete Phase",
-    "newActivity": "New Activity",
-    "editActivity": "Edit Activity",
-    "deleteActivity": "Delete Activity",
-    "order": "Order",
-    "name": "Name",
-    "type": "Type",
-    "description": "Description",
-    "actions": "Actions",
-    "noPermission": "You do not have permission to view this section",
-    "loadError": "Error loading data",
-    "progressCheckError": "Error checking linked progress",
-    "phaseCreated": "Phase created successfully",
-    "phaseCreateError": "Error creating phase",
-    "phaseUpdated": "Phase updated successfully",
-    "phaseUpdateError": "Error updating phase",
-    "phaseDeleted": "Phase deleted successfully. Removed progress: {{removed}}. Validated preserved: {{preserved}}",
-    "phaseDeleteError": "Error deleting phase",
-    "activityCreated": "Activity created successfully",
-    "activityCreateError": "Error creating activity",
-    "activityUpdated": "Activity updated successfully",
-    "activityUpdateError": "Error updating activity",
-    "activityDeleted": "Activity deleted successfully",
-    "activityDeleteError": "Error deleting activity"
+    "activity": "Activity",
+    "table": {
+      "order": "Order",
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "messages": {
+      "noActivities": "No activities in this phase",
+      "noPhases": "No phases created",
+      "created": "{{item}} created successfully",
+      "createError": "Error creating {{item}}",
+      "updated": "{{item}} updated successfully",
+      "updateError": "Error updating {{item}}",
+      "deleted": "{{item}} deleted successfully",
+      "deleteError": "Error deleting {{item}}",
+      "progressCheckError": "Error checking linked progress"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "New Phase",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editPhase": {
+        "title": "Edit Phase",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deletePhase": {
+        "title": "Delete Phase",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "newActivity": {
+        "title": "New Activity",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editActivity": {
+        "title": "Edit Activity",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteActivity": {
+        "title": "Delete Activity",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      }
+    }
   },
   "adminUserProgress": {
     "title": "User Progress",
@@ -452,7 +561,7 @@
     "resetRequest": "Password reset request",
     "errorLogin": "Login error",
     "errorChangePassword": "Error changing password",
-   "errorUpdatePassword": "Error updating password"
+    "errorUpdatePassword": "Error updating password"
   },
   "forgotPassword": {
     "heading": "Forgot your password?",
@@ -463,9 +572,9 @@
   },
   "login": {
     "title": "Academic Program daVinci",
-    "subtitle": "Technologies of the da Vinci Robot",
+    "subtitle": "Da Vinci Systems Training Program",
     "email": "Email",
-    "password": "Password",
+    "passwora": "Password",
     "signIn": "Log In",
     "forgotPassword": "Forgot your password?",
     "noAccount": "Don't have an account?",
