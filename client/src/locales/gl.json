@@ -1,0 +1,297 @@
+{
+  "welcome": "Benvido/a, {{name}}",
+  "role": {
+    "adminPanel": "Panel de Administración",
+    "trainer": "Formador de residentes do hospital {{hospital}}",
+    "coordinator": "Coordinador de residentes do hospital {{hospital}}",
+    "resident": "Residente do hospital {{hospital}}",
+    "student": "Alumno do programa de sociedades {{title}}",
+    "instructor": "Instrutor do programa de sociedades {{title}}"
+  },
+  "actions": {
+    "dashboard": "Panel",
+    "myProgress": "O meu progreso",
+    "trainingPhases": "Fases formativas",
+    "validations": "Validacións",
+    "myUsers": "Os meus usuarios",
+    "usersProgress": "Progreso dos usuarios",
+    "settings": "Configuración",
+    "myProfile": "O meu perfil",
+    "notifications": "Notificacións",
+    "profile": "Perfil",
+    "users": "Usuarios",
+    "logout": "Pechar sesión"
+  },
+  "adminConfig": {
+    "title": "Configuración",
+    "hospitals": "Hospitais",
+    "societies": "Sociedades",
+    "residentProgram": "Programa de Residentes",
+    "societiesProgram": "Programa de Sociedades",
+    "users": "Usuarios",
+    "accessCodes": "Códigos de acceso",
+    "debug": "Depuración"
+  },
+  "progressByPhase": "Progreso por fase",
+  "close": "Pechar",
+  "devWarning": "⚠️ ESTÁS NO ENTORNO DE DESENVOLVEMENTO ⚠️",
+  "brand": {
+    "name": "Abex Excelencia Robótica"
+  },
+  "regions": {
+    "andalucia": "ANDALUCÍA"
+  },
+  "status": {
+    "pendingValidation": "Pendente de validación",
+    "validado": "Validado",
+    "rechazado": "Rexeitado",
+    "completado": "Completado",
+    "pendiente": "Pendente",
+    "noCompletada": "Non completada",
+    "enProgreso": "En progreso",
+    "bloqueada": "Bloqueada",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "validated": "Validado",
+    "rejected": "Rexeitado"
+  },
+  "register": {
+    "title": "Rexistro",
+    "accessCode": "Código de acceso",
+    "name": "Nome",
+    "surname": "Apelidos",
+    "email": "Correo electrónico",
+    "password": "Contrasinal",
+    "confirmPassword": "Confirmar contrasinal",
+    "hospital": "Hospital",
+    "zone": "Zona",
+    "specialty": "Especialidade",
+    "specialties": {
+      "URO": "Uroloxía (URO)",
+      "GEN": "Cirurxía Xeral (GEN)",
+      "GYN": "Xinecoloxía (GYN)",
+      "THOR": "Torácica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
+    "society": "Sociedade",
+    "none": "Ningunha",
+    "invalidAccessCode": "Código de acceso non válido",
+    "requiredFields": "Por favor, completa todos os campos obrigatorios.",
+    "hospitalAndSpecialtyRequired": "Hospital e especialidade obrigatorios",
+    "hospitalRequired": "Hospital obrigatorio",
+    "societyRequired": "Sociedade obrigatoria",
+    "passwordsMismatch": "Os contrasinais non coinciden",
+    "consentPrefix": "Acepto o tratamento dos meus datos persoais segundo a ",
+    "privacyPolicy": "Política de Privacidade",
+    "consentSuffix": " e cumpro coa LOPD.",
+    "registerButton": "Rexistrarse"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "creating": "Creando...",
+    "saveChanges": "Gardar cambios",
+    "saving": "Gardando...",
+    "delete": "Eliminar",
+    "deleting": "Eliminando...",
+    "phase": "Fase",
+    "validate": "Validar",
+    "reject": "Rexectar",
+    "processing": "Procesando..."
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Pechar sesión",
+    "password": "Contrasinal",
+    "passwordCurrent": "Contrasinal actual",
+    "passwordNew": "Novo contrasinal",
+    "passwordConfirm": "Confirmar contrasinal",
+    "passwordUpdated": "Contrasinal actualizado",
+    "passwordMismatch": "Os contrasinais non coinciden",
+    "accessCode": "Código de acceso",
+    "invalidAccessCode": "Código de acceso non válido",
+    "changePassword": "Cambiar contrasinal",
+    "resetRequest": "Solicitude de restablecemento de contrasinal",
+    "errorLogin": "Erro ao iniciar sesión",
+    "errorChangePassword": "Erro ao cambiar o contrasinal",
+    "errorUpdatePassword": "Erro ao actualizar o contrasinal"
+  },
+  "forgotPassword": {
+    "heading": "Esqueciches o contrasinal?",
+    "description": "Para restablecer o contrasinal, contacta co administrador do sistema.",
+    "emailLabel": "O teu correo",
+    "submit": "Enviar correo ao administrador",
+    "backToLogin": "Volver ao inicio de sesión"
+  },
+  "login": {
+    "title": "Programa Académico da Vinci",
+    "subtitle": "Tecnoloxías do Robot da Vinci",
+    "email": "Correo electrónico",
+    "password": "Contrasinal",
+    "signIn": "Iniciar sesión",
+    "forgotPassword": "Esqueciches o contrasinal?",
+    "noAccount": "Non tes conta?",
+    "registerHere": "Rexístrate aquí",
+    "copyright": "© {{year}} Abex Excelencia Robótica",
+    "poweredBy": "Desenvolvido por FARGV",
+    "logoAlt": "Abex Excelencia Robótica"
+  },
+  "types": {
+    "theoretical": "Teórica",
+    "practical": "Práctica",
+    "evaluation": "Avaliación",
+    "observation": "Observación",
+    "theoreticalLower": "teórica",
+    "practicalLower": "práctica",
+    "evaluationLower": "avaliación",
+    "observationLower": "observación",
+    "programaResidentes": "Programa de Residentes",
+    "programaSociedades": "Programa de Sociedades"
+  },
+  "roles": {
+    "residente": "Residente",
+    "formador": "Formador",
+    "coordinador": "Coordinador",
+    "administrador": "Administrador",
+    "alumno": "Alumno",
+    "instructor": "Instrutor"
+  },
+  "notifications": {
+    "title": "Notificacións",
+    "tabs": {
+      "aria": "lapelas de notificacións",
+      "pending": "Pendentes",
+      "viewed": "Vistas"
+    },
+    "table": {
+      "message": "Mensaxe",
+      "date": "Data",
+      "type": "Tipo",
+      "actions": "Accións"
+    },
+    "empty": {
+      "all": "Non hai notificacións",
+      "pending": "Non hai notificacións pendentes",
+      "viewed": "Non hai notificacións vistas"
+    },
+    "errorLoad": "Erro ao cargar as notificacións",
+    "errorMarkAsRead": "Erro ao marcar a notificación como lida"
+  },
+  "codes": {
+    "new": "Novo código",
+    "edit": "Editar código",
+    "errorLoad": "Erro ao cargar os códigos",
+    "errorDelete": "Erro ao eliminar o código",
+    "errorSave": "Erro ao gardar o código"
+  },
+  "progress": {
+    "createSuccess": "Progreso formativo creado con éxito"
+  },
+  "emails": {
+    "inviteSubject": "Invitación á Plataforma de Formación Da Vinci"
+  },
+  "debug": {
+    "tokenValid": "✅ Token válido e decodificado",
+    "tokenInvalid": "❌ Token non válido ou corrompido"
+  },
+  "residentProgress": {
+    "title": "O meu progreso",
+    "errorLoad": "Erro ao cargar o progreso",
+    "downloadError": "Erro ao descargar o certificado",
+    "downloadCertificate": "Descargar certificado"
+  },
+  "forms": {
+    "code": "Código",
+    "numericCode": "Código numérico",
+    "postalCode": "Código postal",
+    "address": "Enderezo",
+    "phone": "Teléfono",
+    "description": "Descrición",
+    "number": "Número",
+    "title": "Título",
+    "completionDate": "Data de realización",
+    "selectDate": "Selecciona unha data de realización",
+    "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
+    "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB."
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparación Inicial",
+      "description": "Familiarización co sistema Da Vinci e aspectos teóricos iniciais."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formación Preclínica",
+      "description": "Exercicios de simulación e adestramento en contorno seguro."
+    },
+    "phase3": {
+      "label": "Fase 3 - Asistencia Cirúrxica",
+      "description": "Participación como asistente en quirófano."
+    },
+    "phase4": {
+      "label": "Fase 4 - Cirurxía en Consola",
+      "description": "Procedementos realizados polo residente con supervisión."
+    }
+  },
+  "residentPhases": {
+    "title": "As miñas fases formativas",
+    "errorLoad": "Erro ao cargar o progreso",
+    "activityFail": "Non se puido completar a actividade.",
+    "activitySaveError": "Erro ao gardar a actividade.",
+    "activitySuccess": "✅ Actividade rexistrada con éxito",
+    "noActivitySelectedError": "Erro interno: Non se seleccionou ningunha actividade.",
+    "noTitle": "Sen título",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "deadline": "Data límite",
+    "validatedProgress": "Progreso validado: {{percent}}%",
+    "noActivities": "Non hai actividades dispoñibles",
+    "phaseLocked": "Fase bloqueada",
+    "noProgress": "Non hai progreso formativo dispoñible.",
+    "markAsCompleted": "Marcar como completada",
+    "unnamedActivity": "Actividade sen nome",
+    "comment": "Comentario",
+    "trainerComment": "Comentario do formador",
+    "rejectionReason": "Motivo do rexeitamento",
+    "completedOn": "Data completada",
+    "validatedOn": "Validado o",
+    "status": "Estado",
+    "dialog": {
+      "completeActivity": "Marcar actividade como completada",
+      "completionDate": "Data de realización",
+      "comment": "Comentario",
+      "selectFile": "Seleccionar ficheiro",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "missingProgressId": "Falta o ID do progreso",
+      "noActivitySelected": "Non se seleccionou ningunha actividade",
+      "selectDate": "Selecciona unha data de realización",
+      "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
+      "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB.",
+      "title": "Marcar actividade como completada",
+      "date": "Data de realización"
+    },
+    "messages": {
+      "noActivities": "Non hai actividades dispoñibles",
+      "blocked": "Fase bloqueada",
+      "noProgress": "Non hai progreso formativo dispoñible.",
+      "loadError": "Erro ao cargar o progreso"
+    },
+    "tooltip": {
+      "missingProgress": "Falta o ID do progreso",
+      "noActivity": "Non se seleccionou ningunha actividade"
+    },
+    "labels": {
+      "comment": "Comentario",
+      "trainerComment": "Comentario do formador",
+      "rejectionReason": "Motivo do rexeitamento",
+      "completedDate": "Data completada",
+      "validatedDate": "Validado o",
+      "state": "Estado"
+    },
+    "states": {
+      "validated": "Validado",
+      "rejected": "Rexeitado",
+      "pending": "Pendente de validación",
+      "notCompleted": "Non completada"
+    }
+  }
+}

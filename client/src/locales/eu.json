@@ -1,0 +1,265 @@
+{
+  "welcome": "Ongietorri, {{name}}",
+  "role": {
+    "adminPanel": "Administrazio panela",
+    "trainer": "Erietxeko egoiliarren prestatzailea {{hospital}}",
+    "coordinator": "Erresidentziako koordinatzailea {{hospital}}",
+    "resident": "Erietxeko egoiliarra {{hospital}}",
+    "student": "Elkarteen programako ikaslea {{title}}",
+    "instructor": "Elkarteen programako irakaslea {{title}}"
+  },
+  "actions": {
+    "dashboard": "Arbela",
+    "myProgress": "Nire aurrerapena",
+    "trainingPhases": "Prestakuntza faseak",
+    "validations": "Balidazioak",
+    "myUsers": "Nire erabiltzaileak",
+    "usersProgress": "Erabiltzaileen aurrerapena",
+    "settings": "Ezarpenak",
+    "myProfile": "Nire profila",
+    "notifications": "Jakinarazpenak",
+    "profile": "Profila",
+    "users": "Erabiltzaileak",
+    "logout": "Saioa itxi"
+  },
+  "adminConfig": {
+    "title": "Konfigurazioa",
+    "hospitals": "Ospitaleak",
+    "societies": "Elkarteak",
+    "residentProgram": "Egoiliarren Programa",
+    "societiesProgram": "Elkarteen Programa",
+    "users": "Erabiltzaileak",
+    "accessCodes": "Sarbide kodeak",
+    "debug": "Arazketa"
+  },
+  "progressByPhase": "Fasearen araberako aurrerapena",
+  "close": "Itxi",
+  "devWarning": "⚠️ GARAPEN INGURUNEA ZAUDE ⚠️",
+  "brand": {
+    "name": "Abex Robotikako Bikaintasuna"
+  },
+  "regions": {
+    "andalucia": "ANDALUZIA"
+  },
+  "status": {
+    "pendingValidation": "Balidazioaren zain",
+    "validado": "Balidatuta",
+    "rechazado": "Baztertuta",
+    "completado": "Osatuta",
+    "pendiente": "Zain",
+    "noCompletada": "Osatu gabe",
+    "enProgreso": "Prozesuan",
+    "bloqueada": "Blokeatuta",
+    "active": "Aktibo",
+    "inactive": "Inaktibo",
+    "validated": "Balidatuta",
+    "rejected": "Baztertuta"
+  },
+  "register": {
+    "title": "Erregistroa",
+    "accessCode": "Sarbide kodea",
+    "name": "Izena",
+    "surname": "Abizenak",
+    "email": "Posta elektronikoa",
+    "password": "Pasahitza",
+    "confirmPassword": "Berretsi pasahitza",
+    "hospital": "Ospitalea",
+    "zone": "Eremua",
+    "specialty": "Espezialitatea",
+    "specialties": {
+      "URO": "Urologia (URO)",
+      "GEN": "Kirurgia Orokorra (GEN)",
+      "GYN": "Ginekologia (GYN)",
+      "THOR": "Toraxekoa (THOR)",
+      "ORL": "Otorino (ORL)"
+    },
+    "society": "Elkartea",
+    "none": "Bat ere ez",
+    "invalidAccessCode": "Sarbide kode baliogabea",
+    "requiredFields": "Mesedez, bete derrigorrezko eremu guztiak.",
+    "hospitalAndSpecialtyRequired": "Ospitalea eta espezialitatea derrigorrezkoak dira",
+    "hospitalRequired": "Ospitalea derrigorrezkoa da",
+    "societyRequired": "Elkartea derrigorrezkoa da",
+    "passwordsMismatch": "Pasahitzak ez datoz bat",
+    "consentPrefix": "Onartzen dut nire datu pertsonalen tratamendua ",
+    "privacyPolicy": "Pribatutasun Politikaren arabera",
+    "consentSuffix": " eta DBEO betetzen dut.",
+    "registerButton": "Erregistratu"
+  },
+  "common": {
+    "cancel": "Utzi",
+    "create": "Sortu",
+    "creating": "Sortzen...",
+    "saveChanges": "Aldaketak gorde",
+    "saving": "Gordetzen...",
+    "delete": "Ezabatu",
+    "deleting": "Ezabatzen...",
+    "phase": "Fasea",
+    "validate": "Balidatu",
+    "reject": "Baztertu",
+    "processing": "Prozesatzen..."
+  },
+  "auth": {
+    "login": "Hasi saioa",
+    "logout": "Saioa itxi",
+    "password": "Pasahitza",
+    "passwordCurrent": "Uneko pasahitza",
+    "passwordNew": "Pasahitz berria",
+    "passwordConfirm": "Berretsi pasahitza",
+    "passwordUpdated": "Pasahitza eguneratua",
+    "passwordMismatch": "Pasahitzak ez datoz bat",
+    "accessCode": "Sarbide kodea",
+    "invalidAccessCode": "Sarbide kode baliogabea",
+    "changePassword": "Aldatu pasahitza",
+    "resetRequest": "Pasahitza berrezartzeko eskaera",
+    "errorLogin": "Errorea saioa hastean",
+    "errorChangePassword": "Errorea pasahitza aldatzean",
+    "errorUpdatePassword": "Errorea pasahitza eguneratzean"
+  },
+  "forgotPassword": {
+    "heading": "Pasahitza ahaztuta?",
+    "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
+    "emailLabel": "Zure emaila",
+    "submit": "Bidali emaila administratzaileari",
+    "backToLogin": "Itzuli saioa hasteko"
+  },
+  "login": {
+    "title": "Da Vinci Akademia Programa",
+    "subtitle": "Da Vinci Robotaren Teknologiak",
+    "email": "Posta elektronikoa",
+    "password": "Pasahitza",
+    "signIn": "Hasi saioa",
+    "forgotPassword": "Pasahitza ahaztuta?",
+    "noAccount": "Ez duzu konturik?",
+    "registerHere": "Erregistratu hemen",
+    "copyright": "© {{year}} Abex Robotikako Bikaintasuna",
+    "poweredBy": "FARGV garatua",
+    "logoAlt": "Abex Robotikako Bikaintasuna"
+  },
+  "types": {
+    "theoretical": "Teorikoa",
+    "practical": "Praktikoa",
+    "evaluation": "Ebaluazioa",
+    "observation": "Behatzea",
+    "theoreticalLower": "teorikoa",
+    "practicalLower": "praktikoa",
+    "evaluationLower": "ebaluazioa",
+    "observationLower": "behatzea",
+    "programaResidentes": "Egoiliarren Programa",
+    "programaSociedades": "Elkarteen Programa"
+  },
+  "roles": {
+    "residente": "Egoilarra",
+    "formador": "Prestatzailea",
+    "coordinador": "Koordinatzailea",
+    "administrador": "Administratzailea",
+    "alumno": "Ikaslea",
+    "instructor": "Instruktorea"
+  },
+  "notifications": {
+    "title": "Jakinarazpenak",
+    "tabs": {
+      "aria": "jakinarazpenen fitxak",
+      "pending": "Zain",
+      "viewed": "Ikusita"
+    },
+    "table": {
+      "message": "Mezua",
+      "date": "Data",
+      "type": "Mota",
+      "actions": "Ekintzak"
+    },
+    "empty": {
+      "all": "Ez dago jakinarazpenik",
+      "pending": "Ez dago zain dauden jakinarazpenik",
+      "viewed": "Ez dago ikusitako jakinarazpenik"
+    },
+    "errorLoad": "Errorea jakinarazpenak kargatzean",
+    "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean"
+  },
+  "codes": {
+    "new": "Kode berria",
+    "edit": "Editatu kodea",
+    "errorLoad": "Errorea kodeak kargatzean",
+    "errorDelete": "Errorea kodea ezabatzean",
+    "errorSave": "Errorea kodea gordetzean"
+  },
+  "progress": {
+    "createSuccess": "Prestakuntza aurrerapena ondo sortu da"
+  },
+  "emails": {
+    "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
+  },
+  "debug": {
+    "tokenValid": "✅ Token baliozkoa eta deskodetua",
+    "tokenInvalid": "❌ Token baliogabea edo hondatuta"
+  },
+  "residentProgress": {
+    "title": "Nire aurrerapena",
+    "errorLoad": "Errorea aurrerapena kargatzean",
+    "downloadError": "Errorea ziurtagiria deskargatzean",
+    "downloadCertificate": "Deskargatu ziurtagiria"
+  },
+  "residentPhases": {
+    "title": "Nire prestakuntza faseak",
+    "errorLoad": "Errorea aurrerapena kargatzean",
+    "activityFail": "Ezin izan da jarduera osatu.",
+    "activitySaveError": "Errorea jarduera gordetzean.",
+    "activitySuccess": "✅ Jarduera ondo erregistratua",
+    "noActivitySelectedError": "Barne errorea: Ez da jarduerarik hautatu.",
+    "noTitle": "Izenbururik gabe",
+    "phaseTitle": "Fasea {{number}}: {{name}}",
+    "deadline": "Epemuga",
+    "validatedProgress": "Balidatutako aurrerapena: {{percent}}%",
+    "noActivities": "Ez dago jarduerarik eskuragarri",
+    "phaseLocked": "Fasea blokeatuta",
+    "noProgress": "Ez dago prestakuntza aurrerapenik eskuragarri.",
+    "markAsCompleted": "Markatu osatutzat",
+    "unnamedActivity": "Izenik gabeko jarduera",
+    "comment": "Iruzkina",
+    "trainerComment": "Prestatzailearen iruzkina",
+    "rejectionReason": "Baztertzeko arrazoia",
+    "completedOn": "Osatze data",
+    "validatedOn": "Balidatua: ",
+    "status": "Egoera",
+    "dialog": {
+      "completeActivity": "Markatu jarduera osatutzat",
+      "completionDate": "Osatze data",
+      "comment": "Iruzkina",
+      "selectFile": "Hautatu fitxategia",
+      "cancel": "Utzi",
+      "confirm": "Baieztatu",
+      "missingProgressId": "Falta da aurrerapenaren IDa",
+      "noActivitySelected": "Ez da jarduerarik hautatu",
+      "selectDate": "Hautatu osatze data bat",
+      "optionalFileHint": "Erantsi fitxategi aukerazkoa (geh. 5MB)",
+      "fileTooLarge": "Fitxategia 5MB baino handiagoa da.",
+      "title": "Markatu jarduera osatutzat",
+      "date": "Osatze data"
+    },
+    "messages": {
+      "noActivities": "Ez dago jarduerarik eskuragarri",
+      "blocked": "Fasea blokeatuta",
+      "noProgress": "Ez dago prestakuntza aurrerapenik eskuragarri.",
+      "loadError": "Errorea aurrerapena kargatzean"
+    },
+    "tooltip": {
+      "missingProgress": "Falta da aurrerapenaren IDa",
+      "noActivity": "Ez da jarduerarik hautatu"
+    },
+    "labels": {
+      "comment": "Iruzkina",
+      "trainerComment": "Prestatzailearen iruzkina",
+      "rejectionReason": "Baztertzeko arrazoia",
+      "completedDate": "Osatze data",
+      "validatedDate": "Balidatua",
+      "state": "Egoera"
+    },
+    "states": {
+      "validated": "Balidatua",
+      "rejected": "Baztertua",
+      "pending": "Balidazioaren zain",
+      "notCompleted": "Osatu gabe"
+    }
+  }
+}

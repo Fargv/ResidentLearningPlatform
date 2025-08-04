@@ -13,12 +13,22 @@ jest.mock('../context/AuthContext', () => ({
   })
 }));
 
-test('renders Password label when language is English', async () => {
-  await i18n.changeLanguage('en');
+const cases: Array<[string, string]> = [
+  ['en', 'Password'],
+  ['fr', 'Mot de passe'],
+  ['de', 'Passwort'],
+  ['it', 'Password'],
+  ['ca', 'Contrasenya'],
+  ['gl', 'Contrasinal'],
+  ['eu', 'Pasahitza']
+];
+
+test.each(cases)('renders Password label when language is %s', async (lang, label) => {
+  await i18n.changeLanguage(lang);
   render(
     <MemoryRouter>
       <Login />
     </MemoryRouter>
   );
-  expect(screen.getByLabelText('Password')).toBeInTheDocument();
+  expect(screen.getByLabelText(label)).toBeInTheDocument();
 });

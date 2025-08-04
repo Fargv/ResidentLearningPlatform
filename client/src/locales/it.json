@@ -1,0 +1,352 @@
+{
+  "welcome": "Benvenuto/a, {{name}}",
+  "role": {
+    "adminPanel": "Pannello di amministrazione",
+    "trainer": "Formatore dei residenti dell'ospedale {{hospital}}",
+    "coordinator": "Coordinatore dei residenti dell'ospedale {{hospital}}",
+    "resident": "Residente dell'ospedale {{hospital}}",
+    "student": "Studente del programma delle società {{title}}",
+    "instructor": "Istruttore del programma delle società {{title}}"
+  },
+  "actions": {
+    "dashboard": "Dashboard",
+    "myProgress": "Il mio progresso",
+    "trainingPhases": "Fasi formative",
+    "validations": "Validazioni",
+    "myUsers": "I miei utenti",
+    "usersProgress": "Progresso degli utenti",
+    "settings": "Impostazioni",
+    "myProfile": "Il mio profilo",
+    "notifications": "Notifiche",
+    "profile": "Profilo",
+    "users": "Utenti",
+    "logout": "Disconnetti"
+  },
+  "adminConfig": {
+    "title": "Configurazione",
+    "hospitals": "Ospedali",
+    "societies": "Società",
+    "residentProgram": "Programma Residenti",
+    "societiesProgram": "Programma Società",
+    "users": "Utenti",
+    "accessCodes": "Codici di accesso",
+    "debug": "Debug"
+  },
+  "progressByPhase": "Progresso per fase",
+  "close": "Chiudi",
+  "devWarning": "⚠️ SEI IN AMBIENTE DI SVILUPPO ⚠️",
+  "brand": {
+    "name": "Abex Eccellenza Robotica"
+  },
+  "regions": {
+    "andalucia": "ANDALUSIA"
+  },
+  "status": {
+    "pendingValidation": "In attesa di validazione",
+    "validado": "Validato",
+    "rechazado": "Respinto",
+    "completado": "Completato",
+    "pendiente": "In attesa",
+    "noCompletada": "Non completato",
+    "enProgreso": "In corso",
+    "bloqueada": "Bloccato",
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "validated": "Validato",
+    "rejected": "Respinto"
+  },
+  "register": {
+    "title": "Registrazione",
+    "accessCode": "Codice di accesso",
+    "name": "Nome",
+    "surname": "Cognome",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "hospital": "Ospedale",
+    "zone": "Zona",
+    "specialty": "Specializzazione",
+    "specialties": {
+      "URO": "Urologia (URO)",
+      "GEN": "Chirurgia Generale (GEN)",
+      "GYN": "Ginecologia (GYN)",
+      "THOR": "Toracica (THOR)",
+      "ORL": "Otorino (ORL)"
+    },
+    "society": "Società",
+    "none": "Nessuna",
+    "invalidAccessCode": "Codice di accesso non valido",
+    "requiredFields": "Per favore, completa tutti i campi obbligatori.",
+    "hospitalAndSpecialtyRequired": "Ospedale e specializzazione richiesti",
+    "hospitalRequired": "Ospedale richiesto",
+    "societyRequired": "Società richiesta",
+    "passwordsMismatch": "Le password non corrispondono",
+    "consentPrefix": "Accetto il trattamento dei miei dati personali secondo la ",
+    "privacyPolicy": "Politica sulla Privacy",
+    "consentSuffix": " e sono conforme al GDPR.",
+    "registerButton": "Registrati"
+  },
+  "common": {
+    "cancel": "Annulla",
+    "create": "Crea",
+    "creating": "Creazione in corso...",
+    "saveChanges": "Salva modifiche",
+    "saving": "Salvataggio in corso...",
+    "delete": "Elimina",
+    "deleting": "Eliminazione in corso...",
+    "phase": "Fase",
+    "validate": "Convalida",
+    "reject": "Rifiuta",
+    "processing": "Elaborazione in corso..."
+  },
+  "auth": {
+    "login": "Accesso",
+    "logout": "Disconnetti",
+    "password": "Password",
+    "passwordCurrent": "Password attuale",
+    "passwordNew": "Nuova password",
+    "passwordConfirm": "Conferma password",
+    "passwordUpdated": "Password aggiornata",
+    "passwordMismatch": "Le password non corrispondono",
+    "accessCode": "Codice di accesso",
+    "invalidAccessCode": "Codice di accesso non valido",
+    "changePassword": "Cambia password",
+    "resetRequest": "Richiesta di reimpostazione della password",
+    "errorLogin": "Errore durante l'accesso",
+    "errorChangePassword": "Errore durante il cambio password",
+    "errorUpdatePassword": "Errore durante l'aggiornamento della password"
+  },
+  "forgotPassword": {
+    "heading": "Hai dimenticato la password?",
+    "description": "Per reimpostare la password, contatta l'amministratore del sistema.",
+    "emailLabel": "La tua email",
+    "submit": "Invia email all'amministratore",
+    "backToLogin": "Torna al login"
+  },
+  "login": {
+    "title": "Programma Accademico da Vinci",
+    "subtitle": "Tecnologie del robot da Vinci",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Accedi",
+    "forgotPassword": "Hai dimenticato la password?",
+    "noAccount": "Non hai un account?",
+    "registerHere": "Registrati qui",
+    "copyright": "© {{year}} Abex Eccellenza Robotica",
+    "poweredBy": "Sviluppato da FARGV",
+    "logoAlt": "Abex Eccellenza Robotica"
+  },
+  "types": {
+    "theoretical": "Teorica",
+    "practical": "Pratica",
+    "evaluation": "Valutazione",
+    "observation": "Osservazione",
+    "theoreticalLower": "teorica",
+    "practicalLower": "pratica",
+    "evaluationLower": "valutazione",
+    "observationLower": "osservazione",
+    "programaResidentes": "Programma Residenti",
+    "programaSociedades": "Programma Società"
+  },
+  "roles": {
+    "residente": "Residente",
+    "formador": "Formatore",
+    "coordinador": "Coordinatore",
+    "administrador": "Amministratore",
+    "alumno": "Studente",
+    "instructor": "Istruttore"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "tabs": {
+      "aria": "schede notifiche",
+      "pending": "In attesa",
+      "viewed": "Viste"
+    },
+    "table": {
+      "message": "Messaggio",
+      "date": "Data",
+      "type": "Tipo",
+      "actions": "Azioni"
+    },
+    "empty": {
+      "all": "Nessuna notifica",
+      "pending": "Nessuna notifica in attesa",
+      "viewed": "Nessuna notifica vista"
+    },
+    "errorLoad": "Errore durante il caricamento delle notifiche",
+    "errorMarkAsRead": "Errore nel segnare la notifica come letta"
+  },
+  "codes": {
+    "new": "Nuovo codice",
+    "edit": "Modifica codice",
+    "errorLoad": "Errore durante il caricamento dei codici",
+    "errorDelete": "Errore durante l'eliminazione del codice",
+    "errorSave": "Errore durante il salvataggio del codice"
+  },
+  "progress": {
+    "createSuccess": "Avanzamento formativo creato con successo"
+  },
+  "emails": {
+    "inviteSubject": "Invito alla Piattaforma di Formazione Da Vinci"
+  },
+  "debug": {
+    "tokenValid": "✅ Token valido e decodificato",
+    "tokenInvalid": "❌ Token non valido o corrotto"
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestione di tutti gli utenti",
+    "noPermissions": "Non hai i permessi per visualizzare questa sezione"
+  },
+  "forms": {
+    "code": "Codice",
+    "numericCode": "Codice numerico",
+    "postalCode": "CAP",
+    "address": "Indirizzo",
+    "phone": "Telefono",
+    "description": "Descrizione",
+    "number": "Numero",
+    "title": "Titolo",
+    "completionDate": "Data di completamento",
+    "selectDate": "Seleziona una data di completamento",
+    "optionalFileHint": "Allega un file opzionale (max. 5MB)",
+    "fileTooLarge": "Il file supera la dimensione massima di 5MB."
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Bando",
+      "intro": "Inizio del processo di candidatura.",
+      "item1": "Invio degli inviti",
+      "item2": "Ricezione delle candidature"
+    },
+    "presentacion": {
+      "label": "Presentazione",
+      "intro": "Sessione di presentazione del programma.",
+      "item1": "Introduzione al programma",
+      "item2": "Presentazione degli istruttori"
+    },
+    "modOnline": {
+      "label": "Mod. Online",
+      "intro": "Moduli formativi online.",
+      "item1": "Accesso alla piattaforma",
+      "item2": "Contenuto teorico"
+    },
+    "simulacion": {
+      "label": "Simulazione",
+      "intro": "Pratiche di simulazione.",
+      "item1": "Sessioni pratiche",
+      "item2": "Valutazione delle competenze"
+    },
+    "firstAssistant": {
+      "label": "Primo Assistente",
+      "intro": "Attività come primo assistente.",
+      "item1": "Partecipazione in sala operatoria",
+      "item2": "Registrazione delle attività"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Procedure passo dopo passo.",
+      "item1": "Materiale di supporto",
+      "item2": "Revisione guidata"
+    },
+    "handsOn": {
+      "label": "Hands On",
+      "intro": "Formazione pratica Hands On.",
+      "item1": "Pratica intensiva",
+      "item2": "Feedback personalizzato"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparazione iniziale",
+      "description": "Familiarizzazione con il sistema Da Vinci e aspetti teorici iniziali."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formazione preclinica",
+      "description": "Esercizi di simulazione e formazione in ambiente sicuro."
+    },
+    "phase3": {
+      "label": "Fase 3 - Assistenza chirurgica",
+      "description": "Partecipazione come assistente in sala operatoria."
+    },
+    "phase4": {
+      "label": "Fase 4 - Chirurgia alla console",
+      "description": "Procedure eseguite dal residente sotto supervisione."
+    }
+  },
+  "residentProgress": {
+    "title": "Il mio progresso",
+    "errorLoad": "Errore durante il caricamento del progresso",
+    "downloadError": "Errore durante il download del certificato",
+    "downloadCertificate": "Scarica certificato"
+  },
+  "trainerUsers": {
+    "title": "I miei utenti",
+    "invite": "Invita utente",
+    "edit": "Modifica utente",
+    "updated": "Utente aggiornato",
+    "invited": "Utente invitato",
+    "deleted": "Utente eliminato",
+    "error": "Errore",
+    "deleteError": "Errore durante l'eliminazione",
+    "loadError": "Errore durante il caricamento degli utenti",
+    "table": {
+      "name": "Nome",
+      "email": "Email",
+      "role": "Ruolo",
+      "status": "Stato",
+      "actions": "Azioni",
+      "state": "Stato"
+    },
+    "form": {
+      "email": "Email",
+      "name": "Nome",
+      "surname": "Cognome",
+      "role": "Ruolo",
+      "roles": {
+        "resident": "Residente",
+        "trainer": "Formatore"
+      }
+    },
+    "dialog": {
+      "cancel": "Annulla",
+      "saving": "Salvataggio in corso...",
+      "save": "Salva",
+      "invite": "Invita"
+    },
+    "_comment": "Gestione utenti per formatori",
+    "buttons": {
+      "invite": "Invita utente",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "saving": "Salvataggio...",
+      "delete": "Elimina"
+    },
+    "fields": {
+      "email": "Email",
+      "name": "Nome",
+      "lastName": "Cognome",
+      "role": "Ruolo"
+    },
+    "roles": {
+      "resident": "Residente",
+      "trainer": "Formatore"
+    },
+    "states": {
+      "active": "Attivo",
+      "inactive": "Inattivo"
+    },
+    "dialogs": {
+      "editTitle": "Modifica utente",
+      "inviteTitle": "Invita utente"
+    },
+    "messages": {
+      "loadError": "Errore durante il caricamento degli utenti",
+      "updateSuccess": "Utente aggiornato",
+      "inviteSuccess": "Utente invitato",
+      "deleteSuccess": "Utente eliminato",
+      "deleteError": "Errore durante l'eliminazione",
+      "genericError": "Errore"
+    }
+  }
+}

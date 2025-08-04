@@ -22,6 +22,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     >
       <MenuItem value="es">ES</MenuItem>
       <MenuItem value="en">EN</MenuItem>
+      <MenuItem value="fr">FR</MenuItem>
+      <MenuItem value="de">DE</MenuItem>
+      <MenuItem value="it">IT</MenuItem>
+      <MenuItem value="ca">CA</MenuItem>
+      <MenuItem value="gl">GL</MenuItem>
+      <MenuItem value="eu">EU</MenuItem>
     </Select>
   );
 };
