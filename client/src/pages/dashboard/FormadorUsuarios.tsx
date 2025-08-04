@@ -157,7 +157,15 @@ const FormadorUsuarios: React.FC = () => {
                   <TableCell>{usuario.email}</TableCell>
                   <TableCell>{usuario.rol}</TableCell>
                   <TableCell>
-                    <Chip label={t(usuario.activo ? 'status.active' : 'status.inactive')} color={usuario.activo ? 'success' : 'error'} size="small" />
+                    <Chip
+                      label={t(
+                        usuario.activo
+                          ? 'trainerUsers.states.active'
+                          : 'trainerUsers.states.inactive'
+                      )}
+                      color={usuario.activo ? 'success' : 'error'}
+                      size="small"
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <IconButton onClick={() => {

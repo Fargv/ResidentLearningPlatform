@@ -246,7 +246,7 @@ const handleRechazar = async () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t('common.phase')}</TableCell>
+                    <TableCell>{t('trainerValidations.table.phase')}</TableCell>
                     <TableCell>{t('trainerValidations.table.activity')}</TableCell>
                     <TableCell>{t('trainerValidations.table.resident')}</TableCell>
                     <TableCell>{t('trainerValidations.table.date')}</TableCell>
@@ -277,7 +277,7 @@ const handleRechazar = async () => {
                               )
                             }
                           >
-                            {t('trainerValidations.actions.viewAttachment')}
+                            {t('trainerValidations.buttons.viewAttachment')}
                           </Button>
                         )}
                         <Button
@@ -294,7 +294,7 @@ const handleRechazar = async () => {
                             })
                           }
                         >
-                          {t('common.validate')}
+                          {t('trainerValidations.buttons.validate')}
                         </Button>
                         <Button
                           variant="contained"
@@ -309,7 +309,7 @@ const handleRechazar = async () => {
                             })
                           }
                         >
-                          {t('common.reject')}
+                          {t('trainerValidations.buttons.reject')}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -331,12 +331,12 @@ const handleRechazar = async () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t('common.phase')}</TableCell>
+                    <TableCell>{t('trainerValidations.table.phase')}</TableCell>
                     <TableCell>{t('trainerValidations.table.activity')}</TableCell>
                     <TableCell>{t('trainerValidations.table.resident')}</TableCell>
                     <TableCell>{t('trainerValidations.table.date')}</TableCell>
                     <TableCell>{t('trainerValidations.table.comments')}</TableCell>
-                    <TableCell align="right">{t('trainerValidations.table.status')}</TableCell>
+                    <TableCell align="right">{t('trainerValidations.table.state')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -348,7 +348,7 @@ const handleRechazar = async () => {
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
                       <TableCell align="right">
-                        <Chip icon={<CheckCircleIcon />} label={t('status.validated')} color="success" size="small" variant="outlined" />
+                        <Chip icon={<CheckCircleIcon />} label={t('trainerValidations.states.validated')} color="success" size="small" variant="outlined" />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -370,12 +370,12 @@ const handleRechazar = async () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t('common.phase')}</TableCell>
+                    <TableCell>{t('trainerValidations.table.phase')}</TableCell>
                     <TableCell>{t('trainerValidations.table.activity')}</TableCell>
                     <TableCell>{t('trainerValidations.table.resident')}</TableCell>
                     <TableCell>{t('trainerValidations.table.date')}</TableCell>
                     <TableCell>{t('trainerValidations.table.reason')}</TableCell>
-                    <TableCell align="right">{t('trainerValidations.table.status')}</TableCell>
+                    <TableCell align="right">{t('trainerValidations.table.state')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -387,7 +387,7 @@ const handleRechazar = async () => {
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
                       <TableCell align="right">
-                        <Chip icon={<ErrorIcon />} label={t('status.rejected')} color="error" size="small" variant="outlined" />
+                        <Chip icon={<ErrorIcon />} label={t('trainerValidations.states.rejected')} color="error" size="small" variant="outlined" />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -436,7 +436,7 @@ const handleRechazar = async () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseValidarDialog} color="primary">
-            {t('common.cancel')}
+            {t('trainerValidations.buttons.cancel')}
           </Button>
           <Button
             onClick={handleValidar}
@@ -444,7 +444,7 @@ const handleRechazar = async () => {
             variant="contained"
             disabled={procesando || !firmaDigital}
           >
-            {procesando ? t('common.processing') : t('common.validate')}
+            {procesando ? t('common.processing') : t('trainerValidations.buttons.validate')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -476,7 +476,7 @@ const handleRechazar = async () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseRechazarDialog} color="primary">
-            {t('common.cancel')}
+            {t('trainerValidations.buttons.cancel')}
           </Button>
           <Button
             onClick={handleRechazar}
@@ -484,7 +484,7 @@ const handleRechazar = async () => {
             variant="contained"
             disabled={procesando || !comentarios}
           >
-            {procesando ? t('common.processing') : t('common.reject')}
+            {procesando ? t('common.processing') : t('trainerValidations.buttons.reject')}
           </Button>
         </DialogActions>
       </Dialog>

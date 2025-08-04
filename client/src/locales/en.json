@@ -544,7 +544,9 @@
       "blocked": "Blocked",
       "inProgress": "In Progress",
       "completed": "Completed",
-      "validated": "Validated"
+      "validated": "Validated",
+      "pending": "Pending",
+      "rejected": "Rejected"
     },
     "activityStatus": {
       "pending": "Pending",
@@ -593,7 +595,7 @@
     "title": "Academic Program daVinci",
     "subtitle": "Da Vinci Systems Training Program",
     "email": "Email",
-    "passwora": "Password",
+    "password": "Password",
     "signIn": "Log In",
     "forgotPassword": "Forgot your password?",
     "noAccount": "Don't have an account?",
@@ -683,7 +685,8 @@
       "email": "Email",
       "role": "Role",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "state": "State"
     },
     "form": {
       "email": "Email",
@@ -702,6 +705,27 @@
       "invite": "Invite"
     },
     "_comment": "Trainer user management",
+    "buttons": {
+      "invite": "Invite User",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "delete": "Delete"
+    },
+    "fields": {
+      "email": "Email",
+      "name": "Name",
+      "lastName": "Last Name",
+      "role": "Role"
+    },
+    "roles": {
+      "resident": "Resident",
+      "trainer": "Trainer"
+    },
+    "states": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
     "dialogs": {
       "editTitle": "Edit User",
       "inviteTitle": "Invite User"
@@ -735,7 +759,9 @@
       "status": "Status",
       "reason": "Reason",
       "noPhase": "No phase",
-      "noName": "No name"
+      "noName": "No name",
+      "phase": "Phase",
+      "state": "State"
     },
     "empty": {
       "pending": "No pending validations",
@@ -756,6 +782,16 @@
     },
     "errorLoad": "Error loading validations",
     "_comment": "Validations managed by trainers",
+    "buttons": {
+      "viewAttachment": "View attachment",
+      "validate": "Validate",
+      "reject": "Reject",
+      "cancel": "Cancel"
+    },
+    "states": {
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
     "dialogs": {
       "validateTitle": "Validate Activity",
       "rejectTitle": "Reject Activity",
@@ -803,9 +839,35 @@
       "noActivitySelected": "No activity selected",
       "selectDate": "Select a completion date",
       "optionalFileHint": "Attach an optional file (max 5MB)",
-      "fileTooLarge": "The file exceeds the maximum size of 5MB."
+      "fileTooLarge": "The file exceeds the maximum size of 5MB.",
+      "title": "Mark activity as completed",
+      "date": "Completion date"
     },
-    "_comment": "Resident phases and activities"
+    "_comment": "Resident phases and activities",
+    "messages": {
+      "noActivities": "No activities available",
+      "blocked": "Phase locked",
+      "noProgress": "No training progress available.",
+      "loadError": "Error loading progress"
+    },
+    "tooltip": {
+      "missingProgress": "Missing progress ID",
+      "noActivity": "No activity selected"
+    },
+    "labels": {
+      "comment": "Comment",
+      "trainerComment": "Trainer comment",
+      "rejectionReason": "Rejection reason",
+      "completedDate": "Completed on",
+      "validatedDate": "Validated on",
+      "state": "Status"
+    },
+    "states": {
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "pending": "Pending validation",
+      "notCompleted": "Not completed"
+    }
   },
   "residentProgress": {
     "title": "My Progress",
