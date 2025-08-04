@@ -63,7 +63,20 @@
       "updated": "{{item}} actualizada correctamente",
       "updateError": "Error al actualizar {{item}}",
       "deleted": "{{item}} eliminada correctamente",
-      "deleteError": "Error al eliminar {{item}}"
+      "deleteError": "Error al eliminar {{item}}",
+      "phaseCreated": "Fase creada correctamente",
+      "phaseCreateError": "Error al crear la fase",
+      "phaseUpdated": "Fase actualizada correctamente",
+      "phaseUpdateError": "Error al actualizar la fase",
+      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados conservados: {{preserved}}",
+      "phaseDeleteError": "Error al eliminar la fase",
+      "activityCreated": "Actividad creada correctamente",
+      "activityCreateError": "Error al crear la actividad",
+      "activityUpdated": "Actividad actualizada correctamente",
+      "activityUpdateError": "Error al actualizar la actividad",
+      "activityDeleted": "Actividad eliminada correctamente",
+      "activityDeleteError": "Error al eliminar la actividad",
+      "checkProgressError": "Error al comprobar el progreso vinculado"
     },
     "actions": {
       "newPhase": "Nueva Fase",
@@ -119,7 +132,8 @@
     "theory": "Teórica",
     "procedure": "Procedimiento",
     "errorForbidden": "No tienes permisos para ver esta sección",
-    "errorLoadData": "Error al cargar los datos"
+     "errorLoadData": "Error al cargar los datos",
+    "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",

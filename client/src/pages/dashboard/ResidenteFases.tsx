@@ -397,10 +397,10 @@ const ResidenteFases: React.FC = () => {
 
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>{t('residentPhases.dialog.completeActivity')}</DialogTitle>
+        <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
         <DialogContent>
           <TextField
-            label={t('residentPhases.dialog.completionDate')}
+            label={t('residentPhases.dialog.date')}
             type="date"
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
@@ -426,6 +426,7 @@ const ResidenteFases: React.FC = () => {
               onChange={handleFileChange}
             />
           </Button>
+
           {archivo && !archivoError && (
             <Typography variant="body2" sx={{ mt: 1 }}>
               {archivo.name} – {(archivo.size / (1024 * 1024)).toFixed(1)} MB
