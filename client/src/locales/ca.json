@@ -1,0 +1,345 @@
+{
+  "welcome": "Benvingut/da, {{name}}",
+  "role": {
+    "adminPanel": "Panell d'administració",
+    "trainer": "Formador de residents de l'hospital {{hospital}}",
+    "coordinator": "Coordinador de residents de l'hospital {{hospital}}",
+    "resident": "Resident de l'hospital {{hospital}}",
+    "student": "Alumne del programa de societats {{title}}",
+    "instructor": "Instructor del programa de societats {{title}}"
+  },
+  "actions": {
+    "dashboard": "Tauler",
+    "myProgress": "El meu progrés",
+    "trainingPhases": "Fases formatives",
+    "validations": "Validacions",
+    "myUsers": "Els meus usuaris",
+    "usersProgress": "Progrés dels usuaris",
+    "settings": "Configuració",
+    "myProfile": "El meu perfil",
+    "notifications": "Notificacions",
+    "profile": "Perfil",
+    "users": "Usuaris",
+    "logout": "Tancar sessió"
+  },
+  "adminConfig": {
+    "title": "Configuració",
+    "hospitals": "Hospitals",
+    "societies": "Societats",
+    "residentProgram": "Programa de Residents",
+    "societiesProgram": "Programa de Societats",
+    "users": "Usuaris",
+    "accessCodes": "Codis d'accés",
+    "debug": "Depuració"
+  },
+  "progressByPhase": "Progrés per fase",
+  "close": "Tancar",
+  "devWarning": "⚠️ ESTÀS EN ENTORN DE DESENVOLUPAMENT ⚠️",
+  "brand": {
+    "name": "Abex Excel·lència Robòtica"
+  },
+  "regions": {
+    "andalucia": "ANDALUSIA"
+  },
+  "status": {
+    "pendingValidation": "Pendent de validació",
+    "validado": "Validat",
+    "rechazado": "Rebutjat",
+    "completado": "Completat",
+    "pendiente": "Pendent",
+    "noCompletada": "No completada",
+    "enProgreso": "En progrés",
+    "bloqueada": "Blocada",
+    "active": "Actiu",
+    "inactive": "Inactiu",
+    "validated": "Validat",
+    "rejected": "Rebutjat"
+  },
+  "register": {
+    "title": "Registre",
+    "accessCode": "Codi d'accés",
+    "name": "Nom",
+    "surname": "Cognoms",
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "confirmPassword": "Confirmar contrasenya",
+    "hospital": "Hospital",
+    "zone": "Zona",
+    "specialty": "Especialitat",
+    "specialties": {
+      "URO": "Urologia (URO)",
+      "GEN": "Cirurgia General (GEN)",
+      "GYN": "Ginecologia (GYN)",
+      "THOR": "Toràcica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
+    "society": "Societat",
+    "none": "Cap",
+    "invalidAccessCode": "Codi d'accés no vàlid",
+    "requiredFields": "Si us plau, completa tots els camps obligatoris.",
+    "hospitalAndSpecialtyRequired": "Hospital i especialitat requerits",
+    "hospitalRequired": "Hospital requerit",
+    "societyRequired": "Societat requerida",
+    "passwordsMismatch": "Les contrasenyes no coincideixen",
+    "consentPrefix": "Accepto el tractament de les meves dades personals segons la ",
+    "privacyPolicy": "Política de Privacitat",
+    "consentSuffix": " i compleixo amb la LOPD.",
+    "registerButton": "Registrar-se"
+  },
+  "common": {
+    "cancel": "Cancel·lar",
+    "create": "Crear",
+    "creating": "Creant...",
+    "saveChanges": "Desar canvis",
+    "saving": "Desant...",
+    "delete": "Eliminar",
+    "deleting": "Eliminant...",
+    "phase": "Fase",
+    "validate": "Validar",
+    "reject": "Rebutjar",
+    "processing": "Processant..."
+  },
+  "auth": {
+    "login": "Iniciar sessió",
+    "logout": "Tancar sessió",
+    "password": "Contrasenya",
+    "passwordCurrent": "Contrasenya actual",
+    "passwordNew": "Nova contrasenya",
+    "passwordConfirm": "Confirmar contrasenya",
+    "passwordUpdated": "Contrasenya actualitzada",
+    "passwordMismatch": "Les contrasenyes no coincideixen",
+    "accessCode": "Codi d'accés",
+    "invalidAccessCode": "Codi d'accés no vàlid",
+    "changePassword": "Canviar contrasenya",
+    "resetRequest": "Sol·licitud de restabliment de contrasenya",
+    "errorLogin": "Error en iniciar sessió",
+    "errorChangePassword": "Error en canviar la contrasenya",
+    "errorUpdatePassword": "Error en actualitzar la contrasenya"
+  },
+  "forgotPassword": {
+    "heading": "Has oblidat la contrasenya?",
+    "description": "Per restablir la contrasenya posa't en contacte amb l'administrador del sistema.",
+    "emailLabel": "El teu correu",
+    "submit": "Enviar correu a l'administrador",
+    "backToLogin": "Tornar a iniciar sessió"
+  },
+  "login": {
+    "title": "Programa Acadèmic da Vinci",
+    "subtitle": "Tecnologies del Robot da Vinci",
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "signIn": "Iniciar sessió",
+    "forgotPassword": "Has oblidat la contrasenya?",
+    "noAccount": "No tens compte?",
+    "registerHere": "Registra't aquí",
+    "copyright": "© {{year}} Abex Excel·lència Robòtica",
+    "poweredBy": "Desenvolupat per FARGV",
+    "logoAlt": "Abex Excel·lència Robòtica"
+  },
+  "types": {
+    "theoretical": "Teòrica",
+    "practical": "Pràctica",
+    "evaluation": "Avaluació",
+    "observation": "Observació",
+    "theoreticalLower": "teòrica",
+    "practicalLower": "pràctica",
+    "evaluationLower": "avaluació",
+    "observationLower": "observació",
+    "programaResidentes": "Programa de Residents",
+    "programaSociedades": "Programa de Societats"
+  },
+  "roles": {
+    "residente": "Resident",
+    "formador": "Formador",
+    "coordinador": "Coordinador",
+    "administrador": "Administrador",
+    "alumno": "Alumne",
+    "instructor": "Instructor"
+  },
+  "notifications": {
+    "title": "Notificacions",
+    "tabs": {
+      "aria": "pestanyes de notificacions",
+      "pending": "Pendents",
+      "viewed": "Vistes"
+    },
+    "table": {
+      "message": "Missatge",
+      "date": "Data",
+      "type": "Tipus",
+      "actions": "Accions"
+    },
+    "empty": {
+      "all": "No hi ha notificacions",
+      "pending": "No hi ha notificacions pendents",
+      "viewed": "No hi ha notificacions vistes"
+    },
+    "errorLoad": "Error en carregar les notificacions",
+    "errorMarkAsRead": "Error en marcar la notificació com a llegida"
+  },
+  "codes": {
+    "new": "Nou codi",
+    "edit": "Editar codi",
+    "errorLoad": "Error en carregar els codis",
+    "errorDelete": "Error en eliminar el codi",
+    "errorSave": "Error en desar el codi"
+  },
+  "progress": {
+    "createSuccess": "Progrés formatiu creat amb èxit"
+  },
+  "emails": {
+    "inviteSubject": "Invitació a la Plataforma de Formació Da Vinci"
+  },
+  "debug": {
+    "tokenValid": "✅ Token vàlid i descodificat",
+    "tokenInvalid": "❌ Token no vàlid o corrupte"
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestió de tots els usuaris",
+    "noPermissions": "No tens permisos per veure aquesta secció"
+  },
+  "forms": {
+    "code": "Codi",
+    "numericCode": "Codi numèric",
+    "postalCode": "Codi postal",
+    "address": "Adreça",
+    "phone": "Telèfon",
+    "description": "Descripció",
+    "number": "Número",
+    "title": "Títol",
+    "completionDate": "Data de realització",
+    "selectDate": "Selecciona una data de realització",
+    "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+    "fileTooLarge": "El fitxer supera la mida màxima de 5MB."
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Convocatòria",
+      "intro": "Inici del procés de convocatòria.",
+      "item1": "Enviament d'invitacions",
+      "item2": "Recepció de sol·licituds"
+    },
+    "presentacion": {
+      "label": "Presentació",
+      "intro": "Sessió de presentació del programa.",
+      "item1": "Introducció al programa",
+      "item2": "Presentació dels instructors"
+    },
+    "modOnline": {
+      "label": "Mod. En línia",
+      "intro": "Mòduls formatius en línia.",
+      "item1": "Accés a la plataforma",
+      "item2": "Contingut teòric"
+    },
+    "simulacion": {
+      "label": "Simulació",
+      "intro": "Pràctiques de simulació.",
+      "item1": "Sessions pràctiques",
+      "item2": "Avaluació d'habilitats"
+    },
+    "firstAssistant": {
+      "label": "Primer ajudant",
+      "intro": "Activitats com a primer ajudant.",
+      "item1": "Participació en quiròfans",
+      "item2": "Registre d'activitats"
+    },
+    "stepByStep": {
+      "label": "Pas a pas",
+      "intro": "Procediments pas a pas.",
+      "item1": "Material de suport",
+      "item2": "Revisió guiada"
+    },
+    "handsOn": {
+      "label": "Pràctica Hands On",
+      "intro": "Entrenament pràctic Hands On.",
+      "item1": "Pràctica intensiva",
+      "item2": "Feedback personalitzat"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparació Inicial",
+      "description": "Familiarització amb el sistema Da Vinci i aspectes teòrics inicials."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formació Preclínica",
+      "description": "Exercicis de simulació i entrenaments en entorn segur."
+    },
+    "phase3": {
+      "label": "Fase 3 - Assistència Quirúrgica",
+      "description": "Participació com a ajudant en quiròfan."
+    },
+    "phase4": {
+      "label": "Fase 4 - Cirurgia en Consola",
+      "description": "Procediments realitzats pel resident amb supervisió."
+    }
+  },
+  "residentProgress": {
+    "title": "El meu progrés",
+    "errorLoad": "Error en carregar el progrés",
+    "downloadError": "Error en descarregar el certificat",
+    "downloadCertificate": "Descarregar certificat"
+  },
+  "residentPhases": {
+    "title": "Les meves fases formatives",
+    "errorLoad": "Error en carregar el progrés",
+    "activityFail": "No s'ha pogut completar l'activitat.",
+    "activitySaveError": "Error en desar l'activitat.",
+    "activitySuccess": "✅ Activitat registrada amb èxit",
+    "noActivitySelectedError": "Error intern: No s'ha seleccionat cap activitat.",
+    "noTitle": "Sense títol",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "deadline": "Data límit",
+    "validatedProgress": "Progrés validat: {{percent}}%",
+    "noActivities": "No hi ha activitats disponibles",
+    "phaseLocked": "Fase bloquejada",
+    "noProgress": "No hi ha progrés formatiu disponible.",
+    "markAsCompleted": "Marcar com a completada",
+    "unnamedActivity": "Activitat sense nom",
+    "comment": "Comentari",
+    "trainerComment": "Comentari del formador",
+    "rejectionReason": "Motiu del rebuig",
+    "completedOn": "Data completada",
+    "validatedOn": "Validat el",
+    "status": "Estat",
+    "dialog": {
+      "completeActivity": "Marcar activitat com a completada",
+      "completionDate": "Data de realització",
+      "comment": "Comentari",
+      "selectFile": "Seleccionar fitxer",
+      "cancel": "Cancel·lar",
+      "confirm": "Confirmar",
+      "missingProgressId": "Falta l’ID del progrés",
+      "noActivitySelected": "No s'ha seleccionat cap activitat",
+      "selectDate": "Selecciona una data de realització",
+      "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+      "fileTooLarge": "El fitxer supera la mida màxima de 5MB.",
+      "title": "Marcar activitat com a completada",
+      "date": "Data de realització"
+    },
+    "messages": {
+      "noActivities": "No hi ha activitats disponibles",
+      "blocked": "Fase bloquejada",
+      "noProgress": "No hi ha progrés formatiu disponible.",
+      "loadError": "Error en carregar el progrés"
+    },
+    "tooltip": {
+      "missingProgress": "Falta l’ID del progrés",
+      "noActivity": "No s'ha seleccionat cap activitat"
+    },
+    "labels": {
+      "comment": "Comentari",
+      "trainerComment": "Comentari del formador",
+      "rejectionReason": "Motiu del rebuig",
+      "completedDate": "Data completada",
+      "validatedDate": "Validat el",
+      "state": "Estat"
+    },
+    "states": {
+      "validated": "Validat",
+      "rejected": "Rebutjat",
+      "pending": "Pendent de validació",
+      "notCompleted": "No completada"
+    }
+  }
+}
