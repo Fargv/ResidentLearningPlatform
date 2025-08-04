@@ -36,6 +36,10 @@
     "_comment": "Admin phases management",
     "phase": "Phase",
     "activity": "Activity",
+    "activities": "Activities",
+    "name": "Name",
+    "order": "Order",
+    "type": "Type",
     "description": "Description",
     "number": "Number",
     "evaluation": "Evaluation",
@@ -102,10 +106,11 @@
       },
       "deletePhase": {
         "title": "Delete Phase",
-        "confirm": "Delete",
         "cancel": "Cancel",
         "content": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase.",
-        "contentWithProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept."
+        "contentWithProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
+        "hasProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
+        "confirm": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase."
       },
       "newActivity": {
         "title": "New Activity",
@@ -120,11 +125,13 @@
       },
       "deleteActivity": {
         "title": "Delete Activity",
-        "confirm": "Delete",
         "cancel": "Cancel",
         "content": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone.",
-        "contentWithProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users."
-      }
+        "contentWithProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users.",
+        "hasProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users.",
+        "confirm": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone."
+      },
+      "createActivity": "Creating activity for the phase: <strong>{{phase}}</strong>"
     },
     "empty": "No phases created. Create a new phase to begin."
   },
@@ -461,6 +468,18 @@
       "updateError": "Error updating {{item}}",
       "deleted": "{{item}} deleted successfully",
       "deleteError": "Error deleting {{item}}",
+      "phaseCreated": "Phase created successfully",
+      "phaseCreateError": "Error creating phase",
+      "phaseUpdated": "Phase updated successfully",
+      "phaseUpdateError": "Error updating phase",
+      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
+      "phaseDeleteError": "Error deleting phase",
+      "activityCreated": "Activity created successfully",
+      "activityCreateError": "Error creating activity",
+      "activityUpdated": "Activity updated successfully",
+      "activityUpdateError": "Error updating activity",
+      "activityDeleted": "Activity deleted successfully",
+      "activityDeleteError": "Error deleting activity",
       "progressCheckError": "Error checking linked progress"
     },
     "dialogs": {

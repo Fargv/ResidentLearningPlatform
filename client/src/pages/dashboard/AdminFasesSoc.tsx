@@ -173,7 +173,7 @@ const AdminFases: React.FC = () => {
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: t('adminPhasesSoc.progressCheckError'),
+        message: t('adminPhasesSoc.messages.progressCheckError'),
         severity: 'error'
       });
     } finally {
@@ -210,15 +210,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: t('adminPhasesSoc.phaseCreated'),
+        message: t('adminPhasesSoc.messages.phaseCreated'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || t('adminPhasesSoc.phaseCreateError'));
+      setError(err.response?.data?.error || t('adminPhasesSoc.messages.phaseCreateError'));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('adminPhasesSoc.phaseCreateError'),
+        message: err.response?.data?.error || t('adminPhasesSoc.messages.phaseCreateError'),
         severity: 'error'
       });
     } finally {
@@ -244,15 +244,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: t('adminPhasesSoc.phaseUpdated'),
+        message: t('adminPhasesSoc.messages.phaseUpdated'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || t('adminPhasesSoc.phaseUpdateError'));
+      setError(err.response?.data?.error || t('adminPhasesSoc.messages.phaseUpdateError'));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('adminPhasesSoc.phaseUpdateError'),
+        message: err.response?.data?.error || t('adminPhasesSoc.messages.phaseUpdateError'),
         severity: 'error'
       });
     } finally {
@@ -278,15 +278,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: t('adminPhasesSoc.phaseDeleted', { removed: res.data.removedCount || 0, preserved: res.data.preservedCount || 0 }),
+        message: t('adminPhasesSoc.messages.phaseDeleted', { removed: res.data.removedCount || 0, preserved: res.data.preservedCount || 0 }),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || t('adminPhasesSoc.phaseDeleteError'));
+      setError(err.response?.data?.error || t('adminPhasesSoc.messages.phaseDeleteError'));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('adminPhasesSoc.phaseDeleteError'),
+        message: err.response?.data?.error || t('adminPhasesSoc.messages.phaseDeleteError'),
         severity: 'error'
       });
     } finally {
@@ -363,15 +363,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: t('adminPhasesSoc.activityCreated'),
+        message: t('adminPhasesSoc.messages.activityCreated'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || t('adminPhasesSoc.activityCreateError'));
+      setError(err.response?.data?.error || t('adminPhasesSoc.messages.activityCreateError'));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('adminPhasesSoc.activityCreateError'),
+        message: err.response?.data?.error || t('adminPhasesSoc.messages.activityCreateError'),
         severity: 'error'
       });
     } finally {
@@ -399,15 +399,15 @@ const AdminFases: React.FC = () => {
 
     setSnackbar({
       open: true,
-      message: t('adminPhasesSoc.activityUpdated'),
+      message: t('adminPhasesSoc.messages.activityUpdated'),
       severity: 'success'
     });
   } catch (err: any) {
-    setError(err.response?.data?.error || t('adminPhasesSoc.activityUpdateError'));
+    setError(err.response?.data?.error || t('adminPhasesSoc.messages.activityUpdateError'));
 
     setSnackbar({
       open: true,
-      message: err.response?.data?.error || t('adminPhasesSoc.activityUpdateError'),
+      message: err.response?.data?.error || t('adminPhasesSoc.messages.activityUpdateError'),
       severity: 'error'
     });
   } finally {
@@ -430,15 +430,15 @@ const AdminFases: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: t('adminPhasesSoc.activityDeleted'),
+        message: t('adminPhasesSoc.messages.activityDeleted'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || t('adminPhasesSoc.activityDeleteError'));
+      setError(err.response?.data?.error || t('adminPhasesSoc.messages.activityDeleteError'));
 
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('adminPhasesSoc.activityDeleteError'),
+        message: err.response?.data?.error || t('adminPhasesSoc.messages.activityDeleteError'),
         severity: 'error'
       });
     } finally {
@@ -463,7 +463,7 @@ const AdminFases: React.FC = () => {
   } catch (err: any) {
     setSnackbar({
       open: true,
-      message: t('adminPhasesSoc.progressCheckError'),
+      message: t('adminPhasesSoc.messages.progressCheckError'),
       severity: 'error'
     });
   } finally {
