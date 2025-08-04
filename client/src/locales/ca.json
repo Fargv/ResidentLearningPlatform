@@ -155,8 +155,8 @@
       "postalCode": "Codi postal",
       "phone": "Telèfon",
       "systemType": "Tipus de sistema",
-      "email": "Correu electrònic"
-    },
+      "email": "Correu electrònic",
+      "logoUrl": "URL del logotip"    },
     "system": {
       "other": "Altres"
     },
@@ -832,6 +832,11 @@
     "errorLoad": "Error en carregar el progrés",
     "downloadError": "Error en descarregar el certificat",
     "downloadCertificate": "Descarregar certificat"
+  },
+  "certificate": {
+    "title": "Certificat de Compliment",
+    "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.<br /><br />Data de finalització: <strong>{{date}}</strong>",
+    "footer": "Certificat generat automàticament per Academic Program Da Vinci · www.abexsl.es"
   },
   "residentPhases": {
     "title": "Les meves fases formatives",

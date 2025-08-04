@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const User = require('../models/User');
 const ProgresoResidente = require('../models/ProgresoResidente');
-const Adjunto = require('../models/Adjunto');
+
 
 exports.descargarCertificado = async (req, res, next) => {
   try {
@@ -21,6 +21,8 @@ exports.descargarCertificado = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Existen fases sin validar' });
     }
 
+    const lang = req.query.lang || 'es';
+
     const uploadDir = path.join(__dirname, '../../public/uploads');
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
     const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
@@ -33,36 +35,60 @@ exports.descargarCertificado = async (req, res, next) => {
     }
     let html = fs.readFileSync(templatePath, 'utf8');
 
+    let certificateStrings;
+    try {
+      const localePath = path.resolve(process.cwd(), `client/src/locales/${lang}.json`);
+      const localeData = JSON.parse(fs.readFileSync(localePath, 'utf8'));
+      certificateStrings = localeData.certificate;
+    } catch (e) {
+      const localeData = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'client/src/locales/es.json'), 'utf8'));
+      certificateStrings = localeData.certificate;
+    }
+
     const programa = usuario.rol === 'residente'
       ? 'Programa Residentes'
       : usuario.rol === 'alumno'
         ? 'Programa Sociedades'
         : usuario.tipo;
+    
+    const corporateLogo = 'https://www.abexsl.es/images/logo.png';
+      let logosHtml;
+      if (programa === 'Programa Sociedades') {
+        logosHtml = `<div class="logo-center"><img src="${corporateLogo}" alt="Logo" /></div>`;
+      } else {
+        const hospiLogo = usuario.hospital && usuario.hospital.urlHospiLogo
+          ? `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`
+          : '';
+        logosHtml = `<div class="logos"><img src="${corporateLogo}" alt="Logo" />${hospiLogo}</div>`;
+      }
+
+    const formattedBody = certificateStrings.body
+      .replace('{{name}}', `${usuario.nombre} ${usuario.apellidos}`)
+      .replace('{{hospital}}', usuario.hospital ? usuario.hospital.nombre : '')
+      .replace('{{date}}', new Date().toLocaleDateString(lang));
 
     html = html
-      .replace('{{NOMBRE}}', `${usuario.nombre} ${usuario.apellidos}`)
-      .replace('{{HOSPITAL}}', usuario.hospital ? usuario.hospital.nombre : '')
+      .replace('{{LOGOS}}', logosHtml)
+      .replace('{{CERT_TITLE}}', certificateStrings.title)
       .replace('{{PROGRAMA}}', programa)
-      .replace('{{FECHA}}', new Date().toLocaleDateString('es-ES'));
+      .replace('{{CERT_BODY}}', formattedBody)
+      .replace('{{CERT_FOOTER}}', certificateStrings.footer)
+      .replace('{{LOGO_TOP}}', 'https://www.abexsl.es/images/logo.png')
+      .replace('{{SIGNATURE_LOGO}}', '/firma-javier.png')
+      .replace('{{LANG}}', lang);
 
     const pdfBuffer = await pdf.generatePdf({ content: html }, { format: 'A4' });
     fs.writeFileSync(filePath, pdfBuffer);
 
-    try {
-      const ultimoProgreso = progresos[progresos.length - 1];
-      await Adjunto.create({
-        progreso: ultimoProgreso._id,
-        nombreArchivo: fileName,
-        rutaArchivo: `/uploads/${fileName}`,
-        tipoArchivo: 'certificado'
-      });
-    } catch (e) {
-      console.error('Error guardando certificado', e);
-    }
-
     res.set('Content-Type', 'application/pdf');
-    res.download(filePath, 'certificado.pdf');
+    res.download(filePath, 'certificado.pdf', err => {
+      fs.unlink(filePath, unlinkErr => {
+        if (unlinkErr) console.error('Error eliminando certificado temporal', unlinkErr);
+      });
+      if (err) next(err);
+    });
   } catch (err) {
     next(err);
   }
 };
+

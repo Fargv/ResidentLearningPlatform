@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Alert, Paper, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Alert, Paper, Button, CircularProgress, Backdrop } from '@mui/material';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import PhaseProgressChart from '../../components/PhaseProgressChart';
@@ -21,10 +21,11 @@ interface ProgresoFase {
 
 const ResidenteProgreso: React.FC = () => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,7 +45,7 @@ const ResidenteProgreso: React.FC = () => {
   const handleDescargarCertificado = async () => {
     if (!user?._id) return;
     try {
-      const res = await api.get(`/certificado/${user._id}`, { responseType: 'blob' });
+      const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -54,6 +55,8 @@ const ResidenteProgreso: React.FC = () => {
       link.remove();
     } catch (err: any) {
       setError(err.response?.data?.error || t('residentProgress.downloadError'));
+      } finally {
+      setDownloadLoading(false);
     }
   };
 
@@ -99,11 +102,14 @@ const ResidenteProgreso: React.FC = () => {
       </Box>
       {allValidado && (
         <Box textAlign="center" mt={2}>
-          <Button variant="contained" onClick={handleDescargarCertificado}>
+          <Button variant="contained" onClick={handleDescargarCertificado} disabled={downloadLoading}>
             {t('residentProgress.downloadCertificate')}
           </Button>
         </Box>
       )}
+      <Backdrop open={downloadLoading} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 };

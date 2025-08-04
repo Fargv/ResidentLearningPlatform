@@ -351,7 +351,8 @@
       "postalCode": "Code postal",
       "phone": "Téléphone",
       "systemType": "Type de système",
-      "email": "Email"
+      "email": "Email",
+      "logoUrl": "Logoaren URLa"
     },
     "system": {
       "other": "Autre"
@@ -634,255 +635,255 @@
     "downloadCertificate": "Télécharger le certificat"
   },
   "adminPhases": {
-    "_comment": "Admin phases management",
+    "_comment": "Gestion des phases d'administration",
     "phase": "Phase",
-    "activity": "Activity",
-    "activities": "Activities",
-    "name": "Name",
-    "order": "Order",
+    "activity": "Activité",
+    "activities": "Activités",
+    "name": "Nom",
+    "order": "Ordre",
     "type": "Type",
     "description": "Description",
-    "number": "Number",
-    "evaluation": "Evaluation",
+    "number": "Numéro",
+    "evaluation": "Évaluation",
     "observation": "Observation",
-    "practice": "Practice",
-    "theory": "Theory",
-    "procedure": "Procedure",
-    "errorForbidden": "You do not have permission to view this section",
-    "errorLoadData": "Error loading data",
+    "practice": "Pratique",
+    "theory": "Théorie",
+    "procedure": "Procédure",
+    "errorForbidden": "Vous n'avez pas la permission d'accéder à cette section",
+    "errorLoadData": "Erreur lors du chargement des données",
     "tabs": {
-      "aria": "phases tabs",
-      "activities": "Activities"
+      "aria": "onglets des phases",
+      "activities": "Activités"
     },
     "table": {
-      "aria": "activities of phase {{number}}",
-      "order": "Order",
-      "name": "Name",
+      "aria": "activités de la phase {{number}}",
+      "order": "Ordre",
+      "name": "Nom",
       "type": "Type",
       "actions": "Actions",
       "description": "Description",
-      "empty": "No activities in this phase"
+      "empty": "Aucune activité dans cette phase"
     },
     "messages": {
-      "noActivities": "No activities in this phase",
-      "noPhases": "No phases created. Create a new phase to get started.",
-      "created": "{{item}} created successfully",
-      "createError": "Error creating {{item}}",
-      "updated": "{{item}} updated successfully",
-      "updateError": "Error updating {{item}}",
-      "deleted": "{{item}} deleted successfully",
-      "deleteError": "Error deleting {{item}}",
-      "phaseCreated": "Phase created successfully",
-      "phaseCreateError": "Error creating phase",
-      "phaseUpdated": "Phase updated successfully",
-      "phaseUpdateError": "Error updating phase",
-      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
-      "phaseDeleteError": "Error deleting phase",
-      "activityCreated": "Activity created successfully",
-      "activityCreateError": "Error creating activity",
-      "activityUpdated": "Activity updated successfully",
-      "activityUpdateError": "Error updating activity",
-      "activityDeleted": "Activity deleted successfully",
-      "activityDeleteError": "Error deleting activity",
-      "checkProgressError": "Error checking linked progress",
-      "loadError": "Error loading data",
-      "userCreated": "User created successfully",
-      "userUpdated": "User updated successfully",
-      "userDeleted": "User deleted successfully",
-      "passwordUpdated": "Password updated",
-      "passwordError": "Error updating password"
+      "noActivities": "Aucune activité dans cette phase",
+      "noPhases": "Aucune phase créée. Créez une nouvelle phase pour commencer.",
+      "created": "{{item}} créé avec succès",
+      "createError": "Erreur lors de la création de {{item}}",
+      "updated": "{{item}} mis à jour avec succès",
+      "updateError": "Erreur lors de la mise à jour de {{item}}",
+      "deleted": "{{item}} supprimé avec succès",
+      "deleteError": "Erreur lors de la suppression de {{item}}",
+      "phaseCreated": "Phase créée avec succès",
+      "phaseCreateError": "Erreur lors de la création de la phase",
+      "phaseUpdated": "Phase mise à jour avec succès",
+      "phaseUpdateError": "Erreur lors de la mise à jour de la phase",
+      "phaseDeleted": "Phase supprimée avec succès. Progrès supprimés : {{removed}}. Validés conservés : {{preserved}}",
+      "phaseDeleteError": "Erreur lors de la suppression de la phase",
+      "activityCreated": "Activité créée avec succès",
+      "activityCreateError": "Erreur lors de la création de l'activité",
+      "activityUpdated": "Activité mise à jour avec succès",
+      "activityUpdateError": "Erreur lors de la mise à jour de l'activité",
+      "activityDeleted": "Activité supprimée avec succès",
+      "activityDeleteError": "Erreur lors de la suppression de l'activité",
+      "checkProgressError": "Erreur lors de la vérification du progrès associé",
+      "loadError": "Erreur lors du chargement des données",
+      "userCreated": "Utilisateur créé avec succès",
+      "userUpdated": "Utilisateur mis à jour avec succès",
+      "userDeleted": "Utilisateur supprimé avec succès",
+      "passwordUpdated": "Mot de passe mis à jour",
+      "passwordError": "Erreur lors de la mise à jour du mot de passe"
     },
     "actions": {
-      "newPhase": "New Phase",
-      "editPhase": "Edit Phase",
-      "deletePhase": "Delete Phase",
-      "newActivity": "New Activity",
-      "editActivity": "Edit Activity",
-      "deleteActivity": "Delete Activity"
+      "newPhase": "Nouvelle phase",
+      "editPhase": "Modifier la phase",
+      "deletePhase": "Supprimer la phase",
+      "newActivity": "Nouvelle activité",
+      "editActivity": "Modifier l'activité",
+      "deleteActivity": "Supprimer l'activité"
     },
     "dialogs": {
       "newPhase": {
-        "title": "New Phase",
-        "create": "Create",
-        "cancel": "Cancel"
+        "title": "Nouvelle phase",
+        "create": "Créer",
+        "cancel": "Annuler"
       },
       "editPhase": {
-        "title": "Edit Phase",
-        "save": "Save",
-        "cancel": "Cancel"
+        "title": "Modifier la phase",
+        "save": "Enregistrer",
+        "cancel": "Annuler"
       },
       "deletePhase": {
-        "title": "Delete Phase",
-        "cancel": "Cancel",
-        "content": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase.",
-        "contentWithProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
-        "hasProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
-        "confirm": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase."
+        "title": "Supprimer la phase",
+        "cancel": "Annuler",
+        "content": "Êtes-vous sûr de vouloir supprimer la phase <strong>{{name}}</strong> ? Cette action est irréversible et supprimera toutes les activités associées à cette phase.",
+        "contentWithProgress": "La phase <strong>{{name}}</strong> possède <strong>{{count}}</strong> enregistrements de progrès. Voulez-vous la supprimer ? Les progrès validés seront conservés.",
+        "hasProgress": "La phase <strong>{{name}}</strong> possède <strong>{{count}}</strong> enregistrements de progrès. Voulez-vous la supprimer ? Les progrès validés seront conservés.",
+        "confirm": "Êtes-vous sûr de vouloir supprimer la phase <strong>{{name}}</strong> ? Cette action est irréversible et supprimera toutes les activités associées à cette phase."
       },
       "newActivity": {
-        "title": "New Activity",
-        "create": "Create",
-        "cancel": "Cancel",
-        "content": "Creating activity for the phase: <strong>{{phase}}</strong>"
+        "title": "Nouvelle activité",
+        "create": "Créer",
+        "cancel": "Annuler",
+        "content": "Création d'une activité pour la phase : <strong>{{phase}}</strong>"
       },
       "editActivity": {
-        "title": "Edit Activity",
-        "save": "Save",
-        "cancel": "Cancel"
+        "title": "Modifier l'activité",
+        "save": "Enregistrer",
+        "cancel": "Annuler"
       },
       "deleteActivity": {
-        "title": "Delete Activity",
-        "cancel": "Cancel",
-        "content": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone.",
-        "confirm": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone."
+        "title": "Supprimer l'activité",
+        "cancel": "Annuler",
+        "content": "Êtes-vous sûr de vouloir supprimer l'activité <strong>{{name}}</strong> ? Cette action est irréversible.",
+        "confirm": "Êtes-vous sûr de vouloir supprimer l'activité <strong>{{name}}</strong> ? Cette action est irréversible."
       },
       "checkProgress": {
-        "title": "Linked Progress",
-        "content": "This activity has <strong>{{count}}</strong> progress records. Deleting it will remove those records. Do you want to continue?",
-        "cancel": "Cancel",
-        "confirm": "Confirm"
+        "title": "Progrès associés",
+        "content": "Cette activité possède <strong>{{count}}</strong> enregistrements de progrès. La supprimer effacera ces enregistrements. Voulez-vous continuer ?",
+        "cancel": "Annuler",
+        "confirm": "Confirmer"
       },
       "checkPhaseProgress": {
-        "title": "Linked Progress",
-        "content": "This phase has <strong>{{count}}</strong> progress records. Deleting it will remove those records. Do you want to continue?",
-        "cancel": "Cancel",
-        "confirm": "Confirm"
+        "title": "Progrès associés",
+        "content": "Cette phase possède <strong>{{count}}</strong> enregistrements de progrès. La supprimer effacera ces enregistrements. Voulez-vous continuer ?",
+        "cancel": "Annuler",
+        "confirm": "Confirmer"
       }
     }
   },
   "adminPhasesSoc": {
-    "_comment": "Admin phases for Societies program",
+    "_comment": "Gestion des phases pour le programme des sociétés",
     "phase": "Phase",
-    "activity": "Activity",
+    "activity": "Activité",
     "table": {
-      "order": "Order",
-      "name": "Name",
+      "order": "Ordre",
+      "name": "Nom",
       "type": "Type",
       "actions": "Actions"
     },
     "messages": {
-      "noActivities": "No activities in this phase",
-      "noPhases": "No phases created",
-      "created": "{{item}} created successfully",
-      "createError": "Error creating {{item}}",
-      "updated": "{{item}} updated successfully",
-      "updateError": "Error updating {{item}}",
-      "deleted": "{{item}} deleted successfully",
-      "deleteError": "Error deleting {{item}}",
-      "phaseCreated": "Phase created successfully",
-      "phaseCreateError": "Error creating phase",
-      "phaseUpdated": "Phase updated successfully",
-      "phaseUpdateError": "Error updating phase",
-      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
-      "phaseDeleteError": "Error deleting phase",
-      "activityCreated": "Activity created successfully",
-      "activityCreateError": "Error creating activity",
-      "activityUpdated": "Activity updated successfully",
-      "activityUpdateError": "Error updating activity",
-      "activityDeleted": "Activity deleted successfully",
-      "activityDeleteError": "Error deleting activity",
-      "progressCheckError": "Error checking linked progress"
+      "noActivities": "Aucune activité dans cette phase",
+      "noPhases": "Aucune phase créée",
+      "created": "{{item}} créé avec succès",
+      "createError": "Erreur lors de la création de {{item}}",
+      "updated": "{{item}} mis à jour avec succès",
+      "updateError": "Erreur lors de la mise à jour de {{item}}",
+      "deleted": "{{item}} supprimé avec succès",
+      "deleteError": "Erreur lors de la suppression de {{item}}",
+      "phaseCreated": "Phase créée avec succès",
+      "phaseCreateError": "Erreur lors de la création de la phase",
+      "phaseUpdated": "Phase mise à jour avec succès",
+      "phaseUpdateError": "Erreur lors de la mise à jour de la phase",
+      "phaseDeleted": "Phase supprimée avec succès. Progrès supprimés : {{removed}}. Validés conservés : {{preserved}}",
+      "phaseDeleteError": "Erreur lors de la suppression de la phase",
+      "activityCreated": "Activité créée avec succès",
+      "activityCreateError": "Erreur lors de la création de l'activité",
+      "activityUpdated": "Activité mise à jour avec succès",
+      "activityUpdateError": "Erreur lors de la mise à jour de l'activité",
+      "activityDeleted": "Activité supprimée avec succès",
+      "activityDeleteError": "Erreur lors de la suppression de l'activité",
+      "progressCheckError": "Erreur lors de la vérification du progrès associé"
     },
     "dialogs": {
       "newPhase": {
-        "title": "New Phase",
-        "create": "Create",
-        "cancel": "Cancel"
+        "title": "Nouvelle phase",
+        "create": "Créer",
+        "cancel": "Annuler"
       },
       "editPhase": {
-        "title": "Edit Phase",
-        "save": "Save",
-        "cancel": "Cancel"
+        "title": "Modifier la phase",
+        "save": "Enregistrer",
+        "cancel": "Annuler"
       },
       "deletePhase": {
-        "title": "Delete Phase",
-        "confirm": "Delete",
-        "cancel": "Cancel"
+        "title": "Supprimer la phase",
+        "confirm": "Supprimer",
+        "cancel": "Annuler"
       },
       "newActivity": {
-        "title": "New Activity",
-        "create": "Create",
-        "cancel": "Cancel"
+        "title": "Nouvelle activité",
+        "create": "Créer",
+        "cancel": "Annuler"
       },
       "editActivity": {
-        "title": "Edit Activity",
-        "save": "Save",
-        "cancel": "Cancel"
+        "title": "Modifier l'activité",
+        "save": "Enregistrer",
+        "cancel": "Annuler"
       },
       "deleteActivity": {
-        "title": "Delete Activity",
-        "confirm": "Delete",
-        "cancel": "Cancel"
+        "title": "Supprimer l'activité",
+        "confirm": "Supprimer",
+        "cancel": "Annuler"
       }
     }
   },
   "trainerUsers": {
-    "title": "My Users",
-    "invite": "Invite User",
-    "edit": "Edit User",
-    "updated": "User updated",
-    "invited": "User invited",
-    "deleted": "User deleted",
-    "error": "Error",
-    "deleteError": "Error deleting",
-    "loadError": "Error loading users",
+    "title": "Mes utilisateurs",
+    "invite": "Inviter un utilisateur",
+    "edit": "Modifier l'utilisateur",
+    "updated": "Utilisateur mis à jour",
+    "invited": "Utilisateur invité",
+    "deleted": "Utilisateur supprimé",
+    "error": "Erreur",
+    "deleteError": "Erreur lors de la suppression",
+    "loadError": "Erreur lors du chargement des utilisateurs",
     "table": {
-      "name": "Name",
+      "name": "Nom",
       "email": "Email",
-      "role": "Role",
-      "status": "Status",
+      "role": "Rôle",
+      "status": "Statut",
       "actions": "Actions",
-      "state": "State"
+      "state": "État"
     },
     "form": {
       "email": "Email",
-      "name": "Name",
-      "surname": "Surname",
-      "role": "Role",
+      "name": "Prénom",
+      "surname": "Nom",
+      "role": "Rôle",
       "roles": {
-        "resident": "Resident",
-        "trainer": "Trainer"
+        "resident": "Résident",
+        "trainer": "Formateur"
       }
     },
     "dialog": {
-      "cancel": "Cancel",
-      "saving": "Saving...",
-      "save": "Save",
-      "invite": "Invite"
+      "cancel": "Annuler",
+      "saving": "Enregistrement...",
+      "save": "Enregistrer",
+      "invite": "Inviter"
     },
-    "_comment": "Trainer user management",
+    "_comment": "Gestion des utilisateurs pour les formateurs",
     "buttons": {
-      "invite": "Invite User",
-      "cancel": "Cancel",
-      "save": "Save",
-      "saving": "Saving...",
-      "delete": "Delete"
+      "invite": "Inviter un utilisateur",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "delete": "Supprimer"
     },
     "fields": {
       "email": "Email",
-      "name": "Name",
-      "lastName": "Last Name",
-      "role": "Role"
+      "name": "Prénom",
+      "lastName": "Nom de famille",
+      "role": "Rôle"
     },
     "roles": {
-      "resident": "Resident",
-      "trainer": "Trainer"
+      "resident": "Résident",
+      "trainer": "Formateur"
     },
     "states": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Actif",
+      "inactive": "Inactif"
     },
     "dialogs": {
-      "editTitle": "Edit User",
-      "inviteTitle": "Invite User"
+      "editTitle": "Modifier l'utilisateur",
+      "inviteTitle": "Inviter un utilisateur"
     },
     "messages": {
-      "loadError": "Error loading users",
-      "updateSuccess": "User updated",
-      "inviteSuccess": "User invited",
-      "deleteSuccess": "User deleted",
-      "deleteError": "Error deleting",
-      "genericError": "Error"
+      "loadError": "Erreur lors du chargement des utilisateurs",
+      "updateSuccess": "Utilisateur mis à jour",
+      "inviteSuccess": "Utilisateur invité",
+      "deleteSuccess": "Utilisateur supprimé",
+      "deleteError": "Erreur lors de la suppression",
+      "genericError": "Erreur"
     }
   }
 }

@@ -52,6 +52,7 @@ interface Hospital {
   email?: string;
   tipoSistema?: string;
   zona?: string;
+  urlHospiLogo?: string;
 }
 
 const AdminHospitales: React.FC = () => {
@@ -80,7 +81,8 @@ const AdminHospitales: React.FC = () => {
         telefono: '',
         email: '',
         tipoSistema: '',
-        zona: ''
+        zona: '',
+        urlHospiLogo: ''
       });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -116,7 +118,8 @@ const AdminHospitales: React.FC = () => {
       telefono: '',
       email: '',
       tipoSistema: '',
-      zona: ''
+      zona: '',
+      urlHospiLogo: ''
     });
     setOpenCrearDialog(true);
   };
@@ -138,7 +141,8 @@ const AdminHospitales: React.FC = () => {
       telefono: hospital.telefono || '',
       email: hospital.email || '',
       tipoSistema: hospital.tipoSistema || '',
-      zona: hospital.zona || ''
+      zona: hospital.zona || '',
+      urlHospiLogo: hospital.urlHospiLogo || ''
     });
     setOpenEditarDialog(true);
   };
@@ -571,6 +575,17 @@ const AdminHospitales: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
           />
+          <TextField
+            margin="dense"
+            id="urlHospiLogo"
+            name="urlHospiLogo"
+            label={t('adminHospitals.fields.logoUrl')}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.urlHospiLogo}
+            onChange={handleChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearDialog} color="primary">
@@ -735,6 +750,17 @@ const AdminHospitales: React.FC = () => {
             fullWidth
             variant="outlined"
             value={formData.email}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="urlHospiLogo"
+            name="urlHospiLogo"
+            label={t('adminHospitals.fields.logoUrl')}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.urlHospiLogo}
             onChange={handleChange}
           />
         </DialogContent>

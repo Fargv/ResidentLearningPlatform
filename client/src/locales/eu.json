@@ -33,107 +33,107 @@
     "debug": "Arazketa"
   },
   "adminPhases": {
-    "_comment": "Gestión de fases para administradores",
-    "phase": "Fase",
-    "activity": "Actividad",
-    "activities": "Actividades",
-    "name": "Nombre",
-    "order": "Orden",
-    "type": "Tipo",
-    "description": "Descripción",
-    "number": "Número",
+    "_comment": "Administratzaileentzako faseen kudeaketa",
+    "phase": "Fasea",
+    "activity": "Jarduera",
+    "activities": "Jarduerak",
+    "name": "Izena",
+    "order": "Ordena",
+    "type": "Mota",
+    "description": "Deskribapena",
+    "number": "Zenbakia",
     "tabs": {
-      "aria": "pestañas de fases",
-      "activities": "Actividades"
+      "aria": "faseen fitxak",
+      "activities": "Jarduerak"
     },
     "table": {
-      "aria": "actividades de la fase {{number}}",
-      "order": "Orden",
-      "name": "Nombre",
-      "type": "Tipo",
-      "actions": "Acciones",
-      "description": "Descripción",
-      "empty": "No hay actividades en esta fase"
+      "aria": "{{number}}. faseko jarduerak",
+      "order": "Ordena",
+      "name": "Izena",
+      "type": "Mota",
+      "actions": "Ekintzak",
+      "description": "Deskribapena",
+      "empty": "Ez dago jarduerarik fase honetan"
     },
     "messages": {
-      "noActivities": "No hay actividades en esta fase",
-      "noPhases": "No hay fases creadas",
-      "created": "{{item}} creada correctamente",
-      "createError": "Error al crear {{item}}",
-      "updated": "{{item}} actualizada correctamente",
-      "updateError": "Error al actualizar {{item}}",
-      "deleted": "{{item}} eliminada correctamente",
-      "deleteError": "Error al eliminar {{item}}",
-      "phaseCreated": "Fase creada correctamente",
-      "phaseCreateError": "Error al crear la fase",
-      "phaseUpdated": "Fase actualizada correctamente",
-      "phaseUpdateError": "Error al actualizar la fase",
-      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados conservados: {{preserved}}",
-      "phaseDeleteError": "Error al eliminar la fase",
-      "activityCreated": "Actividad creada correctamente",
-      "activityCreateError": "Error al crear la actividad",
-      "activityUpdated": "Actividad actualizada correctamente",
-      "activityUpdateError": "Error al actualizar la actividad",
-      "activityDeleted": "Actividad eliminada correctamente",
-      "activityDeleteError": "Error al eliminar la actividad",
-      "checkProgressError": "Error al comprobar el progreso vinculado"
+      "noActivities": "Ez dago jarduerarik fase honetan",
+      "noPhases": "Ez dago faserenik sortuta",
+      "created": "{{item}} ongi sortu da",
+      "createError": "Errorea {{item}} sortzean",
+      "updated": "{{item}} ongi eguneratu da",
+      "updateError": "Errorea {{item}} eguneratzean",
+      "deleted": "{{item}} ongi ezabatu da",
+      "deleteError": "Errorea {{item}} ezabatzean",
+      "phaseCreated": "Fasea ongi sortu da",
+      "phaseCreateError": "Errorea fasea sortzean",
+      "phaseUpdated": "Fasea ongi eguneratu da",
+      "phaseUpdateError": "Errorea fasea eguneratzean",
+      "phaseDeleted": "Fasea ongi ezabatu da. Ezabatutako aurrerapenak: {{removed}}. Balidatuak gordeta: {{preserved}}",
+      "phaseDeleteError": "Errorea fasea ezabatzean",
+      "activityCreated": "Jarduera ongi sortu da",
+      "activityCreateError": "Errorea jarduera sortzean",
+      "activityUpdated": "Jarduera ongi eguneratu da",
+      "activityUpdateError": "Errorea jarduera eguneratzean",
+      "activityDeleted": "Jarduera ongi ezabatu da",
+      "activityDeleteError": "Errorea jarduera ezabatzean",
+      "checkProgressError": "Errorea lotutako aurrerapena egiaztatzean"
     },
     "actions": {
-      "newPhase": "Nueva Fase",
-      "editPhase": "Editar Fase",
-      "deletePhase": "Eliminar Fase",
-      "newActivity": "Nueva Actividad",
-      "editActivity": "Editar Actividad",
-      "deleteActivity": "Eliminar Actividad"
+      "newPhase": "Fase berria",
+      "editPhase": "Fasea editatu",
+      "deletePhase": "Fasea ezabatu",
+      "newActivity": "Jarduera berria",
+      "editActivity": "Jarduera editatu",
+      "deleteActivity": "Jarduera ezabatu"
     },
     "dialogs": {
       "newPhase": {
-        "title": "Nueva Fase",
-        "create": "Crear",
-        "cancel": "Cancelar"
+        "title": "Fase berria",
+        "create": "Sortu",
+        "cancel": "Utzi"
       },
       "editPhase": {
-        "title": "Editar Fase",
-        "save": "Guardar",
-        "cancel": "Cancelar"
+        "title": "Fasea editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
       },
       "deletePhase": {
-        "title": "Eliminar Fase",
-        "cancel": "Cancelar",
-        "content": "¿Seguro que quieres eliminar la fase <strong>{{name}}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase.",
-        "contentWithProgress": "La fase <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Quieres eliminarla? El progreso validado se conservará.",
-        "hasProgress": "La fase <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Quieres eliminarla? El progreso validado se conservará.",
-        "confirm": "¿Seguro que quieres eliminar la fase <strong>{{name}}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase."
+        "title": "Fasea ezabatu",
+        "cancel": "Utzi",
+        "content": "Ziur al zaude <strong>{{name}}</strong> fasea ezabatu nahi duzula? Ekintza hau ezin da desegin eta fase honi lotutako jarduera guztiak ezabatuko dira.",
+        "contentWithProgress": "<strong>{{name}}</strong> faseak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ezabatu nahi duzu? Balidatutako aurrerapena gordeko da.",
+        "hasProgress": "<strong>{{name}}</strong> faseak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ezabatu nahi duzu? Balidatutako aurrerapena gordeko da.",
+        "confirm": "Ziur al zaude <strong>{{name}}</strong> fasea ezabatu nahi duzula? Ekintza hau ezin da desegin eta fase honi lotutako jarduera guztiak ezabatuko dira."
       },
       "newActivity": {
-        "title": "Nueva Actividad",
-        "create": "Crear",
-        "cancel": "Cancelar",
-        "content": "Creando actividad para la fase: <strong>{{phase}}</strong>"
+        "title": "Jarduera berria",
+        "create": "Sortu",
+        "cancel": "Utzi",
+        "content": "Faserako jarduera sortzen: <strong>{{phase}}</strong>"
       },
       "editActivity": {
-        "title": "Editar Actividad",
-        "save": "Guardar",
-        "cancel": "Cancelar"
+        "title": "Jarduera editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
       },
       "deleteActivity": {
-        "title": "Eliminar Actividad",
-        "cancel": "Cancelar",
-        "content": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer.",
-        "contentWithProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
-        "hasProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
-        "confirm": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+        "title": "Jarduera ezabatu",
+        "cancel": "Utzi",
+        "content": "Ziur al zaude <strong>{{name}}</strong> jarduera ezabatu nahi duzula? Ekintza hau ezin da desegin.",
+        "contentWithProgress": "<strong>{{name}}</strong> jarduerak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ziur al zaude ezabatu nahi duzula? Honek erabiltzaile guztien erregistro horiek ere ezabatuko ditu.",
+        "hasProgress": "<strong>{{name}}</strong> jarduerak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ziur al zaude ezabatu nahi duzula? Honek erabiltzaile guztien erregistro horiek ere ezabatuko ditu.",
+        "confirm": "Ziur al zaude <strong>{{name}}</strong> jarduera ezabatu nahi duzula? Ekintza hau ezin da desegin."
       },
-      "createActivity": "Creando actividad para la fase: <strong>{{phase}}</strong>"
+      "createActivity": "Faserako jarduera sortzen: <strong>{{phase}}</strong>"
     },
-    "evaluation": "Evaluación",
-    "observation": "Observación",
-    "practice": "Práctica",
-    "theory": "Teórica",
-    "procedure": "Procedimiento",
-    "errorForbidden": "No tienes permisos para ver esta sección",
-    "errorLoadData": "Error al cargar los datos",
-    "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
+    "evaluation": "Ebaluazioa",
+    "observation": "Behaketa",
+    "practice": "Praktika",
+    "theory": "Teorikoa",
+    "procedure": "Prozedura",
+    "errorForbidden": "Ez duzu baimenik atal hau ikusteko",
+    "errorLoadData": "Errorea datuak kargatzean",
+    "empty": "Ez dago faserenik sortuta. Hasteko, sortu fase berri bat."
   },
   "progressByPhase": "Fasearen araberako aurrerapena",
   "close": "Itxi",
@@ -196,9 +196,9 @@
     },
     "firstAssistant": {
       "label": "First Assistant",
-      "intro": "Actividades como primer asistente.",
-      "item1": "Participación en quirófanos",
-      "item2": "Registro de actividades"
+      "intro": "Lehen laguntzaile gisa egindako jarduerak",
+      "item1": "Ebaki-gelan parte hartzea",
+      "item2": "Jarduerak erregistratzea"
     },
     "stepByStep": {
       "label": "Step By Step",
@@ -245,75 +245,76 @@
     "processing": "Prozesatzen..."
   },
   "profile": {
-    "title": "Mi Perfil",
-    "personalData": "Datos personales",
-    "changePassword": "Cambiar Contraseña",
+    "title": "Nire profila",
+    "personalData": "Datu pertsonalak",
+    "changePassword": "Pasahitza aldatu",
     "fields": {
-      "name": "Nombre",
-      "lastName": "Apellidos",
-      "email": "Email",
-      "hospital": "Hospital",
-      "society": "Sociedad",
-      "currentPassword": "Contraseña Actual",
-      "newPassword": "Nueva Contraseña",
-      "confirmPassword": "Confirmar Contraseña"
+      "name": "Izena",
+      "lastName": "Abizenak",
+      "email": "Emaila",
+      "hospital": "Ospitalea",
+      "society": "Elkartea",
+      "currentPassword": "Oraingo pasahitza",
+      "newPassword": "Pasahitz berria",
+      "confirmPassword": "Pasahitza berretsi"
     },
     "messages": {
-      "updateSuccess": "Perfil actualizado",
-      "updateError": "Error al actualizar el perfil",
-      "passwordMismatch": "Las contraseñas no coinciden",
-      "passwordUpdateSuccess": "Contraseña actualizada",
-      "passwordUpdateError": "Error al cambiar la contraseña"
+      "updateSuccess": "Profila eguneratu da",
+      "updateError": "Errorea profila eguneratzean",
+      "passwordMismatch": "Pasahitzak ez datoz bat",
+      "passwordUpdateSuccess": "Pasahitza eguneratu da",
+      "passwordUpdateError": "Errorea pasahitza aldatzean"
     },
     "buttons": {
-      "changePassword": "Cambiar Contraseña"
+      "changePassword": "Pasahitza aldatu"
     }
   },
   "adminHospitals": {
-    "title": "Gestión de Hospitales",
-    "new": "Nuevo Hospital",
-    "searchPlaceholder": "Buscar por Nombre",
-    "loadError": "Error al cargar los hospitales",
-    "createSuccess": "Hospital creado correctamente",
-    "createError": "Error al crear el hospital",
-    "updateSuccess": "Hospital actualizado correctamente",
-    "updateError": "Error al actualizar el hospital",
-    "deleteSuccess": "Hospital eliminado correctamente",
-    "deleteError": "Error al eliminar el hospital",
+    "title": "Ospitalen kudeaketa",
+    "new": "Ospitale berria",
+    "searchPlaceholder": "Bilatu izenaren arabera",
+    "loadError": "Errorea ospitaleak kargatzean",
+    "createSuccess": "Ospitalea ongi sortu da",
+    "createError": "Errorea ospitalea sortzean",
+    "updateSuccess": "Ospitalea ongi eguneratu da",
+    "updateError": "Errorea ospitalea eguneratzean",
+    "deleteSuccess": "Ospitalea ongi ezabatu da",
+    "deleteError": "Errorea ospitalea ezabatzean",
     "table": {
-      "aria": "tabla de hospitales",
-      "name": "Nombre",
-      "city": "Ciudad",
-      "province": "Provincia",
-      "zone": "Zona",
-      "phone": "Teléfono",
-      "email": "Email",
-      "actions": "Acciones"
+      "aria": "ospitalen taula",
+      "name": "Izena",
+      "city": "Hiria",
+      "province": "Probintzia",
+      "zone": "Eremua",
+      "phone": "Telefonoa",
+      "email": "Emaila",
+      "actions": "Ekintzak"
     },
     "fields": {
-      "name": "Nombre",
-      "numericCode": "Código Numérico",
-      "address": "Dirección",
-      "city": "Ciudad",
-      "province": "Provincia",
-      "zone": "Zona",
-      "postalCode": "Código Postal",
-      "phone": "Teléfono",
-      "systemType": "Tipo de Sistema",
-      "email": "Email"
+      "name": "Izena",
+      "numericCode": "Kode numerikoa",
+      "address": "Helbidea",
+      "city": "Hiria",
+      "province": "Probintzia",
+      "zone": "Eremua",
+      "postalCode": "Posta kodea",
+      "phone": "Telefonoa",
+      "systemType": "Sistemaren mota",
+      "email": "Emaila",
+      "logoUrl": "Logoaren URLa"
     },
     "system": {
-      "other": "Otro"
+      "other": "Bestelakoa"
     },
     "create": {
-      "title": "Nuevo Hospital"
+      "title": "Ospitale berria"
     },
     "edit": {
-      "title": "Editar Hospital"
+      "title": "Ospitalea editatu"
     },
     "delete": {
-      "title": "Eliminar Hospital",
-      "confirm": "¿Estás seguro de que deseas eliminar el hospital <strong>{{name}}</strong>? Se eliminarán {{count}} usuarios y sus progresos. Esta acción no se puede deshacer."
+      "title": "Ospitalea ezabatu",
+      "confirm": "Ziur al zaude <strong>{{name}}</strong> ospitalea ezabatu nahi duzula? {{count}} erabiltzaile eta haien aurrerapenak ezabatuko dira. Ekintza hau ezin da desegin."
     }
   },
   "adminSocieties": {
@@ -355,211 +356,211 @@
     }
   },
   "adminUsers": {
-    "titleAll": "Gestión de Todos los Usuarios",
-    "titleHospital": "Usuarios de Tu Hospital",
-    "searchPlaceholder": "Buscar por nombre o email",
-    "loadError": "Error al cargar los datos",
+    "titleAll": "Erabiltzaile guztien kudeaketa",
+    "titleHospital": "Zure ospitaleko erabiltzaileak",
+    "searchPlaceholder": "Bilatu izenaren edo emailaren arabera",
+    "loadError": "Errorea datuak kargatzean",
     "actions": {
-      "create": "Crear Usuario",
-      "invite": "Invitar Usuario",
-      "edit": "Editar",
-      "delete": "Eliminar",
-      "changePassword": "Cambiar contraseña",
-      "createProgress": "Crear progreso"
+      "create": "Erabiltzailea sortu",
+      "invite": "Erabiltzailea gonbidatu",
+      "edit": "Editatu",
+      "delete": "Ezabatu",
+      "changePassword": "Pasahitza aldatu",
+      "createProgress": "Aurrerapena sortu"
     },
-    "createSuccess": "Usuario creado correctamente",
-    "createError": "Error al crear el usuario",
-    "updateSuccess": "Usuario actualizado correctamente",
-    "updateError": "Error al actualizar el usuario",
-    "deleteSuccess": "Usuario eliminado correctamente",
-    "deleteError": "Error al eliminar el usuario",
-    "passwordUpdated": "Contraseña actualizada",
-    "passwordError": "Error al actualizar la contraseña",
-    "createProgressSuccess": "Progreso formativo creado con éxito",
-    "createProgressError": "Error al crear el progreso",
+    "createSuccess": "Erabiltzailea ongi sortu da",
+    "createError": "Errorea erabiltzailea sortzean",
+    "updateSuccess": "Erabiltzailea ongi eguneratu da",
+    "updateError": "Errorea erabiltzailea eguneratzean",
+    "deleteSuccess": "Erabiltzailea ongi ezabatu da",
+    "deleteError": "Errorea erabiltzailea ezabatzean",
+    "passwordUpdated": "Pasahitza eguneratu da",
+    "passwordError": "Errorea pasahitza eguneratzean",
+    "createProgressSuccess": "Aurrerapen formatiboa sortu da",
+    "createProgressError": "Errorea aurrerapena sortzean",
     "table": {
-      "aria": "tabla de usuarios",
-      "name": "Nombre",
-      "email": "Email",
-      "type": "Tipo",
-      "society": "Sociedad",
-      "role": "Rol",
-      "hospital": "Hospital",
-      "zone": "Zona",
-      "actions": "Acciones"
+      "aria": "erabiltzaileen taula",
+      "name": "Izena",
+      "email": "Emaila",
+      "type": "Mota",
+      "society": "Elkartea",
+      "role": "Rola",
+      "hospital": "Ospitalea",
+      "zone": "Eremua",
+      "actions": "Ekintzak"
     },
     "fields": {
-      "email": "Email",
-      "password": "Contraseña",
-      "name": "Nombre",
-      "surname": "Apellidos",
-      "type": "Tipo",
-      "role": "Rol",
-      "hospital": "Hospital",
-      "specialty": "Especialidad",
-      "society": "Sociedad",
-      "zone": "Zona"
+      "email": "Emaila",
+      "password": "Pasahitza",
+      "name": "Izena",
+      "surname": "Abizenak",
+      "type": "Mota",
+      "role": "Rola",
+      "hospital": "Ospitalea",
+      "specialty": "Espezialitatea",
+      "society": "Elkartea",
+      "zone": "Eremua"
     },
     "create": {
-      "title": "Crear Usuario"
+      "title": "Erabiltzailea sortu"
     },
     "edit": {
-      "title": "Editar Usuario"
+      "title": "Erabiltzailea editatu"
     },
     "delete": {
-      "title": "Eliminar Usuario",
-      "confirm": "¿Estás seguro de que deseas eliminar al usuario <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+      "title": "Erabiltzailea ezabatu",
+      "confirm": "Ziur al zaude erabiltzaile <strong>{{name}}</strong> ezabatu nahi duzula? Ekintza hau ezin da desegin."
     },
     "password": {
-      "title": "Actualizar Contraseña",
-      "label": "Nueva contraseña",
-      "updating": "Actualizando...",
-      "update": "Actualizar"
+      "title": "Pasahitza eguneratu",
+      "label": "Pasahitz berria",
+      "updating": "Eguneratzen...",
+      "update": "Eguneratu"
     },
-    "_comment": "Gestión de usuarios para administradores",
+    "_comment": "Administratzaileentzako erabiltzaileen kudeaketa",
     "buttons": {
-      "create": "Crear Usuario",
-      "creating": "Creando...",
-      "invite": "Invitar Usuario",
-      "cancel": "Cancelar",
-      "save": "Guardar Cambios",
-      "saving": "Guardando...",
-      "delete": "Eliminar",
-      "deleting": "Eliminando...",
-      "update": "Actualizar",
-      "updating": "Actualizando..."
+      "create": "Erabiltzailea sortu",
+      "creating": "Sortzen...",
+      "invite": "Erabiltzailea gonbidatu",
+      "cancel": "Utzi",
+      "save": "Aldaketak gorde",
+      "saving": "Gordetzen...",
+      "delete": "Ezabatu",
+      "deleting": "Ezabatzen...",
+      "update": "Eguneratu",
+      "updating": "Eguneratzen..."
     },
     "dialogs": {
-      "createTitle": "Crear Usuario",
-      "editTitle": "Editar Usuario",
-      "deleteTitle": "Eliminar Usuario",
-      "passwordTitle": "Actualizar Contraseña",
-      "passwordLabel": "Nueva contraseña",
-      "deleteConfirm": "¿Estás seguro de que deseas eliminar al usuario {{name}} {{lastName}}? Esta acción no se puede deshacer."
+      "createTitle": "Erabiltzailea sortu",
+      "editTitle": "Erabiltzailea editatu",
+      "deleteTitle": "Erabiltzailea ezabatu",
+      "passwordTitle": "Pasahitza eguneratu",
+      "passwordLabel": "Pasahitz berria",
+      "deleteConfirm": "Ziur al zaude {{name}} {{lastName}} erabiltzailea ezabatu nahi duzula? Ekintza hau ezin da desegin."
     },
     "messages": {
-      "loadError": "Error al cargar los datos",
-      "userCreated": "Usuario creado correctamente",
-      "createError": "Error al crear el usuario",
-      "userUpdated": "Usuario actualizado correctamente",
-      "updateError": "Error al actualizar el usuario",
-      "userDeleted": "Usuario eliminado correctamente",
-      "deleteError": "Error al eliminar el usuario",
-      "passwordUpdated": "Contraseña actualizada",
-      "passwordError": "Error al actualizar la contraseña"
+      "loadError": "Errorea datuak kargatzean",
+      "userCreated": "Erabiltzailea ongi sortu da",
+      "createError": "Errorea erabiltzailea sortzean",
+      "userUpdated": "Erabiltzailea ongi eguneratu da",
+      "updateError": "Errorea erabiltzailea eguneratzean",
+      "userDeleted": "Erabiltzailea ongi ezabatu da",
+      "deleteError": "Errorea erabiltzailea ezabatzean",
+      "passwordUpdated": "Pasahitza eguneratu da",
+      "passwordError": "Errorea pasahitza eguneratzean"
     }
   },
   "adminPhasesSoc": {
-    "_comment": "Gestión de fases para el programa de Sociedades",
-    "phase": "Fase",
-    "activity": "Actividad",
+    "_comment": "Elkarteen programako faseen kudeaketa",
+    "phase": "Fasea",
+    "activity": "Jarduera",
     "table": {
-      "order": "Orden",
-      "name": "Nombre",
-      "type": "Tipo",
-      "actions": "Acciones"
+      "order": "Ordena",
+      "name": "Izena",
+      "type": "Mota",
+      "actions": "Ekintzak"
     },
     "messages": {
-      "noActivities": "No hay actividades en esta fase",
-      "noPhases": "No hay fases creadas",
-      "created": "{{item}} creada correctamente",
-      "createError": "Error al crear {{item}}",
-      "updated": "{{item}} actualizada correctamente",
-      "updateError": "Error al actualizar {{item}}",
-      "deleted": "{{item}} eliminada correctamente",
-      "deleteError": "Error al eliminar {{item}}",
-      "phaseCreated": "Fase creada correctamente",
-      "phaseCreateError": "Error al crear la fase",
-      "phaseUpdated": "Fase actualizada correctamente",
-      "phaseUpdateError": "Error al actualizar la fase",
-      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados preservados: {{preserved}}",
-      "phaseDeleteError": "Error al eliminar la fase",
-      "activityCreated": "Actividad creada correctamente",
-      "activityCreateError": "Error al crear la actividad",
-      "activityUpdated": "Actividad actualizada correctamente",
-      "activityUpdateError": "Error al actualizar la actividad",
-      "activityDeleted": "Actividad eliminada correctamente",
-      "activityDeleteError": "Error al eliminar la actividad",
-      "progressCheckError": "Error al comprobar progresos vinculados"
+      "noActivities": "Ez dago jarduerarik fase honetan",
+      "noPhases": "Ez dago faserenik sortuta",
+      "created": "{{item}} ongi sortu da",
+      "createError": "Errorea {{item}} sortzean",
+      "updated": "{{item}} ongi eguneratu da",
+      "updateError": "Errorea {{item}} eguneratzean",
+      "deleted": "{{item}} ongi ezabatu da",
+      "deleteError": "Errorea {{item}} ezabatzean",
+      "phaseCreated": "Fasea ongi sortu da",
+      "phaseCreateError": "Errorea fasea sortzean",
+      "phaseUpdated": "Fasea ongi eguneratu da",
+      "phaseUpdateError": "Errorea fasea eguneratzean",
+      "phaseDeleted": "Fasea ongi ezabatu da. Ezabatutako aurrerapenak: {{removed}}. Balidatuak gordeta: {{preserved}}",
+      "phaseDeleteError": "Errorea fasea ezabatzean",
+      "activityCreated": "Jarduera ongi sortu da",
+      "activityCreateError": "Errorea jarduera sortzean",
+      "activityUpdated": "Jarduera ongi eguneratu da",
+      "activityUpdateError": "Errorea jarduera eguneratzean",
+      "activityDeleted": "Jarduera ongi ezabatu da",
+      "activityDeleteError": "Errorea jarduera ezabatzean",
+      "progressCheckError": "Errorea lotutako aurrerapenak egiaztatzean"
     },
     "dialogs": {
       "newPhase": {
-        "title": "Nueva Fase",
-        "create": "Crear",
-        "cancel": "Cancelar"
+        "title": "Fase berria",
+        "create": "Sortu",
+        "cancel": "Utzi"
       },
       "editPhase": {
-        "title": "Editar Fase",
-        "save": "Guardar",
-        "cancel": "Cancelar"
+        "title": "Fasea editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
       },
       "deletePhase": {
-        "title": "Eliminar Fase",
-        "confirm": "Eliminar",
-        "cancel": "Cancelar"
+        "title": "Fasea ezabatu",
+        "confirm": "Ezabatu",
+        "cancel": "Utzi"
       },
       "newActivity": {
-        "title": "Nueva Actividad",
-        "create": "Crear",
-        "cancel": "Cancelar"
+        "title": "Jarduera berria",
+        "create": "Sortu",
+        "cancel": "Utzi"
       },
       "editActivity": {
-        "title": "Editar Actividad",
-        "save": "Guardar",
-        "cancel": "Cancelar"
+        "title": "Jarduera editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
       },
       "deleteActivity": {
-        "title": "Eliminar Actividad",
-        "confirm": "Eliminar",
-        "cancel": "Cancelar"
+        "title": "Jarduera ezabatu",
+        "confirm": "Ezabatu",
+        "cancel": "Utzi"
       }
     }
   },
   "adminUserProgress": {
-    "title": "Progreso de Usuarios",
-    "searchPlaceholder": "Buscar por nombre o email",
+    "title": "Erabiltzaileen aurrerapena",
+    "searchPlaceholder": "Bilatu izenaren edo emailaren arabera",
     "table": {
-      "name": "Nombre",
+      "name": "Izena",
       "email": "Email",
-      "hospitalSociety": "Hospital/Sociedad",
-      "role": "Rol",
-      "actions": "Acciones"
+      "hospitalSociety": "Ospitale/Elkartea",
+      "role": "Rola",
+      "actions": "Ekintzak"
     },
-    "viewProgress": "Ver Progreso"
+    "viewProgress": "Aurrerapena ikusi"
   },
   "adminProgressDetail": {
-    "loadError": "Error al cargar el progreso",
-    "phaseUpdateSuccess": "Fase actualizada correctamente",
-    "phaseUpdateError": "Error al actualizar la fase",
-    "activityUpdateSuccess": "Actividad actualizada correctamente",
-    "activityUpdateError": "Error al actualizar actividad",
-    "title": "Progreso del Usuario",
-    "titleWithName": "Progreso de {{name}} {{surname}}",
-    "back": "Atrás",
-    "phaseTitle": "Fase {{number}}: {{name}}",
-    "noTitle": "Sin título",
-    "phaseStatusLabel": "Estado fase",
-    "activityStatusLabel": "Estado actividad",
+    "loadError": "Errorea aurrerapena kargatzean",
+    "phaseUpdateSuccess": "Fasea ongi eguneratu da",
+    "phaseUpdateError": "Errorea fasea eguneratzean",
+    "activityUpdateSuccess": "Jarduera ongi eguneratu da",
+    "activityUpdateError": "Errorea jarduera eguneratzean",
+    "title": "Erabiltzailearen aurrerapena",
+    "titleWithName": "{{name}} {{surname}}-ren aurrerapena",
+    "back": "Atzera",
+    "phaseTitle": "Fasea {{number}}: {{name}}",
+    "noTitle": "Izenbururik gabe",
+    "phaseStatusLabel": "Fasearen egoera",
+    "activityStatusLabel": "Jardueraren egoera",
     "phaseStatus": {
-      "blocked": "Bloqueada",
-      "inProgress": "En progreso",
-      "completed": "Completado",
-      "validated": "Validado",
-      "pending": "Pendiente",
-      "rejected": "Rechazado"
+      "blocked": "Blokeatuta",
+      "inProgress": "Prozesuan",
+      "completed": "Osatuta",
+      "validated": "Balidatua",
+      "pending": "Zain",
+      "rejected": "Baztertuta"
     },
     "activityStatus": {
-      "pending": "Pendiente",
-      "completed": "Completado",
-      "validated": "Validado",
-      "rejected": "Rechazado"
+      "pending": "Zain",
+      "completed": "Osatuta",
+      "validated": "Balidatua",
+      "rejected": "Baztertuta"
     },
-    "validatedProgress": "Progreso validado: {{percent}}%",
-    "noActivityName": "Actividad sin nombre",
-    "completedOn": "Fecha completada: {{date}}",
-    "validatedOn": "Validado el: {{date}}",
-    "statusWithValue": "Estado: {{status}}",
-    "noProgress": "No hay progreso disponible."
+    "validatedProgress": "Balidatutako aurrerapena: {{percent}}%",
+    "noActivityName": "Izenik gabeko jarduera",
+    "completedOn": "Osatze data: {{date}}",
+    "validatedOn": "Balidatua: {{date}}",
+    "statusWithValue": "Egoera: {{status}}",
+    "noProgress": "Ez dago aurrerapenik eskuragarri."
   },
   "brand": {
     "name": "Abex Robotikako Bikaintasuna"
@@ -671,63 +672,63 @@
     "errorSave": "Errorea kodea gordetzean"
   },
   "trainerUsers": {
-    "title": "Mis Usuarios",
-    "invite": "Invitar Usuario",
-    "edit": "Editar Usuario",
-    "updated": "Usuario actualizado",
-    "invited": "Usuario invitado",
-    "deleted": "Usuario eliminado",
-    "error": "Error",
-    "deleteError": "Error al eliminar",
-    "loadError": "Error al cargar usuarios",
+    "title": "Nire erabiltzaileak",
+    "invite": "Erabiltzailea gonbidatu",
+    "edit": "Erabiltzailea editatu",
+    "updated": "Erabiltzailea eguneratua",
+    "invited": "Erabiltzailea gonbidatua",
+    "deleted": "Erabiltzailea ezabatua",
+    "error": "Errorea",
+    "deleteError": "Errorea ezabatzean",
+    "loadError": "Errorea erabiltzaileak kargatzean",
     "table": {
-      "name": "Nombre",
-      "email": "Email",
-      "role": "Rol",
-      "status": "Estado",
-      "actions": "Acciones",
-      "state": "Estado"
+      "name": "Izena",
+      "email": "Emaila",
+      "role": "Rola",
+      "status": "Egoera",
+      "actions": "Ekintzak",
+      "state": "Egoera"
     },
     "form": {
-      "email": "Email",
-      "name": "Nombre",
-      "surname": "Apellidos",
-      "role": "Rol",
+      "email": "Emaila",
+      "name": "Izena",
+      "surname": "Abizenak",
+      "role": "Rola",
       "roles": {
-        "resident": "Residente",
-        "trainer": "Formador"
+        "resident": "Egoiliarra",
+        "trainer": "Prestakuntza-emilea"
       }
     },
     "dialog": {
-      "cancel": "Cancelar",
-      "saving": "Guardando...",
-      "save": "Guardar",
-      "invite": "Invitar"
+      "cancel": "Utzi",
+      "saving": "Gordetzen...",
+      "save": "Gorde",
+      "invite": "Gonbidatu"
     },
-    "_comment": "Gestión de usuarios para formadores",
+    "_comment": "Prestakuntza-emileentzako erabiltzaileen kudeaketa",
     "buttons": {
-      "invite": "Invitar Usuario",
-      "cancel": "Cancelar",
-      "save": "Guardar",
-      "saving": "Guardando...",
-      "delete": "Eliminar"
+      "invite": "Erabiltzailea gonbidatu",
+      "cancel": "Utzi",
+      "save": "Gorde",
+      "saving": "Gordetzen...",
+      "delete": "Ezabatu"
     },
     "fields": {
-      "email": "Email",
-      "name": "Nombre",
-      "lastName": "Apellidos",
-      "role": "Rol"
+      "email": "Emaila",
+      "name": "Izena",
+      "lastName": "Abizenak",
+      "role": "Rola"
     },
     "roles": {
-      "resident": "Residente",
-      "trainer": "Formador"
+      "resident": "Egoiliarra",
+      "trainer": "Prestakuntza-emilea"
     },
     "states": {
-      "active": "Activo",
-      "inactive": "Inactivo"
+      "active": "Aktibo",
+      "inactive": "Inaktibo"
     },
     "dialogs": {
-      "editTitle": "Editar Usuario",
+      "editTitle": "Erabiltzailea editatu",
       "inviteTitle": "Invitar Usuario"
     },
     "messages": {
@@ -743,67 +744,67 @@
     "createSuccess": "Prestakuntza aurrerapena ondo sortu da"
   },
   "trainerValidations": {
-    "title": "Validaciones",
+    "title": "Balidazioak",
     "tabs": {
-      "pending": "Pendientes ({{count}})",
-      "validated": "Validadas ({{count}})",
-      "rejected": "Rechazadas ({{count}})",
-      "aria": "pestañas de validaciones"
+      "pending": "Zain ({{count}})",
+      "validated": "Balidatuak ({{count}})",
+      "rejected": "Baztertuta ({{count}})",
+      "aria": "balidazioen fitxak"
     },
     "table": {
-      "activity": "Actividad",
-      "resident": "Residente",
-      "date": "Fecha",
-      "comments": "Comentarios",
-      "actions": "Acciones",
-      "status": "Estado",
-      "reason": "Motivo",
-      "noPhase": "Sin fase",
-      "noName": "Sin nombre",
-      "phase": "Fase",
-      "state": "Estado"
+      "activity": "Jarduera",
+      "resident": "Egoiliarra",
+      "date": "Data",
+      "comments": "Iruzkinak",
+      "actions": "Ekintzak",
+      "status": "Egoera",
+      "reason": "Arrazoia",
+      "noPhase": "Faserik gabe",
+      "noName": "Izenik gabe",
+      "phase": "Fasea",
+      "state": "Egoera"
     },
     "empty": {
-      "pending": "No hay validaciones pendientes",
-      "validated": "No hay validaciones completadas",
-      "rejected": "No hay validaciones rechazadas"
+      "pending": "Ez dago baliozkotze zain",
+      "validated": "Ez dago baliozkotze osaturik",
+      "rejected": "Ez dago baztertutako baliozkotzerik"
     },
     "actions": {
-      "viewAttachment": "Ver adjunto"
+      "viewAttachment": "Eranskina ikusi"
     },
     "dialog": {
-      "validateTitle": "Validar Actividad",
-      "validateMessage": "Estás validando la actividad {{activity}} del residente {{name}}.",
-      "optionalComments": "Comentarios (opcional)",
-      "digitalSignature": "Firma Digital",
-      "rejectTitle": "Rechazar Actividad",
-      "rejectMessage": "Estás rechazando la actividad {{activity}} del residente {{name}}.",
-      "rejectReason": "Motivo del rechazo"
+      "validateTitle": "Jarduera balioztatu",
+      "validateMessage": "Egoiliar {{name}}-ren {{activity}} jarduera balioztatzen ari zara.",
+      "optionalComments": "Iruzkinak (aukerakoa)",
+      "digitalSignature": "Sinadura digitala",
+      "rejectTitle": "Jarduera baztertu",
+      "rejectMessage": "Egoiliar {{name}}-ren {{activity}} jarduera baztertzen ari zara.",
+      "rejectReason": "Baztertzeko arrazoia"
     },
-    "errorLoad": "Error al cargar las validaciones",
-    "_comment": "Validaciones gestionadas por formadores",
+    "errorLoad": "Errorea balidazioak kargatzean",
+    "_comment": "Balidazioak prestakuntza-emilek kudeatuta",
     "buttons": {
-      "viewAttachment": "Ver adjunto",
-      "validate": "Validar",
-      "reject": "Rechazar",
-      "cancel": "Cancelar"
+      "viewAttachment": "Eranskina ikusi",
+      "validate": "Balidatu",
+      "reject": "Baztertu",
+      "cancel": "Utzi"
     },
     "states": {
-      "validated": "Validado",
-      "rejected": "Rechazado"
+      "validated": "Balidatua",
+      "rejected": "Baztertua"
     },
     "dialogs": {
-      "validateTitle": "Validar Actividad",
-      "rejectTitle": "Rechazar Actividad",
-      "validateConfirm": "Estás validando la actividad {{activity}} del residente {{resident}}.",
-      "rejectConfirm": "Estás rechazando la actividad {{activity}} del residente {{resident}}.",
-      "commentsOptional": "Comentarios (opcional)",
-      "digitalSignature": "Firma Digital",
-      "rejectReason": "Motivo del rechazo",
-      "processing": "Procesando..."
+      "validateTitle": "Jarduera balioztatu",
+      "rejectTitle": "Jarduera baztertu",
+      "validateConfirm": "Egoiliar {{resident}}-ren {{activity}} jarduera balioztatzen ari zara.",
+      "rejectConfirm": "Egoiliar {{resident}}-ren {{activity}} jarduera baztertzen ari zara.",
+      "commentsOptional": "Iruzkinak (aukerakoa)",
+      "digitalSignature": "Sinadura digitala",
+      "rejectReason": "Baztertzeko arrazoia",
+      "processing": "Prozesatzen..."
     },
     "messages": {
-      "loadError": "Error al cargar las validaciones"
+      "loadError": "Errorea balidazioak kargatzean"
     }
   },
   "residentPhases": {
@@ -874,6 +875,11 @@
     "errorLoad": "Errorea aurrerapena kargatzean",
     "downloadError": "Errorea ziurtagiria deskargatzean",
     "downloadCertificate": "Deskargatu ziurtagiria"
+  },
+  "certificate": {
+    "title": "Osaketaren Ziurtagiria",
+    "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.<br /><br />Amaiera data: <strong>{{date}}</strong>",
+    "footer": "Ziurtagiria automatikoki sortua Academic Program Da Vinci-k · www.abexsl.es"
   },
   "emails": {
     "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
