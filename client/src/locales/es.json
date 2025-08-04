@@ -33,6 +33,57 @@
     "debug": "Debug"
   },
   "adminPhases": {
+    "_comment": "Gestión de fases para administradores",
+    "phase": "Fase",
+    "activity": "Actividad",
+    "table": {
+      "order": "Orden",
+      "name": "Nombre",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "messages": {
+      "noActivities": "No hay actividades en esta fase",
+      "noPhases": "No hay fases creadas",
+      "created": "{{item}} creada correctamente",
+      "createError": "Error al crear {{item}}",
+      "updated": "{{item}} actualizada correctamente",
+      "updateError": "Error al actualizar {{item}}",
+      "deleted": "{{item}} eliminada correctamente",
+      "deleteError": "Error al eliminar {{item}}"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nueva Fase",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      },
+      "newActivity": {
+        "title": "Nueva Actividad",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editActivity": {
+        "title": "Editar Actividad",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Actividad",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    },
     "description": "Descripción",
     "number": "Número",
     "evaluation": "Evaluación",
@@ -45,7 +96,7 @@
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
- "devWarning": "⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️",
+  "devWarning": "⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️",
   "register": {
     "title": "Registro",
     "accessCode": "Código de Acceso",
@@ -354,38 +405,62 @@
       "userDeleted": "Usuario eliminado correctamente",
       "deleteError": "Error al eliminar el usuario",
       "passwordUpdated": "Contraseña actualizada",
-     "passwordError": "Error al actualizar la contraseña"
+      "passwordError": "Error al actualizar la contraseña"
     }
   },
   "adminPhasesSoc": {
+    "_comment": "Gestión de fases para el programa de Sociedades",
     "phase": "Fase",
-    "activities": "Actividades",
-    "newPhase": "Nueva Fase",
-    "editPhase": "Editar Fase",
-    "deletePhase": "Eliminar Fase",
-    "newActivity": "Nueva Actividad",
-    "editActivity": "Editar Actividad",
-    "deleteActivity": "Eliminar Actividad",
-    "order": "Orden",
-    "name": "Nombre",
-    "type": "Tipo",
-    "description": "Descripción",
-    "actions": "Acciones",
-    "noPermission": "No tienes permisos para ver esta sección",
-    "loadError": "Error al cargar los datos",
-    "progressCheckError": "Error al comprobar progresos vinculados",
-    "phaseCreated": "Fase creada correctamente",
-    "phaseCreateError": "Error al crear la fase",
-    "phaseUpdated": "Fase actualizada correctamente",
-    "phaseUpdateError": "Error al actualizar la fase",
-    "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados preservados: {{preserved}}",
-    "phaseDeleteError": "Error al eliminar la fase",
-    "activityCreated": "Actividad creada correctamente",
-    "activityCreateError": "Error al crear la actividad",
-    "activityUpdated": "Actividad actualizada correctamente",
-    "activityUpdateError": "Error al actualizar la actividad",
-    "activityDeleted": "Actividad eliminada correctamente",
-    "activityDeleteError": "Error al eliminar la actividad"
+    "activity": "Actividad",
+    "table": {
+      "order": "Orden",
+      "name": "Nombre",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "messages": {
+      "noActivities": "No hay actividades en esta fase",
+      "noPhases": "No hay fases creadas",
+      "created": "{{item}} creada correctamente",
+      "createError": "Error al crear {{item}}",
+      "updated": "{{item}} actualizada correctamente",
+      "updateError": "Error al actualizar {{item}}",
+      "deleted": "{{item}} eliminada correctamente",
+      "deleteError": "Error al eliminar {{item}}",
+      "progressCheckError": "Error al comprobar progresos vinculados"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nueva Fase",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      },
+      "newActivity": {
+        "title": "Nueva Actividad",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editActivity": {
+        "title": "Editar Actividad",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Actividad",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    }
   },
   "adminUserProgress": {
     "title": "Progreso de Usuarios",
@@ -399,7 +474,7 @@
     },
     "viewProgress": "Ver Progreso"
   },
-   "adminProgressDetail": {
+  "adminProgressDetail": {
     "loadError": "Error al cargar el progreso",
     "phaseUpdateSuccess": "Fase actualizada correctamente",
     "phaseUpdateError": "Error al actualizar la fase",
@@ -413,13 +488,13 @@
     "phaseStatusLabel": "Estado fase",
     "activityStatusLabel": "Estado actividad",
     "phaseStatus": {
-  "blocked": "Bloqueada",
-  "inProgress": "En progreso",
-  "completed": "Completado",
-  "validated": "Validado",
-  "pending": "Pendiente",
-  "rejected": "Rechazado"
-},
+      "blocked": "Bloqueada",
+      "inProgress": "En progreso",
+      "completed": "Completado",
+      "validated": "Validado",
+      "pending": "Pendiente",
+      "rejected": "Rechazado"
+    },
     "activityStatus": {
       "pending": "Pendiente",
       "completed": "Completado",
