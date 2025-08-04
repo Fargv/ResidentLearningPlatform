@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -62,6 +63,9 @@ const Login: React.FC = () => {
         borderRadius: 2
       }}
     >
+      <Box sx={{ alignSelf: 'flex-end', mb: 2 }}>
+        <LanguageSelector />
+      </Box>
       <Box sx={{ mb: 3, textAlign: 'center' }}>
         <img
           src="/logo.png"
