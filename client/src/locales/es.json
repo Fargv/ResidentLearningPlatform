@@ -300,7 +300,8 @@
       "postalCode": "Código Postal",
       "phone": "Teléfono",
       "systemType": "Tipo de Sistema",
-      "email": "Email"
+      "email": "Email",
+      "logoUrl": "URL del logo"
     },
     "system": {
       "other": "Otro"
@@ -874,6 +875,11 @@
     "errorLoad": "Error al cargar el progreso",
     "downloadError": "Error al descargar certificado",
     "downloadCertificate": "Descargar certificado"
+  },
+  "certificate": {
+    "title": "Certificado de Cumplimiento",
+    "body": "Se certifica que <strong>{{name}}</strong> ha completado satisfactoriamente la fase formativa asignada del Academic Program en tecnologías del robot Da Vinci®. <br /><br />Este curso se enmarca dentro del plan formativo en tecnología robótica en colaboración con el hospital <strong>{{hospital}}</strong> y bajo la supervisión de su tutor asignado.<br /><br />Fecha de finalización: <strong>{{date}}</strong>",
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · www.abexsl.es"
   },
   "emails": {
     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
