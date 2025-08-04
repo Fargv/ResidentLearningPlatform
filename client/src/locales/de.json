@@ -340,6 +340,561 @@
       "rejected": "Abgelehnt",
       "pending": "Ausstehende Validierung",
       "notCompleted": "Nicht abgeschlossen"
+    },
+    "_comment": "Resident phases and activities"
+  },
+  "adminPhases": {
+    "_comment": "Admin phases management",
+    "phase": "Phase",
+    "activity": "Activity",
+    "activities": "Activities",
+    "name": "Name",
+    "order": "Order",
+    "type": "Type",
+    "description": "Description",
+    "number": "Number",
+    "evaluation": "Evaluation",
+    "observation": "Observation",
+    "practice": "Practice",
+    "theory": "Theory",
+    "procedure": "Procedure",
+    "errorForbidden": "You do not have permission to view this section",
+    "errorLoadData": "Error loading data",
+    "tabs": {
+      "aria": "phases tabs",
+      "activities": "Activities"
+    },
+    "table": {
+      "aria": "activities of phase {{number}}",
+      "order": "Order",
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions",
+      "description": "Description",
+      "empty": "No activities in this phase"
+    },
+    "messages": {
+      "noActivities": "No activities in this phase",
+      "noPhases": "No phases created. Create a new phase to get started.",
+      "created": "{{item}} created successfully",
+      "createError": "Error creating {{item}}",
+      "updated": "{{item}} updated successfully",
+      "updateError": "Error updating {{item}}",
+      "deleted": "{{item}} deleted successfully",
+      "deleteError": "Error deleting {{item}}",
+      "phaseCreated": "Phase created successfully",
+      "phaseCreateError": "Error creating phase",
+      "phaseUpdated": "Phase updated successfully",
+      "phaseUpdateError": "Error updating phase",
+      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
+      "phaseDeleteError": "Error deleting phase",
+      "activityCreated": "Activity created successfully",
+      "activityCreateError": "Error creating activity",
+      "activityUpdated": "Activity updated successfully",
+      "activityUpdateError": "Error updating activity",
+      "activityDeleted": "Activity deleted successfully",
+      "activityDeleteError": "Error deleting activity",
+      "checkProgressError": "Error checking linked progress"
+    },
+    "actions": {
+      "newPhase": "New Phase",
+      "editPhase": "Edit Phase",
+      "deletePhase": "Delete Phase",
+      "newActivity": "New Activity",
+      "editActivity": "Edit Activity",
+      "deleteActivity": "Delete Activity"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "New Phase",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editPhase": {
+        "title": "Edit Phase",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deletePhase": {
+        "title": "Delete Phase",
+        "cancel": "Cancel",
+        "content": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase.",
+        "contentWithProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
+        "hasProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
+        "confirm": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase."
+      },
+      "newActivity": {
+        "title": "New Activity",
+        "create": "Create",
+        "cancel": "Cancel",
+        "content": "Creating activity for the phase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Edit Activity",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteActivity": {
+        "title": "Delete Activity",
+        "cancel": "Cancel",
+        "content": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone.",
+        "contentWithProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users.",
+        "hasProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users.",
+        "confirm": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone."
+      },
+      "createActivity": "Creating activity for the phase: <strong>{{phase}}</strong>"
+    },
+    "empty": "No phases created. Create a new phase to begin."
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalData": "Personal Data",
+    "changePassword": "Change Password",
+    "fields": {
+      "name": "Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "hospital": "Hospital",
+      "society": "Society",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "messages": {
+      "updateSuccess": "Profile updated",
+      "updateError": "Error updating profile",
+      "passwordMismatch": "Passwords do not match",
+      "passwordUpdateSuccess": "Password updated",
+      "passwordUpdateError": "Error changing password"
+    },
+    "buttons": {
+      "changePassword": "Change Password"
+    }
+  },
+  "adminHospitals": {
+    "title": "Hospital Management",
+    "new": "New Hospital",
+    "searchPlaceholder": "Search by Name",
+    "loadError": "Error loading hospitals",
+    "createSuccess": "Hospital created successfully",
+    "createError": "Error creating hospital",
+    "updateSuccess": "Hospital updated successfully",
+    "updateError": "Error updating hospital",
+    "deleteSuccess": "Hospital deleted successfully",
+    "deleteError": "Error deleting hospital",
+    "table": {
+      "aria": "hospitals table",
+      "name": "Name",
+      "city": "City",
+      "province": "Province",
+      "zone": "Zone",
+      "phone": "Phone",
+      "email": "Email",
+      "actions": "Actions"
+    },
+    "fields": {
+      "name": "Name",
+      "numericCode": "Numeric Code",
+      "address": "Address",
+      "city": "City",
+      "province": "Province",
+      "zone": "Zone",
+      "postalCode": "Postal Code",
+      "phone": "Phone",
+      "systemType": "System Type",
+      "email": "Email"
+    },
+    "system": {
+      "other": "Other"
+    },
+    "create": {
+      "title": "New Hospital"
+    },
+    "edit": {
+      "title": "Edit Hospital"
+    },
+    "delete": {
+      "title": "Delete Hospital",
+      "confirm": "Are you sure you want to delete hospital <strong>{{name}}</strong>? {{count}} users and their progress will be removed. This action cannot be undone."
+    }
+  },
+  "adminSocieties": {
+    "title": "Societies Management",
+    "new": "New society",
+    "searchPlaceholder": "Search by name",
+    "table": {
+      "title": "Title",
+      "status": "Status",
+      "convocatoria": "Call",
+      "presentacion": "Presentation",
+      "modOnline": "Online Modules",
+      "simulacion": "Simulation",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hands On",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "dialog": {
+      "editTitle": "Edit Society",
+      "createTitle": "New Society"
+    },
+    "fields": {
+      "titulo": "Title",
+      "status": "Status",
+      "fechaConvocatoria": "Call Date",
+      "fechaPresentacion": "Presentation Date",
+      "fechaModulosOnline": "Online Modules",
+      "fechaSimulacion": "Simulation",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hands On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Manage All Users",
+    "titleHospital": "Users of Your Hospital",
+    "searchPlaceholder": "Search by name or email",
+    "loadError": "Error loading data",
+    "actions": {
+      "create": "Create User",
+      "invite": "Invite User",
+      "edit": "Edit",
+      "delete": "Delete",
+      "changePassword": "Change password",
+      "createProgress": "Create progress"
+    },
+    "createSuccess": "User created successfully",
+    "createError": "Error creating user",
+    "updateSuccess": "User updated successfully",
+    "updateError": "Error updating user",
+    "deleteSuccess": "User deleted successfully",
+    "deleteError": "Error deleting user",
+    "passwordUpdated": "Password updated",
+    "passwordError": "Error updating password",
+    "createProgressSuccess": "Training progress created successfully",
+    "createProgressError": "Error creating progress",
+    "table": {
+      "aria": "users table",
+      "name": "Name",
+      "email": "Email",
+      "type": "Type",
+      "society": "Society",
+      "role": "Role",
+      "hospital": "Hospital",
+      "zone": "Zone",
+      "actions": "Actions"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "name": "Name",
+      "surname": "Surname",
+      "type": "Type",
+      "role": "Role",
+      "hospital": "Hospital",
+      "specialty": "Specialty",
+      "society": "Society",
+      "zone": "Zone"
+    },
+    "create": {
+      "title": "Create User"
+    },
+    "edit": {
+      "title": "Edit User"
+    },
+    "delete": {
+      "title": "Delete User",
+      "confirm": "Are you sure you want to delete user <strong>{{name}}</strong>? This action cannot be undone."
+    },
+    "password": {
+      "title": "Update Password",
+      "label": "New password",
+      "updating": "Updating...",
+      "update": "Update"
+    },
+    "_comment": "Admin user management",
+    "buttons": {
+      "create": "Create User",
+      "creating": "Creating...",
+      "invite": "Invite User",
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "update": "Update",
+      "updating": "Updating..."
+    },
+    "dialogs": {
+      "createTitle": "Create User",
+      "editTitle": "Edit User",
+      "deleteTitle": "Delete User",
+      "passwordTitle": "Update Password",
+      "passwordLabel": "New password",
+      "deleteConfirm": "Are you sure you want to delete user {{name}} {{lastName}}? This action cannot be undone."
+    },
+    "messages": {
+      "loadError": "Error loading data",
+      "userCreated": "User created successfully",
+      "createError": "Error creating user",
+      "userUpdated": "User updated successfully",
+      "updateError": "Error updating user",
+      "userDeleted": "User deleted successfully",
+      "deleteError": "Error deleting user",
+      "passwordUpdated": "Password updated",
+      "passwordError": "Error updating password"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Admin phases for Societies program",
+    "phase": "Phase",
+    "activity": "Activity",
+    "table": {
+      "order": "Order",
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "messages": {
+      "noActivities": "No activities in this phase",
+      "noPhases": "No phases created",
+      "created": "{{item}} created successfully",
+      "createError": "Error creating {{item}}",
+      "updated": "{{item}} updated successfully",
+      "updateError": "Error updating {{item}}",
+      "deleted": "{{item}} deleted successfully",
+      "deleteError": "Error deleting {{item}}",
+      "phaseCreated": "Phase created successfully",
+      "phaseCreateError": "Error creating phase",
+      "phaseUpdated": "Phase updated successfully",
+      "phaseUpdateError": "Error updating phase",
+      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
+      "phaseDeleteError": "Error deleting phase",
+      "activityCreated": "Activity created successfully",
+      "activityCreateError": "Error creating activity",
+      "activityUpdated": "Activity updated successfully",
+      "activityUpdateError": "Error updating activity",
+      "activityDeleted": "Activity deleted successfully",
+      "activityDeleteError": "Error deleting activity",
+      "progressCheckError": "Error checking linked progress"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "New Phase",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editPhase": {
+        "title": "Edit Phase",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deletePhase": {
+        "title": "Delete Phase",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "newActivity": {
+        "title": "New Activity",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editActivity": {
+        "title": "Edit Activity",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteActivity": {
+        "title": "Delete Activity",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "User Progress",
+    "searchPlaceholder": "Search by name or email",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "hospitalSociety": "Hospital/Society",
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "viewProgress": "View Progress"
+  },
+  "adminProgressDetail": {
+    "loadError": "Error loading progress",
+    "phaseUpdateSuccess": "Phase updated successfully",
+    "phaseUpdateError": "Error updating phase",
+    "activityUpdateSuccess": "Activity updated successfully",
+    "activityUpdateError": "Error updating activity",
+    "title": "User Progress",
+    "titleWithName": "Progress of {{name}} {{surname}}",
+    "back": "Back",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "noTitle": "Untitled",
+    "phaseStatusLabel": "Phase status",
+    "activityStatusLabel": "Activity status",
+    "phaseStatus": {
+      "blocked": "Blocked",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "validated": "Validated",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "activityStatus": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
+    "validatedProgress": "Validated progress: {{percent}}%",
+    "noActivityName": "Unnamed activity",
+    "completedOn": "Completed on: {{date}}",
+    "validatedOn": "Validated on: {{date}}",
+    "statusWithValue": "Status: {{status}}",
+    "noProgress": "No progress available."
+  },
+  "trainerUsers": {
+    "title": "My Users",
+    "invite": "Invite User",
+    "edit": "Edit User",
+    "updated": "User updated",
+    "invited": "User invited",
+    "deleted": "User deleted",
+    "error": "Error",
+    "deleteError": "Error deleting",
+    "loadError": "Error loading users",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions",
+      "state": "State"
+    },
+    "form": {
+      "email": "Email",
+      "name": "Name",
+      "surname": "Surname",
+      "role": "Role",
+      "roles": {
+        "resident": "Resident",
+        "trainer": "Trainer"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save",
+      "invite": "Invite"
+    },
+    "_comment": "Trainer user management",
+    "buttons": {
+      "invite": "Invite User",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "delete": "Delete"
+    },
+    "fields": {
+      "email": "Email",
+      "name": "Name",
+      "lastName": "Last Name",
+      "role": "Role"
+    },
+    "roles": {
+      "resident": "Resident",
+      "trainer": "Trainer"
+    },
+    "states": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "dialogs": {
+      "editTitle": "Edit User",
+      "inviteTitle": "Invite User"
+    },
+    "messages": {
+      "loadError": "Error loading users",
+      "updateSuccess": "User updated",
+      "inviteSuccess": "User invited",
+      "deleteSuccess": "User deleted",
+      "deleteError": "Error deleting",
+      "genericError": "Error"
+    }
+  },
+  "trainerValidations": {
+    "title": "Validations",
+    "tabs": {
+      "pending": "Pending",
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "aria": "validations tabs"
+    },
+    "table": {
+      "activity": "Activity",
+      "resident": "Resident",
+      "date": "Date",
+      "comments": "Comments",
+      "actions": "Actions",
+      "status": "Status",
+      "reason": "Reason",
+      "noPhase": "No phase",
+      "noName": "No name",
+      "phase": "Phase",
+      "state": "State"
+    },
+    "empty": {
+      "pending": "No pending validations",
+      "validated": "No completed validations",
+      "rejected": "No rejected validations"
+    },
+    "actions": {
+      "viewAttachment": "View attachment"
+    },
+    "dialog": {
+      "validateTitle": "Validate Activity",
+      "validateMessage": "You are validating the activity {{activity}} of resident {{name}}.",
+      "optionalComments": "Comments (optional)",
+      "digitalSignature": "Digital Signature",
+      "rejectTitle": "Reject Activity",
+      "rejectMessage": "You are rejecting the activity {{activity}} of resident {{name}}.",
+      "rejectReason": "Reason for rejection"
+    },
+    "errorLoad": "Error loading validations",
+    "_comment": "Validations managed by trainers",
+    "buttons": {
+      "viewAttachment": "View attachment",
+      "validate": "Validate",
+      "reject": "Reject",
+      "cancel": "Cancel"
+    },
+    "states": {
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
+    "dialogs": {
+      "validateTitle": "Validate Activity",
+      "rejectTitle": "Reject Activity",
+      "validateConfirm": "You are validating activity {{activity}} for resident {{resident}}.",
+      "rejectConfirm": "You are rejecting activity {{activity}} for resident {{resident}}.",
+      "commentsOptional": "Comments (optional)",
+      "digitalSignature": "Digital Signature",
+      "rejectReason": "Rejection reason",
+      "processing": "Processing..."
+    },
+    "messages": {
+      "loadError": "Error loading validations"
     }
   }
 }
+

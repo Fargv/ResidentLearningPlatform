@@ -32,29 +32,112 @@
     "accessCodes": "Sarbide kodeak",
     "debug": "Arazketa"
   },
+  "adminPhases": {
+    "_comment": "Gestión de fases para administradores",
+    "phase": "Fase",
+    "activity": "Actividad",
+    "activities": "Actividades",
+    "name": "Nombre",
+    "order": "Orden",
+    "type": "Tipo",
+    "description": "Descripción",
+    "number": "Número",
+    "tabs": {
+      "aria": "pestañas de fases",
+      "activities": "Actividades"
+    },
+    "table": {
+      "aria": "actividades de la fase {{number}}",
+      "order": "Orden",
+      "name": "Nombre",
+      "type": "Tipo",
+      "actions": "Acciones",
+      "description": "Descripción",
+      "empty": "No hay actividades en esta fase"
+    },
+    "messages": {
+      "noActivities": "No hay actividades en esta fase",
+      "noPhases": "No hay fases creadas",
+      "created": "{{item}} creada correctamente",
+      "createError": "Error al crear {{item}}",
+      "updated": "{{item}} actualizada correctamente",
+      "updateError": "Error al actualizar {{item}}",
+      "deleted": "{{item}} eliminada correctamente",
+      "deleteError": "Error al eliminar {{item}}",
+      "phaseCreated": "Fase creada correctamente",
+      "phaseCreateError": "Error al crear la fase",
+      "phaseUpdated": "Fase actualizada correctamente",
+      "phaseUpdateError": "Error al actualizar la fase",
+      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados conservados: {{preserved}}",
+      "phaseDeleteError": "Error al eliminar la fase",
+      "activityCreated": "Actividad creada correctamente",
+      "activityCreateError": "Error al crear la actividad",
+      "activityUpdated": "Actividad actualizada correctamente",
+      "activityUpdateError": "Error al actualizar la actividad",
+      "activityDeleted": "Actividad eliminada correctamente",
+      "activityDeleteError": "Error al eliminar la actividad",
+      "checkProgressError": "Error al comprobar el progreso vinculado"
+    },
+    "actions": {
+      "newPhase": "Nueva Fase",
+      "editPhase": "Editar Fase",
+      "deletePhase": "Eliminar Fase",
+      "newActivity": "Nueva Actividad",
+      "editActivity": "Editar Actividad",
+      "deleteActivity": "Eliminar Actividad"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nueva Fase",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "cancel": "Cancelar",
+        "content": "¿Seguro que quieres eliminar la fase <strong>{{name}}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase.",
+        "contentWithProgress": "La fase <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Quieres eliminarla? El progreso validado se conservará.",
+        "hasProgress": "La fase <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Quieres eliminarla? El progreso validado se conservará.",
+        "confirm": "¿Seguro que quieres eliminar la fase <strong>{{name}}</strong>? Esta acción no se puede deshacer y eliminará todas las actividades asociadas a esta fase."
+      },
+      "newActivity": {
+        "title": "Nueva Actividad",
+        "create": "Crear",
+        "cancel": "Cancelar",
+        "content": "Creando actividad para la fase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Editar Actividad",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Actividad",
+        "cancel": "Cancelar",
+        "content": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer.",
+        "contentWithProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
+        "hasProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
+        "confirm": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+      },
+      "createActivity": "Creando actividad para la fase: <strong>{{phase}}</strong>"
+    },
+    "evaluation": "Evaluación",
+    "observation": "Observación",
+    "practice": "Práctica",
+    "theory": "Teórica",
+    "procedure": "Procedimiento",
+    "errorForbidden": "No tienes permisos para ver esta sección",
+    "errorLoadData": "Error al cargar los datos",
+    "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
+  },
   "progressByPhase": "Fasearen araberako aurrerapena",
   "close": "Itxi",
   "devWarning": "⚠️ GARAPEN INGURUNEA ZAUDE ⚠️",
-  "brand": {
-    "name": "Abex Robotikako Bikaintasuna"
-  },
-  "regions": {
-    "andalucia": "ANDALUZIA"
-  },
-  "status": {
-    "pendingValidation": "Balidazioaren zain",
-    "validado": "Balidatuta",
-    "rechazado": "Baztertuta",
-    "completado": "Osatuta",
-    "pendiente": "Zain",
-    "noCompletada": "Osatu gabe",
-    "enProgreso": "Prozesuan",
-    "bloqueada": "Blokeatuta",
-    "active": "Aktibo",
-    "inactive": "Inaktibo",
-    "validated": "Balidatuta",
-    "rejected": "Baztertuta"
-  },
   "register": {
     "title": "Erregistroa",
     "accessCode": "Sarbide kodea",
@@ -86,6 +169,68 @@
     "consentSuffix": " eta DBEO betetzen dut.",
     "registerButton": "Erregistratu"
   },
+  "society": {
+    "convocatoria": {
+      "label": "Convocatoria",
+      "intro": "Inicio del proceso de convocatoria.",
+      "item1": "Envío de invitaciones",
+      "item2": "Recepción de solicitudes"
+    },
+    "presentacion": {
+      "label": "Presentación",
+      "intro": "Sesión de presentación del programa.",
+      "item1": "Introducción al programa",
+      "item2": "Presentación de instructores"
+    },
+    "modOnline": {
+      "label": "Mod. Online",
+      "intro": "Módulos formativos online.",
+      "item1": "Acceso a la plataforma",
+      "item2": "Contenido teórico"
+    },
+    "simulacion": {
+      "label": "Simulación",
+      "intro": "Prácticas de simulación.",
+      "item1": "Sesiones prácticas",
+      "item2": "Evaluación de destrezas"
+    },
+    "firstAssistant": {
+      "label": "First Assistant",
+      "intro": "Actividades como primer asistente.",
+      "item1": "Participación en quirófanos",
+      "item2": "Registro de actividades"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Procedimientos Step By Step.",
+      "item1": "Material de apoyo",
+      "item2": "Revisión guiada"
+    },
+    "handsOn": {
+      "label": "Hand On",
+      "intro": "Entrenamiento práctico Hands On.",
+      "item1": "Práctica intensiva",
+      "item2": "Retroalimentación personalizada"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparación Inicial",
+      "description": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formación Preclínica",
+      "description": "Ejercicios de simulación y entrenamientos en entorno seguro."
+    },
+    "phase3": {
+      "label": "Fase 3 - Asistencia Quirúrgica",
+      "description": "Participación como asistente en quirófano."
+    },
+    "phase4": {
+      "label": "Fase 4 - Cirugía en Consola",
+      "description": "Procedimientos realizados por el residente con supervisión."
+    }
+  },
   "common": {
     "cancel": "Utzi",
     "create": "Sortu",
@@ -98,6 +243,329 @@
     "validate": "Balidatu",
     "reject": "Baztertu",
     "processing": "Prozesatzen..."
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "personalData": "Datos personales",
+    "changePassword": "Cambiar Contraseña",
+    "fields": {
+      "name": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Email",
+      "hospital": "Hospital",
+      "society": "Sociedad",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña"
+    },
+    "messages": {
+      "updateSuccess": "Perfil actualizado",
+      "updateError": "Error al actualizar el perfil",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "passwordUpdateSuccess": "Contraseña actualizada",
+      "passwordUpdateError": "Error al cambiar la contraseña"
+    },
+    "buttons": {
+      "changePassword": "Cambiar Contraseña"
+    }
+  },
+  "adminHospitals": {
+    "title": "Gestión de Hospitales",
+    "new": "Nuevo Hospital",
+    "searchPlaceholder": "Buscar por Nombre",
+    "loadError": "Error al cargar los hospitales",
+    "createSuccess": "Hospital creado correctamente",
+    "createError": "Error al crear el hospital",
+    "updateSuccess": "Hospital actualizado correctamente",
+    "updateError": "Error al actualizar el hospital",
+    "deleteSuccess": "Hospital eliminado correctamente",
+    "deleteError": "Error al eliminar el hospital",
+    "table": {
+      "aria": "tabla de hospitales",
+      "name": "Nombre",
+      "city": "Ciudad",
+      "province": "Provincia",
+      "zone": "Zona",
+      "phone": "Teléfono",
+      "email": "Email",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "name": "Nombre",
+      "numericCode": "Código Numérico",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "province": "Provincia",
+      "zone": "Zona",
+      "postalCode": "Código Postal",
+      "phone": "Teléfono",
+      "systemType": "Tipo de Sistema",
+      "email": "Email"
+    },
+    "system": {
+      "other": "Otro"
+    },
+    "create": {
+      "title": "Nuevo Hospital"
+    },
+    "edit": {
+      "title": "Editar Hospital"
+    },
+    "delete": {
+      "title": "Eliminar Hospital",
+      "confirm": "¿Estás seguro de que deseas eliminar el hospital <strong>{{name}}</strong>? Se eliminarán {{count}} usuarios y sus progresos. Esta acción no se puede deshacer."
+    }
+  },
+  "adminSocieties": {
+    "title": "Gestión de Sociedades",
+    "new": "Nueva sociedad",
+    "searchPlaceholder": "Buscar por nombre",
+    "table": {
+      "title": "Título",
+      "status": "Estado",
+      "convocatoria": "Convocatoria",
+      "presentacion": "Presentación",
+      "modOnline": "Mod. Online",
+      "simulacion": "Simulación",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hand On",
+      "actions": "Acciones"
+    },
+    "buttons": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "dialog": {
+      "editTitle": "Editar Sociedad",
+      "createTitle": "Nueva Sociedad"
+    },
+    "fields": {
+      "titulo": "Título",
+      "status": "Estado",
+      "fechaConvocatoria": "Fecha de convocatoria",
+      "fechaPresentacion": "Fecha de presentación",
+      "fechaModulosOnline": "Módulos online",
+      "fechaSimulacion": "Simulación",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hand On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Gestión de Todos los Usuarios",
+    "titleHospital": "Usuarios de Tu Hospital",
+    "searchPlaceholder": "Buscar por nombre o email",
+    "loadError": "Error al cargar los datos",
+    "actions": {
+      "create": "Crear Usuario",
+      "invite": "Invitar Usuario",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "changePassword": "Cambiar contraseña",
+      "createProgress": "Crear progreso"
+    },
+    "createSuccess": "Usuario creado correctamente",
+    "createError": "Error al crear el usuario",
+    "updateSuccess": "Usuario actualizado correctamente",
+    "updateError": "Error al actualizar el usuario",
+    "deleteSuccess": "Usuario eliminado correctamente",
+    "deleteError": "Error al eliminar el usuario",
+    "passwordUpdated": "Contraseña actualizada",
+    "passwordError": "Error al actualizar la contraseña",
+    "createProgressSuccess": "Progreso formativo creado con éxito",
+    "createProgressError": "Error al crear el progreso",
+    "table": {
+      "aria": "tabla de usuarios",
+      "name": "Nombre",
+      "email": "Email",
+      "type": "Tipo",
+      "society": "Sociedad",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "zone": "Zona",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Contraseña",
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "type": "Tipo",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "specialty": "Especialidad",
+      "society": "Sociedad",
+      "zone": "Zona"
+    },
+    "create": {
+      "title": "Crear Usuario"
+    },
+    "edit": {
+      "title": "Editar Usuario"
+    },
+    "delete": {
+      "title": "Eliminar Usuario",
+      "confirm": "¿Estás seguro de que deseas eliminar al usuario <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+    },
+    "password": {
+      "title": "Actualizar Contraseña",
+      "label": "Nueva contraseña",
+      "updating": "Actualizando...",
+      "update": "Actualizar"
+    },
+    "_comment": "Gestión de usuarios para administradores",
+    "buttons": {
+      "create": "Crear Usuario",
+      "creating": "Creando...",
+      "invite": "Invitar Usuario",
+      "cancel": "Cancelar",
+      "save": "Guardar Cambios",
+      "saving": "Guardando...",
+      "delete": "Eliminar",
+      "deleting": "Eliminando...",
+      "update": "Actualizar",
+      "updating": "Actualizando..."
+    },
+    "dialogs": {
+      "createTitle": "Crear Usuario",
+      "editTitle": "Editar Usuario",
+      "deleteTitle": "Eliminar Usuario",
+      "passwordTitle": "Actualizar Contraseña",
+      "passwordLabel": "Nueva contraseña",
+      "deleteConfirm": "¿Estás seguro de que deseas eliminar al usuario {{name}} {{lastName}}? Esta acción no se puede deshacer."
+    },
+    "messages": {
+      "loadError": "Error al cargar los datos",
+      "userCreated": "Usuario creado correctamente",
+      "createError": "Error al crear el usuario",
+      "userUpdated": "Usuario actualizado correctamente",
+      "updateError": "Error al actualizar el usuario",
+      "userDeleted": "Usuario eliminado correctamente",
+      "deleteError": "Error al eliminar el usuario",
+      "passwordUpdated": "Contraseña actualizada",
+      "passwordError": "Error al actualizar la contraseña"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Gestión de fases para el programa de Sociedades",
+    "phase": "Fase",
+    "activity": "Actividad",
+    "table": {
+      "order": "Orden",
+      "name": "Nombre",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "messages": {
+      "noActivities": "No hay actividades en esta fase",
+      "noPhases": "No hay fases creadas",
+      "created": "{{item}} creada correctamente",
+      "createError": "Error al crear {{item}}",
+      "updated": "{{item}} actualizada correctamente",
+      "updateError": "Error al actualizar {{item}}",
+      "deleted": "{{item}} eliminada correctamente",
+      "deleteError": "Error al eliminar {{item}}",
+      "phaseCreated": "Fase creada correctamente",
+      "phaseCreateError": "Error al crear la fase",
+      "phaseUpdated": "Fase actualizada correctamente",
+      "phaseUpdateError": "Error al actualizar la fase",
+      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados preservados: {{preserved}}",
+      "phaseDeleteError": "Error al eliminar la fase",
+      "activityCreated": "Actividad creada correctamente",
+      "activityCreateError": "Error al crear la actividad",
+      "activityUpdated": "Actividad actualizada correctamente",
+      "activityUpdateError": "Error al actualizar la actividad",
+      "activityDeleted": "Actividad eliminada correctamente",
+      "activityDeleteError": "Error al eliminar la actividad",
+      "progressCheckError": "Error al comprobar progresos vinculados"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nueva Fase",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      },
+      "newActivity": {
+        "title": "Nueva Actividad",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editActivity": {
+        "title": "Editar Actividad",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Actividad",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "Progreso de Usuarios",
+    "searchPlaceholder": "Buscar por nombre o email",
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "hospitalSociety": "Hospital/Sociedad",
+      "role": "Rol",
+      "actions": "Acciones"
+    },
+    "viewProgress": "Ver Progreso"
+  },
+  "adminProgressDetail": {
+    "loadError": "Error al cargar el progreso",
+    "phaseUpdateSuccess": "Fase actualizada correctamente",
+    "phaseUpdateError": "Error al actualizar la fase",
+    "activityUpdateSuccess": "Actividad actualizada correctamente",
+    "activityUpdateError": "Error al actualizar actividad",
+    "title": "Progreso del Usuario",
+    "titleWithName": "Progreso de {{name}} {{surname}}",
+    "back": "Atrás",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "noTitle": "Sin título",
+    "phaseStatusLabel": "Estado fase",
+    "activityStatusLabel": "Estado actividad",
+    "phaseStatus": {
+      "blocked": "Bloqueada",
+      "inProgress": "En progreso",
+      "completed": "Completado",
+      "validated": "Validado",
+      "pending": "Pendiente",
+      "rejected": "Rechazado"
+    },
+    "activityStatus": {
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "validatedProgress": "Progreso validado: {{percent}}%",
+    "noActivityName": "Actividad sin nombre",
+    "completedOn": "Fecha completada: {{date}}",
+    "validatedOn": "Validado el: {{date}}",
+    "statusWithValue": "Estado: {{status}}",
+    "noProgress": "No hay progreso disponible."
+  },
+  "brand": {
+    "name": "Abex Robotikako Bikaintasuna"
+  },
+  "regions": {
+    "andalucia": "ANDALUZIA"
   },
   "auth": {
     "login": "Hasi saioa",
@@ -135,6 +603,24 @@
     "copyright": "© {{year}} Abex Robotikako Bikaintasuna",
     "poweredBy": "FARGV garatua",
     "logoAlt": "Abex Robotikako Bikaintasuna"
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestión de Todos los Usuarios",
+    "noPermissions": "No tienes permisos para ver esta sección"
+  },
+  "forms": {
+    "code": "Código",
+    "numericCode": "Código Numérico",
+    "postalCode": "Código Postal",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "description": "Descripción",
+    "number": "Número",
+    "title": "Título",
+    "completionDate": "Fecha de realización",
+    "selectDate": "Selecciona una fecha de realización",
+    "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+    "fileTooLarge": "El archivo supera el tamaño máximo de 5MB."
   },
   "types": {
     "theoretical": "Teorikoa",
@@ -184,21 +670,141 @@
     "errorDelete": "Errorea kodea ezabatzean",
     "errorSave": "Errorea kodea gordetzean"
   },
+  "trainerUsers": {
+    "title": "Mis Usuarios",
+    "invite": "Invitar Usuario",
+    "edit": "Editar Usuario",
+    "updated": "Usuario actualizado",
+    "invited": "Usuario invitado",
+    "deleted": "Usuario eliminado",
+    "error": "Error",
+    "deleteError": "Error al eliminar",
+    "loadError": "Error al cargar usuarios",
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "status": "Estado",
+      "actions": "Acciones",
+      "state": "Estado"
+    },
+    "form": {
+      "email": "Email",
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "role": "Rol",
+      "roles": {
+        "resident": "Residente",
+        "trainer": "Formador"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+      "save": "Guardar",
+      "invite": "Invitar"
+    },
+    "_comment": "Gestión de usuarios para formadores",
+    "buttons": {
+      "invite": "Invitar Usuario",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "delete": "Eliminar"
+    },
+    "fields": {
+      "email": "Email",
+      "name": "Nombre",
+      "lastName": "Apellidos",
+      "role": "Rol"
+    },
+    "roles": {
+      "resident": "Residente",
+      "trainer": "Formador"
+    },
+    "states": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "dialogs": {
+      "editTitle": "Editar Usuario",
+      "inviteTitle": "Invitar Usuario"
+    },
+    "messages": {
+      "loadError": "Error al cargar usuarios",
+      "updateSuccess": "Usuario actualizado",
+      "inviteSuccess": "Usuario invitado",
+      "deleteSuccess": "Usuario eliminado",
+      "deleteError": "Error al eliminar",
+      "genericError": "Error"
+    }
+  },
   "progress": {
     "createSuccess": "Prestakuntza aurrerapena ondo sortu da"
   },
-  "emails": {
-    "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
-  },
-  "debug": {
-    "tokenValid": "✅ Token baliozkoa eta deskodetua",
-    "tokenInvalid": "❌ Token baliogabea edo hondatuta"
-  },
-  "residentProgress": {
-    "title": "Nire aurrerapena",
-    "errorLoad": "Errorea aurrerapena kargatzean",
-    "downloadError": "Errorea ziurtagiria deskargatzean",
-    "downloadCertificate": "Deskargatu ziurtagiria"
+  "trainerValidations": {
+    "title": "Validaciones",
+    "tabs": {
+      "pending": "Pendientes ({{count}})",
+      "validated": "Validadas ({{count}})",
+      "rejected": "Rechazadas ({{count}})",
+      "aria": "pestañas de validaciones"
+    },
+    "table": {
+      "activity": "Actividad",
+      "resident": "Residente",
+      "date": "Fecha",
+      "comments": "Comentarios",
+      "actions": "Acciones",
+      "status": "Estado",
+      "reason": "Motivo",
+      "noPhase": "Sin fase",
+      "noName": "Sin nombre",
+      "phase": "Fase",
+      "state": "Estado"
+    },
+    "empty": {
+      "pending": "No hay validaciones pendientes",
+      "validated": "No hay validaciones completadas",
+      "rejected": "No hay validaciones rechazadas"
+    },
+    "actions": {
+      "viewAttachment": "Ver adjunto"
+    },
+    "dialog": {
+      "validateTitle": "Validar Actividad",
+      "validateMessage": "Estás validando la actividad {{activity}} del residente {{name}}.",
+      "optionalComments": "Comentarios (opcional)",
+      "digitalSignature": "Firma Digital",
+      "rejectTitle": "Rechazar Actividad",
+      "rejectMessage": "Estás rechazando la actividad {{activity}} del residente {{name}}.",
+      "rejectReason": "Motivo del rechazo"
+    },
+    "errorLoad": "Error al cargar las validaciones",
+    "_comment": "Validaciones gestionadas por formadores",
+    "buttons": {
+      "viewAttachment": "Ver adjunto",
+      "validate": "Validar",
+      "reject": "Rechazar",
+      "cancel": "Cancelar"
+    },
+    "states": {
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "dialogs": {
+      "validateTitle": "Validar Actividad",
+      "rejectTitle": "Rechazar Actividad",
+      "validateConfirm": "Estás validando la actividad {{activity}} del residente {{resident}}.",
+      "rejectConfirm": "Estás rechazando la actividad {{activity}} del residente {{resident}}.",
+      "commentsOptional": "Comentarios (opcional)",
+      "digitalSignature": "Firma Digital",
+      "rejectReason": "Motivo del rechazo",
+      "processing": "Procesando..."
+    },
+    "messages": {
+      "loadError": "Error al cargar las validaciones"
+    }
   },
   "residentPhases": {
     "title": "Nire prestakuntza faseak",
@@ -237,6 +843,7 @@
       "title": "Markatu jarduera osatutzat",
       "date": "Osatze data"
     },
+    "_comment": "Fases y actividades para residentes",
     "messages": {
       "noActivities": "Ez dago jarduerarik eskuragarri",
       "blocked": "Fasea blokeatuta",
@@ -261,5 +868,32 @@
       "pending": "Balidazioaren zain",
       "notCompleted": "Osatu gabe"
     }
+  },
+  "residentProgress": {
+    "title": "Nire aurrerapena",
+    "errorLoad": "Errorea aurrerapena kargatzean",
+    "downloadError": "Errorea ziurtagiria deskargatzean",
+    "downloadCertificate": "Deskargatu ziurtagiria"
+  },
+  "emails": {
+    "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
+  },
+  "debug": {
+    "tokenValid": "✅ Token baliozkoa eta deskodetua",
+    "tokenInvalid": "❌ Token baliogabea edo hondatuta"
+  },
+  "status": {
+    "pendingValidation": "Balidazioaren zain",
+    "validado": "Balidatuta",
+    "rechazado": "Baztertuta",
+    "completado": "Osatuta",
+    "pendiente": "Zain",
+    "noCompletada": "Osatu gabe",
+    "enProgreso": "Prozesuan",
+    "bloqueada": "Blokeatuta",
+    "active": "Aktibo",
+    "inactive": "Inaktibo",
+    "validated": "Balidatuta",
+    "rejected": "Baztertuta"
   }
 }
