@@ -31,6 +31,109 @@
     "users": "Utenti",
     "accessCodes": "Codici di accesso",
     "debug": "Debug"
+ },
+  "adminPhases": {
+    "_comment": "Gestione delle fasi per amministratori",
+    "phase": "Fase",
+    "activity": "Attività",
+    "activities": "Attività",
+    "name": "Nome",
+    "order": "Ordine",
+    "type": "Tipo",
+    "description": "Descrizione",
+    "number": "Numero",
+    "evaluation": "Valutazione",
+    "observation": "Osservazione",
+    "practice": "Pratica",
+    "theory": "Teoria",
+    "procedure": "Procedura",
+    "errorForbidden": "Non hai i permessi per vedere questa sezione",
+    "errorLoadData": "Errore nel caricamento dei dati",
+    "tabs": {
+      "aria": "schede delle fasi",
+      "activities": "Attività"
+    },
+    "table": {
+      "aria": "attività della fase {{number}}",
+      "order": "Ordine",
+      "name": "Nome",
+      "type": "Tipo",
+      "actions": "Azioni",
+      "description": "Descrizione",
+      "empty": "Nessuna attività in questa fase"
+    },
+    "messages": {
+      "noActivities": "Nessuna attività in questa fase",
+      "noPhases": "Nessuna fase creata. Crea una nuova fase per iniziare.",
+      "created": "{{item}} creata correttamente",
+      "createError": "Errore nella creazione di {{item}}",
+      "updated": "{{item}} aggiornata correttamente",
+      "updateError": "Errore nell'aggiornamento di {{item}}",
+      "deleted": "{{item}} eliminata correttamente",
+      "deleteError": "Errore nell'eliminazione di {{item}}",
+      "phaseCreated": "Fase creata correttamente",
+      "phaseCreateError": "Errore nella creazione della fase",
+      "phaseUpdated": "Fase aggiornata correttamente",
+      "phaseUpdateError": "Errore nell'aggiornamento della fase",
+      "phaseDeleted": "Fase eliminata correttamente. Progressi rimossi: {{removed}}. Validati conservati: {{preserved}}",
+      "phaseDeleteError": "Errore nell'eliminazione della fase",
+      "activityCreated": "Attività creata correttamente",
+      "activityCreateError": "Errore nella creazione dell'attività",
+      "activityUpdated": "Attività aggiornata correttamente",
+      "activityUpdateError": "Errore nell'aggiornamento dell'attività",
+      "activityDeleted": "Attività eliminata correttamente",
+      "activityDeleteError": "Errore nell'eliminazione dell'attività",
+      "checkProgressError": "Errore nel controllo del progresso collegato"
+    },
+    "actions": {
+      "newPhase": "Nuova fase",
+      "editPhase": "Modifica fase",
+      "deletePhase": "Elimina fase",
+      "newActivity": "Nuova attività",
+      "editActivity": "Modifica attività",
+      "deleteActivity": "Elimina attività"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nuova fase",
+        "create": "Crea",
+        "cancel": "Annulla"
+      },
+      "editPhase": {
+        "title": "Modifica fase",
+        "save": "Salva",
+        "cancel": "Annulla"
+      },
+      "deletePhase": {
+        "title": "Elimina fase",
+        "cancel": "Annulla",
+        "content": "Sei sicuro di voler eliminare la fase <strong>{{name}}</strong>? Questa azione non può essere annullata e rimuoverà tutte le attività associate a questa fase.",
+        "contentWithProgress": "La fase <strong>{{name}}</strong> ha <strong>{{count}}</strong> registrazioni di progresso. Vuoi eliminarla? Il progresso validato sarà conservato.",
+        "hasProgress": "La fase <strong>{{name}}</strong> ha <strong>{{count}}</strong> registrazioni di progresso. Vuoi eliminarla? Il progresso validato sarà conservato.",
+        "confirm": "Sei sicuro di voler eliminare la fase <strong>{{name}}</strong>? Questa azione non può essere annullata e rimuoverà tutte le attività associate a questa fase."
+      },
+      "newActivity": {
+        "title": "Nuova attività",
+        "create": "Crea",
+        "cancel": "Annulla",
+        "content": "Creazione attività per la fase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Modifica attività",
+        "save": "Salva",
+        "cancel": "Annulla"
+      },
+      "deleteActivity": {
+        "title": "Elimina attività",
+        "cancel": "Annulla",
+        "content": "Sei sicuro di voler eliminare l'attività <strong>{{name}}</strong>? Questa azione non può essere annullata.",
+        "contentWithProgress": "L'attività <strong>{{name}}</strong> ha <strong>{{count}}</strong> registrazioni di progresso. Sei sicuro di volerla eliminare? Questo rimuoverà anche quei progressi da tutti gli utenti.",
+        "hasProgress": "L'attività <strong>{{name}}</strong> ha <strong>{{count}}</strong> registrazioni di progresso. Sei sicuro di volerla eliminare? Questo rimuoverà anche quei progressi da tutti gli utenti.",
+        "confirm": "Sei sicuro di voler eliminare l'attività <strong>{{name}}</strong>? Questa azione non può essere annullata."
+      },
+      "createActivity": "Creazione attività per la fase: <strong>{{phase}}</strong>"
+    },
+    "empty": "Nessuna fase creata. Crea una nuova fase per iniziare."
   },
   "progressByPhase": "Progresso per fase",
   "close": "Chiudi",
@@ -346,7 +449,451 @@
       "inviteSuccess": "Utente invitato",
       "deleteSuccess": "Utente eliminato",
       "deleteError": "Errore durante l'eliminazione",
-      "genericError": "Errore"
+       "genericError": "Errore"
+    }
+  },
+  "profile": {
+    "title": "Il mio profilo",
+    "personalData": "Dati personali",
+    "changePassword": "Cambia password",
+    "fields": {
+      "name": "Nome",
+      "lastName": "Cognome",
+      "email": "Email",
+      "hospital": "Ospedale",
+      "society": "Società",
+      "currentPassword": "Password attuale",
+      "newPassword": "Nuova password",
+      "confirmPassword": "Conferma password"
+    },
+    "messages": {
+      "updateSuccess": "Profilo aggiornato",
+      "updateError": "Errore nell'aggiornamento del profilo",
+      "passwordMismatch": "Le password non corrispondono",
+      "passwordUpdateSuccess": "Password aggiornata",
+      "passwordUpdateError": "Errore nel cambio della password"
+    },
+    "buttons": {
+      "changePassword": "Cambia password"
+    }
+  },
+  "adminHospitals": {
+    "title": "Gestione ospedali",
+    "new": "Nuovo ospedale",
+    "searchPlaceholder": "Cerca per nome",
+    "loadError": "Errore nel caricamento degli ospedali",
+    "createSuccess": "Ospedale creato correttamente",
+    "createError": "Errore nella creazione dell'ospedale",
+    "updateSuccess": "Ospedale aggiornato correttamente",
+    "updateError": "Errore nell'aggiornamento dell'ospedale",
+    "deleteSuccess": "Ospedale eliminato correttamente",
+    "deleteError": "Errore nell'eliminazione dell'ospedale",
+    "table": {
+      "aria": "tabella ospedali",
+      "name": "Nome",
+      "city": "Città",
+      "province": "Provincia",
+      "zone": "Zona",
+      "phone": "Telefono",
+      "email": "Email",
+      "actions": "Azioni"
+    },
+    "fields": {
+      "name": "Nome",
+      "numericCode": "Codice numerico",
+      "address": "Indirizzo",
+      "city": "Città",
+      "province": "Provincia",
+      "zone": "Zona",
+      "postalCode": "Codice postale",
+      "phone": "Telefono",
+      "systemType": "Tipo di sistema",
+      "email": "Email"
+    },
+    "system": {
+      "other": "Altro"
+    },
+    "create": {
+      "title": "Nuovo ospedale"
+    },
+    "edit": {
+      "title": "Modifica ospedale"
+    },
+    "delete": {
+      "title": "Elimina ospedale",
+      "confirm": "Sei sicuro di voler eliminare l'ospedale <strong>{{name}}</strong>? Verranno rimossi {{count}} utenti e i loro progressi. Questa azione non può essere annullata."
+    }
+  },
+  "adminSocieties": {
+    "title": "Gestione società",
+    "new": "Nuova società",
+    "searchPlaceholder": "Cerca per nome",
+    "table": {
+      "title": "Titolo",
+      "status": "Stato",
+      "convocatoria": "Convocazione",
+      "presentacion": "Presentazione",
+      "modOnline": "Moduli online",
+      "simulacion": "Simulazione",
+      "firstAssistant": "Primo assistente",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hands On",
+      "actions": "Azioni"
+    },
+    "buttons": {
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "cancel": "Annulla",
+      "save": "Salva"
+    },
+    "dialog": {
+      "editTitle": "Modifica società",
+      "createTitle": "Nuova società"
+    },
+    "fields": {
+      "titulo": "Titolo",
+      "status": "Stato",
+      "fechaConvocatoria": "Data convocazione",
+      "fechaPresentacion": "Data presentazione",
+      "fechaModulosOnline": "Moduli online",
+      "fechaSimulacion": "Simulazione",
+      "fechaAtividadesFirstAssistant": "Primo assistente",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hands On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Gestione di tutti gli utenti",
+    "titleHospital": "Utenti del tuo ospedale",
+    "searchPlaceholder": "Cerca per nome o email",
+    "loadError": "Errore nel caricamento dei dati",
+    "actions": {
+      "create": "Crea utente",
+      "invite": "Invita utente",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "changePassword": "Cambia password",
+      "createProgress": "Crea progresso"
+    },
+    "createSuccess": "Utente creato correttamente",
+    "createError": "Errore nella creazione dell'utente",
+    "updateSuccess": "Utente aggiornato correttamente",
+    "updateError": "Errore nell'aggiornamento dell'utente",
+    "deleteSuccess": "Utente eliminato correttamente",
+    "deleteError": "Errore nell'eliminazione dell'utente",
+    "passwordUpdated": "Password aggiornata",
+    "passwordError": "Errore nell'aggiornamento della password",
+    "createProgressSuccess": "Progresso formativo creato correttamente",
+    "createProgressError": "Errore nella creazione del progresso",
+    "table": {
+      "aria": "tabella utenti",
+      "name": "Nome",
+      "email": "Email",
+      "type": "Tipo",
+      "society": "Società",
+      "role": "Ruolo",
+      "hospital": "Ospedale",
+      "zone": "Zona",
+      "actions": "Azioni"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "name": "Nome",
+      "surname": "Cognome",
+      "type": "Tipo",
+      "role": "Ruolo",
+      "hospital": "Ospedale",
+      "specialty": "Specializzazione",
+      "society": "Società",
+      "zone": "Zona"
+    },
+    "create": {
+      "title": "Crea utente"
+    },
+    "edit": {
+      "title": "Modifica utente"
+    },
+    "delete": {
+      "title": "Elimina utente",
+      "confirm": "Sei sicuro di voler eliminare l'utente <strong>{{name}}</strong>? Questa azione non può essere annullata."
+    },
+    "password": {
+      "title": "Aggiorna password",
+      "label": "Nuova password",
+      "updating": "Aggiornamento...",
+      "update": "Aggiorna"
+    },
+    "_comment": "Gestione utenti per amministratori",
+    "buttons": {
+      "create": "Crea utente",
+      "creating": "Creazione...",
+      "invite": "Invita utente",
+      "cancel": "Annulla",
+      "save": "Salva modifiche",
+      "saving": "Salvataggio...",
+      "delete": "Elimina",
+      "deleting": "Eliminazione...",
+      "update": "Aggiorna",
+      "updating": "Aggiornamento..."
+    },
+    "dialogs": {
+      "createTitle": "Crea utente",
+      "editTitle": "Modifica utente",
+      "deleteTitle": "Elimina utente",
+      "passwordTitle": "Aggiorna password",
+      "passwordLabel": "Nuova password",
+      "deleteConfirm": "Sei sicuro di voler eliminare l'utente {{name}} {{lastName}}? Questa azione non può essere annullata."
+    },
+    "messages": {
+      "loadError": "Errore nel caricamento dei dati",
+      "userCreated": "Utente creato correttamente",
+      "createError": "Errore nella creazione dell'utente",
+      "userUpdated": "Utente aggiornato correttamente",
+      "updateError": "Errore nell'aggiornamento dell'utente",
+      "userDeleted": "Utente eliminato correttamente",
+      "deleteError": "Errore nell'eliminazione dell'utente",
+      "passwordUpdated": "Password aggiornata",
+      "passwordError": "Errore nell'aggiornamento della password"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Gestione delle fasi per il programma Società",
+    "phase": "Fase",
+    "activity": "Attività",
+    "table": {
+      "order": "Ordine",
+      "name": "Nome",
+      "type": "Tipo",
+      "actions": "Azioni"
+    },
+    "messages": {
+      "noActivities": "Nessuna attività in questa fase",
+      "noPhases": "Nessuna fase creata",
+      "created": "{{item}} creata correttamente",
+      "createError": "Errore nella creazione di {{item}}",
+      "updated": "{{item}} aggiornata correttamente",
+      "updateError": "Errore nell'aggiornamento di {{item}}",
+      "deleted": "{{item}} eliminata correttamente",
+      "deleteError": "Errore nell'eliminazione di {{item}}",
+      "phaseCreated": "Fase creata correttamente",
+      "phaseCreateError": "Errore nella creazione della fase",
+      "phaseUpdated": "Fase aggiornata correttamente",
+      "phaseUpdateError": "Errore nell'aggiornamento della fase",
+      "phaseDeleted": "Fase eliminata correttamente. Progressi rimossi: {{removed}}. Validati conservati: {{preserved}}",
+      "phaseDeleteError": "Errore nell'eliminazione della fase",
+      "activityCreated": "Attività creata correttamente",
+      "activityCreateError": "Errore nella creazione dell'attività",
+      "activityUpdated": "Attività aggiornata correttamente",
+      "activityUpdateError": "Errore nell'aggiornamento dell'attività",
+      "activityDeleted": "Attività eliminata correttamente",
+      "activityDeleteError": "Errore nell'eliminazione dell'attività",
+      "progressCheckError": "Errore nel controllo del progresso collegato"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nuova fase",
+        "create": "Crea",
+        "cancel": "Annulla"
+      },
+      "editPhase": {
+        "title": "Modifica fase",
+        "save": "Salva",
+        "cancel": "Annulla"
+      },
+      "deletePhase": {
+        "title": "Elimina fase",
+        "confirm": "Elimina",
+        "cancel": "Annulla"
+      },
+      "newActivity": {
+        "title": "Nuova attività",
+        "create": "Crea",
+        "cancel": "Annulla"
+      },
+      "editActivity": {
+        "title": "Modifica attività",
+        "save": "Salva",
+        "cancel": "Annulla"
+      },
+      "deleteActivity": {
+        "title": "Elimina attività",
+        "confirm": "Elimina",
+        "cancel": "Annulla"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "Progresso utenti",
+    "searchPlaceholder": "Cerca per nome o email",
+    "table": {
+      "name": "Nome",
+      "email": "Email",
+      "hospitalSociety": "Ospedale/Società",
+      "role": "Ruolo",
+      "actions": "Azioni"
+    },
+    "viewProgress": "Vedi progresso"
+  },
+  "adminProgressDetail": {
+    "loadError": "Errore nel caricamento del progresso",
+    "phaseUpdateSuccess": "Fase aggiornata correttamente",
+    "phaseUpdateError": "Errore nell'aggiornamento della fase",
+    "activityUpdateSuccess": "Attività aggiornata correttamente",
+    "activityUpdateError": "Errore nell'aggiornamento dell'attività",
+    "title": "Progresso utente",
+    "titleWithName": "Progresso di {{name}} {{surname}}",
+    "back": "Indietro",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "noTitle": "Senza titolo",
+    "phaseStatusLabel": "Stato della fase",
+    "activityStatusLabel": "Stato dell'attività",
+    "phaseStatus": {
+      "blocked": "Bloccata",
+      "inProgress": "In corso",
+      "completed": "Completata",
+      "validated": "Validata",
+      "pending": "In sospeso",
+      "rejected": "Respinta"
+    },
+    "activityStatus": {
+      "pending": "In sospeso",
+      "completed": "Completata",
+      "validated": "Validata",
+      "rejected": "Respinta"
+    },
+    "validatedProgress": "Progresso validato: {{percent}}%",
+    "noActivityName": "Attività senza nome",
+    "completedOn": "Completata il: {{date}}",
+    "validatedOn": "Validata il: {{date}}",
+    "statusWithValue": "Stato: {{status}}",
+    "noProgress": "Nessun progresso disponibile."
+  },
+  "trainerValidations": {
+    "title": "Validazioni",
+    "tabs": {
+      "pending": "In sospeso",
+      "validated": "Validate",
+      "rejected": "Respinte",
+      "aria": "schede delle validazioni"
+    },
+    "table": {
+      "activity": "Attività",
+      "resident": "Residente",
+      "date": "Data",
+      "comments": "Commenti",
+      "actions": "Azioni",
+      "status": "Stato",
+      "reason": "Motivo",
+      "noPhase": "Nessuna fase",
+      "noName": "Senza nome",
+      "phase": "Fase",
+      "state": "Stato"
+    },
+    "empty": {
+      "pending": "Nessuna validazione in sospeso",
+      "validated": "Nessuna validazione completata",
+      "rejected": "Nessuna validazione respinta"
+    },
+    "actions": {
+      "viewAttachment": "Vedi allegato"
+    },
+    "dialog": {
+      "validateTitle": "Convalida attività",
+      "validateMessage": "Stai convalidando l'attività {{activity}} del residente {{name}}.",
+      "optionalComments": "Commenti (opzionale)",
+      "digitalSignature": "Firma digitale",
+      "rejectTitle": "Rifiuta attività",
+      "rejectMessage": "Stai rifiutando l'attività {{activity}} del residente {{name}}.",
+      "rejectReason": "Motivo del rifiuto"
+    },
+    "errorLoad": "Errore nel caricamento delle validazioni",
+    "_comment": "Validazioni gestite dai formatori",
+    "buttons": {
+      "viewAttachment": "Vedi allegato",
+      "validate": "Convalida",
+      "reject": "Rifiuta",
+      "cancel": "Annulla"
+    },
+    "states": {
+      "validated": "Validata",
+      "rejected": "Respinta"
+    },
+    "dialogs": {
+      "validateTitle": "Convalida attività",
+      "rejectTitle": "Rifiuta attività",
+      "validateConfirm": "Stai convalidando l'attività {{activity}} del residente {{resident}}.",
+      "rejectConfirm": "Stai rifiutando l'attività {{activity}} del residente {{resident}}.",
+      "commentsOptional": "Commenti (opzionale)",
+      "digitalSignature": "Firma digitale",
+      "rejectReason": "Motivo del rifiuto",
+      "processing": "Elaborazione..."
+    },
+    "messages": {
+      "loadError": "Errore nel caricamento delle validazioni"
+    }
+  },
+  "residentPhases": {
+    "title": "Le mie fasi formative",
+    "errorLoad": "Errore nel caricamento del progresso",
+    "activityFail": "Impossibile completare l'attività.",
+    "activitySaveError": "Errore nel salvataggio dell'attività.",
+    "activitySuccess": "✅ Attività registrata con successo",
+    "noActivitySelectedError": "Errore interno: Nessuna attività selezionata.",
+    "noTitle": "Senza titolo",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "deadline": "Scadenza",
+    "validatedProgress": "Progresso validato: {{percent}}%",
+    "noActivities": "Nessuna attività disponibile",
+    "phaseLocked": "Fase bloccata",
+    "noProgress": "Nessun progresso formativo disponibile.",
+    "markAsCompleted": "Segna come completata",
+    "unnamedActivity": "Attività senza nome",
+    "comment": "Commento",
+    "trainerComment": "Commento del formatore",
+    "rejectionReason": "Motivo del rifiuto",
+    "completedOn": "Completata il",
+    "validatedOn": "Validata il",
+    "status": "Stato",
+    "dialog": {
+      "completeActivity": "Segna attività come completata",
+      "completionDate": "Data di completamento",
+      "comment": "Commento",
+      "selectFile": "Seleziona file",
+      "cancel": "Annulla",
+      "confirm": "Conferma",
+      "missingProgressId": "ID del progresso mancante",
+      "noActivitySelected": "Nessuna attività selezionata",
+      "selectDate": "Seleziona una data di completamento",
+      "optionalFileHint": "Allega un file opzionale (max 5MB)",
+      "fileTooLarge": "Il file supera la dimensione massima di 5MB.",
+      "title": "Segna attività come completata",
+      "date": "Data di completamento"
+    },
+    "_comment": "Fasi e attività per residenti",
+    "messages": {
+      "noActivities": "Nessuna attività disponibile",
+      "blocked": "Fase bloccata",
+      "noProgress": "Nessun progresso formativo disponibile.",
+      "loadError": "Errore nel caricamento del progresso"
+    },
+    "tooltip": {
+      "missingProgress": "ID del progresso mancante",
+      "noActivity": "Nessuna attività selezionata"
+    },
+    "labels": {
+      "comment": "Commento",
+      "trainerComment": "Commento del formatore",
+      "rejectionReason": "Motivo del rifiuto",
+      "completedDate": "Completata il",
+      "validatedDate": "Validata il",
+      "state": "Stato"
+    },
+    "states": {
+      "validated": "Validata",
+      "rejected": "Respinta",
+      "pending": "In attesa di validazione",
+      "notCompleted": "Non completata"
     }
   }
 }
