@@ -1,17 +1,20 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Select, MenuItem } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
+import { Select, MenuItem, SelectChangeEvent, SelectProps } from '@mui/material';
 
-const LanguageSelector: React.FC = () => {
+interface LanguageSelectorProps
+  extends Omit<SelectProps<string>, 'value' | 'onChange'> {}
+
+const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   const { i18n } = useTranslation();
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChange = (event: SelectChangeEvent<string>) => {
     i18n.changeLanguage(event.target.value);
   };
 
   return (
-    <Select
+    <Select<string>
+      {...props}
       value={i18n.language}
       onChange={handleChange}
       size="small"

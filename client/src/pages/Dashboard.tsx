@@ -54,6 +54,7 @@ import DebugDashboard from './DebugDashboard';
 import ResidenteFases from './dashboard/ResidenteFases';
 import AdminAccessCodes from './dashboard/AdminAccessCodes';
 import AdminConfiguracion from './dashboard/AdminConfiguracion';
+import LanguageSelector from '../components/LanguageSelector';
 
 const drawerWidth = 240;
 
@@ -158,6 +159,17 @@ const Dashboard: React.FC = () => {
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Academic Program daVinci
           </Typography>
+          <LanguageSelector
+            sx={{
+              mr: 2,
+              color: 'inherit',
+              '.MuiSelect-select': { color: 'inherit' },
+              '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.5)' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#fff' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#fff' },
+              '.MuiSvgIcon-root': { color: 'inherit' }
+            }}
+          />
           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
             <Badge badgeContent={unreadCount} color="secondary">
               <NotificationsIcon />
