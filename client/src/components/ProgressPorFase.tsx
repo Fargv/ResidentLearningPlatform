@@ -7,11 +7,12 @@ export interface Fase {
   bloqueada?: boolean;
 }
 
-interface Props {
+export interface Props {
   fases: Fase[];
+  onFaseClick?: (fase: Fase, index: number) => void;
 }
 
-const ProgressPorFase: React.FC<Props> = ({ fases }) => {
+const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
   const visibles = fases.filter((f) => !f.bloqueada);
 
   return (
@@ -20,6 +21,7 @@ const ProgressPorFase: React.FC<Props> = ({ fases }) => {
         <Box
           key={fase.nombre ?? idx}
           sx={{ flex: '1 1 220px', minWidth: 200 }}
+          onClick={() => onFaseClick?.(fase, idx)}
         >
           <Paper sx={{ p: 2, borderRadius: 2 }}>
             <Box
