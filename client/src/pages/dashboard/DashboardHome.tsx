@@ -402,6 +402,11 @@ const DashboardHome: React.FC = () => {
     }
   };
 
+  const fasesFiltradas = phaseSummary.map((p) => ({
+  nombre: p.name,
+  porcentaje: p.percent,
+}));
+
  return (
     <Box>
       <Box sx={{ mb: 4 }}>
