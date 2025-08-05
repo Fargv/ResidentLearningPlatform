@@ -234,6 +234,673 @@
       "rejected": "Rejeitado",
       "pending": "Pendente de validação",
       "notCompleted": "Não concluída"
+    },
+    "_comment": "Fases y actividades para residentes"
+  },
+  "adminPhases": {
+    "_comment": "Gestión de fases para administradores",
+    "phase": "Fase",
+    "activity": "Atividade",
+    "activities": "Atividades",
+    "name": "Nome",
+    "order": "Ordem",
+    "type": "Tipo",
+    "description": "Descrição",
+    "number": "Número",
+    "tabs": {
+      "aria": "abas de fases",
+      "activities": "Atividades"
+    },
+    "table": {
+      "aria": "atividades da fase {{number}}",
+      "order": "Ordem",
+      "name": "Nome",
+      "type": "Tipo",
+      "actions": "Ações",
+      "description": "Descrição",
+      "empty": "Não há atividades nesta fase"
+    },
+    "messages": {
+      "noActivities": "Não há atividades nesta fase",
+      "noPhases": "Não há fases criadas",
+      "created": "{{item}} criada corretamente",
+      "createError": "Erro ao criar {{item}}",
+      "updated": "{{item}} atualizada corretamente",
+      "updateError": "Erro ao atualizar {{item}}",
+      "deleted": "{{item}} excluída corretamente",
+      "deleteError": "Erro ao excluir {{item}}",
+      "phaseCreated": "Fase criada com sucesso",
+      "phaseCreateError": "Erro ao criar a fase",
+      "phaseUpdated": "Fase atualizada com sucesso",
+      "phaseUpdateError": "Erro ao atualizar a fase",
+      "phaseDeleted": "Fase excluída corretamente. Progresos eliminados: {{removed}}. Validados conservados: {{preserved}}",
+      "phaseDeleteError": "Erro ao excluir a fase",
+      "activityCreated": "Atividade criada com sucesso",
+      "activityCreateError": "Erro ao criar a atividade",
+      "activityUpdated": "Atividade atualizada com sucesso",
+      "activityUpdateError": "Erro ao atualizar a atividade",
+      "activityDeleted": "Atividade excluída com sucesso",
+      "activityDeleteError": "Erro ao excluir a atividade",
+      "checkProgressError": "Erro ao verificar o progresso vinculado"
+    },
+    "actions": {
+      "newPhase": "Nova Fase",
+      "editPhase": "Editar Fase",
+      "deletePhase": "Excluir Fase",
+      "newActivity": "Nova Atividade",
+      "editActivity": "Editar Atividade",
+      "deleteActivity": "Excluir Atividade"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nova Fase",
+        "create": "Criar",
+        "cancel": "Cancelar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Salvar",
+        "cancel": "Cancelar"
+      },
+      "deletePhase": {
+        "title": "Excluir Fase",
+        "cancel": "Cancelar",
+        "content": "Tem certeza de que deseja excluir a fase <strong>{{name}}</strong>? Esta ação não pode ser desfeita e excluirá todas as atividades associadas a esta fase.",
+        "contentWithProgress": "A fase <strong>{{name}}</strong> tem <strong>{{count}}</strong> registros de progresso. Deseja excluí-la? O progresso validado será mantido.",
+        "hasProgress": "A fase <strong>{{name}}</strong> tem <strong>{{count}}</strong> registros de progresso. Deseja excluí-la? O progresso validado será mantido.",
+        "confirm": "Tem certeza de que deseja excluir a fase <strong>{{name}}</strong>? Esta ação não pode ser desfeita e excluirá todas as atividades associadas a esta fase."
+      },
+      "newActivity": {
+        "title": "Nova Atividade",
+        "create": "Criar",
+        "cancel": "Cancelar",
+        "content": "Criando atividade para a fase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Editar Atividade",
+        "save": "Salvar",
+        "cancel": "Cancelar"
+      },
+      "deleteActivity": {
+        "title": "Excluir Atividade",
+        "cancel": "Cancelar",
+        "content": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer.",
+        "contentWithProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
+        "hasProgress": "La actividad <strong>{{name}}</strong> tiene <strong>{{count}}</strong> registros de progreso. ¿Seguro que quieres eliminarla? Esto también eliminará esos registros de progreso de todos los usuarios.",
+        "confirm": "¿Seguro que quieres eliminar la actividad <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+      },
+      "createActivity": "Creando actividad para la fase: <strong>{{phase}}</strong>"
+    },
+    "evaluation": "Evaluación",
+    "observation": "Observación",
+    "practice": "Práctica",
+    "theory": "Teórica",
+    "procedure": "Procedimiento",
+    "errorForbidden": "No tienes permisos para ver esta sección",
+    "errorLoadData": "Error al cargar los datos",
+    "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Convocatoria",
+      "intro": "Inicio del proceso de convocatoria.",
+      "item1": "Envío de invitaciones",
+      "item2": "Recepción de solicitudes"
+    },
+    "presentacion": {
+      "label": "Presentación",
+      "intro": "Sesión de presentación del programa.",
+      "item1": "Introducción al programa",
+      "item2": "Presentación de instructores"
+    },
+    "modOnline": {
+      "label": "Mod. Online",
+      "intro": "Módulos formativos online.",
+      "item1": "Acceso a la plataforma",
+      "item2": "Contenido teórico"
+    },
+    "simulacion": {
+      "label": "Simulación",
+      "intro": "Prácticas de simulación.",
+      "item1": "Sesiones prácticas",
+      "item2": "Evaluación de destrezas"
+    },
+    "firstAssistant": {
+      "label": "First Assistant",
+      "intro": "Actividades como primer asistente.",
+      "item1": "Participación en quirófanos",
+      "item2": "Registro de actividades"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Procedimientos Step By Step.",
+      "item1": "Material de apoyo",
+      "item2": "Revisión guiada"
+    },
+    "handsOn": {
+      "label": "Hand On",
+      "intro": "Entrenamiento práctico Hands On.",
+      "item1": "Práctica intensiva",
+      "item2": "Retroalimentación personalizada"
     }
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "personalData": "Datos personales",
+    "changePassword": "Cambiar Contraseña",
+    "fields": {
+      "name": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Email",
+      "hospital": "Hospital",
+      "society": "Sociedad",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña"
+    },
+    "messages": {
+      "updateSuccess": "Perfil actualizado",
+      "updateError": "Error al actualizar el perfil",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "passwordUpdateSuccess": "Contraseña actualizada",
+      "passwordUpdateError": "Error al cambiar la contraseña"
+    },
+    "buttons": {
+      "changePassword": "Cambiar Contraseña"
+    }
+  },
+  "adminHospitals": {
+    "title": "Gestão de Hospitais",
+    "new": "Novo Hospital",
+    "searchPlaceholder": "Pesquisar por Nome",
+    "loadError": "Erro ao carregar os hospitais",
+    "createSuccess": "Hospital criado com sucesso",
+    "createError": "Erro ao criar o hospital",
+    "updateSuccess": "Hospital atualizado com sucesso",
+    "updateError": "Erro ao atualizar o hospital",
+    "deleteSuccess": "Hospital excluído com sucesso",
+    "deleteError": "Erro ao excluir o hospital",
+    "table": {
+      "aria": "tabela de hospitais",
+      "name": "Nome",
+      "city": "Cidade",
+      "province": "Província",
+      "zone": "Zona",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "actions": "Ações"
+    },
+    "fields": {
+      "name": "Nome",
+      "numericCode": "Código Numérico",
+      "address": "Endereço",
+      "city": "Cidade",
+      "province": "Província",
+      "zone": "Zona",
+      "postalCode": "Código Postal",
+      "phone": "Telefone",
+      "systemType": "Tipo de Sistema",
+      "email": "E-mail",
+      "logoUrl": "URL do logo"
+    },
+    "system": {
+      "other": "Outro"
+    },
+    "create": {
+      "title": "Novo Hospital"
+    },
+    "edit": {
+      "title": "Editar Hospital"
+    },
+    "delete": {
+      "title": "Excluir Hospital",
+      "confirm": "Tem certeza de que deseja excluir o hospital <strong>{{name}}</strong>? Serão excluídos {{count}} usuários e seus progressos. Esta ação não pode ser desfeita."
+    }
+  },
+  "adminSocieties": {
+    "title": "Gestión de Sociedades",
+    "new": "Nueva sociedad",
+    "searchPlaceholder": "Buscar por nombre",
+    "table": {
+      "title": "Título",
+      "status": "Estado",
+      "convocatoria": "Convocatoria",
+      "presentacion": "Presentación",
+      "modOnline": "Mod. Online",
+      "simulacion": "Simulación",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hand On",
+      "actions": "Acciones"
+    },
+    "buttons": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "dialog": {
+      "editTitle": "Editar Sociedad",
+      "createTitle": "Nueva Sociedad"
+    },
+    "fields": {
+      "titulo": "Título",
+      "status": "Estado",
+      "fechaConvocatoria": "Fecha de convocatoria",
+      "fechaPresentacion": "Fecha de presentación",
+      "fechaModulosOnline": "Módulos online",
+      "fechaSimulacion": "Simulación",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hand On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Gestión de Todos los Usuarios",
+    "titleHospital": "Usuarios de Tu Hospital",
+    "searchPlaceholder": "Buscar por nombre o email",
+    "loadError": "Error al cargar los datos",
+    "actions": {
+      "create": "Crear Usuario",
+      "invite": "Invitar Usuario",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "changePassword": "Cambiar contraseña",
+      "createProgress": "Crear progreso"
+    },
+    "createSuccess": "Usuario creado correctamente",
+    "createError": "Error al crear el usuario",
+    "updateSuccess": "Usuario actualizado correctamente",
+    "updateError": "Error al actualizar el usuario",
+    "deleteSuccess": "Usuario eliminado correctamente",
+    "deleteError": "Error al eliminar el usuario",
+    "passwordUpdated": "Contraseña actualizada",
+    "passwordError": "Error al actualizar la contraseña",
+    "createProgressSuccess": "Progreso formativo creado con éxito",
+    "createProgressError": "Error al crear el progreso",
+    "table": {
+      "aria": "tabla de usuarios",
+      "name": "Nombre",
+      "email": "Email",
+      "type": "Tipo",
+      "society": "Sociedad",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "zone": "Zona",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Contraseña",
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "type": "Tipo",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "specialty": "Especialidad",
+      "society": "Sociedad",
+      "zone": "Zona"
+    },
+    "create": {
+      "title": "Crear Usuario"
+    },
+    "edit": {
+      "title": "Editar Usuario"
+    },
+    "delete": {
+      "title": "Eliminar Usuario",
+      "confirm": "¿Estás seguro de que deseas eliminar al usuario <strong>{{name}}</strong>? Esta acción no se puede deshacer."
+    },
+    "password": {
+      "title": "Actualizar Contraseña",
+      "label": "Nueva contraseña",
+      "updating": "Actualizando...",
+      "update": "Actualizar"
+    },
+    "_comment": "Gestión de usuarios para administradores",
+    "buttons": {
+      "create": "Crear Usuario",
+      "creating": "Creando...",
+      "invite": "Invitar Usuario",
+      "cancel": "Cancelar",
+      "save": "Guardar Cambios",
+      "saving": "Guardando...",
+      "delete": "Eliminar",
+      "deleting": "Eliminando...",
+      "update": "Actualizar",
+      "updating": "Actualizando..."
+    },
+    "dialogs": {
+      "createTitle": "Crear Usuario",
+      "editTitle": "Editar Usuario",
+      "deleteTitle": "Eliminar Usuario",
+      "passwordTitle": "Actualizar Contraseña",
+      "passwordLabel": "Nueva contraseña",
+      "deleteConfirm": "¿Estás seguro de que deseas eliminar al usuario {{name}} {{lastName}}? Esta acción no se puede deshacer."
+    },
+    "messages": {
+      "loadError": "Error al cargar los datos",
+      "userCreated": "Usuario creado correctamente",
+      "createError": "Error al crear el usuario",
+      "userUpdated": "Usuario actualizado correctamente",
+      "updateError": "Error al actualizar el usuario",
+      "userDeleted": "Usuario eliminado correctamente",
+      "deleteError": "Error al eliminar el usuario",
+      "passwordUpdated": "Contraseña actualizada",
+      "passwordError": "Error al actualizar la contraseña"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Gestión de fases para el programa de Sociedades",
+    "phase": "Fase",
+    "activity": "Actividad",
+    "table": {
+      "order": "Orden",
+      "name": "Nombre",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "messages": {
+      "noActivities": "No hay actividades en esta fase",
+      "noPhases": "No hay fases creadas",
+      "created": "{{item}} creada correctamente",
+      "createError": "Error al crear {{item}}",
+      "updated": "{{item}} actualizada correctamente",
+      "updateError": "Error al actualizar {{item}}",
+      "deleted": "{{item}} eliminada correctamente",
+      "deleteError": "Error al eliminar {{item}}",
+      "phaseCreated": "Fase creada correctamente",
+      "phaseCreateError": "Error al crear la fase",
+      "phaseUpdated": "Fase actualizada correctamente",
+      "phaseUpdateError": "Error al actualizar la fase",
+      "phaseDeleted": "Fase eliminada correctamente. Progresos eliminados: {{removed}}. Validados preservados: {{preserved}}",
+      "phaseDeleteError": "Error al eliminar la fase",
+      "activityCreated": "Actividad creada correctamente",
+      "activityCreateError": "Error al crear la actividad",
+      "activityUpdated": "Actividad actualizada correctamente",
+      "activityUpdateError": "Error al actualizar la actividad",
+      "activityDeleted": "Actividad eliminada correctamente",
+      "activityDeleteError": "Error al eliminar la actividad",
+      "progressCheckError": "Error al comprobar progresos vinculados"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nueva Fase",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      },
+      "newActivity": {
+        "title": "Nueva Actividad",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "editActivity": {
+        "title": "Editar Actividad",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Actividad",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "Progreso de Usuarios",
+    "searchPlaceholder": "Buscar por nombre o email",
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "hospitalSociety": "Hospital/Sociedad",
+      "role": "Rol",
+      "actions": "Acciones"
+    },
+    "viewProgress": "Ver Progreso"
+  },
+  "adminProgressDetail": {
+    "loadError": "Error al cargar el progreso",
+    "phaseUpdateSuccess": "Fase actualizada correctamente",
+    "phaseUpdateError": "Error al actualizar la fase",
+    "activityUpdateSuccess": "Actividad actualizada correctamente",
+    "activityUpdateError": "Error al actualizar actividad",
+    "title": "Progreso del Usuario",
+    "titleWithName": "Progreso de {{name}} {{surname}}",
+    "back": "Atrás",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "noTitle": "Sin título",
+    "phaseStatusLabel": "Estado fase",
+    "activityStatusLabel": "Estado actividad",
+    "phaseStatus": {
+      "blocked": "Bloqueada",
+      "inProgress": "En progreso",
+      "completed": "Completado",
+      "validated": "Validado",
+      "pending": "Pendiente",
+      "rejected": "Rechazado"
+    },
+    "activityStatus": {
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "validatedProgress": "Progreso validado: {{percent}}%",
+    "noActivityName": "Actividad sin nombre",
+    "completedOn": "Fecha completada: {{date}}",
+    "validatedOn": "Validado el: {{date}}",
+    "statusWithValue": "Estado: {{status}}",
+    "noProgress": "No hay progreso disponible."
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestión de Todos los Usuarios",
+    "noPermissions": "No tienes permisos para ver esta sección"
+  },
+  "types": {
+    "theoretical": "Teórica",
+    "practical": "Práctica",
+    "evaluation": "Evaluación",
+    "observation": "Observación",
+    "theoreticalLower": "teórica",
+    "practicalLower": "práctica",
+    "evaluationLower": "evaluación",
+    "observationLower": "observación",
+    "programaResidentes": "Programa Residentes",
+    "programaSociedades": "Programa Sociedades"
+  },
+  "roles": {
+    "residente": "Residente",
+    "formador": "Formador",
+    "coordinador": "Coordinador",
+    "administrador": "Administrador",
+    "alumno": "Alumno",
+    "instructor": "Instructor"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "tabs": {
+      "aria": "pestañas de notificaciones",
+      "pending": "Pendientes",
+      "viewed": "Vistas"
+    },
+    "table": {
+      "message": "Mensaje",
+      "date": "Fecha",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "empty": {
+      "all": "No hay notificaciones",
+      "pending": "No hay notificaciones pendientes",
+      "viewed": "No hay notificaciones vistas"
+    },
+    "errorLoad": "Error al cargar notificaciones",
+    "errorMarkAsRead": "Error marcando notificación como leída"
+  },
+  "codes": {
+    "new": "Nuevo Código",
+    "edit": "Editar Código",
+    "errorLoad": "Error al cargar los códigos",
+    "errorDelete": "Error al eliminar el código",
+    "errorSave": "Error al guardar el código"
+  },
+  "trainerUsers": {
+    "title": "Meus Usuários",
+    "invite": "Convidar Usuário",
+    "edit": "Editar Usuário",
+    "updated": "Usuário atualizado",
+    "invited": "Usuário convidado",
+    "deleted": "Usuário excluído",
+    "error": "Erro",
+    "deleteError": "Erro ao excluir",
+    "loadError": "Erro ao carregar usuários",
+    "table": {
+      "name": "Nome",
+      "email": "E-mail",
+      "role": "Função",
+      "status": "Estado",
+      "actions": "Ações",
+      "state": "Estado"
+    },
+    "form": {
+      "email": "E-mail",
+      "name": "Nome",
+      "surname": "Sobrenome",
+      "role": "Função",
+      "roles": {
+        "resident": "Residente",
+        "trainer": "Formador"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancelar",
+      "saving": "Salvando...",
+      "save": "Salvar",
+      "invite": "Convidar"
+    },
+    "_comment": "Gestión de usuarios para formadores",
+    "buttons": {
+      "invite": "Convidar Usuário",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "delete": "Excluir"
+    },
+    "fields": {
+      "email": "E-mail",
+      "name": "Nome",
+      "lastName": "Sobrenome",
+      "role": "Função"
+    },
+    "roles": {
+      "resident": "Residente",
+      "trainer": "Formador"
+    },
+    "states": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "dialogs": {
+      "editTitle": "Editar Usuário",
+      "inviteTitle": "Convidar Usuário"
+    },
+    "messages": {
+      "loadError": "Erro ao carregar usuários",
+      "updateSuccess": "Usuário atualizado",
+      "inviteSuccess": "Usuário convidado",
+      "deleteSuccess": "Usuário excluído",
+      "deleteError": "Erro ao excluir",
+      "genericError": "Erro"
+    }
+  },
+  "progress": {
+    "createSuccess": "Progreso formativo creado con éxito"
+  },
+  "trainerValidations": {
+    "title": "Validaciones",
+    "tabs": {
+      "pending": "Pendientes ({{count}})",
+      "validated": "Validadas ({{count}})",
+      "rejected": "Rechazadas ({{count}})",
+      "aria": "pestañas de validaciones"
+    },
+    "table": {
+      "activity": "Actividad",
+      "resident": "Residente",
+      "date": "Fecha",
+      "comments": "Comentarios",
+      "actions": "Acciones",
+      "status": "Estado",
+      "reason": "Motivo",
+      "noPhase": "Sin fase",
+      "noName": "Sin nombre",
+      "phase": "Fase",
+      "state": "Estado"
+    },
+    "empty": {
+      "pending": "No hay validaciones pendientes",
+      "validated": "No hay validaciones completadas",
+      "rejected": "No hay validaciones rechazadas"
+    },
+    "actions": {
+      "viewAttachment": "Ver adjunto"
+    },
+    "dialog": {
+      "validateTitle": "Validar Actividad",
+      "validateMessage": "Estás validando la actividad {{activity}} del residente {{name}}.",
+      "optionalComments": "Comentarios (opcional)",
+      "digitalSignature": "Firma Digital",
+      "rejectTitle": "Rechazar Actividad",
+      "rejectMessage": "Estás rechazando la actividad {{activity}} del residente {{name}}.",
+      "rejectReason": "Motivo del rechazo"
+    },
+    "errorLoad": "Error al cargar las validaciones",
+    "_comment": "Validaciones gestionadas por formadores",
+    "buttons": {
+      "viewAttachment": "Ver adjunto",
+      "validate": "Validar",
+      "reject": "Rechazar",
+      "cancel": "Cancelar"
+    },
+    "states": {
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "dialogs": {
+      "validateTitle": "Validar Actividad",
+      "rejectTitle": "Rechazar Actividad",
+      "validateConfirm": "Estás validando la actividad {{activity}} del residente {{resident}}.",
+      "rejectConfirm": "Estás rechazando la actividad {{activity}} del residente {{resident}}.",
+      "commentsOptional": "Comentarios (opcional)",
+      "digitalSignature": "Firma Digital",
+      "rejectReason": "Motivo del rechazo",
+      "processing": "Procesando..."
+    },
+    "messages": {
+      "loadError": "Error al cargar las validaciones"
+    }
+  },
+  "certificate": {
+    "title": "Certificado de Cumplimiento",
+    "body": "Se certifica que <strong>{{name}}</strong> ha completado satisfactoriamente la fase formativa asignada del Academic Program en tecnologías del robot Da Vinci®. <br /><br />Este curso se enmarca dentro del plan formativo en tecnología robótica en colaboración con el hospital <strong>{{hospital}}</strong> y bajo la supervisión de su tutor asignado.",
+    "dateLine": "Madrid, {{date}}",
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · www.abexsl.es"
+  },
+  "emails": {
+    "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
+  },
+  "debug": {
+    "tokenValid": "✅ Token válido y decodificado",
+    "tokenInvalid": "❌ Token no válido o corrupto"
   }
 }
