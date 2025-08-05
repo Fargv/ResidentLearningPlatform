@@ -15,6 +15,7 @@ interface ProgresoFase {
     _id: string;
     nombre: string;
   };
+  faseModel: string;
   estadoGeneral: string;
   actividades: Actividad[];
 }
@@ -55,7 +56,7 @@ const ResidenteProgreso: React.FC = () => {
       link.remove();
     } catch (err: any) {
       setError(err.response?.data?.error || t('residentProgress.downloadError'));
-      } finally {
+    } finally {
       setDownloadLoading(false);
     }
   };
@@ -69,7 +70,8 @@ const ResidenteProgreso: React.FC = () => {
   }
   if (error) return <Alert severity="error">{error}</Alert>;
 
-  const phaseStats = progresos.map(p => {
+  const filteredProgresos = progresos.filter(p => p.faseModel === 'Fase');
+  const phaseStats = filteredProgresos.map(p => {
     const counts = { pendiente: 0, completado: 0, rechazado: 0, validado: 0 };
     p.actividades.forEach(a => {
       if (a.estado === 'pendiente') counts.pendiente += 1;
@@ -80,7 +82,7 @@ const ResidenteProgreso: React.FC = () => {
     return { faseNombre: p.fase.nombre, estadoGeneral: p.estadoGeneral, counts };
   });
 
-  const allValidado = phaseStats.every(p => p.estadoGeneral === 'validado');
+  const allValidado = filteredProgresos.every(p => p.estadoGeneral === 'validado');
 
   return (
     <Box>
