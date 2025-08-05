@@ -31,6 +31,7 @@ import api from "../../api";
 import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
 import { Sociedad } from "../../types/Sociedad";
 import { useTranslation } from 'react-i18next';
+import type { Fase } from "../../components/ProgressPorFase";
 
 
 const DashboardHome: React.FC = () => {
@@ -185,6 +186,9 @@ const DashboardHome: React.FC = () => {
      setSelectedPhase(phase);
     setOpenDialog(true);
   };
+
+  const onFaseClick = (_fase: Fase, idx: number) =>
+    handleOpenDialog(residentMilestones[idx]);
 
   const handleCloseDialog = () => setOpenDialog(false);
   useEffect(() => {
@@ -485,7 +489,12 @@ const DashboardHome: React.FC = () => {
               {phaseSummary.map((p, idx) => (
                 <CardActionArea
                   key={p.name}
-                  onClick={() => handleOpenDialog(residentMilestones[idx])}
+                  onClick={() =>
+                    onFaseClick(
+                      { nombre: p.name, porcentaje: p.percent },
+                      idx,
+                    )
+                  }
                   sx={{
                     flex: "1 1 calc(50% - 16px)",
                     minWidth: "250px",
