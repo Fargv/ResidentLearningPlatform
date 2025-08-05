@@ -45,6 +45,7 @@ const ResidenteProgreso: React.FC = () => {
 
   const handleDescargarCertificado = async () => {
     if (!user?._id) return;
+    setDownloadLoading(true);
     try {
       const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
