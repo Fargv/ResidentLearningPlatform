@@ -39,7 +39,6 @@ import { useTranslation } from 'react-i18next';
 
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
-import ResidenteProgreso from './dashboard/ResidenteProgreso';
 import FormadorValidaciones from './dashboard/FormadorValidaciones';
 import AdminUsuarios from './dashboard/AdminUsuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
@@ -106,10 +105,6 @@ const Dashboard: React.FC = () => {
         roles: ['administrador', 'formador', 'coordinador', 'residente', 'alumno']
       }
     ];
-
-    if (user?.rol === 'residente' || user?.rol === 'alumno') {
-     items.push({ text: t('actions.myProgress'), icon: <AssignmentIcon />, path: '/dashboard/progreso', roles: ['residente', 'alumno'] });
-    }
 
     if (user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor') {
       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno', 'instructor'] });
@@ -278,7 +273,6 @@ const Dashboard: React.FC = () => {
         <Toolbar />
         <Routes>
   <Route path="/" element={<DashboardHome />} />
-  <Route path="/progreso" element={<ResidenteProgreso />} />
   <Route path="/validaciones" element={<FormadorValidaciones />} />
   <Route path="/usuarios" element={<AdminUsuarios />} />
   <Route path="/hospitals" element={<AdminHospitales />} />
