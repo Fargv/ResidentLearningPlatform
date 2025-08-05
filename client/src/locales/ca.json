@@ -835,7 +835,8 @@
   },
   "certificate": {
     "title": "Certificat de Compliment",
-    "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.<br /><br />Data de finalització: <strong>{{date}}</strong>",
+   "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
+    "dateLine": "Madrid, {{date}}",
     "footer": "Certificat generat automàticament per Academic Program Da Vinci · www.abexsl.es"
   },
   "residentPhases": {

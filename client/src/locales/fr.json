@@ -634,6 +634,12 @@
     "downloadError": "Erreur lors du téléchargement du certificat",
     "downloadCertificate": "Télécharger le certificat"
   },
+  "certificate": {
+    "title": "Certificat de réussite",
+    "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
+    "dateLine": "Madrid, {{date}}",
+    "footer": "Certificat généré automatiquement par Academic Program Da Vinci · www.abexsl.es"
+  },
   "adminPhases": {
     "_comment": "Gestion des phases d'administration",
     "phase": "Phase",

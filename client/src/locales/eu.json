@@ -878,7 +878,8 @@
   },
   "certificate": {
     "title": "Osaketaren Ziurtagiria",
-    "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.<br /><br />Amaiera data: <strong>{{date}}</strong>",
+    "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
+    "dateLine": "Madril, {{date}}",
     "footer": "Ziurtagiria automatikoki sortua Academic Program Da Vinci-k · www.abexsl.es"
   },
   "emails": {
