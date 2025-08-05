@@ -43,6 +43,7 @@ const DashboardHome: React.FC = () => {
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [socAllValidado, setSocAllValidado] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<{
     label: string;
@@ -214,28 +215,44 @@ const DashboardHome: React.FC = () => {
 
   useEffect(() => {
     const loadProgress = async () => {
-      if (
-        user?.tipo !== "Programa Residentes" ||
-        !user?._id ||
-        !["residente", "formador", "coordinador", "instructor", "alumno"].includes(
+      const isResidentes =
+        user?.tipo === "Programa Residentes" &&
+        user?._id &&
+        ["residente", "formador", "coordinador", "instructor", "alumno"].includes(
           user.rol,
-        )
-      ) {
+        );
+      const isSociedades =
+        user?.tipo === "Programa Sociedades" &&
+        user?.rol === "alumno" &&
+        !!user?._id;
+
+      if (!isResidentes && !isSociedades) {
         return;
       }
       try {
         setProgressLoading(true);
         const res = await api.get(`/progreso/residente/${user._id}`);
         const data = res.data.data || [];
-        const summary = data.map((p: any) => {
-          const total = p.actividades.length;
-          const validated = p.actividades.filter(
-            (a: any) => a.estado === "validado",
-          ).length;
-          const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
-          return { name: p.fase.nombre, percent };
-        });
-        setPhaseSummary(summary);
+
+        if (isResidentes) {
+          const summary = data.map((p: any) => {
+            const total = p.actividades.length;
+            const validated = p.actividades.filter(
+              (a: any) => a.estado === "validado",
+            ).length;
+            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+            return { name: p.fase.nombre, percent };
+          });
+          setPhaseSummary(summary);
+        }
+
+        if (isSociedades) {
+          const socFases = data.filter((p: any) => p.faseModel === 'FaseSoc');
+          const allValidado =
+            socFases.length > 0 &&
+            socFases.every((p: any) => p.estadoGeneral === 'validado');
+          setSocAllValidado(allValidado);
+        }
       } catch (err) {
         console.error("Error cargando progreso", err);
       } finally {
@@ -342,6 +359,7 @@ const DashboardHome: React.FC = () => {
   );
 
   const allValidado =
+    user?.tipo === 'Programa Residentes' &&
     (user?.rol === 'residente' || user?.rol === 'alumno') &&
     phaseSummary.length > 0 &&
     phaseSummary.every((p) => p.percent === 100);
@@ -438,6 +456,17 @@ const DashboardHome: React.FC = () => {
               </CardActionArea>
             ))}
           </Box>
+          {socAllValidado && (
+            <Box textAlign="center" mt={2}>
+              <Button
+                variant="contained"
+                onClick={handleDescargarCertificado}
+                disabled={downloadLoading}
+              >
+                {t('residentProgress.downloadCertificate')}
+              </Button>
+            </Box>
+          )}
        </Paper>
       )}
       {user?.tipo === "Programa Residentes" &&
