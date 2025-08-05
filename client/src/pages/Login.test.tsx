@@ -20,7 +20,8 @@ const cases: Array<[string, string]> = [
   ['it', 'Password'],
   ['ca', 'Contrasenya'],
   ['gl', 'Contrasinal'],
-  ['eu', 'Pasahitza']
+  ['eu', 'Pasahitza'],
+  ['pt', 'Senha']
 ];
 
 test.each(cases)('renders Password label when language is %s', async (lang, label) => {
