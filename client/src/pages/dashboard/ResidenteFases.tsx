@@ -19,7 +19,9 @@ import {
   DialogActions,
   TextField,
   Snackbar,
-  Tooltip 
+  Tooltip,
+  CircularProgress,
+  Backdrop
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -34,7 +36,7 @@ import { useTranslation } from 'react-i18next';
 
 const ResidenteFases: React.FC = () => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [progresos, setProgresos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +52,7 @@ const ResidenteFases: React.FC = () => {
   const [snackbarMsg, setSnackbarMsg] = useState('');
   const [snackbarError, setSnackbarError] = useState(false);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaConvocatoria',
@@ -231,6 +234,25 @@ const ResidenteFases: React.FC = () => {
     }
   };
 
+  const handleDescargarCertificado = async () => {
+    if (!user?._id) return;
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'certificado.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setError(err.response?.data?.error || t('residentProgress.downloadError'));
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
@@ -247,6 +269,10 @@ const ResidenteFases: React.FC = () => {
   }
 
   if (error) return <Alert severity="error">{error}</Alert>;
+
+  const allValidado = progresos
+    .filter(p => p.faseModel === 'Fase')
+    .every(p => p.estadoGeneral === 'validado');
 
   return (
     <Box>
@@ -393,6 +419,25 @@ const ResidenteFases: React.FC = () => {
 ) : (
   <Alert severity="info">{t('residentPhases.noProgress')}</Alert>
 )}
+      {allValidado && (
+        <Box textAlign="center" mt={2}>
+          <Button
+            variant="contained"
+            onClick={handleDescargarCertificado}
+            disabled={downloadLoading}
+          >
+            {t('residentProgress.downloadCertificate')}
+          </Button>
+        </Box>
+      )}
+
+      <Backdrop
+        open={downloadLoading}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
 
 
 

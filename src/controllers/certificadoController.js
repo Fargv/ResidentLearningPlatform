@@ -92,14 +92,21 @@ exports.descargarCertificado = async (req, res, next) => {
 
     const formattedBody = certificateStrings.body
       .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
-      .replace("{{hospital}}", usuario.hospital ? usuario.hospital.nombre : "")
-      .replace("{{date}}", new Date().toLocaleDateString(lang));
+      .replace("{{hospital}}", usuario.hospital ? usuario.hospital.nombre : "");
+
+    const formattedDate = new Intl.DateTimeFormat(lang, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date());
+    const dateLine = certificateStrings.dateLine.replace("{{date}}", formattedDate);
 
     html = html
       .replace("{{LOGOS}}", logosHtml)
       .replace("{{CERT_TITLE}}", certificateStrings.title)
       .replace("{{PROGRAMA}}", programa)
       .replace("{{CERT_BODY}}", formattedBody)
+      .replace("{{CERT_DATE}}", dateLine)
       .replace("{{CERT_FOOTER}}", certificateStrings.footer)
       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
       .replace("{{SIGNATURE_LOGO}}", signatureBase64)

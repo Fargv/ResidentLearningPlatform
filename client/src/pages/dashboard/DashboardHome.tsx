@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Backdrop,
 } from "@mui/material";
 import {
   Assignment as AssignmentIcon,
@@ -32,15 +33,16 @@ import { Sociedad } from "../../types/Sociedad";
 import { useTranslation } from 'react-i18next';
 
 const DashboardHome: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [error] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [phaseSummary, setPhaseSummary] = useState<
     { name: string; percent: number }[]
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<{
     label: string;
@@ -244,6 +246,27 @@ const DashboardHome: React.FC = () => {
     loadProgress();
   }, [user]);
 
+  const handleDescargarCertificado = async () => {
+    if (!user?._id) return;
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'certificado.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setError(err.response?.data?.error || t('residentProgress.downloadError'));
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   const navigate = useNavigate();
 
   type Action = {
@@ -317,6 +340,11 @@ const DashboardHome: React.FC = () => {
       icon: <NotificationsIcon sx={{ fontSize: 40 }} />,
     },
   );
+
+  const allValidado =
+    (user?.rol === 'residente' || user?.rol === 'alumno') &&
+    phaseSummary.length > 0 &&
+    phaseSummary.every((p) => p.percent === 100);
 
   const renderContent = () => {
     if (loading || progressLoading) {
@@ -416,7 +444,8 @@ const DashboardHome: React.FC = () => {
         (user?.rol === "residente" ||
           user?.rol === "formador" ||
           user?.rol === "coordinador" ||
-          user?.rol === "instructor") &&
+          user?.rol === "instructor" ||
+          user?.rol === "alumno") &&
         phaseSummary.length > 0 && (
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
@@ -455,6 +484,17 @@ const DashboardHome: React.FC = () => {
                 </CardActionArea>
               ))}
             </Box>
+            {allValidado && (
+              <Box textAlign="center" mt={2}>
+                <Button
+                  variant="contained"
+                  onClick={handleDescargarCertificado}
+                  disabled={downloadLoading}
+                >
+                  {t('residentProgress.downloadCertificate')}
+                </Button>
+              </Box>
+            )}
           </Paper>
         )}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
@@ -496,22 +536,28 @@ const DashboardHome: React.FC = () => {
 
 
       {renderContent()}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{selectedPhase?.label}</DialogTitle>
-        <DialogContent>
-          {selectedPhase?.description}
-          {selectedPhase?.date && (
-            <Typography variant="body2" color="text.secondary">
-              {formatDayMonthYear(selectedPhase.date)}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>{t('close')}</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  );
-};
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle>{selectedPhase?.label}</DialogTitle>
+          <DialogContent>
+            {selectedPhase?.description}
+            {selectedPhase?.date && (
+              <Typography variant="body2" color="text.secondary">
+                {formatDayMonthYear(selectedPhase.date)}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>{t('close')}</Button>
+          </DialogActions>
+        </Dialog>
+        <Backdrop
+          open={downloadLoading}
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </Box>
+    );
+  };
 
 export default DashboardHome;

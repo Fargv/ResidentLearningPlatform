@@ -46,8 +46,14 @@
       color: #1E5B94;
     }
 
-    .firma {
+    .sign-section {
       margin-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .firma {
       text-align: right;
     }
 
@@ -100,14 +106,16 @@
       {{CERT_BODY}}
     </div>
 
-    <div class="firma">
-      <img src="{{SIGNATURE_LOGO}}" alt="Firma" style="max-height: 80px; display: block; margin-left: auto; margin-right: 60px; margin-bottom: -5px;" />
-      <div class="linea">
-        Javier Trujillo Menacho<br />
-        Hospital Marketing Manager
+    <div class="sign-section">
+      <div class="date">{{CERT_DATE}}</div>
+      <div class="firma">
+        <img src="{{SIGNATURE_LOGO}}" alt="Firma" style="max-height: 80px; display: block; margin-left: auto; margin-right: 60px;margin-bottom: -5px;" />
+        <div class="linea">
+          Javier Trujillo Menacho<br />
+          Hospital Marketing Manager
+        </div>
       </div>
     </div>
-
 
     <div class="footer">
       {{CERT_FOOTER}}
