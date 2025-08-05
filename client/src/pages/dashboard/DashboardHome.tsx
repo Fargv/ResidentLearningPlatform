@@ -32,6 +32,7 @@ import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
 import { Sociedad } from "../../types/Sociedad";
 import { useTranslation } from 'react-i18next';
 
+
 const DashboardHome: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -401,11 +402,6 @@ const DashboardHome: React.FC = () => {
         return "";
     }
   };
-
-  const fasesFiltradas = phaseSummary.map((p) => ({
-  nombre: p.name,
-  porcentaje: p.percent,
-}));
 
  return (
     <Box>
