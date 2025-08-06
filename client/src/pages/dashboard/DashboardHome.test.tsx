@@ -32,7 +32,7 @@ beforeEach(() => {
     data: {
       titulo: 'Soc Test',
       status: 'ACTIVO',
-      fechaConvocatoria: '2025-01-01'
+      fechaModulosOnline: '2025-01-01'
     }
   });
 });
@@ -48,7 +48,7 @@ test('clicking milestone opens dialog', async () => {
       <DashboardHome />
     </I18nextProvider>
   );
-  const item = await screen.findByText('Convocatoria');
+  const item = await screen.findByText(/Convocatoria/);
   await userEvent.click(item);
   expect(await screen.findByRole('dialog')).toBeInTheDocument();
 });

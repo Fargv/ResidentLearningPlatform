@@ -44,7 +44,7 @@ const DashboardHome: React.FC = () => {
     { name: string; percent: number }[]
  >([]);
   const [socPhaseSummary, setSocPhaseSummary] = useState<
-    { name: string; percent: number }[]
+    { phase: number; percent: number }[]
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
@@ -59,8 +59,14 @@ const DashboardHome: React.FC = () => {
 
   const societyMilestones = [
     {
-      label: t('society.convocatoria.label'),
-      date: sociedadInfo?.fechaConvocatoria,
+      phase: 1,
+      label:
+        t('society.convocatoria.label') +
+        ' / ' +
+        t('society.presentacion.label') +
+        ' / ' +
+        t('society.modOnline.label'),
+      date: sociedadInfo?.fechaModulosOnline,
       description: (
         <>
           <Typography gutterBottom>
@@ -70,30 +76,14 @@ const DashboardHome: React.FC = () => {
             <li>{t('society.convocatoria.item1')}</li>
             <li>{t('society.convocatoria.item2')}</li>
           </ul>
-        </>
-      ),
-    },
-    {
-      label: t('society.presentacion.label'),
-      date: sociedadInfo?.fechaPresentacion,
-      description: (
-        <>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ mt: 2 }}>
             {t('society.presentacion.intro')}
           </Typography>
           <ul>
             <li>{t('society.presentacion.item1')}</li>
             <li>{t('society.presentacion.item2')}</li>
           </ul>
-        </>
-      ),
-    },
-    {
-      label: t('society.modOnline.label'),
-      date: sociedadInfo?.fechaModulosOnline,
-      description: (
-        <>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ mt: 2 }}>
             {t('society.modOnline.intro')}
           </Typography>
           <ul>
@@ -104,6 +94,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 2,
       label: t('society.simulacion.label'),
       date: sociedadInfo?.fechaSimulacion,
       description: (
@@ -119,6 +110,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 3,
       label: t('society.firstAssistant.label'),
       date: sociedadInfo?.fechaAtividadesFirstAssistant,
       description: (
@@ -134,6 +126,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 4,
       label: t('society.stepByStep.label'),
       date: sociedadInfo?.fechaModuloOnlineStepByStep,
       description: (
@@ -149,6 +142,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 5,
       label: t('society.handsOn.label'),
       date: sociedadInfo?.fechaHandOn,
       description: (
@@ -255,14 +249,19 @@ const DashboardHome: React.FC = () => {
         }
 
         if (isSociedades) {
-          const socFases = data.filter((p: any) => p.faseModel === 'FaseSoc');
+          const socFases = data
+            .filter((p: any) => p.faseModel === 'FaseSoc')
+            .sort(
+              (a: any, b: any) =>
+                (a.fase?.orden ?? 0) - (b.fase?.orden ?? 0)
+            );
           const socSummary = socFases.map((p: any) => {
             const total = p.actividades.length;
             const validated = p.actividades.filter(
               (a: any) => a.estado === 'validado'
             ).length;
             const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
-            return { name: p.fase.nombre, percent };
+            return { phase: p.fase.orden, percent };
           });
           setSocPhaseSummary(socSummary);
           const allValidado =
@@ -441,8 +440,9 @@ const DashboardHome: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {societyMilestones.map((m, idx) => {
-              const percent = socPhaseSummary[idx]?.percent ?? 0;
+            {societyMilestones.map((m) => {
+              const percent =
+                socPhaseSummary.find((s) => s.phase === m.phase)?.percent ?? 0;
               return (
                 <CardActionArea
                   key={m.label}

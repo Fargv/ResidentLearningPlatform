@@ -55,14 +55,13 @@ const ResidenteFases: React.FC = () => {
   const [downloadLoading, setDownloadLoading] = useState(false);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
-    1: 'fechaConvocatoria',
-    2: 'fechaPresentacion',
-    3: 'fechaModulosOnline',
-    4: 'fechaSimulacion',
-    5: 'fechaAtividadesFirstAssistant',
-    6: 'fechaModuloOnlineStepByStep',
-    7: 'fechaHandOn'
+    1: 'fechaModulosOnline',
+    2: 'fechaSimulacion',
+    3: 'fechaAtividadesFirstAssistant',
+    4: 'fechaModuloOnlineStepByStep',
+    5: 'fechaHandOn'
   };
+
 
   const getSociedadDateObj = (fase: number): Date | null => {
     if (!sociedadInfo) return null;
