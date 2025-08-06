@@ -468,7 +468,7 @@ const DashboardHome: React.FC = () => {
                     sx={{
                       p: 2,
                       borderLeft: "6px solid #1E5B94",
-                      background: `linear-gradient(90deg, #1E5B94 ${percent}%, #E3F2FD ${percent}%)`,
+                      background: `linear-gradient(90deg, #E3F2FD ${percent}%, #F5F5F5 ${percent}%)`,
                     }}
                   >
                     <Typography

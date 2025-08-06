@@ -26,12 +26,13 @@ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
           <Paper sx={{ p: 2, borderRadius: 2 }}>
             <Box
               sx={{
-                backgroundColor: '#1E5B94',
-                color: 'white',
+                backgroundColor: '#F5F5F5',
+                color: '#1E5B94',
                 textAlign: 'center',
                 borderRadius: 1,
                 mb: 2,
                 p: 1,
+                fontWeight: 'bold',
               }}
             >
               <Typography variant="subtitle1">{fase.nombre}</Typography>
@@ -43,9 +44,9 @@ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
                 sx={{
                   height: 10,
                   borderRadius: 5,
-                  backgroundColor: '#E3F2FD',
+                  backgroundColor: '#F5F5F5',
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: '#1E5B94',
+                    backgroundColor: '#E3F2FD',
                   },
                 }}
               />
