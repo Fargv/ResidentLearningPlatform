@@ -1,0 +1,907 @@
+{
+  "welcome": "Willkommen, {{name}}",
+  "role": {
+    "adminPanel": "Administrationsbereich",
+    "trainer": "Ausbilder für Krankenhausbewohner {{hospital}}",
+    "coordinator": "Koordinator für Krankenhausbewohner {{hospital}}",
+    "resident": "Bewohner des Krankenhauses {{hospital}}",
+    "student": "Teilnehmer am Gesellschaftsprogramm {{title}}",
+    "instructor": "Ausbilder im Gesellschaftsprogramm {{title}}"
+  },
+  "actions": {
+    "dashboard": "Dashboard",
+    "myProgress": "Mein Fortschritt",
+    "trainingPhases": "Ausbildungsphasen",
+    "validations": "Validierungen",
+    "myUsers": "Meine Benutzer",
+    "usersProgress": "Benutzerfortschritt",
+    "settings": "Einstellungen",
+    "myProfile": "Mein Profil",
+    "notifications": "Benachrichtigungen",
+    "profile": "Profil",
+    "users": "Benutzer",
+    "logout": "Abmelden"
+  },
+  "adminConfig": {
+    "title": "Konfiguration",
+    "hospitals": "Krankenhäuser",
+    "societies": "Gesellschaften",
+    "residentProgram": "Bewohnerprogramm",
+    "societiesProgram": "Gesellschaftsprogramm",
+    "users": "Benutzer",
+    "accessCodes": "Zugangscodes",
+    "debug": "Fehlersuche"
+  },
+  "progressByPhase": "Fortschritt nach Phase",
+  "close": "Schließen",
+  "devWarning": "⚠️ ENTWICKLUNGSUMGEBUNG ⚠️",
+  "brand": {
+    "name": "Abex Roboterexzellenz"
+  },
+  "regions": {
+    "andalucia": "ANDALUSIEN"
+  },
+  "status": {
+    "pendingValidation": "Wartet auf Validierung",
+    "validado": "Validiert",
+    "rechazado": "Abgelehnt",
+    "completado": "Abgeschlossen",
+    "pendiente": "Ausstehend",
+    "noCompletada": "Nicht abgeschlossen",
+    "enProgreso": "In Bearbeitung",
+    "bloqueada": "Gesperrt",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "validated": "Validiert",
+    "rejected": "Abgelehnt"
+  },
+  "register": {
+    "title": "Registrierung",
+    "accessCode": "Zugangscode",
+    "name": "Vorname",
+    "surname": "Nachname",
+    "email": "E-Mail",
+    "logoUrl": "Logo-URL",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "hospital": "Krankenhaus",
+    "zone": "Zone",
+    "specialty": "Fachgebiet",
+    "specialties": {
+      "URO": "Urologie (URO)",
+      "GEN": "Allgemeinchirurgie (GEN)",
+      "GYN": "Gynäkologie (GYN)",
+      "THOR": "Thoraxchirurgie (THOR)",
+      "ORL": "HNO (ORL)"
+    },
+    "society": "Gesellschaft",
+    "none": "Keine",
+    "invalidAccessCode": "Ungültiger Zugangscode",
+    "requiredFields": "Bitte füllen Sie alle Pflichtfelder aus.",
+    "hospitalAndSpecialtyRequired": "Krankenhaus und Fachgebiet erforderlich",
+    "hospitalRequired": "Krankenhaus erforderlich",
+    "societyRequired": "Gesellschaft erforderlich",
+    "passwordsMismatch": "Passwörter stimmen nicht überein",
+    "consentPrefix": "Ich stimme der Verarbeitung meiner persönlichen Daten gemäß der ",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "consentSuffix": " zu und erfülle die DSGVO.",
+    "registerButton": "Registrieren"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
+    "creating": "Erstelle...",
+    "saveChanges": "Änderungen speichern",
+    "saving": "Speichern...",
+    "delete": "Löschen",
+    "deleting": "Lösche...",
+    "phase": "Phase",
+    "validate": "Validieren",
+    "reject": "Ablehnen",
+    "processing": "Verarbeite..."
+  },
+  "auth": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "password": "Passwort",
+    "passwordCurrent": "Aktuelles Passwort",
+    "passwordNew": "Neues Passwort",
+    "passwordConfirm": "Passwort bestätigen",
+    "passwordUpdated": "Passwort aktualisiert",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "accessCode": "Zugangscode",
+    "invalidAccessCode": "Ungültiger Zugangscode",
+    "changePassword": "Passwort ändern",
+    "resetRequest": "Passwort-Zurücksetzung anfordern",
+    "errorLogin": "Fehler beim Anmelden",
+    "errorChangePassword": "Fehler beim Ändern des Passworts",
+    "errorUpdatePassword": "Fehler beim Aktualisieren des Passworts"
+  },
+  "forgotPassword": {
+    "heading": "Passwort vergessen?",
+    "description": "Um Ihr Passwort zurückzusetzen, wenden Sie sich bitte an den Systemadministrator.",
+    "emailLabel": "Ihre E-Mail",
+    "submit": "E-Mail an Administrator senden",
+    "backToLogin": "Zurück zur Anmeldung"
+  },
+  "login": {
+    "title": "Da Vinci Ausbildungsprogramm",
+    "subtitle": "Technologien des Da Vinci Roboters",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "noAccount": "Noch kein Konto?",
+    "registerHere": "Hier registrieren",
+    "copyright": "© {{year}} Abex Roboterexzellenz",
+    "poweredBy": "Entwickelt von FARGV",
+    "logoAlt": "Abex Roboterexzellenz"
+  },
+  "types": {
+    "theoretical": "Theoretisch",
+    "practical": "Praktisch",
+    "evaluation": "Bewertung",
+    "observation": "Beobachtung",
+    "theoreticalLower": "theoretisch",
+    "practicalLower": "praktisch",
+    "evaluationLower": "bewertung",
+    "observationLower": "beobachtung",
+    "programaResidentes": "Bewohnerprogramm",
+    "programaSociedades": "Gesellschaftsprogramm"
+  },
+  "roles": {
+    "residente": "Bewohner",
+    "formador": "Ausbilder",
+    "coordinador": "Koordinator",
+    "administrador": "Administrator",
+    "alumno": "Teilnehmer",
+    "instructor": "Ausbilder"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "tabs": {
+      "aria": "Benachrichtigungs-Tabs",
+      "pending": "Ausstehend",
+      "viewed": "Gesehen"
+    },
+    "table": {
+      "message": "Nachricht",
+      "date": "Datum",
+      "type": "Typ",
+      "actions": "Aktionen"
+    },
+    "empty": {
+      "all": "Keine Benachrichtigungen",
+      "pending": "Keine ausstehenden Benachrichtigungen",
+      "viewed": "Keine angesehenen Benachrichtigungen"
+    },
+    "errorLoad": "Fehler beim Laden der Benachrichtigungen",
+    "errorMarkAsRead": "Fehler beim Markieren als gelesen"
+  },
+  "codes": {
+    "new": "Neuer Code",
+    "edit": "Code bearbeiten",
+    "errorLoad": "Fehler beim Laden der Codes",
+    "errorDelete": "Fehler beim Löschen des Codes",
+    "errorSave": "Fehler beim Speichern des Codes"
+  },
+  "progress": {
+    "createSuccess": "Ausbildungsfortschritt erfolgreich erstellt"
+  },
+  "emails": {
+    "inviteSubject": "Einladung zur Da Vinci Ausbildungsplattform"
+  },
+  "debug": {
+    "tokenValid": "✅ Token ist gültig und entschlüsselt",
+    "tokenInvalid": "❌ Token ist ungültig oder beschädigt"
+  },
+  "dashboard": {
+    "manageAllUsers": "Alle Benutzer verwalten",
+    "noPermissions": "Sie haben keine Berechtigung, diesen Bereich zu sehen"
+  },
+  "forms": {
+    "code": "Code",
+    "numericCode": "Numerischer Code",
+    "postalCode": "Postleitzahl",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "description": "Beschreibung",
+    "number": "Nummer",
+    "title": "Titel",
+    "completionDate": "Abschlussdatum",
+    "selectDate": "Wählen Sie ein Abschlussdatum",
+    "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
+    "fileTooLarge": "Die Datei überschreitet die maximale Größe von 5MB."
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Ausschreibung",
+      "intro": "Beginn des Ausschreibungsverfahrens.",
+      "item1": "Einladungen versenden",
+      "item2": "Bewerbungen empfangen"
+    },
+    "presentacion": {
+      "label": "Präsentation",
+      "intro": "Präsentationssitzung des Programms.",
+      "item1": "Einführung in das Programm",
+      "item2": "Vorstellung der Ausbilder"
+    },
+    "modOnline": {
+      "label": "Online-Modul",
+      "intro": "Online-Lernmodule.",
+      "item1": "Zugang zur Plattform",
+      "item2": "Theoretische Inhalte"
+    },
+    "simulacion": {
+      "label": "Simulation",
+      "intro": "Simulationsübungen.",
+      "item1": "Praktische Sitzungen",
+      "item2": "Kompetenzbewertung"
+    },
+    "firstAssistant": {
+      "label": "Erster Assistent",
+      "intro": "Aktivitäten als erster Assistent.",
+      "item1": "Teilnahme im OP",
+      "item2": "Aktivitäten protokollieren"
+    },
+    "stepByStep": {
+      "label": "Schritt für Schritt",
+      "intro": "Schritt-für-Schritt-Verfahren.",
+      "item1": "Unterstützendes Material",
+      "item2": "Geführte Überprüfung"
+    },
+    "handsOn": {
+      "label": "Hands On",
+      "intro": "Praktisches Training Hands On.",
+      "item1": "Intensivtraining",
+      "item2": "Individuelles Feedback"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Phase 1 – Erste Vorbereitung",
+      "description": "Vertrautwerden mit dem Da Vinci System und grundlegende theoretische Inhalte."
+    },
+    "phase2": {
+      "label": "Phase 2 – Präklinische Ausbildung",
+      "description": "Simulation und Training in sicherer Umgebung."
+    },
+    "phase3": {
+      "label": "Phase 3 – Chirurgische Assistenz",
+      "description": "Teilnahme als Assistent im Operationssaal."
+    },
+    "phase4": {
+      "label": "Phase 4 – Chirurgie an der Konsole",
+      "description": "Durchführung von Eingriffen durch den Bewohner unter Aufsicht."
+    }
+  },
+ "residentProgress": {
+    "title": "Mein Fortschritt",
+    "errorLoad": "Fehler beim Laden des Fortschritts",
+    "downloadError": "Fehler beim Herunterladen des Zertifikats",
+    "downloadCertificate": "Zertifikat herunterladen"
+  },
+  "certificate": {
+    "title": "Zertifikat über den Abschluss",
+    "body": "Hiermit wird bestätigt, dass <strong>{{name}}</strong> die zugewiesene Ausbildungsphase des Academic Program zu Technologien des Da Vinci®-Roboters erfolgreich abgeschlossen hat.<br /><br />Dieser Kurs ist Teil des Ausbildungsplans für Robotertechnologie in Zusammenarbeit mit dem Krankenhaus <strong>{{hospital}}</strong> und unter der Aufsicht des zugewiesenen Tutors.",
+    "dateLine": "Madrid, {{date}}",
+    "footer": "Zertifikat automatisch erstellt vom Academic Program Da Vinci · www.abexsl.es"
+  },
+  "residentPhases": {
+    "title": "Meine Ausbildungsphasen",
+    "errorLoad": "Fehler beim Laden des Fortschritts",
+    "activityFail": "Aktivität konnte nicht abgeschlossen werden.",
+    "activitySaveError": "Fehler beim Speichern der Aktivität.",
+    "activitySuccess": "✅ Aktivität erfolgreich registriert",
+    "noActivitySelectedError": "Interner Fehler: Keine Aktivität ausgewählt.",
+    "noTitle": "Kein Titel",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "deadline": "Frist",
+    "validatedProgress": "Validierter Fortschritt: {{percent}}%",
+    "noActivities": "Keine Aktivitäten verfügbar",
+    "phaseLocked": "Phase gesperrt",
+    "noProgress": "Kein Fortschritt verfügbar.",
+    "markAsCompleted": "Als abgeschlossen markieren",
+    "unnamedActivity": "Aktivität ohne Namen",
+    "comment": "Kommentar",
+    "trainerComment": "Kommentar des Ausbilders",
+    "rejectionReason": "Ablehnungsgrund",
+    "completedOn": "Abschlussdatum",
+    "validatedOn": "Validiert am",
+    "status": "Status",
+    "dialog": {
+      "completeActivity": "Aktivität als abgeschlossen markieren",
+      "completionDate": "Abschlussdatum",
+      "comment": "Kommentar",
+      "selectFile": "Datei auswählen",
+      "cancel": "Abbrechen",
+      "confirm": "Bestätigen",
+      "missingProgressId": "Fortschritts-ID fehlt",
+      "noActivitySelected": "Keine Aktivität ausgewählt",
+      "selectDate": "Wähle ein Abschlussdatum",
+      "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
+      "fileTooLarge": "Datei ist größer als 5MB.",
+      "title": "Aktivität abschließen",
+      "date": "Abschlussdatum"
+    },
+    "messages": {
+      "noActivities": "Keine Aktivitäten verfügbar",
+      "blocked": "Phase gesperrt",
+      "noProgress": "Kein Fortschritt verfügbar.",
+      "loadError": "Fehler beim Laden des Fortschritts"
+    },
+    "tooltip": {
+      "missingProgress": "Fortschritts-ID fehlt",
+      "noActivity": "Keine Aktivität ausgewählt"
+    },
+    "labels": {
+      "comment": "Kommentar",
+      "trainerComment": "Kommentar des Ausbilders",
+      "rejectionReason": "Ablehnungsgrund",
+      "completedDate": "Abgeschlossen am",
+      "validatedDate": "Validiert am",
+      "state": "Status"
+    },
+    "states": {
+      "validated": "Validiert",
+      "rejected": "Abgelehnt",
+      "pending": "Ausstehende Validierung",
+      "notCompleted": "Nicht abgeschlossen"
+    },
+    "_comment": "Resident phases and activities"
+  },
+ "adminPhases": {
+    "_comment": "Verwaltung der Phasen",
+    "phase": "Phase",
+    "activity": "Aktivität",
+    "activities": "Aktivitäten",
+    "name": "Name",
+    "order": "Reihenfolge",
+    "type": "Typ",
+    "description": "Beschreibung",
+    "number": "Nummer",
+    "evaluation": "Bewertung",
+    "observation": "Beobachtung",
+    "practice": "Praxis",
+    "theory": "Theorie",
+    "procedure": "Verfahren",
+    "errorForbidden": "Sie haben keine Berechtigung, diesen Abschnitt anzuzeigen",
+    "errorLoadData": "Fehler beim Laden der Daten",
+    "tabs": {
+      "aria": "Phasen-Tabs",
+      "activities": "Aktivitäten"
+    },
+    "table": {
+      "aria": "Aktivitäten der Phase {{number}}",
+      "order": "Reihenfolge",
+      "name": "Name",
+      "type": "Typ",
+      "actions": "Aktionen",
+      "description": "Beschreibung",
+      "empty": "Keine Aktivitäten in dieser Phase"
+    },
+    "messages": {
+      "noActivities": "Keine Aktivitäten in dieser Phase",
+      "noPhases": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen.",
+      "created": "{{item}} erfolgreich erstellt",
+      "createError": "Fehler beim Erstellen von {{item}}",
+      "updated": "{{item}} erfolgreich aktualisiert",
+      "updateError": "Fehler beim Aktualisieren von {{item}}",
+      "deleted": "{{item}} erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen von {{item}}",
+      "phaseCreated": "Phase erfolgreich erstellt",
+      "phaseCreateError": "Fehler beim Erstellen der Phase",
+      "phaseUpdated": "Phase erfolgreich aktualisiert",
+      "phaseUpdateError": "Fehler beim Aktualisieren der Phase",
+      "phaseDeleted": "Phase erfolgreich gelöscht. Fortschritt entfernt: {{removed}}. Validiert erhalten: {{preserved}}",
+      "phaseDeleteError": "Fehler beim Löschen der Phase",
+      "activityCreated": "Aktivität erfolgreich erstellt",
+      "activityCreateError": "Fehler beim Erstellen der Aktivität",
+      "activityUpdated": "Aktivität erfolgreich aktualisiert",
+      "activityUpdateError": "Fehler beim Aktualisieren der Aktivität",
+      "activityDeleted": "Aktivität erfolgreich gelöscht",
+      "activityDeleteError": "Fehler beim Löschen der Aktivität",
+      "checkProgressError": "Fehler beim Prüfen des verknüpften Fortschritts"
+    },
+    "actions": {
+      "newPhase": "Neue Phase",
+      "editPhase": "Phase bearbeiten",
+      "deletePhase": "Phase löschen",
+      "newActivity": "Neue Aktivität",
+      "editActivity": "Aktivität bearbeiten",
+      "deleteActivity": "Aktivität löschen"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Neue Phase",
+        "create": "Erstellen",
+        "cancel": "Abbrechen"
+      },
+      "editPhase": {
+        "title": "Phase bearbeiten",
+        "save": "Speichern",
+        "cancel": "Abbrechen"
+      },
+      "deletePhase": {
+        "title": "Phase löschen",
+        "cancel": "Abbrechen",
+        "content": "Möchten Sie die Phase <strong>{{name}}</strong> wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden und entfernt alle Aktivitäten dieser Phase.",
+        "contentWithProgress": "Die Phase <strong>{{name}}</strong> hat <strong>{{count}}</strong> Fortschrittsdatensätze. Möchten Sie sie löschen? Validierter Fortschritt bleibt erhalten.",
+        "hasProgress": "Die Phase <strong>{{name}}</strong> hat <strong>{{count}}</strong> Fortschrittsdatensätze. Möchten Sie sie löschen? Validierter Fortschritt bleibt erhalten.",
+        "confirm": "Sind Sie sicher, dass Sie die Phase <strong>{{name}}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und entfernt alle Aktivitäten dieser Phase."
+      },
+      "newActivity": {
+        "title": "Neue Aktivität",
+        "create": "Erstellen",
+        "cancel": "Abbrechen",
+        "content": "Aktivität für die Phase <strong>{{phase}}</strong> wird erstellt"
+      },
+      "editActivity": {
+        "title": "Aktivität bearbeiten",
+        "save": "Speichern",
+        "cancel": "Abbrechen"
+      },
+      "deleteActivity": {
+        "title": "Aktivität löschen",
+        "cancel": "Abbrechen",
+        "content": "Möchten Sie die Aktivität <strong>{{name}}</strong> wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "contentWithProgress": "Die Aktivität <strong>{{name}}</strong> hat <strong>{{count}}</strong> Fortschrittsdatensätze. Sind Sie sicher, dass Sie sie löschen möchten? Dies entfernt auch diese Fortschrittsdatensätze bei allen Nutzern.",
+        "hasProgress": "Die Aktivität <strong>{{name}}</strong> hat <strong>{{count}}</strong> Fortschrittsdatensätze. Sind Sie sicher, dass Sie sie löschen möchten? Dies entfernt auch diese Fortschrittsdatensätze bei allen Nutzern.",
+        "confirm": "Sind Sie sicher, dass Sie die Aktivität <strong>{{name}}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+      },
+      "createActivity": "Aktivität für die Phase <strong>{{phase}}</strong> wird erstellt"
+    },
+    "empty": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen."
+  },
+  "profile": {
+    "title": "Mein Profil",
+    "personalData": "Persönliche Daten",
+    "changePassword": "Passwort ändern",
+    "fields": {
+      "name": "Name",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "hospital": "Krankenhaus",
+      "society": "Gesellschaft",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen"
+    },
+    "messages": {
+      "updateSuccess": "Profil aktualisiert",
+      "updateError": "Fehler beim Aktualisieren des Profils",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "passwordUpdateSuccess": "Passwort aktualisiert",
+      "passwordUpdateError": "Fehler beim Ändern des Passworts"
+    },
+    "buttons": {
+      "changePassword": "Passwort ändern"
+    }
+  },
+  "adminHospitals": {
+    "title": "Krankenhausverwaltung",
+    "new": "Neues Krankenhaus",
+    "searchPlaceholder": "Nach Name suchen",
+    "loadError": "Fehler beim Laden der Krankenhäuser",
+    "createSuccess": "Krankenhaus erfolgreich erstellt",
+    "createError": "Fehler beim Erstellen des Krankenhauses",
+    "updateSuccess": "Krankenhaus erfolgreich aktualisiert",
+    "updateError": "Fehler beim Aktualisieren des Krankenhauses",
+    "deleteSuccess": "Krankenhaus erfolgreich gelöscht",
+    "deleteError": "Fehler beim Löschen des Krankenhauses",
+    "table": {
+      "aria": "Tabelle der Krankenhäuser",
+      "name": "Name",
+      "city": "Stadt",
+      "province": "Provinz",
+      "zone": "Zone",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "actions": "Aktionen"
+    },
+    "fields": {
+      "name": "Name",
+      "numericCode": "Numerischer Code",
+      "address": "Adresse",
+      "city": "Stadt",
+      "province": "Provinz",
+      "zone": "Zone",
+      "postalCode": "Postleitzahl",
+      "phone": "Telefon",
+      "systemType": "Systemtyp",
+      "email": "E-Mail"
+    },
+    "system": {
+      "other": "Andere"
+    },
+    "create": {
+      "title": "Neues Krankenhaus"
+    },
+    "edit": {
+      "title": "Krankenhaus bearbeiten"
+    },
+    "delete": {
+      "title": "Krankenhaus löschen",
+      "confirm": "Sind Sie sicher, dass Sie das Krankenhaus <strong>{{name}}</strong> löschen möchten? {{count}} Benutzer und deren Fortschritt werden entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+    }
+  },
+  "adminSocieties": {
+    "title": "Verwaltung der Gesellschaften",
+    "new": "Neue Gesellschaft",
+    "searchPlaceholder": "Nach Name suchen",
+    "table": {
+      "title": "Titel",
+      "status": "Status",
+      "convocatoria": "Ausschreibung",
+      "presentacion": "Präsentation",
+      "modOnline": "Online-Module",
+      "simulacion": "Simulation",
+      "firstAssistant": "Erster Assistent",
+      "stepByStep": "Schritt für Schritt",
+      "handsOn": "Hands On",
+      "actions": "Aktionen"
+    },
+    "buttons": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "cancel": "Abbrechen",
+      "save": "Speichern"
+    },
+    "dialog": {
+      "editTitle": "Gesellschaft bearbeiten",
+      "createTitle": "Neue Gesellschaft"
+    },
+    "fields": {
+      "titulo": "Titel",
+      "status": "Status",
+      "fechaConvocatoria": "Datum der Ausschreibung",
+      "fechaPresentacion": "Datum der Präsentation",
+      "fechaModulosOnline": "Online-Module",
+      "fechaSimulacion": "Simulation",
+      "fechaAtividadesFirstAssistant": "Erster Assistent",
+      "fechaModuloOnlineStepByStep": "Schritt für Schritt",
+      "fechaHandOn": "Hands On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Alle Benutzer verwalten",
+    "titleHospital": "Benutzer Ihres Krankenhauses",
+    "searchPlaceholder": "Nach Name oder E-Mail suchen",
+    "loadError": "Fehler beim Laden der Daten",
+    "actions": {
+      "create": "Benutzer erstellen",
+      "invite": "Benutzer einladen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "changePassword": "Passwort ändern",
+      "createProgress": "Fortschritt erstellen"
+    },
+    "createSuccess": "Benutzer erfolgreich erstellt",
+    "createError": "Fehler beim Erstellen des Benutzers",
+    "updateSuccess": "Benutzer erfolgreich aktualisiert",
+    "updateError": "Fehler beim Aktualisieren des Benutzers",
+    "deleteSuccess": "Benutzer erfolgreich gelöscht",
+    "deleteError": "Fehler beim Löschen des Benutzers",
+    "passwordUpdated": "Passwort aktualisiert",
+    "passwordError": "Fehler beim Aktualisieren des Passworts",
+    "createProgressSuccess": "Ausbildungsfortschritt erfolgreich erstellt",
+    "createProgressError": "Fehler beim Erstellen des Fortschritts",
+    "table": {
+      "aria": "Benutzertabelle",
+      "name": "Name",
+      "email": "E-Mail",
+      "type": "Typ",
+      "society": "Gesellschaft",
+      "role": "Rolle",
+      "hospital": "Krankenhaus",
+      "zone": "Zone",
+      "actions": "Aktionen"
+    },
+    "fields": {
+      "email": "E-Mail",
+      "password": "Passwort",
+      "name": "Name",
+      "surname": "Nachname",
+      "type": "Typ",
+      "role": "Rolle",
+      "hospital": "Krankenhaus",
+      "specialty": "Fachgebiet",
+      "society": "Gesellschaft",
+      "zone": "Zone"
+    },
+    "create": {
+      "title": "Benutzer erstellen"
+    },
+    "edit": {
+      "title": "Benutzer bearbeiten"
+    },
+    "delete": {
+      "title": "Benutzer löschen",
+      "confirm": "Sind Sie sicher, dass Sie den Benutzer <strong>{{name}}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "password": {
+      "title": "Passwort aktualisieren",
+      "label": "Neues Passwort",
+      "updating": "Aktualisiere...",
+      "update": "Aktualisieren"
+    },
+    "_comment": "Benutzerverwaltung",
+    "buttons": {
+      "create": "Benutzer erstellen",
+      "creating": "Erstelle...",
+      "invite": "Benutzer einladen",
+      "cancel": "Abbrechen",
+      "save": "Änderungen speichern",
+      "saving": "Speichere...",
+      "delete": "Löschen",
+      "deleting": "Lösche...",
+      "update": "Aktualisieren",
+      "updating": "Aktualisiere..."
+    },
+    "dialogs": {
+      "createTitle": "Benutzer erstellen",
+      "editTitle": "Benutzer bearbeiten",
+      "deleteTitle": "Benutzer löschen",
+      "passwordTitle": "Passwort aktualisieren",
+      "passwordLabel": "Neues Passwort",
+      "deleteConfirm": "Sind Sie sicher, dass Sie den Benutzer {{name}} {{lastName}} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "messages": {
+      "loadError": "Fehler beim Laden der Daten",
+      "userCreated": "Benutzer erfolgreich erstellt",
+      "createError": "Fehler beim Erstellen des Benutzers",
+      "userUpdated": "Benutzer erfolgreich aktualisiert",
+      "updateError": "Fehler beim Aktualisieren des Benutzers",
+      "userDeleted": "Benutzer erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen des Benutzers",
+      "passwordUpdated": "Passwort aktualisiert",
+      "passwordError": "Fehler beim Aktualisieren des Passworts"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Phasenverwaltung für das Gesellschaftsprogramm",
+    "phase": "Phase",
+    "activity": "Aktivität",
+    "table": {
+      "order": "Reihenfolge",
+      "name": "Name",
+      "type": "Typ",
+      "actions": "Aktionen"
+    },
+    "messages": {
+      "noActivities": "Keine Aktivitäten in dieser Phase",
+      "noPhases": "Keine Phasen erstellt",
+      "created": "{{item}} erfolgreich erstellt",
+      "createError": "Fehler beim Erstellen von {{item}}",
+      "updated": "{{item}} erfolgreich aktualisiert",
+      "updateError": "Fehler beim Aktualisieren von {{item}}",
+      "deleted": "{{item}} erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen von {{item}}",
+      "phaseCreated": "Phase erfolgreich erstellt",
+      "phaseCreateError": "Fehler beim Erstellen der Phase",
+      "phaseUpdated": "Phase erfolgreich aktualisiert",
+      "phaseUpdateError": "Fehler beim Aktualisieren der Phase",
+      "phaseDeleted": "Phase erfolgreich gelöscht. Fortschritt entfernt: {{removed}}. Validiert erhalten: {{preserved}}",
+      "phaseDeleteError": "Fehler beim Löschen der Phase",
+      "activityCreated": "Aktivität erfolgreich erstellt",
+      "activityCreateError": "Fehler beim Erstellen der Aktivität",
+      "activityUpdated": "Aktivität erfolgreich aktualisiert",
+      "activityUpdateError": "Fehler beim Aktualisieren der Aktivität",
+      "activityDeleted": "Aktivität erfolgreich gelöscht",
+      "activityDeleteError": "Fehler beim Löschen der Aktivität",
+      "progressCheckError": "Fehler beim Prüfen des verknüpften Fortschritts"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Neue Phase",
+        "create": "Erstellen",
+        "cancel": "Abbrechen"
+      },
+      "editPhase": {
+        "title": "Phase bearbeiten",
+        "save": "Speichern",
+        "cancel": "Abbrechen"
+      },
+      "deletePhase": {
+        "title": "Phase löschen",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      },
+      "newActivity": {
+        "title": "Neue Aktivität",
+        "create": "Erstellen",
+        "cancel": "Abbrechen"
+      },
+      "editActivity": {
+        "title": "Aktivität bearbeiten",
+        "save": "Speichern",
+        "cancel": "Abbrechen"
+      },
+      "deleteActivity": {
+        "title": "Aktivität löschen",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "Benutzerfortschritt",
+    "searchPlaceholder": "Nach Name oder E-Mail suchen",
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "hospitalSociety": "Krankenhaus/Gesellschaft",
+      "role": "Rolle",
+      "actions": "Aktionen"
+    },
+    "viewProgress": "Fortschritt anzeigen"
+  },
+  "adminProgressDetail": {
+    "loadError": "Fehler beim Laden des Fortschritts",
+    "phaseUpdateSuccess": "Phase erfolgreich aktualisiert",
+    "phaseUpdateError": "Fehler beim Aktualisieren der Phase",
+    "activityUpdateSuccess": "Aktivität erfolgreich aktualisiert",
+    "activityUpdateError": "Fehler beim Aktualisieren der Aktivität",
+    "title": "Benutzerfortschritt",
+    "titleWithName": "Fortschritt von {{name}} {{surname}}",
+    "back": "Zurück",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "noTitle": "Ohne Titel",
+    "phaseStatusLabel": "Phasenstatus",
+    "activityStatusLabel": "Aktivitätsstatus",
+    "phaseStatus": {
+      "blocked": "Gesperrt",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "validated": "Validiert",
+      "pending": "Ausstehend",
+      "rejected": "Abgelehnt"
+    },
+    "activityStatus": {
+      "pending": "Ausstehend",
+      "completed": "Abgeschlossen",
+      "validated": "Validiert",
+      "rejected": "Abgelehnt"
+    },
+    "validatedProgress": "Validierter Fortschritt: {{percent}}%",
+    "noActivityName": "Unbenannte Aktivität",
+    "completedOn": "Abgeschlossen am: {{date}}",
+    "validatedOn": "Validiert am: {{date}}",
+    "statusWithValue": "Status: {{status}}",
+    "noProgress": "Kein Fortschritt verfügbar."
+  },
+  "trainerUsers": {
+    "title": "Meine Benutzer",
+    "invite": "Benutzer einladen",
+    "edit": "Benutzer bearbeiten",
+    "updated": "Benutzer aktualisiert",
+    "invited": "Benutzer eingeladen",
+    "deleted": "Benutzer gelöscht",
+    "error": "Fehler",
+    "deleteError": "Fehler beim Löschen",
+    "loadError": "Fehler beim Laden der Benutzer",
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "status": "Status",
+      "actions": "Aktionen",
+      "state": "Status"
+    },
+    "form": {
+      "email": "E-Mail",
+      "name": "Name",
+      "surname": "Nachname",
+      "role": "Rolle",
+      "roles": {
+        "resident": "Bewohner",
+        "trainer": "Ausbilder"
+      }
+    },
+    "dialog": {
+      "cancel": "Abbrechen",
+      "saving": "Speichere...",
+      "save": "Speichern",
+      "invite": "Einladen"
+    },
+    "_comment": "Verwaltung von Ausbilderbenutzern",
+    "buttons": {
+      "invite": "Benutzer einladen",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Speichere...",
+      "delete": "Löschen"
+    },
+    "fields": {
+      "email": "E-Mail",
+      "name": "Name",
+      "lastName": "Nachname",
+      "role": "Rolle"
+    },
+    "roles": {
+      "resident": "Bewohner",
+      "trainer": "Ausbilder"
+    },
+    "states": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "dialogs": {
+      "editTitle": "Benutzer bearbeiten",
+      "inviteTitle": "Benutzer einladen"
+    },
+    "messages": {
+      "loadError": "Fehler beim Laden der Benutzer",
+      "updateSuccess": "Benutzer aktualisiert",
+      "inviteSuccess": "Benutzer eingeladen",
+      "deleteSuccess": "Benutzer gelöscht",
+      "deleteError": "Fehler beim Löschen",
+      "genericError": "Fehler"
+    }
+  },
+  "trainerValidations": {
+    "title": "Validierungen",
+    "tabs": {
+      "pending": "Ausstehend",
+      "validated": "Validiert",
+      "rejected": "Abgelehnt",
+      "aria": "Validierungs-Tabs"
+    },
+    "table": {
+      "activity": "Aktivität",
+      "resident": "Bewohner",
+      "date": "Datum",
+      "comments": "Kommentare",
+      "actions": "Aktionen",
+      "status": "Status",
+      "reason": "Grund",
+      "noPhase": "Keine Phase",
+      "noName": "Kein Name",
+      "phase": "Phase",
+      "state": "Status"
+    },
+    "empty": {
+      "pending": "Keine ausstehenden Validierungen",
+      "validated": "Keine abgeschlossenen Validierungen",
+      "rejected": "Keine abgelehnten Validierungen"
+    },
+    "actions": {
+      "viewAttachment": "Anhang anzeigen"
+    },
+    "dialog": {
+      "validateTitle": "Aktivität validieren",
+      "validateMessage": "Sie validieren die Aktivität {{activity}} von Bewohner {{name}}.",
+      "optionalComments": "Kommentare (optional)",
+      "digitalSignature": "Digitale Signatur",
+      "rejectTitle": "Aktivität ablehnen",
+      "rejectMessage": "Sie lehnen die Aktivität {{activity}} von Bewohner {{name}} ab.",
+      "rejectReason": "Ablehnungsgrund"
+    },
+    "errorLoad": "Fehler beim Laden der Validierungen",
+    "_comment": "Von Ausbildern verwaltete Validierungen",
+    "buttons": {
+      "viewAttachment": "Anhang anzeigen",
+      "validate": "Validieren",
+      "reject": "Ablehnen",
+      "cancel": "Abbrechen"
+    },
+    "states": {
+      "validated": "Validiert",
+      "rejected": "Abgelehnt"
+    },
+    "dialogs": {
+      "validateTitle": "Aktivität validieren",
+      "rejectTitle": "Aktivität ablehnen",
+      "validateConfirm": "Sie validieren die Aktivität {{activity}} für Bewohner {{resident}}.",
+      "rejectConfirm": "Sie lehnen die Aktivität {{activity}} für Bewohner {{resident}} ab.",
+      "commentsOptional": "Kommentare (optional)",
+      "digitalSignature": "Digitale Signatur",
+      "rejectReason": "Ablehnungsgrund",
+      "processing": "Verarbeite..."
+    },
+    "messages": {
+      "loadError": "Fehler beim Laden der Validierungen"
+    }
+  }
+}
+

@@ -1,0 +1,904 @@
+{
+  "welcome": "Benvingut/da, {{name}}",
+  "role": {
+    "adminPanel": "Panell d'administració",
+    "trainer": "Formador de residents de l'hospital {{hospital}}",
+    "coordinator": "Coordinador de residents de l'hospital {{hospital}}",
+    "resident": "Resident de l'hospital {{hospital}}",
+    "student": "Alumne del programa de societats {{title}}",
+    "instructor": "Instructor del programa de societats {{title}}"
+  },
+  "actions": {
+    "dashboard": "Tauler",
+    "myProgress": "El meu progrés",
+    "trainingPhases": "Fases formatives",
+    "validations": "Validacions",
+    "myUsers": "Els meus usuaris",
+    "usersProgress": "Progrés dels usuaris",
+    "settings": "Configuració",
+    "myProfile": "El meu perfil",
+    "notifications": "Notificacions",
+    "profile": "Perfil",
+    "users": "Usuaris",
+    "logout": "Tancar sessió"
+  },
+  "adminConfig": {
+    "title": "Configuració",
+    "hospitals": "Hospitals",
+    "societies": "Societats",
+    "residentProgram": "Programa de Residents",
+    "societiesProgram": "Programa de Societats",
+    "users": "Usuaris",
+    "accessCodes": "Codis d'accés",
+    "debug": "Depuració"
+  },
+  "progressByPhase": "Progrés per fase",
+  "close": "Tancar",
+  "devWarning": "⚠️ ESTÀS EN ENTORN DE DESENVOLUPAMENT ⚠️",
+  "brand": {
+    "name": "Abex Excel·lència Robòtica"
+  },
+  "regions": {
+    "andalucia": "ANDALUSIA"
+  },
+  "status": {
+    "pendingValidation": "Pendent de validació",
+    "validado": "Validat",
+    "rechazado": "Rebutjat",
+    "completado": "Completat",
+    "pendiente": "Pendent",
+    "noCompletada": "No completada",
+    "enProgreso": "En progrés",
+    "bloqueada": "Blocada",
+    "active": "Actiu",
+    "inactive": "Inactiu",
+    "validated": "Validat",
+    "rejected": "Rebutjat"
+  },
+  "register": {
+    "title": "Registre",
+    "accessCode": "Codi d'accés",
+    "name": "Nom",
+    "surname": "Cognoms",
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "confirmPassword": "Confirmar contrasenya",
+    "hospital": "Hospital",
+    "zone": "Zona",
+    "specialty": "Especialitat",
+    "specialties": {
+      "URO": "Urologia (URO)",
+      "GEN": "Cirurgia General (GEN)",
+      "GYN": "Ginecologia (GYN)",
+      "THOR": "Toràcica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
+    "society": "Societat",
+    "none": "Cap",
+    "invalidAccessCode": "Codi d'accés no vàlid",
+    "requiredFields": "Si us plau, completa tots els camps obligatoris.",
+    "hospitalAndSpecialtyRequired": "Hospital i especialitat requerits",
+    "hospitalRequired": "Hospital requerit",
+    "societyRequired": "Societat requerida",
+    "passwordsMismatch": "Les contrasenyes no coincideixen",
+    "consentPrefix": "Accepto el tractament de les meves dades personals segons la ",
+    "privacyPolicy": "Política de Privacitat",
+    "consentSuffix": " i compleixo amb la LOPD.",
+    "registerButton": "Registrar-se"
+  },
+  "common": {
+    "cancel": "Cancel·lar",
+    "create": "Crear",
+    "creating": "Creant...",
+    "saveChanges": "Desar canvis",
+    "saving": "Desant...",
+    "delete": "Eliminar",
+    "deleting": "Eliminant...",
+    "phase": "Fase",
+    "validate": "Validar",
+    "reject": "Rebutjar",
+    "processing": "Processant..."
+  },
+  "profile": {
+    "title": "El meu perfil",
+    "personalData": "Dades personals",
+    "changePassword": "Canviar contrasenya",
+    "fields": {
+      "name": "Nom",
+      "lastName": "Cognoms",
+      "email": "Correu electrònic",
+      "hospital": "Hospital",
+      "society": "Societat",
+      "currentPassword": "Contrasenya actual",
+      "newPassword": "Nova contrasenya",
+      "confirmPassword": "Confirmar contrasenya"
+    },
+    "messages": {
+      "updateSuccess": "Perfil actualitzat",
+      "updateError": "Error en actualitzar el perfil",
+      "passwordMismatch": "Les contrasenyes no coincideixen",
+      "passwordUpdateSuccess": "Contrasenya actualitzada",
+      "passwordUpdateError": "Error en canviar la contrasenya"
+    },
+    "buttons": {
+      "changePassword": "Canviar contrasenya"
+    }
+  },
+  "adminHospitals": {
+    "title": "Gestió d'Hospitals",
+    "new": "Nou Hospital",
+    "searchPlaceholder": "Cerca per nom",
+    "loadError": "Error en carregar els hospitals",
+    "createSuccess": "Hospital creat correctament",
+    "createError": "Error en crear l'hospital",
+    "updateSuccess": "Hospital actualitzat correctament",
+    "updateError": "Error en actualitzar l'hospital",
+    "deleteSuccess": "Hospital eliminat correctament",
+    "deleteError": "Error en eliminar l'hospital",
+    "table": {
+      "aria": "taula d'hospitals",
+      "name": "Nom",
+      "city": "Ciutat",
+      "province": "Província",
+      "zone": "Zona",
+      "phone": "Telèfon",
+      "email": "Correu electrònic",
+      "actions": "Accions"
+    },
+    "fields": {
+      "name": "Nom",
+      "numericCode": "Codi numèric",
+      "address": "Adreça",
+      "city": "Ciutat",
+      "province": "Província",
+      "zone": "Zona",
+      "postalCode": "Codi postal",
+      "phone": "Telèfon",
+      "systemType": "Tipus de sistema",
+      "email": "Correu electrònic",
+      "logoUrl": "URL del logotip"    },
+    "system": {
+      "other": "Altres"
+    },
+    "create": {
+      "title": "Nou Hospital"
+    },
+    "edit": {
+      "title": "Editar Hospital"
+    },
+    "delete": {
+      "title": "Eliminar Hospital",
+      "confirm": "Estàs segur que vols eliminar l'hospital <strong>{{name}}</strong>? S'eliminaran {{count}} usuaris i els seus progressos. Aquesta acció no es pot desfer."
+    }
+  },
+  "adminSocieties": {
+    "title": "Gestió de Societats",
+    "new": "Nova societat",
+    "searchPlaceholder": "Cerca per nom",
+    "table": {
+      "title": "Títol",
+      "status": "Estat",
+      "convocatoria": "Convocatòria",
+      "presentacion": "Presentació",
+      "modOnline": "Mod. en línia",
+      "simulacion": "Simulació",
+      "firstAssistant": "Primer Ajudant",
+      "stepByStep": "Pas a Pas",
+      "handsOn": "Hands On",
+      "actions": "Accions"
+    },
+    "buttons": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancel·lar",
+      "save": "Desar"
+    },
+    "dialog": {
+      "editTitle": "Editar Societat",
+      "createTitle": "Nova Societat"
+    },
+    "fields": {
+      "titulo": "Títol",
+      "status": "Estat",
+      "fechaConvocatoria": "Data de convocatòria",
+      "fechaPresentacion": "Data de presentació",
+      "fechaModulosOnline": "Mòduls en línia",
+      "fechaSimulacion": "Simulació",
+      "fechaAtividadesFirstAssistant": "Primer Ajudant",
+      "fechaModuloOnlineStepByStep": "Pas a Pas",
+      "fechaHandOn": "Hands On"
+    }
+  },
+  "adminPhases": {
+    "_comment": "Gestió de fases per a administradors",
+    "phase": "Fase",
+    "activity": "Activitat",
+    "activities": "Activitats",
+    "name": "Nom",
+    "order": "Ordre",
+    "type": "Tipus",
+    "description": "Descripció",
+    "number": "Número",
+    "tabs": {
+      "aria": "pestanyes de fases",
+      "activities": "Activitats"
+    },
+    "table": {
+      "aria": "activitats de la fase {{number}}",
+      "order": "Ordre",
+      "name": "Nom",
+      "type": "Tipus",
+      "actions": "Accions",
+      "description": "Descripció",
+      "empty": "No hi ha activitats en aquesta fase"
+    },
+    "messages": {
+      "noActivities": "No hi ha activitats en aquesta fase",
+      "noPhases": "No hi ha fases creades",
+      "created": "{{item}} creada correctament",
+      "createError": "Error en crear {{item}}",
+      "updated": "{{item}} actualitzada correctament",
+      "updateError": "Error en actualitzar {{item}}",
+      "deleted": "{{item}} eliminada correctament",
+      "deleteError": "Error en eliminar {{item}}",
+      "phaseCreated": "Fase creada correctament",
+      "phaseCreateError": "Error en crear la fase",
+      "phaseUpdated": "Fase actualitzada correctament",
+      "phaseUpdateError": "Error en actualitzar la fase",
+      "phaseDeleted": "Fase eliminada correctament. Progrés eliminat: {{removed}}. Validats conservats: {{preserved}}",
+      "phaseDeleteError": "Error en eliminar la fase",
+      "activityCreated": "Activitat creada correctament",
+      "activityCreateError": "Error en crear l'activitat",
+      "activityUpdated": "Activitat actualitzada correctament",
+      "activityUpdateError": "Error en actualitzar l'activitat",
+      "activityDeleted": "Activitat eliminada correctament",
+      "activityDeleteError": "Error en eliminar l'activitat",
+      "checkProgressError": "Error en comprovar el progrés vinculat"
+    },
+    "actions": {
+      "newPhase": "Nova Fase",
+      "editPhase": "Editar Fase",
+      "deletePhase": "Eliminar Fase",
+      "newActivity": "Nova Activitat",
+      "editActivity": "Editar Activitat",
+      "deleteActivity": "Eliminar Activitat"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nova Fase",
+        "create": "Crear",
+        "cancel": "Cancel·lar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Desar",
+        "cancel": "Cancel·lar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "cancel": "Cancel·lar",
+        "content": "Segur que vols eliminar la fase <strong>{{name}}</strong>? Aquesta acció no es pot desfer i eliminarà totes les activitats associades a aquesta fase.",
+        "contentWithProgress": "La fase <strong>{{name}}</strong> té <strong>{{count}}</strong> registres de progrés. Vols eliminar-la? El progrés validat es conservarà.",
+        "hasProgress": "La fase <strong>{{name}}</strong> té <strong>{{count}}</strong> registres de progrés. Vols eliminar-la? El progrés validat es conservarà.",
+        "confirm": "Segur que vols eliminar la fase <strong>{{name}}</strong>? Aquesta acció no es pot desfer i eliminarà totes les activitats associades a aquesta fase."
+      },
+      "newActivity": {
+        "title": "Nova Activitat",
+        "create": "Crear",
+        "cancel": "Cancel·lar",
+        "content": "Creant activitat per a la fase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Editar Activitat",
+        "save": "Desar",
+        "cancel": "Cancel·lar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Activitat",
+        "cancel": "Cancel·lar",
+        "content": "Segur que vols eliminar l'activitat <strong>{{name}}</strong>? Aquesta acció no es pot desfer.",
+        "contentWithProgress": "L'activitat <strong>{{name}}</strong> té <strong>{{count}}</strong> registres de progrés. Segur que vols eliminar-la? Això també eliminarà aquests registres de progrés de tots els usuaris.",
+        "hasProgress": "L'activitat <strong>{{name}}</strong> té <strong>{{count}}</strong> registres de progrés. Segur que vols eliminar-la? Això també eliminarà aquests registres de progrés de tots els usuaris.",
+        "confirm": "Segur que vols eliminar l'activitat <strong>{{name}}</strong>? Aquesta acció no es pot desfer."
+      },
+      "createActivity": "Creant activitat per a la fase: <strong>{{phase}}</strong>"
+    },
+    "evaluation": "Avaluació",
+    "observation": "Observació",
+    "practice": "Pràctica",
+    "theory": "Teòrica",
+    "procedure": "Procediment",
+    "errorForbidden": "No tens permisos per veure aquesta secció",
+    "errorLoadData": "Error en carregar les dades",
+    "empty": "No hi ha fases creades. Crea una nova fase per començar."
+  },
+  "adminPhasesSoc": {
+    "_comment": "Gestió de fases per al programa de Societats",
+    "phase": "Fase",
+    "activity": "Activitat",
+    "table": {
+      "order": "Ordre",
+      "name": "Nom",
+      "type": "Tipus",
+      "actions": "Accions"
+    },
+    "messages": {
+      "noActivities": "No hi ha activitats en aquesta fase",
+      "noPhases": "No hi ha fases creades",
+      "created": "{{item}} creada correctament",
+      "createError": "Error en crear {{item}}",
+      "updated": "{{item}} actualitzada correctament",
+      "updateError": "Error en actualitzar {{item}}",
+      "deleted": "{{item}} eliminada correctament",
+      "deleteError": "Error en eliminar {{item}}",
+      "phaseCreated": "Fase creada correctament",
+      "phaseCreateError": "Error en crear la fase",
+      "phaseUpdated": "Fase actualitzada correctament",
+      "phaseUpdateError": "Error en actualitzar la fase",
+      "phaseDeleted": "Fase eliminada correctament. Progrés eliminat: {{removed}}. Validats preservats: {{preserved}}",
+      "phaseDeleteError": "Error en eliminar la fase",
+      "activityCreated": "Activitat creada correctament",
+      "activityCreateError": "Error en crear l'activitat",
+      "activityUpdated": "Activitat actualitzada correctament",
+      "activityUpdateError": "Error en actualitzar l'activitat",
+      "activityDeleted": "Activitat eliminada correctament",
+      "activityDeleteError": "Error en eliminar l'activitat",
+      "progressCheckError": "Error en comprovar els progressos vinculats"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Nova Fase",
+        "create": "Crear",
+        "cancel": "Cancel·lar"
+      },
+      "editPhase": {
+        "title": "Editar Fase",
+        "save": "Desar",
+        "cancel": "Cancel·lar"
+      },
+      "deletePhase": {
+        "title": "Eliminar Fase",
+        "confirm": "Eliminar",
+        "cancel": "Cancel·lar"
+      },
+      "newActivity": {
+        "title": "Nova Activitat",
+        "create": "Crear",
+        "cancel": "Cancel·lar"
+      },
+      "editActivity": {
+        "title": "Editar Activitat",
+        "save": "Desar",
+        "cancel": "Cancel·lar"
+      },
+      "deleteActivity": {
+        "title": "Eliminar Activitat",
+        "confirm": "Eliminar",
+        "cancel": "Cancel·lar"
+      }
+    }
+  },
+  "adminProgressDetail": {
+    "loadError": "Error en carregar el progrés",
+    "phaseUpdateSuccess": "Fase actualitzada correctament",
+    "phaseUpdateError": "Error en actualitzar la fase",
+    "activityUpdateSuccess": "Activitat actualitzada correctament",
+    "activityUpdateError": "Error en actualitzar l'activitat",
+    "title": "Progrés de l'usuari",
+    "titleWithName": "Progrés de {{name}} {{surname}}",
+    "back": "Enrere",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "noTitle": "Sense títol",
+    "phaseStatusLabel": "Estat fase",
+    "activityStatusLabel": "Estat activitat",
+    "phaseStatus": {
+      "blocked": "Blocada",
+      "inProgress": "En progrés",
+      "completed": "Completat",
+      "validated": "Validat",
+      "pending": "Pendent",
+      "rejected": "Rebutjat"
+    },
+    "activityStatus": {
+      "pending": "Pendent",
+      "completed": "Completat",
+      "validated": "Validat",
+      "rejected": "Rebutjat"
+    },
+    "validatedProgress": "Progrés validat: {{percent}}%",
+    "noActivityName": "Activitat sense nom",
+    "completedOn": "Data completada: {{date}}",
+    "validatedOn": "Validat el: {{date}}",
+    "statusWithValue": "Estat: {{status}}",
+    "noProgress": "No hi ha progrés disponible."
+  },
+  "adminUserProgress": {
+    "title": "Progrés d'usuaris",
+    "searchPlaceholder": "Cerca per nom o correu",
+    "table": {
+      "name": "Nom",
+      "email": "Correu electrònic",
+      "hospitalSociety": "Hospital/Societat",
+      "role": "Rol",
+      "actions": "Accions"
+    },
+    "viewProgress": "Veure progrés"
+  },
+  "adminUsers": {
+    "titleAll": "Gestió de tots els usuaris",
+    "titleHospital": "Usuaris del teu hospital",
+    "searchPlaceholder": "Cerca per nom o correu",
+    "loadError": "Error en carregar les dades",
+    "actions": {
+      "create": "Crear usuari",
+      "invite": "Convidar usuari",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "changePassword": "Canviar contrasenya",
+      "createProgress": "Crear progrés"
+    },
+    "createSuccess": "Usuari creat correctament",
+    "createError": "Error en crear l'usuari",
+    "updateSuccess": "Usuari actualitzat correctament",
+    "updateError": "Error en actualitzar l'usuari",
+    "deleteSuccess": "Usuari eliminat correctament",
+    "deleteError": "Error en eliminar l'usuari",
+    "passwordUpdated": "Contrasenya actualitzada",
+    "passwordError": "Error en actualitzar la contrasenya",
+    "createProgressSuccess": "Progrés formatiu creat amb èxit",
+    "createProgressError": "Error en crear el progrés",
+    "table": {
+      "aria": "taula d'usuaris",
+      "name": "Nom",
+      "email": "Correu electrònic",
+      "type": "Tipus",
+      "society": "Societat",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "zone": "Zona",
+      "actions": "Accions"
+    },
+    "fields": {
+      "email": "Correu electrònic",
+      "password": "Contrasenya",
+      "name": "Nom",
+      "surname": "Cognoms",
+      "type": "Tipus",
+      "role": "Rol",
+      "hospital": "Hospital",
+      "specialty": "Especialitat",
+      "society": "Societat",
+      "zone": "Zona"
+    },
+    "create": {
+      "title": "Crear usuari"
+    },
+    "edit": {
+      "title": "Editar usuari"
+    },
+    "delete": {
+      "title": "Eliminar usuari",
+      "confirm": "Estàs segur que vols eliminar l'usuari <strong>{{name}}</strong>? Aquesta acció no es pot desfer."
+    },
+    "password": {
+      "title": "Actualitzar contrasenya",
+      "label": "Nova contrasenya",
+      "updating": "Actualitzant...",
+      "update": "Actualitzar"
+    },
+    "_comment": "Gestió d'usuaris per a administradors",
+    "buttons": {
+      "create": "Crear usuari",
+      "creating": "Creant...",
+      "invite": "Convidar usuari",
+      "cancel": "Cancel·lar",
+      "save": "Desar canvis",
+      "saving": "Desant...",
+      "delete": "Eliminar",
+      "deleting": "Eliminant...",
+      "update": "Actualitzar",
+      "updating": "Actualitzant..."
+    },
+    "dialogs": {
+      "createTitle": "Crear usuari",
+      "editTitle": "Editar usuari",
+      "deleteTitle": "Eliminar usuari",
+      "passwordTitle": "Actualitzar contrasenya",
+      "passwordLabel": "Nova contrasenya",
+      "deleteConfirm": "Estàs segur que vols eliminar l'usuari {{name}} {{lastName}}? Aquesta acció no es pot desfer."
+    },
+    "messages": {
+      "loadError": "Error en carregar les dades",
+      "userCreated": "Usuari creat correctament",
+      "createError": "Error en crear l'usuari",
+      "userUpdated": "Usuari actualitzat correctament",
+      "updateError": "Error en actualitzar l'usuari",
+      "userDeleted": "Usuari eliminat correctament",
+      "deleteError": "Error en eliminar l'usuari",
+      "passwordUpdated": "Contrasenya actualitzada",
+      "passwordError": "Error en actualitzar la contrasenya"
+    }
+  },
+  "trainerUsers": {
+    "title": "Els meus usuaris",
+    "invite": "Convidar usuari",
+    "edit": "Editar usuari",
+    "updated": "Usuari actualitzat",
+    "invited": "Usuari convidat",
+    "deleted": "Usuari eliminat",
+    "error": "Error",
+    "deleteError": "Error en eliminar",
+    "loadError": "Error en carregar usuaris",
+    "table": {
+      "name": "Nom",
+      "email": "Correu electrònic",
+      "role": "Rol",
+      "status": "Estat",
+      "actions": "Accions",
+      "state": "Estat"
+    },
+    "form": {
+      "email": "Correu electrònic",
+      "name": "Nom",
+      "surname": "Cognoms",
+      "role": "Rol",
+      "roles": {
+        "resident": "Resident",
+        "trainer": "Formador"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancel·lar",
+      "saving": "Desant...",
+      "save": "Desar",
+      "invite": "Convidar"
+    },
+    "_comment": "Gestió d'usuaris per a formadors",
+    "buttons": {
+      "invite": "Convidar usuari",
+      "cancel": "Cancel·lar",
+      "save": "Desar",
+      "saving": "Desant...",
+      "delete": "Eliminar"
+    },
+    "fields": {
+      "email": "Correu electrònic",
+      "name": "Nom",
+      "lastName": "Cognoms",
+      "role": "Rol"
+    },
+    "roles": {
+      "resident": "Resident",
+      "trainer": "Formador"
+    },
+    "states": {
+      "active": "Actiu",
+      "inactive": "Inactiu"
+    },
+    "dialogs": {
+      "editTitle": "Editar usuari",
+      "inviteTitle": "Convidar usuari"
+    },
+    "messages": {
+      "loadError": "Error en carregar usuaris",
+      "updateSuccess": "Usuari actualitzat",
+      "inviteSuccess": "Usuari convidat",
+      "deleteSuccess": "Usuari eliminat",
+      "deleteError": "Error en eliminar",
+      "genericError": "Error"
+    }
+  },
+  "trainerValidations": {
+    "title": "Validacions",
+    "tabs": {
+      "pending": "Pendents ({{count}})",
+      "validated": "Validades ({{count}})",
+      "rejected": "Rebutjades ({{count}})",
+      "aria": "pestanyes de validacions"
+    },
+    "table": {
+      "activity": "Activitat",
+      "resident": "Resident",
+      "date": "Data",
+      "comments": "Comentaris",
+      "actions": "Accions",
+      "status": "Estat",
+      "reason": "Motiu",
+      "noPhase": "Sense fase",
+      "noName": "Sense nom",
+      "phase": "Fase",
+      "state": "Estat"
+    },
+    "empty": {
+      "pending": "No hi ha validacions pendents",
+      "validated": "No hi ha validacions completades",
+      "rejected": "No hi ha validacions rebutjades"
+    },
+    "actions": {
+      "viewAttachment": "Veure adjunt"
+    },
+    "dialog": {
+      "validateTitle": "Validar Activitat",
+      "validateMessage": "Estàs validant l'activitat {{activity}} del resident {{name}}.",
+      "optionalComments": "Comentaris (opcional)",
+      "digitalSignature": "Signatura digital",
+      "rejectTitle": "Rebutjar Activitat",
+      "rejectMessage": "Estàs rebutjant l'activitat {{activity}} del resident {{name}}.",
+      "rejectReason": "Motiu del rebuig"
+    },
+    "errorLoad": "Error en carregar les validacions",
+    "_comment": "Validacions gestionades per formadors",
+    "buttons": {
+      "viewAttachment": "Veure adjunt",
+      "validate": "Validar",
+      "reject": "Rebutjar",
+      "cancel": "Cancel·lar"
+    },
+    "states": {
+      "validated": "Validat",
+      "rejected": "Rebutjat"
+    },
+    "dialogs": {
+      "validateTitle": "Validar Activitat",
+      "rejectTitle": "Rebutjar Activitat",
+      "validateConfirm": "Estàs validant l'activitat {{activity}} del resident {{resident}}.",
+      "rejectConfirm": "Estàs rebutjant l'activitat {{activity}} del resident {{resident}}.",
+      "commentsOptional": "Comentaris (opcional)",
+      "digitalSignature": "Signatura digital",
+      "rejectReason": "Motiu del rebuig",
+      "processing": "Processant..."
+    },
+    "messages": {
+      "loadError": "Error en carregar les validacions"
+    }
+  },
+  "auth": {
+    "login": "Iniciar sessió",
+    "logout": "Tancar sessió",
+    "password": "Contrasenya",
+    "passwordCurrent": "Contrasenya actual",
+    "passwordNew": "Nova contrasenya",
+    "passwordConfirm": "Confirmar contrasenya",
+    "passwordUpdated": "Contrasenya actualitzada",
+    "passwordMismatch": "Les contrasenyes no coincideixen",
+    "accessCode": "Codi d'accés",
+    "invalidAccessCode": "Codi d'accés no vàlid",
+    "changePassword": "Canviar contrasenya",
+    "resetRequest": "Sol·licitud de restabliment de contrasenya",
+    "errorLogin": "Error en iniciar sessió",
+    "errorChangePassword": "Error en canviar la contrasenya",
+    "errorUpdatePassword": "Error en actualitzar la contrasenya"
+  },
+  "forgotPassword": {
+    "heading": "Has oblidat la contrasenya?",
+    "description": "Per restablir la contrasenya posa't en contacte amb l'administrador del sistema.",
+    "emailLabel": "El teu correu",
+    "submit": "Enviar correu a l'administrador",
+    "backToLogin": "Tornar a iniciar sessió"
+  },
+  "login": {
+    "title": "Programa Acadèmic da Vinci",
+    "subtitle": "Tecnologies del Robot da Vinci",
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "signIn": "Iniciar sessió",
+    "forgotPassword": "Has oblidat la contrasenya?",
+    "noAccount": "No tens compte?",
+    "registerHere": "Registra't aquí",
+    "copyright": "© {{year}} Abex Excel·lència Robòtica",
+    "poweredBy": "Desenvolupat per FARGV",
+    "logoAlt": "Abex Excel·lència Robòtica"
+  },
+  "types": {
+    "theoretical": "Teòrica",
+    "practical": "Pràctica",
+    "evaluation": "Avaluació",
+    "observation": "Observació",
+    "theoreticalLower": "teòrica",
+    "practicalLower": "pràctica",
+    "evaluationLower": "avaluació",
+    "observationLower": "observació",
+    "programaResidentes": "Programa de Residents",
+    "programaSociedades": "Programa de Societats"
+  },
+  "roles": {
+    "residente": "Resident",
+    "formador": "Formador",
+    "coordinador": "Coordinador",
+    "administrador": "Administrador",
+    "alumno": "Alumne",
+    "instructor": "Instructor"
+  },
+  "notifications": {
+    "title": "Notificacions",
+    "tabs": {
+      "aria": "pestanyes de notificacions",
+      "pending": "Pendents",
+      "viewed": "Vistes"
+    },
+    "table": {
+      "message": "Missatge",
+      "date": "Data",
+      "type": "Tipus",
+      "actions": "Accions"
+    },
+    "empty": {
+      "all": "No hi ha notificacions",
+      "pending": "No hi ha notificacions pendents",
+      "viewed": "No hi ha notificacions vistes"
+    },
+    "errorLoad": "Error en carregar les notificacions",
+    "errorMarkAsRead": "Error en marcar la notificació com a llegida"
+  },
+  "codes": {
+    "new": "Nou codi",
+    "edit": "Editar codi",
+    "errorLoad": "Error en carregar els codis",
+    "errorDelete": "Error en eliminar el codi",
+    "errorSave": "Error en desar el codi"
+  },
+  "progress": {
+    "createSuccess": "Progrés formatiu creat amb èxit"
+  },
+  "emails": {
+    "inviteSubject": "Invitació a la Plataforma de Formació Da Vinci"
+  },
+  "debug": {
+    "tokenValid": "✅ Token vàlid i descodificat",
+    "tokenInvalid": "❌ Token no vàlid o corrupte"
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestió de tots els usuaris",
+    "noPermissions": "No tens permisos per veure aquesta secció"
+  },
+  "forms": {
+    "code": "Codi",
+    "numericCode": "Codi numèric",
+    "postalCode": "Codi postal",
+    "address": "Adreça",
+    "phone": "Telèfon",
+    "description": "Descripció",
+    "number": "Número",
+    "title": "Títol",
+    "completionDate": "Data de realització",
+    "selectDate": "Selecciona una data de realització",
+    "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+    "fileTooLarge": "El fitxer supera la mida màxima de 5MB."
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Convocatòria",
+      "intro": "Inici del procés de convocatòria.",
+      "item1": "Enviament d'invitacions",
+      "item2": "Recepció de sol·licituds"
+    },
+    "presentacion": {
+      "label": "Presentació",
+      "intro": "Sessió de presentació del programa.",
+      "item1": "Introducció al programa",
+      "item2": "Presentació dels instructors"
+    },
+    "modOnline": {
+      "label": "Mod. En línia",
+      "intro": "Mòduls formatius en línia.",
+      "item1": "Accés a la plataforma",
+      "item2": "Contingut teòric"
+    },
+    "simulacion": {
+      "label": "Simulació",
+      "intro": "Pràctiques de simulació.",
+      "item1": "Sessions pràctiques",
+      "item2": "Avaluació d'habilitats"
+    },
+    "firstAssistant": {
+      "label": "Primer ajudant",
+      "intro": "Activitats com a primer ajudant.",
+      "item1": "Participació en quiròfans",
+      "item2": "Registre d'activitats"
+    },
+    "stepByStep": {
+      "label": "Pas a pas",
+      "intro": "Procediments pas a pas.",
+      "item1": "Material de suport",
+      "item2": "Revisió guiada"
+    },
+    "handsOn": {
+      "label": "Pràctica Hands On",
+      "intro": "Entrenament pràctic Hands On.",
+      "item1": "Pràctica intensiva",
+      "item2": "Feedback personalitzat"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparació Inicial",
+      "description": "Familiarització amb el sistema Da Vinci i aspectes teòrics inicials."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formació Preclínica",
+      "description": "Exercicis de simulació i entrenaments en entorn segur."
+    },
+    "phase3": {
+      "label": "Fase 3 - Assistència Quirúrgica",
+      "description": "Participació com a ajudant en quiròfan."
+    },
+    "phase4": {
+      "label": "Fase 4 - Cirurgia en Consola",
+      "description": "Procediments realitzats pel resident amb supervisió."
+    }
+  },
+  "residentProgress": {
+    "title": "El meu progrés",
+    "errorLoad": "Error en carregar el progrés",
+    "downloadError": "Error en descarregar el certificat",
+    "downloadCertificate": "Descarregar certificat"
+  },
+  "certificate": {
+    "title": "Certificat de Compliment",
+   "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
+    "dateLine": "Madrid, {{date}}",
+    "footer": "Certificat generat automàticament per Academic Program Da Vinci · www.abexsl.es"
+  },
+  "residentPhases": {
+    "title": "Les meves fases formatives",
+    "errorLoad": "Error en carregar el progrés",
+    "activityFail": "No s'ha pogut completar l'activitat.",
+    "activitySaveError": "Error en desar l'activitat.",
+    "activitySuccess": "✅ Activitat registrada amb èxit",
+    "noActivitySelectedError": "Error intern: No s'ha seleccionat cap activitat.",
+    "noTitle": "Sense títol",
+    "phaseTitle": "Fase {{number}}: {{name}}",
+    "deadline": "Data límit",
+    "validatedProgress": "Progrés validat: {{percent}}%",
+    "noActivities": "No hi ha activitats disponibles",
+    "phaseLocked": "Fase bloquejada",
+    "noProgress": "No hi ha progrés formatiu disponible.",
+    "markAsCompleted": "Marcar com a completada",
+    "unnamedActivity": "Activitat sense nom",
+    "comment": "Comentari",
+    "trainerComment": "Comentari del formador",
+    "rejectionReason": "Motiu del rebuig",
+    "completedOn": "Data completada",
+    "validatedOn": "Validat el",
+    "status": "Estat",
+    "dialog": {
+      "completeActivity": "Marcar activitat com a completada",
+      "completionDate": "Data de realització",
+      "comment": "Comentari",
+      "selectFile": "Seleccionar fitxer",
+      "cancel": "Cancel·lar",
+      "confirm": "Confirmar",
+      "missingProgressId": "Falta l’ID del progrés",
+      "noActivitySelected": "No s'ha seleccionat cap activitat",
+      "selectDate": "Selecciona una data de realització",
+      "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+      "fileTooLarge": "El fitxer supera la mida màxima de 5MB.",
+      "title": "Marcar activitat com a completada",
+      "date": "Data de realització"
+    },
+    "messages": {
+      "noActivities": "No hi ha activitats disponibles",
+      "blocked": "Fase bloquejada",
+      "noProgress": "No hi ha progrés formatiu disponible.",
+      "loadError": "Error en carregar el progrés"
+    },
+    "tooltip": {
+      "missingProgress": "Falta l’ID del progrés",
+      "noActivity": "No s'ha seleccionat cap activitat"
+    },
+    "labels": {
+      "comment": "Comentari",
+      "trainerComment": "Comentari del formador",
+      "rejectionReason": "Motiu del rebuig",
+      "completedDate": "Data completada",
+      "validatedDate": "Validat el",
+      "state": "Estat"
+    },
+    "states": {
+      "validated": "Validat",
+      "rejected": "Rebutjat",
+      "pending": "Pendent de validació",
+      "notCompleted": "No completada"
+    }
+  }
+}

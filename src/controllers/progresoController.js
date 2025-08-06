@@ -145,6 +145,7 @@ const getProgresoResidente = async (req, res, next) => {
         return {
           _id: item._id.toString(),
           fase: item.fase,
+          faseModel: item.faseModel,
           estadoGeneral: item.estadoGeneral,
           actividades: item.actividades.map(act => ({
             nombre: act.nombre,

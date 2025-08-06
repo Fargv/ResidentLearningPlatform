@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Backdrop,
 } from "@mui/material";
 import {
   Assignment as AssignmentIcon,
@@ -29,16 +30,22 @@ import { useAuth } from "../../context/AuthContext";
 import api from "../../api";
 import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
 import { Sociedad } from "../../types/Sociedad";
+import { useTranslation } from 'react-i18next';
+import type { Fase } from "../../components/ProgressPorFase";
+
 
 const DashboardHome: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [error] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [phaseSummary, setPhaseSummary] = useState<
     { name: string; percent: number }[]
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [socAllValidado, setSocAllValidado] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<{
     label: string;
@@ -49,123 +56,129 @@ const DashboardHome: React.FC = () => {
 
   const societyMilestones = [
     {
-      label: "Convocatoria",
+      label: t('society.convocatoria.label'),
       date: sociedadInfo?.fechaConvocatoria,
       description: (
         <>
           <Typography gutterBottom>
-            Inicio del proceso de convocatoria.
+            {t('society.convocatoria.intro')}
           </Typography>
           <ul>
-            <li>Envío de invitaciones</li>
-            <li>Recepción de solicitudes</li>
+            <li>{t('society.convocatoria.item1')}</li>
+            <li>{t('society.convocatoria.item2')}</li>
           </ul>
         </>
       ),
     },
     {
-      label: "Presentación",
+      label: t('society.presentacion.label'),
       date: sociedadInfo?.fechaPresentacion,
       description: (
         <>
           <Typography gutterBottom>
-            Sesión de presentación del programa.
+            {t('society.presentacion.intro')}
           </Typography>
           <ul>
-            <li>Introducción al programa</li>
-            <li>Presentación de instructores</li>
+            <li>{t('society.presentacion.item1')}</li>
+            <li>{t('society.presentacion.item2')}</li>
           </ul>
         </>
       ),
     },
     {
-      label: "Mod. Online",
+      label: t('society.modOnline.label'),
       date: sociedadInfo?.fechaModulosOnline,
       description: (
         <>
-          <Typography gutterBottom>Módulos formativos online.</Typography>
+          <Typography gutterBottom>
+            {t('society.modOnline.intro')}
+          </Typography>
           <ul>
-            <li>Acceso a la plataforma</li>
-            <li>Contenido teórico</li>
+            <li>{t('society.modOnline.item1')}</li>
+            <li>{t('society.modOnline.item2')}</li>
           </ul>
         </>
       ),
     },
     {
-      label: "Simulación",
+      label: t('society.simulacion.label'),
       date: sociedadInfo?.fechaSimulacion,
       description: (
         <>
-          <Typography gutterBottom>Prácticas de simulación.</Typography>
+          <Typography gutterBottom>
+            {t('society.simulacion.intro')}
+          </Typography>
           <ul>
-            <li>Sesiones prácticas</li>
-            <li>Evaluación de destrezas</li>
+            <li>{t('society.simulacion.item1')}</li>
+            <li>{t('society.simulacion.item2')}</li>
           </ul>
         </>
       ),
     },
     {
-      label: "First Assistant",
+      label: t('society.firstAssistant.label'),
       date: sociedadInfo?.fechaAtividadesFirstAssistant,
       description: (
         <>
           <Typography gutterBottom>
-            Actividades como primer asistente.
+            {t('society.firstAssistant.intro')}
           </Typography>
           <ul>
-            <li>Participación en quirófanos</li>
-            <li>Registro de actividades</li>
+            <li>{t('society.firstAssistant.item1')}</li>
+            <li>{t('society.firstAssistant.item2')}</li>
           </ul>
         </>
       ),
     },
     {
-      label: "Step By Step",
+      label: t('society.stepByStep.label'),
       date: sociedadInfo?.fechaModuloOnlineStepByStep,
       description: (
         <>
-          <Typography gutterBottom>Procedimientos Step By Step.</Typography>
+          <Typography gutterBottom>
+            {t('society.stepByStep.intro')}
+          </Typography>
           <ul>
-            <li>Material de apoyo</li>
-            <li>Revisión guiada</li>
+            <li>{t('society.stepByStep.item1')}</li>
+            <li>{t('society.stepByStep.item2')}</li>
           </ul>
         </>
       ),
     },
     {
-      label: "Hand On",
+      label: t('society.handsOn.label'),
       date: sociedadInfo?.fechaHandOn,
       description: (
         <>
-          <Typography gutterBottom>Entrenamiento práctico Hands On.</Typography>
+          <Typography gutterBottom>
+            {t('society.handsOn.intro')}
+          </Typography>
           <ul>
-            <li>Práctica intensiva</li>
-            <li>Retroalimentación personalizada</li>
+            <li>{t('society.handsOn.item1')}</li>
+            <li>{t('society.handsOn.item2')}</li>
           </ul>
         </>
       ),
-    },  ];
+    },
+  ];
 
   const residentMilestones = [
     {
-      label: 'Fase 1 - Preparación Inicial',
-      description:
-        'Familiarización con el sistema Da Vinci y aspectos teóricos iniciales.'
+      label: t('residentMilestones.phase1.label'),
+      description: t('residentMilestones.phase1.description'),
     },
     {
-      label: 'Fase 2 - Formación Preclínica',
-      description:
-        'Ejercicios de simulación y entrenamientos en entorno seguro.'
+      label: t('residentMilestones.phase2.label'),
+      description: t('residentMilestones.phase2.description'),
     },
     {
-      label: 'Fase 3 - Asistencia Quirúrgica',
-      description: 'Participación como asistente en quirófano.'
+      label: t('residentMilestones.phase3.label'),
+      description: t('residentMilestones.phase3.description'),
     },
     {
-      label: 'Fase 4 - Cirugía en Consola',
-      description:
-        'Procedimientos realizados por el residente con supervisión.'
-    }
+      label: t('residentMilestones.phase4.label'),
+      description: t('residentMilestones.phase4.description'),
+    },
   ];
 
   const handleOpenDialog = (phase: { label: string; date?: string; description: React.ReactNode }) => {
@@ -173,6 +186,9 @@ const DashboardHome: React.FC = () => {
      setSelectedPhase(phase);
     setOpenDialog(true);
   };
+
+  const onFaseClick = (_fase: Fase, idx: number) =>
+    handleOpenDialog(residentMilestones[idx]);
 
   const handleCloseDialog = () => setOpenDialog(false);
   useEffect(() => {
@@ -204,28 +220,44 @@ const DashboardHome: React.FC = () => {
 
   useEffect(() => {
     const loadProgress = async () => {
-      if (
-        user?.tipo !== "Programa Residentes" ||
-        !user?._id ||
-        !["residente", "formador", "coordinador", "instructor", "alumno"].includes(
+      const isResidentes =
+        user?.tipo === "Programa Residentes" &&
+        user?._id &&
+        ["residente", "formador", "coordinador", "instructor", "alumno"].includes(
           user.rol,
-        )
-      ) {
+        );
+      const isSociedades =
+        user?.tipo === "Programa Sociedades" &&
+        user?.rol === "alumno" &&
+        !!user?._id;
+
+      if (!isResidentes && !isSociedades) {
         return;
       }
       try {
         setProgressLoading(true);
         const res = await api.get(`/progreso/residente/${user._id}`);
         const data = res.data.data || [];
-        const summary = data.map((p: any) => {
-          const total = p.actividades.length;
-          const validated = p.actividades.filter(
-            (a: any) => a.estado === "validado",
-          ).length;
-          const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
-          return { name: p.fase.nombre, percent };
-        });
-        setPhaseSummary(summary);
+
+        if (isResidentes) {
+          const summary = data.map((p: any) => {
+            const total = p.actividades.length;
+            const validated = p.actividades.filter(
+              (a: any) => a.estado === "validado",
+            ).length;
+            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+            return { name: p.fase.nombre, percent };
+          });
+          setPhaseSummary(summary);
+        }
+
+        if (isSociedades) {
+          const socFases = data.filter((p: any) => p.faseModel === 'FaseSoc');
+          const allValidado =
+            socFases.length > 0 &&
+            socFases.every((p: any) => p.estadoGeneral === 'validado');
+          setSocAllValidado(allValidado);
+        }
       } catch (err) {
         console.error("Error cargando progreso", err);
       } finally {
@@ -235,6 +267,27 @@ const DashboardHome: React.FC = () => {
 
     loadProgress();
   }, [user]);
+
+  const handleDescargarCertificado = async () => {
+    if (!user?._id) return;
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'certificado.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setError(err.response?.data?.error || t('residentProgress.downloadError'));
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -248,7 +301,7 @@ const DashboardHome: React.FC = () => {
 
   if (user?.rol === "residente" || user?.rol === "alumno") {
     actions.push({
-      label: "Mi Progreso",
+      label: t('actions.myProgress'),
       path: "/dashboard/progreso",
       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
     });
@@ -260,7 +313,7 @@ const DashboardHome: React.FC = () => {
     user?.rol === "instructor"
   ) {
     actions.push({
-      label: "Fases Formativas",
+      label: t('actions.trainingPhases'),
       path: "/dashboard/fases",
       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
     });
@@ -268,7 +321,7 @@ const DashboardHome: React.FC = () => {
 
   if (user?.rol === "formador" || user?.rol === "coordinador" || user?.rol === "instructor") {
     actions.push({
-      label: "Validaciones",
+      label: t('actions.validations'),
       path: "/dashboard/validaciones",
       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
     });
@@ -276,7 +329,7 @@ const DashboardHome: React.FC = () => {
 
   if (user?.rol === "formador" || user?.rol === "coordinador") {
     actions.push({
-      label: "Mis Usuarios",
+      label: t('actions.myUsers'),
       path: "/dashboard/usuarios",
       icon: <PeopleIcon sx={{ fontSize: 40 }} />,
     });
@@ -285,12 +338,12 @@ const DashboardHome: React.FC = () => {
   if (user?.rol === "administrador") {
     actions.push(
       {
-        label: "Progreso Usuarios",
+        label: t('actions.usersProgress'),
         path: "/dashboard/progreso-usuarios",
         icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
       },
       {
-        label: "Configuración",
+        label: t('actions.settings'),
         path: "/dashboard/config",
         icon: <SettingsIcon sx={{ fontSize: 40 }} />,
       }
@@ -299,16 +352,22 @@ const DashboardHome: React.FC = () => {
 
   actions.push(
     {
-      label: "Mi Perfil",
+      label: t('actions.myProfile'),
       path: "/dashboard/perfil",
       icon: <PersonIcon sx={{ fontSize: 40 }} />,
     },
     {
-      label: "Notificaciones",
+      label: t('actions.notifications'),
       path: "/dashboard/notificaciones",
       icon: <NotificationsIcon sx={{ fontSize: 40 }} />,
     },
   );
+
+  const allValidado =
+    user?.tipo === 'Programa Residentes' &&
+    (user?.rol === 'residente' || user?.rol === 'alumno') &&
+    phaseSummary.length > 0 &&
+    phaseSummary.every((p) => p.percent === 100);
 
   const renderContent = () => {
     if (loading || progressLoading) {
@@ -328,24 +387,20 @@ const DashboardHome: React.FC = () => {
     const hospital = user.hospital?.nombre;
     switch (user.rol) {
       case "administrador":
-        return "Panel de Administración";
+        return t('role.adminPanel');
       case "formador":
-        return hospital
-          ? `Formador de residentes del hospital ${hospital}`
-          : "";
+        return hospital ? t('role.trainer', { hospital }) : "";
       case "coordinador":
-        return hospital
-          ? `Coordinador de residentes del hospital ${hospital}`
-          : "";
+        return hospital ? t('role.coordinator', { hospital }) : "";
       case "residente":
-        return hospital ? `Residente del hospital ${hospital}` : "";
+        return hospital ? t('role.resident', { hospital }) : "";
       case "alumno":
         return sociedadInfo?.titulo
-          ? `Alumno del programa de sociedades ${sociedadInfo.titulo}`
+          ? t('role.student', { title: sociedadInfo.titulo })
           : "";
       case "instructor":
         return sociedadInfo?.titulo
-          ? `Instructor del programa de sociedades ${sociedadInfo.titulo}`
+          ? t('role.instructor', { title: sociedadInfo.titulo })
           : "";
       default:
         return "";
@@ -355,18 +410,18 @@ const DashboardHome: React.FC = () => {
  return (
     <Box>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Bienvenido/a, {user?.nombre}
-        </Typography>
+          <Typography variant="h4" component="h1" gutterBottom>
+            {t('welcome', { name: user?.nombre })}
+          </Typography>
         <Typography variant="subtitle1" color="text.secondary">
           {getRoleSubtitle()}
         </Typography>
       </Box>
       {user?.tipo === "Programa Sociedades" && sociedadInfo && (
         <Paper sx={{ p: 2, mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            {sociedadInfo.titulo}
-          </Typography>
+            <Typography variant="h6" gutterBottom>
+              {sociedadInfo.titulo}
+            </Typography>
           <Chip
             label={sociedadInfo.status}
             color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
@@ -406,23 +461,40 @@ const DashboardHome: React.FC = () => {
               </CardActionArea>
             ))}
           </Box>
+          {socAllValidado && (
+            <Box textAlign="center" mt={2}>
+              <Button
+                variant="contained"
+                onClick={handleDescargarCertificado}
+                disabled={downloadLoading}
+              >
+                {t('residentProgress.downloadCertificate')}
+              </Button>
+            </Box>
+          )}
        </Paper>
       )}
       {user?.tipo === "Programa Residentes" &&
         (user?.rol === "residente" ||
           user?.rol === "formador" ||
           user?.rol === "coordinador" ||
-          user?.rol === "instructor") &&
+          user?.rol === "instructor" ||
+          user?.rol === "alumno") &&
         phaseSummary.length > 0 && (
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Progreso por fase
-            </Typography>
+                {t('progressByPhase')}
+              </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               {phaseSummary.map((p, idx) => (
                 <CardActionArea
                   key={p.name}
-                  onClick={() => handleOpenDialog(residentMilestones[idx])}
+                  onClick={() =>
+                    onFaseClick(
+                      { nombre: p.name, porcentaje: p.percent },
+                      idx,
+                    )
+                  }
                   sx={{
                     flex: "1 1 calc(50% - 16px)",
                     minWidth: "250px",
@@ -451,6 +523,17 @@ const DashboardHome: React.FC = () => {
                 </CardActionArea>
               ))}
             </Box>
+            {allValidado && (
+              <Box textAlign="center" mt={2}>
+                <Button
+                  variant="contained"
+                  onClick={handleDescargarCertificado}
+                  disabled={downloadLoading}
+                >
+                  {t('residentProgress.downloadCertificate')}
+                </Button>
+              </Box>
+            )}
           </Paper>
         )}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
@@ -492,22 +575,28 @@ const DashboardHome: React.FC = () => {
 
 
       {renderContent()}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{selectedPhase?.label}</DialogTitle>
-        <DialogContent>
-          {selectedPhase?.description}
-          {selectedPhase?.date && (
-            <Typography variant="body2" color="text.secondary">
-              {formatDayMonthYear(selectedPhase.date)}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  );
-};
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle>{selectedPhase?.label}</DialogTitle>
+          <DialogContent>
+            {selectedPhase?.description}
+            {selectedPhase?.date && (
+              <Typography variant="body2" color="text.secondary">
+                {formatDayMonthYear(selectedPhase.date)}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>{t('close')}</Button>
+          </DialogActions>
+        </Dialog>
+        <Backdrop
+          open={downloadLoading}
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </Box>
+    );
+  };
 
 export default DashboardHome;

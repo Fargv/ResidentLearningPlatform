@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{LANG}}">
 <head>
   <meta charset="UTF-8" />
   <style>
@@ -26,18 +26,18 @@
 
     .header h1 {
       color: #1E5B94;
-      font-size: 32px;
-      margin-bottom: 10px;
+      font-size: 26px; /* antes 32px */
+      margin-bottom: 8px;
     }
 
     .header h2 {
-      color: #6AB023;
-      font-size: 18px;
-      font-weight: normal;
-    }
+        color: #6AB023;
+        font-size: 16px; /* antes 18px */
+        font-weight: normal;
+      }
 
     .contenido {
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1.6;
       text-align: justify;
     }
@@ -46,8 +46,14 @@
       color: #1E5B94;
     }
 
-    .firma {
+    .sign-section {
       margin-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .firma {
       text-align: right;
     }
 
@@ -60,12 +66,23 @@
       color: #1E5B94;
     }
 
-    .logo {
-      text-align: center;
-      margin-bottom: 20px;
+    .logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
     }
 
-    .logo img {
+    .logos img {
+      max-height: 50px;
+    }
+
+    .logo-center {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo-center img {
       max-height: 80px;
     }
 
@@ -79,37 +96,29 @@
 </head>
 <body>
   <div class="certificado">
-    <div class="logo">
-      <img src="https://www.abexsl.es/images/logo.png" alt="Logo" />
-    </div>
+    {{LOGOS}}
     <div class="header">
-      <h1>Certificado de Cumplimiento</h1>
+      <h1>{{CERT_TITLE}}</h1>
       <h2>{{PROGRAMA}}</h2>
     </div>
 
     <div class="contenido">
-      Se certifica que <strong>{{NOMBRE}}</strong> ha completado satisfactoriamente la fase formativa asignada del Academic Program en tecnologías del robot Da Vinci®.
-
-      <br /><br />
-
-      Este curso se enmarca dentro del plan formativo en tecnología robótica en colaboración con el hospital <strong>{{HOSPITAL}}</strong> y bajo la supervisión de su tutor asignado.
-
-      <br /><br />
-
-      Fecha de finalización: <strong>{{FECHA}}</strong>
+      {{CERT_BODY}}
     </div>
 
-    <div class="firma">
-  <img src="/firma-javier.png" alt="Firma Javier Trujillo" style="max-height: 60px; display: block; margin-left: auto; margin-bottom: -10px;" />
-  <div class="linea">
-    Javier Trujillo Menacho<br />
-    Hospital Marketing Manager
-  </div>
-</div>
-
+    <div class="sign-section">
+      <div class="date">{{CERT_DATE}}</div>
+      <div class="firma">
+        <img src="{{SIGNATURE_LOGO}}" alt="Firma" style="max-height: 80px; display: block; margin-left: auto; margin-right: 60px;margin-bottom: -5px;" />
+        <div class="linea">
+          Javier Trujillo Menacho<br />
+          Hospital Marketing Manager
+        </div>
+      </div>
+    </div>
 
     <div class="footer">
-      Certificado generado automáticamente por Academic Program Da Vinci · www.abexsl.es
+      {{CERT_FOOTER}}
     </div>
   </div>
 </body>

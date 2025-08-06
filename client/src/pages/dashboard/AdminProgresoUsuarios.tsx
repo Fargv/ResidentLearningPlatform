@@ -15,6 +15,7 @@ import {
   TextField,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../../api';
 
 interface User {
@@ -35,6 +36,7 @@ const AdminProgresoUsuarios: React.FC = () => {
   const [sortField, setSortField] = useState<'nombre' | 'email' | 'hospital' | 'rol'>('nombre');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -105,11 +107,11 @@ const AdminProgresoUsuarios: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Progreso de Usuarios
+        {t('adminUserProgress.title')}
       </Typography>
       <TextField
         variant="outlined"
-        placeholder="Buscar por nombre o email"
+        placeholder={t('adminUserProgress.searchPlaceholder')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         fullWidth
@@ -123,31 +125,31 @@ const AdminProgresoUsuarios: React.FC = () => {
                 onClick={() => handleSort('nombre')}
                 sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
               >
-                Nombre
+                {t('adminUserProgress.table.name')}
               </TableCell>
               <TableCell
                 onClick={() => handleSort('email')}
                 sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
               >
-                Email
+                {t('adminUserProgress.table.email')}
               </TableCell>
               <TableCell
                 onClick={() => handleSort('hospital')}
                 sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
               >
-                Hospital/Sociedad
+                {t('adminUserProgress.table.hospitalSociety')}
               </TableCell>
               <TableCell
                 onClick={() => handleSort('rol')}
                 sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
               >
-                Rol
+                {t('adminUserProgress.table.role')}
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ backgroundColor: 'primary.light', color: 'common.white' }}
               >
-                Acciones
+                {t('adminUserProgress.table.actions')}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -165,7 +167,7 @@ const AdminProgresoUsuarios: React.FC = () => {
                       onClick={() => navigate(`/dashboard/progreso-usuario/${u._id}`)}
                       sx={{ minWidth: 150 }}
                     >
-                      Ver Progreso
+                      {t('adminUserProgress.viewProgress')}
                     </Button>
                   </TableCell>
                 </TableRow>

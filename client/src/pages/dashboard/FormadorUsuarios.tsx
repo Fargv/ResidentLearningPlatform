@@ -8,10 +8,12 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import api from '../../api';
 
 const FormadorUsuarios: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,11 +43,11 @@ const FormadorUsuarios: React.FC = () => {
       const res = await api.get(`/users/hospital/${user.hospital._id}`);
       setUsuarios(res.data.data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al cargar usuarios');
+      setError(err.response?.data?.error || t('trainerUsers.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [user?.hospital?._id]);
+  }, [user?.hospital?._id, t]);
 
   useEffect(() => {
     fetchUsuarios();
@@ -72,14 +74,14 @@ const FormadorUsuarios: React.FC = () => {
       setOpenDialog(false);
       setSnackbar({
         open: true,
-        message: editar ? 'Usuario actualizado' : 'Usuario invitado',
+        message: editar ? t('trainerUsers.updated') : t('trainerUsers.invited'),
         severity: 'success'
       });
 
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error',
+        message: err.response?.data?.error || t('trainerUsers.error'),
         severity: 'error'
       });
     } finally {
@@ -95,13 +97,13 @@ const FormadorUsuarios: React.FC = () => {
       setUsuarios(usuarios.filter(u => u._id !== usuarioId));
       setSnackbar({
         open: true,
-        message: 'Usuario eliminado',
+        message: t('trainerUsers.deleted'),
         severity: 'success'
       });
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al eliminar',
+        message: err.response?.data?.error || t('trainerUsers.deleteError'),
         severity: 'error'
       });
     } finally {
@@ -115,7 +117,7 @@ const FormadorUsuarios: React.FC = () => {
   return (
     <Box sx={{ px: 3, py: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4">Mis Usuarios</Typography>
+        <Typography variant="h4">{t('trainerUsers.title')}</Typography>
         <Button
           variant="contained"
           color="primary"
@@ -132,7 +134,7 @@ const FormadorUsuarios: React.FC = () => {
             setOpenDialog(true);
           }}
         >
-          Invitar Usuario
+          {t('trainerUsers.invite')}
         </Button>
       </Box>
 
@@ -141,11 +143,11 @@ const FormadorUsuarios: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Rol</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell>{t('trainerUsers.table.name')}</TableCell>
+                <TableCell>{t('trainerUsers.table.email')}</TableCell>
+                <TableCell>{t('trainerUsers.table.role')}</TableCell>
+                <TableCell>{t('trainerUsers.table.status')}</TableCell>
+                <TableCell align="right">{t('trainerUsers.table.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -155,7 +157,15 @@ const FormadorUsuarios: React.FC = () => {
                   <TableCell>{usuario.email}</TableCell>
                   <TableCell>{usuario.rol}</TableCell>
                   <TableCell>
-                    <Chip label={usuario.activo ? 'Activo' : 'Inactivo'} color={usuario.activo ? 'success' : 'error'} size="small" />
+                    <Chip
+                      label={t(
+                        usuario.activo
+                          ? 'trainerUsers.states.active'
+                          : 'trainerUsers.states.inactive'
+                      )}
+                      color={usuario.activo ? 'success' : 'error'}
+                      size="small"
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <IconButton onClick={() => {
@@ -184,29 +194,29 @@ const FormadorUsuarios: React.FC = () => {
       </Paper>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>{editar ? 'Editar Usuario' : 'Invitar Usuario'}</DialogTitle>
+        <DialogTitle>{t(editar ? 'trainerUsers.edit' : 'trainerUsers.invite')}</DialogTitle>
         <DialogContent>
-          <TextField fullWidth margin="dense" label="Email" name="email" value={formData.email} onChange={handleChange} />
-          <TextField fullWidth margin="dense" label="Nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
-          <TextField fullWidth margin="dense" label="Apellidos" name="apellidos" value={formData.apellidos} onChange={handleChange} />
+          <TextField fullWidth margin="dense" label={t('trainerUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
+          <TextField fullWidth margin="dense" label={t('trainerUsers.form.name')} name="nombre" value={formData.nombre} onChange={handleChange} />
+          <TextField fullWidth margin="dense" label={t('trainerUsers.form.surname')} name="apellidos" value={formData.apellidos} onChange={handleChange} />
           <TextField
             select
             fullWidth
             margin="dense"
-            label="Rol"
+            label={t('trainerUsers.form.role')}
             name="rol"
             value={formData.rol}
             onChange={handleChange}
             slotProps={{ select: { native: true } }}
           >
-            <option value="residente">Residente</option>
-            <option value="formador">Formador</option>
+            <option value="residente">{t('trainerUsers.form.roles.resident')}</option>
+            <option value="formador">{t('trainerUsers.form.roles.trainer')}</option>
           </TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+          <Button onClick={() => setOpenDialog(false)}>{t('trainerUsers.dialog.cancel')}</Button>
           <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
-            {procesando ? 'Guardando...' : editar ? 'Guardar' : 'Invitar'}
+            {procesando ? t('trainerUsers.dialog.saving') : editar ? t('trainerUsers.dialog.save') : t('trainerUsers.dialog.invite')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -219,3 +229,4 @@ const FormadorUsuarios: React.FC = () => {
 };
 
 export default FormadorUsuarios;
+

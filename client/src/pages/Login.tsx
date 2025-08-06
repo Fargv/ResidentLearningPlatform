@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +23,7 @@ const Login: React.FC = () => {
   });
   const { email, password } = formData;
   const { login, error, loading, clearError } = useAuth();
+  const { t } = useTranslation();
   //const navigate = useNavigate();
 //const location = useLocation();
 
@@ -60,17 +63,20 @@ const Login: React.FC = () => {
         borderRadius: 2
       }}
     >
+      <Box sx={{ alignSelf: 'flex-end', mb: 2 }}>
+        <LanguageSelector />
+      </Box>
       <Box sx={{ mb: 3, textAlign: 'center' }}>
         <img
           src="/logo.png"
-          alt="Abex Excelencia Robótica"
+          alt={t('login.logoAlt')}
           style={{ maxWidth: '200px', marginBottom: '16px' }}
         />
         <Typography variant="h4" component="h1" gutterBottom>
-          Academic Program daVinci
+          {t('login.title')}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          Tecnologías del Robot da Vinci
+          {t('login.subtitle')}
         </Typography>
       </Box>
 
@@ -86,7 +92,7 @@ const Login: React.FC = () => {
           required
           fullWidth
           id="email"
-          label="Email"
+          label={t('login.email')}
           name="email"
           autoComplete="email"
           autoFocus
@@ -99,7 +105,7 @@ const Login: React.FC = () => {
           required
           fullWidth
           name="password"
-          label="Contraseña"
+          label={t('login.password')}
           type="password"
           id="password"
           autoComplete="current-password"
@@ -115,21 +121,20 @@ const Login: React.FC = () => {
           sx={{ mt: 3, mb: 2, py: 1.5 }}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
+          {loading ? <CircularProgress size={24} /> : t('login.signIn')}
         </Button>
 
         <Box sx={{ mt: 2 }}>
           <Link component={RouterLink} to="/forgot-password" variant="body2">
-            ¿Olvidaste tu contraseña?
+            {t('login.forgotPassword')}
           </Link>
         </Box>
         
 <Box sx={{ mt: 1 }}>
   <Typography variant="body2" align="center">
-    ¿No tienes cuenta?
-    {' '}
+    {t('login.noAccount')}{' '}
     <Link component={RouterLink} to="/register" underline="hover">
-      Regístrate aquí
+      {t('login.registerHere')}
     </Link>
   </Typography>
 </Box>
@@ -139,10 +144,10 @@ const Login: React.FC = () => {
 
     <Box sx={{ mt: 2, textAlign: 'center' }}>
       <Typography variant="body2" color="text.secondary">
-        © {new Date().getFullYear()} Abex Excelencia Robótica
+        {t('login.copyright', { year: new Date().getFullYear() })}
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        Powered by FARGV
+        {t('login.poweredBy')}
       </Typography>
     </Box>
   </Container>
