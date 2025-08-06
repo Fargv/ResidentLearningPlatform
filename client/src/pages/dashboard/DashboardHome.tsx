@@ -42,6 +42,9 @@ const DashboardHome: React.FC = () => {
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [phaseSummary, setPhaseSummary] = useState<
     { name: string; percent: number }[]
+ >([]);
+  const [socPhaseSummary, setSocPhaseSummary] = useState<
+    { name: string; percent: number }[]
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
@@ -253,6 +256,15 @@ const DashboardHome: React.FC = () => {
 
         if (isSociedades) {
           const socFases = data.filter((p: any) => p.faseModel === 'FaseSoc');
+          const socSummary = socFases.map((p: any) => {
+            const total = p.actividades.length;
+            const validated = p.actividades.filter(
+              (a: any) => a.estado === 'validado'
+            ).length;
+            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+            return { name: p.fase.nombre, percent };
+          });
+          setSocPhaseSummary(socSummary);
           const allValidado =
             socFases.length > 0 &&
             socFases.every((p: any) => p.estadoGeneral === 'validado');
@@ -429,37 +441,43 @@ const DashboardHome: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {societyMilestones.map((m) => (
-              <CardActionArea
-                key={m.label}
-                onClick={() => handleOpenDialog(m)}
-                sx={{
-                  flex: "1 1 calc(50% - 16px)",
-                  minWidth: "250px",
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                    transform: "scale(1.02)",
-                  },
-                  cursor: "pointer",
-                }}
-              >
-                <Paper
-                  elevation={2}
+            {societyMilestones.map((m, idx) => {
+              const percent = socPhaseSummary[idx]?.percent ?? 0;
+              return (
+                <CardActionArea
+                  key={m.label}
+                  onClick={() => handleOpenDialog(m)}
                   sx={{
-                    p: 2,
-                    borderLeft: "6px solid #1E5B94",
-                    backgroundColor: "background.paper",
+                    flex: "1 1 calc(50% - 16px)",
+                    minWidth: "250px",
+                    "&:hover": {
+                      backgroundColor: "action.hover",
+                      transform: "scale(1.02)",
+                    },
+                    cursor: "pointer",
                   }}
                 >
-                  <Typography variant="subtitle2" color="text.secondary">
-                    {m.label}
-                  </Typography>
-                  <Typography variant="body1" fontWeight="bold">
-                    {formatMonthYear(m.date || "") || "—"}
-                  </Typography>
-                </Paper>
-              </CardActionArea>
-            ))}
+                  <Paper
+                    elevation={2}
+                    sx={{
+                      p: 2,
+                      borderLeft: "6px solid #1E5B94",
+                      background: `linear-gradient(90deg, #C8E6C9 ${percent}%, #FFFFFF ${percent}%)`,
+                    }}
+                  >
+                    <Typography variant="subtitle2" color="text.secondary">
+                      {m.label}
+                    </Typography>
+                    <Typography variant="body1" fontWeight="bold">
+                      {formatMonthYear(m.date || "") || "—"}
+                    </Typography>
+                    <Typography variant="body2" fontWeight="bold">
+                      {percent}%
+                    </Typography>
+                  </Paper>
+                </CardActionArea>
+              );
+            })}
           </Box>
           {socAllValidado && (
             <Box textAlign="center" mt={2}>
@@ -506,20 +524,31 @@ const DashboardHome: React.FC = () => {
                   }}
                 >
                   <Paper
-                    elevation={2}
-                    sx={{
-                      p: 2,
-                      borderLeft: "6px solid #1E5B94",
-                      backgroundColor: "background.paper",
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {p.name}
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {p.percent}%
-                    </Typography>
-                  </Paper>
+                      elevation={2}
+                      sx={{
+                        p: 2,
+                        borderLeft: "6px solid #1E5B94",
+                        backgroundColor: "background.paper",
+                        backgroundImage: (theme) =>
+                          `linear-gradient(to right, ${theme.palette.success.light} ${p.percent}%, transparent ${p.percent}%)`,
+                      }}
+                    >
+                      <Typography variant="subtitle2" color="text.secondary">
+                        {p.name}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        sx={{
+                          color:
+                            p.percent > 50 ? "common.white" : "text.primary",
+                          textShadow:
+                            p.percent > 50 ? "0 0 2px rgba(0,0,0,0.5)" : "none",
+                        }}
+                      >
+                        {p.percent}%
+                      </Typography>
+                    </Paper>
                 </CardActionArea>
               ))}
             </Box>
