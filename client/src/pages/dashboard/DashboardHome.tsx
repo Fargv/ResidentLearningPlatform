@@ -468,16 +468,27 @@ const DashboardHome: React.FC = () => {
                     sx={{
                       p: 2,
                       borderLeft: "6px solid #1E5B94",
-                      background: `linear-gradient(90deg, #C8E6C9 ${percent}%, #FFFFFF ${percent}%)`,
+                      background: `linear-gradient(90deg, #1E5B94 ${percent}%, #E3F2FD ${percent}%)`,
                     }}
                   >
-                    <Typography variant="subtitle2" color="text.secondary">
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: percent > 50 ? "white" : "text.secondary" }}
+                    >
                       {m.label}
                     </Typography>
-                    <Typography variant="body1" fontWeight="bold">
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      sx={{ color: percent > 50 ? "white" : "text.primary" }}
+                    >
                       {formatMonthYear(m.date || "") || "—"}
                     </Typography>
-                    <Typography variant="body2" fontWeight="bold">
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      sx={{ color: percent > 50 ? "white" : "text.primary" }}
+                    >
                       {percent}%
                     </Typography>
                   </Paper>
