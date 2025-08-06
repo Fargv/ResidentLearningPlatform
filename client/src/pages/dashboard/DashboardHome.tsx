@@ -473,7 +473,7 @@ const DashboardHome: React.FC = () => {
                   >
                     <Typography
                       variant="subtitle2"
-                      sx={{ color: '#1E5B94' }}
+                      sx={{ color: 'text.secondary' }}
                     >
                       {m.label}
                     </Typography>
@@ -545,7 +545,7 @@ const DashboardHome: React.FC = () => {
                       sx={{
                         p: 2,
                         borderLeft: "6px solid #1E5B94",
-                        background: `linear-gradient(90deg, #1E5B94 ${p.percent}%, #E3F2FD ${p.percent}%)`,
+                        background: `linear-gradient(90deg, #E3F2FD  ${p.percent}%, #F5F5F5  ${p.percent}%)`,
                       }}
                     >
                       <Typography variant="subtitle2" color="text.secondary">
@@ -555,7 +555,7 @@ const DashboardHome: React.FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         sx={{
-                          color: '#1E5B94',
+                          color: "text.secondary",
                           textShadow: 'none',
                         }}
                       >
