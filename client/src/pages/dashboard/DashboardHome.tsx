@@ -440,7 +440,7 @@ const DashboardHome: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {societyMilestones.map((m) => {
+            {societyMilestones.map((m, idx) => {
               const percent =
                 socPhaseSummary.find((s) => s.phase === m.phase)?.percent ?? 0;
               return (
@@ -448,8 +448,14 @@ const DashboardHome: React.FC = () => {
                   key={m.label}
                   onClick={() => handleOpenDialog(m)}
                   sx={{
-                    flex: "1 1 calc(50% - 16px)",
-                    minWidth: "250px",
+                    flex: {
+                      xs: "1 1 100%",
+                      md:
+                        idx === 0
+                          ? "1 1 100%"
+                          : "1 1 calc(50% - 16px)",
+                    },
+                    minWidth: { xs: "250px", md: "250px" },
                     "&:hover": {
                       backgroundColor: "action.hover",
                       transform: "scale(1.02)",

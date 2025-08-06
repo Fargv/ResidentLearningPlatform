@@ -43,13 +43,17 @@ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
                 sx={{
                   height: 10,
                   borderRadius: 5,
-                  backgroundColor: '#c6efce',
+                  backgroundColor: '#E3F2FD',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: '#1E5B94',
                   },
                 }}
               />
-              <Typography variant="body2" align="right" sx={{ mt: 1 }}>
+              <Typography
+                variant="body2"
+                align="right"
+                sx={{ mt: 1, color: fase.porcentaje > 50 ? 'white' : 'inherit' }}
+              >
                 {fase.porcentaje}%
               </Typography>
             </Box>
