@@ -52,7 +52,7 @@ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
               <Typography
                 variant="body2"
                 align="right"
-                sx={{ mt: 1, color: fase.porcentaje > 50 ? 'white' : 'inherit' }}
+                sx={{ mt: 1, color: '#1E5B94' }}
               >
                 {fase.porcentaje}%
               </Typography>

@@ -473,21 +473,21 @@ const DashboardHome: React.FC = () => {
                   >
                     <Typography
                       variant="subtitle2"
-                      sx={{ color: percent > 50 ? "white" : "text.secondary" }}
+                      sx={{ color: '#1E5B94' }}
                     >
                       {m.label}
                     </Typography>
                     <Typography
                       variant="body1"
                       fontWeight="bold"
-                      sx={{ color: percent > 50 ? "white" : "text.primary" }}
+                      sx={{ color: '#1E5B94' }}
                     >
                       {formatMonthYear(m.date || "") || "—"}
                     </Typography>
                     <Typography
                       variant="body2"
                       fontWeight="bold"
-                      sx={{ color: percent > 50 ? "white" : "text.primary" }}
+                      sx={{ color: '#1E5B94' }}
                     >
                       {percent}%
                     </Typography>
@@ -545,9 +545,7 @@ const DashboardHome: React.FC = () => {
                       sx={{
                         p: 2,
                         borderLeft: "6px solid #1E5B94",
-                        backgroundColor: "background.paper",
-                        backgroundImage: (theme) =>
-                          `linear-gradient(to right, ${theme.palette.success.light} ${p.percent}%, transparent ${p.percent}%)`,
+                        background: `linear-gradient(90deg, #1E5B94 ${p.percent}%, #E3F2FD ${p.percent}%)`,
                       }}
                     >
                       <Typography variant="subtitle2" color="text.secondary">
@@ -557,10 +555,8 @@ const DashboardHome: React.FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         sx={{
-                          color:
-                            p.percent > 50 ? "common.white" : "text.primary",
-                          textShadow:
-                            p.percent > 50 ? "0 0 2px rgba(0,0,0,0.5)" : "none",
+                          color: '#1E5B94',
+                          textShadow: 'none',
                         }}
                       >
                         {p.percent}%
