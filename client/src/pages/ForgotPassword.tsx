@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Container, Paper, Typography, TextField, Button, Link } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
 const ForgotPassword: React.FC = () => {
   const [userEmail, setUserEmail] = useState('');
+  const { t } = useTranslation();
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const adminUrl =
     env === 'dev'
@@ -41,15 +43,15 @@ const ForgotPassword: React.FC = () => {
           }}
         >
           <Typography variant="h5" component="h1" gutterBottom>
-            ¿Olvidaste tu contraseña?
+            {t('forgotPassword.heading')}
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Para resetear la contraseña póngase en contacto con el administrador del sistema.
+            {t('forgotPassword.description')}
           </Typography>
           <TextField
             margin="normal"
             fullWidth
-            label="Tu email"
+            label={t('forgotPassword.emailLabel')}
             value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
           />
@@ -60,11 +62,11 @@ const ForgotPassword: React.FC = () => {
             href={mailtoLink}
             sx={{ mt: 2 }}
           >
-            Enviar correo al administrador
+            {t('forgotPassword.submit')}
           </Button>
           <Box sx={{ mt: 2 }}>
             <Link component={RouterLink} to="/login" underline="hover">
-              Volver al inicio de sesión
+              {t('forgotPassword.backToLogin')}
             </Link>
           </Box>
         </Paper>

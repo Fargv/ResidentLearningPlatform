@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import AdminUsuarios from './AdminUsuarios';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../../i18n';
 
 jest.mock('../../api');
 jest.mock('../../context/AuthContext');
@@ -16,6 +18,7 @@ const mockedGet = (api as any).get as jest.Mock;
 
 beforeEach(() => {
   mockedUseAuth.mockReturnValue({ user: { rol: 'administrador' } } as any);
+  i18n.changeLanguage('es');
 });
 
 afterEach(() => {
@@ -30,7 +33,11 @@ test('muestra boton Crear progreso cuando no existe progreso', async () => {
     .mockResolvedValueOnce({ data: { data: [] } })
     .mockResolvedValueOnce({ data: [] });
 
-  render(<AdminUsuarios />);
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
   expect(await screen.findByText('Crear progreso')).toBeInTheDocument();
 });
 
@@ -42,7 +49,11 @@ test('no muestra boton cuando tiene progreso', async () => {
     .mockResolvedValueOnce({ data: { data: [] } })
     .mockResolvedValueOnce({ data: [] });
 
-  render(<AdminUsuarios />);
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
   await screen.findByText('Res A');
   expect(screen.queryByText('Crear progreso')).not.toBeInTheDocument();
 });
@@ -55,7 +66,11 @@ test('muestra boton Cambiar contraseña para administradores', async () => {
     .mockResolvedValueOnce({ data: { data: [] } })
     .mockResolvedValueOnce({ data: [] });
 
-  render(<AdminUsuarios />);
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
   expect(await screen.findByText('Cambiar contraseña')).toBeInTheDocument();
 });
 
@@ -67,7 +82,11 @@ test('muestra botones Editar y Eliminar', async () => {
     .mockResolvedValueOnce({ data: { data: [] } })
     .mockResolvedValueOnce({ data: [] });
 
-  render(<AdminUsuarios />);
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
   expect(await screen.findByText('Editar')).toBeInTheDocument();
   expect(screen.getByText('Eliminar')).toBeInTheDocument();
 });

@@ -1,0 +1,906 @@
+{
+  "welcome": "Ongietorri, {{name}}",
+  "role": {
+    "adminPanel": "Administrazio panela",
+    "trainer": "Erietxeko egoiliarren prestatzailea {{hospital}}",
+    "coordinator": "Erresidentziako koordinatzailea {{hospital}}",
+    "resident": "Erietxeko egoiliarra {{hospital}}",
+    "student": "Elkarteen programako ikaslea {{title}}",
+    "instructor": "Elkarteen programako irakaslea {{title}}"
+  },
+  "actions": {
+    "dashboard": "Arbela",
+    "myProgress": "Nire aurrerapena",
+    "trainingPhases": "Prestakuntza faseak",
+    "validations": "Balidazioak",
+    "myUsers": "Nire erabiltzaileak",
+    "usersProgress": "Erabiltzaileen aurrerapena",
+    "settings": "Ezarpenak",
+    "myProfile": "Nire profila",
+    "notifications": "Jakinarazpenak",
+    "profile": "Profila",
+    "users": "Erabiltzaileak",
+    "logout": "Saioa itxi"
+  },
+  "adminConfig": {
+    "title": "Konfigurazioa",
+    "hospitals": "Ospitaleak",
+    "societies": "Elkarteak",
+    "residentProgram": "Egoiliarren Programa",
+    "societiesProgram": "Elkarteen Programa",
+    "users": "Erabiltzaileak",
+    "accessCodes": "Sarbide kodeak",
+    "debug": "Arazketa"
+  },
+  "adminPhases": {
+    "_comment": "Administratzaileentzako faseen kudeaketa",
+    "phase": "Fasea",
+    "activity": "Jarduera",
+    "activities": "Jarduerak",
+    "name": "Izena",
+    "order": "Ordena",
+    "type": "Mota",
+    "description": "Deskribapena",
+    "number": "Zenbakia",
+    "tabs": {
+      "aria": "faseen fitxak",
+      "activities": "Jarduerak"
+    },
+    "table": {
+      "aria": "{{number}}. faseko jarduerak",
+      "order": "Ordena",
+      "name": "Izena",
+      "type": "Mota",
+      "actions": "Ekintzak",
+      "description": "Deskribapena",
+      "empty": "Ez dago jarduerarik fase honetan"
+    },
+    "messages": {
+      "noActivities": "Ez dago jarduerarik fase honetan",
+      "noPhases": "Ez dago faserenik sortuta",
+      "created": "{{item}} ongi sortu da",
+      "createError": "Errorea {{item}} sortzean",
+      "updated": "{{item}} ongi eguneratu da",
+      "updateError": "Errorea {{item}} eguneratzean",
+      "deleted": "{{item}} ongi ezabatu da",
+      "deleteError": "Errorea {{item}} ezabatzean",
+      "phaseCreated": "Fasea ongi sortu da",
+      "phaseCreateError": "Errorea fasea sortzean",
+      "phaseUpdated": "Fasea ongi eguneratu da",
+      "phaseUpdateError": "Errorea fasea eguneratzean",
+      "phaseDeleted": "Fasea ongi ezabatu da. Ezabatutako aurrerapenak: {{removed}}. Balidatuak gordeta: {{preserved}}",
+      "phaseDeleteError": "Errorea fasea ezabatzean",
+      "activityCreated": "Jarduera ongi sortu da",
+      "activityCreateError": "Errorea jarduera sortzean",
+      "activityUpdated": "Jarduera ongi eguneratu da",
+      "activityUpdateError": "Errorea jarduera eguneratzean",
+      "activityDeleted": "Jarduera ongi ezabatu da",
+      "activityDeleteError": "Errorea jarduera ezabatzean",
+      "checkProgressError": "Errorea lotutako aurrerapena egiaztatzean"
+    },
+    "actions": {
+      "newPhase": "Fase berria",
+      "editPhase": "Fasea editatu",
+      "deletePhase": "Fasea ezabatu",
+      "newActivity": "Jarduera berria",
+      "editActivity": "Jarduera editatu",
+      "deleteActivity": "Jarduera ezabatu"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Fase berria",
+        "create": "Sortu",
+        "cancel": "Utzi"
+      },
+      "editPhase": {
+        "title": "Fasea editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
+      },
+      "deletePhase": {
+        "title": "Fasea ezabatu",
+        "cancel": "Utzi",
+        "content": "Ziur al zaude <strong>{{name}}</strong> fasea ezabatu nahi duzula? Ekintza hau ezin da desegin eta fase honi lotutako jarduera guztiak ezabatuko dira.",
+        "contentWithProgress": "<strong>{{name}}</strong> faseak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ezabatu nahi duzu? Balidatutako aurrerapena gordeko da.",
+        "hasProgress": "<strong>{{name}}</strong> faseak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ezabatu nahi duzu? Balidatutako aurrerapena gordeko da.",
+        "confirm": "Ziur al zaude <strong>{{name}}</strong> fasea ezabatu nahi duzula? Ekintza hau ezin da desegin eta fase honi lotutako jarduera guztiak ezabatuko dira."
+      },
+      "newActivity": {
+        "title": "Jarduera berria",
+        "create": "Sortu",
+        "cancel": "Utzi",
+        "content": "Faserako jarduera sortzen: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Jarduera editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
+      },
+      "deleteActivity": {
+        "title": "Jarduera ezabatu",
+        "cancel": "Utzi",
+        "content": "Ziur al zaude <strong>{{name}}</strong> jarduera ezabatu nahi duzula? Ekintza hau ezin da desegin.",
+        "contentWithProgress": "<strong>{{name}}</strong> jarduerak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ziur al zaude ezabatu nahi duzula? Honek erabiltzaile guztien erregistro horiek ere ezabatuko ditu.",
+        "hasProgress": "<strong>{{name}}</strong> jarduerak <strong>{{count}}</strong> aurrerapen-erregistro ditu. Ziur al zaude ezabatu nahi duzula? Honek erabiltzaile guztien erregistro horiek ere ezabatuko ditu.",
+        "confirm": "Ziur al zaude <strong>{{name}}</strong> jarduera ezabatu nahi duzula? Ekintza hau ezin da desegin."
+      },
+      "createActivity": "Faserako jarduera sortzen: <strong>{{phase}}</strong>"
+    },
+    "evaluation": "Ebaluazioa",
+    "observation": "Behaketa",
+    "practice": "Praktika",
+    "theory": "Teorikoa",
+    "procedure": "Prozedura",
+    "errorForbidden": "Ez duzu baimenik atal hau ikusteko",
+    "errorLoadData": "Errorea datuak kargatzean",
+    "empty": "Ez dago faserenik sortuta. Hasteko, sortu fase berri bat."
+  },
+  "progressByPhase": "Fasearen araberako aurrerapena",
+  "close": "Itxi",
+  "devWarning": "⚠️ GARAPEN INGURUNEA ZAUDE ⚠️",
+  "register": {
+    "title": "Erregistroa",
+    "accessCode": "Sarbide kodea",
+    "name": "Izena",
+    "surname": "Abizenak",
+    "email": "Posta elektronikoa",
+    "password": "Pasahitza",
+    "confirmPassword": "Berretsi pasahitza",
+    "hospital": "Ospitalea",
+    "zone": "Eremua",
+    "specialty": "Espezialitatea",
+    "specialties": {
+      "URO": "Urologia (URO)",
+      "GEN": "Kirurgia Orokorra (GEN)",
+      "GYN": "Ginekologia (GYN)",
+      "THOR": "Toraxekoa (THOR)",
+      "ORL": "Otorino (ORL)"
+    },
+    "society": "Elkartea",
+    "none": "Bat ere ez",
+    "invalidAccessCode": "Sarbide kode baliogabea",
+    "requiredFields": "Mesedez, bete derrigorrezko eremu guztiak.",
+    "hospitalAndSpecialtyRequired": "Ospitalea eta espezialitatea derrigorrezkoak dira",
+    "hospitalRequired": "Ospitalea derrigorrezkoa da",
+    "societyRequired": "Elkartea derrigorrezkoa da",
+    "passwordsMismatch": "Pasahitzak ez datoz bat",
+    "consentPrefix": "Onartzen dut nire datu pertsonalen tratamendua ",
+    "privacyPolicy": "Pribatutasun Politikaren arabera",
+    "consentSuffix": " eta DBEO betetzen dut.",
+    "registerButton": "Erregistratu"
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Convocatoria",
+      "intro": "Inicio del proceso de convocatoria.",
+      "item1": "Envío de invitaciones",
+      "item2": "Recepción de solicitudes"
+    },
+    "presentacion": {
+      "label": "Presentación",
+      "intro": "Sesión de presentación del programa.",
+      "item1": "Introducción al programa",
+      "item2": "Presentación de instructores"
+    },
+    "modOnline": {
+      "label": "Mod. Online",
+      "intro": "Módulos formativos online.",
+      "item1": "Acceso a la plataforma",
+      "item2": "Contenido teórico"
+    },
+    "simulacion": {
+      "label": "Simulación",
+      "intro": "Prácticas de simulación.",
+      "item1": "Sesiones prácticas",
+      "item2": "Evaluación de destrezas"
+    },
+    "firstAssistant": {
+      "label": "First Assistant",
+      "intro": "Lehen laguntzaile gisa egindako jarduerak",
+      "item1": "Ebaki-gelan parte hartzea",
+      "item2": "Jarduerak erregistratzea"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Procedimientos Step By Step.",
+      "item1": "Material de apoyo",
+      "item2": "Revisión guiada"
+    },
+    "handsOn": {
+      "label": "Hand On",
+      "intro": "Entrenamiento práctico Hands On.",
+      "item1": "Práctica intensiva",
+      "item2": "Retroalimentación personalizada"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Fase 1 - Preparación Inicial",
+      "description": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales."
+    },
+    "phase2": {
+      "label": "Fase 2 - Formación Preclínica",
+      "description": "Ejercicios de simulación y entrenamientos en entorno seguro."
+    },
+    "phase3": {
+      "label": "Fase 3 - Asistencia Quirúrgica",
+      "description": "Participación como asistente en quirófano."
+    },
+    "phase4": {
+      "label": "Fase 4 - Cirugía en Consola",
+      "description": "Procedimientos realizados por el residente con supervisión."
+    }
+  },
+  "common": {
+    "cancel": "Utzi",
+    "create": "Sortu",
+    "creating": "Sortzen...",
+    "saveChanges": "Aldaketak gorde",
+    "saving": "Gordetzen...",
+    "delete": "Ezabatu",
+    "deleting": "Ezabatzen...",
+    "phase": "Fasea",
+    "validate": "Balidatu",
+    "reject": "Baztertu",
+    "processing": "Prozesatzen..."
+  },
+  "profile": {
+    "title": "Nire profila",
+    "personalData": "Datu pertsonalak",
+    "changePassword": "Pasahitza aldatu",
+    "fields": {
+      "name": "Izena",
+      "lastName": "Abizenak",
+      "email": "Emaila",
+      "hospital": "Ospitalea",
+      "society": "Elkartea",
+      "currentPassword": "Oraingo pasahitza",
+      "newPassword": "Pasahitz berria",
+      "confirmPassword": "Pasahitza berretsi"
+    },
+    "messages": {
+      "updateSuccess": "Profila eguneratu da",
+      "updateError": "Errorea profila eguneratzean",
+      "passwordMismatch": "Pasahitzak ez datoz bat",
+      "passwordUpdateSuccess": "Pasahitza eguneratu da",
+      "passwordUpdateError": "Errorea pasahitza aldatzean"
+    },
+    "buttons": {
+      "changePassword": "Pasahitza aldatu"
+    }
+  },
+  "adminHospitals": {
+    "title": "Ospitalen kudeaketa",
+    "new": "Ospitale berria",
+    "searchPlaceholder": "Bilatu izenaren arabera",
+    "loadError": "Errorea ospitaleak kargatzean",
+    "createSuccess": "Ospitalea ongi sortu da",
+    "createError": "Errorea ospitalea sortzean",
+    "updateSuccess": "Ospitalea ongi eguneratu da",
+    "updateError": "Errorea ospitalea eguneratzean",
+    "deleteSuccess": "Ospitalea ongi ezabatu da",
+    "deleteError": "Errorea ospitalea ezabatzean",
+    "table": {
+      "aria": "ospitalen taula",
+      "name": "Izena",
+      "city": "Hiria",
+      "province": "Probintzia",
+      "zone": "Eremua",
+      "phone": "Telefonoa",
+      "email": "Emaila",
+      "actions": "Ekintzak"
+    },
+    "fields": {
+      "name": "Izena",
+      "numericCode": "Kode numerikoa",
+      "address": "Helbidea",
+      "city": "Hiria",
+      "province": "Probintzia",
+      "zone": "Eremua",
+      "postalCode": "Posta kodea",
+      "phone": "Telefonoa",
+      "systemType": "Sistemaren mota",
+      "email": "Emaila",
+      "logoUrl": "Logoaren URLa"
+    },
+    "system": {
+      "other": "Bestelakoa"
+    },
+    "create": {
+      "title": "Ospitale berria"
+    },
+    "edit": {
+      "title": "Ospitalea editatu"
+    },
+    "delete": {
+      "title": "Ospitalea ezabatu",
+      "confirm": "Ziur al zaude <strong>{{name}}</strong> ospitalea ezabatu nahi duzula? {{count}} erabiltzaile eta haien aurrerapenak ezabatuko dira. Ekintza hau ezin da desegin."
+    }
+  },
+  "adminSocieties": {
+    "title": "Gestión de Sociedades",
+    "new": "Nueva sociedad",
+    "searchPlaceholder": "Buscar por nombre",
+    "table": {
+      "title": "Título",
+      "status": "Estado",
+      "convocatoria": "Convocatoria",
+      "presentacion": "Presentación",
+      "modOnline": "Mod. Online",
+      "simulacion": "Simulación",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hand On",
+      "actions": "Acciones"
+    },
+    "buttons": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "dialog": {
+      "editTitle": "Editar Sociedad",
+      "createTitle": "Nueva Sociedad"
+    },
+    "fields": {
+      "titulo": "Título",
+      "status": "Estado",
+      "fechaConvocatoria": "Fecha de convocatoria",
+      "fechaPresentacion": "Fecha de presentación",
+      "fechaModulosOnline": "Módulos online",
+      "fechaSimulacion": "Simulación",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hand On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Erabiltzaile guztien kudeaketa",
+    "titleHospital": "Zure ospitaleko erabiltzaileak",
+    "searchPlaceholder": "Bilatu izenaren edo emailaren arabera",
+    "loadError": "Errorea datuak kargatzean",
+    "actions": {
+      "create": "Erabiltzailea sortu",
+      "invite": "Erabiltzailea gonbidatu",
+      "edit": "Editatu",
+      "delete": "Ezabatu",
+      "changePassword": "Pasahitza aldatu",
+      "createProgress": "Aurrerapena sortu"
+    },
+    "createSuccess": "Erabiltzailea ongi sortu da",
+    "createError": "Errorea erabiltzailea sortzean",
+    "updateSuccess": "Erabiltzailea ongi eguneratu da",
+    "updateError": "Errorea erabiltzailea eguneratzean",
+    "deleteSuccess": "Erabiltzailea ongi ezabatu da",
+    "deleteError": "Errorea erabiltzailea ezabatzean",
+    "passwordUpdated": "Pasahitza eguneratu da",
+    "passwordError": "Errorea pasahitza eguneratzean",
+    "createProgressSuccess": "Aurrerapen formatiboa sortu da",
+    "createProgressError": "Errorea aurrerapena sortzean",
+    "table": {
+      "aria": "erabiltzaileen taula",
+      "name": "Izena",
+      "email": "Emaila",
+      "type": "Mota",
+      "society": "Elkartea",
+      "role": "Rola",
+      "hospital": "Ospitalea",
+      "zone": "Eremua",
+      "actions": "Ekintzak"
+    },
+    "fields": {
+      "email": "Emaila",
+      "password": "Pasahitza",
+      "name": "Izena",
+      "surname": "Abizenak",
+      "type": "Mota",
+      "role": "Rola",
+      "hospital": "Ospitalea",
+      "specialty": "Espezialitatea",
+      "society": "Elkartea",
+      "zone": "Eremua"
+    },
+    "create": {
+      "title": "Erabiltzailea sortu"
+    },
+    "edit": {
+      "title": "Erabiltzailea editatu"
+    },
+    "delete": {
+      "title": "Erabiltzailea ezabatu",
+      "confirm": "Ziur al zaude erabiltzaile <strong>{{name}}</strong> ezabatu nahi duzula? Ekintza hau ezin da desegin."
+    },
+    "password": {
+      "title": "Pasahitza eguneratu",
+      "label": "Pasahitz berria",
+      "updating": "Eguneratzen...",
+      "update": "Eguneratu"
+    },
+    "_comment": "Administratzaileentzako erabiltzaileen kudeaketa",
+    "buttons": {
+      "create": "Erabiltzailea sortu",
+      "creating": "Sortzen...",
+      "invite": "Erabiltzailea gonbidatu",
+      "cancel": "Utzi",
+      "save": "Aldaketak gorde",
+      "saving": "Gordetzen...",
+      "delete": "Ezabatu",
+      "deleting": "Ezabatzen...",
+      "update": "Eguneratu",
+      "updating": "Eguneratzen..."
+    },
+    "dialogs": {
+      "createTitle": "Erabiltzailea sortu",
+      "editTitle": "Erabiltzailea editatu",
+      "deleteTitle": "Erabiltzailea ezabatu",
+      "passwordTitle": "Pasahitza eguneratu",
+      "passwordLabel": "Pasahitz berria",
+      "deleteConfirm": "Ziur al zaude {{name}} {{lastName}} erabiltzailea ezabatu nahi duzula? Ekintza hau ezin da desegin."
+    },
+    "messages": {
+      "loadError": "Errorea datuak kargatzean",
+      "userCreated": "Erabiltzailea ongi sortu da",
+      "createError": "Errorea erabiltzailea sortzean",
+      "userUpdated": "Erabiltzailea ongi eguneratu da",
+      "updateError": "Errorea erabiltzailea eguneratzean",
+      "userDeleted": "Erabiltzailea ongi ezabatu da",
+      "deleteError": "Errorea erabiltzailea ezabatzean",
+      "passwordUpdated": "Pasahitza eguneratu da",
+      "passwordError": "Errorea pasahitza eguneratzean"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Elkarteen programako faseen kudeaketa",
+    "phase": "Fasea",
+    "activity": "Jarduera",
+    "table": {
+      "order": "Ordena",
+      "name": "Izena",
+      "type": "Mota",
+      "actions": "Ekintzak"
+    },
+    "messages": {
+      "noActivities": "Ez dago jarduerarik fase honetan",
+      "noPhases": "Ez dago faserenik sortuta",
+      "created": "{{item}} ongi sortu da",
+      "createError": "Errorea {{item}} sortzean",
+      "updated": "{{item}} ongi eguneratu da",
+      "updateError": "Errorea {{item}} eguneratzean",
+      "deleted": "{{item}} ongi ezabatu da",
+      "deleteError": "Errorea {{item}} ezabatzean",
+      "phaseCreated": "Fasea ongi sortu da",
+      "phaseCreateError": "Errorea fasea sortzean",
+      "phaseUpdated": "Fasea ongi eguneratu da",
+      "phaseUpdateError": "Errorea fasea eguneratzean",
+      "phaseDeleted": "Fasea ongi ezabatu da. Ezabatutako aurrerapenak: {{removed}}. Balidatuak gordeta: {{preserved}}",
+      "phaseDeleteError": "Errorea fasea ezabatzean",
+      "activityCreated": "Jarduera ongi sortu da",
+      "activityCreateError": "Errorea jarduera sortzean",
+      "activityUpdated": "Jarduera ongi eguneratu da",
+      "activityUpdateError": "Errorea jarduera eguneratzean",
+      "activityDeleted": "Jarduera ongi ezabatu da",
+      "activityDeleteError": "Errorea jarduera ezabatzean",
+      "progressCheckError": "Errorea lotutako aurrerapenak egiaztatzean"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "Fase berria",
+        "create": "Sortu",
+        "cancel": "Utzi"
+      },
+      "editPhase": {
+        "title": "Fasea editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
+      },
+      "deletePhase": {
+        "title": "Fasea ezabatu",
+        "confirm": "Ezabatu",
+        "cancel": "Utzi"
+      },
+      "newActivity": {
+        "title": "Jarduera berria",
+        "create": "Sortu",
+        "cancel": "Utzi"
+      },
+      "editActivity": {
+        "title": "Jarduera editatu",
+        "save": "Gorde",
+        "cancel": "Utzi"
+      },
+      "deleteActivity": {
+        "title": "Jarduera ezabatu",
+        "confirm": "Ezabatu",
+        "cancel": "Utzi"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "Erabiltzaileen aurrerapena",
+    "searchPlaceholder": "Bilatu izenaren edo emailaren arabera",
+    "table": {
+      "name": "Izena",
+      "email": "Email",
+      "hospitalSociety": "Ospitale/Elkartea",
+      "role": "Rola",
+      "actions": "Ekintzak"
+    },
+    "viewProgress": "Aurrerapena ikusi"
+  },
+  "adminProgressDetail": {
+    "loadError": "Errorea aurrerapena kargatzean",
+    "phaseUpdateSuccess": "Fasea ongi eguneratu da",
+    "phaseUpdateError": "Errorea fasea eguneratzean",
+    "activityUpdateSuccess": "Jarduera ongi eguneratu da",
+    "activityUpdateError": "Errorea jarduera eguneratzean",
+    "title": "Erabiltzailearen aurrerapena",
+    "titleWithName": "{{name}} {{surname}}-ren aurrerapena",
+    "back": "Atzera",
+    "phaseTitle": "Fasea {{number}}: {{name}}",
+    "noTitle": "Izenbururik gabe",
+    "phaseStatusLabel": "Fasearen egoera",
+    "activityStatusLabel": "Jardueraren egoera",
+    "phaseStatus": {
+      "blocked": "Blokeatuta",
+      "inProgress": "Prozesuan",
+      "completed": "Osatuta",
+      "validated": "Balidatua",
+      "pending": "Zain",
+      "rejected": "Baztertuta"
+    },
+    "activityStatus": {
+      "pending": "Zain",
+      "completed": "Osatuta",
+      "validated": "Balidatua",
+      "rejected": "Baztertuta"
+    },
+    "validatedProgress": "Balidatutako aurrerapena: {{percent}}%",
+    "noActivityName": "Izenik gabeko jarduera",
+    "completedOn": "Osatze data: {{date}}",
+    "validatedOn": "Balidatua: {{date}}",
+    "statusWithValue": "Egoera: {{status}}",
+    "noProgress": "Ez dago aurrerapenik eskuragarri."
+  },
+  "brand": {
+    "name": "Abex Robotikako Bikaintasuna"
+  },
+  "regions": {
+    "andalucia": "ANDALUZIA"
+  },
+  "auth": {
+    "login": "Hasi saioa",
+    "logout": "Saioa itxi",
+    "password": "Pasahitza",
+    "passwordCurrent": "Uneko pasahitza",
+    "passwordNew": "Pasahitz berria",
+    "passwordConfirm": "Berretsi pasahitza",
+    "passwordUpdated": "Pasahitza eguneratua",
+    "passwordMismatch": "Pasahitzak ez datoz bat",
+    "accessCode": "Sarbide kodea",
+    "invalidAccessCode": "Sarbide kode baliogabea",
+    "changePassword": "Aldatu pasahitza",
+    "resetRequest": "Pasahitza berrezartzeko eskaera",
+    "errorLogin": "Errorea saioa hastean",
+    "errorChangePassword": "Errorea pasahitza aldatzean",
+    "errorUpdatePassword": "Errorea pasahitza eguneratzean"
+  },
+  "forgotPassword": {
+    "heading": "Pasahitza ahaztuta?",
+    "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
+    "emailLabel": "Zure emaila",
+    "submit": "Bidali emaila administratzaileari",
+    "backToLogin": "Itzuli saioa hasteko"
+  },
+  "login": {
+    "title": "Da Vinci Akademia Programa",
+    "subtitle": "Da Vinci Robotaren Teknologiak",
+    "email": "Posta elektronikoa",
+    "password": "Pasahitza",
+    "signIn": "Hasi saioa",
+    "forgotPassword": "Pasahitza ahaztuta?",
+    "noAccount": "Ez duzu konturik?",
+    "registerHere": "Erregistratu hemen",
+    "copyright": "© {{year}} Abex Robotikako Bikaintasuna",
+    "poweredBy": "FARGV garatua",
+    "logoAlt": "Abex Robotikako Bikaintasuna"
+  },
+  "dashboard": {
+    "manageAllUsers": "Gestión de Todos los Usuarios",
+    "noPermissions": "No tienes permisos para ver esta sección"
+  },
+  "forms": {
+    "code": "Código",
+    "numericCode": "Código Numérico",
+    "postalCode": "Código Postal",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "description": "Descripción",
+    "number": "Número",
+    "title": "Título",
+    "completionDate": "Fecha de realización",
+    "selectDate": "Selecciona una fecha de realización",
+    "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+    "fileTooLarge": "El archivo supera el tamaño máximo de 5MB."
+  },
+  "types": {
+    "theoretical": "Teorikoa",
+    "practical": "Praktikoa",
+    "evaluation": "Ebaluazioa",
+    "observation": "Behatzea",
+    "theoreticalLower": "teorikoa",
+    "practicalLower": "praktikoa",
+    "evaluationLower": "ebaluazioa",
+    "observationLower": "behatzea",
+    "programaResidentes": "Egoiliarren Programa",
+    "programaSociedades": "Elkarteen Programa"
+  },
+  "roles": {
+    "residente": "Egoilarra",
+    "formador": "Prestatzailea",
+    "coordinador": "Koordinatzailea",
+    "administrador": "Administratzailea",
+    "alumno": "Ikaslea",
+    "instructor": "Instruktorea"
+  },
+  "notifications": {
+    "title": "Jakinarazpenak",
+    "tabs": {
+      "aria": "jakinarazpenen fitxak",
+      "pending": "Zain",
+      "viewed": "Ikusita"
+    },
+    "table": {
+      "message": "Mezua",
+      "date": "Data",
+      "type": "Mota",
+      "actions": "Ekintzak"
+    },
+    "empty": {
+      "all": "Ez dago jakinarazpenik",
+      "pending": "Ez dago zain dauden jakinarazpenik",
+      "viewed": "Ez dago ikusitako jakinarazpenik"
+    },
+    "errorLoad": "Errorea jakinarazpenak kargatzean",
+    "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean"
+  },
+  "codes": {
+    "new": "Kode berria",
+    "edit": "Editatu kodea",
+    "errorLoad": "Errorea kodeak kargatzean",
+    "errorDelete": "Errorea kodea ezabatzean",
+    "errorSave": "Errorea kodea gordetzean"
+  },
+  "trainerUsers": {
+    "title": "Nire erabiltzaileak",
+    "invite": "Erabiltzailea gonbidatu",
+    "edit": "Erabiltzailea editatu",
+    "updated": "Erabiltzailea eguneratua",
+    "invited": "Erabiltzailea gonbidatua",
+    "deleted": "Erabiltzailea ezabatua",
+    "error": "Errorea",
+    "deleteError": "Errorea ezabatzean",
+    "loadError": "Errorea erabiltzaileak kargatzean",
+    "table": {
+      "name": "Izena",
+      "email": "Emaila",
+      "role": "Rola",
+      "status": "Egoera",
+      "actions": "Ekintzak",
+      "state": "Egoera"
+    },
+    "form": {
+      "email": "Emaila",
+      "name": "Izena",
+      "surname": "Abizenak",
+      "role": "Rola",
+      "roles": {
+        "resident": "Egoiliarra",
+        "trainer": "Prestakuntza-emilea"
+      }
+    },
+    "dialog": {
+      "cancel": "Utzi",
+      "saving": "Gordetzen...",
+      "save": "Gorde",
+      "invite": "Gonbidatu"
+    },
+    "_comment": "Prestakuntza-emileentzako erabiltzaileen kudeaketa",
+    "buttons": {
+      "invite": "Erabiltzailea gonbidatu",
+      "cancel": "Utzi",
+      "save": "Gorde",
+      "saving": "Gordetzen...",
+      "delete": "Ezabatu"
+    },
+    "fields": {
+      "email": "Emaila",
+      "name": "Izena",
+      "lastName": "Abizenak",
+      "role": "Rola"
+    },
+    "roles": {
+      "resident": "Egoiliarra",
+      "trainer": "Prestakuntza-emilea"
+    },
+    "states": {
+      "active": "Aktibo",
+      "inactive": "Inaktibo"
+    },
+    "dialogs": {
+      "editTitle": "Erabiltzailea editatu",
+      "inviteTitle": "Invitar Usuario"
+    },
+    "messages": {
+      "loadError": "Error al cargar usuarios",
+      "updateSuccess": "Usuario actualizado",
+      "inviteSuccess": "Usuario invitado",
+      "deleteSuccess": "Usuario eliminado",
+      "deleteError": "Error al eliminar",
+      "genericError": "Error"
+    }
+  },
+  "progress": {
+    "createSuccess": "Prestakuntza aurrerapena ondo sortu da"
+  },
+  "trainerValidations": {
+    "title": "Balidazioak",
+    "tabs": {
+      "pending": "Zain ({{count}})",
+      "validated": "Balidatuak ({{count}})",
+      "rejected": "Baztertuta ({{count}})",
+      "aria": "balidazioen fitxak"
+    },
+    "table": {
+      "activity": "Jarduera",
+      "resident": "Egoiliarra",
+      "date": "Data",
+      "comments": "Iruzkinak",
+      "actions": "Ekintzak",
+      "status": "Egoera",
+      "reason": "Arrazoia",
+      "noPhase": "Faserik gabe",
+      "noName": "Izenik gabe",
+      "phase": "Fasea",
+      "state": "Egoera"
+    },
+    "empty": {
+      "pending": "Ez dago baliozkotze zain",
+      "validated": "Ez dago baliozkotze osaturik",
+      "rejected": "Ez dago baztertutako baliozkotzerik"
+    },
+    "actions": {
+      "viewAttachment": "Eranskina ikusi"
+    },
+    "dialog": {
+      "validateTitle": "Jarduera balioztatu",
+      "validateMessage": "Egoiliar {{name}}-ren {{activity}} jarduera balioztatzen ari zara.",
+      "optionalComments": "Iruzkinak (aukerakoa)",
+      "digitalSignature": "Sinadura digitala",
+      "rejectTitle": "Jarduera baztertu",
+      "rejectMessage": "Egoiliar {{name}}-ren {{activity}} jarduera baztertzen ari zara.",
+      "rejectReason": "Baztertzeko arrazoia"
+    },
+    "errorLoad": "Errorea balidazioak kargatzean",
+    "_comment": "Balidazioak prestakuntza-emilek kudeatuta",
+    "buttons": {
+      "viewAttachment": "Eranskina ikusi",
+      "validate": "Balidatu",
+      "reject": "Baztertu",
+      "cancel": "Utzi"
+    },
+    "states": {
+      "validated": "Balidatua",
+      "rejected": "Baztertua"
+    },
+    "dialogs": {
+      "validateTitle": "Jarduera balioztatu",
+      "rejectTitle": "Jarduera baztertu",
+      "validateConfirm": "Egoiliar {{resident}}-ren {{activity}} jarduera balioztatzen ari zara.",
+      "rejectConfirm": "Egoiliar {{resident}}-ren {{activity}} jarduera baztertzen ari zara.",
+      "commentsOptional": "Iruzkinak (aukerakoa)",
+      "digitalSignature": "Sinadura digitala",
+      "rejectReason": "Baztertzeko arrazoia",
+      "processing": "Prozesatzen..."
+    },
+    "messages": {
+      "loadError": "Errorea balidazioak kargatzean"
+    }
+  },
+  "residentPhases": {
+    "title": "Nire prestakuntza faseak",
+    "errorLoad": "Errorea aurrerapena kargatzean",
+    "activityFail": "Ezin izan da jarduera osatu.",
+    "activitySaveError": "Errorea jarduera gordetzean.",
+    "activitySuccess": "✅ Jarduera ondo erregistratua",
+    "noActivitySelectedError": "Barne errorea: Ez da jarduerarik hautatu.",
+    "noTitle": "Izenbururik gabe",
+    "phaseTitle": "Fasea {{number}}: {{name}}",
+    "deadline": "Epemuga",
+    "validatedProgress": "Balidatutako aurrerapena: {{percent}}%",
+    "noActivities": "Ez dago jarduerarik eskuragarri",
+    "phaseLocked": "Fasea blokeatuta",
+    "noProgress": "Ez dago prestakuntza aurrerapenik eskuragarri.",
+    "markAsCompleted": "Markatu osatutzat",
+    "unnamedActivity": "Izenik gabeko jarduera",
+    "comment": "Iruzkina",
+    "trainerComment": "Prestatzailearen iruzkina",
+    "rejectionReason": "Baztertzeko arrazoia",
+    "completedOn": "Osatze data",
+    "validatedOn": "Balidatua: ",
+    "status": "Egoera",
+    "dialog": {
+      "completeActivity": "Markatu jarduera osatutzat",
+      "completionDate": "Osatze data",
+      "comment": "Iruzkina",
+      "selectFile": "Hautatu fitxategia",
+      "cancel": "Utzi",
+      "confirm": "Baieztatu",
+      "missingProgressId": "Falta da aurrerapenaren IDa",
+      "noActivitySelected": "Ez da jarduerarik hautatu",
+      "selectDate": "Hautatu osatze data bat",
+      "optionalFileHint": "Erantsi fitxategi aukerazkoa (geh. 5MB)",
+      "fileTooLarge": "Fitxategia 5MB baino handiagoa da.",
+      "title": "Markatu jarduera osatutzat",
+      "date": "Osatze data"
+    },
+    "_comment": "Fases y actividades para residentes",
+    "messages": {
+      "noActivities": "Ez dago jarduerarik eskuragarri",
+      "blocked": "Fasea blokeatuta",
+      "noProgress": "Ez dago prestakuntza aurrerapenik eskuragarri.",
+      "loadError": "Errorea aurrerapena kargatzean"
+    },
+    "tooltip": {
+      "missingProgress": "Falta da aurrerapenaren IDa",
+      "noActivity": "Ez da jarduerarik hautatu"
+    },
+    "labels": {
+      "comment": "Iruzkina",
+      "trainerComment": "Prestatzailearen iruzkina",
+      "rejectionReason": "Baztertzeko arrazoia",
+      "completedDate": "Osatze data",
+      "validatedDate": "Balidatua",
+      "state": "Egoera"
+    },
+    "states": {
+      "validated": "Balidatua",
+      "rejected": "Baztertua",
+      "pending": "Balidazioaren zain",
+      "notCompleted": "Osatu gabe"
+    }
+  },
+  "residentProgress": {
+    "title": "Nire aurrerapena",
+    "errorLoad": "Errorea aurrerapena kargatzean",
+    "downloadError": "Errorea ziurtagiria deskargatzean",
+    "downloadCertificate": "Deskargatu ziurtagiria"
+  },
+  "certificate": {
+    "title": "Osaketaren Ziurtagiria",
+    "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
+    "dateLine": "Madril, {{date}}",
+    "footer": "Ziurtagiria automatikoki sortua Academic Program Da Vinci-k · www.abexsl.es"
+  },
+  "emails": {
+    "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
+  },
+  "debug": {
+    "tokenValid": "✅ Token baliozkoa eta deskodetua",
+    "tokenInvalid": "❌ Token baliogabea edo hondatuta"
+  },
+  "status": {
+    "pendingValidation": "Balidazioaren zain",
+    "validado": "Balidatuta",
+    "rechazado": "Baztertuta",
+    "completado": "Osatuta",
+    "pendiente": "Zain",
+    "noCompletada": "Osatu gabe",
+    "enProgreso": "Prozesuan",
+    "bloqueada": "Blokeatuta",
+    "active": "Aktibo",
+    "inactive": "Inaktibo",
+    "validated": "Balidatuta",
+    "rejected": "Baztertuta"
+  }
+}

@@ -38,6 +38,7 @@ import {
 } from '@mui/icons-material';
 import BackButton from '../../components/BackButton';
 import api from '../../api';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface Hospital {
   _id: string;
@@ -51,10 +52,12 @@ interface Hospital {
   email?: string;
   tipoSistema?: string;
   zona?: string;
+  urlHospiLogo?: string;
 }
 
 const AdminHospitales: React.FC = () => {
   //const { user } = useAuth();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hospitales, setHospitales] = useState<Hospital[]>([]);
@@ -78,7 +81,8 @@ const AdminHospitales: React.FC = () => {
         telefono: '',
         email: '',
         tipoSistema: '',
-        zona: ''
+        zona: '',
+        urlHospiLogo: ''
       });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -88,21 +92,20 @@ const AdminHospitales: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchHospitales = async () => {
-      try {
-        setLoading(true);
-        
-       const res = await api.get('/hospitals');
-        setHospitales(res.data.data);
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Error al cargar los hospitales');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchHospitales = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/hospitals');
+      setHospitales(res.data.data);
+    } catch (err: any) {
+      setError(err.response?.data?.error || t('adminHospitals.loadError'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchHospitales();
-  }, []);
+  fetchHospitales();
+}, [t]);
 
   const handleOpenCrearDialog = () => {
     setFormData({
@@ -115,7 +118,8 @@ const AdminHospitales: React.FC = () => {
       telefono: '',
       email: '',
       tipoSistema: '',
-      zona: ''
+      zona: '',
+      urlHospiLogo: ''
     });
     setOpenCrearDialog(true);
   };
@@ -137,7 +141,8 @@ const AdminHospitales: React.FC = () => {
       telefono: hospital.telefono || '',
       email: hospital.email || '',
       tipoSistema: hospital.tipoSistema || '',
-      zona: hospital.zona || ''
+      zona: hospital.zona || '',
+      urlHospiLogo: hospital.urlHospiLogo || ''
     });
     setOpenEditarDialog(true);
   };
@@ -193,15 +198,15 @@ const AdminHospitales: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Hospital creado correctamente',
+        message: t('adminHospitals.createSuccess'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al crear el hospital');
+      setError(err.response?.data?.error || t('adminHospitals.createError'));
       
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al crear el hospital',
+        message: err.response?.data?.error || t('adminHospitals.createError'),
         severity: 'error'
       });
     } finally {
@@ -227,15 +232,15 @@ const AdminHospitales: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Hospital actualizado correctamente',
+        message: t('adminHospitals.updateSuccess'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al actualizar el hospital');
+      setError(err.response?.data?.error || t('adminHospitals.updateError'));
       
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al actualizar el hospital',
+        message: err.response?.data?.error || t('adminHospitals.updateError'),
         severity: 'error'
       });
     } finally {
@@ -258,15 +263,15 @@ const AdminHospitales: React.FC = () => {
       
       setSnackbar({
         open: true,
-        message: 'Hospital eliminado correctamente',
+        message: t('adminHospitals.deleteSuccess'),
         severity: 'success'
       });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al eliminar el hospital');
+      setError(err.response?.data?.error || t('adminHospitals.deleteError'));
       
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || 'Error al eliminar el hospital',
+        message: err.response?.data?.error || t('adminHospitals.deleteError'),
         severity: 'error'
       });
     } finally {
@@ -322,7 +327,7 @@ const AdminHospitales: React.FC = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Gestión de Hospitales
+          {t('adminHospitals.title')}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <BackButton sx={{ mr: 1 }} />
@@ -332,14 +337,14 @@ const AdminHospitales: React.FC = () => {
             startIcon={<AddIcon />}
             onClick={handleOpenCrearDialog}
           >
-            Nuevo Hospital
+            {t('adminHospitals.new')}
           </Button>
         </Box>
       </Box>
 
       <TextField
         variant="outlined"
-        placeholder="Buscar por Nombre"
+        placeholder={t('adminHospitals.searchPlaceholder')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         fullWidth
@@ -349,46 +354,46 @@ const AdminHospitales: React.FC = () => {
       {/* Tabla de hospitales */}
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="tabla de hospitales">
+          <Table stickyHeader aria-label={t('adminHospitals.table.aria')}>
             <TableHead>
               <TableRow>
                 <TableCell
                   onClick={() => handleSort('nombre')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Nombre
+                  {t('adminHospitals.table.name')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('ciudad')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Ciudad
+                  {t('adminHospitals.table.city')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('provincia')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Provincia
+                  {t('adminHospitals.table.province')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('zona')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Zona
+                  {t('adminHospitals.table.zone')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('telefono')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Teléfono
+                  {t('adminHospitals.table.phone')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('email')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Email
+                  {t('adminHospitals.table.email')}
                 </TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell align="right">{t('adminHospitals.table.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -425,14 +430,14 @@ const AdminHospitales: React.FC = () => {
       
       {/* Diálogo para crear hospital */}
       <Dialog open={openCrearDialog} onClose={handleCloseCrearDialog}>
-        <DialogTitle>Nuevo Hospital</DialogTitle>
+        <DialogTitle>{t('adminHospitals.create.title')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t('adminHospitals.fields.name')}
             type="text"
             fullWidth
             variant="outlined"
@@ -445,7 +450,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="codigoNumerico"
             name="codigoNumerico"
-            label="Código Numérico"
+            label={t('adminHospitals.fields.numericCode')}
             type="number"
             fullWidth
             variant="outlined"
@@ -458,7 +463,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="direccion"
             name="direccion"
-            label="Dirección"
+            label={t('adminHospitals.fields.address')}
             type="text"
             fullWidth
             variant="outlined"
@@ -472,7 +477,7 @@ const AdminHospitales: React.FC = () => {
       margin="dense"
       id="ciudad"
       name="ciudad"
-      label="Ciudad"
+      label={t('adminHospitals.fields.city')}
       type="text"
       fullWidth
       variant="outlined"
@@ -485,7 +490,7 @@ const AdminHospitales: React.FC = () => {
       margin="dense"
       id="provincia"
       name="provincia"
-      label="Provincia"
+      label={t('adminHospitals.fields.province')}
       type="text"
       fullWidth
       variant="outlined"
@@ -497,13 +502,13 @@ const AdminHospitales: React.FC = () => {
 
 
         <FormControl fullWidth margin="dense">
-          <InputLabel id="zona-label">Zona</InputLabel>
+          <InputLabel id="zona-label">{t('adminHospitals.fields.zone')}</InputLabel>
           <Select
             labelId="zona-label"
             id="zona"
             name="zona"
             value={formData.zona}
-            label="Zona"
+            label={t('adminHospitals.fields.zone')}
             onChange={handleChange}
           >
             <MenuItem value="NORDESTE">NORDESTE</MenuItem>
@@ -520,7 +525,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="codigoPostal"
             name="codigoPostal"
-            label="Código Postal"
+            label={t('adminHospitals.fields.postalCode')}
             type="text"
             fullWidth
             variant="outlined"
@@ -532,7 +537,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="telefono"
             name="telefono"
-            label="Teléfono"
+            label={t('adminHospitals.fields.phone')}
             type="text"
             fullWidth
             variant="outlined"
@@ -545,7 +550,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="tipoSistema"
             name="tipoSistema"
-            label="Tipo de Sistema"
+            label={t('adminHospitals.fields.systemType')}
             fullWidth
             variant="outlined"
             value={formData.tipoSistema}
@@ -557,23 +562,34 @@ const AdminHospitales: React.FC = () => {
             <option value="Xi">Xi</option>
             <option value="X">X</option>
             <option value="SP">SP</option>
-            <option value="Otro">Otro</option>
+            <option value="Otro">{t('adminHospitals.system.other')}</option>
           </TextField>
           <TextField
             margin="dense"
             id="email"
             name="email"
-            label="Email"
+            label={t('adminHospitals.fields.email')}
             type="email"
             fullWidth
             variant="outlined"
             value={formData.email}
             onChange={handleChange}
           />
+          <TextField
+            margin="dense"
+            id="urlHospiLogo"
+            name="urlHospiLogo"
+            label={t('adminHospitals.fields.logoUrl')}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.urlHospiLogo}
+            onChange={handleChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button 
             onClick={handleCrear} 
@@ -586,21 +602,21 @@ const AdminHospitales: React.FC = () => {
               !formData.tipoSistema
             }
           >
-            {procesando ? 'Creando...' : 'Crear'}
+            {procesando ? t('common.creating') : t('common.create')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para editar hospital */}
       <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
-        <DialogTitle>Editar Hospital</DialogTitle>
+        <DialogTitle>{t('adminHospitals.edit.title')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="nombre"
             name="nombre"
-            label="Nombre"
+            label={t('adminHospitals.fields.name')}
             type="text"
             fullWidth
             variant="outlined"
@@ -613,7 +629,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="codigoNumerico"
             name="codigoNumerico"
-            label="Código Numérico"
+            label={t('adminHospitals.fields.numericCode')}
             type="number"
             fullWidth
             variant="outlined"
@@ -626,7 +642,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="direccion"
             name="direccion"
-            label="Dirección"
+            label={t('adminHospitals.fields.address')}
             type="text"
             fullWidth
             variant="outlined"
@@ -640,7 +656,7 @@ const AdminHospitales: React.FC = () => {
       margin="dense"
       id="ciudad"
       name="ciudad"
-      label="Ciudad"
+      label={t('adminHospitals.fields.city')}
       type="text"
       fullWidth
       variant="outlined"
@@ -653,7 +669,7 @@ const AdminHospitales: React.FC = () => {
       margin="dense"
       id="provincia"
       name="provincia"
-      label="Provincia"
+      label={t('adminHospitals.fields.province')}
       type="text"
       fullWidth
       variant="outlined"
@@ -661,15 +677,15 @@ const AdminHospitales: React.FC = () => {
       onChange={handleChange}
     />
   </Box>
-</Box>             
+</Box>     
             <FormControl fullWidth margin="dense">
-            <InputLabel id="zona-edit-label">Zona</InputLabel>
+            <InputLabel id="zona-edit-label">{t('adminHospitals.fields.zone')}</InputLabel>
             <Select
               labelId="zona-edit-label"
               id="zona-edit"
               name="zona"
               value={formData.zona}
-              label="Zona"
+              label={t('adminHospitals.fields.zone')}
               onChange={handleChange}
             >
               <MenuItem value="NORDESTE">NORDESTE</MenuItem>
@@ -686,7 +702,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="codigoPostal"
             name="codigoPostal"
-            label="Código Postal"
+            label={t('adminHospitals.fields.postalCode')}
             type="text"
             fullWidth
             variant="outlined"
@@ -698,7 +714,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="telefono"
             name="telefono"
-            label="Teléfono"
+            label={t('adminHospitals.fields.phone')}
             type="text"
             fullWidth
             variant="outlined"
@@ -711,7 +727,7 @@ const AdminHospitales: React.FC = () => {
             margin="dense"
             id="tipoSistema"
             name="tipoSistema"
-            label="Tipo de Sistema"
+            label={t('adminHospitals.fields.systemType')}
             fullWidth
             variant="outlined"
             value={formData.tipoSistema}
@@ -723,23 +739,34 @@ const AdminHospitales: React.FC = () => {
             <option value="Xi">Xi</option>
             <option value="X">X</option>
             <option value="SP">SP</option>
-            <option value="Otro">Otro</option>
+            <option value="Otro">{t('adminHospitals.system.other')}</option>
           </TextField>
           <TextField
             margin="dense"
             id="email"
             name="email"
-            label="Email"
+            label={t('adminHospitals.fields.email')}
             type="email"
             fullWidth
             variant="outlined"
             value={formData.email}
             onChange={handleChange}
           />
+          <TextField
+            margin="dense"
+            id="urlHospiLogo"
+            name="urlHospiLogo"
+            label={t('adminHospitals.fields.logoUrl')}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.urlHospiLogo}
+            onChange={handleChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditarDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button 
             onClick={handleEditar} 
@@ -752,30 +779,34 @@ const AdminHospitales: React.FC = () => {
               !formData.tipoSistema
             }
           >
-            {procesando ? 'Guardando...' : 'Guardar Cambios'}
+            {procesando ? t('common.saving') : t('common.saveChanges')}
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Diálogo para eliminar hospital */}
       <Dialog open={openEliminarDialog} onClose={handleCloseEliminarDialog}>
-        <DialogTitle>Eliminar Hospital</DialogTitle>
+        <DialogTitle>{t('adminHospitals.delete.title')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que deseas eliminar el hospital <strong>{selectedHospital?.nombre}</strong>? Se eliminarán {usuariosAsociados} usuarios y sus progresos. Esta acción no se puede deshacer.
+            <Trans
+              i18nKey="adminHospitals.delete.confirm"
+              values={{ name: selectedHospital?.nombre, count: usuariosAsociados }}
+              components={{ strong: <strong /> }}
+            />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEliminarDialog} color="primary">
-            Cancelar
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleEliminar} 
+          <Button
+            onClick={handleEliminar}
             color="error"
             variant="contained"
             disabled={procesando}
           >
-            {procesando ? 'Eliminando...' : 'Eliminar'}
+            {procesando ? t('common.deleting') : t('common.delete')}
           </Button>
         </DialogActions>
       </Dialog>

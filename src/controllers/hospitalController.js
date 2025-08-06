@@ -46,7 +46,12 @@ exports.getHospital = async (req, res, next) => {
 // @access  Private/Admin
 exports.createHospital = async (req, res, next) => {
   try {
-    const hospital = await Hospital.create(req.body);
+    const fields = ['nombre','codigoNumerico','direccion','ciudad','provincia','zona','codigoPostal','telefono','email','tipoSistema','activo','urlHospiLogo'];
+    const data = {};
+    fields.forEach(f => {
+      if (req.body[f] !== undefined) data[f] = req.body[f];
+    });
+    const hospital = await Hospital.create(data);
     
     // Crear registro de auditoría
     await createAuditLog({
@@ -78,13 +83,19 @@ exports.updateHospital = async (req, res, next) => {
 
     const prevZona = hospital.zona;
 
-    hospital = await Hospital.findByIdAndUpdate(req.params.id, req.body, {
+    const fields = ['nombre','codigoNumerico','direccion','ciudad','provincia','zona','codigoPostal','telefono','email','tipoSistema','activo','urlHospiLogo'];
+    const updates = {};
+    fields.forEach(f => {
+      if (req.body[f] !== undefined) updates[f] = req.body[f];
+    });
+
+    hospital = await Hospital.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true
     });
 
-    if (req.body.zona && req.body.zona !== prevZona) {
-      await User.updateMany({ hospital: hospital._id }, { zona: req.body.zona });
+    if (updates.zona && updates.zona !== prevZona) {
+      await User.updateMany({ hospital: hospital._id }, { zona: updates.zona });
     }
     
     // Crear registro de auditoría

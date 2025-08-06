@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Alert, Paper, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Alert, Paper, Button, CircularProgress, Backdrop } from '@mui/material';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import PhaseProgressChart from '../../components/PhaseProgressChart';
+import { useTranslation } from 'react-i18next';
 
 interface Actividad {
   estado: 'pendiente' | 'completado' | 'rechazado' | 'validado';
@@ -14,15 +15,18 @@ interface ProgresoFase {
     _id: string;
     nombre: string;
   };
+  faseModel: string;
   estadoGeneral: string;
   actividades: Actividad[];
 }
 
 const ResidenteProgreso: React.FC = () => {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,18 +35,19 @@ const ResidenteProgreso: React.FC = () => {
         const res = await api.get(`/progreso/residente/${user._id}`);
         setProgresos(res.data.data);
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Error al cargar el progreso');
+        setError(err.response?.data?.error || t('residentProgress.errorLoad'));
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, t]);
 
   const handleDescargarCertificado = async () => {
     if (!user?._id) return;
+    setDownloadLoading(true);
     try {
-      const res = await api.get(`/certificado/${user._id}`, { responseType: 'blob' });
+      const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -51,7 +56,9 @@ const ResidenteProgreso: React.FC = () => {
       link.click();
       link.remove();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al descargar certificado');
+      setError(err.response?.data?.error || t('residentProgress.downloadError'));
+    } finally {
+      setDownloadLoading(false);
     }
   };
 
@@ -64,7 +71,8 @@ const ResidenteProgreso: React.FC = () => {
   }
   if (error) return <Alert severity="error">{error}</Alert>;
 
-  const phaseStats = progresos.map(p => {
+  const filteredProgresos = progresos.filter(p => p.faseModel === 'Fase');
+  const phaseStats = filteredProgresos.map(p => {
     const counts = { pendiente: 0, completado: 0, rechazado: 0, validado: 0 };
     p.actividades.forEach(a => {
       if (a.estado === 'pendiente') counts.pendiente += 1;
@@ -75,12 +83,12 @@ const ResidenteProgreso: React.FC = () => {
     return { faseNombre: p.fase.nombre, estadoGeneral: p.estadoGeneral, counts };
   });
 
-  const allValidado = phaseStats.every(p => p.estadoGeneral === 'validado');
+  const allValidado = filteredProgresos.every(p => p.estadoGeneral === 'validado');
 
   return (
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
-        Mi Progreso
+        {t('residentProgress.title')}
       </Typography>
       <Box display="flex" flexWrap="wrap" gap={2}>
         {phaseStats.map(p => (
@@ -97,11 +105,14 @@ const ResidenteProgreso: React.FC = () => {
       </Box>
       {allValidado && (
         <Box textAlign="center" mt={2}>
-          <Button variant="contained" onClick={handleDescargarCertificado}>
-            Descargar certificado
+          <Button variant="contained" onClick={handleDescargarCertificado} disabled={downloadLoading}>
+            {t('residentProgress.downloadCertificate')}
           </Button>
         </Box>
       )}
+      <Backdrop open={downloadLoading} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 };

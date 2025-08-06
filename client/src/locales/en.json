@@ -1,0 +1,916 @@
+{
+  "welcome": "Welcome, {{name}}",
+  "role": {
+    "adminPanel": "Administration Panel",
+    "trainer": "Trainer of residents at {{hospital}} hospital",
+    "coordinator": "Coordinator of residents at {{hospital}} hospital",
+    "resident": "Resident at {{hospital}} hospital",
+    "student": "Student of the societies program {{title}}",
+    "instructor": "Instructor of the societies program {{title}}"
+  },
+  "actions": {
+    "dashboard": "Dashboard",
+    "myProgress": "My Progress",
+    "trainingPhases": "Training Phases",
+    "validations": "Validations",
+    "myUsers": "My Users",
+    "usersProgress": "Users Progress",
+    "settings": "Settings",
+    "myProfile": "My Profile",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "users": "Users",
+    "logout": "Logout"
+  },
+  "adminConfig": {
+    "title": "Settings",
+    "hospitals": "Hospitals",
+    "societies": "Societies",
+    "residentProgram": "Resident Program",
+    "societiesProgram": "Societies Program",
+    "users": "Users",
+    "accessCodes": "Access Codes",
+    "debug": "Debug"
+  },
+  "adminPhases": {
+    "_comment": "Admin phases management",
+    "phase": "Phase",
+    "activity": "Activity",
+    "activities": "Activities",
+    "name": "Name",
+    "order": "Order",
+    "type": "Type",
+    "description": "Description",
+    "number": "Number",
+    "evaluation": "Evaluation",
+    "observation": "Observation",
+    "practice": "Practice",
+    "theory": "Theory",
+    "procedure": "Procedure",
+    "errorForbidden": "You do not have permission to view this section",
+    "errorLoadData": "Error loading data",
+    "tabs": {
+      "aria": "phases tabs",
+      "activities": "Activities"
+    },
+    "table": {
+      "aria": "activities of phase {{number}}",
+      "order": "Order",
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions",
+      "description": "Description",
+      "empty": "No activities in this phase"
+    },
+    "messages": {
+      "noActivities": "No activities in this phase",
+      "noPhases": "No phases created. Create a new phase to get started.",
+      "created": "{{item}} created successfully",
+      "createError": "Error creating {{item}}",
+      "updated": "{{item}} updated successfully",
+      "updateError": "Error updating {{item}}",
+      "deleted": "{{item}} deleted successfully",
+      "deleteError": "Error deleting {{item}}",
+      "phaseCreated": "Phase created successfully",
+      "phaseCreateError": "Error creating phase",
+      "phaseUpdated": "Phase updated successfully",
+      "phaseUpdateError": "Error updating phase",
+      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
+      "phaseDeleteError": "Error deleting phase",
+      "activityCreated": "Activity created successfully",
+      "activityCreateError": "Error creating activity",
+      "activityUpdated": "Activity updated successfully",
+      "activityUpdateError": "Error updating activity",
+      "activityDeleted": "Activity deleted successfully",
+      "activityDeleteError": "Error deleting activity",
+      "checkProgressError": "Error checking linked progress"
+    },
+    "actions": {
+      "newPhase": "New Phase",
+      "editPhase": "Edit Phase",
+      "deletePhase": "Delete Phase",
+      "newActivity": "New Activity",
+      "editActivity": "Edit Activity",
+      "deleteActivity": "Delete Activity"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "New Phase",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editPhase": {
+        "title": "Edit Phase",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deletePhase": {
+        "title": "Delete Phase",
+        "cancel": "Cancel",
+        "content": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase.",
+        "contentWithProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
+        "hasProgress": "Phase <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Do you want to delete it? Validated progress will be kept.",
+        "confirm": "Are you sure you want to delete the phase <strong>{{name}}</strong>? This action cannot be undone and will remove all activities associated with this phase."
+      },
+      "newActivity": {
+        "title": "New Activity",
+        "create": "Create",
+        "cancel": "Cancel",
+        "content": "Creating activity for the phase: <strong>{{phase}}</strong>"
+      },
+      "editActivity": {
+        "title": "Edit Activity",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteActivity": {
+        "title": "Delete Activity",
+        "cancel": "Cancel",
+        "content": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone.",
+        "contentWithProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users.",
+        "hasProgress": "The activity <strong>{{name}}</strong> has <strong>{{count}}</strong> progress records. Are you sure you want to delete it? This will also remove those progress records from all users.",
+        "confirm": "Are you sure you want to delete the activity <strong>{{name}}</strong>? This action cannot be undone."
+      },
+      "createActivity": "Creating activity for the phase: <strong>{{phase}}</strong>"
+    },
+    "empty": "No phases created. Create a new phase to begin."
+  },
+  "progressByPhase": "Progress by phase",
+  "close": "Close",
+  "devWarning": "⚠️ YOU ARE IN DEVELOPMENT ENVIRONMENT ⚠️",
+  "register": {
+    "title": "Register",
+    "accessCode": "Access Code",
+    "name": "Name",
+    "surname": "Last Name",
+    "email": "Email",
+    "logoUrl": "Logo URL",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "hospital": "Hospital",
+    "zone": "Zone",
+    "specialty": "Specialty",
+    "specialties": {
+      "URO": "Urology (URO)",
+      "GEN": "General Surgery (GEN)",
+      "GYN": "Gynecology (GYN)",
+      "THOR": "Thoracic (THOR)",
+      "ORL": "ENT (ORL)"
+    },
+    "society": "Society",
+    "none": "None",
+    "invalidAccessCode": "Invalid access code",
+    "requiredFields": "Please fill out all required fields.",
+    "hospitalAndSpecialtyRequired": "Hospital and specialty required",
+    "hospitalRequired": "Hospital required",
+    "societyRequired": "Society required",
+    "passwordsMismatch": "Passwords do not match",
+    "consentPrefix": "I accept the processing of my personal data according to the ",
+    "privacyPolicy": "Privacy Policy",
+    "consentSuffix": " and comply with the LOPD.",
+    "registerButton": "Register"
+  },
+  "society": {
+    "convocatoria": {
+      "label": "Call",
+      "intro": "Start of the call process.",
+      "item1": "Sending invitations",
+      "item2": "Receiving applications"
+    },
+    "presentacion": {
+      "label": "Presentation",
+      "intro": "Program presentation session.",
+      "item1": "Program introduction",
+      "item2": "Instructor presentation"
+    },
+    "modOnline": {
+      "label": "Online Modules",
+      "intro": "Online training modules.",
+      "item1": "Platform access",
+      "item2": "Theoretical content"
+    },
+    "simulacion": {
+      "label": "Simulation",
+      "intro": "Simulation practices.",
+      "item1": "Practical sessions",
+      "item2": "Skills evaluation"
+    },
+    "firstAssistant": {
+      "label": "First Assistant",
+      "intro": "Activities as first assistant.",
+      "item1": "Participation in operating rooms",
+      "item2": "Activity logging"
+    },
+    "stepByStep": {
+      "label": "Step By Step",
+      "intro": "Step By Step procedures.",
+      "item1": "Support material",
+      "item2": "Guided review"
+    },
+    "handsOn": {
+      "label": "Hands On",
+      "intro": "Hands On practical training.",
+      "item1": "Intensive practice",
+      "item2": "Personalized feedback"
+    }
+  },
+  "residentMilestones": {
+    "phase1": {
+      "label": "Phase 1 - Initial Preparation",
+      "description": "Familiarization with the Da Vinci system and initial theoretical aspects."
+    },
+    "phase2": {
+      "label": "Phase 2 - Preclinical Training",
+      "description": "Simulation exercises and training in a safe environment."
+    },
+    "phase3": {
+      "label": "Phase 3 - Surgical Assistance",
+      "description": "Participation as an assistant in the operating room."
+    },
+    "phase4": {
+      "label": "Phase 4 - Console Surgery",
+      "description": "Procedures performed by the resident with supervision."
+    }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "phase": "Phase",
+    "validate": "Validate",
+    "reject": "Reject",
+    "processing": "Processing..."
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalData": "Personal Data",
+    "changePassword": "Change Password",
+    "fields": {
+      "name": "Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "hospital": "Hospital",
+      "society": "Society",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "messages": {
+      "updateSuccess": "Profile updated",
+      "updateError": "Error updating profile",
+      "passwordMismatch": "Passwords do not match",
+      "passwordUpdateSuccess": "Password updated",
+      "passwordUpdateError": "Error changing password"
+    },
+    "buttons": {
+      "changePassword": "Change Password"
+    }
+  },
+  "adminHospitals": {
+    "title": "Hospital Management",
+    "new": "New Hospital",
+    "searchPlaceholder": "Search by Name",
+    "loadError": "Error loading hospitals",
+    "createSuccess": "Hospital created successfully",
+    "createError": "Error creating hospital",
+    "updateSuccess": "Hospital updated successfully",
+    "updateError": "Error updating hospital",
+    "deleteSuccess": "Hospital deleted successfully",
+    "deleteError": "Error deleting hospital",
+    "table": {
+      "aria": "hospitals table",
+      "name": "Name",
+      "city": "City",
+      "province": "Province",
+      "zone": "Zone",
+      "phone": "Phone",
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "actions": "Actions"
+    },
+    "fields": {
+      "name": "Name",
+      "numericCode": "Numeric Code",
+      "address": "Address",
+      "city": "City",
+      "province": "Province",
+      "zone": "Zone",
+      "postalCode": "Postal Code",
+      "phone": "Phone",
+      "systemType": "System Type",
+      "email": "Email",
+      "logoUrl": "Logo URL"
+    },
+    "system": {
+      "other": "Other"
+    },
+    "create": {
+      "title": "New Hospital"
+    },
+    "edit": {
+      "title": "Edit Hospital"
+    },
+    "delete": {
+      "title": "Delete Hospital",
+      "confirm": "Are you sure you want to delete hospital <strong>{{name}}</strong>? {{count}} users and their progress will be removed. This action cannot be undone."
+    }
+  },
+  "adminSocieties": {
+    "title": "Societies Management",
+    "new": "New society",
+    "searchPlaceholder": "Search by name",
+    "table": {
+      "title": "Title",
+      "status": "Status",
+      "convocatoria": "Call",
+      "presentacion": "Presentation",
+      "modOnline": "Online Modules",
+      "simulacion": "Simulation",
+      "firstAssistant": "First Assistant",
+      "stepByStep": "Step By Step",
+      "handsOn": "Hands On",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "dialog": {
+      "editTitle": "Edit Society",
+      "createTitle": "New Society"
+    },
+    "fields": {
+      "titulo": "Title",
+      "status": "Status",
+      "fechaConvocatoria": "Call Date",
+      "fechaPresentacion": "Presentation Date",
+      "fechaModulosOnline": "Online Modules",
+      "fechaSimulacion": "Simulation",
+      "fechaAtividadesFirstAssistant": "First Assistant",
+      "fechaModuloOnlineStepByStep": "Step By Step",
+      "fechaHandOn": "Hands On"
+    }
+  },
+  "adminUsers": {
+    "titleAll": "Manage All Users",
+    "titleHospital": "Users of Your Hospital",
+    "searchPlaceholder": "Search by name or email",
+    "loadError": "Error loading data",
+    "actions": {
+      "create": "Create User",
+      "invite": "Invite User",
+      "edit": "Edit",
+      "delete": "Delete",
+      "changePassword": "Change password",
+      "createProgress": "Create progress"
+    },
+    "createSuccess": "User created successfully",
+    "createError": "Error creating user",
+    "updateSuccess": "User updated successfully",
+    "updateError": "Error updating user",
+    "deleteSuccess": "User deleted successfully",
+    "deleteError": "Error deleting user",
+    "passwordUpdated": "Password updated",
+    "passwordError": "Error updating password",
+    "createProgressSuccess": "Training progress created successfully",
+    "createProgressError": "Error creating progress",
+    "table": {
+      "aria": "users table",
+      "name": "Name",
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "type": "Type",
+      "society": "Society",
+      "role": "Role",
+      "hospital": "Hospital",
+      "zone": "Zone",
+      "actions": "Actions"
+    },
+    "fields": {
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "password": "Password",
+      "name": "Name",
+      "surname": "Surname",
+      "type": "Type",
+      "role": "Role",
+      "hospital": "Hospital",
+      "specialty": "Specialty",
+      "society": "Society",
+      "zone": "Zone"
+    },
+    "create": {
+      "title": "Create User"
+    },
+    "edit": {
+      "title": "Edit User"
+    },
+    "delete": {
+      "title": "Delete User",
+      "confirm": "Are you sure you want to delete user <strong>{{name}}</strong>? This action cannot be undone."
+    },
+    "password": {
+      "title": "Update Password",
+      "label": "New password",
+      "updating": "Updating...",
+      "update": "Update"
+    },
+    "_comment": "Admin user management",
+    "buttons": {
+      "create": "Create User",
+      "creating": "Creating...",
+      "invite": "Invite User",
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "update": "Update",
+      "updating": "Updating..."
+    },
+    "dialogs": {
+      "createTitle": "Create User",
+      "editTitle": "Edit User",
+      "deleteTitle": "Delete User",
+      "passwordTitle": "Update Password",
+      "passwordLabel": "New password",
+      "deleteConfirm": "Are you sure you want to delete user {{name}} {{lastName}}? This action cannot be undone."
+    },
+    "messages": {
+      "loadError": "Error loading data",
+      "userCreated": "User created successfully",
+      "createError": "Error creating user",
+      "userUpdated": "User updated successfully",
+      "updateError": "Error updating user",
+      "userDeleted": "User deleted successfully",
+      "deleteError": "Error deleting user",
+      "passwordUpdated": "Password updated",
+      "passwordError": "Error updating password"
+    }
+  },
+  "adminPhasesSoc": {
+    "_comment": "Admin phases for Societies program",
+    "phase": "Phase",
+    "activity": "Activity",
+    "table": {
+      "order": "Order",
+      "name": "Name",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "messages": {
+      "noActivities": "No activities in this phase",
+      "noPhases": "No phases created",
+      "created": "{{item}} created successfully",
+      "createError": "Error creating {{item}}",
+      "updated": "{{item}} updated successfully",
+      "updateError": "Error updating {{item}}",
+      "deleted": "{{item}} deleted successfully",
+      "deleteError": "Error deleting {{item}}",
+      "phaseCreated": "Phase created successfully",
+      "phaseCreateError": "Error creating phase",
+      "phaseUpdated": "Phase updated successfully",
+      "phaseUpdateError": "Error updating phase",
+      "phaseDeleted": "Phase deleted successfully. Progress removed: {{removed}}. Validated preserved: {{preserved}}",
+      "phaseDeleteError": "Error deleting phase",
+      "activityCreated": "Activity created successfully",
+      "activityCreateError": "Error creating activity",
+      "activityUpdated": "Activity updated successfully",
+      "activityUpdateError": "Error updating activity",
+      "activityDeleted": "Activity deleted successfully",
+      "activityDeleteError": "Error deleting activity",
+      "progressCheckError": "Error checking linked progress"
+    },
+    "dialogs": {
+      "newPhase": {
+        "title": "New Phase",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editPhase": {
+        "title": "Edit Phase",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deletePhase": {
+        "title": "Delete Phase",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "newActivity": {
+        "title": "New Activity",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "editActivity": {
+        "title": "Edit Activity",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteActivity": {
+        "title": "Delete Activity",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "adminUserProgress": {
+    "title": "User Progress",
+    "searchPlaceholder": "Search by name or email",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "hospitalSociety": "Hospital/Society",
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "viewProgress": "View Progress"
+  },
+  "adminProgressDetail": {
+    "loadError": "Error loading progress",
+    "phaseUpdateSuccess": "Phase updated successfully",
+    "phaseUpdateError": "Error updating phase",
+    "activityUpdateSuccess": "Activity updated successfully",
+    "activityUpdateError": "Error updating activity",
+    "title": "User Progress",
+    "titleWithName": "Progress of {{name}} {{surname}}",
+    "back": "Back",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "noTitle": "Untitled",
+    "phaseStatusLabel": "Phase status",
+    "activityStatusLabel": "Activity status",
+    "phaseStatus": {
+      "blocked": "Blocked",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "validated": "Validated",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "activityStatus": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
+    "validatedProgress": "Validated progress: {{percent}}%",
+    "noActivityName": "Unnamed activity",
+    "completedOn": "Completed on: {{date}}",
+    "validatedOn": "Validated on: {{date}}",
+    "statusWithValue": "Status: {{status}}",
+    "noProgress": "No progress available."
+  },
+  "brand": {
+    "name": "Abex Excelencia Robótica"
+  },
+  "regions": {
+    "andalucia": "Andalusia"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "password": "Password",
+    "passwordCurrent": "Current Password",
+    "passwordNew": "New Password",
+    "passwordConfirm": "Confirm Password",
+    "passwordUpdated": "Password updated",
+    "passwordMismatch": "Passwords do not match",
+    "accessCode": "Access Code",
+    "invalidAccessCode": "Invalid access code",
+    "changePassword": "Change Password",
+    "resetRequest": "Password reset request",
+    "errorLogin": "Login error",
+    "errorChangePassword": "Error changing password",
+    "errorUpdatePassword": "Error updating password"
+  },
+  "forgotPassword": {
+    "heading": "Forgot your password?",
+    "description": "To reset the password please contact the system administrator.",
+    "emailLabel": "Your email",
+    "submit": "Send email to administrator",
+    "backToLogin": "Back to login"
+  },
+  "login": {
+    "title": "Academic Program daVinci",
+    "subtitle": "Da Vinci Systems Training Program",
+    "email": "Email",
+      "logoUrl": "Logo URL",
+    "password": "Password",
+    "signIn": "Log In",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "copyright": "© {{year}} Abex Excelencia Robótica",
+    "poweredBy": "Powered by FARGV",
+    "logoAlt": "Abex Excelencia Robótica"
+  },
+  "dashboard": {
+    "manageAllUsers": "Manage All Users",
+    "noPermissions": "You do not have permission to view this section"
+  },
+  "forms": {
+    "code": "Code",
+    "numericCode": "Numeric Code",
+    "postalCode": "Postal Code",
+    "address": "Address",
+    "phone": "Phone",
+    "description": "Description",
+    "number": "Number",
+    "title": "Title",
+    "completionDate": "Completion date",
+    "selectDate": "Select a completion date",
+    "optionalFileHint": "Attach an optional file (max 5MB)",
+    "fileTooLarge": "The file exceeds the maximum size of 5MB"
+  },
+  "types": {
+    "theoretical": "Theoretical",
+    "practical": "Practical",
+    "evaluation": "Evaluation",
+    "observation": "Observation",
+    "theoreticalLower": "theoretical",
+    "practicalLower": "practical",
+    "evaluationLower": "evaluation",
+    "observationLower": "observation",
+    "programaResidentes": "Residents Program",
+    "programaSociedades": "Societies Program"
+  },
+  "roles": {
+    "residente": "Resident",
+    "formador": "Trainer",
+    "coordinador": "Coordinator",
+    "administrador": "Administrator",
+    "alumno": "Student",
+    "instructor": "Instructor"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "tabs": {
+      "aria": "notifications tabs",
+      "pending": "Pending",
+      "viewed": "Viewed"
+    },
+    "table": {
+      "message": "Message",
+      "date": "Date",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "empty": {
+      "all": "No notifications",
+      "pending": "No pending notifications",
+      "viewed": "No viewed notifications"
+    },
+    "errorLoad": "Error loading notifications",
+    "errorMarkAsRead": "Error marking notification as read"
+  },
+  "codes": {
+    "new": "New Code",
+    "edit": "Edit Code",
+    "errorLoad": "Error loading codes",
+    "errorDelete": "Error deleting code",
+    "errorSave": "Error saving code"
+  },
+  "trainerUsers": {
+    "title": "My Users",
+    "invite": "Invite User",
+    "edit": "Edit User",
+    "updated": "User updated",
+    "invited": "User invited",
+    "deleted": "User deleted",
+    "error": "Error",
+    "deleteError": "Error deleting",
+    "loadError": "Error loading users",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions",
+      "state": "State"
+    },
+    "form": {
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "name": "Name",
+      "surname": "Surname",
+      "role": "Role",
+      "roles": {
+        "resident": "Resident",
+        "trainer": "Trainer"
+      }
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save",
+      "invite": "Invite"
+    },
+    "_comment": "Trainer user management",
+    "buttons": {
+      "invite": "Invite User",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "delete": "Delete"
+    },
+    "fields": {
+      "email": "Email",
+      "logoUrl": "Logo URL",
+      "name": "Name",
+      "lastName": "Last Name",
+      "role": "Role"
+    },
+    "roles": {
+      "resident": "Resident",
+      "trainer": "Trainer"
+    },
+    "states": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "dialogs": {
+      "editTitle": "Edit User",
+      "inviteTitle": "Invite User"
+    },
+    "messages": {
+      "loadError": "Error loading users",
+      "updateSuccess": "User updated",
+      "inviteSuccess": "User invited",
+      "deleteSuccess": "User deleted",
+      "deleteError": "Error deleting",
+      "genericError": "Error"
+    }
+  },
+  "progress": {
+    "createSuccess": "Training progress created successfully"
+  },
+  "trainerValidations": {
+    "title": "Validations",
+    "tabs": {
+      "pending": "Pending",
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "aria": "validations tabs"
+    },
+    "table": {
+      "activity": "Activity",
+      "resident": "Resident",
+      "date": "Date",
+      "comments": "Comments",
+      "actions": "Actions",
+      "status": "Status",
+      "reason": "Reason",
+      "noPhase": "No phase",
+      "noName": "No name",
+      "phase": "Phase",
+      "state": "State"
+    },
+    "empty": {
+      "pending": "No pending validations",
+      "validated": "No completed validations",
+      "rejected": "No rejected validations"
+    },
+    "actions": {
+      "viewAttachment": "View attachment"
+    },
+    "dialog": {
+      "validateTitle": "Validate Activity",
+      "validateMessage": "You are validating the activity {{activity}} of resident {{name}}.",
+      "optionalComments": "Comments (optional)",
+      "digitalSignature": "Digital Signature",
+      "rejectTitle": "Reject Activity",
+      "rejectMessage": "You are rejecting the activity {{activity}} of resident {{name}}.",
+      "rejectReason": "Reason for rejection"
+    },
+    "errorLoad": "Error loading validations",
+    "_comment": "Validations managed by trainers",
+    "buttons": {
+      "viewAttachment": "View attachment",
+      "validate": "Validate",
+      "reject": "Reject",
+      "cancel": "Cancel"
+    },
+    "states": {
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
+    "dialogs": {
+      "validateTitle": "Validate Activity",
+      "rejectTitle": "Reject Activity",
+      "validateConfirm": "You are validating activity {{activity}} for resident {{resident}}.",
+      "rejectConfirm": "You are rejecting activity {{activity}} for resident {{resident}}.",
+      "commentsOptional": "Comments (optional)",
+      "digitalSignature": "Digital Signature",
+      "rejectReason": "Rejection reason",
+      "processing": "Processing..."
+    },
+    "messages": {
+      "loadError": "Error loading validations"
+    }
+  },
+  "residentPhases": {
+    "title": "My Training Phases",
+    "errorLoad": "Error loading progress",
+    "activityFail": "Could not complete the activity.",
+    "activitySaveError": "Error saving the activity.",
+    "activitySuccess": "✅ Activity recorded successfully",
+    "noActivitySelectedError": "Internal error: No activity selected.",
+    "noTitle": "No title",
+    "phaseTitle": "Phase {{number}}: {{name}}",
+    "deadline": "Deadline",
+    "validatedProgress": "Validated progress: {{percent}}%",
+    "noActivities": "No activities available",
+    "phaseLocked": "Phase locked",
+    "noProgress": "No training progress available.",
+    "markAsCompleted": "Mark as completed",
+    "unnamedActivity": "Unnamed activity",
+    "comment": "Comment",
+    "trainerComment": "Trainer comment",
+    "rejectionReason": "Rejection reason",
+    "completedOn": "Completed on",
+    "validatedOn": "Validated on",
+    "status": "Status",
+    "dialog": {
+      "completeActivity": "Mark activity as completed",
+      "completionDate": "Completion date",
+      "comment": "Comment",
+      "selectFile": "Select file",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "missingProgressId": "Missing progress ID",
+      "noActivitySelected": "No activity selected",
+      "selectDate": "Select a completion date",
+      "optionalFileHint": "Attach an optional file (max 5MB)",
+      "fileTooLarge": "The file exceeds the maximum size of 5MB.",
+      "title": "Mark activity as completed",
+      "date": "Completion date"
+    },
+    "_comment": "Resident phases and activities",
+    "messages": {
+      "noActivities": "No activities available",
+      "blocked": "Phase locked",
+      "noProgress": "No training progress available.",
+      "loadError": "Error loading progress"
+    },
+    "tooltip": {
+      "missingProgress": "Missing progress ID",
+      "noActivity": "No activity selected"
+    },
+    "labels": {
+      "comment": "Comment",
+      "trainerComment": "Trainer comment",
+      "rejectionReason": "Rejection reason",
+      "completedDate": "Completed on",
+      "validatedDate": "Validated on",
+      "state": "Status"
+    },
+    "states": {
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "pending": "Pending validation",
+      "notCompleted": "Not completed"
+    }
+  },
+  "residentProgress": {
+    "title": "My Progress",
+    "errorLoad": "Error loading progress",
+    "downloadError": "Error downloading certificate",
+    "downloadCertificate": "Download certificate"
+  },
+  "certificate": {
+    "title": "Certificate of Completion",
+   "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
+    "dateLine": "Madrid, {{date}}",
+    "footer": "Certificate automatically generated by Academic Program Da Vinci · www.abexsl.es"
+  },
+  "emails": {
+    "inviteSubject": "Invitation to the Da Vinci Training Platform"
+  },
+  "debug": {
+    "tokenValid": "✅ Token valid and decoded",
+    "tokenInvalid": "❌ Token invalid or corrupt"
+  },
+  "status": {
+    "pendingValidation": "Pending validation",
+    "validado": "Validated",
+    "rechazado": "Rejected",
+    "completado": "Completed",
+    "pendiente": "Pending",
+    "noCompletada": "Not completed",
+    "enProgreso": "In progress",
+    "bloqueada": "Blocked",
+    "active": "Active",
+    "inactive": "Inactive",
+    "validated": "Validated",
+    "rejected": "Rejected"
+  }
+}

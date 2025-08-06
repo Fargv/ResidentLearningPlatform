@@ -3,6 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import AdminProgresoUsuarios from '../AdminProgresoUsuarios';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../../../i18n';
 
 const mockNavigate = jest.fn();
 
@@ -15,6 +17,10 @@ jest.mock('react-router-dom', () => ({
 import api from '../../../api';
 const mockedGet = (api as any).get as jest.Mock;
 
+beforeEach(() => {
+  i18n.changeLanguage('es');
+});
+
 afterEach(() => {
   jest.clearAllMocks();
 });
@@ -24,9 +30,11 @@ it('muestra usuarios en la tabla', async () => {
     data: { data: [{ _id: '1', nombre: 'A', apellidos: 'B', email: 'a@b.com', rol: 'residente', hospital: { nombre: 'H1' } }] }
   });
   render(
-    <MemoryRouter>
-      <AdminProgresoUsuarios />
-    </MemoryRouter>
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
+        <AdminProgresoUsuarios />
+      </MemoryRouter>
+    </I18nextProvider>
   );
   expect(await screen.findByText('A B')).toBeInTheDocument();
   expect(screen.getByText('a@b.com')).toBeInTheDocument();
@@ -43,9 +51,11 @@ it('filtra por nombre y email', async () => {
   });
 
   render(
-    <MemoryRouter>
-      <AdminProgresoUsuarios />
-    </MemoryRouter>
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
+        <AdminProgresoUsuarios />
+      </MemoryRouter>
+    </I18nextProvider>
   );
 
   expect(await screen.findByText('Anna Lee')).toBeInTheDocument();
@@ -63,9 +73,11 @@ it('muestra boton y la fila no es clickeable', async () => {
   });
 
   render(
-    <MemoryRouter>
-      <AdminProgresoUsuarios />
-    </MemoryRouter>
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
+        <AdminProgresoUsuarios />
+      </MemoryRouter>
+    </I18nextProvider>
   );
 
   const row = await screen.findByText('A B');

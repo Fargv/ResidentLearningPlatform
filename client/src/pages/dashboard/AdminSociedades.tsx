@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import api from '../../api';
 import BackButton from '../../components/BackButton';
+import { useTranslation } from 'react-i18next';
 
 interface Sociedad {
   _id?: string;
@@ -54,15 +55,16 @@ const AdminSociedades = () => {
     fechaHandOn: ''
   });
 
-  const fetchSociedades = async () => {
+  const { t } = useTranslation();
+
+  const fetchSociedades = useCallback(async () => {
     const res = await api.get('/sociedades');
     setSociedades(res.data);
-  };
+  }, []);
 
   useEffect(() => {
-  fetchSociedades();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+    fetchSociedades();
+  }, [fetchSociedades]);
 
 
   const handleOpen = (s?: Sociedad) => {
@@ -157,19 +159,19 @@ const AdminSociedades = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Gestión de Sociedades
+          {t('adminSocieties.title')}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <BackButton sx={{ mr: 1 }} />
           <Button variant="contained" onClick={() => handleOpen()}>
-            Nueva sociedad
+            {t('adminSocieties.new')}
           </Button>
         </Box>
       </Box>
 
       <TextField
         variant="outlined"
-        placeholder="Buscar por Nombre"
+        placeholder={t('adminSocieties.searchPlaceholder')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         fullWidth
@@ -185,58 +187,58 @@ const AdminSociedades = () => {
                   onClick={() => handleSort('titulo')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Título
+                  {t('adminSocieties.table.title')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('status')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Estado
+                  {t('adminSocieties.table.status')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaConvocatoria')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Convocatoria
+                  {t('adminSocieties.table.convocatoria')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaPresentacion')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Presentación
+                  {t('adminSocieties.table.presentacion')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaModulosOnline')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Mod. Online
+                  {t('adminSocieties.table.modOnline')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaSimulacion')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Simulación
+                  {t('adminSocieties.table.simulacion')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaAtividadesFirstAssistant')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  First Assistant
+                  {t('adminSocieties.table.firstAssistant')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaModuloOnlineStepByStep')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Step By Step
+                  {t('adminSocieties.table.stepByStep')}
                 </TableCell>
                 <TableCell
                   onClick={() => handleSort('fechaHandOn')}
                   sx={{ cursor: 'pointer', backgroundColor: 'primary.light', color: 'common.white' }}
                 >
-                  Hand On
+                  {t('adminSocieties.table.handsOn')}
                 </TableCell>
                 <TableCell align="right" sx={{ backgroundColor: 'primary.light', color: 'common.white' }}>
-                  Acciones
+                  {t('adminSocieties.table.actions')}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -254,10 +256,10 @@ const AdminSociedades = () => {
                   <TableCell>{s.fechaHandOn?.slice(0, 10) || '-'}</TableCell>
                   <TableCell align="right">
                     <Button onClick={() => handleOpen(s)} size="small">
-                      Editar
+                      {t('adminSocieties.buttons.edit')}
                     </Button>
                     <Button color="error" onClick={() => handleDelete(s._id!)} size="small">
-                      Eliminar
+                      {t('adminSocieties.buttons.delete')}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -267,25 +269,28 @@ const AdminSociedades = () => {
         </TableContainer>
       </Paper>
 
+
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{formData._id ? 'Editar Sociedad' : 'Nueva Sociedad'}</DialogTitle>
+        <DialogTitle>
+          {formData._id ? t('adminSocieties.dialog.editTitle') : t('adminSocieties.dialog.createTitle')}
+        </DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
-            label="Título"
+            label={t('adminSocieties.fields.titulo')}
             name="titulo"
             fullWidth
             value={formData.titulo}
             onChange={handleChange}
           />
           <FormControl fullWidth margin="dense">
-            <InputLabel id="status-label">Estado</InputLabel>
+            <InputLabel id="status-label">{t('adminSocieties.fields.status')}</InputLabel>
             <Select
               labelId="status-label"
               id="status"
               name="status"
               value={formData.status}
-              label="Estado"
+              label={t('adminSocieties.fields.status')}
               onChange={handleChange}
             >
               <MenuItem value="ACTIVO">ACTIVO</MenuItem>
@@ -304,7 +309,7 @@ const AdminSociedades = () => {
             <TextField
               key={field}
               margin="dense"
-              label={field}
+              label={t(`adminSocieties.fields.${field}`)}
               name={field}
               type="date"
               fullWidth
@@ -315,8 +320,10 @@ const AdminSociedades = () => {
           ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button variant="contained" onClick={handleSave}>Guardar</Button>
+          <Button onClick={handleClose}>{t('adminSocieties.buttons.cancel')}</Button>
+          <Button variant="contained" onClick={handleSave}>
+            {t('adminSocieties.buttons.save')}
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

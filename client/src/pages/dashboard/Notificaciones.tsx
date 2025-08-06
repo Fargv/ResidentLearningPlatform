@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -65,8 +66,9 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
   const [error, setError] = useState<string | null>(null);
   const [tabValue, setTabValue] = useState(0);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getNotificaciones();
@@ -74,15 +76,15 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
       setPendientes(data.filter((n) => !n.leida));
       setVistas(data.filter((n) => n.leida));
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al cargar notificaciones');
+      setError(err.response?.data?.error || t('notifications.errorLoad'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleMarcarLeida = async (id: string) => {
     try {
@@ -123,21 +125,21 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Notificaciones
+        {t('notifications.title')}
       </Typography>
       {pendientes.length === 0 && vistas.length === 0 ? (
-        <Typography>No hay notificaciones</Typography>
+        <Typography>{t('notifications.empty.all')}</Typography>
       ) : (
         <Paper sx={{ width: '100%' }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={tabValue} onChange={handleTabChange} aria-label="notificaciones tabs">
+            <Tabs value={tabValue} onChange={handleTabChange} aria-label={t('notifications.tabs.aria')}>
               <Tab
-                label={`Pendientes (${pendientes.length})`}
+                label={`${t('notifications.tabs.pending')} (${pendientes.length})`}
                 id="notificaciones-tab-0"
                 aria-controls="notificaciones-tabpanel-0"
               />
               <Tab
-                label={`Vistas (${vistas.length})`}
+                label={`${t('notifications.tabs.viewed')} (${vistas.length})`}
                 id="notificaciones-tab-1"
                 aria-controls="notificaciones-tabpanel-1"
               />
@@ -147,17 +149,17 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
           <TabPanel value={tabValue} index={0}>
             {pendientes.length === 0 ? (
               <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-                No hay notificaciones pendientes
+                {t('notifications.empty.pending')}
               </Typography>
             ) : (
               <TableContainer component={Paper}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Mensaje</TableCell>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Tipo</TableCell>
-                      <TableCell align="right">Acciones</TableCell>
+                      <TableCell>{t('notifications.table.message')}</TableCell>
+                      <TableCell>{t('notifications.table.date')}</TableCell>
+                      <TableCell>{t('notifications.table.type')}</TableCell>
+                      <TableCell align="right">{t('notifications.table.actions')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -194,16 +196,16 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
           <TabPanel value={tabValue} index={1}>
             {vistas.length === 0 ? (
               <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-                No hay notificaciones vistas
+                {t('notifications.empty.viewed')}
               </Typography>
             ) : (
               <TableContainer component={Paper}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Mensaje</TableCell>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Tipo</TableCell>
+                      <TableCell>{t('notifications.table.message')}</TableCell>
+                      <TableCell>{t('notifications.table.date')}</TableCell>
+                      <TableCell>{t('notifications.table.type')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
