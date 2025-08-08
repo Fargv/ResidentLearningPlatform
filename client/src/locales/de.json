@@ -902,6 +902,13 @@
     "messages": {
       "loadError": "Fehler beim Laden der Validierungen"
     }
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "intro": "Your privacy is important to us. This policy explains how we handle your personal data.",
+    "dataCollectionTitle": "Data Collection",
+    "dataCollection": "We collect personal data to improve our services and ensure the platform functions correctly.",
+    "lastUpdated": "Last updated: {{date}}"
   }
 }
 

@@ -20,6 +20,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import NotFound from './pages/NotFound';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 // Páginas del dashboard
 import Dashboard from './pages/Dashboard';
@@ -162,6 +163,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
 
             {/* Ruta raíz redirige a dashboard o login */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -228,6 +230,7 @@ function App() {
             </Route>
 
             {/* Ruta 404 */}
+            <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
