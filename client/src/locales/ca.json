@@ -145,7 +145,7 @@
       "email": "Correu electrònic",
       "actions": "Accions"
     },
-    "fields": {
+   "fields": {
       "name": "Nom",
       "numericCode": "Codi numèric",
       "address": "Adreça",
@@ -156,7 +156,8 @@
       "phone": "Telèfon",
       "systemType": "Tipus de sistema",
       "email": "Correu electrònic",
-      "logoUrl": "URL del logotip"    },
+      "logoUrl": "URL del logotip"
+    },
     "system": {
       "other": "Altres"
     },
@@ -835,7 +836,7 @@
   },
   "certificate": {
     "title": "Certificat de Compliment",
-   "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
+    "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificat generat automàticament per Academic Program Da Vinci · www.abexsl.es"
   },
@@ -898,14 +899,11 @@
       "validated": "Validat",
       "rejected": "Rebutjat",
       "pending": "Pendent de validació",
-     "notCompleted": "No completada"
+      "notCompleted": "No completada"
     }
   },
   "privacyPolicy": {
-    "title": "Privacy Policy",
-    "intro": "Your privacy is important to us. This policy explains how we handle your personal data.",
-    "dataCollectionTitle": "Data Collection",
-    "dataCollection": "We collect personal data to improve our services and ensure the platform functions correctly.",
-    "lastUpdated": "Last updated: {{date}}"
+    "title": "Política de Privacitat",
+    "lastUpdated": "Última actualització: {{date}}"
   }
 }

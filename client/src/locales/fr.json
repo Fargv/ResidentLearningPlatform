@@ -889,14 +889,12 @@
       "inviteSuccess": "Utilisateur invité",
       "deleteSuccess": "Utilisateur supprimé",
       "deleteError": "Erreur lors de la suppression",
-     "genericError": "Erreur"
+      "genericError": "Erreur"
     }
   },
   "privacyPolicy": {
-    "title": "Privacy Policy",
-    "intro": "Your privacy is important to us. This policy explains how we handle your personal data.",
-    "dataCollectionTitle": "Data Collection",
-    "dataCollection": "We collect personal data to improve our services and ensure the platform functions correctly.",
-    "lastUpdated": "Last updated: {{date}}"
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : {{date}}"
   }
 }
+
