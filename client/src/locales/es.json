@@ -905,9 +905,6 @@
   },
   "privacyPolicy": {
     "title": "Política de Privacidad",
-    "intro": "Tu privacidad es importante para nosotros. Esta política explica cómo tratamos tus datos personales.",
-    "dataCollectionTitle": "Recopilación de Datos",
-    "dataCollection": "Recopilamos datos personales para mejorar nuestros servicios y garantizar el correcto funcionamiento de la plataforma.",
     "lastUpdated": "Última actualización: {{date}}"
   }
 }

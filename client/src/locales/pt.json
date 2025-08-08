@@ -913,11 +913,8 @@
     "tokenValid": "✅ Token válido e decodificado",
     "tokenInvalid": "❌ Token inválido ou corrompido"
   },
-  "privacyPolicy": {
-    "title": "Privacy Policy",
-    "intro": "Your privacy is important to us. This policy explains how we handle your personal data.",
-    "dataCollectionTitle": "Data Collection",
-    "dataCollection": "We collect personal data to improve our services and ensure the platform functions correctly.",
-    "lastUpdated": "Last updated: {{date}}"
+   "privacyPolicy": {
+    "title": "Política de privacidade",
+    "lastUpdated": "Última atualização: {{date}}"
   }
 }
