@@ -787,7 +787,7 @@ const AdminUsuarios: React.FC = () => {
                 ))}
               </TextField>
             )}
-          {formData.rol === "residente" && (
+          {(formData.rol === "residente" || formData.rol === "formador") && (
             <TextField
               select
               margin="dense"
@@ -802,6 +802,9 @@ const AdminUsuarios: React.FC = () => {
               SelectProps={{ native: true }}
               sx={{ mb: 2 }}
             >
+              {formData.rol === "formador" && (
+                <option value="ALL">ALL</option>
+              )}
               <option value="URO">URO</option>
               <option value="GEN">GEN</option>
               <option value="GYN">GYN</option>
@@ -869,7 +872,8 @@ const AdminUsuarios: React.FC = () => {
               !formData.apellidos ||
               ((formData.rol === "residente" || formData.rol === "formador") &&
                 !formData.hospital) ||
-              (formData.rol === "residente" && !formData.especialidad) ||
+              ((formData.rol === "residente" || formData.rol === "formador") &&
+                !formData.especialidad) ||
               (formData.rol === "coordinador" && !formData.zona)
             }
           >
@@ -980,7 +984,7 @@ const AdminUsuarios: React.FC = () => {
               ))}
             </TextField>
           )}
-          {formData.rol === "residente" && (
+         {(formData.rol === "residente" || formData.rol === "formador") && (
             <TextField
               select
               margin="dense"
@@ -995,6 +999,9 @@ const AdminUsuarios: React.FC = () => {
               SelectProps={{ native: true }}
               sx={{ mb: 2 }}
             >
+              {formData.rol === "formador" && (
+                <option value="ALL">ALL</option>
+              )}
               <option value="URO">URO</option>
               <option value="GEN">GEN</option>
               <option value="GYN">GYN</option>
@@ -1017,7 +1024,8 @@ const AdminUsuarios: React.FC = () => {
               !formData.apellidos ||
               ((formData.rol === "residente" || formData.rol === "formador") &&
                 !formData.hospital) ||
-              (formData.rol === "residente" && !formData.especialidad) ||
+              ((formData.rol === "residente" || formData.rol === "formador") &&
+                !formData.especialidad) ||
               (formData.rol === "coordinador" && !formData.zona)
             }
           >

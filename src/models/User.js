@@ -37,12 +37,13 @@ const userSchema = new mongoose.Schema({
       return this.rol === 'residente' || this.rol === 'formador';
     }
   },
-  
+
   especialidad: {
     type: String,
-    enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL'],
+    // 'ALL' solo es válida para formadores
+    enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL', 'ALL'],
     required: function() {
-      return this.rol === 'residente';
+      return this.rol === 'residente' || this.rol === 'formador';
     }
   },
    tipo: {

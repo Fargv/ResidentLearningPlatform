@@ -23,7 +23,9 @@ exports.subirAdjunto = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'formador' ||
+        req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
@@ -126,7 +128,9 @@ exports.getAdjuntosProgreso = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'formador' ||
+        req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
@@ -207,7 +211,9 @@ exports.getAdjuntoActividad = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'formador' ||
+        req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
@@ -243,7 +249,9 @@ exports.eliminarAdjunto = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'formador' ||
+        req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {
@@ -298,7 +306,9 @@ exports.descargarAdjunto = async (req, res, next) => {
     if (
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
-      (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+      (req.user.rol !== 'formador' ||
+        req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
       (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
     ) {

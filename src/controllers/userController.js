@@ -23,10 +23,14 @@ exports.getUsers = async (req, res, next) => {
     if (req.user.rol === 'administrador') {
       users = await User.find().populate('hospital').populate('sociedad');
     } else if (req.user.rol === 'formador') {
-      users = await User.find({
+      const query = {
         hospital: req.user.hospital,
         rol: { $ne: 'administrador' }
-      })
+      };
+      if (req.user.especialidad && req.user.especialidad !== 'ALL') {
+        query.especialidad = req.user.especialidad;
+      }
+      users = await User.find(query)
         .populate('hospital')
         .populate('sociedad');
     } else if (req.user.rol === 'coordinador') {
@@ -82,7 +86,7 @@ exports.createUser = async (req, res, next) => {
       zona
     } = req.body;
     const hospitalId = hospital || undefined;
-    const especialidadVal = especialidad || undefined;
+    let especialidadVal;
     const tipoVal = rol === 'administrador' ? undefined : tipo;
     const sociedadId =
       tipoVal === 'Programa Sociedades' ? sociedad || undefined : undefined;
@@ -150,7 +154,28 @@ exports.createUser = async (req, res, next) => {
       }
     }
 
-   const nuevoUsuario = await User.create({
+  if (rol === 'formador') {
+      if (!especialidad) {
+        return next(
+          new ErrorResponse('Especialidad requerida para el rol formador', 400)
+        );
+      }
+      especialidadVal = especialidad;
+    } else if (rol === 'residente') {
+      if (especialidad === 'ALL') {
+        return next(
+          new ErrorResponse(
+            'La especialidad no puede ser ALL para residente',
+            400
+          )
+        );
+      }
+      especialidadVal = especialidad || undefined;
+    } else {
+      especialidadVal = undefined;
+    }
+
+    const nuevoUsuario = await User.create({
       nombre,
       apellidos,
       email,
@@ -215,7 +240,6 @@ exports.updateUser = async (req, res, next) => {
     // Eliminar campos que no deben ser actualizados por esta ruta
     const { password, ...updateData } = req.body;
     const hospitalId = updateData.hospital || undefined;
-    const especialidadVal = updateData.especialidad || undefined;
     let zonaVal = updateData.zona || undefined;
     const currentUser = await User.findById(req.params.id);
     if (!currentUser) {
@@ -226,6 +250,9 @@ exports.updateUser = async (req, res, next) => {
 
     const newTipo = updateData.tipo || currentUser.tipo;
     const newRol = updateData.rol || currentUser.rol;
+    const roleChanged = newRol !== currentUser.rol;
+    const especialidadInput = updateData.especialidad;
+    let especialidadVal;
 
     if (newTipo === 'Programa Residentes') {
       updateData.sociedad = null;
@@ -261,6 +288,35 @@ exports.updateUser = async (req, res, next) => {
 
     if (newRol === 'coordinador' && !zonaVal) {
       return next(new ErrorResponse('Zona requerida para el rol coordinador', 400));
+    }
+
+    if (newRol === 'formador') {
+      especialidadVal =
+        especialidadInput || (roleChanged ? undefined : currentUser.especialidad);
+      if (!especialidadVal) {
+        return next(
+          new ErrorResponse('Especialidad requerida para el rol formador', 400)
+        );
+      }
+    } else if (newRol === 'residente') {
+      if (roleChanged) {
+        especialidadVal = especialidadInput;
+      } else {
+        especialidadVal =
+          especialidadInput !== undefined
+            ? especialidadInput
+            : currentUser.especialidad;
+      }
+      if (especialidadVal === 'ALL') {
+        return next(
+          new ErrorResponse(
+            'La especialidad no puede ser ALL para residente',
+            400
+          )
+        );
+      }
+    } else {
+      especialidadVal = undefined;
     }
 
     updateData.hospital = hospitalId;
@@ -490,7 +546,7 @@ exports.inviteUser = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener todas las invitaciones
+// @desc    Obtener ALL las invitaciones
 // @route   GET /api/users/invitations
 // @access  Private/Admin
 exports.getInvitations = async (req, res, next) => {
@@ -559,10 +615,14 @@ exports.getFormadorResidentes = async (req, res, next) => {
     }
 
     // Obtener residentes del mismo hospital que el formador
-    const residentes = await User.find({
+    const filtrosResidentes = {
       hospital: formador.hospital,
       rol: 'residente'
-    })
+    };
+    if (formador.especialidad && formador.especialidad !== 'ALL') {
+      filtrosResidentes.especialidad = formador.especialidad;
+    }
+    const residentes = await User.find(filtrosResidentes)
       .populate('hospital')
       .populate('sociedad');
 
@@ -596,10 +656,14 @@ exports.getResidenteFormadores = async (req, res, next) => {
     }
 
     // Obtener formadores del mismo hospital que el residente
-    const formadores = await User.find({
+    const filtrosFormadores = {
       hospital: residente.hospital,
       rol: 'formador'
-    })
+    };
+    if (req.user.rol === 'formador' && req.user.especialidad && req.user.especialidad !== 'ALL') {
+      filtrosFormadores.especialidad = req.user.especialidad;
+    }
+    const formadores = await User.find(filtrosFormadores)
       .populate('hospital')
       .populate('sociedad');
 
@@ -627,6 +691,9 @@ exports.getUsersByHospital = async (req, res) => {
     let query = { hospital: hospitalId };
     if (req.user.rol === 'formador') {
       query.rol = { $ne: 'administrador' };
+      if (req.user.especialidad && req.user.especialidad !== 'ALL') {
+        query.especialidad = req.user.especialidad;
+      }
     } else if (req.user.rol === 'coordinador') {
       query.rol = { $in: ['residente', 'formador'] };
     }

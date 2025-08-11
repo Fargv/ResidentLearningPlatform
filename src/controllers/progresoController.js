@@ -124,7 +124,11 @@ const getProgresoResidente = async (req, res, next) => {
   }
 
 
-    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital._id.toString()) {
+    if (
+      req.user.rol === 'formador' &&
+      (req.user.hospital.toString() !== residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== residente.especialidad))
+    ) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
     if (req.user.rol === 'coordinador' && req.user.zona !== residente.hospital.zona) {
@@ -191,7 +195,11 @@ const getProgresoResidentePorFase = async (req, res, next) => {
       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
   }
 
-    if (req.user.rol === 'formador' && req.user.hospital.toString() !== residente.hospital._id.toString()) {
+    if (
+      req.user.rol === 'formador' &&
+      (req.user.hospital.toString() !== residente.hospital._id.toString() ||
+        (req.user.especialidad !== 'ALL' && req.user.especialidad !== residente.especialidad))
+    ) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
     }
     if (req.user.rol === 'coordinador' && req.user.zona !== residente.hospital.zona) {
@@ -257,7 +265,8 @@ const registrarProgreso = async (req, res, next) => {
       // Obtener formadores del hospital del residente
       const formadores = await User.find({
         hospital: residente.hospital,
-        rol: 'formador'
+        rol: 'formador',
+        especialidad: { $in: [residente.especialidad, 'ALL'] }
       });
 
       // Obtener instructores de la misma sociedad, si aplica
@@ -329,7 +338,9 @@ const actualizarProgreso = async (req, res, next) => {
       req.user.rol !== 'administrador' &&
       req.user.id !== progreso.residente._id.toString() &&
       (
-        (req.user.rol !== 'formador' || req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) &&
+        (req.user.rol !== 'formador' ||
+          req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+          (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
         (req.user.rol !== 'coordinador' || req.user.zona !== progreso.residente.hospital.zona) &&
         (req.user.rol !== 'instructor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
       )
@@ -391,7 +402,9 @@ const validarProgreso = async (req, res, next) => {
 
     // Si es formador o instructor, verificar que pertenece al mismo hospital o sociedad que el residente
     if (
-      (req.user.rol === 'formador' && req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) ||
+      (req.user.rol === 'formador' &&
+        (req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+          (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad))) ||
       (req.user.rol === 'coordinador' && req.user.zona !== progreso.residente.hospital.zona) ||
       (req.user.rol === 'instructor' && (!progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString()))
     ) {
@@ -421,7 +434,8 @@ const validarProgreso = async (req, res, next) => {
     // Eliminar notificaciones pendientes para formadores e instructores
     const formadoresIds = (await User.find({
       hospital: progreso.residente.hospital,
-      rol: 'formador'
+      rol: 'formador',
+      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
@@ -502,7 +516,9 @@ const rechazarProgreso = async (req, res, next) => {
 
     // Si es formador o instructor, verificar que pertenece al mismo hospital o sociedad que el residente
     if (
-      (req.user.rol === 'formador' && req.user.hospital.toString() !== progreso.residente.hospital._id.toString()) ||
+      (req.user.rol === 'formador' &&
+        (req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+          (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad))) ||
       (req.user.rol === 'coordinador' && req.user.zona !== progreso.residente.hospital.zona) ||
       (req.user.rol === 'instructor' && (!progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString()))
     ) {
@@ -521,7 +537,8 @@ const rechazarProgreso = async (req, res, next) => {
     // Eliminar notificaciones pendientes para formadores e instructores
     const formadoresIds = (await User.find({
       hospital: progreso.residente.hospital,
-      rol: 'formador'
+      rol: 'formador',
+      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
@@ -660,11 +677,16 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
     })
     .populate({
       path: 'residente',
-      select: 'nombre apellidos hospital sociedad',
+      select: 'nombre apellidos hospital sociedad especialidad',
       match: req.user.rol === 'instructor'
         ? { sociedad: req.user.sociedad }
         : req.user.rol === 'formador'
-        ? { hospital: req.user.hospital }
+        ? {
+            hospital: req.user.hospital,
+            ...(req.user.especialidad !== 'ALL'
+              ? { especialidad: req.user.especialidad }
+              : {})
+          }
         : {},
       populate: { path: 'hospital', select: 'zona' }
     })
@@ -678,7 +700,12 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
     const filtrados = pendientes.filter(p => {
       if (!p.residente) return false;
       if (req.user.rol === 'coordinador') return p.residente.hospital && p.residente.hospital.zona === req.user.zona;
-      if (req.user.rol === 'formador') return p.residente.hospital && p.residente.hospital._id.toString() === req.user.hospital.toString();
+      if (req.user.rol === 'formador')
+        return (
+          p.residente.hospital &&
+          p.residente.hospital._id.toString() === req.user.hospital.toString() &&
+          (req.user.especialidad === 'ALL' || p.residente.especialidad === req.user.especialidad)
+        );
       return true;
     });
 
@@ -708,9 +735,14 @@ const getValidacionesPendientes = async (req, res, next) => {
         match: req.user.rol === 'instructor'
           ? { sociedad: req.user.sociedad }
           : req.user.rol === 'formador'
-          ? { hospital: req.user.hospital }
+          ? {
+              hospital: req.user.hospital,
+              ...(req.user.especialidad !== 'ALL'
+                ? { especialidad: req.user.especialidad }
+                : {})
+            }
           : {},
-        select: 'nombre apellidos hospital sociedad',
+        select: 'nombre apellidos hospital sociedad especialidad',
         populate: { path: 'hospital', select: 'zona' }
       })
       .populate('fase')
@@ -863,7 +895,8 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
 
     const formadoresIds = (await User.find({
       hospital: progreso.residente.hospital,
-      rol: 'formador'
+      rol: 'formador',
+      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
@@ -921,7 +954,8 @@ const rechazarActividad = async (req, res, next) => {
     
     const formadoresIds = (await User.find({
       hospital: progreso.residente.hospital,
-      rol: 'formador'
+      rol: 'formador',
+      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
     const instructoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'instructor' })).map(i => i._id)
