@@ -47,7 +47,9 @@ const FormadorUsuarios: React.FC = () => {
   const fetchUsuarios = useCallback(async () => {
     try {
       let res;
-      if (user?.rol === 'instructor') {
+      if (user?.rol === 'coordinador') {
+        res = await api.get('/users');
+      } else if (user?.rol === 'instructor') {
         res = await api.get(`/users/instructor/${user._id}/alumnos`);
       } else if (user?.hospital?._id) {
         res = await api.get(`/users/hospital/${user.hospital._id}`);

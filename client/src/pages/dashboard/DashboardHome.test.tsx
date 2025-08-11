@@ -74,3 +74,25 @@ test('no progress fetch for admin resident program user', async () => {
     expect.stringContaining('/progreso/residente')
   );
 });
+
+test('no progress fetch for coordinator resident program user', async () => {
+  mockedUseAuth.mockReturnValue({
+    user: {
+      _id: 'coord1',
+      nombre: 'Coord',
+      rol: 'coordinador',
+      tipo: 'Programa Residentes',
+    }
+  } as any);
+
+  i18n.changeLanguage('es');
+  render(
+    <I18nextProvider i18n={i18n}>
+      <DashboardHome />
+    </I18nextProvider>
+  );
+
+  expect(mockedGet).not.toHaveBeenCalledWith(
+    expect.stringContaining('/progreso/residente')
+  );
+});

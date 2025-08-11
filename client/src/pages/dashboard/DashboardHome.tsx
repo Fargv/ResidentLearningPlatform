@@ -220,9 +220,7 @@ const DashboardHome: React.FC = () => {
       const isResidentes =
         user?.tipo === "Programa Residentes" &&
         user?._id &&
-        ["residente", "formador", "coordinador", "instructor", "alumno"].includes(
-          user.rol,
-        );
+        ["residente", "formador", "instructor", "alumno"].includes(user.rol);
       const isSociedades =
         user?.tipo === "Programa Sociedades" &&
         user?.rol === "alumno" &&
@@ -269,8 +267,10 @@ const DashboardHome: React.FC = () => {
             socFases.every((p: any) => p.estadoGeneral === 'validado');
           setSocAllValidado(allValidado);
         }
-      } catch (err) {
-        console.error("Error cargando progreso", err);
+      } catch (err: any) {
+        if (!(err?.response?.status === 404 && user?.rol === "coordinador")) {
+          console.error("Error cargando progreso", err);
+        }
       } finally {
         setProgressLoading(false);
       }
