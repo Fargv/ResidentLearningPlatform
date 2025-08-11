@@ -13,9 +13,10 @@ const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 
 
 
-// @desc    Obtener todos los usuarios (admin) o usuarios del hospital (formador)
+// @desc    Obtener todos los usuarios (admin), usuarios del hospital (formador)
+//         o alumnos de la sociedad (instructor)
 // @route   GET /api/users
-// @access  Private/Admin|Formador
+// @access  Private/Admin|Formador|Coordinador|Instructor
 exports.getUsers = async (req, res, next) => {
   try {
     let users;
@@ -40,6 +41,13 @@ exports.getUsers = async (req, res, next) => {
         hospital: { $in: ids },
         rol: { $in: ['residente', 'formador'] },
         tipo: 'Programa Residentes'
+      })
+        .populate('hospital')
+        .populate('sociedad');
+    } else if (req.user.rol === 'instructor') {
+      users = await User.find({
+        sociedad: req.user.sociedad,
+        rol: 'alumno'
       })
         .populate('hospital')
         .populate('sociedad');
@@ -248,6 +256,32 @@ exports.updateUser = async (req, res, next) => {
       );
     }
 
+    if (req.user.rol === 'instructor') {
+      if (
+        currentUser.rol !== 'alumno' ||
+        !currentUser.sociedad ||
+        currentUser.sociedad.toString() !== req.user.sociedad.toString()
+      ) {
+        return next(
+          new ErrorResponse('No autorizado para modificar este usuario', 403)
+        );
+      }
+      if (updateData.rol && updateData.rol !== 'alumno') {
+        return next(
+          new ErrorResponse('No autorizado para cambiar el rol del usuario', 403)
+        );
+      }
+      if (
+        updateData.sociedad &&
+        updateData.sociedad.toString() !== req.user.sociedad.toString()
+      ) {
+        return next(
+          new ErrorResponse('No autorizado para cambiar la sociedad', 403)
+        );
+      }
+      updateData.sociedad = req.user.sociedad;
+    }
+
     const newTipo = updateData.tipo || currentUser.tipo;
     const newRol = updateData.rol || currentUser.rol;
     const roleChanged = newRol !== currentUser.rol;
@@ -431,6 +465,18 @@ exports.deleteUser = async (req, res, next) => {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
     }
 
+    if (req.user.rol === 'instructor') {
+      if (
+        user.rol !== 'alumno' ||
+        !user.sociedad ||
+        user.sociedad.toString() !== req.user.sociedad.toString()
+      ) {
+        return next(
+          new ErrorResponse('No autorizado para eliminar este usuario', 403)
+        );
+      }
+    }
+
     await ProgresoResidente.deleteMany({ residente: req.params.id });
 
     await user.remove();
@@ -457,7 +503,30 @@ exports.deleteUser = async (req, res, next) => {
 // @access  Private/Admin
 exports.inviteUser = async (req, res, next) => {
   try {
-    const { email, rol, hospital } = req.body;
+    const { email, rol, hospital, sociedad } = req.body;
+
+    if (req.user.rol === 'instructor') {
+      if (rol !== 'alumno') {
+        return next(
+          new ErrorResponse('Los instructores solo pueden invitar alumnos', 403)
+        );
+      }
+      if (
+        !req.user.sociedad ||
+        (sociedad && sociedad.toString() !== req.user.sociedad.toString())
+      ) {
+        return next(
+          new ErrorResponse(
+            'No autorizado para invitar alumnos de otra sociedad',
+            403
+          )
+        );
+      }
+    }
+
+    if ((rol === 'alumno' || rol === 'instructor') && !sociedad) {
+      return next(new ErrorResponse('Se requiere una sociedad para este rol', 400));
+    }
 
     // Verificar si el email ya está registrado
     const existingUser = await User.findOne({ email });
@@ -495,6 +564,7 @@ exports.inviteUser = async (req, res, next) => {
       email,
       rol,
       hospital,
+      sociedad: sociedad || req.user.sociedad,
       token,
       fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
       admin: req.user.id

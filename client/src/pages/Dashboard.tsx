@@ -40,7 +40,7 @@ import { useTranslation } from 'react-i18next';
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
 import FormadorValidaciones from './dashboard/FormadorValidaciones';
-import AdminUsuarios from './dashboard/AdminUsuarios';
+import Usuarios from './dashboard/Usuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
 import AdminFasesSoc from './dashboard/AdminFasesSoc';
@@ -274,7 +274,7 @@ const Dashboard: React.FC = () => {
         <Routes>
   <Route path="/" element={<DashboardHome />} />
   <Route path="/validaciones" element={<FormadorValidaciones />} />
-  <Route path="/usuarios" element={<AdminUsuarios />} />
+  <Route path="/usuarios" element={<Usuarios />} />
   <Route path="/hospitals" element={<AdminHospitales />} />
   {user?.rol === 'administrador' && (
     <Route path="/fases" element={<AdminFases />} />
