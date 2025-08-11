@@ -150,6 +150,20 @@ const FormadorUsuarios: React.FC = () => {
         .filter((e): e is string => Boolean(e)),
     ),
   );
+  const zonaOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.zona)
+        .filter((z): z is string => Boolean(z)),
+    ),
+  );
+  const tipoOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.tipo)
+        .filter((t): t is string => Boolean(t)),
+    ),
+  );
 
   const displayUsuarios = usuarios
     .filter((u) =>
@@ -211,6 +225,30 @@ const FormadorUsuarios: React.FC = () => {
           }
           renderInput={(params) => (
             <TextField {...params} label={t('trainerUsers.fields.role')} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={zonaOptions}
+          value={selectedZonas}
+          onChange={(e, newValue) =>
+            setSelectedZonas(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t('adminUsers.fields.zone')} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={tipoOptions}
+          value={selectedTipos}
+          onChange={(e, newValue) =>
+            setSelectedTipos(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t('adminUsers.fields.type')} />
           )}
           sx={{ minWidth: 200 }}
         />
