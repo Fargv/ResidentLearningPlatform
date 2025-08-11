@@ -150,13 +150,13 @@
     "zone": "Eremua",
     "specialty": "Espezialitatea",
     "specialties": {
-      "URO": "Urologia (URO)",
-      "GEN": "Kirurgia Orokorra (GEN)",
-      "GYN": "Ginekologia (GYN)",
-      "THOR": "Toraxekoa (THOR)",
-      "ORL": "Otorino (ORL)"
-    },
-    "society": "Elkartea",
+        "ALL": "Guztiak",
+        "URO": "Urologia (URO)",
+        "GEN": "Kirurgia Orokorra (GEN)",
+        "GYN": "Ginekologia (GYN)",
+        "THOR": "Toraxekoa (THOR)",
+        "ORL": "Otorino (ORL)"
+      },    "society": "Elkartea",
     "none": "Bat ere ez",
     "invalidAccessCode": "Sarbide kode baliogabea",
     "requiredFields": "Mesedez, bete derrigorrezko eremu guztiak.",

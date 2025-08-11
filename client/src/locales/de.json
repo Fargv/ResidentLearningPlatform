@@ -68,12 +68,13 @@
     "zone": "Zone",
     "specialty": "Fachgebiet",
     "specialties": {
-      "URO": "Urologie (URO)",
-      "GEN": "Allgemeinchirurgie (GEN)",
-      "GYN": "Gynäkologie (GYN)",
-      "THOR": "Thoraxchirurgie (THOR)",
-      "ORL": "HNO (ORL)"
-    },
+        "ALL": "Alle",
+        "URO": "Urologie (URO)",
+        "GEN": "Allgemeinchirurgie (GEN)",
+        "GYN": "Gynäkologie (GYN)",
+        "THOR": "Thoraxchirurgie (THOR)",
+        "ORL": "HNO (ORL)"
+      },
     "society": "Gesellschaft",
     "none": "Keine",
     "invalidAccessCode": "Ungültiger Zugangscode",

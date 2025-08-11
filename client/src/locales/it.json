@@ -170,6 +170,7 @@
     "zone": "Zona",
     "specialty": "Specializzazione",
     "specialties": {
+      "ALL": "Tutte",
       "URO": "Urologia (URO)",
       "GEN": "Chirurgia Generale (GEN)",
       "GYN": "Ginecologia (GYN)",

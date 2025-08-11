@@ -151,12 +151,13 @@
     "zone": "Zone",
     "specialty": "Specialty",
     "specialties": {
-      "URO": "Urology (URO)",
-      "GEN": "General Surgery (GEN)",
-      "GYN": "Gynecology (GYN)",
-      "THOR": "Thoracic (THOR)",
-      "ORL": "ENT (ORL)"
-    },
+        "ALL": "All",
+        "URO": "Urology (URO)",
+        "GEN": "General Surgery (GEN)",
+        "GYN": "Gynecology (GYN)",
+        "THOR": "Thoracic (THOR)",
+        "ORL": "ENT (ORL)"
+      },
     "society": "Society",
     "none": "None",
     "invalidAccessCode": "Invalid access code",

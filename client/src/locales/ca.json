@@ -67,12 +67,13 @@
     "zone": "Zona",
     "specialty": "Especialitat",
     "specialties": {
-      "URO": "Urologia (URO)",
-      "GEN": "Cirurgia General (GEN)",
-      "GYN": "Ginecologia (GYN)",
-      "THOR": "Toràcica (THOR)",
-      "ORL": "Otorrino (ORL)"
-    },
+        "ALL": "Totes",
+        "URO": "Urologia (URO)",
+        "GEN": "Cirurgia General (GEN)",
+        "GYN": "Ginecologia (GYN)",
+        "THOR": "Toràcica (THOR)",
+        "ORL": "Otorrino (ORL)"
+      },
     "society": "Societat",
     "none": "Cap",
     "invalidAccessCode": "Codi d'accés no vàlid",
