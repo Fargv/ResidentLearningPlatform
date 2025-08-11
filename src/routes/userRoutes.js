@@ -15,6 +15,7 @@ const {
   cancelInvitation,
   getFormadorResidentes,
   getResidenteFormadores,
+  getInstructorAlumnos,
   getUsersByHospital,
   deleteUser
 } = require('../controllers/userController');
@@ -42,6 +43,9 @@ router.route('/invitations/:id')
 // Rutas para administradores y formadores
 router.route('/formador/:id/residentes')
   .get(authorize('administrador', 'formador', 'coordinador'), getFormadorResidentes);
+
+router.route('/instructor/:id/alumnos')
+  .get(authorize('administrador', 'instructor'), getInstructorAlumnos);
 
 // Rutas para todos los roles
 router.route('/residente/:id/formadores')

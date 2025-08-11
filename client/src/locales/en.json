@@ -390,6 +390,7 @@
       "society": "Society",
       "role": "Role",
       "hospital": "Hospital",
+      "specialty": "Specialty",
       "zone": "Zone",
       "actions": "Actions"
     },

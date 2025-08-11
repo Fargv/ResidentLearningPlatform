@@ -677,6 +677,49 @@ exports.getResidenteFormadores = async (req, res, next) => {
   }
 };
 
+// @desc    Obtener alumnos de un instructor
+// @route   GET /api/users/instructor/:id/alumnos
+// @access  Private/Admin,Instructor
+exports.getInstructorAlumnos = async (req, res, next) => {
+  try {
+    const instructor = await User.findById(req.params.id).populate('sociedad');
+
+    if (!instructor) {
+      return next(
+        new ErrorResponse(`Instructor no encontrado con id ${req.params.id}`, 404)
+      );
+    }
+
+    if (instructor.rol !== 'instructor') {
+      return next(
+        new ErrorResponse(`El usuario con id ${req.params.id} no es un instructor`, 400)
+      );
+    }
+
+    if (
+      req.user.rol === 'instructor' &&
+      req.user._id.toString() !== instructor._id.toString()
+    ) {
+      return next(
+        new ErrorResponse('No autorizado para ver alumnos de otro instructor', 403)
+      );
+    }
+
+    const alumnos = await User.find({
+      sociedad: instructor.sociedad,
+      rol: 'alumno',
+    }).populate('sociedad');
+
+    res.status(200).json({
+      success: true,
+      count: alumnos.length,
+      data: alumnos,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getUsersByHospital = async (req, res) => {
   try {
     const { hospitalId } = req.params;
@@ -690,7 +733,7 @@ exports.getUsersByHospital = async (req, res) => {
 
     let query = { hospital: hospitalId };
     if (req.user.rol === 'formador') {
-      query.rol = { $ne: 'administrador' };
+      query.rol = 'residente';
       if (req.user.especialidad && req.user.especialidad !== 'ALL') {
         query.especialidad = req.user.especialidad;
       }

@@ -448,7 +448,7 @@
     "passwordError": "Error en actualitzar la contrasenya",
     "createProgressSuccess": "Progrés formatiu creat amb èxit",
     "createProgressError": "Error en crear el progrés",
-    "table": {
+   "table": {
       "aria": "taula d'usuaris",
       "name": "Nom",
       "email": "Correu electrònic",
@@ -456,6 +456,7 @@
       "society": "Societat",
       "role": "Rol",
       "hospital": "Hospital",
+      "specialty": "Especialitat",
       "zone": "Zona",
       "actions": "Accions"
     },

@@ -21,6 +21,7 @@ import {
   LinearProgress,
   Alert,
   Snackbar,
+  Autocomplete,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -101,6 +102,15 @@ const AdminUsuarios: React.FC = () => {
     "nombre" | "email" | "hospital" | "rol"
   >("nombre");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const allRoles = Array.from(
+    new Set([...rolesResidentes, ...rolesSociedades]),
+  );
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedHospitals, setSelectedHospitals] = useState<string[]>([]);
+  const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
+  const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
+  const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
 
   const roleOptions =
     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
@@ -428,6 +438,18 @@ const AdminUsuarios: React.FC = () => {
     );
   }
 
+  const especialidadOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.especialidad)
+        .filter((e): e is string => Boolean(e)),
+    ),
+  );
+  const hospitalSociedadOptions = [
+    ...hospitales.map((h) => ({ _id: h._id, nombre: h.nombre })),
+    ...sociedades.map((s) => ({ _id: s._id, nombre: s.titulo })),
+  ];
+
   const displayUsuarios = usuarios
     .filter((u) => {
       const q = search.toLowerCase();
@@ -436,6 +458,27 @@ const AdminUsuarios: React.FC = () => {
         u.email.toLowerCase().includes(q)
       );
     })
+    .filter((u) =>
+      selectedRoles.length > 0 ? selectedRoles.includes(u.rol) : true,
+    )
+    .filter((u) =>
+      selectedHospitals.length > 0
+        ? selectedHospitals.includes(
+            u.hospital?._id || u.sociedad?._id || "",
+          )
+        : true,
+    )
+    .filter((u) =>
+      selectedZonas.length > 0 ? selectedZonas.includes(u.zona) : true,
+    )
+    .filter((u) =>
+      selectedEspecialidades.length > 0
+        ? selectedEspecialidades.includes(u.especialidad)
+        : true,
+    )
+    .filter((u) =>
+      selectedTipos.length > 0 ? selectedTipos.includes(u.tipo) : true,
+    )
     .sort((a, b) => {
       let aVal = "";
       let bVal = "";
@@ -498,7 +541,7 @@ const AdminUsuarios: React.FC = () => {
         </Box>
       </Box>
 
-      <TextField
+     <TextField
         variant="outlined"
         placeholder={t("adminUsers.searchPlaceholder")}
         value={search}
@@ -506,6 +549,69 @@ const AdminUsuarios: React.FC = () => {
         fullWidth
         margin="normal"
       />
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+        <Autocomplete
+          multiple
+          options={allRoles}
+          value={selectedRoles}
+          onChange={(e, newValue) =>
+            setSelectedRoles(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t("adminUsers.fields.role")} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={hospitalSociedadOptions}
+          getOptionLabel={(option) => option.nombre}
+          value={hospitalSociedadOptions.filter((h) =>
+            selectedHospitals.includes(h._id),
+          )}
+          onChange={(e, newValue) =>
+            setSelectedHospitals(newValue.map((h: any) => h._id))
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t("adminUsers.fields.hospital")} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={zonaOptions}
+          value={selectedZonas}
+          onChange={(e, newValue) =>
+            setSelectedZonas(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t("adminUsers.fields.zone")} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={especialidadOptions}
+          value={selectedEspecialidades}
+          onChange={(e, newValue) =>
+            setSelectedEspecialidades(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t("adminUsers.fields.specialty")} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={["Programa Residentes", "Programa Sociedades"]}
+          value={selectedTipos}
+          onChange={(e, newValue) => setSelectedTipos(newValue as string[])}
+          renderInput={(params) => (
+            <TextField {...params} label={t("adminUsers.fields.type")} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+      </Box>
 
      {/* Tabla de usuarios */}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -539,6 +645,7 @@ const AdminUsuarios: React.FC = () => {
                 >
                   {t("adminUsers.table.hospital")}
                 </TableCell>
+                <TableCell>{t("adminUsers.table.specialty")}</TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
               </TableRow>
@@ -570,6 +677,7 @@ const AdminUsuarios: React.FC = () => {
                     />
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
+                  <TableCell>{usuario.especialidad || "-"}</TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell align="right">
                     <Button
