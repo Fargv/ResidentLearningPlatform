@@ -67,12 +67,13 @@
     "zone": "Zona",
     "specialty": "Especialitat",
     "specialties": {
-      "URO": "Urologia (URO)",
-      "GEN": "Cirurgia General (GEN)",
-      "GYN": "Ginecologia (GYN)",
-      "THOR": "Toràcica (THOR)",
-      "ORL": "Otorrino (ORL)"
-    },
+        "ALL": "Totes",
+        "URO": "Urologia (URO)",
+        "GEN": "Cirurgia General (GEN)",
+        "GYN": "Ginecologia (GYN)",
+        "THOR": "Toràcica (THOR)",
+        "ORL": "Otorrino (ORL)"
+      },
     "society": "Societat",
     "none": "Cap",
     "invalidAccessCode": "Codi d'accés no vàlid",
@@ -145,7 +146,7 @@
       "email": "Correu electrònic",
       "actions": "Accions"
     },
-    "fields": {
+   "fields": {
       "name": "Nom",
       "numericCode": "Codi numèric",
       "address": "Adreça",
@@ -156,7 +157,8 @@
       "phone": "Telèfon",
       "systemType": "Tipus de sistema",
       "email": "Correu electrònic",
-      "logoUrl": "URL del logotip"    },
+      "logoUrl": "URL del logotip"
+    },
     "system": {
       "other": "Altres"
     },
@@ -447,7 +449,7 @@
     "passwordError": "Error en actualitzar la contrasenya",
     "createProgressSuccess": "Progrés formatiu creat amb èxit",
     "createProgressError": "Error en crear el progrés",
-    "table": {
+   "table": {
       "aria": "taula d'usuaris",
       "name": "Nom",
       "email": "Correu electrònic",
@@ -455,6 +457,7 @@
       "society": "Societat",
       "role": "Rol",
       "hospital": "Hospital",
+      "specialty": "Especialitat",
       "zone": "Zona",
       "actions": "Accions"
     },
@@ -835,7 +838,7 @@
   },
   "certificate": {
     "title": "Certificat de Compliment",
-   "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
+    "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificat generat automàticament per Academic Program Da Vinci · www.abexsl.es"
   },
@@ -900,5 +903,9 @@
       "pending": "Pendent de validació",
       "notCompleted": "No completada"
     }
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacitat",
+    "lastUpdated": "Última actualització: {{date}}"
   }
 }

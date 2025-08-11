@@ -170,6 +170,7 @@
     "zone": "Zona",
     "specialty": "Specializzazione",
     "specialties": {
+      "ALL": "Tutte",
       "URO": "Urologia (URO)",
       "GEN": "Chirurgia Generale (GEN)",
       "GYN": "Ginecologia (GYN)",
@@ -600,6 +601,7 @@
       "society": "Società",
       "role": "Ruolo",
       "hospital": "Ospedale",
+      "specialty": "Specializzazione",
       "zone": "Zona",
       "actions": "Azioni"
     },
@@ -902,5 +904,9 @@
       "pending": "In attesa di validazione",
       "notCompleted": "Non completata"
     }
+  },
+  "privacyPolicy": {
+    "title": "Informativa sulla privacy",
+    "lastUpdated": "Ultimo aggiornamento: {{date}}"
   }
 }

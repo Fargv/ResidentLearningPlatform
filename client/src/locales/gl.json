@@ -236,6 +236,7 @@
     "zone": "Zona",
     "specialty": "Especialidade",
     "specialties": {
+      "ALL": "Todas",
       "URO": "Uroloxía (URO)",
       "GEN": "Cirurxía Xeral (GEN)",
       "GYN": "Xinecoloxía (GYN)",
@@ -454,6 +455,7 @@
       "society": "Sociedade",
       "role": "Rol",
       "hospital": "Hospital",
+      "specialty": "Especialidade",
       "zone": "Zona",
       "actions": "Accións"
     },
@@ -902,5 +904,10 @@
       "pending": "Pendente de validación",
       "notCompleted": "Non completada"
     }
+  },
+  "privacyPolicy": {
+    "title": "Política de privacidade",
+    "lastUpdated": "Última actualización: {{date}}"
   }
 }
+

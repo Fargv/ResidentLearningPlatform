@@ -173,18 +173,13 @@ const Register: React.FC = () => {
       return setCodigoError(t('register.requiredFields'));
     }
 
-    if (rol === 'residente' && (!hospital || !especialidad)) {
+    if ((rol === 'residente' || rol === 'formador') && (!hospital || !especialidad)) {
       return setCodigoError(t('register.hospitalAndSpecialtyRequired'));
-    }
-
-    if (rol === 'formador' && !hospital) {
-      return setCodigoError(t('register.hospitalRequired'));
     }
 
     if (tipo === 'Programa Sociedades' && !sociedad) {
       return setCodigoError(t('register.societyRequired'));
     }
-
     if (password !== confirmPassword) {
       return setPasswordError(t('register.passwordsMismatch'));
     }
@@ -261,10 +256,11 @@ const Register: React.FC = () => {
                   </FormControl>
                 )}
 
-                {rol === 'residente' && (
+                {(rol === 'residente' || rol === 'formador') && (
                   <FormControl fullWidth margin="normal" required disabled={loading}>
                     <InputLabel id="especialidad-label">{t('register.specialty')}</InputLabel>
                     <Select labelId="especialidad-label" id="especialidad" name="especialidad" value={especialidad} label={t('register.specialty')} onChange={onSelectEspecialidad}>
+                      <MenuItem value="ALL">{t('register.specialties.ALL')}</MenuItem>
                       <MenuItem value="URO">{t('register.specialties.URO')}</MenuItem>
                       <MenuItem value="GEN">{t('register.specialties.GEN')}</MenuItem>
                       <MenuItem value="GYN">{t('register.specialties.GYN')}</MenuItem>

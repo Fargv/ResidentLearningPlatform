@@ -67,12 +67,13 @@
     "zone": "Zone",
     "specialty": "Spécialité",
     "specialties": {
-      "URO": "Urologie (URO)",
-      "GEN": "Chirurgie Générale (GEN)",
-      "GYN": "Gynécologie (GYN)",
-      "THOR": "Thoracique (THOR)",
-      "ORL": "ORL (ORL)"
-    },
+        "ALL": "Toutes",
+        "URO": "Urologie (URO)",
+        "GEN": "Chirurgie Générale (GEN)",
+        "GYN": "Gynécologie (GYN)",
+        "THOR": "Thoracique (THOR)",
+        "ORL": "ORL (ORL)"
+      },
     "society": "Société",
     "none": "Aucune",
     "invalidAccessCode": "Code d'accès invalide",
@@ -437,6 +438,7 @@
       "society": "Société",
       "role": "Rôle",
       "hospital": "Hôpital",
+      "specialty": "Spécialité",
       "zone": "Zone",
       "actions": "Actions"
     },
@@ -891,5 +893,10 @@
       "deleteError": "Erreur lors de la suppression",
       "genericError": "Erreur"
     }
+  },
+  "privacyPolicy": {
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : {{date}}"
   }
 }
+

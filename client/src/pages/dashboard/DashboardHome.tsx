@@ -42,6 +42,9 @@ const DashboardHome: React.FC = () => {
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [phaseSummary, setPhaseSummary] = useState<
     { name: string; percent: number }[]
+ >([]);
+  const [socPhaseSummary, setSocPhaseSummary] = useState<
+    { phase: number; percent: number }[]
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
@@ -56,8 +59,14 @@ const DashboardHome: React.FC = () => {
 
   const societyMilestones = [
     {
-      label: t('society.convocatoria.label'),
-      date: sociedadInfo?.fechaConvocatoria,
+      phase: 1,
+      label:
+        t('society.convocatoria.label') +
+        ' / ' +
+        t('society.presentacion.label') +
+        ' / ' +
+        t('society.modOnline.label'),
+      date: sociedadInfo?.fechaModulosOnline,
       description: (
         <>
           <Typography gutterBottom>
@@ -67,30 +76,14 @@ const DashboardHome: React.FC = () => {
             <li>{t('society.convocatoria.item1')}</li>
             <li>{t('society.convocatoria.item2')}</li>
           </ul>
-        </>
-      ),
-    },
-    {
-      label: t('society.presentacion.label'),
-      date: sociedadInfo?.fechaPresentacion,
-      description: (
-        <>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ mt: 2 }}>
             {t('society.presentacion.intro')}
           </Typography>
           <ul>
             <li>{t('society.presentacion.item1')}</li>
             <li>{t('society.presentacion.item2')}</li>
           </ul>
-        </>
-      ),
-    },
-    {
-      label: t('society.modOnline.label'),
-      date: sociedadInfo?.fechaModulosOnline,
-      description: (
-        <>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ mt: 2 }}>
             {t('society.modOnline.intro')}
           </Typography>
           <ul>
@@ -101,6 +94,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 2,
       label: t('society.simulacion.label'),
       date: sociedadInfo?.fechaSimulacion,
       description: (
@@ -116,6 +110,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 3,
       label: t('society.firstAssistant.label'),
       date: sociedadInfo?.fechaAtividadesFirstAssistant,
       description: (
@@ -131,6 +126,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 4,
       label: t('society.stepByStep.label'),
       date: sociedadInfo?.fechaModuloOnlineStepByStep,
       description: (
@@ -146,6 +142,7 @@ const DashboardHome: React.FC = () => {
       ),
     },
     {
+      phase: 5,
       label: t('society.handsOn.label'),
       date: sociedadInfo?.fechaHandOn,
       description: (
@@ -223,9 +220,7 @@ const DashboardHome: React.FC = () => {
       const isResidentes =
         user?.tipo === "Programa Residentes" &&
         user?._id &&
-        ["residente", "formador", "coordinador", "instructor", "alumno"].includes(
-          user.rol,
-        );
+        ["residente", "formador", "instructor", "alumno"].includes(user.rol);
       const isSociedades =
         user?.tipo === "Programa Sociedades" &&
         user?.rol === "alumno" &&
@@ -252,14 +247,30 @@ const DashboardHome: React.FC = () => {
         }
 
         if (isSociedades) {
-          const socFases = data.filter((p: any) => p.faseModel === 'FaseSoc');
+          const socFases = data
+            .filter((p: any) => p.faseModel === 'FaseSoc')
+            .sort(
+              (a: any, b: any) =>
+                (a.fase?.orden ?? 0) - (b.fase?.orden ?? 0)
+            );
+          const socSummary = socFases.map((p: any) => {
+            const total = p.actividades.length;
+            const validated = p.actividades.filter(
+              (a: any) => a.estado === 'validado'
+            ).length;
+            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
+            return { phase: p.fase.orden, percent };
+          });
+          setSocPhaseSummary(socSummary);
           const allValidado =
             socFases.length > 0 &&
             socFases.every((p: any) => p.estadoGeneral === 'validado');
           setSocAllValidado(allValidado);
         }
-      } catch (err) {
-        console.error("Error cargando progreso", err);
+      } catch (err: any) {
+        if (!(err?.response?.status === 404 && user?.rol === "coordinador")) {
+          console.error("Error cargando progreso", err);
+        }
       } finally {
         setProgressLoading(false);
       }
@@ -429,37 +440,61 @@ const DashboardHome: React.FC = () => {
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {societyMilestones.map((m) => (
-              <CardActionArea
-                key={m.label}
-                onClick={() => handleOpenDialog(m)}
-                sx={{
-                  flex: "1 1 calc(50% - 16px)",
-                  minWidth: "250px",
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                    transform: "scale(1.02)",
-                  },
-                  cursor: "pointer",
-                }}
-              >
-                <Paper
-                  elevation={2}
+            {societyMilestones.map((m, idx) => {
+              const percent =
+                socPhaseSummary.find((s) => s.phase === m.phase)?.percent ?? 0;
+              return (
+                <CardActionArea
+                  key={m.label}
+                  onClick={() => handleOpenDialog(m)}
                   sx={{
-                    p: 2,
-                    borderLeft: "6px solid #1E5B94",
-                    backgroundColor: "background.paper",
+                    flex: {
+                      xs: "1 1 100%",
+                      md:
+                        idx === 0
+                          ? "1 1 100%"
+                          : "1 1 calc(50% - 16px)",
+                    },
+                    minWidth: { xs: "250px", md: "250px" },
+                    "&:hover": {
+                      backgroundColor: "action.hover",
+                      transform: "scale(1.02)",
+                    },
+                    cursor: "pointer",
                   }}
                 >
-                  <Typography variant="subtitle2" color="text.secondary">
-                    {m.label}
-                  </Typography>
-                  <Typography variant="body1" fontWeight="bold">
-                    {formatMonthYear(m.date || "") || "—"}
-                  </Typography>
-                </Paper>
-              </CardActionArea>
-            ))}
+                  <Paper
+                    elevation={2}
+                    sx={{
+                      p: 2,
+                      borderLeft: "6px solid #1E5B94",
+                      background: `linear-gradient(90deg, #E3F2FD ${percent}%, #F5F5F5 ${percent}%)`,
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'text.secondary' }}
+                    >
+                      {m.label}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      sx={{ color: '#1E5B94' }}
+                    >
+                      {formatMonthYear(m.date || "") || "—"}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      sx={{ color: '#1E5B94' }}
+                    >
+                      {percent}%
+                    </Typography>
+                  </Paper>
+                </CardActionArea>
+              );
+            })}
           </Box>
           {socAllValidado && (
             <Box textAlign="center" mt={2}>
@@ -506,20 +541,27 @@ const DashboardHome: React.FC = () => {
                   }}
                 >
                   <Paper
-                    elevation={2}
-                    sx={{
-                      p: 2,
-                      borderLeft: "6px solid #1E5B94",
-                      backgroundColor: "background.paper",
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {p.name}
-                    </Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                      {p.percent}%
-                    </Typography>
-                  </Paper>
+                      elevation={2}
+                      sx={{
+                        p: 2,
+                        borderLeft: "6px solid #1E5B94",
+                        background: `linear-gradient(90deg, #E3F2FD  ${p.percent}%, #F5F5F5  ${p.percent}%)`,
+                      }}
+                    >
+                      <Typography variant="subtitle2" color="text.secondary">
+                        {p.name}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        sx={{
+                          color: "text.secondary",
+                          textShadow: 'none',
+                        }}
+                      >
+                        {p.percent}%
+                      </Typography>
+                    </Paper>
                 </CardActionArea>
               ))}
             </Box>

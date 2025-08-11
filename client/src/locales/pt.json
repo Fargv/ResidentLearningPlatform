@@ -68,6 +68,7 @@
     "zone": "Zona",
     "specialty": "Especialidade",
     "specialties": {
+      "ALL": "Todas",
       "URO": "Urologia (URO)",
       "GEN": "Cirurgia Geral (GEN)",
       "GYN": "Ginecologia (GYN)",
@@ -531,6 +532,7 @@
       "society": "Sociedade",
       "role": "Função",
       "hospital": "Hospital",
+      "specialty": "Especialidade",
       "zone": "Zona",
       "actions": "Ações"
     },
@@ -912,5 +914,9 @@
   "debug": {
     "tokenValid": "✅ Token válido e decodificado",
     "tokenInvalid": "❌ Token inválido ou corrompido"
+  },
+   "privacyPolicy": {
+    "title": "Política de privacidade",
+    "lastUpdated": "Última atualização: {{date}}"
   }
 }

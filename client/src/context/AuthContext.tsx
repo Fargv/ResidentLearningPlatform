@@ -32,6 +32,7 @@ interface User {
     _id: string;
     nombre: string;
   };
+  especialidad?: string;
   zona?: string;
   tipo?: string; // ← Añadido para usuarios tipo "Programa Sociedades"
   sociedad?: string | { _id: string }; // ← Añadido para compatibilidad flexible
@@ -88,8 +89,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const res = await api.get('/auth/me');
-
-        const userWithToken = { ...res.data.data, token };
+        const userWithToken: User = {
+          ...res.data.data,
+          especialidad: res.data.data.especialidad,
+          token
+        };
         setUser(userWithToken);
         setIsAuthenticated(true);
         localStorage.setItem('user', JSON.stringify(userWithToken));
@@ -116,7 +120,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('token', token);
 
       const userRes = await api.get('/auth/me');
-      const userWithToken = { ...userRes.data.data, token };
+      const userWithToken: User = {
+        ...userRes.data.data,
+        especialidad: userRes.data.data.especialidad,
+        token
+      };
 
       setUser(userWithToken);
       setIsAuthenticated(true);
@@ -139,10 +147,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const token = res.data.token;
 
       localStorage.setItem('token', token);
-      
 
       const userRes = await api.get('/auth/me');
-      const userWithToken = { ...userRes.data.data, token };
+      const userWithToken: User = {
+        ...userRes.data.data,
+        especialidad: userRes.data.data.especialidad,
+        token
+      };
 
       setUser(userWithToken);
       setIsAuthenticated(true);

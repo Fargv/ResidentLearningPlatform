@@ -15,6 +15,7 @@ const {
   cancelInvitation,
   getFormadorResidentes,
   getResidenteFormadores,
+  getInstructorAlumnos,
   getUsersByHospital,
   deleteUser
 } = require('../controllers/userController');
@@ -25,13 +26,13 @@ router.use(protect);
 // Rutas solo para administradores y formadores
 router.get('/hospital/:hospitalId', authorize('administrador', 'formador', 'coordinador'), getUsersByHospital);
 
-// Rutas solo para administradores
+// Rutas para administradores, formadores, coordinadores e instructores
 router.route('/')
-  .get(authorize('administrador', 'formador', 'coordinador'), getUsers)
+  .get(authorize('administrador', 'formador', 'coordinador', 'instructor'), getUsers)
   .post(authorize('administrador'), createUser);
 
 router.route('/invite')
-  .post(authorize('administrador'), inviteUser);
+  .post(authorize('administrador', 'instructor'), inviteUser);
 
 router.route('/invitations')
   .get(authorize('administrador'), getInvitations);
@@ -43,14 +44,17 @@ router.route('/invitations/:id')
 router.route('/formador/:id/residentes')
   .get(authorize('administrador', 'formador', 'coordinador'), getFormadorResidentes);
 
+router.route('/instructor/:id/alumnos')
+  .get(authorize('administrador', 'instructor'), getInstructorAlumnos);
+
 // Rutas para todos los roles
 router.route('/residente/:id/formadores')
   .get(getResidenteFormadores);
 
 router.route('/:id')
   .get(authorize('administrador'), getUser)
-  .put(authorize('administrador'), updateUser)
-  .delete(authorize('administrador'), deleteUser);
+  .put(authorize('administrador', 'instructor'), updateUser)
+  .delete(authorize('administrador', 'instructor'), deleteUser);
 
 router.route('/:id/password')
   .put(authorize('administrador'), updateUserPassword);

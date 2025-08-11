@@ -32,7 +32,7 @@ beforeEach(() => {
     data: {
       titulo: 'Soc Test',
       status: 'ACTIVO',
-      fechaConvocatoria: '2025-01-01'
+      fechaModulosOnline: '2025-01-01'
     }
   });
 });
@@ -48,7 +48,7 @@ test('clicking milestone opens dialog', async () => {
       <DashboardHome />
     </I18nextProvider>
   );
-  const item = await screen.findByText('Convocatoria');
+  const item = await screen.findByText(/Convocatoria/);
   await userEvent.click(item);
   expect(await screen.findByRole('dialog')).toBeInTheDocument();
 });
@@ -60,6 +60,28 @@ test('no progress fetch for admin resident program user', async () => {
       nombre: 'Admin',
       rol: 'administrador',
       tipo: 'Programa Residentes'
+    }
+  } as any);
+
+  i18n.changeLanguage('es');
+  render(
+    <I18nextProvider i18n={i18n}>
+      <DashboardHome />
+    </I18nextProvider>
+  );
+
+  expect(mockedGet).not.toHaveBeenCalledWith(
+    expect.stringContaining('/progreso/residente')
+  );
+});
+
+test('no progress fetch for coordinator resident program user', async () => {
+  mockedUseAuth.mockReturnValue({
+    user: {
+      _id: 'coord1',
+      nombre: 'Coord',
+      rol: 'coordinador',
+      tipo: 'Programa Residentes',
     }
   } as any);
 

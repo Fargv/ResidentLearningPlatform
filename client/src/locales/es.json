@@ -150,13 +150,13 @@
     "zone": "Zona",
     "specialty": "Especialidad",
     "specialties": {
-      "URO": "Urología (URO)",
-      "GEN": "Cirugía General (GEN)",
-      "GYN": "Ginecología (GYN)",
-      "THOR": "Torácica (THOR)",
-      "ORL": "Otorrino (ORL)"
-    },
-    "society": "Sociedad",
+        "ALL": "Todas",
+        "URO": "Urología (URO)",
+        "GEN": "Cirugía General (GEN)",
+        "GYN": "Ginecología (GYN)",
+        "THOR": "Torácica (THOR)",
+        "ORL": "Otorrino (ORL)"
+      },    "society": "Sociedad",
     "none": "Ninguna",
     "invalidAccessCode": "Código de acceso no válido",
     "requiredFields": "Por favor, completa todos los campos obligatorios.",
@@ -386,6 +386,7 @@
       "society": "Sociedad",
       "role": "Rol",
       "hospital": "Hospital",
+      "specialty": "Especialidad",
       "zone": "Zona",
       "actions": "Acciones"
     },
@@ -902,5 +903,9 @@
     "inactive": "Inactivo",
     "validated": "Validado",
     "rejected": "Rechazado"
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: {{date}}"
   }
 }

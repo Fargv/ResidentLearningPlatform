@@ -13,9 +13,10 @@ const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 
 
 
-// @desc    Obtener todos los usuarios (admin) o usuarios del hospital (formador)
+// @desc    Obtener todos los usuarios (admin), usuarios del hospital (formador)
+//         o alumnos de la sociedad (instructor)
 // @route   GET /api/users
-// @access  Private/Admin|Formador
+// @access  Private/Admin|Formador|Coordinador|Instructor
 exports.getUsers = async (req, res, next) => {
   try {
     let users;
@@ -23,10 +24,14 @@ exports.getUsers = async (req, res, next) => {
     if (req.user.rol === 'administrador') {
       users = await User.find().populate('hospital').populate('sociedad');
     } else if (req.user.rol === 'formador') {
-      users = await User.find({
+      const query = {
         hospital: req.user.hospital,
         rol: { $ne: 'administrador' }
-      })
+      };
+      if (req.user.especialidad && req.user.especialidad !== 'ALL') {
+        query.especialidad = req.user.especialidad;
+      }
+      users = await User.find(query)
         .populate('hospital')
         .populate('sociedad');
     } else if (req.user.rol === 'coordinador') {
@@ -36,6 +41,13 @@ exports.getUsers = async (req, res, next) => {
         hospital: { $in: ids },
         rol: { $in: ['residente', 'formador'] },
         tipo: 'Programa Residentes'
+      })
+        .populate('hospital')
+        .populate('sociedad');
+    } else if (req.user.rol === 'instructor') {
+      users = await User.find({
+        sociedad: req.user.sociedad,
+        rol: 'alumno'
       })
         .populate('hospital')
         .populate('sociedad');
@@ -82,7 +94,7 @@ exports.createUser = async (req, res, next) => {
       zona
     } = req.body;
     const hospitalId = hospital || undefined;
-    const especialidadVal = especialidad || undefined;
+    let especialidadVal;
     const tipoVal = rol === 'administrador' ? undefined : tipo;
     const sociedadId =
       tipoVal === 'Programa Sociedades' ? sociedad || undefined : undefined;
@@ -150,7 +162,28 @@ exports.createUser = async (req, res, next) => {
       }
     }
 
-   const nuevoUsuario = await User.create({
+  if (rol === 'formador') {
+      if (!especialidad) {
+        return next(
+          new ErrorResponse('Especialidad requerida para el rol formador', 400)
+        );
+      }
+      especialidadVal = especialidad;
+    } else if (rol === 'residente') {
+      if (especialidad === 'ALL') {
+        return next(
+          new ErrorResponse(
+            'La especialidad no puede ser ALL para residente',
+            400
+          )
+        );
+      }
+      especialidadVal = especialidad || undefined;
+    } else {
+      especialidadVal = undefined;
+    }
+
+    const nuevoUsuario = await User.create({
       nombre,
       apellidos,
       email,
@@ -215,7 +248,6 @@ exports.updateUser = async (req, res, next) => {
     // Eliminar campos que no deben ser actualizados por esta ruta
     const { password, ...updateData } = req.body;
     const hospitalId = updateData.hospital || undefined;
-    const especialidadVal = updateData.especialidad || undefined;
     let zonaVal = updateData.zona || undefined;
     const currentUser = await User.findById(req.params.id);
     if (!currentUser) {
@@ -224,8 +256,37 @@ exports.updateUser = async (req, res, next) => {
       );
     }
 
+    if (req.user.rol === 'instructor') {
+      if (
+        currentUser.rol !== 'alumno' ||
+        !currentUser.sociedad ||
+        currentUser.sociedad.toString() !== req.user.sociedad.toString()
+      ) {
+        return next(
+          new ErrorResponse('No autorizado para modificar este usuario', 403)
+        );
+      }
+      if (updateData.rol && updateData.rol !== 'alumno') {
+        return next(
+          new ErrorResponse('No autorizado para cambiar el rol del usuario', 403)
+        );
+      }
+      if (
+        updateData.sociedad &&
+        updateData.sociedad.toString() !== req.user.sociedad.toString()
+      ) {
+        return next(
+          new ErrorResponse('No autorizado para cambiar la sociedad', 403)
+        );
+      }
+      updateData.sociedad = req.user.sociedad;
+    }
+
     const newTipo = updateData.tipo || currentUser.tipo;
     const newRol = updateData.rol || currentUser.rol;
+    const roleChanged = newRol !== currentUser.rol;
+    const especialidadInput = updateData.especialidad;
+    let especialidadVal;
 
     if (newTipo === 'Programa Residentes') {
       updateData.sociedad = null;
@@ -261,6 +322,35 @@ exports.updateUser = async (req, res, next) => {
 
     if (newRol === 'coordinador' && !zonaVal) {
       return next(new ErrorResponse('Zona requerida para el rol coordinador', 400));
+    }
+
+    if (newRol === 'formador') {
+      especialidadVal =
+        especialidadInput || (roleChanged ? undefined : currentUser.especialidad);
+      if (!especialidadVal) {
+        return next(
+          new ErrorResponse('Especialidad requerida para el rol formador', 400)
+        );
+      }
+    } else if (newRol === 'residente') {
+      if (roleChanged) {
+        especialidadVal = especialidadInput;
+      } else {
+        especialidadVal =
+          especialidadInput !== undefined
+            ? especialidadInput
+            : currentUser.especialidad;
+      }
+      if (especialidadVal === 'ALL') {
+        return next(
+          new ErrorResponse(
+            'La especialidad no puede ser ALL para residente',
+            400
+          )
+        );
+      }
+    } else {
+      especialidadVal = undefined;
     }
 
     updateData.hospital = hospitalId;
@@ -375,6 +465,18 @@ exports.deleteUser = async (req, res, next) => {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
     }
 
+    if (req.user.rol === 'instructor') {
+      if (
+        user.rol !== 'alumno' ||
+        !user.sociedad ||
+        user.sociedad.toString() !== req.user.sociedad.toString()
+      ) {
+        return next(
+          new ErrorResponse('No autorizado para eliminar este usuario', 403)
+        );
+      }
+    }
+
     await ProgresoResidente.deleteMany({ residente: req.params.id });
 
     await user.remove();
@@ -401,7 +503,30 @@ exports.deleteUser = async (req, res, next) => {
 // @access  Private/Admin
 exports.inviteUser = async (req, res, next) => {
   try {
-    const { email, rol, hospital } = req.body;
+    const { email, rol, hospital, sociedad } = req.body;
+
+    if (req.user.rol === 'instructor') {
+      if (rol !== 'alumno') {
+        return next(
+          new ErrorResponse('Los instructores solo pueden invitar alumnos', 403)
+        );
+      }
+      if (
+        !req.user.sociedad ||
+        (sociedad && sociedad.toString() !== req.user.sociedad.toString())
+      ) {
+        return next(
+          new ErrorResponse(
+            'No autorizado para invitar alumnos de otra sociedad',
+            403
+          )
+        );
+      }
+    }
+
+    if ((rol === 'alumno' || rol === 'instructor') && !sociedad) {
+      return next(new ErrorResponse('Se requiere una sociedad para este rol', 400));
+    }
 
     // Verificar si el email ya está registrado
     const existingUser = await User.findOne({ email });
@@ -439,6 +564,7 @@ exports.inviteUser = async (req, res, next) => {
       email,
       rol,
       hospital,
+      sociedad: sociedad || req.user.sociedad,
       token,
       fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
       admin: req.user.id
@@ -490,7 +616,7 @@ exports.inviteUser = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener todas las invitaciones
+// @desc    Obtener ALL las invitaciones
 // @route   GET /api/users/invitations
 // @access  Private/Admin
 exports.getInvitations = async (req, res, next) => {
@@ -559,10 +685,14 @@ exports.getFormadorResidentes = async (req, res, next) => {
     }
 
     // Obtener residentes del mismo hospital que el formador
-    const residentes = await User.find({
+    const filtrosResidentes = {
       hospital: formador.hospital,
       rol: 'residente'
-    })
+    };
+    if (formador.especialidad && formador.especialidad !== 'ALL') {
+      filtrosResidentes.especialidad = formador.especialidad;
+    }
+    const residentes = await User.find(filtrosResidentes)
       .populate('hospital')
       .populate('sociedad');
 
@@ -596,10 +726,14 @@ exports.getResidenteFormadores = async (req, res, next) => {
     }
 
     // Obtener formadores del mismo hospital que el residente
-    const formadores = await User.find({
+    const filtrosFormadores = {
       hospital: residente.hospital,
       rol: 'formador'
-    })
+    };
+    if (req.user.rol === 'formador' && req.user.especialidad && req.user.especialidad !== 'ALL') {
+      filtrosFormadores.especialidad = req.user.especialidad;
+    }
+    const formadores = await User.find(filtrosFormadores)
       .populate('hospital')
       .populate('sociedad');
 
@@ -607,6 +741,50 @@ exports.getResidenteFormadores = async (req, res, next) => {
       success: true,
       count: formadores.length,
       data: formadores
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Obtener alumnos de un instructor
+// @route   GET /api/users/instructor/:id/alumnos
+// @access  Private/Admin,Instructor
+exports.getInstructorAlumnos = async (req, res, next) => {
+  try {
+    const instructor = await User.findById(req.params.id).populate('sociedad');
+
+    if (!instructor) {
+      return next(
+        new ErrorResponse(`Instructor no encontrado con id ${req.params.id}`, 404)
+      );
+    }
+
+    if (instructor.rol !== 'instructor') {
+      return next(
+        new ErrorResponse(`El usuario con id ${req.params.id} no es un instructor`, 400)
+      );
+    }
+
+    if (
+      req.user.rol === 'instructor' &&
+      req.user._id.toString() !== instructor._id.toString()
+    ) {
+      return next(
+        new ErrorResponse('No autorizado para ver alumnos de otro instructor', 403)
+      );
+    }
+
+    const alumnos = await User.find({
+      sociedad: instructor.sociedad,
+      rol: 'alumno',
+      tipo: instructor.tipo,
+    }).populate('sociedad');
+
+    res.status(200).json({
+      success: true,
+      count: alumnos.length,
+      data: alumnos,
     });
   } catch (err) {
     next(err);
@@ -624,9 +802,16 @@ exports.getUsersByHospital = async (req, res) => {
       }
     }
 
-    let query = { hospital: hospitalId };
+    let query = {
+      hospital: hospitalId,
+      tipo: req.user.tipo,
+      _id: { $ne: req.user._id }
+    };
     if (req.user.rol === 'formador') {
-      query.rol = { $ne: 'administrador' };
+      query.rol = 'residente';
+      if (req.user.especialidad && req.user.especialidad !== 'ALL') {
+        query.especialidad = req.user.especialidad;
+      }
     } else if (req.user.rol === 'coordinador') {
       query.rol = { $in: ['residente', 'formador'] };
     }
