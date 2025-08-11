@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   getHospitals,
@@ -23,19 +24,19 @@ router.route('/:id')
   .get(getHospital);
 
 router.route('/')
-  .post(authorize('administrador'), createHospital);
+  .post(authorize(Role.ADMINISTRADOR), createHospital);
 
 router.route('/:id')
-  .put(authorize('administrador'), updateHospital)
-  .delete(authorize('administrador'), deleteHospital);
+  .put(authorize(Role.ADMINISTRADOR), updateHospital)
+  .delete(authorize(Role.ADMINISTRADOR), deleteHospital);
 
 router.route('/:id/residentes')
-  .get(authorize('administrador', 'tutor', 'csm'), getHospitalResidentes);
+  .get(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getHospitalResidentes);
 
 router.route('/:id/formadores')
-  .get(authorize('administrador'), getHospitalFormadores);
+  .get(authorize(Role.ADMINISTRADOR), getHospitalFormadores);
 
 router.route('/:id/stats')
-  .get(authorize('administrador', 'tutor', 'csm'), getHospitalStats);
+  .get(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getHospitalStats);
 
 module.exports = router;

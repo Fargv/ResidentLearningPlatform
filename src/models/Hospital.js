@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Role } = require('../utils/roles');
 
 const hospitalSchema = new mongoose.Schema({
   nombre: {
@@ -62,15 +63,15 @@ hospitalSchema.virtual('residentes', {
   localField: '_id',
   foreignField: 'hospital',
   justOne: false,
-  match: { rol: 'residente' }
+  match: { rol: Role.RESIDENTE }
 });
 
-hospitalSchema.virtual('formadores', {
+hospitalSchema.virtual('tutores', {
   ref: 'User',
   localField: '_id',
   foreignField: 'hospital',
   justOne: false,
-  match: { rol: 'tutor' }
+  match: { rol: Role.TUTOR }
 });
 
 const Hospital = mongoose.model('Hospital', hospitalSchema);

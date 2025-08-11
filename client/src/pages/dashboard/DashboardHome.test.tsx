@@ -22,7 +22,7 @@ beforeEach(() => {
     user: {
       _id: 'u1',
       nombre: 'Test',
-      rol: 'alumno',
+      rol: 'participante',
       tipo: 'Programa Sociedades',
       sociedad: { _id: 's1' }
     }
@@ -80,7 +80,7 @@ test('no progress fetch for coordinator resident program user', async () => {
     user: {
       _id: 'coord1',
       nombre: 'Coord',
-      rol: 'coordinador',
+      rol: 'csm',
       tipo: 'Programa Residentes',
     }
   } as any);

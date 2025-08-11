@@ -6,7 +6,7 @@ const validacionSchema = new mongoose.Schema({
     ref: 'ProgresoResidente',
     required: [true, 'Por favor proporcione el registro de progreso a validar']
   },
-  formador: {
+  tutor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Por favor proporcione el tutor que valida']

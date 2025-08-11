@@ -34,8 +34,8 @@ const inicializarProgresoFormativo = async (usuario) => {
         nombre: act.nombre,
         completada: false,
         estado: 'pendiente',
-        comentariosResidente: '',
-        comentariosFormador: '',
+          comentariosResidente: '',
+          comentariosTutor: '',
         fechaRealizacion: null,
         firmaDigital: '',
       }));

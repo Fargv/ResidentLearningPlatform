@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import api from '../api';
+import Role from '../types/roles';
 
 interface InviteUsersMailProps {
   open: boolean;
@@ -19,21 +20,15 @@ interface InviteUsersMailProps {
 
 interface AccessCode {
   codigo: string;
-  rol: string;
+  rol: Role;
 }
 
-const roles = [
-  'residente',
-  'tutor',
-  'csm',
-  'administrador',
-  'participante',
-  'profesor',
-];
+const roles = Object.values(Role) as Role[];
+const isRole = (v: string): v is Role => (roles as string[]).includes(v);
 
 const InviteUsersMail: React.FC<InviteUsersMailProps> = ({ open, onClose }) => {
   const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState<Role | ''>('');
   const [code, setCode] = useState('');
   const [emails, setEmails] = useState<string[]>(['']);
 
@@ -121,7 +116,10 @@ ABEX Excelencia Robótica
           fullWidth
           SelectProps={{ native: true }}
           value={role}
-          onChange={(e) => setRole(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const v = e.target.value;
+            setRole(isRole(v) ? v : '');
+          }}
           sx={{ mt: 2 }}
         >
           <option value="" disabled>

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   getActividades,
@@ -16,19 +17,37 @@ router.use(protect);
 
 // Rutas para todos los roles
 router.route('/')
-  .get(authorize('administrador', 'tutor', 'csm', 'residente', 'participante'), getActividades);
+  .get(
+    authorize(
+      Role.ADMINISTRADOR,
+      Role.TUTOR,
+      Role.CSM,
+      Role.RESIDENTE,
+      Role.PARTICIPANTE
+    ),
+    getActividades
+  );
 
 router.route('/:id')
-  .get(authorize('administrador', 'tutor', 'csm', 'residente', 'participante'), getActividad);
+  .get(
+    authorize(
+      Role.ADMINISTRADOR,
+      Role.TUTOR,
+      Role.CSM,
+      Role.RESIDENTE,
+      Role.PARTICIPANTE
+    ),
+    getActividad
+  );
 // Rutas solo para administradores
 router.route('/')
-  .post(authorize('administrador'), createActividad);
+  .post(authorize(Role.ADMINISTRADOR), createActividad);
 
 router.route('/:id')
-  .put(authorize('administrador'), updateActividad)
-  .delete(authorize('administrador'), deleteActividad);
+  .put(authorize(Role.ADMINISTRADOR), updateActividad)
+  .delete(authorize(Role.ADMINISTRADOR), deleteActividad);
 
 router.route('/reorder')
-  .put(authorize('administrador'), reorderActividades);
+  .put(authorize(Role.ADMINISTRADOR), reorderActividades);
 
 module.exports = router;

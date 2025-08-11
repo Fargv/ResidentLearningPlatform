@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../../api';
 
-const FormadorUsuarios: React.FC = () => {
+const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -50,7 +50,7 @@ const FormadorUsuarios: React.FC = () => {
       if (user?.rol === 'csm') {
         res = await api.get('/users');
       } else if (user?.rol === 'profesor') {
-        res = await api.get(`/users/instructor/${user._id}/alumnos`);
+        res = await api.get(`/users/profesor/${user._id}/participantes`);
       } else if (user?.hospital?._id) {
         res = await api.get(`/users/hospital/${user.hospital._id}`);
       }
@@ -386,7 +386,7 @@ const FormadorUsuarios: React.FC = () => {
             slotProps={{ select: { native: true } }}
           >
             <option value="residente">{t('tutorUsers.form.roles.resident')}</option>
-            <option value="formador">{t('tutorUsers.form.roles.trainer')}</option>
+            <option value="tutor">{t('tutorUsers.form.roles.trainer')}</option>
           </TextField>
         </DialogContent>
         <DialogActions>
@@ -404,5 +404,5 @@ const FormadorUsuarios: React.FC = () => {
   );
 };
 
-export default FormadorUsuarios;
+export default TutorUsuarios;
 

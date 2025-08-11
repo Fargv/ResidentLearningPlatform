@@ -155,7 +155,7 @@ const getProgresoResidente = async (req, res, next) => {
             nombre: act.nombre,
             completada: act.estado === 'validado',
             comentariosResidente: act.comentariosResidente || '',
-            comentariosFormador: act.comentariosFormador || '',
+            comentariosTutor: act.comentariosTutor || '',
             fecha: act.fechaRealizacion,
             fechaValidacion: act.fechaValidacion,
             comentariosRechazo: act.comentariosRechazo || '',
@@ -260,21 +260,21 @@ const registrarProgreso = async (req, res, next) => {
       estado: actividad.requiereValidacion ? 'pendiente' : 'completado'
     });
 
-// Si la actividad requiere validación, crear notificación para formadores e instructores
-    if (actividad.requiereValidacion) {
-      // Obtener formadores del hospital del residente
-      const formadores = await User.find({
-        hospital: residente.hospital,
-        rol: 'tutor',
-        especialidad: { $in: [residente.especialidad, 'ALL'] }
-      });
+// Si la actividad requiere validación, crear notificación para tutores y profesores
+      if (actividad.requiereValidacion) {
+        // Obtener tutores del hospital del residente
+        const tutores = await User.find({
+          hospital: residente.hospital,
+          rol: 'tutor',
+          especialidad: { $in: [residente.especialidad, 'ALL'] }
+        });
 
-      // Obtener instructores de la misma sociedad, si aplica
-      const instructores = residente.sociedad
-        ? await User.find({ sociedad: residente.sociedad, rol: 'profesor' })
-        : [];
+        // Obtener profesores de la misma sociedad, si aplica
+        const profesores = residente.sociedad
+          ? await User.find({ sociedad: residente.sociedad, rol: 'profesor' })
+          : [];
 
-      const destinatarios = [...formadores, ...instructores];
+        const destinatarios = [...tutores, ...profesores];
 
       // Crear notificaciones para cada destinatario
       const notificacionesPromises = destinatarios.map(user => {
@@ -384,10 +384,10 @@ const actualizarProgreso = async (req, res, next) => {
 
 // @desc    Validar progreso de residente
 // @route   POST /api/progreso/:id/validar
-// @access  Private/Formador|Instructor|Admin
+// @access  Private/Tutor|Profesor|CSM|Admin
 const validarProgreso = async (req, res, next) => {
   try {
-    // Verificar que el usuario es formador, instructor o administrador
+    // Verificar que el usuario es tutor, profesor o administrador
     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'administrador') {
       return next(new ErrorResponse('No autorizado para validar progreso', 403));
     }
@@ -400,7 +400,7 @@ const validarProgreso = async (req, res, next) => {
       return next(new ErrorResponse(`Progreso no encontrado con id ${req.params.id}`, 404));
     }
 
-    // Si es formador o instructor, verificar que pertenece al mismo hospital o sociedad que el residente
+    // Si es tutor o profesor, verificar que pertenece al mismo hospital o sociedad que el residente
     if (
       (req.user.rol === 'tutor' &&
         (req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
@@ -419,7 +419,7 @@ const validarProgreso = async (req, res, next) => {
     // Crear validación
     const validacion = await Validacion.create({
       progreso: progreso._id,
-      formador: req.user._id,
+      tutor: req.user._id,
       comentarios: req.body.comentarios,
       firmaDigital: req.body.firmaDigital,
     });
@@ -431,18 +431,18 @@ const validarProgreso = async (req, res, next) => {
     progreso.estado = 'validado';
     await progreso.save();
 
-    // Eliminar notificaciones pendientes para formadores e instructores
-    const formadoresIds = (await User.find({
+    // Eliminar notificaciones pendientes para tutores y profesores
+    const tutoresIds = (await User.find({
       hospital: progreso.residente.hospital,
       rol: 'tutor',
       especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
-    const instructoresIds = progreso.residente.sociedad
+    const profesoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
       : [];
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        usuario: { $in: [...tutoresIds, ...profesoresIds] },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },
@@ -498,10 +498,10 @@ const validarProgreso = async (req, res, next) => {
 
 // @desc    Rechazar progreso de residente
 // @route   POST /api/progreso/:id/rechazar
-// @access  Private/Formador|Instructor|Admin
+// @access  Private/Tutor|Profesor|CSM|Admin
 const rechazarProgreso = async (req, res, next) => {
   try {
-    // Verificar que el usuario es formador, instructor o administrador
+    // Verificar que el usuario es tutor, profesor o administrador
     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'administrador') {
       return next(new ErrorResponse('No autorizado para rechazar progreso', 403));
     }
@@ -514,7 +514,7 @@ const rechazarProgreso = async (req, res, next) => {
       return next(new ErrorResponse(`Progreso no encontrado con id ${req.params.id}`, 404));
     }
 
-    // Si es formador o instructor, verificar que pertenece al mismo hospital o sociedad que el residente
+    // Si es tutor o profesor, verificar que pertenece al mismo hospital o sociedad que el residente
     if (
       (req.user.rol === 'tutor' &&
         (req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
@@ -534,18 +534,18 @@ const rechazarProgreso = async (req, res, next) => {
     progreso.estado = 'rechazado';
     await progreso.save();
 
-    // Eliminar notificaciones pendientes para formadores e instructores
-    const formadoresIds = (await User.find({
+    // Eliminar notificaciones pendientes para tutores y profesores
+    const tutoresIds = (await User.find({
       hospital: progreso.residente.hospital,
       rol: 'tutor',
       especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
-    const instructoresIds = progreso.residente.sociedad
+    const profesoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
       : [];
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        usuario: { $in: [...tutoresIds, ...profesoresIds] },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },
@@ -664,8 +664,8 @@ const marcarActividadCompletada = async (req, res, next) => {
   }
 };
 
-// GET /api/progreso/formador/pendientes
-// @access Private/Formador|Instructor
+// GET /api/progreso/tutor/pendientes
+// @access Private/Tutor|Profesor
 const getProgresosPendientesDelHospital = async (req, res, next) => {
   try {
     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'csm') {
@@ -721,8 +721,8 @@ const getProgresosPendientesDelHospital = async (req, res, next) => {
 
 
 // @desc Obtener lista plana de validaciones pendientes por actividad
-// @route GET /api/progreso/formador/validaciones/pendientes
-// @access Private/Formador|Instructor
+// @route GET /api/progreso/tutor/validaciones/pendientes
+// @access Private/Tutor|Profesor
 const getValidacionesPendientes = async (req, res, next) => {
   try {
     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'csm') {
@@ -886,24 +886,24 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
     }
 
     actividad.estado = 'validado';
-    actividad.comentariosFormador = comentarios;
+    actividad.comentariosTutor = comentarios;
     actividad.firmaDigital = firmaDigital;
     actividad.fechaValidacion = new Date();
 
     await progreso.save();
     await updatePhaseStatus(progreso);
 
-    const formadoresIds = (await User.find({
+    const tutoresIds = (await User.find({
       hospital: progreso.residente.hospital,
       rol: 'tutor',
       especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
-    const instructoresIds = progreso.residente.sociedad
+    const profesoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
       : [];
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        usuario: { $in: [...tutoresIds, ...profesoresIds] },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },
@@ -952,17 +952,17 @@ const rechazarActividad = async (req, res, next) => {
     await progreso.save();
     await progreso.populate(['fase', 'actividades.actividad']);
     
-    const formadoresIds = (await User.find({
+    const tutoresIds = (await User.find({
       hospital: progreso.residente.hospital,
       rol: 'tutor',
       especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
     })).map(f => f._id);
-    const instructoresIds = progreso.residente.sociedad
+    const profesoresIds = progreso.residente.sociedad
       ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
       : [];
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...formadoresIds, ...instructoresIds] },
+        usuario: { $in: [...tutoresIds, ...profesoresIds] },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },

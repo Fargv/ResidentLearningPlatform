@@ -43,7 +43,7 @@ const AdminProgresoUsuarios: React.FC = () => {
       try {
         const res = await api.get('/users');
         const all = res.data.data || res.data;
-        setUsers(all.filter((u: User) => u.rol === 'residente' || u.rol === 'alumno'));
+        setUsers(all.filter((u: User) => u.rol === 'residente' || u.rol === 'participante'));
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error al cargar usuarios');
       } finally {

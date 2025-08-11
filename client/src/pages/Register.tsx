@@ -106,7 +106,7 @@ const Register: React.FC = () => {
           ...prev,
           rol: rolResp,
           tipo: tipoResp,
-          ...(rolResp === 'coordinador' && { hospital: '', sociedad: '' })
+          ...(rolResp === 'csm' && { hospital: '', sociedad: '' })
         }));
         setCodigoError(null);
         setShowForm(true);
@@ -232,7 +232,7 @@ const Register: React.FC = () => {
                 <TextField margin="normal" fullWidth label={t('register.confirmPassword')} name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
                 {passwordError && <Alert severity="warning">{passwordError}</Alert>}
 
-                {(rol === 'residente' || rol === 'tutor' || rol === 'alumno' || rol === 'instructor') && (
+                {(rol === 'residente' || rol === 'tutor' || rol === 'participante' || rol === 'profesor') && (
                   <FormControl fullWidth margin="normal" required={hospitalRequired} disabled={loading}>
                     <InputLabel id="hospital-label">{t('register.hospital')}</InputLabel>
                     <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label={t('register.hospital')} onChange={onSelectHospital}>
@@ -243,7 +243,7 @@ const Register: React.FC = () => {
                   </FormControl>
                 )}
 
-                {rol === 'coordinador' && (
+                {rol === 'csm' && (
                   <FormControl fullWidth margin="normal" required disabled={loading}>
                     <InputLabel id="zona-label">{t('register.zone')}</InputLabel>
                     <Select labelId="zona-label" id="zona" name="zona" value={zona} label={t('register.zone')} onChange={(e) => onChange(e as any)}>

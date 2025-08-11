@@ -85,7 +85,7 @@ const TutorValidaciones: React.FC = () => {
       setLoading(true);
 
       const respuesta = await api.get(
-        '/progreso/formador/validaciones/pendientes'
+        '/progreso/tutor/validaciones/pendientes'
       );
 
       const { pendientes, validadas, rechazadas } = respuesta.data.data || {};

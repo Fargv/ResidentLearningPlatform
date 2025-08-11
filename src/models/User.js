@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { Role } = require('../utils/roles');
 
 // Definición del esquema de usuario
 const userSchema = new mongoose.Schema({
@@ -27,14 +28,14 @@ const userSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['residente', 'tutor', 'administrador', 'participante', 'profesor', 'csm'],
+    enum: Object.values(Role),
     required: [true, 'Por favor especifique un rol']
   },
   hospital: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
     required: function() {
-      return this.rol === 'residente' || this.rol === 'tutor';
+      return this.rol === Role.RESIDENTE || this.rol === Role.TUTOR;
     }
   },
 
@@ -43,14 +44,14 @@ const userSchema = new mongoose.Schema({
     // 'ALL' solo es válida para tutores
     enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL', 'ALL'],
     required: function() {
-      return this.rol === 'residente' || this.rol === 'tutor';
+      return this.rol === Role.RESIDENTE || this.rol === Role.TUTOR;
     }
   },
    tipo: {
     type: String,
     enum: ['Programa Residentes', 'Programa Sociedades'],
     required: function() {
-      return this.rol !== 'administrador';
+      return this.rol !== Role.ADMINISTRADOR;
     }
   },
   sociedad: {
@@ -64,7 +65,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS'],
     required: function() {
-      return this.rol === 'csm';
+      return this.rol === Role.CSM;
     }
   },
   activo: {

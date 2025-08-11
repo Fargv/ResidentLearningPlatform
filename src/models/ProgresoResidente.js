@@ -11,7 +11,7 @@ const actividadSchema = new Schema({
     refPath: 'actividades.actividadModel',
     required: true
   },
-  comentariosFormador: String,
+  comentariosTutor: String,
   comentariosRechazo: String,
   firmaDigital: String,
   fechaValidacion: Date,
