@@ -28,7 +28,7 @@ const FormadorUsuarios: React.FC = () => {
     email: '',
     nombre: '',
     apellidos: '',
-    rol: user?.rol === 'instructor' ? 'alumno' : 'residente',
+    rol: user?.rol === 'profesor' ? 'participante' : 'residente',
     hospital: user?.hospital?._id || ''
   });
 
@@ -47,9 +47,9 @@ const FormadorUsuarios: React.FC = () => {
   const fetchUsuarios = useCallback(async () => {
     try {
       let res;
-      if (user?.rol === 'coordinador') {
+      if (user?.rol === 'csm') {
         res = await api.get('/users');
-      } else if (user?.rol === 'instructor') {
+      } else if (user?.rol === 'profesor') {
         res = await api.get(`/users/instructor/${user._id}/alumnos`);
       } else if (user?.hospital?._id) {
         res = await api.get(`/users/hospital/${user.hospital._id}`);
@@ -61,7 +61,7 @@ const FormadorUsuarios: React.FC = () => {
         setUsuarios(filtrados);
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || t('trainerUsers.loadError'));
+      setError(err.response?.data?.error || t('tutorUsers.loadError'));
     } finally {
       setLoading(false);
     }
@@ -92,14 +92,14 @@ const FormadorUsuarios: React.FC = () => {
       setOpenDialog(false);
       setSnackbar({
         open: true,
-        message: editar ? t('trainerUsers.updated') : t('trainerUsers.invited'),
+        message: editar ? t('tutorUsers.updated') : t('tutorUsers.invited'),
         severity: 'success'
       });
 
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('trainerUsers.error'),
+        message: err.response?.data?.error || t('tutorUsers.error'),
         severity: 'error'
       });
     } finally {
@@ -115,13 +115,13 @@ const FormadorUsuarios: React.FC = () => {
       setUsuarios(usuarios.filter(u => u._id !== usuarioId));
       setSnackbar({
         open: true,
-        message: t('trainerUsers.deleted'),
+        message: t('tutorUsers.deleted'),
         severity: 'success'
       });
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || t('trainerUsers.deleteError'),
+        message: err.response?.data?.error || t('tutorUsers.deleteError'),
         severity: 'error'
       });
     } finally {
@@ -197,7 +197,7 @@ const FormadorUsuarios: React.FC = () => {
   return (
     <Box sx={{ px: 3, py: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4">{t('trainerUsers.title')}</Typography>
+        <Typography variant="h4">{t('tutorUsers.title')}</Typography>
         <Button
           variant="contained"
           color="primary"
@@ -208,13 +208,13 @@ const FormadorUsuarios: React.FC = () => {
               email: '',
               nombre: '',
               apellidos: '',
-              rol: user?.rol === 'instructor' ? 'alumno' : 'residente',
+              rol: user?.rol === 'profesor' ? 'participante' : 'residente',
               hospital: user?.hospital?._id || ''
             });
             setOpenDialog(true);
           }}
         >
-          {t('trainerUsers.invite')}
+          {t('tutorUsers.invite')}
         </Button>
       </Box>
 
@@ -227,7 +227,7 @@ const FormadorUsuarios: React.FC = () => {
             setSelectedRoles(newValue as string[])
           }
           renderInput={(params) => (
-            <TextField {...params} label={t('trainerUsers.fields.role')} />
+            <TextField {...params} label={t('tutorUsers.fields.role')} />
           )}
           sx={{ minWidth: 200 }}
         />
@@ -255,7 +255,7 @@ const FormadorUsuarios: React.FC = () => {
           )}
           sx={{ minWidth: 200 }}
         />
-        {['formador', 'coordinador'].includes(user?.rol || '') && (
+        {['tutor', 'csm'].includes(user?.rol || '') && (
           <>
             <Autocomplete
               multiple
@@ -292,7 +292,7 @@ const FormadorUsuarios: React.FC = () => {
             />
           </>
         )}
-        {user?.rol === 'instructor' && (
+        {user?.rol === 'profesor' && (
           <Autocomplete
             multiple
             options={societyOptions}
@@ -319,11 +319,11 @@ const FormadorUsuarios: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('trainerUsers.table.name')}</TableCell>
-                <TableCell>{t('trainerUsers.table.email')}</TableCell>
-                <TableCell>{t('trainerUsers.table.role')}</TableCell>
-                <TableCell>{t('trainerUsers.table.status')}</TableCell>
-                <TableCell align="right">{t('trainerUsers.table.actions')}</TableCell>
+                <TableCell>{t('tutorUsers.table.name')}</TableCell>
+                <TableCell>{t('tutorUsers.table.email')}</TableCell>
+                <TableCell>{t('tutorUsers.table.role')}</TableCell>
+                <TableCell>{t('tutorUsers.table.status')}</TableCell>
+                <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -336,8 +336,8 @@ const FormadorUsuarios: React.FC = () => {
                     <Chip
                       label={t(
                         usuario.activo
-                          ? 'trainerUsers.states.active'
-                          : 'trainerUsers.states.inactive'
+                          ? 'tutorUsers.states.active'
+                          : 'tutorUsers.states.inactive'
                       )}
                       color={usuario.activo ? 'success' : 'error'}
                       size="small"
@@ -370,29 +370,29 @@ const FormadorUsuarios: React.FC = () => {
       </Paper>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>{t(editar ? 'trainerUsers.edit' : 'trainerUsers.invite')}</DialogTitle>
+        <DialogTitle>{t(editar ? 'tutorUsers.edit' : 'tutorUsers.invite')}</DialogTitle>
         <DialogContent>
-          <TextField fullWidth margin="dense" label={t('trainerUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
-          <TextField fullWidth margin="dense" label={t('trainerUsers.form.name')} name="nombre" value={formData.nombre} onChange={handleChange} />
-          <TextField fullWidth margin="dense" label={t('trainerUsers.form.surname')} name="apellidos" value={formData.apellidos} onChange={handleChange} />
+          <TextField fullWidth margin="dense" label={t('tutorUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
+          <TextField fullWidth margin="dense" label={t('tutorUsers.form.name')} name="nombre" value={formData.nombre} onChange={handleChange} />
+          <TextField fullWidth margin="dense" label={t('tutorUsers.form.surname')} name="apellidos" value={formData.apellidos} onChange={handleChange} />
           <TextField
             select
             fullWidth
             margin="dense"
-            label={t('trainerUsers.form.role')}
+            label={t('tutorUsers.form.role')}
             name="rol"
             value={formData.rol}
             onChange={handleChange}
             slotProps={{ select: { native: true } }}
           >
-            <option value="residente">{t('trainerUsers.form.roles.resident')}</option>
-            <option value="formador">{t('trainerUsers.form.roles.trainer')}</option>
+            <option value="residente">{t('tutorUsers.form.roles.resident')}</option>
+            <option value="formador">{t('tutorUsers.form.roles.trainer')}</option>
           </TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>{t('trainerUsers.dialog.cancel')}</Button>
+          <Button onClick={() => setOpenDialog(false)}>{t('tutorUsers.dialog.cancel')}</Button>
           <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
-            {procesando ? t('trainerUsers.dialog.saving') : editar ? t('trainerUsers.dialog.save') : t('trainerUsers.dialog.invite')}
+            {procesando ? t('tutorUsers.dialog.saving') : editar ? t('tutorUsers.dialog.save') : t('tutorUsers.dialog.invite')}
           </Button>
         </DialogActions>
       </Dialog>

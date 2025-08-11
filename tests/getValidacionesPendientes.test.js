@@ -13,7 +13,7 @@ describe('getValidacionesPendientes filtro sociedad', () => {
       .mockResolvedValueOnce([]);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ populate });
 
-    const req = { user: { rol: 'formador', hospital: 'h1' }, query: { sociedad: 's1' } };
+    const req = { user: { rol: 'tutor', hospital: 'h1' }, query: { sociedad: 's1' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
     await getValidacionesPendientes(req, res, jest.fn());

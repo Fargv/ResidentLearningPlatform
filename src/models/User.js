@@ -27,23 +27,23 @@ const userSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['residente', 'formador', 'administrador', 'alumno', 'instructor', 'coordinador'],
+    enum: ['residente', 'tutor', 'administrador', 'participante', 'profesor', 'csm'],
     required: [true, 'Por favor especifique un rol']
   },
   hospital: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
     required: function() {
-      return this.rol === 'residente' || this.rol === 'formador';
+      return this.rol === 'residente' || this.rol === 'tutor';
     }
   },
 
   especialidad: {
     type: String,
-    // 'ALL' solo es válida para formadores
+    // 'ALL' solo es válida para tutores
     enum: ['URO', 'GEN', 'GYN', 'THOR', 'ORL', 'ALL'],
     required: function() {
-      return this.rol === 'residente' || this.rol === 'formador';
+      return this.rol === 'residente' || this.rol === 'tutor';
     }
   },
    tipo: {
@@ -64,7 +64,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS'],
     required: function() {
-      return this.rol === 'coordinador';
+      return this.rol === 'csm';
     }
   },
   activo: {

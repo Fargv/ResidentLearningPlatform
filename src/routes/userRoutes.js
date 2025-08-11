@@ -24,15 +24,15 @@ const {
 router.use(protect);
 
 // Rutas solo para administradores y formadores
-router.get('/hospital/:hospitalId', authorize('administrador', 'formador', 'coordinador'), getUsersByHospital);
+router.get('/hospital/:hospitalId', authorize('administrador', 'tutor', 'csm'), getUsersByHospital);
 
 // Rutas para administradores, formadores, coordinadores e instructores
 router.route('/')
-  .get(authorize('administrador', 'formador', 'coordinador', 'instructor'), getUsers)
+  .get(authorize('administrador', 'tutor', 'csm', 'profesor'), getUsers)
   .post(authorize('administrador'), createUser);
 
 router.route('/invite')
-  .post(authorize('administrador', 'instructor'), inviteUser);
+  .post(authorize('administrador', 'profesor'), inviteUser);
 
 router.route('/invitations')
   .get(authorize('administrador'), getInvitations);
@@ -42,10 +42,10 @@ router.route('/invitations/:id')
 
 // Rutas para administradores y formadores
 router.route('/formador/:id/residentes')
-  .get(authorize('administrador', 'formador', 'coordinador'), getFormadorResidentes);
+  .get(authorize('administrador', 'tutor', 'csm'), getFormadorResidentes);
 
 router.route('/instructor/:id/alumnos')
-  .get(authorize('administrador', 'instructor'), getInstructorAlumnos);
+  .get(authorize('administrador', 'profesor'), getInstructorAlumnos);
 
 // Rutas para todos los roles
 router.route('/residente/:id/formadores')
@@ -53,8 +53,8 @@ router.route('/residente/:id/formadores')
 
 router.route('/:id')
   .get(authorize('administrador'), getUser)
-  .put(authorize('administrador', 'instructor'), updateUser)
-  .delete(authorize('administrador', 'instructor'), deleteUser);
+  .put(authorize('administrador', 'profesor'), updateUser)
+  .delete(authorize('administrador', 'profesor'), deleteUser);
 
 router.route('/:id/password')
   .put(authorize('administrador'), updateUserPassword);

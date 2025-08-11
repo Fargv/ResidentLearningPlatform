@@ -6,7 +6,7 @@
     "coordinator": "Erresidentziako koordinatzailea {{hospital}}",
     "resident": "Erietxeko egoiliarra {{hospital}}",
     "student": "Elkarteen programako ikaslea {{title}}",
-    "instructor": "Elkarteen programako irakaslea {{title}}"
+    "profesor": "Elkarteen programako irakaslea {{title}}"
   },
   "actions": {
     "dashboard": "Arbela",
@@ -638,11 +638,11 @@
   },
   "roles": {
     "residente": "Egoilarra",
-    "formador": "Prestatzailea",
-    "coordinador": "Koordinatzailea",
+    "tutor": "Prestatzailea",
+    "csm": "Koordinatzailea",
     "administrador": "Administratzailea",
-    "alumno": "Ikaslea",
-    "instructor": "Instruktorea"
+    "participante": "Ikaslea",
+    "profesor": "Instruktorea"
   },
   "notifications": {
     "title": "Jakinarazpenak",

@@ -41,5 +41,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
 - 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
 - 2025-08-30: Creación de la página `PrivacyPolicy` con internacionalización y metadatos de actualización.
+- 2025-08-11: Actualización de roles `'formador'`, `'coordinador'`, `'instructor'` y `'alumno'` a `'tutor'`, `'csm'`, `'profesor'` y `'participante'` en modelos y pruebas.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

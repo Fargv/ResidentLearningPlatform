@@ -16,13 +16,13 @@ jest.mock('../src/models/AccessCode', () => {
 });
 const AccessCode = require('../src/models/AccessCode');
 
-describe('register coordinador access code', () => {
+describe('register csm access code', () => {
   afterEach(async () => {
     jest.restoreAllMocks();
     await AccessCode.deleteMany();
   });
 
-  test('ABEXCOOR2025 asigna rol coordinador con zona', async () => {
+  test('ABEXCOOR2025 asigna rol csm con zona', async () => {
     const req = {
       body: {
         nombre: 'c',
@@ -35,11 +35,11 @@ describe('register coordinador access code', () => {
       }
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-    await AccessCode.create({ codigo: 'ABEXCOOR2025', rol: 'coordinador', tipo: 'Programa Residentes' });
+    await AccessCode.create({ codigo: 'ABEXCOOR2025', rol: 'csm', tipo: 'Programa Residentes' });
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
     jest.spyOn(User, 'create').mockResolvedValue({
       _id: 'u1',
-      rol: 'coordinador',
+      rol: 'csm',
       tipo: 'Programa Residentes',
       zona: 'NORTE',
       hospital: null
@@ -48,7 +48,7 @@ describe('register coordinador access code', () => {
     await register(req, res, jest.fn());
 
     expect(User.create).toHaveBeenCalledWith(
-      expect.objectContaining({ rol: 'coordinador', tipo: 'Programa Residentes', zona: 'NORTE', hospital: undefined })
+      expect.objectContaining({ rol: 'csm', tipo: 'Programa Residentes', zona: 'NORTE', hospital: undefined })
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXCOOR2025' });

@@ -160,7 +160,7 @@ exports.deleteHospital = async (req, res, next) => {
 
 // @desc    Obtener residentes de un hospital
 // @route   GET /api/hospitals/:id/residentes
-// @access  Private/Admin,Formador
+// @access  Private/Admin,tutor
 exports.getHospitalResidentes = async (req, res, next) => {
   try {
     const hospital = await Hospital.findById(req.params.id);
@@ -197,7 +197,7 @@ exports.getHospitalFormadores = async (req, res, next) => {
 
     const formadores = await User.find({ 
       hospital: req.params.id,
-      rol: 'formador'
+      rol: 'tutor'
     });
 
     res.status(200).json({
@@ -212,7 +212,7 @@ exports.getHospitalFormadores = async (req, res, next) => {
 
 // @desc    Obtener estadísticas de un hospital
 // @route   GET /api/hospitals/:id/stats
-// @access  Private/Admin,Formador
+// @access  Private/Admin,tutor
 exports.getHospitalStats = async (req, res, next) => {
   try {
     const hospital = await Hospital.findById(req.params.id);
@@ -229,7 +229,7 @@ exports.getHospitalStats = async (req, res, next) => {
     
     const formadoresCount = await User.countDocuments({ 
       hospital: req.params.id,
-      rol: 'formador'
+      rol: 'tutor'
     });
 
     // Obtener estadísticas adicionales si es necesario

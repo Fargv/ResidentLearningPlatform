@@ -24,11 +24,11 @@ interface AccessCode {
 
 const roles = [
   'residente',
-  'formador',
-  'coordinador',
+  'tutor',
+  'csm',
   'administrador',
-  'alumno',
-  'instructor',
+  'participante',
+  'profesor',
 ];
 
 const InviteUsersMail: React.FC<InviteUsersMailProps> = ({ open, onClose }) => {

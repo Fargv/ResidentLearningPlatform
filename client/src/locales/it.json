@@ -6,7 +6,7 @@
     "coordinator": "Coordinatore dei residenti dell'ospedale {{hospital}}",
     "resident": "Residente dell'ospedale {{hospital}}",
     "student": "Studente del programma delle società {{title}}",
-    "instructor": "Istruttore del programma delle società {{title}}"
+    "profesor": "Istruttore del programma delle società {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -254,11 +254,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "formador": "Formatore",
-    "coordinador": "Coordinatore",
+    "tutor": "Formatore",
+    "csm": "Coordinatore",
     "administrador": "Amministratore",
-    "alumno": "Studente",
-    "instructor": "Istruttore"
+    "participante": "Studente",
+    "profesor": "Istruttore"
   },
   "notifications": {
     "title": "Notifiche",

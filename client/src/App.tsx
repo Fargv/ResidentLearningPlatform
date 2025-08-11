@@ -12,7 +12,7 @@ import { AuthProvider } from './context/AuthContext';
 // Componentes de enrutamiento
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
-import FormadorRoute from './components/routing/FormadorRoute';
+import TutorRoute from './components/routing/TutorRoute';
 import ResidenteRoute from './components/routing/ResidenteRoute';
 
 // Páginas públicas
@@ -26,7 +26,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Dashboard from './pages/Dashboard';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
-import FormadorValidaciones from './pages/dashboard/FormadorValidaciones';
+import TutorValidaciones from './pages/dashboard/TutorValidaciones';
 import Usuarios from './pages/dashboard/Usuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
@@ -183,17 +183,17 @@ function App() {
                 </ResidenteRoute>
               } />
 
-              {/* Rutas para formadores */}
+              {/* Rutas para tutores */}
               <Route path="validaciones" element={
-                <FormadorRoute>
-                  <FormadorValidaciones />
-                </FormadorRoute>
+                <TutorRoute>
+                  <TutorValidaciones />
+                </TutorRoute>
               } />
-              {/* Rutas para formadores y administradores */}
+              {/* Rutas para tutores y administradores */}
               <Route path="usuarios" element={
-                <FormadorRoute>
+                <TutorRoute>
                   <Usuarios />
-                </FormadorRoute>
+                </TutorRoute>
               } />
 
               {/* Rutas solo para administradores */}

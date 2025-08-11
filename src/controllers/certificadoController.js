@@ -13,7 +13,7 @@ exports.descargarCertificado = async (req, res, next) => {
         .json({ success: false, error: "Usuario no encontrado" });    }
 
     if (
-      (req.user.rol === "residente" || req.user.rol === "alumno") &&
+      (req.user.rol === "residente" || req.user.rol === "participante") &&
       req.user.id !== req.params.id
     ) {
       return res.status(403).json({ success: false, error: "No autorizado" });
@@ -75,7 +75,7 @@ exports.descargarCertificado = async (req, res, next) => {
     const programa =
       usuario.rol === "residente"
         ? "Programa Residentes"
-        : usuario.rol === "alumno"
+        : usuario.rol === "participante"
           ? "Programa Sociedades"
           : usuario.tipo;
 

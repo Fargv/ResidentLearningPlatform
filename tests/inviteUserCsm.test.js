@@ -8,21 +8,21 @@ const { createAuditLog } = require('../src/utils/auditLog');
 jest.mock('../src/utils/sendEmail');
 jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
 
-describe('inviteUser coordinador', () => {
+describe('inviteUser csm', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  test('crea invitación para coordinador', async () => {
+  test('crea invitación para csm', async () => {
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
-    const created = { _id: 'i1', email: 'coord@test.com', rol: 'coordinador' };
+    const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm' };
     jest.spyOn(Invitacion, 'create').mockResolvedValue(created);
     sendEmail.mockResolvedValue();
 
     const req = {
-      body: { email: 'coord@test.com', rol: 'coordinador', hospital: 'h1' },
+      body: { email: 'coord@test.com', rol: 'csm', hospital: 'h1' },
       protocol: 'http',
       get: () => 'localhost',
       user: { _id: 'admin', id: 'admin' },
@@ -33,7 +33,7 @@ describe('inviteUser coordinador', () => {
     await inviteUser(req, res, jest.fn());
 
     expect(Invitacion.create).toHaveBeenCalledWith(
-      expect.objectContaining({ rol: 'coordinador' })
+      expect.objectContaining({ rol: 'csm' })
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });

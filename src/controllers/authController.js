@@ -57,7 +57,7 @@ const register = async (req, res, next) => {
       zona = selectedHospital.zona;
     }
 
-    if (rol === 'coordinador' && !zona) {
+    if (rol === 'csm' && !zona) {
       return next(new ErrorResponse('Zona requerida', 400));
     }
 
@@ -65,7 +65,7 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
     }
 
-    if (tipo === 'Programa Residentes' && !hospital && (rol === 'residente' || rol === 'formador')) {
+    if (tipo === 'Programa Residentes' && !hospital && (rol === 'residente' || rol === 'tutor')) {
       return next(new ErrorResponse('Hospital requerido', 400));
     }
 
@@ -101,7 +101,7 @@ const register = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    if (rol === 'residente' || rol === 'alumno') {
+    if (rol === 'residente' || rol === 'participante') {
       await inicializarProgresoFormativo(newUser);
     }
 

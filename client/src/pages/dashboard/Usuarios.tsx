@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import FormadorUsuarios from './FormadorUsuarios';
+import TutorUsuarios from './TutorUsuarios';
 import AdminUsuarios from './AdminUsuarios';
 
 const Usuarios: React.FC = () => {
@@ -10,8 +10,8 @@ const Usuarios: React.FC = () => {
     return <AdminUsuarios />;
   }
 
-  // FormadorRoute garantiza que solo formadores o administradores lleguen aquí
-  return <FormadorUsuarios />;
+  // TutorRoute garantiza que solo tutores o administradores lleguen aquí
+  return <TutorUsuarios />;
 };
 
 export default Usuarios;

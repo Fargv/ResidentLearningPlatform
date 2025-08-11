@@ -39,7 +39,7 @@ import { useTranslation } from 'react-i18next';
 
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
-import FormadorValidaciones from './dashboard/FormadorValidaciones';
+import TutorValidaciones from './dashboard/TutorValidaciones';
 import Usuarios from './dashboard/Usuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
@@ -102,21 +102,21 @@ const Dashboard: React.FC = () => {
         text: t('actions.dashboard'),
         icon: <DashboardIcon />,
         path: '/dashboard',
-        roles: ['administrador', 'formador', 'coordinador', 'residente', 'alumno']
+        roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
       }
     ];
 
-    if (user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor') {
-      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno', 'instructor'] });
+    if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
     }
 
 
-        if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
-      items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
+        if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
     }
 
-    if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
-      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador', 'instructor'] });
+    if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
     }
 
     if (user?.rol === 'administrador') {
@@ -273,7 +273,7 @@ const Dashboard: React.FC = () => {
         <Toolbar />
         <Routes>
   <Route path="/" element={<DashboardHome />} />
-  <Route path="/validaciones" element={<FormadorValidaciones />} />
+  <Route path="/validaciones" element={<TutorValidaciones />} />
   <Route path="/usuarios" element={<Usuarios />} />
   <Route path="/hospitals" element={<AdminHospitales />} />
   {user?.rol === 'administrador' && (
@@ -295,7 +295,7 @@ const Dashboard: React.FC = () => {
     <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
-  {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (
+  {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
     <Route path="/fases" element={<ResidenteFases />} />
   ) : null}
   <Route path="/perfil" element={<Perfil />} />

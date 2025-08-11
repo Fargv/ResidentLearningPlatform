@@ -188,10 +188,10 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
               onChange={handleSelectChange}
             >
               <MenuItem value="residente">Residente</MenuItem>
-              <MenuItem value="formador">Formador</MenuItem>
-              <MenuItem value="coordinador">Coordinador</MenuItem>
-              <MenuItem value="alumno">Alumno</MenuItem>
-              <MenuItem value="instructor">Instructor</MenuItem>
+              <MenuItem value="tutor">Tutor</MenuItem>
+              <MenuItem value="csm">CSM</MenuItem>
+              <MenuItem value="participante">Participante</MenuItem>
+              <MenuItem value="profesor">Profesor</MenuItem>
               <MenuItem value="administrador">Administrador</MenuItem>
             </Select>
           </FormControl>

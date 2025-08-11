@@ -10,11 +10,11 @@ const invitacionSchema = new mongoose.Schema({
     type: String,
     enum: [
       'residente',
-      'formador',
+      'tutor',
       'administrador',
-      'alumno',
-      'instructor',
-      'coordinador'
+      'participante',
+      'profesor',
+      'csm'
     ],
     required: [true, 'Por favor especifique un rol']
   },
@@ -22,7 +22,7 @@ const invitacionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
     required: function() {
-      return this.rol === 'residente' || this.rol === 'formador';
+      return this.rol === 'residente' || this.rol === 'tutor';
     }
   },
   token: {

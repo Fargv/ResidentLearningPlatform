@@ -220,10 +220,10 @@ const DashboardHome: React.FC = () => {
       const isResidentes =
         user?.tipo === "Programa Residentes" &&
         user?._id &&
-        ["residente", "formador", "instructor", "alumno"].includes(user.rol);
+        ["residente", "tutor", "profesor", "participante"].includes(user.rol);
       const isSociedades =
         user?.tipo === "Programa Sociedades" &&
-        user?.rol === "alumno" &&
+        user?.rol === "participante" &&
         !!user?._id;
 
       if (!isResidentes && !isSociedades) {
@@ -268,7 +268,7 @@ const DashboardHome: React.FC = () => {
           setSocAllValidado(allValidado);
         }
       } catch (err: any) {
-        if (!(err?.response?.status === 404 && user?.rol === "coordinador")) {
+        if (!(err?.response?.status === 404 && user?.rol === "csm")) {
           console.error("Error cargando progreso", err);
         }
       } finally {
@@ -310,7 +310,7 @@ const DashboardHome: React.FC = () => {
 
   const actions: Action[] = [];
 
-  if (user?.rol === "residente" || user?.rol === "alumno") {
+  if (user?.rol === "residente" || user?.rol === "participante") {
     actions.push({
       label: t('actions.myProgress'),
       path: "/dashboard/progreso",
@@ -320,8 +320,8 @@ const DashboardHome: React.FC = () => {
 
   if (
     user?.rol === "residente" ||
-    user?.rol === "alumno" ||
-    user?.rol === "instructor"
+    user?.rol === "participante" ||
+    user?.rol === "profesor"
   ) {
     actions.push({
       label: t('actions.trainingPhases'),
@@ -330,7 +330,7 @@ const DashboardHome: React.FC = () => {
     });
   }
 
-  if (user?.rol === "formador" || user?.rol === "coordinador" || user?.rol === "instructor") {
+  if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
     actions.push({
       label: t('actions.validations'),
       path: "/dashboard/validaciones",
@@ -338,7 +338,7 @@ const DashboardHome: React.FC = () => {
     });
   }
 
-  if (user?.rol === "formador" || user?.rol === "coordinador") {
+  if (user?.rol === "tutor" || user?.rol === "csm") {
     actions.push({
       label: t('actions.myUsers'),
       path: "/dashboard/usuarios",
@@ -376,7 +376,7 @@ const DashboardHome: React.FC = () => {
 
   const allValidado =
     user?.tipo === 'Programa Residentes' &&
-    (user?.rol === 'residente' || user?.rol === 'alumno') &&
+    (user?.rol === 'residente' || user?.rol === 'participante') &&
     phaseSummary.length > 0 &&
     phaseSummary.every((p) => p.percent === 100);
 
@@ -399,19 +399,19 @@ const DashboardHome: React.FC = () => {
     switch (user.rol) {
       case "administrador":
         return t('role.adminPanel');
-      case "formador":
-        return hospital ? t('role.trainer', { hospital }) : "";
-      case "coordinador":
-        return hospital ? t('role.coordinator', { hospital }) : "";
+      case "tutor":
+        return hospital ? t('role.tutor', { hospital }) : "";
+      case "csm":
+        return hospital ? t('role.csm', { hospital }) : "";
       case "residente":
         return hospital ? t('role.resident', { hospital }) : "";
-      case "alumno":
+      case "participante":
         return sociedadInfo?.titulo
-          ? t('role.student', { title: sociedadInfo.titulo })
+          ? t('role.participant', { title: sociedadInfo.titulo })
           : "";
-      case "instructor":
+      case "profesor":
         return sociedadInfo?.titulo
-          ? t('role.instructor', { title: sociedadInfo.titulo })
+          ? t('role.professor', { title: sociedadInfo.titulo })
           : "";
       default:
         return "";
@@ -511,10 +511,10 @@ const DashboardHome: React.FC = () => {
       )}
       {user?.tipo === "Programa Residentes" &&
         (user?.rol === "residente" ||
-          user?.rol === "formador" ||
-          user?.rol === "coordinador" ||
-          user?.rol === "instructor" ||
-          user?.rol === "alumno") &&
+          user?.rol === "tutor" ||
+          user?.rol === "csm" ||
+          user?.rol === "profesor" ||
+          user?.rol === "participante") &&
         phaseSummary.length > 0 && (
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>

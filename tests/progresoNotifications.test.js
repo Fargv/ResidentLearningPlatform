@@ -38,14 +38,14 @@ describe('progresoController notifications', () => {
     jest.spyOn(Validacion, 'findById').mockReturnValue({ populate: valPopulate });
     jest
       .spyOn(User, 'find')
-      .mockResolvedValueOnce([{ _id: 'f1' }])
-      .mockResolvedValueOnce([{ _id: 'i1' }]);
+      .mockResolvedValueOnce([{ _id: 't1' }])
+      .mockResolvedValueOnce([{ _id: 'pr1' }]);
     const updateSpy = jest.spyOn(Notificacion, 'updateMany').mockResolvedValue();
     jest.spyOn(Notificacion, 'create').mockResolvedValue({});
 
     const req = {
       params: { id: 'p1' },
-      user: { rol: 'formador', hospital: 'h1', _id: 'f1', nombre: 'F', apellidos: 'L' },
+      user: { rol: 'tutor', hospital: 'h1', _id: 't1', nombre: 'F', apellidos: 'L' },
       body: { comentarios: 'ok', firmaDigital: 'sig' },
       ip: '::1',
       headers: { 'user-agent': 'jest' }
@@ -56,7 +56,7 @@ describe('progresoController notifications', () => {
 
     expect(updateSpy).toHaveBeenCalledWith(
       {
-        usuario: { $in: ['f1', 'i1'] },
+        usuario: { $in: ['t1', 'pr1'] },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': 'p1'
       },
@@ -79,8 +79,8 @@ describe('progresoController notifications', () => {
       .mockReturnValue({ populate: jest.fn().mockResolvedValue(progreso) });
     jest
       .spyOn(User, 'find')
-      .mockResolvedValueOnce([{ _id: 'f1' }])
-      .mockResolvedValueOnce([{ _id: 'i1' }]);
+      .mockResolvedValueOnce([{ _id: 't1' }])
+      .mockResolvedValueOnce([{ _id: 'pr1' }]);
     const updateSpy = jest.spyOn(Notificacion, 'updateMany').mockResolvedValue();
     jest.spyOn(Notificacion, 'create').mockResolvedValue({});
 
@@ -94,7 +94,7 @@ describe('progresoController notifications', () => {
 
     expect(updateSpy).toHaveBeenCalledWith(
       {
-        usuario: { $in: ['f1', 'i1'] },
+        usuario: { $in: ['t1', 'pr1'] },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': 'p2'
       },
@@ -117,8 +117,8 @@ describe('progresoController notifications', () => {
     });
     jest
       .spyOn(User, 'find')
-      .mockResolvedValueOnce([{ _id: 'f1' }])
-      .mockResolvedValueOnce([{ _id: 'i1' }]);
+      .mockResolvedValueOnce([{ _id: 't1' }])
+      .mockResolvedValueOnce([{ _id: 'pr1' }]);
     jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({ _id: 'p1' });
     const populate = jest.fn();
     populate
@@ -143,7 +143,7 @@ describe('progresoController notifications', () => {
     expect(createSpy).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
-        usuario: 'f1',
+        usuario: 't1',
         tipo: 'validacion',
         enlace: '/dashboard/validaciones'
       })
@@ -151,7 +151,7 @@ describe('progresoController notifications', () => {
     expect(createSpy).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
-        usuario: 'i1',
+        usuario: 'pr1',
         tipo: 'validacion',
         enlace: '/dashboard/validaciones'
       })

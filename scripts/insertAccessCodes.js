@@ -16,7 +16,7 @@ async function run() {
 
     const codes = [
       { codigo: 'ADMIN', rol: 'administrador', tipo: 'Programa Residentes' },
-      { codigo: 'FORMADOR', rol: 'formador', tipo: 'Programa Residentes' },
+      { codigo: 'TUTOR', rol: 'tutor', tipo: 'Programa Residentes' },
       { codigo: 'RESIDENTE', rol: 'residente', tipo: 'Programa Residentes' }
     ];
 

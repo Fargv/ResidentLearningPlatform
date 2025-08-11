@@ -6,7 +6,7 @@
     "coordinator": "Koordinator für Krankenhausbewohner {{hospital}}",
     "resident": "Bewohner des Krankenhauses {{hospital}}",
     "student": "Teilnehmer am Gesellschaftsprogramm {{title}}",
-    "instructor": "Ausbilder im Gesellschaftsprogramm {{title}}"
+    "profesor": "Ausbilder im Gesellschaftsprogramm {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -152,11 +152,11 @@
   },
   "roles": {
     "residente": "Bewohner",
-    "formador": "Ausbilder",
-    "coordinador": "Koordinator",
+    "tutor": "Ausbilder",
+    "csm": "Koordinator",
     "administrador": "Administrator",
-    "alumno": "Teilnehmer",
-    "instructor": "Ausbilder"
+    "participante": "Teilnehmer",
+    "profesor": "Ausbilder"
   },
   "notifications": {
     "title": "Benachrichtigungen",

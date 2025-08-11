@@ -102,7 +102,7 @@ const ResidenteFases: React.FC = () => {
 
 
   useEffect(() => {
-    if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'alumno')) return;
+    if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'participante')) return;
   
     const fetchProgresos = async () => {
       try {
@@ -359,7 +359,7 @@ const ResidenteFases: React.FC = () => {
                         )}
                         {act.comentariosFormador && (
                           <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.trainerComment')}: {act.comentariosFormador}
+                            {t('residentPhases.tutorComment')}: {act.comentariosFormador}
                           </Typography>
                         )}
                         {act.estado === 'rechazado' && act.comentariosRechazo && (

@@ -70,7 +70,7 @@ hospitalSchema.virtual('formadores', {
   localField: '_id',
   foreignField: 'hospital',
   justOne: false,
-  match: { rol: 'formador' }
+  match: { rol: 'tutor' }
 });
 
 const Hospital = mongoose.model('Hospital', hospitalSchema);

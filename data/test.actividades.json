@@ -41,7 +41,7 @@
   },
   {
     "_id": "ObjectId(\"6842f73881d01cbb57d101a0\")",
-    "nombre": "Ejercicios en pelvic trainer con formador",
+    "nombre": "Ejercicios en pelvic trainer con tutor",
     "fase": "ObjectId(\"680a0a2a6b25e3e614bab3ba\")",
     "orden": 5,
     "status": "pendiente",

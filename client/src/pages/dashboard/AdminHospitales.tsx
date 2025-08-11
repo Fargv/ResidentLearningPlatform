@@ -158,8 +158,8 @@ const AdminHospitales: React.FC = () => {
     setUsuariosAsociados(0);
     try {
       const res = await api.get(`/hospitals/${hospital._id}/stats`);
-      const { residentes = 0, formadores = 0 } = res.data.data || {};
-      setUsuariosAsociados(residentes + formadores);
+      const { residentes = 0, tutores = 0 } = res.data.data || {};
+      setUsuariosAsociados(residentes + tutores);
     } catch {
       setUsuariosAsociados(0);
     }

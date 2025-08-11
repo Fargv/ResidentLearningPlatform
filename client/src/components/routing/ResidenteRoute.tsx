@@ -27,9 +27,9 @@ const ResidenteRoute: React.FC<ResidenteRouteProps> = ({ children }) => {
   // Verificar si el usuario es residente o tiene permisos superiores
   if (
     user?.rol !== 'residente' &&
-    user?.rol !== 'alumno' &&
-    user?.rol !== 'formador' &&
-    user?.rol !== 'coordinador' &&
+    user?.rol !== 'participante' &&
+    user?.rol !== 'tutor' &&
+    user?.rol !== 'csm' &&
     user?.rol !== 'administrador'
   ) {
     // Redirigir al dashboard si no tiene permisos

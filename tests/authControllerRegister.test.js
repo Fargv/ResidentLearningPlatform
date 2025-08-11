@@ -28,7 +28,7 @@ describe('register access codes', () => {
     await AccessCode.deleteMany();
   });
 
-  test('ABEXFOR2025 asigna rol formador y tipo Programa Residentes', async () => {
+  test('ABEXFOR2025 asigna rol tutor y tipo Programa Residentes', async () => {
     const req = {
       body: {
         nombre: 'a',
@@ -41,13 +41,13 @@ describe('register access codes', () => {
       }
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-    await AccessCode.create({ codigo: 'ABEXFOR2025', rol: 'formador', tipo: 'Programa Residentes' });
+    await AccessCode.create({ codigo: 'ABEXFOR2025', rol: 'tutor', tipo: 'Programa Residentes' });
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'formador', tipo: 'Programa Residentes', hospital: 'h1' });
+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'tutor', tipo: 'Programa Residentes', hospital: 'h1' });
 
     await register(req, res, jest.fn());
 
-    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'formador', tipo: 'Programa Residentes', hospital: 'h1' }));
+    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'tutor', tipo: 'Programa Residentes', hospital: 'h1' }));
     expect(res.status).toHaveBeenCalledWith(200);
     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXFOR2025' });
   });
@@ -63,7 +63,7 @@ describe('register access codes', () => {
         consentimientoDatos: true
       }
     };
-    await AccessCode.create({ codigo: 'ABEXSOCUSER2025', rol: 'alumno', tipo: 'Programa Sociedades' });
+    await AccessCode.create({ codigo: 'ABEXSOCUSER2025', rol: 'participante', tipo: 'Programa Sociedades' });
     const next = jest.fn();
     await register(req, {}, next);
     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
@@ -83,14 +83,14 @@ describe('register access codes', () => {
       }
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-    await AccessCode.create({ codigo: 'ABEXSOCUSER2025', rol: 'alumno', tipo: 'Programa Sociedades' });
+    await AccessCode.create({ codigo: 'ABEXSOCUSER2025', rol: 'participante', tipo: 'Programa Sociedades' });
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
     jest.spyOn(Sociedades, 'findOne').mockResolvedValue({ _id: 's1', status: 'ACTIVO' });
-    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'alumno', tipo: 'Programa Sociedades', sociedad: 's1' });
+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'participante', tipo: 'Programa Sociedades', sociedad: 's1' });
 
     await register(req, res, jest.fn());
 
-    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'alumno', tipo: 'Programa Sociedades', sociedad: 's1' }));
+    expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'participante', tipo: 'Programa Sociedades', sociedad: 's1' }));
     expect(inicializarProgresoFormativo).toHaveBeenCalled();
     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXSOCUSER2025' });
   });

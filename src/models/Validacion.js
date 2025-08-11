@@ -9,7 +9,7 @@ const validacionSchema = new mongoose.Schema({
   formador: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'Por favor proporcione el formador que valida']
+    required: [true, 'Por favor proporcione el tutor que valida']
   },
   fechaValidacion: {
     type: Date,

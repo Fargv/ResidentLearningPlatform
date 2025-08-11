@@ -6,7 +6,7 @@
     "coordinator": "Coordenador de residentes do hospital {{hospital}}",
     "resident": "Residente do hospital {{hospital}}",
     "student": "Aluno do programa de sociedades {{title}}",
-    "instructor": "Instrutor do programa de sociedades {{title}}"
+    "profesor": "Instrutor do programa de sociedades {{title}}"
   },
   "actions": {
     "dashboard": "Painel",
@@ -729,11 +729,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "formador": "Formador",
-    "coordinador": "Coordenador",
+    "tutor": "tutor",
+    "csm": "Coordenador",
     "administrador": "Administrador",
-    "alumno": "Aluno",
-    "instructor": "Instrutor"
+    "participante": "Aluno",
+    "profesor": "Instrutor"
   },
   "notifications": {
     "title": "Notificações",
@@ -790,7 +790,7 @@
       "role": "Função",
       "roles": {
         "resident": "Residente",
-        "trainer": "Formador"
+        "trainer": "tutor"
       }
     },
     "dialog": {
@@ -816,7 +816,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "Formador"
+      "trainer": "tutor"
     },
     "states": {
       "active": "Ativo",

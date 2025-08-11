@@ -6,7 +6,7 @@
     "coordinator": "Coordinador de residents de l'hospital {{hospital}}",
     "resident": "Resident de l'hospital {{hospital}}",
     "student": "Alumne del programa de societats {{title}}",
-    "instructor": "Instructor del programa de societats {{title}}"
+    "profesor": "Instructor del programa de societats {{title}}"
   },
   "actions": {
     "dashboard": "Tauler",
@@ -547,7 +547,7 @@
       "role": "Rol",
       "roles": {
         "resident": "Resident",
-        "trainer": "Formador"
+        "trainer": "tutor"
       }
     },
     "dialog": {
@@ -572,7 +572,7 @@
     },
     "roles": {
       "resident": "Resident",
-      "trainer": "Formador"
+      "trainer": "tutor"
     },
     "states": {
       "active": "Actiu",
@@ -706,11 +706,11 @@
   },
   "roles": {
     "residente": "Resident",
-    "formador": "Formador",
-    "coordinador": "Coordinador",
+    "tutor": "tutor",
+    "csm": "csm",
     "administrador": "Administrador",
-    "alumno": "Alumne",
-    "instructor": "Instructor"
+    "participante": "Alumne",
+    "profesor": "profesor"
   },
   "notifications": {
     "title": "Notificacions",
