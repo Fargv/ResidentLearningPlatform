@@ -708,6 +708,7 @@ exports.getInstructorAlumnos = async (req, res, next) => {
     const alumnos = await User.find({
       sociedad: instructor.sociedad,
       rol: 'alumno',
+      tipo: instructor.tipo,
     }).populate('sociedad');
 
     res.status(200).json({
@@ -731,7 +732,11 @@ exports.getUsersByHospital = async (req, res) => {
       }
     }
 
-    let query = { hospital: hospitalId };
+    let query = {
+      hospital: hospitalId,
+      tipo: req.user.tipo,
+      _id: { $ne: req.user._id }
+    };
     if (req.user.rol === 'formador') {
       query.rol = 'residente';
       if (req.user.especialidad && req.user.especialidad !== 'ALL') {

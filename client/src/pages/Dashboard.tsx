@@ -115,8 +115,8 @@ const Dashboard: React.FC = () => {
       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
     }
 
-    if (user?.rol === 'formador' || user?.rol === 'coordinador') {
-      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador'] });
+    if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
+      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador', 'instructor'] });
     }
 
     if (user?.rol === 'administrador') {

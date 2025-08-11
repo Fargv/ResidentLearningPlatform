@@ -49,11 +49,12 @@ const FormadorUsuarios: React.FC = () => {
       let res;
       if (user?.rol === 'instructor') {
         res = await api.get(`/users/instructor/${user._id}/alumnos`);
-        setUsuarios(res.data.data);
       } else if (user?.hospital?._id) {
         res = await api.get(`/users/hospital/${user.hospital._id}`);
+      }
+      if (res) {
         const filtrados = res.data.data.filter(
-          (u: any) => !(['formador', 'instructor'].includes(u.rol) && u._id !== user?._id)
+          (u: any) => u._id !== user?._id && u.tipo === user?.tipo
         );
         setUsuarios(filtrados);
       }
@@ -62,7 +63,7 @@ const FormadorUsuarios: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?._id, user?.hospital?._id, user?.rol, t]);
+  }, [user?._id, user?.hospital?._id, user?.rol, user?.tipo, t]);
 
   useEffect(() => {
     fetchUsuarios();
