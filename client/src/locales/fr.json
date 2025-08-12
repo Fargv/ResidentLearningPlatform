@@ -569,9 +569,9 @@
   "tutorValidations": {
     "title": "Validations",
     "tabs": {
-      "pending": "En attente ({{count}})",
-      "validated": "Validées ({{count}})",
-      "rejected": "Rejetées ({{count}})",
+      "pending": "En attente",
+      "validated": "Validées",
+      "rejected": "Rejetées",
       "aria": "onglets de validations"
     },
     "table": {

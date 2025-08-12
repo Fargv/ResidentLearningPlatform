@@ -841,9 +841,9 @@
   "tutorValidations": {
     "title": "Validações",
     "tabs": {
-      "pending": "Pendentes ({{count}})",
-      "validated": "Validadas ({{count}})",
-      "rejected": "Rejeitadas ({{count}})",
+      "pending": "Pendentes",
+      "validated": "Validadas",
+      "rejected": "Rejeitadas",
       "aria": "abas de validações"
     },
     "table": {

@@ -748,9 +748,9 @@
   "tutorValidations": {
     "title": "Balidazioak",
     "tabs": {
-      "pending": "Zain ({{count}})",
-      "validated": "Balidatuak ({{count}})",
-      "rejected": "Baztertuta ({{count}})",
+      "pending": "Zain",
+      "validated": "Balidatuak",
+      "rejected": "Baztertuta",
       "aria": "balidazioen fitxak"
     },
     "table": {
