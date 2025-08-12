@@ -1,0 +1,21 @@
+diff --git a//dev/null b/client/src/utils/roleChipColors.ts
+index 0000000000000000000000000000000000000000..cc08047f84550dc8d9698b7c82f3283dd9c621d0 100644
+--- a//dev/null
++++ b/client/src/utils/roleChipColors.ts
+@@ -0,0 +1,16 @@
++import { SxProps, Theme } from '@mui/material/styles';
++import { grey } from '@mui/material/colors';
++
++const roleChipColors: Record<string, SxProps<Theme>> = {
++  administrador: { bgcolor: 'error.main', color: 'white' },
++  csm: { bgcolor: 'success.main', color: 'white' },
++  tutor: { bgcolor: 'primary.main', color: 'white' },
++  profesor: { bgcolor: 'primary.main', color: 'white' },
++  participante: { bgcolor: grey[500], color: 'white' },
++  residente: { bgcolor: grey[500], color: 'white' },
++};
++
++export const getRoleChipSx = (role?: string): SxProps<Theme> =>
++  roleChipColors[role ?? ''] || { bgcolor: grey[500], color: 'white' };
++
++export default roleChipColors;

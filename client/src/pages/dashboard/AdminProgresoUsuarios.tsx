@@ -159,7 +159,7 @@ const AdminProgresoUsuarios: React.FC = () => {
                 <TableCell>{u.nombre} {u.apellidos}</TableCell>
                 <TableCell>{u.email}</TableCell>
                 <TableCell>{u.hospital?.nombre || u.sociedad?.titulo || '-'}</TableCell>
-                <TableCell>{u.rol}</TableCell>
+                <TableCell>{t(`roles.${u.rol}`)}</TableCell>
                   <TableCell align="right">
                     <Button
                       variant="outlined"

@@ -639,11 +639,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "tutor": "tutor",
-    "csm": "csm",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrador",
-    "participante": "participante",
-    "professor": "profesor"
+    "participante": "Participante",
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notificaciones",

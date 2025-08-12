@@ -640,10 +640,10 @@
   "roles": {
     "residente": "Egoilarra",
     "tutor": "Prestatzailea",
-    "csm": "Koordinatzailea",
+    "csm": "CSM",
     "administrador": "Administratzailea",
     "participante": "Ikaslea",
-    "professor": "Instruktorea"
+    "profesor": "Instruktorea"
   },
   "notifications": {
     "title": "Jakinarazpenak",

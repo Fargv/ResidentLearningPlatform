@@ -11,10 +11,17 @@ import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/ico
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../../api';
+import { getRoleChipSx } from '../../utils/roleChipColors';
 
 const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const typeKey = (tipo?: string) =>
+    tipo === 'Programa Sociedades'
+      ? 'programaSociedades'
+      : tipo === 'Programa Residentes'
+      ? 'programaResidentes'
+      : '';
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -321,7 +328,12 @@ const TutorUsuarios: React.FC = () => {
               <TableRow>
                 <TableCell>{t('tutorUsers.table.name')}</TableCell>
                 <TableCell>{t('tutorUsers.table.email')}</TableCell>
-                <TableCell>{t('tutorUsers.table.role')}</TableCell>
+                <TableCell>{t('adminUsers.table.type')}</TableCell>
+                <TableCell>{t('adminUsers.table.society')}</TableCell>
+                <TableCell>{t('adminUsers.table.role')}</TableCell>
+                <TableCell>{t('adminUsers.table.hospital')}</TableCell>
+                <TableCell>{t('adminUsers.table.specialty')}</TableCell>
+                <TableCell>{t('adminUsers.table.zone')}</TableCell>
                 <TableCell>{t('tutorUsers.table.status')}</TableCell>
                 <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
               </TableRow>
@@ -331,7 +343,27 @@ const TutorUsuarios: React.FC = () => {
                 <TableRow key={usuario._id}>
                   <TableCell>{usuario.nombre} {usuario.apellidos}</TableCell>
                   <TableCell>{usuario.email}</TableCell>
-                  <TableCell>{usuario.rol}</TableCell>
+                  <TableCell>
+                    {usuario.tipo ? t(`types.${typeKey(usuario.tipo)}`) : '-'}
+                  </TableCell>
+                  <TableCell>{usuario.sociedad?.titulo || '-'}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={t(`roles.${usuario.rol}`)}
+                      color={
+                        usuario.rol === 'administrador'
+                          ? 'primary'
+                          : usuario.rol === 'tutor'
+                          ? 'secondary'
+                          : 'default'
+                      }
+                      size="small"
+                      sx={getRoleChipSx(usuario.rol)}
+                    />
+                  </TableCell>
+                  <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
+                  <TableCell>{usuario.especialidad || '-'}</TableCell>
+                  <TableCell>{usuario.zona || '-'}</TableCell>
                   <TableCell>
                     <Chip
                       label={t(
@@ -385,8 +417,8 @@ const TutorUsuarios: React.FC = () => {
             onChange={handleChange}
             slotProps={{ select: { native: true } }}
           >
-            <option value="residente">{t('tutorUsers.form.roles.resident')}</option>
-            <option value="tutor">{t('tutorUsers.form.roles.tutor')}</option>
+            <option value="residente">{t('roles.residente')}</option>
+            <option value="tutor">{t('roles.tutor')}</option>
           </TextField>
         </DialogContent>
         <DialogActions>

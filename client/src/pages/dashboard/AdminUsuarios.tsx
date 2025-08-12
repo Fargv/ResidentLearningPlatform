@@ -37,6 +37,7 @@ import api, { createUser, updateUserPassword } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
+import { getRoleChipSx } from "../../utils/roleChipColors";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -666,14 +667,8 @@ const AdminUsuarios: React.FC = () => {
                   <TableCell>
                     <Chip
                       label={t(`roles.${usuario.rol}`)}
-                      color={
-                        usuario.rol === "administrador"
-                          ? "primary"
-                          : usuario.rol === "tutor"
-                          ? "secondary"
-                          : "default"
-                      }
                       size="small"
+                      sx={getRoleChipSx(usuario.rol)}
                     />
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>

@@ -66,13 +66,13 @@
     "zone": "Zona",
     "specialty": "Especialitat",
     "specialties": {
-        "ALL": "Totes",
-        "URO": "Urologia (URO)",
-        "GEN": "Cirurgia General (GEN)",
-        "GYN": "Ginecologia (GYN)",
-        "THOR": "Toràcica (THOR)",
-        "ORL": "Otorrino (ORL)"
-      },
+      "ALL": "Totes",
+      "URO": "Urologia (URO)",
+      "GEN": "Cirurgia General (GEN)",
+      "GYN": "Ginecologia (GYN)",
+      "THOR": "Toràcica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
     "society": "Societat",
     "none": "Cap",
     "invalidAccessCode": "Codi d'accés no vàlid",
@@ -145,7 +145,7 @@
       "email": "Correu electrònic",
       "actions": "Accions"
     },
-   "fields": {
+    "fields": {
       "name": "Nom",
       "numericCode": "Codi numèric",
       "address": "Adreça",
@@ -448,7 +448,7 @@
     "passwordError": "Error en actualitzar la contrasenya",
     "createProgressSuccess": "Progrés formatiu creat amb èxit",
     "createProgressError": "Error en crear el progrés",
-   "table": {
+    "table": {
       "aria": "taula d'usuaris",
       "name": "Nom",
       "email": "Correu electrònic",
@@ -704,12 +704,12 @@
     "programaSociedades": "Programa de Societats"
   },
   "roles": {
-    "residente": "Resident",
-    "tutor": "tutor",
-    "csm": "csm",
     "administrador": "Administrador",
-    "participante": "Alumne",
-    "professor": "profesor"
+    "residente": "Residente",
+    "csm": "CSM",
+    "tutor": "Tutor",
+    "profesor": "Profesor",
+    "participante": "Participante"
   },
   "notifications": {
     "title": "Notificacions",

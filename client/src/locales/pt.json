@@ -729,11 +729,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "tutor": "tutor",
-    "csm": "Coordenador",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrador",
     "participante": "Aluno",
-    "professor": "Profesor"
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notificações",

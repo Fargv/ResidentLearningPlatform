@@ -153,10 +153,10 @@
   "roles": {
     "residente": "Bewohner",
     "tutor": "Tutor",
-    "csm": "Koordinator",
+    "csm": "CSM",
     "administrador": "Administrator",
     "participante": "Participante",
-    "professor": "Tutor"
+    "profesor": "Tutor"
   },
   "notifications": {
     "title": "Benachrichtigungen",
