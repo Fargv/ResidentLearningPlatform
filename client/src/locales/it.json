@@ -2,11 +2,11 @@
   "welcome": "Benvenuto/a, {{name}}",
   "role": {
     "adminPanel": "Pannello di amministrazione",
-    "trainer": "Formatore dei residenti dell'ospedale {{hospital}}",
-    "coordinator": "Coordinatore dei residenti dell'ospedale {{hospital}}",
+    "tutor": "Tutor dei residenti dell'ospedale {{hospital}}",
+    "csm": "CSMe dei residenti dell'ospedale {{hospital}}",
     "resident": "Residente dell'ospedale {{hospital}}",
-    "student": "Studente del programma delle società {{title}}",
-    "profesor": "Istruttore del programma delle società {{title}}"
+    "participant": "Participantee del programma delle società {{title}}",
+    "professor": "Profesor del programma delle società {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -31,7 +31,7 @@
     "users": "Utenti",
     "accessCodes": "Codici di accesso",
     "debug": "Debug"
- },
+  },
   "adminPhases": {
     "_comment": "Gestione delle fasi per amministratori",
     "phase": "Fase",
@@ -254,11 +254,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "tutor": "Formatore",
-    "csm": "Coordinatore",
+    "tutor": "Tutor",
+    "csm": "CSMe",
     "administrador": "Amministratore",
-    "participante": "Studente",
-    "profesor": "Istruttore"
+    "participante": "Participantee",
+    "professor": "Profesor"
   },
   "notifications": {
     "title": "Notifiche",
@@ -390,7 +390,7 @@
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificato generato automaticamente da Academic Program Da Vinci · www.abexsl.es"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "I miei utenti",
     "invite": "Invita utente",
     "edit": "Modifica utente",
@@ -415,7 +415,7 @@
       "role": "Ruolo",
       "roles": {
         "resident": "Residente",
-        "trainer": "Formatore"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -440,7 +440,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "Formatore"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Attivo",
@@ -456,7 +456,7 @@
       "inviteSuccess": "Utente invitato",
       "deleteSuccess": "Utente eliminato",
       "deleteError": "Errore durante l'eliminazione",
-       "genericError": "Errore"
+      "genericError": "Errore"
     }
   },
   "profile": {
@@ -778,7 +778,7 @@
     "statusWithValue": "Stato: {{status}}",
     "noProgress": "Nessun progresso disponibile."
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validazioni",
     "tabs": {
       "pending": "In sospeso",
@@ -859,7 +859,7 @@
     "markAsCompleted": "Segna come completata",
     "unnamedActivity": "Attività senza nome",
     "comment": "Commento",
-    "trainerComment": "Commento del formatore",
+    "tutorComment": "Commento del Tutor",
     "rejectionReason": "Motivo del rifiuto",
     "completedOn": "Completata il",
     "validatedOn": "Validata il",
@@ -892,7 +892,7 @@
     },
     "labels": {
       "comment": "Commento",
-      "trainerComment": "Commento del formatore",
+      "tutorComment": "Commento del Tutor",
       "rejectionReason": "Motivo del rifiuto",
       "completedDate": "Completata il",
       "validatedDate": "Validata il",

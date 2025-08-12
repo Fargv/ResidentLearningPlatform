@@ -2,11 +2,11 @@
   "welcome": "Bem-vindo(a), {{name}}",
   "role": {
     "adminPanel": "Painel de Administração",
-    "trainer": "Formador de residentes do hospital {{hospital}}",
-    "coordinator": "Coordenador de residentes do hospital {{hospital}}",
+    "tutor": "Tutor de residentes do hospital {{hospital}}",
+    "csm": "Coordenador de residentes do hospital {{hospital}}",
     "resident": "Residente do hospital {{hospital}}",
-    "student": "Aluno do programa de sociedades {{title}}",
-    "profesor": "Instrutor do programa de sociedades {{title}}"
+    "participant": "Aluno do programa de sociedades {{title}}",
+    "professor": "Profesor do programa de sociedades {{title}}"
   },
   "actions": {
     "dashboard": "Painel",
@@ -194,7 +194,7 @@
     "markAsCompleted": "Marcar como concluída",
     "unnamedActivity": "Atividade sem nome",
     "comment": "Comentário",
-    "trainerComment": "Comentário do formador",
+    "tutorComment": "Comentário do Tutor",
     "rejectionReason": "Motivo da rejeição",
     "completedOn": "Data de conclusão",
     "validatedOn": "Validado em",
@@ -226,7 +226,7 @@
     },
     "labels": {
       "comment": "Comentário",
-      "trainerComment": "Comentário do formador",
+      "tutorComment": "Comentário do Tutor",
       "rejectionReason": "Motivo da rejeição",
       "completedDate": "Data de conclusão",
       "validatedDate": "Validado em",
@@ -354,7 +354,7 @@
       "label": "Apresentação",
       "intro": "Sessão de apresentação do programa.",
       "item1": "Introdução ao programa",
-      "item2": "Apresentação dos instrutores"
+      "item2": "Apresentação dos Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -733,7 +733,7 @@
     "csm": "Coordenador",
     "administrador": "Administrador",
     "participante": "Aluno",
-    "profesor": "Instrutor"
+    "professor": "Profesor"
   },
   "notifications": {
     "title": "Notificações",
@@ -763,7 +763,7 @@
     "errorDelete": "Erro ao excluir o código",
     "errorSave": "Erro ao salvar o código"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Meus Usuários",
     "invite": "Convidar Usuário",
     "edit": "Editar Usuário",
@@ -790,7 +790,7 @@
       "role": "Função",
       "roles": {
         "resident": "Residente",
-        "trainer": "tutor"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -799,7 +799,7 @@
       "save": "Salvar",
       "invite": "Convidar"
     },
-    "_comment": "Gestão de usuários para formadores",
+    "_comment": "Gestão de usuários para Tutores",
     "buttons": {
       "invite": "Convidar Usuário",
       "cancel": "Cancelar",
@@ -816,7 +816,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "tutor"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Ativo",
@@ -838,7 +838,7 @@
   "progress": {
     "createSuccess": "Progresso formativo criado com sucesso"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validações",
     "tabs": {
       "pending": "Pendentes ({{count}})",
@@ -877,7 +877,7 @@
       "rejectReason": "Motivo da rejeição"
     },
     "errorLoad": "Erro ao carregar as validações",
-    "_comment": "Validações gerenciadas por formadores",
+    "_comment": "Validações gerenciadas por Tutores",
     "buttons": {
       "viewAttachment": "Ver anexo",
       "validate": "Validar",
@@ -915,7 +915,7 @@
     "tokenValid": "✅ Token válido e decodificado",
     "tokenInvalid": "❌ Token inválido ou corrompido"
   },
-   "privacyPolicy": {
+  "privacyPolicy": {
     "title": "Política de privacidade",
     "lastUpdated": "Última atualização: {{date}}"
   }

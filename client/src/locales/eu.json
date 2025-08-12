@@ -2,11 +2,11 @@
   "welcome": "Ongietorri, {{name}}",
   "role": {
     "adminPanel": "Administrazio panela",
-    "trainer": "Erietxeko egoiliarren prestatzailea {{hospital}}",
-    "coordinator": "Erresidentziako koordinatzailea {{hospital}}",
+    "tutor": "Erietxeko egoiliarren prestatzailea {{hospital}}",
+    "csm": "Erresidentziako koordinatzailea {{hospital}}",
     "resident": "Erietxeko egoiliarra {{hospital}}",
-    "student": "Elkarteen programako ikaslea {{title}}",
-    "profesor": "Elkarteen programako irakaslea {{title}}"
+    "participant": "Elkarteen programako ikaslea {{title}}",
+    "professor": "Elkarteen programako irakaslea {{title}}"
   },
   "actions": {
     "dashboard": "Arbela",
@@ -150,13 +150,14 @@
     "zone": "Eremua",
     "specialty": "Espezialitatea",
     "specialties": {
-        "ALL": "Guztiak",
-        "URO": "Urologia (URO)",
-        "GEN": "Kirurgia Orokorra (GEN)",
-        "GYN": "Ginekologia (GYN)",
-        "THOR": "Toraxekoa (THOR)",
-        "ORL": "Otorino (ORL)"
-      },    "society": "Elkartea",
+      "ALL": "Guztiak",
+      "URO": "Urologia (URO)",
+      "GEN": "Kirurgia Orokorra (GEN)",
+      "GYN": "Ginekologia (GYN)",
+      "THOR": "Toraxekoa (THOR)",
+      "ORL": "Otorino (ORL)"
+    },
+    "society": "Elkartea",
     "none": "Bat ere ez",
     "invalidAccessCode": "Sarbide kode baliogabea",
     "requiredFields": "Mesedez, bete derrigorrezko eremu guztiak.",
@@ -180,7 +181,7 @@
       "label": "Presentación",
       "intro": "Sesión de presentación del programa.",
       "item1": "Introducción al programa",
-      "item2": "Presentación de instructores"
+      "item2": "Presentación de Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -642,7 +643,7 @@
     "csm": "Koordinatzailea",
     "administrador": "Administratzailea",
     "participante": "Ikaslea",
-    "profesor": "Instruktorea"
+    "professor": "Instruktorea"
   },
   "notifications": {
     "title": "Jakinarazpenak",
@@ -672,7 +673,7 @@
     "errorDelete": "Errorea kodea ezabatzean",
     "errorSave": "Errorea kodea gordetzean"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Nire erabiltzaileak",
     "invite": "Erabiltzailea gonbidatu",
     "edit": "Erabiltzailea editatu",
@@ -697,7 +698,7 @@
       "role": "Rola",
       "roles": {
         "resident": "Egoiliarra",
-        "trainer": "Prestakuntza-emilea"
+        "tutor": "Prestakuntza-emilea"
       }
     },
     "dialog": {
@@ -722,7 +723,7 @@
     },
     "roles": {
       "resident": "Egoiliarra",
-      "trainer": "Prestakuntza-emilea"
+      "tutor": "Prestakuntza-emilea"
     },
     "states": {
       "active": "Aktibo",
@@ -744,7 +745,7 @@
   "progress": {
     "createSuccess": "Prestakuntza aurrerapena ondo sortu da"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Balidazioak",
     "tabs": {
       "pending": "Zain ({{count}})",
@@ -825,7 +826,7 @@
     "markAsCompleted": "Markatu osatutzat",
     "unnamedActivity": "Izenik gabeko jarduera",
     "comment": "Iruzkina",
-    "trainerComment": "Prestatzailearen iruzkina",
+    "tutorComment": "Prestatzailearen iruzkina",
     "rejectionReason": "Baztertzeko arrazoia",
     "completedOn": "Osatze data",
     "validatedOn": "Balidatua: ",
@@ -858,7 +859,7 @@
     },
     "labels": {
       "comment": "Iruzkina",
-      "trainerComment": "Prestatzailearen iruzkina",
+      "tutorComment": "Prestatzailearen iruzkina",
       "rejectionReason": "Baztertzeko arrazoia",
       "completedDate": "Osatze data",
       "validatedDate": "Balidatua",
@@ -902,7 +903,7 @@
     "active": "Aktibo",
     "inactive": "Inaktibo",
     "validated": "Balidatuta",
-   "rejected": "Baztertuta"
+    "rejected": "Baztertuta"
   },
   "privacyPolicy": {
     "title": "Pribatutasun politika",

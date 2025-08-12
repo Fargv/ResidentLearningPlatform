@@ -2,11 +2,11 @@
   "welcome": "Bienvenido/a, {{name}}",
   "role": {
     "adminPanel": "Panel de Administración",
-    "trainer": "Formador de residentes del hospital {{hospital}}",
-    "coordinator": "Coordinador de residentes del hospital {{hospital}}",
+    "tutor": "Tutor de residentes del hospital {{hospital}}",
+    "csm": "CSM de residentes del hospital {{hospital}}",
     "resident": "Residente del hospital {{hospital}}",
-    "student": "Alumno del programa de sociedades {{title}}",
-    "profesor": "Instructor del programa de sociedades {{title}}"
+    "participant": "Participante del programa de sociedades {{title}}",
+    "professor": "Profesor del programa de sociedades {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -132,7 +132,7 @@
     "theory": "Teórica",
     "procedure": "Procedimiento",
     "errorForbidden": "No tienes permisos para ver esta sección",
-     "errorLoadData": "Error al cargar los datos",
+    "errorLoadData": "Error al cargar los datos",
     "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
   },
   "progressByPhase": "Progreso por fase",
@@ -150,13 +150,14 @@
     "zone": "Zona",
     "specialty": "Especialidad",
     "specialties": {
-        "ALL": "Todas",
-        "URO": "Urología (URO)",
-        "GEN": "Cirugía General (GEN)",
-        "GYN": "Ginecología (GYN)",
-        "THOR": "Torácica (THOR)",
-        "ORL": "Otorrino (ORL)"
-      },    "society": "Sociedad",
+      "ALL": "Todas",
+      "URO": "Urología (URO)",
+      "GEN": "Cirugía General (GEN)",
+      "GYN": "Ginecología (GYN)",
+      "THOR": "Torácica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
+    "society": "Sociedad",
     "none": "Ninguna",
     "invalidAccessCode": "Código de acceso no válido",
     "requiredFields": "Por favor, completa todos los campos obligatorios.",
@@ -180,7 +181,7 @@
       "label": "Presentación",
       "intro": "Sesión de presentación del programa.",
       "item1": "Introducción al programa",
-      "item2": "Presentación de instructores"
+      "item2": "Presentación de Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -642,7 +643,7 @@
     "csm": "csm",
     "administrador": "Administrador",
     "participante": "participante",
-    "profesor": "profesor"
+    "professor": "profesor"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -672,7 +673,7 @@
     "errorDelete": "Error al eliminar el código",
     "errorSave": "Error al guardar el código"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Mis Usuarios",
     "invite": "Invitar Usuario",
     "edit": "Editar Usuario",
@@ -697,7 +698,7 @@
       "role": "Rol",
       "roles": {
         "resident": "Residente",
-        "trainer": "tutor"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -706,7 +707,7 @@
       "save": "Guardar",
       "invite": "Invitar"
     },
-    "_comment": "Gestión de usuarios para formadores",
+    "_comment": "Gestión de usuarios para Tutores",
     "buttons": {
       "invite": "Invitar Usuario",
       "cancel": "Cancelar",
@@ -722,7 +723,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "tutor"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Activo",
@@ -744,7 +745,7 @@
   "progress": {
     "createSuccess": "Progreso formativo creado con éxito"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validaciones",
     "tabs": {
       "pending": "Pendientes ({{count}})",
@@ -783,7 +784,7 @@
       "rejectReason": "Motivo del rechazo"
     },
     "errorLoad": "Error al cargar las validaciones",
-    "_comment": "Validaciones gestionadas por formadores",
+    "_comment": "Validaciones gestionadas por Tutores",
     "buttons": {
       "viewAttachment": "Ver adjunto",
       "validate": "Validar",
@@ -825,7 +826,7 @@
     "markAsCompleted": "Marcar como completada",
     "unnamedActivity": "Actividad sin nombre",
     "comment": "Comentario",
-    "trainerComment": "Comentario formador",
+    "tutorComment": "Comentario Tutor",
     "rejectionReason": "Motivo rechazo",
     "completedOn": "Fecha completada",
     "validatedOn": "Validado el",
@@ -858,7 +859,7 @@
     },
     "labels": {
       "comment": "Comentario",
-      "trainerComment": "Comentario formador",
+      "tutorComment": "Comentario Tutor",
       "rejectionReason": "Motivo rechazo",
       "completedDate": "Fecha completada",
       "validatedDate": "Validado el",

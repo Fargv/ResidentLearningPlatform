@@ -386,7 +386,7 @@ const TutorUsuarios: React.FC = () => {
             slotProps={{ select: { native: true } }}
           >
             <option value="residente">{t('tutorUsers.form.roles.resident')}</option>
-            <option value="tutor">{t('tutorUsers.form.roles.trainer')}</option>
+            <option value="tutor">{t('tutorUsers.form.roles.tutor')}</option>
           </TextField>
         </DialogContent>
         <DialogActions>

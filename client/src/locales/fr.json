@@ -2,11 +2,11 @@
   "welcome": "Bienvenue, {{name}}",
   "role": {
     "adminPanel": "Panneau d'administration",
-    "trainer": "Formateur des résidents de l'hôpital {{hospital}}",
-    "coordinator": "Coordinateur des résidents de l'hôpital {{hospital}}",
+    "tutor": "Tutor des résidents de l'hôpital {{hospital}}",
+    "csm": "Coordinateur des résidents de l'hôpital {{hospital}}",
     "resident": "Résident de l'hôpital {{hospital}}",
-    "student": "Étudiant du programme des sociétés {{title}}",
-    "profesor": "Instructeur du programme des sociétés {{title}}"
+    "participant": "Participante du programme des sociétés {{title}}",
+    "professor": "Profesor du programme des sociétés {{title}}"
   },
   "actions": {
     "dashboard": "Tableau de bord",
@@ -67,13 +67,13 @@
     "zone": "Zone",
     "specialty": "Spécialité",
     "specialties": {
-        "ALL": "Toutes",
-        "URO": "Urologie (URO)",
-        "GEN": "Chirurgie Générale (GEN)",
-        "GYN": "Gynécologie (GYN)",
-        "THOR": "Thoracique (THOR)",
-        "ORL": "ORL (ORL)"
-      },
+      "ALL": "Toutes",
+      "URO": "Urologie (URO)",
+      "GEN": "Chirurgie Générale (GEN)",
+      "GYN": "Gynécologie (GYN)",
+      "THOR": "Thoracique (THOR)",
+      "ORL": "ORL (ORL)"
+    },
     "society": "Société",
     "none": "Aucune",
     "invalidAccessCode": "Code d'accès invalide",
@@ -151,11 +151,11 @@
   },
   "roles": {
     "residente": "Résident",
-    "tutor": "Formateur",
+    "tutor": "Tutor",
     "csm": "Coordinateur",
     "administrador": "Administrateur",
-    "participante": "Étudiant",
-    "profesor": "Instructeur"
+    "participante": "Participante",
+    "professor": "Profesor"
   },
   "notifications": {
     "title": "Notifications",
@@ -224,7 +224,7 @@
       "label": "Présentation",
       "intro": "Session de présentation du programme.",
       "item1": "Introduction au programme",
-      "item2": "Présentation des instructeurs"
+      "item2": "Présentation des Profesors"
     },
     "modOnline": {
       "label": "Mod. En ligne",
@@ -520,7 +520,7 @@
     "markAsCompleted": "Marquer comme complétée",
     "unnamedActivity": "Activité sans nom",
     "comment": "Commentaire",
-    "trainerComment": "Commentaire du formateur",
+    "tutorComment": "Commentaire du Tutor",
     "rejectionReason": "Motif du rejet",
     "completedOn": "Date de réalisation",
     "validatedOn": "Validée le",
@@ -553,7 +553,7 @@
     },
     "labels": {
       "comment": "Commentaire",
-      "trainerComment": "Commentaire du formateur",
+      "tutorComment": "Commentaire du Tutor",
       "rejectionReason": "Motif du rejet",
       "completedDate": "Date de réalisation",
       "validatedDate": "Validée le",
@@ -566,7 +566,7 @@
       "notCompleted": "Non complétée"
     }
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validations",
     "tabs": {
       "pending": "En attente ({{count}})",
@@ -605,7 +605,7 @@
       "rejectReason": "Motif du rejet"
     },
     "errorLoad": "Erreur lors du chargement des validations",
-    "_comment": "Validations gérées par les formateurs",
+    "_comment": "Validations gérées par les Tutors",
     "buttons": {
       "viewAttachment": "Voir la pièce jointe",
       "validate": "Valider",
@@ -825,7 +825,7 @@
       }
     }
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Mes utilisateurs",
     "invite": "Inviter un utilisateur",
     "edit": "Modifier l'utilisateur",
@@ -850,7 +850,7 @@
       "role": "Rôle",
       "roles": {
         "resident": "Résident",
-        "trainer": "Formateur"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -859,7 +859,7 @@
       "save": "Enregistrer",
       "invite": "Inviter"
     },
-    "_comment": "Gestion des utilisateurs pour les formateurs",
+    "_comment": "Gestion des utilisateurs pour les Tutors",
     "buttons": {
       "invite": "Inviter un utilisateur",
       "cancel": "Annuler",
@@ -875,7 +875,7 @@
     },
     "roles": {
       "resident": "Résident",
-      "trainer": "Formateur"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Actif",
@@ -899,4 +899,3 @@
     "lastUpdated": "Dernière mise à jour : {{date}}"
   }
 }
-

@@ -1,0 +1,1 @@
+git apply --3way --ignore-space-change --whitespace=nowarn CODEX.patch

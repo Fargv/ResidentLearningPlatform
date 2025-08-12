@@ -1,12 +1,11 @@
 {
   "welcome": "Benvingut/da, {{name}}",
   "role": {
-    "adminPanel": "Panell d'administració",
-    "trainer": "Formador de residents de l'hospital {{hospital}}",
-    "coordinator": "Coordinador de residents de l'hospital {{hospital}}",
+    "tutor": "Tutor de residents de l'hospital {{hospital}}",
+    "csm": "CSM de residents de l'hospital {{hospital}}",
     "resident": "Resident de l'hospital {{hospital}}",
-    "student": "Alumne del programa de societats {{title}}",
-    "profesor": "Instructor del programa de societats {{title}}"
+    "participant": "Alumne del programa de societats {{title}}",
+    "professor": "Profesor del programa de societats {{title}}"
   },
   "actions": {
     "dashboard": "Tauler",
@@ -522,7 +521,7 @@
       "passwordError": "Error en actualitzar la contrasenya"
     }
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Els meus usuaris",
     "invite": "Convidar usuari",
     "edit": "Editar usuari",
@@ -547,7 +546,7 @@
       "role": "Rol",
       "roles": {
         "resident": "Resident",
-        "trainer": "tutor"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -556,7 +555,7 @@
       "save": "Desar",
       "invite": "Convidar"
     },
-    "_comment": "Gestió d'usuaris per a formadors",
+    "_comment": "Gestió d'usuaris per a Tutors",
     "buttons": {
       "invite": "Convidar usuari",
       "cancel": "Cancel·lar",
@@ -572,7 +571,7 @@
     },
     "roles": {
       "resident": "Resident",
-      "trainer": "tutor"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Actiu",
@@ -591,7 +590,7 @@
       "genericError": "Error"
     }
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validacions",
     "tabs": {
       "pending": "Pendents ({{count}})",
@@ -630,7 +629,7 @@
       "rejectReason": "Motiu del rebuig"
     },
     "errorLoad": "Error en carregar les validacions",
-    "_comment": "Validacions gestionades per formadors",
+    "_comment": "Validacions gestionades per Tutors",
     "buttons": {
       "viewAttachment": "Veure adjunt",
       "validate": "Validar",
@@ -710,7 +709,7 @@
     "csm": "csm",
     "administrador": "Administrador",
     "participante": "Alumne",
-    "profesor": "profesor"
+    "professor": "profesor"
   },
   "notifications": {
     "title": "Notificacions",
@@ -779,7 +778,7 @@
       "label": "Presentació",
       "intro": "Sessió de presentació del programa.",
       "item1": "Introducció al programa",
-      "item2": "Presentació dels instructors"
+      "professor": "profesor"
     },
     "modOnline": {
       "label": "Mod. En línia",
@@ -859,7 +858,7 @@
     "markAsCompleted": "Marcar com a completada",
     "unnamedActivity": "Activitat sense nom",
     "comment": "Comentari",
-    "trainerComment": "Comentari del formador",
+    "tutorComment": "Comentari del Tutor",
     "rejectionReason": "Motiu del rebuig",
     "completedOn": "Data completada",
     "validatedOn": "Validat el",
@@ -891,7 +890,7 @@
     },
     "labels": {
       "comment": "Comentari",
-      "trainerComment": "Comentari del formador",
+      "tutorComment": "Comentari del Tutor",
       "rejectionReason": "Motiu del rebuig",
       "completedDate": "Data completada",
       "validatedDate": "Validat el",

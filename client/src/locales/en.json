@@ -2,11 +2,11 @@
   "welcome": "Welcome, {{name}}",
   "role": {
     "adminPanel": "Administration Panel",
-    "trainer": "Trainer of residents at {{hospital}} hospital",
-    "coordinator": "Coordinator of residents at {{hospital}} hospital",
+    "tutor": "Tutor of residents at {{hospital}} hospital",
+    "csm": "CSM of residents at {{hospital}} hospital",
     "resident": "Resident at {{hospital}} hospital",
-    "student": "Student of the societies program {{title}}",
-    "profesor": "Instructor of the societies program {{title}}"
+    "participant": "Participante of the societies program {{title}}",
+    "professor": "Profesor of the societies program {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -151,13 +151,13 @@
     "zone": "Zone",
     "specialty": "Specialty",
     "specialties": {
-        "ALL": "All",
-        "URO": "Urology (URO)",
-        "GEN": "General Surgery (GEN)",
-        "GYN": "Gynecology (GYN)",
-        "THOR": "Thoracic (THOR)",
-        "ORL": "ENT (ORL)"
-      },
+      "ALL": "All",
+      "URO": "Urology (URO)",
+      "GEN": "General Surgery (GEN)",
+      "GYN": "Gynecology (GYN)",
+      "THOR": "Thoracic (THOR)",
+      "ORL": "ENT (ORL)"
+    },
     "society": "Society",
     "none": "None",
     "invalidAccessCode": "Invalid access code",
@@ -182,7 +182,7 @@
       "label": "Presentation",
       "intro": "Program presentation session.",
       "item1": "Program introduction",
-      "item2": "Instructor presentation"
+      "item2": "Profesor presentation"
     },
     "modOnline": {
       "label": "Online Modules",
@@ -604,7 +604,7 @@
     "title": "Academic Program daVinci",
     "subtitle": "Da Vinci Systems Training Program",
     "email": "Email",
-      "logoUrl": "Logo URL",
+    "logoUrl": "Logo URL",
     "password": "Password",
     "signIn": "Log In",
     "forgotPassword": "Forgot your password?",
@@ -646,11 +646,11 @@
   },
   "roles": {
     "residente": "Resident",
-    "tutor": "Trainer",
-    "csm": "Coordinator",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrator",
-    "participante": "Student",
-    "profesor": "profesor"
+    "participante": "Participante",
+    "professor": "profesor"
   },
   "notifications": {
     "title": "Notifications",
@@ -680,7 +680,7 @@
     "errorDelete": "Error deleting code",
     "errorSave": "Error saving code"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "My Users",
     "invite": "Invite User",
     "edit": "Edit User",
@@ -707,7 +707,7 @@
       "role": "Role",
       "roles": {
         "resident": "Resident",
-        "trainer": "Trainer"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -716,7 +716,7 @@
       "save": "Save",
       "invite": "Invite"
     },
-    "_comment": "Trainer user management",
+    "_comment": "Tutor user management",
     "buttons": {
       "invite": "Invite User",
       "cancel": "Cancel",
@@ -733,7 +733,7 @@
     },
     "roles": {
       "resident": "Resident",
-      "trainer": "Trainer"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Active",
@@ -755,7 +755,7 @@
   "progress": {
     "createSuccess": "Training progress created successfully"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validations",
     "tabs": {
       "pending": "Pending",
@@ -794,7 +794,7 @@
       "rejectReason": "Reason for rejection"
     },
     "errorLoad": "Error loading validations",
-    "_comment": "Validations managed by trainers",
+    "_comment": "Validations managed by Tutors",
     "buttons": {
       "viewAttachment": "View attachment",
       "validate": "Validate",
@@ -836,7 +836,7 @@
     "markAsCompleted": "Mark as completed",
     "unnamedActivity": "Unnamed activity",
     "comment": "Comment",
-    "trainerComment": "Trainer comment",
+    "tutorComment": "Tutor comment",
     "rejectionReason": "Rejection reason",
     "completedOn": "Completed on",
     "validatedOn": "Validated on",
@@ -869,7 +869,7 @@
     },
     "labels": {
       "comment": "Comment",
-      "trainerComment": "Trainer comment",
+      "tutorComment": "Tutor comment",
       "rejectionReason": "Rejection reason",
       "completedDate": "Completed on",
       "validatedDate": "Validated on",
@@ -890,7 +890,7 @@
   },
   "certificate": {
     "title": "Certificate of Completion",
-   "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
+    "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificate automatically generated by Academic Program Da Vinci · www.abexsl.es"
   },
@@ -913,7 +913,7 @@
     "active": "Active",
     "inactive": "Inactive",
     "validated": "Validated",
-   "rejected": "Rejected"
+    "rejected": "Rejected"
   },
   "privacyPolicy": {
     "title": "Privacy Policy",

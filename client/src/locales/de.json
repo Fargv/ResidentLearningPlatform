@@ -2,11 +2,11 @@
   "welcome": "Willkommen, {{name}}",
   "role": {
     "adminPanel": "Administrationsbereich",
-    "trainer": "Ausbilder für Krankenhausbewohner {{hospital}}",
-    "coordinator": "Koordinator für Krankenhausbewohner {{hospital}}",
+    "tutor": "Tutor für Krankenhausbewohner {{hospital}}",
+    "csm": "Koordinator für Krankenhausbewohner {{hospital}}",
     "resident": "Bewohner des Krankenhauses {{hospital}}",
-    "student": "Teilnehmer am Gesellschaftsprogramm {{title}}",
-    "profesor": "Ausbilder im Gesellschaftsprogramm {{title}}"
+    "participant": "Participante am Gesellschaftsprogramm {{title}}",
+    "professor": "Tutor im Gesellschaftsprogramm {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -68,13 +68,13 @@
     "zone": "Zone",
     "specialty": "Fachgebiet",
     "specialties": {
-        "ALL": "Alle",
-        "URO": "Urologie (URO)",
-        "GEN": "Allgemeinchirurgie (GEN)",
-        "GYN": "Gynäkologie (GYN)",
-        "THOR": "Thoraxchirurgie (THOR)",
-        "ORL": "HNO (ORL)"
-      },
+      "ALL": "Alle",
+      "URO": "Urologie (URO)",
+      "GEN": "Allgemeinchirurgie (GEN)",
+      "GYN": "Gynäkologie (GYN)",
+      "THOR": "Thoraxchirurgie (THOR)",
+      "ORL": "HNO (ORL)"
+    },
     "society": "Gesellschaft",
     "none": "Keine",
     "invalidAccessCode": "Ungültiger Zugangscode",
@@ -152,11 +152,11 @@
   },
   "roles": {
     "residente": "Bewohner",
-    "tutor": "Ausbilder",
+    "tutor": "Tutor",
     "csm": "Koordinator",
     "administrador": "Administrator",
-    "participante": "Teilnehmer",
-    "profesor": "Ausbilder"
+    "participante": "Participante",
+    "professor": "Tutor"
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -225,7 +225,7 @@
       "label": "Präsentation",
       "intro": "Präsentationssitzung des Programms.",
       "item1": "Einführung in das Programm",
-      "item2": "Vorstellung der Ausbilder"
+      "item2": "Vorstellung der Tutor"
     },
     "modOnline": {
       "label": "Online-Modul",
@@ -276,7 +276,7 @@
       "description": "Durchführung von Eingriffen durch den Bewohner unter Aufsicht."
     }
   },
- "residentProgress": {
+  "residentProgress": {
     "title": "Mein Fortschritt",
     "errorLoad": "Fehler beim Laden des Fortschritts",
     "downloadError": "Fehler beim Herunterladen des Zertifikats",
@@ -305,7 +305,7 @@
     "markAsCompleted": "Als abgeschlossen markieren",
     "unnamedActivity": "Aktivität ohne Namen",
     "comment": "Kommentar",
-    "trainerComment": "Kommentar des Ausbilders",
+    "tutorComment": "Kommentar des Tutors",
     "rejectionReason": "Ablehnungsgrund",
     "completedOn": "Abschlussdatum",
     "validatedOn": "Validiert am",
@@ -337,7 +337,7 @@
     },
     "labels": {
       "comment": "Kommentar",
-      "trainerComment": "Kommentar des Ausbilders",
+      "tutorComment": "Kommentar des Tutors",
       "rejectionReason": "Ablehnungsgrund",
       "completedDate": "Abgeschlossen am",
       "validatedDate": "Validiert am",
@@ -351,7 +351,7 @@
     },
     "_comment": "Resident phases and activities"
   },
- "adminPhases": {
+  "adminPhases": {
     "_comment": "Verwaltung der Phasen",
     "phase": "Phase",
     "activity": "Aktivität",
@@ -772,7 +772,7 @@
     "statusWithValue": "Status: {{status}}",
     "noProgress": "Kein Fortschritt verfügbar."
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Meine Benutzer",
     "invite": "Benutzer einladen",
     "edit": "Benutzer bearbeiten",
@@ -797,7 +797,7 @@
       "role": "Rolle",
       "roles": {
         "resident": "Bewohner",
-        "trainer": "Ausbilder"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -806,7 +806,7 @@
       "save": "Speichern",
       "invite": "Einladen"
     },
-    "_comment": "Verwaltung von Ausbilderbenutzern",
+    "_comment": "Verwaltung von Tutorbenutzern",
     "buttons": {
       "invite": "Benutzer einladen",
       "cancel": "Abbrechen",
@@ -822,7 +822,7 @@
     },
     "roles": {
       "resident": "Bewohner",
-      "trainer": "Ausbilder"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Aktiv",
@@ -841,7 +841,7 @@
       "genericError": "Fehler"
     }
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validierungen",
     "tabs": {
       "pending": "Ausstehend",
@@ -880,7 +880,7 @@
       "rejectReason": "Ablehnungsgrund"
     },
     "errorLoad": "Fehler beim Laden der Validierungen",
-    "_comment": "Von Ausbildern verwaltete Validierungen",
+    "_comment": "Von Tutorn verwaltete Validierungen",
     "buttons": {
       "viewAttachment": "Anhang anzeigen",
       "validate": "Validieren",
