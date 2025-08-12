@@ -155,9 +155,9 @@ Como residente, podrás:
 5. Añadir comentarios o notas si es necesario
 6. Confirmar el registro
 
-### Formadores
+### tutores
 
-Como formador, podrás:
+Como tutor, podrás:
 
 1. Ver estadísticas del hospital en el dashboard
 2. Gestionar las validaciones de los residentes
@@ -182,15 +182,15 @@ Como administrador, podrás:
 2. Gestionar usuarios (crear, editar, eliminar)
 3. Gestionar hospitales (crear, editar, eliminar)
 4. Gestionar fases y actividades del programa formativo
-5. Acceder a todas las funcionalidades de formadores y residentes
+5. Acceder a todas las funcionalidades de tutores y residentes
 
 #### Invitar a un nuevo usuario
 
 1. Acceder a la sección "Usuarios"
 2. Hacer clic en "Invitar Usuario"
 3. Completar el formulario con los datos del usuario
-4. Seleccionar el rol (residente, formador o administrador)
-5. Si es residente o formador, seleccionar el hospital
+4. Seleccionar el rol (residente, tutor o administrador)
+5. Si es residente o tutor, seleccionar el hospital
 6. Enviar la invitación
 
 ## Funcionalidades comunes

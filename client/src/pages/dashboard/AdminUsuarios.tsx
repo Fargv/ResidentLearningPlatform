@@ -712,7 +712,7 @@ const AdminUsuarios: React.FC = () => {
                         {t("adminUsers.actions.changePassword")}
                       </Button>
                     )}
-                    {['residente', 'alumno'].includes(usuario.rol) &&
+                    {['residente', 'participante'].includes(usuario.rol) &&
                       !usuario.tieneProgreso && (
                         <Button
                           variant="outlined"

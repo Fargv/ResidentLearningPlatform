@@ -26,8 +26,8 @@ const {
 // ✅ Middleware de autenticación para todas las rutas
 router.use(protect);
 
-// ✅ Validaciones pendientes del formador
-router.get('/formador/validaciones/pendientes', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR), getValidacionesPendientes);
+// ✅ Validaciones pendientes del tutor
+router.get('/tutor/validaciones/pendientes', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR), getValidacionesPendientes);
 router.get('/admin/validaciones/pendientes', authorize(Role.ADMINISTRADOR), getValidacionesPendientesAdmin);
 
 // ✅ Listado general y creación de progreso

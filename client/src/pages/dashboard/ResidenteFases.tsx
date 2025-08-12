@@ -357,9 +357,9 @@ const ResidenteFases: React.FC = () => {
                             {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
                           </Typography>
                         )}
-                        {act.comentariosFormador && (
+                        {act.comentariosTutor && (
                           <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.tutorComment')}: {act.comentariosFormador}
+                            {t('residentPhases.tutorComment')}: {act.comentariosTutor}
                           </Typography>
                         )}
                         {act.estado === 'rechazado' && act.comentariosRechazo && (

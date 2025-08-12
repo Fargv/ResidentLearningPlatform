@@ -10,7 +10,7 @@ const {
   updateHospital,
   deleteHospital,
   getHospitalResidentes,
-  getHospitalFormadores,
+  getHospitalTutores,
   getHospitalStats
 } = require('../controllers/hospitalController');
 
@@ -33,8 +33,8 @@ router.route('/:id')
 router.route('/:id/residentes')
   .get(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getHospitalResidentes);
 
-router.route('/:id/formadores')
-  .get(authorize(Role.ADMINISTRADOR), getHospitalFormadores);
+router.route('/:id/tutores')
+  .get(authorize(Role.ADMINISTRADOR), getHospitalTutores);
 
 router.route('/:id/stats')
   .get(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getHospitalStats);
