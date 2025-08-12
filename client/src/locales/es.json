@@ -30,6 +30,7 @@
     "societiesProgram": "Programa Sociedades",
     "users": "Usuarios",
     "accessCodes": "Códigos de Acceso",
+    "surgeryTypes": "Tipos de Cirugía",
     "debug": "Debug"
   },
   "adminPhases": {
@@ -130,10 +131,14 @@
     "observation": "Observación",
     "practice": "Práctica",
     "theory": "Teórica",
-    "procedure": "Procedimiento",
+    "surgery": "Cirugía",
     "errorForbidden": "No tienes permisos para ver esta sección",
     "errorLoadData": "Error al cargar los datos",
-    "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
+    "empty": "No hay fases creadas. Crea una nueva fase para comenzar.",
+    "requiresValidation": "Requiere validación",
+    "requiresSignature": "Requiere firma",
+    "requiresPercentage": "Requiere porcentaje",
+    "requiresAttachment": "Requiere adjunto"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
@@ -203,7 +208,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedimientos Step By Step.",
+      "intro": "Cirugías Step By Step.",
       "item1": "Material de apoyo",
       "item2": "Revisión guiada"
     },
@@ -229,7 +234,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirugía en Consola",
-      "description": "Procedimientos realizados por el residente con supervisión."
+      "description": "Cirugías realizadas por el residente con supervisión."
     }
   },
   "common": {
@@ -516,7 +521,11 @@
         "confirm": "Eliminar",
         "cancel": "Cancelar"
       }
-    }
+    },
+    "requiresValidation": "Requiere validación",
+    "requiresSignature": "Requiere firma",
+    "requiresPercentage": "Requiere porcentaje",
+    "requiresAttachment": "Requiere adjunto"
   },
   "adminUserProgress": {
     "title": "Progreso de Usuarios",
@@ -561,6 +570,9 @@
     "noActivityName": "Actividad sin nombre",
     "completedOn": "Fecha completada: {{date}}",
     "validatedOn": "Validado el: {{date}}",
+    "surgeryType": "Tipo de cirugía: {{type}}",
+    "surgeonName": "Nombre del cirujano: {{name}}",
+    "participation": "Porcentaje de participación: {{percent}}%",
     "statusWithValue": "Estado: {{status}}",
     "noProgress": "No hay progreso disponible."
   },
@@ -757,6 +769,9 @@
       "activity": "Actividad",
       "resident": "Residente",
       "date": "Fecha",
+      "surgeryType": "Tipo de cirugía",
+      "surgeon": "Cirujano",
+      "participation": "Participación (%)",
       "comments": "Comentarios",
       "actions": "Acciones",
       "status": "Estado",
@@ -830,6 +845,9 @@
     "rejectionReason": "Motivo rechazo",
     "completedOn": "Fecha completada",
     "validatedOn": "Validado el",
+    "surgeryType": "Tipo de cirugía: {{type}}",
+    "surgeonName": "Nombre del cirujano: {{name}}",
+    "participation": "Porcentaje de participación: {{percent}}%",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividad como completada",

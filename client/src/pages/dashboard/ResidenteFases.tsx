@@ -21,7 +21,9 @@ import {
   Snackbar,
   Tooltip,
   CircularProgress,
-  Backdrop
+  Backdrop,
+  Autocomplete,
+  MenuItem
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -53,6 +55,11 @@ const ResidenteFases: React.FC = () => {
   const [snackbarError, setSnackbarError] = useState(false);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+  const [cirugia, setCirugia] = useState<any | null>(null);
+  const [otraCirugia, setOtraCirugia] = useState('');
+  const [nombreCirujano, setNombreCirujano] = useState('');
+  const [porcentaje, setPorcentaje] = useState<number>(0);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -125,6 +132,19 @@ const ResidenteFases: React.FC = () => {
   }, [user, t]);
 
   useEffect(() => {
+    const fetchSurgeryTypes = async () => {
+      try {
+        const res = await api.get('/surgery-types');
+        const data = res.data.data || res.data;
+        setSurgeryTypes(data);
+      } catch (err) {
+        console.error('Error cargando tipos de cirugía', err);
+      }
+    };
+    fetchSurgeryTypes();
+  }, []);
+
+  useEffect(() => {
     const loadSociedad = async () => {
       if (user?.tipo !== 'Programa Sociedades') {
         setSociedadInfo(null);
@@ -152,6 +172,10 @@ const ResidenteFases: React.FC = () => {
     setArchivo(null);
     setArchivoError(false);
     setArchivoErrorMsg('');
+    setCirugia(null);
+    setOtraCirugia('');
+    setNombreCirujano('');
+    setPorcentaje(0);
   
     // Mover el console.log al final para que acceda a los parámetros directamente
   
@@ -198,6 +222,15 @@ const ResidenteFases: React.FC = () => {
       const form = new FormData();
       form.append('fechaRealizacion', fecha);
       form.append('comentariosResidente', comentario);
+      if (cirugia) {
+        if (cirugia._id === 'other' && otraCirugia) {
+          form.append('otraCirugia', otraCirugia);
+        } else if (cirugia._id !== 'other') {
+          form.append('cirugia', cirugia._id);
+        }
+      }
+      if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+      form.append('porcentajeParticipacion', String(porcentaje));
       if (archivo) form.append('adjunto', archivo);
 
       const { data } = await api.put(
@@ -357,6 +390,32 @@ const ResidenteFases: React.FC = () => {
                             {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
                           </Typography>
                         )}
+                        {act.estado !== 'pendiente' && act.cirugia && (
+                          <>
+                            <Typography variant="body2" color="text.secondary">
+                              {t('residentPhases.surgeryType', {
+                                type:
+                                  act.cirugia.tipo === 'Other'
+                                    ? act.cirugia.tipoLibre
+                                    : act.cirugia.tipo
+                              })}
+                            </Typography>
+                            {act.cirugia.cirujano && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('residentPhases.surgeonName', {
+                                  name: act.cirugia.cirujano
+                                })}
+                              </Typography>
+                            )}
+                          </>
+                        )}
+                        {act.estado !== 'pendiente' && typeof act.porcentajeParticipacion === 'number' && (
+                          <Typography variant="body2" color="text.secondary">
+                            {t('residentPhases.participation', {
+                              percent: act.porcentajeParticipacion
+                            })}
+                          </Typography>
+                        )}
                         {act.comentariosTutor && (
                           <Typography variant="body2" color="text.secondary">
                             {t('residentPhases.tutorComment')}: {act.comentariosTutor}
@@ -461,6 +520,46 @@ const ResidenteFases: React.FC = () => {
             rows={3}
             margin="normal"
           />
+          <Autocomplete
+            options={[...surgeryTypes, { _id: 'other', nombre: 'Other' }]}
+            getOptionLabel={(option: any) => option.nombre}
+            value={cirugia}
+            onChange={(_, value) => setCirugia(value)}
+            renderInput={(params) => (
+              <TextField {...params} label={t('residentPhases.dialog.surgery')} margin="normal" />
+            )}
+            fullWidth
+          />
+          {cirugia && cirugia._id === 'other' && (
+            <TextField
+              label={t('residentPhases.dialog.otherSurgery')}
+              value={otraCirugia}
+              onChange={(e) => setOtraCirugia(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          )}
+          <TextField
+            label={t('residentPhases.dialog.surgeonName')}
+            value={nombreCirujano}
+            onChange={(e) => setNombreCirujano(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            select
+            label={t('residentPhases.dialog.participation')}
+            value={porcentaje}
+            onChange={(e) => setPorcentaje(Number(e.target.value))}
+            fullWidth
+            margin="normal"
+          >
+            {[0, 25, 50, 75, 100].map((val) => (
+              <MenuItem key={val} value={val}>
+                {val}%
+              </MenuItem>
+            ))}
+          </TextField>
           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
             {t('residentPhases.dialog.selectFile')}
             <input

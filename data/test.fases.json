@@ -1,32 +1,42 @@
-[{
-  "_id": {
-    "$oid": "680a0a2a6b25e3e614bab3bb"
+[
+  {
+    "_id": {
+      "$oid": "680a0a2a6b25e3e614bab3bb"
+    },
+    "numero": 3,
+    "nombre": "Fase 3 - Asistencia Quirúrgica",
+    "descripcion": "Participación como asistente en quirófano"
   },
-  "numero": 3,
-  "nombre": "Fase 3 - Asistencia Quirúrgica",
-  "descripcion": "Participación como asistente en quirófano"
-},
-{
-  "_id": {
-    "$oid": "680a0a2a6b25e3e614bab3b9"
+  {
+    "_id": {
+      "$oid": "680a0a2a6b25e3e614bab3b9"
+    },
+    "numero": 1,
+    "nombre": "Fase 1 - Preparación Inicial",
+    "descripcion": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales"
   },
-  "numero": 1,
-  "nombre": "Fase 1 - Preparación Inicial",
-  "descripcion": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales"
-},
-{
-  "_id": {
-    "$oid": "680a0a2a6b25e3e614bab3bc"
+  {
+    "_id": {
+      "$oid": "680a0a2a6b25e3e614bab3bc"
+    },
+    "numero": 4,
+    "nombre": "Fase 4 - Cirugía en Consola",
+    "descripcion": "Procedimientos realizados por el residente con supervisión"
   },
-  "numero": 4,
-  "nombre": "Fase 4 - Cirugía en Consola",
-  "descripcion": "Procedimientos realizados por el residente con supervisión"
-},
-{
-  "_id": {
-    "$oid": "680a0a2a6b25e3e614bab3ba"
+  {
+    "_id": {
+      "$oid": "680a0a2a6b25e3e614bab3ba"
+    },
+    "numero": 2,
+    "nombre": "Fase 2 - Formación Preclínica",
+    "descripcion": "Ejercicios de simulación y entrenamientos en entorno seguro"
   },
-  "numero": 2,
-  "nombre": "Fase 2 - Formación Preclínica",
-  "descripcion": "Ejercicios de simulación y entrenamientos en entorno seguro"
-}]
+  {
+    "_id": {
+      "$oid": "680a0a2a6b25e3e614bab3bd"
+    },
+    "numero": 5,
+    "nombre": "Fase 5 - Cirugía Avanzada",
+    "descripcion": "Procedimientos quirúrgicos avanzados"
+  }
+]

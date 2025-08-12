@@ -30,6 +30,7 @@
     "societiesProgram": "Programa de Sociedades",
     "users": "Usuarios",
     "accessCodes": "Códigos de acceso",
+    "surgeryTypes": "Tipos de Cirurxía",
     "debug": "Depuración"
   },
   "adminPhases": {
@@ -130,10 +131,14 @@
     "observation": "Observación",
     "practice": "Práctica",
     "theory": "Teórica",
-    "procedure": "Procedemento",
+    "surgery": "Cirurxía",
     "errorForbidden": "Non tes permisos para ver esta sección",
     "errorLoadData": "Erro ao cargar os datos",
-    "empty": "Non hai fases creadas. Crea unha nova fase para comezar."
+    "empty": "Non hai fases creadas. Crea unha nova fase para comezar.",
+    "requiresValidation": "Require validación",
+    "requiresSignature": "Require sinatura",
+    "requiresPercentage": "Require porcentaxe",
+    "requiresAttachment": "Require adxunto"
   },
   "adminPhasesSoc": {
     "_comment": "Xestión de fases para o programa de Sociedades",
@@ -199,7 +204,11 @@
         "confirm": "Eliminar",
         "cancel": "Cancelar"
       }
-    }
+    },
+    "requiresValidation": "Require validación",
+    "requiresSignature": "Require sinatura",
+    "requiresPercentage": "Require porcentaxe",
+    "requiresAttachment": "Require adxunto"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Pechar",
@@ -289,7 +298,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedementos Step By Step.",
+      "intro": "Cirurxías Step By Step.",
       "item1": "Material de apoio",
       "item2": "Revisión guiada"
     },
@@ -563,6 +572,9 @@
     "noActivityName": "Actividade sen nome",
     "completedOn": "Data completada: {{date}}",
     "validatedOn": "Validado o: {{date}}",
+    "surgeryType": "Tipo de cirurxía: {{type}}",
+    "surgeonName": "Nome do cirurxián: {{name}}",
+    "participation": "Porcentaxe de participación: {{percent}}%",
     "statusWithValue": "Estado: {{status}}",
     "noProgress": "Non hai progreso dispoñible."
   },
@@ -739,6 +751,9 @@
       "activity": "Actividade",
       "resident": "Residente",
       "date": "Data",
+      "surgeryType": "Tipo de cirurxía",
+      "surgeon": "Cirurxián",
+      "participation": "Participación (%)",
       "comments": "Comentarios",
       "actions": "Accións",
       "status": "Estado",
@@ -839,7 +854,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirurxía en Consola",
-      "description": "Procedementos realizados polo residente con supervisión."
+      "description": "Cirurxías realizadas polo residente con supervisión."
     }
   },
   "residentPhases": {
@@ -864,6 +879,9 @@
     "rejectionReason": "Motivo do rexeitamento",
     "completedOn": "Data completada",
     "validatedOn": "Validado o",
+    "surgeryType": "Tipo de cirurxía: {{type}}",
+    "surgeonName": "Nome do cirurxián: {{name}}",
+    "participation": "Porcentaxe de participación: {{percent}}%",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividade como completada",

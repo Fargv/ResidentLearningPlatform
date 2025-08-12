@@ -105,6 +105,7 @@ describe('progresoController notifications', () => {
     jest.spyOn(Actividad, 'findById').mockResolvedValue({
       _id: 'a1',
       nombre: 'Act',
+      tipo: 'procedimiento',
       requiereValidacion: true
     });
     jest.spyOn(User, 'findById').mockResolvedValue({
@@ -156,5 +157,47 @@ describe('progresoController notifications', () => {
         enlace: '/dashboard/validaciones'
       })
     );
+  });
+
+  test('registrarProgreso no crea notificaciones si no requiere validacion', async () => {
+    jest.spyOn(Actividad, 'findById').mockResolvedValue({
+      _id: 'a2',
+      nombre: 'Act',
+      tipo: 'procedimiento',
+      requiereValidacion: false
+    });
+    jest.spyOn(User, 'findById').mockResolvedValue({
+      _id: 'res1',
+      rol: 'residente',
+      hospital: 'h1',
+      sociedad: 's1',
+      nombre: 'Res',
+      apellidos: 'Dent'
+    });
+    jest
+      .spyOn(User, 'find')
+      .mockResolvedValueOnce([{ _id: 't1' }])
+      .mockResolvedValueOnce([{ _id: 'pr1' }]);
+    jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({ _id: 'p1' });
+    const populate = jest.fn();
+    populate
+      .mockImplementationOnce(() => ({ populate }))
+      .mockImplementationOnce(() => ({ populate }))
+      .mockResolvedValueOnce({});
+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({ populate });
+    const createSpy = jest
+      .spyOn(Notificacion, 'create')
+      .mockResolvedValue({});
+
+    const req = {
+      body: { residente: 'res1', actividad: 'a2' },
+      user: { rol: 'residente', id: 'res1', _id: 'res1' },
+      ip: '::1'
+    };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    await registrarProgreso(req, res, jest.fn());
+
+    expect(createSpy).not.toHaveBeenCalled();
   });
 });

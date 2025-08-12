@@ -30,6 +30,7 @@
     "societiesProgram": "Societies Program",
     "users": "Users",
     "accessCodes": "Access Codes",
+    "surgeryTypes": "Surgery Types",
     "debug": "Debug"
   },
   "adminPhases": {
@@ -46,7 +47,7 @@
     "observation": "Observation",
     "practice": "Practice",
     "theory": "Theory",
-    "procedure": "Procedure",
+    "surgery": "Surgery",
     "errorForbidden": "You do not have permission to view this section",
     "errorLoadData": "Error loading data",
     "tabs": {
@@ -133,7 +134,11 @@
       },
       "createActivity": "Creating activity for the phase: <strong>{{phase}}</strong>"
     },
-    "empty": "No phases created. Create a new phase to begin."
+    "empty": "No phases created. Create a new phase to begin.",
+    "requiresValidation": "Requires validation",
+    "requiresSignature": "Requires signature",
+    "requiresPercentage": "Requires percentage",
+    "requiresAttachment": "Requires attachment"
   },
   "progressByPhase": "Progress by phase",
   "close": "Close",
@@ -204,7 +209,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Step By Step procedures.",
+      "intro": "Step By Step surgeries.",
       "item1": "Support material",
       "item2": "Guided review"
     },
@@ -230,7 +235,7 @@
     },
     "phase4": {
       "label": "Phase 4 - Console Surgery",
-      "description": "Procedures performed by the resident with supervision."
+      "description": "Surgeries performed by the resident with supervision."
     }
   },
   "common": {
@@ -521,7 +526,11 @@
         "confirm": "Delete",
         "cancel": "Cancel"
       }
-    }
+    },
+    "requiresValidation": "Requires validation",
+    "requiresSignature": "Requires signature",
+    "requiresPercentage": "Requires percentage",
+    "requiresAttachment": "Requires attachment"
   },
   "adminUserProgress": {
     "title": "User Progress",
@@ -567,6 +576,9 @@
     "noActivityName": "Unnamed activity",
     "completedOn": "Completed on: {{date}}",
     "validatedOn": "Validated on: {{date}}",
+    "surgeryType": "Surgery type: {{type}}",
+    "surgeonName": "Surgeon's name: {{name}}",
+    "participation": "Participation percentage: {{percent}}%",
     "statusWithValue": "Status: {{status}}",
     "noProgress": "No progress available."
   },
@@ -767,6 +779,9 @@
       "activity": "Activity",
       "resident": "Resident",
       "date": "Date",
+      "surgeryType": "Surgery type",
+      "surgeon": "Surgeon",
+      "participation": "Participation (%)",
       "comments": "Comments",
       "actions": "Actions",
       "status": "Status",
@@ -840,6 +855,9 @@
     "rejectionReason": "Rejection reason",
     "completedOn": "Completed on",
     "validatedOn": "Validated on",
+    "surgeryType": "Surgery type: {{type}}",
+    "surgeonName": "Surgeon's name: {{name}}",
+    "participation": "Participation percentage: {{percent}}%",
     "status": "Status",
     "dialog": {
       "completeActivity": "Mark activity as completed",

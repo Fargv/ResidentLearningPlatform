@@ -29,6 +29,7 @@
     "societiesProgram": "Programa de Societats",
     "users": "Usuaris",
     "accessCodes": "Codis d'accés",
+    "surgeryTypes": "Tipus de Cirurgia",
     "debug": "Depuració"
   },
   "progressByPhase": "Progrés per fase",
@@ -308,10 +309,14 @@
     "observation": "Observació",
     "practice": "Pràctica",
     "theory": "Teòrica",
-    "procedure": "Procediment",
+    "surgery": "Cirurgia",
     "errorForbidden": "No tens permisos per veure aquesta secció",
     "errorLoadData": "Error en carregar les dades",
-    "empty": "No hi ha fases creades. Crea una nova fase per començar."
+    "empty": "No hi ha fases creades. Crea una nova fase per començar.",
+    "requiresValidation": "Requereix validació",
+    "requiresSignature": "Requereix signatura",
+    "requiresPercentage": "Requereix percentatge",
+    "requiresAttachment": "Requereix adjunt"
   },
   "adminPhasesSoc": {
     "_comment": "Gestió de fases per al programa de Societats",
@@ -377,7 +382,11 @@
         "confirm": "Eliminar",
         "cancel": "Cancel·lar"
       }
-    }
+    },
+    "requiresValidation": "Requereix validació",
+    "requiresSignature": "Requereix signatura",
+    "requiresPercentage": "Requereix percentatge",
+    "requiresAttachment": "Requereix adjunt"
   },
   "adminProgressDetail": {
     "loadError": "Error en carregar el progrés",
@@ -410,6 +419,9 @@
     "noActivityName": "Activitat sense nom",
     "completedOn": "Data completada: {{date}}",
     "validatedOn": "Validat el: {{date}}",
+    "surgeryType": "Tipus de cirurgia: {{type}}",
+    "surgeonName": "Nom del cirurgià: {{name}}",
+    "participation": "Percentatge de participació: {{percent}}%",
     "statusWithValue": "Estat: {{status}}",
     "noProgress": "No hi ha progrés disponible."
   },
@@ -602,6 +614,9 @@
       "activity": "Activitat",
       "resident": "Resident",
       "date": "Data",
+      "surgeryType": "Tipus de cirurgia",
+      "surgeon": "Cirurgià",
+      "participation": "Participació (%)",
       "comments": "Comentaris",
       "actions": "Accions",
       "status": "Estat",
@@ -800,7 +815,7 @@
     },
     "stepByStep": {
       "label": "Pas a pas",
-      "intro": "Procediments pas a pas.",
+      "intro": "Cirurgies pas a pas.",
       "item1": "Material de suport",
       "item2": "Revisió guiada"
     },
@@ -826,7 +841,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirurgia en Consola",
-      "description": "Procediments realitzats pel resident amb supervisió."
+      "description": "Cirurgies realitzades pel resident amb supervisió."
     }
   },
   "residentProgress": {
@@ -862,6 +877,9 @@
     "rejectionReason": "Motiu del rebuig",
     "completedOn": "Data completada",
     "validatedOn": "Validat el",
+    "surgeryType": "Tipus de cirurgia: {{type}}",
+    "surgeonName": "Nom del cirurgià: {{name}}",
+    "participation": "Percentatge de participació: {{percent}}%",
     "status": "Estat",
     "dialog": {
       "completeActivity": "Marcar activitat com a completada",

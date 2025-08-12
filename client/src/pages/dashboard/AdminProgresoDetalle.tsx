@@ -49,6 +49,12 @@ interface Actividad {
   estado?: 'pendiente' | 'completado' | 'rechazado' | 'validado';
   fecha?: string;
   fechaValidacion?: string;
+  porcentajeParticipacion?: number;
+  cirugia?: {
+    tipo?: string;
+    tipoLibre?: string;
+    cirujano?: string;
+  };
 }
 
 interface ProgresoFase {
@@ -276,6 +282,32 @@ const AdminProgresoDetalle: React.FC = () => {
                               <Typography variant="body2" color="text.secondary">
                                 {t('adminProgressDetail.validatedOn', {
                                   date: formatDayMonthYear(act.fechaValidacion)
+                                })}
+                              </Typography>
+                            )}
+                            {act.cirugia && (
+                              <>
+                                <Typography variant="body2" color="text.secondary">
+                                  {t('adminProgressDetail.surgeryType', {
+                                    type:
+                                      act.cirugia.tipo === 'Other'
+                                        ? act.cirugia.tipoLibre
+                                        : act.cirugia.tipo
+                                  })}
+                                </Typography>
+                                {act.cirugia.cirujano && (
+                                  <Typography variant="body2" color="text.secondary">
+                                    {t('adminProgressDetail.surgeonName', {
+                                      name: act.cirugia.cirujano
+                                    })}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                            {typeof act.porcentajeParticipacion === 'number' && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('adminProgressDetail.participation', {
+                                  percent: act.porcentajeParticipacion
                                 })}
                               </Typography>
                             )}

@@ -86,6 +86,7 @@ const getAllProgreso = async (req, res, next) => {
       })
      .populate('fase')
       .populate('actividades.actividad')
+      .populate('actividades.cirugia')
       .lean();
 
     const filtered = progreso.filter(p => p.residente);
@@ -141,7 +142,8 @@ const getProgresoResidente = async (req, res, next) => {
 
     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
       .populate('fase')
-      .populate('actividades.actividad');
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
 
     // Ordenar las fases por su campo 'orden'
     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
@@ -160,7 +162,9 @@ const getProgresoResidente = async (req, res, next) => {
             fechaValidacion: act.fechaValidacion,
             comentariosRechazo: act.comentariosRechazo || '',
             fechaRechazo: act.fechaRechazo,
-            estado: act.estado
+            estado: act.estado,
+            porcentajeParticipacion: act.porcentajeParticipacion,
+            cirugia: act.cirugia
           }))
         };
       });
@@ -209,6 +213,7 @@ const getProgresoResidentePorFase = async (req, res, next) => {
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
      .populate('fase')
       .populate('actividades.actividad')
+      .populate('actividades.cirugia')
       .lean();
 
     const filtered = progreso.filter(p => p.residente);
@@ -309,7 +314,8 @@ const registrarProgreso = async (req, res, next) => {
         populate: { path: 'hospital', select: 'nombre' }
       })
       .populate('fase')
-      .populate('actividades.actividad');
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
 
     res.status(201).json({
       success: true,
@@ -363,7 +369,8 @@ const actualizarProgreso = async (req, res, next) => {
         populate: { path: 'hospital', select: 'nombre' }
       })
       .populate('fase')
-      .populate('actividades.actividad');
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
 
     // Crear registro de auditoría
     await createAuditLog({
@@ -482,6 +489,9 @@ const validarProgreso = async (req, res, next) => {
           },
           {
             path: 'actividades.actividad'
+          },
+          {
+            path: 'actividades.cirugia'
           }
         ]
       })
@@ -589,7 +599,8 @@ const getEstadisticasResidente = async (req, res, next) => {
 
     const progresos = await ProgresoResidente.find({ residente: residenteId })
       .populate('fase')
-      .populate('actividades.actividad');
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
 
     const estadisticas = progresos.map(item => {
       const total = item.actividades.length;
@@ -615,7 +626,7 @@ const getEstadisticasResidente = async (req, res, next) => {
 const marcarActividadCompletada = async (req, res, next) => {
   try {
     const { id, index } = req.params;
-    const { fechaRealizacion, comentariosResidente } = req.body;
+    const { fechaRealizacion, comentariosResidente, cirugia, otraCirugia, nombreCirujano, porcentajeParticipacion } = req.body;
 
     const progreso = await ProgresoResidente.findById(id);
     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
@@ -628,6 +639,26 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     const actividadExistente = progreso.actividades[index];
+
+    const ModeloActividad = mongoose.model(actividadOriginal.actividadModel || 'Actividad');
+    const actividadDoc = await ModeloActividad.findById(actividadOriginal.actividad);
+
+    if (actividadDoc && actividadDoc.tipo === 'cirugia') {
+      const porcentaje = Number(porcentajeParticipacion);
+      if (!nombreCirujano) {
+        return next(new ErrorResponse('Nombre del cirujano es requerido', 400));
+      }
+      if (!cirugia && !otraCirugia) {
+        return next(new ErrorResponse('Debe especificar la cirugía', 400));
+      }
+      if (![0, 25, 50, 75, 100].includes(porcentaje)) {
+        return next(new ErrorResponse('Porcentaje de participación inválido', 400));
+      }
+      actividadExistente.cirugia = cirugia;
+      actividadExistente.otraCirugia = otraCirugia;
+      actividadExistente.nombreCirujano = nombreCirujano;
+      actividadExistente.porcentajeParticipacion = porcentaje;
+    }
 
     actividadExistente.estado = 'completado';
     actividadExistente.completada = true;
@@ -656,7 +687,7 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     await progreso.save();
-    await progreso.populate(['fase', 'actividades.actividad']);
+    await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
 
     res.status(200).json({ success: true, data: progreso });
   } catch (err) {
@@ -746,7 +777,8 @@ const getValidacionesPendientes = async (req, res, next) => {
         populate: { path: 'hospital', select: 'zona' }
       })
       .populate('fase')
-      .populate('actividades.actividad');
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
 
     const pendientes = [];
     const validadas = [];
@@ -815,7 +847,8 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
         select: 'nombre apellidos tipo hospital sociedad'
       })
       .populate('fase')
-      .populate('actividades.actividad');
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
 
     const pendientes = [];
     const validadas = [];
@@ -870,7 +903,7 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
     const { comentarios, firmaDigital } = req.body;
 
     const progreso = await ProgresoResidente.findById(id);
-    await progreso.populate(['residente', 'fase']); // ⬅️ AÑADIDO CRUCIAL
+    await progreso.populate(['residente', 'fase', 'actividades.actividad', 'actividades.cirugia']); // ⬅️ AÑADIDO CRUCIAL
 
     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
@@ -931,7 +964,11 @@ const rechazarActividad = async (req, res, next) => {
     const { id, index } = req.params;
     const { comentarios } = req.body;
 
-    const progreso = await ProgresoResidente.findById(id).populate('residente');
+    const progreso = await ProgresoResidente.findById(id)
+      .populate('residente')
+      .populate('fase')
+      .populate('actividades.actividad')
+      .populate('actividades.cirugia');
     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
@@ -950,7 +987,7 @@ const rechazarActividad = async (req, res, next) => {
     actividad.fechaRechazo = new Date();
 
     await progreso.save();
-    await progreso.populate(['fase', 'actividades.actividad']);
+    await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
     
     const tutoresIds = (await User.find({
       hospital: progreso.residente.hospital,

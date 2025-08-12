@@ -30,6 +30,7 @@
     "societiesProgram": "Programa de Sociedades",
     "users": "Usuários",
     "accessCodes": "Códigos de Acesso",
+    "surgeryTypes": "Tipos de Cirurgia",
     "debug": "Depuração"
   },
   "progressByPhase": "Progresso por fase",
@@ -154,7 +155,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirurgia no Console",
-      "description": "Procedimentos realizados pelo residente com supervisão."
+      "description": "Cirurgias realizadas pelo residente com supervisão."
     }
   },
   "forms": {
@@ -198,6 +199,9 @@
     "rejectionReason": "Motivo da rejeição",
     "completedOn": "Data de conclusão",
     "validatedOn": "Validado em",
+    "surgeryType": "Tipo de cirurgia: {{type}}",
+    "surgeonName": "Nome do cirurgião: {{name}}",
+    "participation": "Percentual de participação: {{percent}}%",
     "status": "Status",
     "dialog": {
       "completeActivity": "Marcar atividade como concluída",
@@ -338,10 +342,14 @@
     "observation": "Observação",
     "practice": "Prática",
     "theory": "Teórica",
-    "procedure": "Procedimento",
+    "surgery": "Cirurgia",
     "errorForbidden": "Você não tem permissão para ver esta seção",
     "errorLoadData": "Erro ao carregar os dados",
-    "empty": "Não há fases criadas. Crie uma nova fase para começar."
+    "empty": "Não há fases criadas. Crie uma nova fase para começar.",
+    "requiresValidation": "Requer validação",
+    "requiresSignature": "Requer assinatura",
+    "requiresPercentage": "Requer percentagem",
+    "requiresAttachment": "Requer anexo"
   },
   "society": {
     "convocatoria": {
@@ -376,7 +384,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedimentos Step By Step.",
+      "intro": "Cirurgias Step By Step.",
       "item1": "Material de apoio",
       "item2": "Revisão guiada"
     },
@@ -662,7 +670,11 @@
         "confirm": "Excluir",
         "cancel": "Cancelar"
       }
-    }
+    },
+    "requiresValidation": "Requer validação",
+    "requiresSignature": "Requer assinatura",
+    "requiresPercentage": "Requer percentagem",
+    "requiresAttachment": "Requer anexo"
   },
   "adminUserProgress": {
     "title": "Progresso de Usuários",
@@ -708,6 +720,9 @@
     "noActivityName": "Atividade sem nome",
     "completedOn": "Data de conclusão: {{date}}",
     "validatedOn": "Validado em: {{date}}",
+    "surgeryType": "Tipo de cirurgia: {{type}}",
+    "surgeonName": "Nome do cirurgião: {{name}}",
+    "participation": "Percentual de participação: {{percent}}%",
     "statusWithValue": "Estado: {{status}}",
     "noProgress": "Não há progresso disponível."
   },
@@ -850,6 +865,9 @@
       "activity": "Atividade",
       "resident": "Residente",
       "date": "Data",
+      "surgeryType": "Tipo de cirurgia",
+      "surgeon": "Cirurgião",
+      "participation": "Participação (%)",
       "comments": "Comentários",
       "actions": "Ações",
       "status": "Estado",

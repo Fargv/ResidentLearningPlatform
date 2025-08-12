@@ -34,10 +34,14 @@ const inicializarProgresoFormativo = async (usuario) => {
         nombre: act.nombre,
         completada: false,
         estado: 'pendiente',
-          comentariosResidente: '',
-          comentariosTutor: '',
+        comentariosResidente: '',
+        comentariosTutor: '',
         fechaRealizacion: null,
         firmaDigital: '',
+        cirugia: null,
+        otraCirugia: '',
+        nombreCirujano: '',
+        porcentajeParticipacion: 0,
       }));
 
       if (i === 0) {

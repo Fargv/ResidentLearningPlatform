@@ -6,7 +6,8 @@ import {
   Assignment as AssignmentIcon,
   Settings as SettingsIcon,
   BugReport as BugReportIcon,
-  People as PeopleIcon
+  People as PeopleIcon,
+  MedicalServices as MedicalServicesIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ const AdminConfiguracion: React.FC = () => {
     { label: t('adminConfig.societiesProgram'), path: '/dashboard/fases-soc', icon: <AssignmentIcon sx={{ fontSize: 40 }} /> },
     { label: t('adminConfig.users'), path: '/dashboard/usuarios', icon: <PeopleIcon sx={{ fontSize: 40 }} /> },
     { label: t('adminConfig.accessCodes'), path: '/dashboard/access-codes', icon: <SettingsIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.surgeryTypes'), path: '/dashboard/cirugias', icon: <MedicalServicesIcon sx={{ fontSize: 40 }} /> },
     ...(isDev ? [{ label: t('adminConfig.debug'), path: '/dashboard/debug', icon: <BugReportIcon sx={{ fontSize: 40 }} /> }] : [])
   ];
 

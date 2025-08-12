@@ -16,10 +16,15 @@ const actividadSchema = new Schema({
   firmaDigital: String,
   fechaValidacion: Date,
   fechaRechazo: Date,
+  cirugia: {
+    type: Schema.Types.ObjectId,
+    ref: 'SurgeryType'
+  },
+  otraCirugia: String,
+  nombreCirujano: String,
   porcentajeParticipacion: {
     type: Number,
-    min: 0,
-    max: 100,
+    enum: [0, 25, 50, 75, 100],
     default: 100
   },
   comentariosResidente: String,

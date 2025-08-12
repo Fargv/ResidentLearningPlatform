@@ -80,6 +80,11 @@ const TutorValidaciones: React.FC = () => {
       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
       : t('tutorValidations.table.noPhase');
 
+  const getSurgeryType = (cirugia?: any) => {
+    if (!cirugia) return '-';
+    return cirugia.tipo === 'Other' ? cirugia.tipoLibre : cirugia.tipo;
+  };
+
   const fetchValidaciones = useCallback(async () => {
     try {
       setLoading(true);
@@ -250,6 +255,9 @@ const handleRechazar = async () => {
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.participation')}</TableCell>
                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
                     <TableCell align="right">{t('tutorValidations.table.actions')}</TableCell>
                   </TableRow>
@@ -263,6 +271,9 @@ const handleRechazar = async () => {
                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
                       </TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.cirugia?.cirujano || '-'}</TableCell>
+                      <TableCell>{progreso.actividad?.porcentajeParticipacion ?? '-'}</TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
                         {progreso.tieneAdjunto && (
@@ -335,6 +346,9 @@ const handleRechazar = async () => {
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.participation')}</TableCell>
                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
                   </TableRow>
@@ -346,6 +360,9 @@ const handleRechazar = async () => {
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.cirugia?.cirujano || '-'}</TableCell>
+                      <TableCell>{progreso.actividad?.porcentajeParticipacion ?? '-'}</TableCell>
                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
                       <TableCell align="right">
                         <Chip icon={<CheckCircleIcon />} label={t('tutorValidations.states.validated')} color="success" size="small" variant="outlined" />
@@ -374,6 +391,9 @@ const handleRechazar = async () => {
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.participation')}</TableCell>
                     <TableCell>{t('tutorValidations.table.reason')}</TableCell>
                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
                   </TableRow>
@@ -385,6 +405,9 @@ const handleRechazar = async () => {
                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.cirugia?.cirujano || '-'}</TableCell>
+                      <TableCell>{progreso.actividad?.porcentajeParticipacion ?? '-'}</TableCell>
                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
                       <TableCell align="right">
                         <Chip icon={<ErrorIcon />} label={t('tutorValidations.states.rejected')} color="error" size="small" variant="outlined" />

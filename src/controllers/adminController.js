@@ -11,7 +11,8 @@ const getAllActiveProgress = async (req, res, next) => {
     const data = await Promise.all(residentes.map(async (residente) => {
       const progresos = await ProgresoResidente.find({ residente: residente._id })
         .populate('fase')
-        .populate('actividades.actividad');
+        .populate('actividades.actividad')
+        .populate('actividades.cirugia');
 
       progresos.sort((a, b) => a.fase.orden - b.fase.orden);
 

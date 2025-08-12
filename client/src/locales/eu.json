@@ -30,6 +30,7 @@
     "societiesProgram": "Elkarteen Programa",
     "users": "Erabiltzaileak",
     "accessCodes": "Sarbide kodeak",
+    "surgeryTypes": "Kirurgia Motak",
     "debug": "Arazketa"
   },
   "adminPhases": {
@@ -130,10 +131,14 @@
     "observation": "Behaketa",
     "practice": "Praktika",
     "theory": "Teorikoa",
-    "procedure": "Prozedura",
+    "surgery": "Kirurgia",
     "errorForbidden": "Ez duzu baimenik atal hau ikusteko",
     "errorLoadData": "Errorea datuak kargatzean",
-    "empty": "Ez dago faserenik sortuta. Hasteko, sortu fase berri bat."
+    "empty": "Ez dago faserenik sortuta. Hasteko, sortu fase berri bat.",
+    "requiresValidation": "Balidazioa behar du",
+    "requiresSignature": "Sinadura behar du",
+    "requiresPercentage": "Ehunekoa behar du",
+    "requiresAttachment": "Eranskina behar du"
   },
   "progressByPhase": "Fasearen araberako aurrerapena",
   "close": "Itxi",
@@ -203,7 +208,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedimientos Step By Step.",
+      "intro": "Cirugías Step By Step.",
       "item1": "Material de apoyo",
       "item2": "Revisión guiada"
     },
@@ -229,7 +234,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirugía en Consola",
-      "description": "Procedimientos realizados por el residente con supervisión."
+      "description": "Cirugías realizadas por el residente con supervisión."
     }
   },
   "common": {
@@ -516,7 +521,11 @@
         "confirm": "Ezabatu",
         "cancel": "Utzi"
       }
-    }
+    },
+    "requiresValidation": "Balidazioa behar du",
+    "requiresSignature": "Sinadura behar du",
+    "requiresPercentage": "Ehunekoa behar du",
+    "requiresAttachment": "Eranskina behar du"
   },
   "adminUserProgress": {
     "title": "Erabiltzaileen aurrerapena",
@@ -561,6 +570,9 @@
     "noActivityName": "Izenik gabeko jarduera",
     "completedOn": "Osatze data: {{date}}",
     "validatedOn": "Balidatua: {{date}}",
+    "surgeryType": "Kirurgia mota: {{type}}",
+    "surgeonName": "Zirujauaren izena: {{name}}",
+    "participation": "Parte-hartze portzentaia: {{percent}}%",
     "statusWithValue": "Egoera: {{status}}",
     "noProgress": "Ez dago aurrerapenik eskuragarri."
   },
@@ -757,6 +769,9 @@
       "activity": "Jarduera",
       "resident": "Egoiliarra",
       "date": "Data",
+      "surgeryType": "Kirurgia mota",
+      "surgeon": "Zirujaua",
+      "participation": "Parte-hartzea (%)",
       "comments": "Iruzkinak",
       "actions": "Ekintzak",
       "status": "Egoera",
@@ -829,7 +844,10 @@
     "tutorComment": "Prestatzailearen iruzkina",
     "rejectionReason": "Baztertzeko arrazoia",
     "completedOn": "Osatze data",
-    "validatedOn": "Balidatua: ",
+    "validatedOn": "Balidatua",
+    "surgeryType": "Kirurgia mota: {{type}}",
+    "surgeonName": "Zirujauaren izena: {{name}}",
+    "participation": "Parte-hartze portzentaia: {{percent}}%",
     "status": "Egoera",
     "dialog": {
       "completeActivity": "Markatu jarduera osatutzat",

@@ -593,7 +593,7 @@ const AdminFases: React.FC = () => {
                                     ? t('adminPhases.evaluation')
                                     : actividad.tipo === 'observación'
                                       ? t('adminPhases.observation')
-                                      : t('adminPhases.procedure')
+                                      : t('adminPhases.surgery')
                             }
                             color={
                               actividad.tipo === 'teórica'
@@ -866,7 +866,7 @@ const AdminFases: React.FC = () => {
                 <option value="práctica">{t('adminPhases.practice')}</option>
                 <option value="evaluación">{t('adminPhases.evaluation')}</option>
                 <option value="observación">{t('adminPhases.observation')}</option>
-                <option value="procedimiento">{t('adminPhases.procedure')}</option>
+                <option value="cirugia">{t('adminPhases.surgery')}</option>
           </TextField>
           <TextField
             margin="dense"
@@ -950,7 +950,7 @@ const AdminFases: React.FC = () => {
             <option value="práctica">{t('adminPhases.practice')}</option>
             <option value="evaluación">{t('adminPhases.evaluation')}</option>
             <option value="observación">{t('adminPhases.observation')}</option>
-            <option value="procedimiento">{t('adminPhases.procedure')}</option>
+            <option value="cirugia">{t('adminPhases.surgery')}</option>
           </TextField>
           <TextField
             select

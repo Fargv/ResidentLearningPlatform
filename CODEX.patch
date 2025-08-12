@@ -1,21 +1,295 @@
-diff --git a//dev/null b/client/src/utils/roleChipColors.ts
-index 0000000000000000000000000000000000000000..cc08047f84550dc8d9698b7c82f3283dd9c621d0 100644
---- a//dev/null
-+++ b/client/src/utils/roleChipColors.ts
-@@ -0,0 +1,16 @@
-+import { SxProps, Theme } from '@mui/material/styles';
-+import { grey } from '@mui/material/colors';
+diff --git a/data/test.actividades.json b/data/test.actividades.json
+index 8aed163693b2a4334e233cce76abc9e2f0456348..3f8bae891720931ae0849d7820102788e045a1d4 100644
+--- a/data/test.actividades.json
++++ b/data/test.actividades.json
+@@ -426,27 +426,43 @@
+     "orden": 8,
+     "status": "pendiente",
+     "comentarios": "",
+     "fechaCompletado": null,
+     "validado": false
+   },
+   {
+     "_id": "ObjectId(\"6842f73881d01cbb57d101c7\")",
+     "nombre": "Cirugía como asistente 9",
+     "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+     "orden": 9,
+     "status": "pendiente",
+     "comentarios": "",
+     "fechaCompletado": null,
+     "validado": false
+   },
+   {
+     "_id": "ObjectId(\"6842f73881d01cbb57d101c8\")",
+     "nombre": "Cirugía como asistente 10",
+     "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bb\")",
+     "orden": 10,
+     "status": "pendiente",
+     "comentarios": "",
+     "fechaCompletado": null,
+     "validado": false
++  },
++  {
++    "_id": "ObjectId(\"6842f73881d01cbb57d101c9\")",
++    "nombre": "Cirugía laparoscópica básica",
++    "fase": "ObjectId(\"680a0a2a6b25e3e614bab3bc\")",
++    "orden": 23,
++    "tipo": "procedimiento",
++    "descripcion": "Procedimiento quirúrgico de ejemplo",
++    "requiereValidacion": true,
++    "requiereFirma": true,
++    "requierePorcentaje": false,
++    "requiereAdjunto": true,
++    "status": "pendiente",
++    "comentarios": "",
++    "fechaCompletado": null,
++    "validado": false
+   }
+-]
++]
+diff --git a/data/test.fases.json b/data/test.fases.json
+index 37834d1766471a0c4b025184e87fa4b70e89a436..9d59f7fc93260b0ac5c43c38f19e10b30f840f62 100644
+--- a/data/test.fases.json
++++ b/data/test.fases.json
+@@ -1,32 +1,42 @@
+-[{
+-  "_id": {
+-    "$oid": "680a0a2a6b25e3e614bab3bb"
++[
++  {
++    "_id": {
++      "$oid": "680a0a2a6b25e3e614bab3bb"
++    },
++    "numero": 3,
++    "nombre": "Fase 3 - Asistencia Quirúrgica",
++    "descripcion": "Participación como asistente en quirófano"
+   },
+-  "numero": 3,
+-  "nombre": "Fase 3 - Asistencia Quirúrgica",
+-  "descripcion": "Participación como asistente en quirófano"
+-},
+-{
+-  "_id": {
+-    "$oid": "680a0a2a6b25e3e614bab3b9"
++  {
++    "_id": {
++      "$oid": "680a0a2a6b25e3e614bab3b9"
++    },
++    "numero": 1,
++    "nombre": "Fase 1 - Preparación Inicial",
++    "descripcion": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales"
+   },
+-  "numero": 1,
+-  "nombre": "Fase 1 - Preparación Inicial",
+-  "descripcion": "Familiarización con el sistema Da Vinci y aspectos teóricos iniciales"
+-},
+-{
+-  "_id": {
+-    "$oid": "680a0a2a6b25e3e614bab3bc"
++  {
++    "_id": {
++      "$oid": "680a0a2a6b25e3e614bab3bc"
++    },
++    "numero": 4,
++    "nombre": "Fase 4 - Cirugía en Consola",
++    "descripcion": "Procedimientos realizados por el residente con supervisión"
+   },
+-  "numero": 4,
+-  "nombre": "Fase 4 - Cirugía en Consola",
+-  "descripcion": "Procedimientos realizados por el residente con supervisión"
+-},
+-{
+-  "_id": {
+-    "$oid": "680a0a2a6b25e3e614bab3ba"
++  {
++    "_id": {
++      "$oid": "680a0a2a6b25e3e614bab3ba"
++    },
++    "numero": 2,
++    "nombre": "Fase 2 - Formación Preclínica",
++    "descripcion": "Ejercicios de simulación y entrenamientos en entorno seguro"
+   },
+-  "numero": 2,
+-  "nombre": "Fase 2 - Formación Preclínica",
+-  "descripcion": "Ejercicios de simulación y entrenamientos en entorno seguro"
+-}]
++  {
++    "_id": {
++      "$oid": "680a0a2a6b25e3e614bab3bd"
++    },
++    "numero": 5,
++    "nombre": "Fase 5 - Cirugía Avanzada",
++    "descripcion": "Procedimientos quirúrgicos avanzados"
++  }
++]
+diff --git a/data/test.users.json b/data/test.users.json
+index ca397f7fb22b7a8a94e1fadf0f20bc22fa0e1559..727a7c8b8f525e871c8fc52075bec5d3b32a9ac6 100644
+--- a/data/test.users.json
++++ b/data/test.users.json
+@@ -2,27 +2,37 @@
+   {
+     "email": "admin@example.com",
+     "password": "12345678",
+     "nombre": "Admin",
+     "apellidos": "Ejemplo",
+     "rol": "administrador"
+   },
+   {
+     "email": "tutor@example.com",
+     "password": "12345678",
+     "nombre": "tutor",
+     "apellidos": "Ejemplo",
+     "rol": "tutor",
+     "hospital": "ObjectId(\"64b000000000000000000001\")",
+     "tipo": "Programa Residentes"
+   },
+   {
+     "email": "residente@example.com",
+     "password": "12345678",
+     "nombre": "Residente",
+     "apellidos": "Ejemplo",
+     "rol": "residente",
+     "hospital": "ObjectId(\"64b000000000000000000001\")",
+     "especialidad": "URO",
+     "tipo": "Programa Residentes"
++  },
++  {
++    "email": "cirujano@example.com",
++    "password": "12345678",
++    "nombre": "Cirujano",
++    "apellidos": "Ejemplo",
++    "rol": "residente",
++    "hospital": "ObjectId(\"64b000000000000000000001\")",
++    "especialidad": "CIR",
++    "tipo": "Programa Residentes"
+   }
+ ]
+diff --git a/tests/progresoNotifications.test.js b/tests/progresoNotifications.test.js
+index 5cb3511b536262f77ca6a3ecaee844b397d0915f..e1a693001be41adc4f23197123632391d7414394 100644
+--- a/tests/progresoNotifications.test.js
++++ b/tests/progresoNotifications.test.js
+@@ -83,50 +83,51 @@ describe('progresoController notifications', () => {
+       .mockResolvedValueOnce([{ _id: 'pr1' }]);
+     const updateSpy = jest.spyOn(Notificacion, 'updateMany').mockResolvedValue();
+     jest.spyOn(Notificacion, 'create').mockResolvedValue({});
+ 
+     const req = {
+       params: { id: 'p2', index: '0' },
+       body: { comentarios: 'no' }
+     };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await rechazarActividad(req, res, jest.fn());
+ 
+     expect(updateSpy).toHaveBeenCalledWith(
+       {
+         usuario: { $in: ['t1', 'pr1'] },
+         'entidadRelacionada.tipo': 'progreso',
+         'entidadRelacionada.id': 'p2'
+       },
+       { leida: true }
+     );
+   });
+   test('registrarProgreso crea notificaciones de validacion', async () => {
+     jest.spyOn(Actividad, 'findById').mockResolvedValue({
+       _id: 'a1',
+       nombre: 'Act',
++      tipo: 'procedimiento',
+       requiereValidacion: true
+     });
+     jest.spyOn(User, 'findById').mockResolvedValue({
+       _id: 'res1',
+       rol: 'residente',
+       hospital: 'h1',
+       sociedad: 's1',
+       nombre: 'Res',
+       apellidos: 'Dent'
+     });
+     jest
+       .spyOn(User, 'find')
+       .mockResolvedValueOnce([{ _id: 't1' }])
+       .mockResolvedValueOnce([{ _id: 'pr1' }]);
+     jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({ _id: 'p1' });
+     const populate = jest.fn();
+     populate
+       .mockImplementationOnce(() => ({ populate }))
+       .mockImplementationOnce(() => ({ populate }))
+       .mockResolvedValueOnce({});
+     jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({ populate });
+     const createSpy = jest
+       .spyOn(Notificacion, 'create')
+       .mockResolvedValue({});
+ 
+diff --git a/tests/progresoNotifications.test.js b/tests/progresoNotifications.test.js
+index 5cb3511b536262f77ca6a3ecaee844b397d0915f..e1a693001be41adc4f23197123632391d7414394 100644
+--- a/tests/progresoNotifications.test.js
++++ b/tests/progresoNotifications.test.js
+@@ -135,26 +136,68 @@ describe('progresoController notifications', () => {
+       user: { rol: 'residente', id: 'res1', _id: 'res1' },
+       ip: '::1'
+     };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await registrarProgreso(req, res, jest.fn());
+ 
+     expect(createSpy).toHaveBeenCalledTimes(2);
+     expect(createSpy).toHaveBeenNthCalledWith(
+       1,
+       expect.objectContaining({
+         usuario: 't1',
+         tipo: 'validacion',
+         enlace: '/dashboard/validaciones'
+       })
+     );
+     expect(createSpy).toHaveBeenNthCalledWith(
+       2,
+       expect.objectContaining({
+         usuario: 'pr1',
+         tipo: 'validacion',
+         enlace: '/dashboard/validaciones'
+       })
+     );
+   });
 +
-+const roleChipColors: Record<string, SxProps<Theme>> = {
-+  administrador: { bgcolor: 'error.main', color: 'white' },
-+  csm: { bgcolor: 'success.main', color: 'white' },
-+  tutor: { bgcolor: 'primary.main', color: 'white' },
-+  profesor: { bgcolor: 'primary.main', color: 'white' },
-+  participante: { bgcolor: grey[500], color: 'white' },
-+  residente: { bgcolor: grey[500], color: 'white' },
-+};
++  test('registrarProgreso no crea notificaciones si no requiere validacion', async () => {
++    jest.spyOn(Actividad, 'findById').mockResolvedValue({
++      _id: 'a2',
++      nombre: 'Act',
++      tipo: 'procedimiento',
++      requiereValidacion: false
++    });
++    jest.spyOn(User, 'findById').mockResolvedValue({
++      _id: 'res1',
++      rol: 'residente',
++      hospital: 'h1',
++      sociedad: 's1',
++      nombre: 'Res',
++      apellidos: 'Dent'
++    });
++    jest
++      .spyOn(User, 'find')
++      .mockResolvedValueOnce([{ _id: 't1' }])
++      .mockResolvedValueOnce([{ _id: 'pr1' }]);
++    jest.spyOn(ProgresoResidente, 'create').mockResolvedValue({ _id: 'p1' });
++    const populate = jest.fn();
++    populate
++      .mockImplementationOnce(() => ({ populate }))
++      .mockImplementationOnce(() => ({ populate }))
++      .mockResolvedValueOnce({});
++    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue({ populate });
++    const createSpy = jest
++      .spyOn(Notificacion, 'create')
++      .mockResolvedValue({});
 +
-+export const getRoleChipSx = (role?: string): SxProps<Theme> =>
-+  roleChipColors[role ?? ''] || { bgcolor: grey[500], color: 'white' };
++    const req = {
++      body: { residente: 'res1', actividad: 'a2' },
++      user: { rol: 'residente', id: 'res1', _id: 'res1' },
++      ip: '::1'
++    };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 +
-+export default roleChipColors;
++    await registrarProgreso(req, res, jest.fn());
++
++    expect(createSpy).not.toHaveBeenCalled();
++  });
+ });

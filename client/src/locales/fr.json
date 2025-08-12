@@ -30,6 +30,7 @@
     "societiesProgram": "Programme des sociétés",
     "users": "Utilisateurs",
     "accessCodes": "Codes d'accès",
+    "surgeryTypes": "Types de Chirurgie",
     "debug": "Débogage"
   },
   "progressByPhase": "Progrès par phase",
@@ -246,7 +247,7 @@
     },
     "stepByStep": {
       "label": "Étape par étape",
-      "intro": "Procédures étape par étape.",
+      "intro": "Chirurgies étape par étape.",
       "item1": "Matériel de soutien",
       "item2": "Révision guidée"
     },
@@ -272,7 +273,7 @@
     },
     "phase4": {
       "label": "Phase 4 - Chirurgie sur console",
-      "description": "Procédures réalisées par le résident sous supervision."
+      "description": "Chirurgies réalisées par le résident sous supervision."
     }
   },
   "adminUserProgress": {
@@ -318,6 +319,9 @@
     "noActivityName": "Activité sans nom",
     "completedOn": "Date de réalisation : {{date}}",
     "validatedOn": "Validée le : {{date}}",
+    "surgeryType": "Type de chirurgie : {{type}}",
+    "surgeonName": "Nom du chirurgien : {{name}}",
+    "participation": "Pourcentage de participation : {{percent}} %",
     "statusWithValue": "Statut : {{status}}",
     "noProgress": "Aucun progrès disponible."
   },
@@ -524,6 +528,9 @@
     "rejectionReason": "Motif du rejet",
     "completedOn": "Date de réalisation",
     "validatedOn": "Validée le",
+    "surgeryType": "Type de chirurgie : {{type}}",
+    "surgeonName": "Nom du chirurgien : {{name}}",
+    "participation": "Pourcentage de participation : {{percent}} %",
     "status": "Statut",
     "dialog": {
       "completeActivity": "Marquer l'activité comme complétée",
@@ -578,6 +585,9 @@
       "activity": "Activité",
       "resident": "Résident",
       "date": "Date",
+      "surgeryType": "Type de chirurgie",
+      "surgeon": "Chirurgien",
+      "participation": "Participation (%)",
       "comments": "Commentaires",
       "actions": "Actions",
       "status": "Statut",
@@ -656,7 +666,7 @@
     "observation": "Observation",
     "practice": "Pratique",
     "theory": "Théorie",
-    "procedure": "Procédure",
+    "surgery": "Chirurgie",
     "errorForbidden": "Vous n'avez pas la permission d'accéder à cette section",
     "errorLoadData": "Erreur lors du chargement des données",
     "tabs": {
@@ -757,7 +767,11 @@
         "cancel": "Annuler",
         "confirm": "Confirmer"
       }
-    }
+    },
+    "requiresValidation": "Nécessite une validation",
+    "requiresSignature": "Nécessite une signature",
+    "requiresPercentage": "Nécessite un pourcentage",
+    "requiresAttachment": "Nécessite une pièce jointe"
   },
   "adminPhasesSoc": {
     "_comment": "Gestion des phases pour le programme des sociétés",
@@ -823,7 +837,11 @@
         "confirm": "Supprimer",
         "cancel": "Annuler"
       }
-    }
+    },
+    "requiresValidation": "Nécessite une validation",
+    "requiresSignature": "Nécessite une signature",
+    "requiresPercentage": "Nécessite un pourcentage",
+    "requiresAttachment": "Nécessite une pièce jointe"
   },
   "tutorUsers": {
     "title": "Mes utilisateurs",

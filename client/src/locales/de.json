@@ -30,6 +30,7 @@
     "societiesProgram": "Gesellschaftsprogramm",
     "users": "Benutzer",
     "accessCodes": "Zugangscodes",
+    "surgeryTypes": "Operationsarten",
     "debug": "Fehlersuche"
   },
   "progressByPhase": "Fortschritt nach Phase",
@@ -247,7 +248,7 @@
     },
     "stepByStep": {
       "label": "Schritt für Schritt",
-      "intro": "Schritt-für-Schritt-Verfahren.",
+      "intro": "Schritt-für-Schritt-Chirurgien.",
       "item1": "Unterstützendes Material",
       "item2": "Geführte Überprüfung"
     },
@@ -309,6 +310,9 @@
     "rejectionReason": "Ablehnungsgrund",
     "completedOn": "Abschlussdatum",
     "validatedOn": "Validiert am",
+    "surgeryType": "Operationsart: {{type}}",
+    "surgeonName": "Name des Chirurgen: {{name}}",
+    "participation": "Teilnahmeprozentsatz: {{percent}}%",
     "status": "Status",
     "dialog": {
       "completeActivity": "Aktivität als abgeschlossen markieren",
@@ -365,7 +369,7 @@
     "observation": "Beobachtung",
     "practice": "Praxis",
     "theory": "Theorie",
-    "procedure": "Verfahren",
+    "surgery": "Chirurgie",
     "errorForbidden": "Sie haben keine Berechtigung, diesen Abschnitt anzuzeigen",
     "errorLoadData": "Fehler beim Laden der Daten",
     "tabs": {
@@ -452,7 +456,11 @@
       },
       "createActivity": "Aktivität für die Phase <strong>{{phase}}</strong> wird erstellt"
     },
-    "empty": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen."
+    "empty": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen.",
+    "requiresValidation": "Benötigt Validierung",
+    "requiresSignature": "Benötigt Unterschrift",
+    "requiresPercentage": "Benötigt Prozentsatz",
+    "requiresAttachment": "Benötigt Anhang"
   },
   "profile": {
     "title": "Mein Profil",
@@ -724,7 +732,11 @@
         "confirm": "Löschen",
         "cancel": "Abbrechen"
       }
-    }
+    },
+    "requiresValidation": "Benötigt Validierung",
+    "requiresSignature": "Benötigt Unterschrift",
+    "requiresPercentage": "Benötigt Prozentsatz",
+    "requiresAttachment": "Benötigt Anhang"
   },
   "adminUserProgress": {
     "title": "Benutzerfortschritt",
@@ -769,6 +781,9 @@
     "noActivityName": "Unbenannte Aktivität",
     "completedOn": "Abgeschlossen am: {{date}}",
     "validatedOn": "Validiert am: {{date}}",
+    "surgeryType": "Operationsart: {{type}}",
+    "surgeonName": "Name des Chirurgen: {{name}}",
+    "participation": "Teilnahmeprozentsatz: {{percent}}%",
     "statusWithValue": "Status: {{status}}",
     "noProgress": "Kein Fortschritt verfügbar."
   },
@@ -853,6 +868,9 @@
       "activity": "Aktivität",
       "resident": "Bewohner",
       "date": "Datum",
+      "surgeryType": "Operationsart",
+      "surgeon": "Chirurg",
+      "participation": "Teilnahme (%)",
       "comments": "Kommentare",
       "actions": "Aktionen",
       "status": "Status",

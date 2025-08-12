@@ -53,6 +53,7 @@ import DebugDashboard from './DebugDashboard';
 import ResidenteFases from './dashboard/ResidenteFases';
 import AdminAccessCodes from './dashboard/AdminAccessCodes';
 import AdminConfiguracion from './dashboard/AdminConfiguracion';
+import AdminCirugias from './dashboard/AdminCirugias';
 import LanguageSelector from '../components/LanguageSelector';
 
 const drawerWidth = 240;
@@ -281,6 +282,9 @@ const Dashboard: React.FC = () => {
   )}
   {user?.rol === 'administrador' && (
     <Route path="/access-codes" element={<AdminAccessCodes />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/cirugias" element={<AdminCirugias />} />
   )}
   {user?.rol === 'administrador' && (
     <Route path="/fases-soc" element={<AdminFasesSoc />} />

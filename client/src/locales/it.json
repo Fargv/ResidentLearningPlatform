@@ -30,6 +30,7 @@
     "societiesProgram": "Programma Società",
     "users": "Utenti",
     "accessCodes": "Codici di accesso",
+    "surgeryTypes": "Tipi di Chirurgia",
     "debug": "Debug"
   },
   "adminPhases": {
@@ -46,7 +47,7 @@
     "observation": "Osservazione",
     "practice": "Pratica",
     "theory": "Teoria",
-    "procedure": "Procedura",
+    "surgery": "Chirurgia",
     "errorForbidden": "Non hai i permessi per vedere questa sezione",
     "errorLoadData": "Errore nel caricamento dei dati",
     "tabs": {
@@ -133,7 +134,11 @@
       },
       "createActivity": "Creazione attività per la fase: <strong>{{phase}}</strong>"
     },
-    "empty": "Nessuna fase creata. Crea una nuova fase per iniziare."
+    "empty": "Nessuna fase creata. Crea una nuova fase per iniziare.",
+    "requiresValidation": "Richiede convalida",
+    "requiresSignature": "Richiede firma",
+    "requiresPercentage": "Richiede percentuale",
+    "requiresAttachment": "Richiede allegato"
   },
   "progressByPhase": "Progresso per fase",
   "close": "Chiudi",
@@ -349,7 +354,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedure passo dopo passo.",
+      "intro": "Chirurgie passo dopo passo.",
       "item1": "Materiale di supporto",
       "item2": "Revisione guidata"
     },
@@ -375,7 +380,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Chirurgia alla console",
-      "description": "Procedure eseguite dal residente sotto supervisione."
+      "description": "Chirurgie eseguite dal residente sotto supervisione."
     }
   },
   "residentProgress": {
@@ -730,7 +735,11 @@
         "confirm": "Elimina",
         "cancel": "Annulla"
       }
-    }
+    },
+    "requiresValidation": "Richiede convalida",
+    "requiresSignature": "Richiede firma",
+    "requiresPercentage": "Richiede percentuale",
+    "requiresAttachment": "Richiede allegato"
   },
   "adminUserProgress": {
     "title": "Progresso utenti",
@@ -775,6 +784,9 @@
     "noActivityName": "Attività senza nome",
     "completedOn": "Completata il: {{date}}",
     "validatedOn": "Validata il: {{date}}",
+    "surgeryType": "Tipo di chirurgia: {{type}}",
+    "surgeonName": "Nome del chirurgo: {{name}}",
+    "participation": "Percentuale di partecipazione: {{percent}}%",
     "statusWithValue": "Stato: {{status}}",
     "noProgress": "Nessun progresso disponibile."
   },
@@ -790,6 +802,9 @@
       "activity": "Attività",
       "resident": "Residente",
       "date": "Data",
+      "surgeryType": "Tipo di chirurgia",
+      "surgeon": "Chirurgo",
+      "participation": "Partecipazione (%)",
       "comments": "Commenti",
       "actions": "Azioni",
       "status": "Stato",
@@ -863,6 +878,9 @@
     "rejectionReason": "Motivo del rifiuto",
     "completedOn": "Completata il",
     "validatedOn": "Validata il",
+    "surgeryType": "Tipo di chirurgia: {{type}}",
+    "surgeonName": "Nome del chirurgo: {{name}}",
+    "participation": "Percentuale di partecipazione: {{percent}}%",
     "status": "Stato",
     "dialog": {
       "completeActivity": "Segna attività come completata",
