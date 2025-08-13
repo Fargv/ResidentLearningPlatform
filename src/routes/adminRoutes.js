@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const { descargarCertificado } = require('../controllers/certificadoController');
+const { updateActivityStatus, updatePhaseStatusAdmin } = require('../controllers/adminController');
 const { Role } = require('../utils/roles');
 
 router.use(protect);
@@ -17,6 +18,18 @@ router.get(
     Role.ADMINISTRADOR
   ),
   descargarCertificado
+);
+
+router.post(
+  '/cambiar-estado-fase',
+  authorize(Role.ADMINISTRADOR),
+  updatePhaseStatusAdmin
+);
+
+router.post(
+  '/cambiar-estado-actividad',
+  authorize(Role.ADMINISTRADOR),
+  updateActivityStatus
 );
 
 module.exports = router;
