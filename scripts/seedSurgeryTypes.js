@@ -21,10 +21,10 @@ async function run() {
 
     for (const type of types) {
       await SurgeryType.updateOne({ name: type.name }, type, { upsert: true });
-      console.log(`Tipo de cirugía ${type.name} registrado`);
+      console.log(`Procedimiento quirúrgico ${type.name} registrado`);
     }
 
-    console.log('✅ Tipos de cirugía iniciales creados');
+    console.log('✅ Procedimientos quirúrgicos iniciales creados');
     process.exit();
   } catch (err) {
     console.error('❌ Error al crear tipos de cirugía:', err);
@@ -33,3 +33,4 @@ async function run() {
 }
 
 run();
+

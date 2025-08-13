@@ -1,7 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const SurgeryType = require('../models/SurgeryType');
 
-// @desc    Obtener todos los tipos de cirugía
+// @desc    Obtener todos los Procedimientos quirúrgicos
 // @route   GET /api/surgery-types
 // @access  Private/Admin
 exports.getSurgeryTypes = async (req, res, next) => {
@@ -13,14 +13,14 @@ exports.getSurgeryTypes = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener un tipo de cirugía por ID
+// @desc    Obtener un Procedimiento quirúrgico por ID
 // @route   GET /api/surgery-types/:id
 // @access  Private/Admin
 exports.getSurgeryType = async (req, res, next) => {
   try {
     const type = await SurgeryType.findById(req.params.id);
     if (!type) {
-      return next(new ErrorResponse('Tipo de cirugía no encontrado', 404));
+      return next(new ErrorResponse('Procedimiento quirúrgico no encontrado', 404));
     }
     res.status(200).json({ success: true, data: type });
   } catch (err) {
@@ -28,7 +28,7 @@ exports.getSurgeryType = async (req, res, next) => {
   }
 };
 
-// @desc    Crear un tipo de cirugía
+// @desc    Crear un Procedimiento quirúrgico
 // @route   POST /api/surgery-types
 // @access  Private/Admin
 exports.createSurgeryType = async (req, res, next) => {
@@ -40,14 +40,14 @@ exports.createSurgeryType = async (req, res, next) => {
   }
 };
 
-// @desc    Actualizar un tipo de cirugía
+// @desc    Actualizar un Procedimiento quirúrgico
 // @route   PUT /api/surgery-types/:id
 // @access  Private/Admin
 exports.updateSurgeryType = async (req, res, next) => {
   try {
     let type = await SurgeryType.findById(req.params.id);
     if (!type) {
-      return next(new ErrorResponse('Tipo de cirugía no encontrado', 404));
+      return next(new ErrorResponse('Procedimiento quirúrgico no encontrado', 404));
     }
     type = await SurgeryType.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -59,14 +59,14 @@ exports.updateSurgeryType = async (req, res, next) => {
   }
 };
 
-// @desc    Eliminar un tipo de cirugía
+// @desc    Eliminar un Procedimiento quirúrgico
 // @route   DELETE /api/surgery-types/:id
 // @access  Private/Admin
 exports.deleteSurgeryType = async (req, res, next) => {
   try {
     const type = await SurgeryType.findById(req.params.id);
     if (!type) {
-      return next(new ErrorResponse('Tipo de cirugía no encontrado', 404));
+      return next(new ErrorResponse('Procedimiento quirúrgico no encontrado', 404));
     }
     await type.remove();
     res.status(200).json({ success: true, data: {} });

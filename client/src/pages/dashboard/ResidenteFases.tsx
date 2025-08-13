@@ -222,15 +222,23 @@ const ResidenteFases: React.FC = () => {
       const form = new FormData();
       form.append('fechaRealizacion', fecha);
       form.append('comentariosResidente', comentario);
-      if (cirugia) {
-        if (cirugia._id === 'other' && otraCirugia) {
-          form.append('otraCirugia', otraCirugia);
-        } else if (cirugia._id !== 'other') {
-          form.append('cirugia', cirugia._id);
+
+      const progreso = progresos.find(p => p._id === selectedProgresoId);
+      const actividad = progreso?.actividades?.[selectedActividadIndex!];
+      const esCirugia = actividad?.actividad?.tipo === 'cirugia';
+
+      if (esCirugia) {
+        if (cirugia) {
+          if (cirugia._id === 'other' && otraCirugia) {
+            form.append('otraCirugia', otraCirugia);
+          } else if (cirugia._id !== 'other') {
+            form.append('cirugia', cirugia._id);
+          }
         }
+        if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+        form.append('porcentajeParticipacion', String(porcentaje));
       }
-      if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
-      form.append('porcentajeParticipacion', String(porcentaje));
+
       if (archivo) form.append('adjunto', archivo);
 
       const { data } = await api.put(
@@ -537,6 +545,7 @@ const ResidenteFases: React.FC = () => {
               onChange={(e) => setOtraCirugia(e.target.value)}
               fullWidth
               margin="normal"
+              helperText={t('residentPhases.dialog.otherSurgeryTooltip')}
             />
           )}
           <TextField

@@ -81,12 +81,12 @@ const AdminCirugias: React.FC = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Tipos de Cirugía
+          Procedimientos Quirúrgicos
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <BackButton sx={{ mr: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpen()}>
-            Nuevo Tipo
+            Nuevo Procedimiento
           </Button>
         </Box>
       </Box>
@@ -119,7 +119,7 @@ const AdminCirugias: React.FC = () => {
       </Paper>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{selected ? 'Editar Tipo' : 'Nuevo Tipo'}</DialogTitle>
+        <DialogTitle>{selected ? 'Editar Procedimiento' : 'Nuevo Procedimiento'}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

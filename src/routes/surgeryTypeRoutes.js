@@ -12,15 +12,16 @@ const {
 } = require('../controllers/surgeryTypeController');
 
 router.use(protect);
-router.use(authorize(Role.ADMINISTRADOR));
 
-router.route('/')
+router
+  .route('/')
   .get(getSurgeryTypes)
-  .post(createSurgeryType);
+  .post(authorize(Role.ADMINISTRADOR), createSurgeryType);
 
-router.route('/:id')
+router
+  .route('/:id')
   .get(getSurgeryType)
-  .put(updateSurgeryType)
-  .delete(deleteSurgeryType);
+  .put(authorize(Role.ADMINISTRADOR), updateSurgeryType)
+  .delete(authorize(Role.ADMINISTRADOR), deleteSurgeryType);
 
 module.exports = router;
