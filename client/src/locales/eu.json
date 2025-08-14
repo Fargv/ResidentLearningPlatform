@@ -768,6 +768,7 @@
     },
     "table": {
       "activity": "Jarduera",
+      "type": "Mota",
       "resident": "Egoiliarra",
       "date": "Data",
       "surgeryType": "Kirurgia mota",

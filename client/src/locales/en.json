@@ -778,6 +778,7 @@
     },
     "table": {
       "activity": "Activity",
+      "type": "Type",
       "resident": "Resident",
       "date": "Date",
       "surgeryType": "Surgery type",

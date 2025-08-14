@@ -60,7 +60,8 @@ const ResidenteFases: React.FC = () => {
   const [otraCirugia, setOtraCirugia] = useState('');
   const [nombreCirujano, setNombreCirujano] = useState('');
   const [porcentaje, setPorcentaje] = useState<number>(0);
-  const [tipoActividad, setTipoActividad] = useState<string | null>(null);
+  const [esCirugia, setEsCirugia] = useState(false);
+  const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -169,8 +170,9 @@ const ResidenteFases: React.FC = () => {
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
     const progreso = progresos.find(p => p._id === progresoId);
-    const actividadActual = progreso?.actividades?.[index];
-    setTipoActividad(actividadActual?.tipo || null);
+    const actividad = progreso?.actividades?.[index];
+    const esCirugia = actividad?.tipo === 'cirugia';
+    setEsCirugia(esCirugia);
     setComentario('');
     setFecha(new Date().toISOString().split('T')[0]);
     setArchivo(null);
@@ -178,10 +180,9 @@ const ResidenteFases: React.FC = () => {
     setArchivoErrorMsg('');
     setCirugia(null);
     setOtraCirugia('');
+    setOtraCirugiaSeleccionada(false);
     setNombreCirujano('');
     setPorcentaje(0);
-
-    // Mover el console.log al final para que acceda a los parámetros directamente
 
     setDialogOpen(true);
   };
@@ -217,7 +218,8 @@ const ResidenteFases: React.FC = () => {
     setOtraCirugia('');
     setNombreCirujano('');
     setPorcentaje(0);
-    setTipoActividad(null);
+    setEsCirugia(false);
+    setOtraCirugiaSeleccionada(false);
   };
 
 
@@ -242,11 +244,9 @@ const ResidenteFases: React.FC = () => {
 
       if (esCirugia) {
         if (cirugia) {
-          if (cirugia._id === 'other' && otraCirugia) {
-            form.append('otraCirugia', otraCirugia);
-          } else if (cirugia._id !== 'other') {
-            form.append('cirugia', cirugia._id);
-          }
+          form.append('cirugia', cirugia._id);
+        } else if (otraCirugia) {
+          form.append('otraCirugia', otraCirugia);
         }
         if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
         form.append('porcentajeParticipacion', String(porcentaje));
@@ -401,6 +401,9 @@ const ResidenteFases: React.FC = () => {
                     primary={act.nombre || t('residentPhases.unnamedActivity')}
                     secondary={
                       <>
+                        <Typography variant="body2" color="text.secondary">
+                          {t('residentPhases.activityType', { type: act.tipo })}
+                        </Typography>
                         {act.comentariosResidente && (
                           <Typography variant="body2" color="text.secondary">
                             {t('residentPhases.comment')}: {act.comentariosResidente}
@@ -430,7 +433,7 @@ const ResidenteFases: React.FC = () => {
                             )}
                           </>
                         )}
-                        {act.estado !== 'pendiente' && typeof act.porcentajeParticipacion === 'number' && (
+                        {act.estado !== 'pendiente' && act.tipo === 'cirugia' && typeof act.porcentajeParticipacion === 'number' && (
                           <Typography variant="body2" color="text.secondary">
                             {t('residentPhases.participation', {
                               percent: act.porcentajeParticipacion
@@ -541,28 +544,47 @@ const ResidenteFases: React.FC = () => {
             rows={3}
             margin="normal"
           />
-          {tipoActividad === 'cirugia' && (
+          {esCirugia && (
             <>
               <Autocomplete
-                options={[...surgeryTypes, { _id: 'other', nombre: 'Other' }]}
-                getOptionLabel={(option: any) => option.nombre}
+                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+                getOptionLabel={(option: any) =>
+                  typeof option === 'string' ? option : option.name
+                }
                 value={cirugia}
-                onChange={(_, value) => setCirugia(value)}
+                inputValue={
+                  otraCirugiaSeleccionada
+                    ? otraCirugia
+                    : cirugia?.name || ''
+                }
+                onChange={(_, value) => {
+                  if ((value as any)?._id === 'other') {
+                    setCirugia(null);
+                    setOtraCirugia('');
+                    setOtraCirugiaSeleccionada(true);
+                  } else {
+                    setCirugia(value);
+                    setOtraCirugiaSeleccionada(false);
+                  }
+                }}
+                onInputChange={(_, newValue) => {
+                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
+                }}
                 renderInput={(params) => (
-                  <TextField {...params} label={t('residentPhases.dialog.surgery')} margin="normal" />
+                  <TextField
+                    {...params}
+                    label={t('residentPhases.dialog.surgery')}
+                    margin="normal"
+                    helperText={
+                      otraCirugiaSeleccionada
+                        ? t('residentPhases.dialog.otherSurgeryTooltip')
+                        : ''
+                    }
+                  />
                 )}
                 fullWidth
+                freeSolo={otraCirugiaSeleccionada}
               />
-              {cirugia && cirugia._id === 'other' && (
-                <TextField
-                  label={t('residentPhases.dialog.otherSurgery')}
-                  value={otraCirugia}
-                  onChange={(e) => setOtraCirugia(e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  helperText={t('residentPhases.dialog.otherSurgeryTooltip')}
-                />
-              )}
               <TextField
                 label={t('residentPhases.dialog.surgeonName')}
                 value={nombreCirujano}

@@ -869,6 +869,7 @@
     },
     "table": {
       "activity": "Atividade",
+      "type": "Tipo",
       "resident": "Residente",
       "date": "Data",
       "surgeryType": "Tipo de cirurgia",

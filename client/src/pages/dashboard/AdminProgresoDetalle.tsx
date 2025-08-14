@@ -305,7 +305,7 @@ const AdminProgresoDetalle: React.FC = () => {
                                 )}
                               </>
                             )}
-                            {typeof act.porcentajeParticipacion === 'number' && (
+                            {act.tipo === 'cirugia' && typeof act.porcentajeParticipacion === 'number' && (
                               <Typography variant="body2" color="text.secondary">
                                 {t('adminProgressDetail.participation', {
                                   percent: act.porcentajeParticipacion
