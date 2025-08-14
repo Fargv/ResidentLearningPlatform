@@ -1,44 +1,62 @@
-// Uso:
-//   node scripts/addTipoToProgresoActividades.js
-//
-// Recorre todos los documentos de "ProgresoResidente" y asegura que cada
-// actividad embebida tenga el campo "tipo". Si falta, lo rellena con el valor
-// de la actividad referenciada o "teórica" por defecto.
+// scripts/addTipoToProgresoActividades-direct.js
+// Ejecutar con: node scripts/addTipoToProgresoActividades-direct.js
 
-const dotenv = require('dotenv');
-const connectDB = require('../src/config/database');
-const ProgresoResidente = require('../src/models/ProgresoResidente');
+const { MongoClient, ObjectId } = require('mongodb');
 
-dotenv.config();
+// Cadena de conexión directa
+const uri = 'mongodb+srv://fernandoacedorico:Fall061023%21%21@cluster0.cxzh9ls.mongodb.net/test?retryWrites=true&w=majority';
+// Nombre de la base de datos que contiene tus colecciones
+const dbName = 'test'; // cámbialo si tu DB no es "test"
 
 async function run() {
-  await connectDB();
+  const client = new MongoClient(uri, { useUnifiedTopology: true });
 
   try {
-    const progresos = await ProgresoResidente.find().populate('actividades.actividad');
+    await client.connect();
+    console.log('✅ Conectado a MongoDB');
+
+    const db = client.db(dbName);
+    const progresosCol = db.collection('progresoresidentes');
+    const actividadesCol = db.collection('actividades');
+
+    const progresos = await progresosCol.find({}).toArray();
     let updated = 0;
 
     for (const progreso of progresos) {
       let modified = false;
+
       for (const act of progreso.actividades) {
         if (!act.tipo) {
-          act.tipo = act.actividad?.tipo || 'teórica';
+          let tipo = 'teórica';
+
+          if (act.actividad) {
+            const actividadRef = await actividadesCol.findOne({ _id: new ObjectId(act.actividad) });
+            if (actividadRef?.tipo) {
+              tipo = actividadRef.tipo;
+            }
+          }
+
+          act.tipo = tipo;
           modified = true;
         }
       }
+
       if (modified) {
-        await progreso.save();
-        updated++;
+        await progresosCol.updateOne(
+          { _id: progreso._id },
+          { $set: { actividades: progreso.actividades } }
+        );
         console.log(`Progreso ${progreso._id} actualizado`);
+        updated++;
       }
     }
 
     console.log(`Progresos actualizados: ${updated}`);
   } catch (err) {
-    console.error('Error al actualizar progresos:', err);
+    console.error('❌ Error al actualizar progresos:', err);
+  } finally {
+    await client.close();
   }
-
-  process.exit();
 }
 
 run();

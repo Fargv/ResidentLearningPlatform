@@ -60,6 +60,7 @@ const ResidenteFases: React.FC = () => {
   const [otraCirugia, setOtraCirugia] = useState('');
   const [nombreCirujano, setNombreCirujano] = useState('');
   const [porcentaje, setPorcentaje] = useState<number>(0);
+  const [tipoActividad, setTipoActividad] = useState<string | null>(null);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -167,6 +168,9 @@ const ResidenteFases: React.FC = () => {
   const handleOpenDialog = (progresoId: string, index: number) => {
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
+    const progreso = progresos.find(p => p._id === progresoId);
+    const actividadActual = progreso?.actividades?.[index];
+    setTipoActividad(actividadActual?.tipo || null);
     setComentario('');
     setFecha(new Date().toISOString().split('T')[0]);
     setArchivo(null);
@@ -176,9 +180,9 @@ const ResidenteFases: React.FC = () => {
     setOtraCirugia('');
     setNombreCirujano('');
     setPorcentaje(0);
-  
+
     // Mover el console.log al final para que acceda a los parámetros directamente
-  
+
     setDialogOpen(true);
   };
 
@@ -207,6 +211,15 @@ const ResidenteFases: React.FC = () => {
     }
   };
 
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setCirugia(null);
+    setOtraCirugia('');
+    setNombreCirujano('');
+    setPorcentaje(0);
+    setTipoActividad(null);
+  };
+
 
 
   const handleCompletarActividad = async () => {
@@ -225,7 +238,7 @@ const ResidenteFases: React.FC = () => {
 
       const progreso = progresos.find(p => p._id === selectedProgresoId);
       const actividad = progreso?.actividades?.[selectedActividadIndex!];
-      const esCirugia = actividad?.actividad?.tipo === 'cirugia';
+      const esCirugia = actividad?.tipo === 'cirugia';
 
       if (esCirugia) {
         if (cirugia) {
@@ -269,7 +282,7 @@ const ResidenteFases: React.FC = () => {
       setSnackbarMsg(t('residentPhases.activitySaveError'));
       setSnackbarOpen(true);
     } finally {
-      setDialogOpen(false);
+      handleCloseDialog();
       setArchivo(null);
     }
   };
@@ -507,7 +520,7 @@ const ResidenteFases: React.FC = () => {
 
 
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
         <DialogContent>
           <TextField
@@ -528,47 +541,51 @@ const ResidenteFases: React.FC = () => {
             rows={3}
             margin="normal"
           />
-          <Autocomplete
-            options={[...surgeryTypes, { _id: 'other', nombre: 'Other' }]}
-            getOptionLabel={(option: any) => option.nombre}
-            value={cirugia}
-            onChange={(_, value) => setCirugia(value)}
-            renderInput={(params) => (
-              <TextField {...params} label={t('residentPhases.dialog.surgery')} margin="normal" />
-            )}
-            fullWidth
-          />
-          {cirugia && cirugia._id === 'other' && (
-            <TextField
-              label={t('residentPhases.dialog.otherSurgery')}
-              value={otraCirugia}
-              onChange={(e) => setOtraCirugia(e.target.value)}
-              fullWidth
-              margin="normal"
-              helperText={t('residentPhases.dialog.otherSurgeryTooltip')}
-            />
+          {tipoActividad === 'cirugia' && (
+            <>
+              <Autocomplete
+                options={[...surgeryTypes, { _id: 'other', nombre: 'Other' }]}
+                getOptionLabel={(option: any) => option.nombre}
+                value={cirugia}
+                onChange={(_, value) => setCirugia(value)}
+                renderInput={(params) => (
+                  <TextField {...params} label={t('residentPhases.dialog.surgery')} margin="normal" />
+                )}
+                fullWidth
+              />
+              {cirugia && cirugia._id === 'other' && (
+                <TextField
+                  label={t('residentPhases.dialog.otherSurgery')}
+                  value={otraCirugia}
+                  onChange={(e) => setOtraCirugia(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  helperText={t('residentPhases.dialog.otherSurgeryTooltip')}
+                />
+              )}
+              <TextField
+                label={t('residentPhases.dialog.surgeonName')}
+                value={nombreCirujano}
+                onChange={(e) => setNombreCirujano(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                select
+                label={t('residentPhases.dialog.participation')}
+                value={porcentaje}
+                onChange={(e) => setPorcentaje(Number(e.target.value))}
+                fullWidth
+                margin="normal"
+              >
+                {[0, 25, 50, 75, 100].map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {val}%
+                  </MenuItem>
+                ))}
+              </TextField>
+            </>
           )}
-          <TextField
-            label={t('residentPhases.dialog.surgeonName')}
-            value={nombreCirujano}
-            onChange={(e) => setNombreCirujano(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            select
-            label={t('residentPhases.dialog.participation')}
-            value={porcentaje}
-            onChange={(e) => setPorcentaje(Number(e.target.value))}
-            fullWidth
-            margin="normal"
-          >
-            {[0, 25, 50, 75, 100].map((val) => (
-              <MenuItem key={val} value={val}>
-                {val}%
-              </MenuItem>
-            ))}
-          </TextField>
           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
             {t('residentPhases.dialog.selectFile')}
             <input
@@ -591,7 +608,7 @@ const ResidenteFases: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>{t('residentPhases.dialog.cancel')}</Button>
+          <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
           <Tooltip
             title={
               archivoError
