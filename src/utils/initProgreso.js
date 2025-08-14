@@ -11,22 +11,22 @@ const inicializarProgresoFormativo = async (usuario) => {
     const ModeloFase = esProgramaSoc ? FaseSoc : Fase;
     const ModeloActividad = esProgramaSoc ? ActividadSoc : Actividad;
 
-    const fases = await ModeloFase.find().sort('numero').populate('actividades');
+    const fases = await ModeloFase.find().sort('numero');
     console.log("📦 Fases encontradas:", fases.map(f => ({ id: f._id, nombre: f.nombre })));
     let createdCount = 0;
 
     for (let i = 0; i < fases.length; i++) {
       const fase = fases[i];
-      const actividadesDB = Array.isArray(fase.actividades)
-        ? fase.actividades
-        : await ModeloActividad.find({ fase: fase._id }).sort('orden');
+      const actividadesDB = await ModeloActividad.find({ fase: fase._id })
+        .select('nombre tipo')
+        .sort('orden');
 
       if (!actividadesDB.length) {
         console.warn(`⚠️  La fase "${fase.nombre}" no tiene actividades asociadas`);
         continue;
       }
 
-      const actividades = actividadesDB.map(act => ({
+      const actividades = actividadesDB.map((act) => ({
         actividadModel: esProgramaSoc ? 'ActividadSoc' : 'Actividad',
         actividad: mongoose.Types.ObjectId.isValid(act._id)
           ? new mongoose.Types.ObjectId(act._id)

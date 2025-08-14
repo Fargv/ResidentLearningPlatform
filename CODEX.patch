@@ -1,59 +1,188 @@
-diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
-index cd7263e43bcc407f952086478792b9f9d50fc539..21d8a0a583cb2e20d1143bb4ab0ca6ff2a05f26a 100644
---- a/src/controllers/progresoController.js
-+++ b/src/controllers/progresoController.js
-@@ -143,51 +143,53 @@ const getProgresoResidente = async (req, res, next) => {
-     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
-       .populate('fase')
-       .populate('actividades.actividad')
-       .populate('actividades.cirugia');
+diff --git a/src/controllers/actividadController.js b/src/controllers/actividadController.js
+index 0df4b3647e70794e637a708a54876059ad6debd4..6ed00d02faadbf810050892ea7cab6ab52bc6594 100644
+--- a/src/controllers/actividadController.js
++++ b/src/controllers/actividadController.js
+@@ -60,74 +60,87 @@ exports.createActividad = async (req, res, next) => {
+       accion: 'crear_actividad',
+       descripcion: `Actividad creada: ${actividad.nombre}`,
+       ip: req.ip
+     });
  
-     // Ordenar las fases por su campo 'orden'
-     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
-       const resultado = progresoPorFase.map(item => {
-         return {
-           _id: item._id.toString(),
-           fase: item.fase,
-           faseModel: item.faseModel,
-           estadoGeneral: item.estadoGeneral,
-           actividades: item.actividades.map(act => ({
-             nombre: act.nombre,
-             tipo: act.tipo,
-             completada: act.estado === 'validado',
-             comentariosResidente: act.comentariosResidente || '',
-             comentariosTutor: act.comentariosTutor || '',
-             fecha: act.fechaRealizacion,
-             fechaValidacion: act.fechaValidacion,
-             comentariosRechazo: act.comentariosRechazo || '',
-             fechaRechazo: act.fechaRechazo,
-             estado: act.estado,
-             porcentajeParticipacion: act.porcentajeParticipacion,
--            cirugia: act.cirugia
-+            cirugia: act.cirugia,
-+            otraCirugia: act.otraCirugia,
-+            nombreCirujano: act.nombreCirujano
-           }))
-         };
-       });
-       
+     res.status(201).json({
+       success: true,
+       data: actividad
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Actualizar una actividad
+ // @route   PUT /api/actividades/:id
+ // @access  Private/Admin
+ exports.updateActividad = async (req, res, next) => {
+   try {
+     let actividad = await Actividad.findById(req.params.id);
+ 
+     if (!actividad) {
+       return next(new ErrorResponse(`Actividad no encontrada con id ${req.params.id}`, 404));
+     }
+ 
++    const tipoAnterior = actividad.tipo;
++
+     // Si se está cambiando la fase, verificar que existe
+     if (req.body.fase && req.body.fase !== actividad.fase.toString()) {
+       const fase = await Fase.findById(req.body.fase);
+       if (!fase) {
+         return next(new ErrorResponse(`Fase no encontrada con id ${req.body.fase}`, 404));
+       }
+     }
+ 
+     actividad = await Actividad.findByIdAndUpdate(req.params.id, req.body, {
+       new: true,
+       runValidators: true
+     }).populate('fase');
+-    
++
++    let progresosActualizados = 0;
++    if (req.body.tipo && req.body.tipo !== tipoAnterior) {
++      const updateResult = await ProgresoResidente.updateMany(
++        { 'actividades.actividad': req.params.id },
++        { $set: { 'actividades.$[elem].tipo': req.body.tipo } },
++        { arrayFilters: [{ 'elem.actividad': req.params.id }] }
++      );
++      progresosActualizados = updateResult.modifiedCount;
++    }
++
+     // Crear registro de auditoría
+     await createAuditLog({
+       usuario: req.user._id,
+       accion: 'actualizar_actividad',
+       descripcion: `Actividad actualizada: ${actividad.nombre}`,
+       ip: req.ip
+     });
  
      res.status(200).json({
        success: true,
-       count: resultado.length,
-       data: resultado
+-      data: actividad
++      data: actividad,
++      progresosActualizados
      });
    } catch (err) {
-     console.error("Error en getProgresoResidente:", err);
      next(err);
    }
- 
  };
  
- 
- const getProgresoResidentePorFase = async (req, res, next) => {
+ // @desc    Eliminar una actividad
+ // @route   DELETE /api/actividades/:id
+ // @access  Private/Admin
+ exports.deleteActividad = async (req, res, next) => {
    try {
-     const residente = await User.findById(req.params.id).populate('hospital');
+     const actividad = await Actividad.findById(req.params.id);
  
-     if (!residente) {
-       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
+     if (!actividad) {
+       return next(new ErrorResponse('Actividad no encontrada', 404));
      }
+ 
+    // Eliminar actividad de los progresos que la contengan y no esté validada
+     const updateResult = await ProgresoResidente.updateMany(
+       { 'actividades.actividad': req.params.id },
+       { $pull: { actividades: { actividad: req.params.id, estado: { $ne: 'validado' } } } }
+     );
+ 
+     // Luego eliminar la actividad
+     await actividad.deleteOne();
+diff --git a/src/controllers/actividadSocController.js b/src/controllers/actividadSocController.js
+index 498e02e737a876a5db0a5f3147e02d4a1c63ad8e..69c074bd8beee3237ae4fc8242844477cac50f96 100644
+--- a/src/controllers/actividadSocController.js
++++ b/src/controllers/actividadSocController.js
+@@ -60,74 +60,87 @@ exports.createActividad = async (req, res, next) => {
+       accion: 'crear_actividad',
+       descripcion: `Actividad creada: ${actividad.nombre}`,
+       ip: req.ip
+     });
+ 
+     res.status(201).json({
+       success: true,
+       data: actividad
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Actualizar una actividad
+ // @route   PUT /api/actividades/:id
+ // @access  Private/Admin
+ exports.updateActividad = async (req, res, next) => {
+   try {
+     let actividad = await ActividadSoc.findById(req.params.id);
+ 
+     if (!actividad) {
+       return next(new ErrorResponse(`Actividad no encontrada con id ${req.params.id}`, 404));
+     }
+ 
++    const tipoAnterior = actividad.tipo;
++
+     // Si se está cambiando la fase, verificar que existe
+     if (req.body.fase && req.body.fase !== actividad.fase.toString()) {
+       const fase = await FaseSoc.findById(req.body.fase);
+       if (!fase) {
+         return next(new ErrorResponse(`Fase no encontrada con id ${req.body.fase}`, 404));
+       }
+     }
+ 
+     actividad = await ActividadSoc.findByIdAndUpdate(req.params.id, req.body, {
+       new: true,
+       runValidators: true
+     }).populate('fase');
+-    
++
++    let progresosActualizados = 0;
++    if (req.body.tipo && req.body.tipo !== tipoAnterior) {
++      const updateResult = await ProgresoResidente.updateMany(
++        { 'actividades.actividad': req.params.id },
++        { $set: { 'actividades.$[elem].tipo': req.body.tipo } },
++        { arrayFilters: [{ 'elem.actividad': req.params.id }] }
++      );
++      progresosActualizados = updateResult.modifiedCount;
++    }
++
+     // Crear registro de auditoría
+     await createAuditLog({
+       usuario: req.user._id,
+       accion: 'actualizar_actividad',
+       descripcion: `Actividad actualizada: ${actividad.nombre}`,
+       ip: req.ip
+     });
+ 
+     res.status(200).json({
+       success: true,
+-      data: actividad
++      data: actividad,
++      progresosActualizados
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Eliminar una actividad
+ // @route   DELETE /api/actividades/:id
+ // @access  Private/Admin
+ exports.deleteActividad = async (req, res, next) => {
+   try {
+     const actividad = await ActividadSoc.findById(req.params.id);
+ 
+     if (!actividad) {
+       return next(new ErrorResponse('Actividad no encontrada', 404));
+     }
+ 
+    // Eliminar actividad de los progresos que la contengan y no esté validada
+     const updateResult = await ProgresoResidente.updateMany(
+       { 'actividades.actividad': req.params.id },
+       { $pull: { actividades: { actividad: req.params.id, estado: { $ne: 'validado' } } } }
+     );
+ 
+     // Luego eliminar la actividad
+     await actividad.deleteOne();
