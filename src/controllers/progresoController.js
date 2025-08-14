@@ -155,6 +155,7 @@ const getProgresoResidente = async (req, res, next) => {
           estadoGeneral: item.estadoGeneral,
           actividades: item.actividades.map(act => ({
             nombre: act.nombre,
+            tipo: act.tipo,
             completada: act.estado === 'validado',
             comentariosResidente: act.comentariosResidente || '',
             comentariosTutor: act.comentariosTutor || '',
@@ -640,10 +641,7 @@ const marcarActividadCompletada = async (req, res, next) => {
 
     const actividadExistente = progreso.actividades[index];
 
-    const ModeloActividad = mongoose.model(actividadOriginal.actividadModel || 'Actividad');
-    const actividadDoc = await ModeloActividad.findById(actividadOriginal.actividad);
-
-    if (actividadDoc && actividadDoc.tipo === 'cirugia') {
+    if (actividadOriginal.tipo === 'cirugia') {
       const porcentaje = Number(porcentajeParticipacion);
       if (!nombreCirujano) {
         return next(new ErrorResponse('Nombre del cirujano es requerido', 400));

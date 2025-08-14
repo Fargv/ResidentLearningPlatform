@@ -28,9 +28,10 @@ describe('getProgresoResidente participante', () => {
       estadoGeneral: 'en progreso',
       actividades: [{
         nombre: 'Act',
+        tipo: 'teórica',
         estado: 'validado',
         comentariosResidente: 'cr',
-          comentariosTutor: 'cf',
+        comentariosTutor: 'cf',
         fechaRealizacion: '2024-01-01',
         fechaValidacion: '2024-01-02',
         comentariosRechazo: 'rej',
@@ -51,7 +52,8 @@ describe('getProgresoResidente participante', () => {
     await getProgresoResidente(req, res, jest.fn());
 
     const actividad = res.json.mock.calls[0][0].data[0].actividades[0];
-      expect(actividad).toHaveProperty('comentariosTutor', 'cf');
+    expect(actividad).toHaveProperty('tipo', 'teórica');
+    expect(actividad).toHaveProperty('comentariosTutor', 'cf');
     expect(actividad).toHaveProperty('fechaValidacion', '2024-01-02');
     expect(actividad).toHaveProperty('comentariosRechazo', 'rej');
     expect(actividad).toHaveProperty('fechaRechazo', '2024-01-03');

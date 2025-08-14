@@ -1,0 +1,424 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index b9bba5a69efe820f1240b94fe306c25194c28677..ac48a9bc711dfb21f83fcb58c97ddde8e1a2403b 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -24,26 +24,28 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
+ - 2025-07-15: Permitir edición de estados en `AdminValidaciones` y mostrar errores de backend.
+ - 2025-07-15: Entrada "Progreso de usuarios" para administradores en el Dashboard.
+ - 2025-07-16: Sanitización de payload en `AdminUsuarios.tsx` antes de crear o
+   actualizar usuarios.
+ - 2025-07-17: Fechas de sociedades en `ResidenteFases` con formato "julio 2025"
+   y color según estado y fecha.
+ - 2025-07-17: Nuevo formateador `formatDayMonthYear` y fecha corta en `ResidenteFases`.
+ - 2025-07-17: Milestones del Dashboard con diálogo y test de apertura al hacer clic.
+ - 2025-07-22: npm test ahora ejecuta pruebas del cliente con react-scripts antes de las pruebas de backend.
+ - 2025-07-18: Validación de tamaño de archivo en `ResidenteFases` y mensaje de error.
+ - 2025-07-21: Banner de desarrollo y fondo rojo claro en `App.tsx` cuando
+   `REACT_APP_ENV` es `dev`.
+ - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
+ - 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
+ - 2025-07-30: Eliminada la vista `AdminValidaciones` y ruta `/dashboard/validaciones-admin`; se reemplaza por `informes`.
+ - 2025-07-31: Añadidas dependencias `ajv` y `ajv-keywords` al cliente e intento de regenerar el lockfile.
+ - 2025-08-01: Localización de AdminConfiguracion y claves `adminConfig` en los archivos de idioma.
+ - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
+ - 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
+ - 2025-08-30: Creación de la página `PrivacyPolicy` con internacionalización y metadatos de actualización.
+ - 2025-08-11: Actualización de roles `'formador'`, `'coordinador'`, `'instructor'` y `'alumno'` a `'tutor'`, `'csm'`, `'profesor'` y `'participante'` en modelos y pruebas.
+ - 2025-08-12: Cambio de ruta a `/tutor/validaciones/pendientes` en `progresoRoutes.js`.
+ - 2025-08-12: Reemplazo de `comentariosFormador` por `comentariosTutor` en `ResidenteFases` y verificación en `ProgresoResidente`.
+ - 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
+ 
++- 2025-08-14: Verificación de tipo de actividad directa en `marcarActividadCompletada` y renderizado condicional de campos de cirugía en `ResidenteFases`.
++
+ ⚠️ Este archivo no interfiere con el código ni el despliegue.
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 58337d768b79e418c779ce4adfb43c3ea7034186..4311f51fb320d24be43db90c8616fc5eec821aca 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -36,52 +36,52 @@ import { Sociedad } from '../../types/Sociedad';
+ import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
+ import { useTranslation } from 'react-i18next';
+ 
+ const ResidenteFases: React.FC = () => {
+   const { user } = useAuth();
+   const { t, i18n } = useTranslation();
+   const [progresos, setProgresos] = useState<any[]>([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+   const [comentario, setComentario] = useState('');
+   const [fecha, setFecha] = useState('');
+   const [archivo, setArchivo] = useState<File | null>(null);
+   const [archivoError, setArchivoError] = useState(false);
+   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
+   const [snackbarMsg, setSnackbarMsg] = useState('');
+   const [snackbarError, setSnackbarError] = useState(false);
+   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+   const [downloadLoading, setDownloadLoading] = useState(false);
+   const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+   const [cirugia, setCirugia] = useState<any | null>(null);
+   const [otraCirugia, setOtraCirugia] = useState('');
+-  const [nombreCirujano, setNombreCirujano] = useState('');
+-  const [porcentaje, setPorcentaje] = useState<number>(0);
++  const [nombreCirujano, setNombreCirujano] = useState('');
++  const [porcentaje, setPorcentaje] = useState<number>(0);
+ 
+   const dateFieldMap: Record<number, keyof Sociedad> = {
+     1: 'fechaModulosOnline',
+     2: 'fechaSimulacion',
+     3: 'fechaAtividadesFirstAssistant',
+     4: 'fechaModuloOnlineStepByStep',
+     5: 'fechaHandOn'
+   };
+ 
+ 
+   const getSociedadDateObj = (fase: number): Date | null => {
+     if (!sociedadInfo) return null;
+     const field = dateFieldMap[fase];
+     const value = field ? (sociedadInfo as any)[field] : null;
+     return value ? new Date(value) : null;
+   };
+ 
+   const getSociedadDate = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatMonthYear(date.toISOString()) : '';
+   };
+ 
+   const getSociedadDateShort = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatDayMonthYear(date.toISOString()) : '';
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 58337d768b79e418c779ce4adfb43c3ea7034186..4311f51fb320d24be43db90c8616fc5eec821aca 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -142,50 +142,55 @@ const ResidenteFases: React.FC = () => {
+       }
+     };
+     fetchSurgeryTypes();
+   }, []);
+ 
+   useEffect(() => {
+     const loadSociedad = async () => {
+       if (user?.tipo !== 'Programa Sociedades') {
+         setSociedadInfo(null);
+         return;
+       }
+       const sociedadId = (user as any)?.sociedad?._id || (user as any)?.sociedad;
+       if (!sociedadId) return;
+       try {
+         const res = await api.get(`/sociedades/${sociedadId}`);
+         const data = res.data.data || res.data;
+         setSociedadInfo(data);
+       } catch (err) {
+         console.error('Error cargando sociedad', err);
+       }
+     };
+ 
+     loadSociedad();
+   }, [user]);
+ 
++  const progresoActual = progresos.find(p => p._id === selectedProgresoId);
++  const actividadActual =
++    selectedActividadIndex !== null ? progresoActual?.actividades?.[selectedActividadIndex] : null;
++  const esCirugia = actividadActual?.tipo === 'cirugia';
++
+   const handleOpenDialog = (progresoId: string, index: number) => {
+     setSelectedProgresoId(progresoId);
+     setSelectedActividadIndex(index);
+     setComentario('');
+     setFecha(new Date().toISOString().split('T')[0]);
+     setArchivo(null);
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+     setCirugia(null);
+     setOtraCirugia('');
+     setNombreCirujano('');
+     setPorcentaje(0);
+   
+     // Mover el console.log al final para que acceda a los parámetros directamente
+   
+     setDialogOpen(true);
+   };
+ 
+   const botonConfirmarHabilitado =
+     Boolean(selectedProgresoId) &&
+     selectedActividadIndex !== null &&
+     Boolean(fecha) &&
+     !archivoError;
+ 
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 58337d768b79e418c779ce4adfb43c3ea7034186..4311f51fb320d24be43db90c8616fc5eec821aca 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -201,53 +206,53 @@ const ResidenteFases: React.FC = () => {
+         setArchivoErrorMsg('');
+       }
+     } else {
+       setArchivo(null);
+       setArchivoError(false);
+       setArchivoErrorMsg('');
+     }
+   };
+ 
+ 
+ 
+   const handleCompletarActividad = async () => {
+     
+     if (!selectedProgresoId || selectedActividadIndex === null) {
+       setSnackbarError(true);
+       setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
+       setSnackbarOpen(true);
+       return;
+     }
+ 
+    try {
+       const form = new FormData();
+       form.append('fechaRealizacion', fecha);
+       form.append('comentariosResidente', comentario);
+ 
+-      const progreso = progresos.find(p => p._id === selectedProgresoId);
+-      const actividad = progreso?.actividades?.[selectedActividadIndex!];
+-      const esCirugia = actividad?.actividad?.tipo === 'cirugia';
++      const progreso = progresos.find(p => p._id === selectedProgresoId);
++      const actividad = progreso?.actividades?.[selectedActividadIndex!];
++      const esCirugia = actividad?.tipo === 'cirugia';
+ 
+       if (esCirugia) {
+         if (cirugia) {
+           if (cirugia._id === 'other' && otraCirugia) {
+             form.append('otraCirugia', otraCirugia);
+           } else if (cirugia._id !== 'other') {
+             form.append('cirugia', cirugia._id);
+           }
+         }
+         if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+         form.append('porcentajeParticipacion', String(porcentaje));
+       }
+ 
+       if (archivo) form.append('adjunto', archivo);
+ 
+       const { data } = await api.put(
+         `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
+         form,
+         { headers: { 'Content-Type': 'multipart/form-data' } }
+       );
+ 
+       if (!data?.success) {
+         setSnackbarError(true);
+         setSnackbarMsg(t('residentPhases.activityFail'));
+         setSnackbarOpen(true);
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 58337d768b79e418c779ce4adfb43c3ea7034186..4311f51fb320d24be43db90c8616fc5eec821aca 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -506,91 +511,95 @@ const ResidenteFases: React.FC = () => {
+ 
+ 
+ 
+ 
+       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+         <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
+         <DialogContent>
+           <TextField
+             label={t('residentPhases.dialog.date')}
+             type="date"
+             value={fecha}
+             onChange={(e) => setFecha(e.target.value)}
+             fullWidth
+             margin="normal"
+             InputLabelProps={{ shrink: true }}
+           />
+           <TextField
+             label={t('residentPhases.dialog.comment')}
+             value={comentario}
+             onChange={(e) => setComentario(e.target.value)}
+             fullWidth
+             multiline
+             rows={3}
+             margin="normal"
+           />
+-          <Autocomplete
+-            options={[...surgeryTypes, { _id: 'other', nombre: 'Other' }]}
+-            getOptionLabel={(option: any) => option.nombre}
+-            value={cirugia}
+-            onChange={(_, value) => setCirugia(value)}
+-            renderInput={(params) => (
+-              <TextField {...params} label={t('residentPhases.dialog.surgery')} margin="normal" />
+-            )}
+-            fullWidth
+-          />
+-          {cirugia && cirugia._id === 'other' && (
+-            <TextField
+-              label={t('residentPhases.dialog.otherSurgery')}
+-              value={otraCirugia}
+-              onChange={(e) => setOtraCirugia(e.target.value)}
+-              fullWidth
+-              margin="normal"
+-              helperText={t('residentPhases.dialog.otherSurgeryTooltip')}
+-            />
+-          )}
+-          <TextField
+-            label={t('residentPhases.dialog.surgeonName')}
+-            value={nombreCirujano}
+-            onChange={(e) => setNombreCirujano(e.target.value)}
+-            fullWidth
+-            margin="normal"
+-          />
+-          <TextField
+-            select
+-            label={t('residentPhases.dialog.participation')}
+-            value={porcentaje}
+-            onChange={(e) => setPorcentaje(Number(e.target.value))}
+-            fullWidth
+-            margin="normal"
+-          >
+-            {[0, 25, 50, 75, 100].map((val) => (
+-              <MenuItem key={val} value={val}>
+-                {val}%
+-              </MenuItem>
+-            ))}
+-          </TextField>
++          {esCirugia && (
++            <>
++              <Autocomplete
++                options={[...surgeryTypes, { _id: 'other', nombre: 'Other' }]}
++                getOptionLabel={(option: any) => option.nombre}
++                value={cirugia}
++                onChange={(_, value) => setCirugia(value)}
++                renderInput={(params) => (
++                  <TextField {...params} label={t('residentPhases.dialog.surgery')} margin="normal" />
++                )}
++                fullWidth
++              />
++              {cirugia && cirugia._id === 'other' && (
++                <TextField
++                  label={t('residentPhases.dialog.otherSurgery')}
++                  value={otraCirugia}
++                  onChange={(e) => setOtraCirugia(e.target.value)}
++                  fullWidth
++                  margin="normal"
++                  helperText={t('residentPhases.dialog.otherSurgeryTooltip')}
++                />
++              )}
++              <TextField
++                label={t('residentPhases.dialog.surgeonName')}
++                value={nombreCirujano}
++                onChange={(e) => setNombreCirujano(e.target.value)}
++                fullWidth
++                margin="normal"
++              />
++              <TextField
++                select
++                label={t('residentPhases.dialog.participation')}
++                value={porcentaje}
++                onChange={(e) => setPorcentaje(Number(e.target.value))}
++                fullWidth
++                margin="normal"
++              >
++                {[0, 25, 50, 75, 100].map((val) => (
++                  <MenuItem key={val} value={val}>
++                    {val}%
++                  </MenuItem>
++                ))}
++              </TextField>
++            </>
++          )}
+           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+             {t('residentPhases.dialog.selectFile')}
+             <input
+               type="file"
+               hidden
+               accept="application/pdf,image/png,image/jpeg"
+               onChange={handleFileChange}
+             />
+           </Button>
+ 
+           {archivo && !archivoError && (
+             <Typography variant="body2" sx={{ mt: 1 }}>
+               {archivo.name} – {(archivo.size / (1024 * 1024)).toFixed(1)} MB
+             </Typography>
+           )}
+           {archivoError && (
+             <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+               {archivoErrorMsg}
+             </Typography>
+           )}
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={() => setDialogOpen(false)}>{t('residentPhases.dialog.cancel')}</Button>
+           <Tooltip
+             title={
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index 022c5d4bde0a5187d88d002193201584de8487da..907ebda87de82485938885b48eb4ae261075603b 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -618,59 +618,56 @@ const getEstadisticasResidente = async (req, res, next) => {
+       data: estadisticas
+     });
+   } catch (err) {
+     console.error("Error en getEstadisticasResidente:", err);
+     next(err);
+   }
+ };
+ // PUT /api/progreso/:id/actividad/:index
+ const marcarActividadCompletada = async (req, res, next) => {
+   try {
+     const { id, index } = req.params;
+     const { fechaRealizacion, comentariosResidente, cirugia, otraCirugia, nombreCirujano, porcentajeParticipacion } = req.body;
+ 
+     const progreso = await ProgresoResidente.findById(id);
+     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
+       return next(new ErrorResponse('Progreso o actividad no válida', 404));
+     }
+ 
+     const actividadOriginal = progreso.actividades[index];
+     if (!actividadOriginal || !actividadOriginal.actividad) {
+       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
+     }
+ 
+     const actividadExistente = progreso.actividades[index];
+ 
+-    const ModeloActividad = mongoose.model(actividadOriginal.actividadModel || 'Actividad');
+-    const actividadDoc = await ModeloActividad.findById(actividadOriginal.actividad);
+-
+-    if (actividadDoc && actividadDoc.tipo === 'cirugia') {
+-      const porcentaje = Number(porcentajeParticipacion);
+-      if (!nombreCirujano) {
+-        return next(new ErrorResponse('Nombre del cirujano es requerido', 400));
+-      }
+-      if (!cirugia && !otraCirugia) {
++    if (actividadOriginal.tipo === 'cirugia') {
++      const porcentaje = Number(porcentajeParticipacion);
++      if (!nombreCirujano) {
++        return next(new ErrorResponse('Nombre del cirujano es requerido', 400));
++      }
++      if (!cirugia && !otraCirugia) {
+         return next(new ErrorResponse('Debe especificar la cirugía', 400));
+       }
+       if (![0, 25, 50, 75, 100].includes(porcentaje)) {
+         return next(new ErrorResponse('Porcentaje de participación inválido', 400));
+       }
+       actividadExistente.cirugia = cirugia;
+       actividadExistente.otraCirugia = otraCirugia;
+       actividadExistente.nombreCirujano = nombreCirujano;
+       actividadExistente.porcentajeParticipacion = porcentaje;
+     }
+ 
+     actividadExistente.estado = 'completado';
+     actividadExistente.completada = true;
+     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+     actividadExistente.comentariosResidente = comentariosResidente;
+ 
+     // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
+     if (req.files && req.files.adjunto) {
+       const file = req.files.adjunto;
+       const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
+       if (!allowed.includes(file.mimetype)) {
+         return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+       }
+       if (file.size > 5 * 1024 * 1024) {
+         return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));

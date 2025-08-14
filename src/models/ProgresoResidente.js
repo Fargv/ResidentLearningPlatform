@@ -3,6 +3,11 @@ const { Schema } = mongoose;
 
 const actividadSchema = new Schema({
   nombre: { type: String, required: true },
+  tipo: {
+    type: String,
+    enum: ['teórica','práctica','evaluación','observación','cirugia'],
+    required: true
+  },
   completada: { type: Boolean, default: false },
   fechaRealizacion: Date,
   actividadModel: { type: String, default: 'Actividad' },

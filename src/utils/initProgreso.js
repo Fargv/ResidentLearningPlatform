@@ -32,6 +32,7 @@ const inicializarProgresoFormativo = async (usuario) => {
           ? new mongoose.Types.ObjectId(act._id)
           : act._id,
         nombre: act.nombre,
+        tipo: act.tipo,
         completada: false,
         estado: 'pendiente',
         comentariosResidente: '',
