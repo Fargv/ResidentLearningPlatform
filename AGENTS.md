@@ -45,5 +45,6 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-12: Cambio de ruta a `/tutor/validaciones/pendientes` en `progresoRoutes.js`.
 - 2025-08-12: Reemplazo de `comentariosFormador` por `comentariosTutor` en `ResidenteFases` y verificación en `ProgresoResidente`.
 - 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
+- 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
 
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

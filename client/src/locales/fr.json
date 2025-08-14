@@ -550,6 +550,9 @@
       "selectDate": "Sélectionnez une date de réalisation",
       "optionalFileHint": "Joindre un fichier facultatif (max. 5 Mo)",
       "fileTooLarge": "Le fichier dépasse la taille maximale de 5 Mo.",
+      "surgeryRequired": "Sélectionnez ou saisissez une procédure",
+      "surgeonNameRequired": "Entrez le nom du chirurgien",
+      "participationRequired": "Sélectionnez un pourcentage de participation",
       "title": "Marquer l'activité comme complétée",
       "date": "Date de réalisation"
     },

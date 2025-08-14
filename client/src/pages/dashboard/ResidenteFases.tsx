@@ -191,7 +191,11 @@ const ResidenteFases: React.FC = () => {
     Boolean(selectedProgresoId) &&
     selectedActividadIndex !== null &&
     Boolean(fecha) &&
-    !archivoError;
+    !archivoError &&
+    (!esCirugia ||
+      ((cirugia || otraCirugia.trim()) &&
+        nombreCirujano.trim() !== '' &&
+        porcentaje > 0));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -414,31 +418,30 @@ const ResidenteFases: React.FC = () => {
                             {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
                           </Typography>
                         )}
-                        {act.estado !== 'pendiente' && act.cirugia && (
+                        {act.tipo === 'cirugia' && act.estado !== 'pendiente' && (
                           <>
-                            <Typography variant="body2" color="text.secondary">
-                              {t('residentPhases.surgeryType', {
-                                type:
-                                  act.cirugia.tipo === 'Other'
-                                    ? act.cirugia.tipoLibre
-                                    : act.cirugia.tipo
-                              })}
-                            </Typography>
-                            {act.cirugia.cirujano && (
+                            {(act.cirugia?.name || act.otraCirugia) && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('residentPhases.surgeryType', {
+                                  type: act.cirugia?.name || act.otraCirugia
+                                })}
+                              </Typography>
+                            )}
+                            {act.nombreCirujano && (
                               <Typography variant="body2" color="text.secondary">
                                 {t('residentPhases.surgeonName', {
-                                  name: act.cirugia.cirujano
+                                  name: act.nombreCirujano
+                                })}
+                              </Typography>
+                            )}
+                            {typeof act.porcentajeParticipacion === 'number' && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('residentPhases.participation', {
+                                  percent: act.porcentajeParticipacion
                                 })}
                               </Typography>
                             )}
                           </>
-                        )}
-                        {act.estado !== 'pendiente' && act.tipo === 'cirugia' && typeof act.porcentajeParticipacion === 'number' && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.participation', {
-                              percent: act.porcentajeParticipacion
-                            })}
-                          </Typography>
                         )}
                         {act.comentariosTutor && (
                           <Typography variant="body2" color="text.secondary">
@@ -548,6 +551,7 @@ const ResidenteFases: React.FC = () => {
             <>
               <Autocomplete
                 options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+                isOptionEqualToValue={(opt, val) => opt._id === val._id}
                 getOptionLabel={(option: any) =>
                   typeof option === 'string' ? option : option.name
                 }
@@ -558,7 +562,14 @@ const ResidenteFases: React.FC = () => {
                     : cirugia?.name || ''
                 }
                 onChange={(_, value) => {
-                  if ((value as any)?._id === 'other') {
+                  if (typeof value === 'string') {
+                    if (otraCirugiaSeleccionada) {
+                      setOtraCirugia(value);
+                    }
+                  } else if (!value) {
+                    setCirugia(null);
+                    setOtraCirugiaSeleccionada(false);
+                  } else if ((value as any)?._id === 'other') {
                     setCirugia(null);
                     setOtraCirugia('');
                     setOtraCirugiaSeleccionada(true);
@@ -575,8 +586,11 @@ const ResidenteFases: React.FC = () => {
                     {...params}
                     label={t('residentPhases.dialog.surgery')}
                     margin="normal"
+                    error={esCirugia && !(cirugia || otraCirugia.trim())}
                     helperText={
-                      otraCirugiaSeleccionada
+                      esCirugia && !(cirugia || otraCirugia.trim())
+                        ? t('residentPhases.dialog.surgeryRequired')
+                        : otraCirugiaSeleccionada
                         ? t('residentPhases.dialog.otherSurgeryTooltip')
                         : ''
                     }
@@ -591,6 +605,12 @@ const ResidenteFases: React.FC = () => {
                 onChange={(e) => setNombreCirujano(e.target.value)}
                 fullWidth
                 margin="normal"
+                error={esCirugia && !nombreCirujano.trim()}
+                helperText={
+                  esCirugia && !nombreCirujano.trim()
+                    ? t('residentPhases.dialog.surgeonNameRequired')
+                    : ''
+                }
               />
               <TextField
                 select
@@ -599,6 +619,12 @@ const ResidenteFases: React.FC = () => {
                 onChange={(e) => setPorcentaje(Number(e.target.value))}
                 fullWidth
                 margin="normal"
+                error={esCirugia && porcentaje === 0}
+                helperText={
+                  esCirugia && porcentaje === 0
+                    ? t('residentPhases.dialog.participationRequired')
+                    : ''
+                }
               >
                 {[0, 25, 50, 75, 100].map((val) => (
                   <MenuItem key={val} value={val}>
@@ -641,6 +667,12 @@ const ResidenteFases: React.FC = () => {
                 ? t('residentPhases.dialog.noActivitySelected')
                 : !fecha
                 ? t('residentPhases.dialog.selectDate')
+                : esCirugia && !(cirugia || otraCirugia.trim())
+                ? t('residentPhases.dialog.surgeryRequired')
+                : esCirugia && !nombreCirujano.trim()
+                ? t('residentPhases.dialog.surgeonNameRequired')
+                : esCirugia && porcentaje === 0
+                ? t('residentPhases.dialog.participationRequired')
                 : t('residentPhases.dialog.optionalFileHint')
             }
             arrow

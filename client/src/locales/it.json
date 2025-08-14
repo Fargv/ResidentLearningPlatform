@@ -901,6 +901,9 @@
       "selectDate": "Seleziona una data di completamento",
       "optionalFileHint": "Allega un file opzionale (max 5MB)",
       "fileTooLarge": "Il file supera la dimensione massima di 5MB.",
+      "surgeryRequired": "Seleziona o inserisci una procedura",
+      "surgeonNameRequired": "Inserisci il nome del chirurgo",
+      "participationRequired": "Seleziona una percentuale di partecipazione",
       "title": "Segna attività come completata",
       "date": "Data di completamento"
     },

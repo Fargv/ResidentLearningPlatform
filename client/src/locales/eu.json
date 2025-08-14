@@ -868,6 +868,9 @@
       "selectDate": "Hautatu osatze data bat",
       "optionalFileHint": "Erantsi fitxategi aukerazkoa (geh. 5MB)",
       "fileTooLarge": "Fitxategia 5MB baino handiagoa da.",
+      "surgeryRequired": "Aukeratu edo idatzi prozedura bat",
+      "surgeonNameRequired": "Idatzi zirujauaren izena",
+      "participationRequired": "Aukeratu parte-hartzearen ehunekoa",
       "title": "Markatu jarduera osatutzat",
       "date": "Osatze data"
     },

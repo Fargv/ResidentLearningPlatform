@@ -900,6 +900,9 @@
       "selectDate": "Selecciona una data de realització",
       "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
       "fileTooLarge": "El fitxer supera la mida màxima de 5MB.",
+      "surgeryRequired": "Selecciona o escriu un procediment",
+      "surgeonNameRequired": "Introdueix el nom del cirurgià",
+      "participationRequired": "Selecciona un percentatge de participació",
       "title": "Marcar activitat com a completada",
       "date": "Data de realització"
     },

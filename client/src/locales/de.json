@@ -331,6 +331,9 @@
       "selectDate": "Wähle ein Abschlussdatum",
       "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
       "fileTooLarge": "Datei ist größer als 5MB.",
+      "surgeryRequired": "Wähle oder gib ein Verfahren ein",
+      "surgeonNameRequired": "Gib den Namen des Chirurgen ein",
+      "participationRequired": "Wähle einen Beteiligungsprozentsatz",
       "title": "Aktivität abschließen",
       "date": "Abschlussdatum"
     },

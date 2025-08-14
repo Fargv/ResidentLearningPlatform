@@ -80,9 +80,9 @@ const TutorValidaciones: React.FC = () => {
       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
       : t('tutorValidations.table.noPhase');
 
-  const getSurgeryType = (cirugia?: any) => {
-    if (!cirugia) return '-';
-    return cirugia.tipo === 'Other' ? cirugia.tipoLibre : cirugia.tipo;
+  const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
+    if (cirugia?.name) return cirugia.name;
+    return otraCirugia || '-';
   };
 
   const fetchValidaciones = useCallback(async () => {
@@ -273,8 +273,8 @@ const handleRechazar = async () => {
                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
                       </TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
-                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia)}</TableCell>
-                      <TableCell>{progreso.actividad?.cirugia?.cirujano || '-'}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
                       <TableCell>
                         {progreso.actividad?.tipo === 'cirugia'
                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
@@ -368,8 +368,8 @@ const handleRechazar = async () => {
                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
-                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia)}</TableCell>
-                      <TableCell>{progreso.actividad?.cirugia?.cirujano || '-'}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
                       <TableCell>
                         {progreso.actividad?.tipo === 'cirugia'
                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
@@ -419,8 +419,8 @@ const handleRechazar = async () => {
                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
-                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia)}</TableCell>
-                      <TableCell>{progreso.actividad?.cirugia?.cirujano || '-'}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
                       <TableCell>
                         {progreso.actividad?.tipo === 'cirugia'
                           ? progreso.actividad?.porcentajeParticipacion ?? '-'

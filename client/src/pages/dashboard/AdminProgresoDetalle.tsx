@@ -52,10 +52,10 @@ interface Actividad {
   tipo: string;
   porcentajeParticipacion?: number;
   cirugia?: {
-    tipo?: string;
-    tipoLibre?: string;
-    cirujano?: string;
+    name?: string;
   };
+  otraCirugia?: string;
+  nombreCirujano?: string;
 }
 
 interface ProgresoFase {
@@ -286,25 +286,24 @@ const AdminProgresoDetalle: React.FC = () => {
                                 })}
                               </Typography>
                             )}
-                            {act.cirugia && (
-                              <>
-                                <Typography variant="body2" color="text.secondary">
-                                  {t('adminProgressDetail.surgeryType', {
-                                    type:
-                                      act.cirugia.tipo === 'Other'
-                                        ? act.cirugia.tipoLibre
-                                        : act.cirugia.tipo
-                                  })}
-                                </Typography>
-                                {act.cirugia.cirujano && (
-                                  <Typography variant="body2" color="text.secondary">
-                                    {t('adminProgressDetail.surgeonName', {
-                                      name: act.cirugia.cirujano
-                                    })}
-                                  </Typography>
-                                )}
-                              </>
-                            )}
+                              {(act.cirugia?.name || act.otraCirugia || act.nombreCirujano) && (
+                                <>
+                                  {(act.cirugia?.name || act.otraCirugia) && (
+                                    <Typography variant="body2" color="text.secondary">
+                                      {t('adminProgressDetail.surgeryType', {
+                                        type: act.cirugia?.name || act.otraCirugia
+                                      })}
+                                    </Typography>
+                                  )}
+                                  {act.nombreCirujano && (
+                                    <Typography variant="body2" color="text.secondary">
+                                      {t('adminProgressDetail.surgeonName', {
+                                        name: act.nombreCirujano
+                                      })}
+                                    </Typography>
+                                  )}
+                                </>
+                              )}
                             {act.tipo === 'cirugia' && typeof act.porcentajeParticipacion === 'number' && (
                               <Typography variant="body2" color="text.secondary">
                                 {t('adminProgressDetail.participation', {

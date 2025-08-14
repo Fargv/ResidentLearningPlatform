@@ -878,6 +878,9 @@
       "selectDate": "Select a completion date",
       "optionalFileHint": "Attach an optional file (max 5MB)",
       "fileTooLarge": "The file exceeds the maximum size of 5MB.",
+      "surgeryRequired": "Select or enter a procedure",
+      "surgeonNameRequired": "Enter the surgeon's name",
+      "participationRequired": "Select a participation percentage",
       "title": "Mark activity as completed",
       "date": "Completion date"
     },

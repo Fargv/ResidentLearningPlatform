@@ -902,6 +902,9 @@
       "selectDate": "Selecciona unha data de realización",
       "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
       "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB.",
+      "surgeryRequired": "Selecciona ou escribe un procedemento",
+      "surgeonNameRequired": "Introduce o nome do cirurxián",
+      "participationRequired": "Selecciona unha porcentaxe de participación",
       "title": "Marcar actividade como completada",
       "date": "Data de realización"
     },
