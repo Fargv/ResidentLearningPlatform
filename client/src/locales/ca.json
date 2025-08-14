@@ -422,6 +422,7 @@
     "surgeryType": "Tipus de cirurgia: {{type}}",
     "surgeonName": "Nom del cirurgià: {{name}}",
     "participation": "Percentatge de participació: {{percent}}%",
+    "activityType": "Tipus d'activitat: {{type}}",
     "statusWithValue": "Estat: {{status}}",
     "noProgress": "No hi ha progrés disponible."
   },

@@ -49,6 +49,7 @@ interface Actividad {
   estado?: 'pendiente' | 'completado' | 'rechazado' | 'validado';
   fecha?: string;
   fechaValidacion?: string;
+  tipo: string;
   porcentajeParticipacion?: number;
   cirugia?: {
     tipo?: string;
@@ -311,6 +312,9 @@ const AdminProgresoDetalle: React.FC = () => {
                                 })}
                               </Typography>
                             )}
+                            <Typography variant="body2" color="text.secondary">
+                              {t('adminProgressDetail.activityType', { type: act.tipo })}
+                            </Typography>
                             <Typography variant="body2" color="text.secondary">
                               {t('adminProgressDetail.statusWithValue', {
                                 status: t(

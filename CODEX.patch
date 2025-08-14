@@ -1,0 +1,140 @@
+diff --git a/client/src/pages/dashboard/AdminProgresoDetalle.tsx b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+index 4398e4a58c20a61d31e45eb4788819157abb597f..be2349922d8e221f38d7535a8d336e65d83b7b74 100644
+--- a/client/src/pages/dashboard/AdminProgresoDetalle.tsx
++++ b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+@@ -27,56 +27,57 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ import { formatDayMonthYear } from '../../utils/date';
+ import { useTranslation } from 'react-i18next';
+ 
+ const activityStatusMap: Record<string, string> = {
+   pendiente: 'pending',
+   completado: 'completed',
+   rechazado: 'rejected',
+   validado: 'validated'
+ };
+ const phaseStatusMap: Record<string, string> = {
+   bloqueada: 'blocked',
+   'en progreso': 'inProgress',
+   completado: 'completed',
+   validado: 'validated',
+   pendiente: 'pending',
+   rechazado: 'rejected'
+ };
+ interface Actividad {
+   nombre?: string;
+   estado?: 'pendiente' | 'completado' | 'rechazado' | 'validado';
+   fecha?: string;
+   fechaValidacion?: string;
+-  porcentajeParticipacion?: number;
+-  cirugia?: {
+-    tipo?: string;
+-    tipoLibre?: string;
+-    cirujano?: string;
+-  };
++  tipo: string;
++  porcentajeParticipacion?: number;
++  cirugia?: {
++    tipo?: string;
++    tipoLibre?: string;
++    cirujano?: string;
++  };
+ }
+ 
+ interface ProgresoFase {
+   _id: string;
+   fase: { numero: number; nombre: string };
+   estadoGeneral: string;
+   actividades: Actividad[];
+ }
+ 
+ interface UserInfo {
+   nombre: string;
+   apellidos: string;
+ }
+ 
+ const AdminProgresoDetalle: React.FC = () => {
+   const { userId } = useParams();
+   const navigate = useNavigate();
+   const { user } = useAuth();
+   const isAdmin = user?.rol === 'administrador';
+   const { t } = useTranslation();
+   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
+   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [apiError, setApiError] = useState<string | null>(null);
+diff --git a/client/src/pages/dashboard/AdminProgresoDetalle.tsx b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+index 4398e4a58c20a61d31e45eb4788819157abb597f..be2349922d8e221f38d7535a8d336e65d83b7b74 100644
+--- a/client/src/pages/dashboard/AdminProgresoDetalle.tsx
++++ b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+@@ -282,57 +283,60 @@ const AdminProgresoDetalle: React.FC = () => {
+                               <Typography variant="body2" color="text.secondary">
+                                 {t('adminProgressDetail.validatedOn', {
+                                   date: formatDayMonthYear(act.fechaValidacion)
+                                 })}
+                               </Typography>
+                             )}
+                             {act.cirugia && (
+                               <>
+                                 <Typography variant="body2" color="text.secondary">
+                                   {t('adminProgressDetail.surgeryType', {
+                                     type:
+                                       act.cirugia.tipo === 'Other'
+                                         ? act.cirugia.tipoLibre
+                                         : act.cirugia.tipo
+                                   })}
+                                 </Typography>
+                                 {act.cirugia.cirujano && (
+                                   <Typography variant="body2" color="text.secondary">
+                                     {t('adminProgressDetail.surgeonName', {
+                                       name: act.cirugia.cirujano
+                                     })}
+                                   </Typography>
+                                 )}
+                               </>
+                             )}
+-                            {typeof act.porcentajeParticipacion === 'number' && (
+-                              <Typography variant="body2" color="text.secondary">
+-                                {t('adminProgressDetail.participation', {
+-                                  percent: act.porcentajeParticipacion
+-                                })}
+-                              </Typography>
+-                            )}
++                            {typeof act.porcentajeParticipacion === 'number' && (
++                              <Typography variant="body2" color="text.secondary">
++                                {t('adminProgressDetail.participation', {
++                                  percent: act.porcentajeParticipacion
++                                })}
++                              </Typography>
++                            )}
++                            <Typography variant="body2" color="text.secondary">
++                              {t('adminProgressDetail.activityType', { type: act.tipo })}
++                            </Typography>
+                             <Typography variant="body2" color="text.secondary">
+                               {t('adminProgressDetail.statusWithValue', {
+                                 status: t(
+                                   `adminProgressDetail.activityStatus.${activityStatusMap[act.estado || 'pendiente']}`
+                                 )
+                               })
+                               }
+                             </Typography>
+                           </>
+                         }
+                       />
+                       {isAdmin && (
+                         <FormControl size="small" sx={{ ml: 2, minWidth: 140 }}>
+                           <InputLabel id={`act-${item._id}-${idx}-estado-label`}>
+                             {t('adminProgressDetail.activityStatusLabel')}
+                           </InputLabel>
+                           <Select
+                             labelId={`act-${item._id}-${idx}-estado-label`}
+                             value={act.estado}
+                             label={t('adminProgressDetail.activityStatusLabel')}
+                             onChange={(e) =>
+                               handleActivityStatusChange(item._id, idx, e.target.value as string)
+                             }
+                           >
+                             <MenuItem value="pendiente">

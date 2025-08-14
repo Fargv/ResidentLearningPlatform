@@ -573,6 +573,7 @@
     "surgeryType": "Kirurgia mota: {{type}}",
     "surgeonName": "Zirujauaren izena: {{name}}",
     "participation": "Parte-hartze portzentaia: {{percent}}%",
+    "activityType": "Jarduera mota: {{type}}",
     "statusWithValue": "Egoera: {{status}}",
     "noProgress": "Ez dago aurrerapenik eskuragarri."
   },
