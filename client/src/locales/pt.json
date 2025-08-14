@@ -199,6 +199,7 @@
     "rejectionReason": "Motivo da rejeição",
     "completedOn": "Data de conclusão",
     "validatedOn": "Validado em",
+    "activityType": "Tipo de atividade: {{type}}",
     "surgeryType": "Tipo de cirurgia: {{type}}",
     "surgeonName": "Nome do cirurgião: {{name}}",
     "participation": "Percentual de participação: {{percent}}%",

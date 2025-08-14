@@ -881,6 +881,7 @@
     "rejectionReason": "Motivo do rexeitamento",
     "completedOn": "Data completada",
     "validatedOn": "Validado o",
+    "activityType": "Tipo de actividade: {{type}}",
     "surgeryType": "Tipo de cirurxía: {{type}}",
     "surgeonName": "Nome do cirurxián: {{name}}",
     "participation": "Porcentaxe de participación: {{percent}}%",

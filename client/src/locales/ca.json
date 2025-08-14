@@ -879,6 +879,7 @@
     "rejectionReason": "Motiu del rebuig",
     "completedOn": "Data completada",
     "validatedOn": "Validat el",
+    "activityType": "Tipus d'activitat: {{type}}",
     "surgeryType": "Tipus de cirurgia: {{type}}",
     "surgeonName": "Nom del cirurgià: {{name}}",
     "participation": "Percentatge de participació: {{percent}}%",

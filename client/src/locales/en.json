@@ -857,6 +857,7 @@
     "rejectionReason": "Rejection reason",
     "completedOn": "Completed on",
     "validatedOn": "Validated on",
+    "activityType": "Activity type: {{type}}",
     "surgeryType": "Surgery type: {{type}}",
     "surgeonName": "Surgeon's name: {{name}}",
     "participation": "Participation percentage: {{percent}}%",

@@ -529,6 +529,7 @@
     "rejectionReason": "Motif du rejet",
     "completedOn": "Date de réalisation",
     "validatedOn": "Validée le",
+    "activityType": "Type d'activité : {{type}}",
     "surgeryType": "Type de chirurgie : {{type}}",
     "surgeonName": "Nom du chirurgien : {{name}}",
     "participation": "Pourcentage de participation : {{percent}} %",

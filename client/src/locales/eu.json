@@ -847,6 +847,7 @@
     "rejectionReason": "Baztertzeko arrazoia",
     "completedOn": "Osatze data",
     "validatedOn": "Balidatua",
+    "activityType": "Jarduera mota: {{type}}",
     "surgeryType": "Kirurgia mota: {{type}}",
     "surgeonName": "Zirujauaren izena: {{name}}",
     "participation": "Parte-hartze portzentaia: {{percent}}%",

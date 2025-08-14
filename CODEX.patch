@@ -1,0 +1,59 @@
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index cd7263e43bcc407f952086478792b9f9d50fc539..21d8a0a583cb2e20d1143bb4ab0ca6ff2a05f26a 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -143,51 +143,53 @@ const getProgresoResidente = async (req, res, next) => {
+     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
+       .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia');
+ 
+     // Ordenar las fases por su campo 'orden'
+     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
+       const resultado = progresoPorFase.map(item => {
+         return {
+           _id: item._id.toString(),
+           fase: item.fase,
+           faseModel: item.faseModel,
+           estadoGeneral: item.estadoGeneral,
+           actividades: item.actividades.map(act => ({
+             nombre: act.nombre,
+             tipo: act.tipo,
+             completada: act.estado === 'validado',
+             comentariosResidente: act.comentariosResidente || '',
+             comentariosTutor: act.comentariosTutor || '',
+             fecha: act.fechaRealizacion,
+             fechaValidacion: act.fechaValidacion,
+             comentariosRechazo: act.comentariosRechazo || '',
+             fechaRechazo: act.fechaRechazo,
+             estado: act.estado,
+             porcentajeParticipacion: act.porcentajeParticipacion,
+-            cirugia: act.cirugia
++            cirugia: act.cirugia,
++            otraCirugia: act.otraCirugia,
++            nombreCirujano: act.nombreCirujano
+           }))
+         };
+       });
+       
+ 
+     res.status(200).json({
+       success: true,
+       count: resultado.length,
+       data: resultado
+     });
+   } catch (err) {
+     console.error("Error en getProgresoResidente:", err);
+     next(err);
+   }
+ 
+ };
+ 
+ 
+ const getProgresoResidentePorFase = async (req, res, next) => {
+   try {
+     const residente = await User.findById(req.params.id).populate('hospital');
+ 
+     if (!residente) {
+       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
+     }

@@ -165,7 +165,9 @@ const getProgresoResidente = async (req, res, next) => {
             fechaRechazo: act.fechaRechazo,
             estado: act.estado,
             porcentajeParticipacion: act.porcentajeParticipacion,
-            cirugia: act.cirugia
+            cirugia: act.cirugia,
+            otraCirugia: act.otraCirugia,
+            nombreCirujano: act.nombreCirujano
           }))
         };
       });

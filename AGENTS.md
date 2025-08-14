@@ -47,4 +47,5 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
 - 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
 
+- 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

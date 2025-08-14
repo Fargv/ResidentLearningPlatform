@@ -310,6 +310,7 @@
     "rejectionReason": "Ablehnungsgrund",
     "completedOn": "Abschlussdatum",
     "validatedOn": "Validiert am",
+    "activityType": "Aktivitätstyp: {{type}}",
     "surgeryType": "Operationsart: {{type}}",
     "surgeonName": "Name des Chirurgen: {{name}}",
     "participation": "Teilnahmeprozentsatz: {{percent}}%",
