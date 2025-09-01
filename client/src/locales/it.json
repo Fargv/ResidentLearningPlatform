@@ -2,11 +2,11 @@
   "welcome": "Benvenuto/a, {{name}}",
   "role": {
     "adminPanel": "Pannello di amministrazione",
-    "trainer": "Formatore dei residenti dell'ospedale {{hospital}}",
-    "coordinator": "Coordinatore dei residenti dell'ospedale {{hospital}}",
+    "tutor": "Tutor dei residenti dell'ospedale {{hospital}}",
+    "csm": "CSMe dei residenti dell'ospedale {{hospital}}",
     "resident": "Residente dell'ospedale {{hospital}}",
-    "student": "Studente del programma delle società {{title}}",
-    "instructor": "Istruttore del programma delle società {{title}}"
+    "participant": "Participantee del programma delle società {{title}}",
+    "professor": "Profesor del programma delle società {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -30,8 +30,9 @@
     "societiesProgram": "Programma Società",
     "users": "Utenti",
     "accessCodes": "Codici di accesso",
+    "surgeryTypes": "Tipi di Chirurgia",
     "debug": "Debug"
- },
+  },
   "adminPhases": {
     "_comment": "Gestione delle fasi per amministratori",
     "phase": "Fase",
@@ -46,7 +47,7 @@
     "observation": "Osservazione",
     "practice": "Pratica",
     "theory": "Teoria",
-    "procedure": "Procedura",
+    "surgery": "Chirurgia",
     "errorForbidden": "Non hai i permessi per vedere questa sezione",
     "errorLoadData": "Errore nel caricamento dei dati",
     "tabs": {
@@ -133,7 +134,11 @@
       },
       "createActivity": "Creazione attività per la fase: <strong>{{phase}}</strong>"
     },
-    "empty": "Nessuna fase creata. Crea una nuova fase per iniziare."
+    "empty": "Nessuna fase creata. Crea una nuova fase per iniziare.",
+    "requiresValidation": "Richiede convalida",
+    "requiresSignature": "Richiede firma",
+    "requiresPercentage": "Richiede percentuale",
+    "requiresAttachment": "Richiede allegato"
   },
   "progressByPhase": "Progresso per fase",
   "close": "Chiudi",
@@ -254,11 +259,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "formador": "Formatore",
-    "coordinador": "Coordinatore",
+    "tutor": "Tutor",
+    "csm": "CSMe",
     "administrador": "Amministratore",
-    "alumno": "Studente",
-    "instructor": "Istruttore"
+    "participante": "Participantee",
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notifiche",
@@ -349,7 +354,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedure passo dopo passo.",
+      "intro": "Chirurgie passo dopo passo.",
       "item1": "Materiale di supporto",
       "item2": "Revisione guidata"
     },
@@ -375,7 +380,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Chirurgia alla console",
-      "description": "Procedure eseguite dal residente sotto supervisione."
+      "description": "Chirurgie eseguite dal residente sotto supervisione."
     }
   },
   "residentProgress": {
@@ -390,7 +395,7 @@
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificato generato automaticamente da Academic Program Da Vinci · www.abexsl.es"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "I miei utenti",
     "invite": "Invita utente",
     "edit": "Modifica utente",
@@ -415,7 +420,7 @@
       "role": "Ruolo",
       "roles": {
         "resident": "Residente",
-        "trainer": "Formatore"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -440,7 +445,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "Formatore"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Attivo",
@@ -456,7 +461,7 @@
       "inviteSuccess": "Utente invitato",
       "deleteSuccess": "Utente eliminato",
       "deleteError": "Errore durante l'eliminazione",
-       "genericError": "Errore"
+      "genericError": "Errore"
     }
   },
   "profile": {
@@ -730,7 +735,11 @@
         "confirm": "Elimina",
         "cancel": "Annulla"
       }
-    }
+    },
+    "requiresValidation": "Richiede convalida",
+    "requiresSignature": "Richiede firma",
+    "requiresPercentage": "Richiede percentuale",
+    "requiresAttachment": "Richiede allegato"
   },
   "adminUserProgress": {
     "title": "Progresso utenti",
@@ -757,6 +766,9 @@
     "noTitle": "Senza titolo",
     "phaseStatusLabel": "Stato della fase",
     "activityStatusLabel": "Stato dell'attività",
+    "masterStatusLabel": "Stato per tutte le attività",
+    "revert": "Ripristina",
+    "confirmBulkChange": "Sei sicuro di voler cambiare lo stato di tutte le attività?",
     "phaseStatus": {
       "blocked": "Bloccata",
       "inProgress": "In corso",
@@ -775,10 +787,14 @@
     "noActivityName": "Attività senza nome",
     "completedOn": "Completata il: {{date}}",
     "validatedOn": "Validata il: {{date}}",
+    "surgeryType": "Tipo di chirurgia: {{type}}",
+    "surgeonName": "Nome del chirurgo: {{name}}",
+    "participation": "Percentuale di partecipazione: {{percent}}%",
+    "activityType": "Tipo di attività: {{type}}",
     "statusWithValue": "Stato: {{status}}",
     "noProgress": "Nessun progresso disponibile."
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validazioni",
     "tabs": {
       "pending": "In sospeso",
@@ -788,8 +804,12 @@
     },
     "table": {
       "activity": "Attività",
+      "type": "Tipo",
       "resident": "Residente",
       "date": "Data",
+      "surgeryType": "Tipo di chirurgia",
+      "surgeon": "Chirurgo",
+      "participation": "Partecipazione (%)",
       "comments": "Commenti",
       "actions": "Azioni",
       "status": "Stato",
@@ -859,15 +879,24 @@
     "markAsCompleted": "Segna come completata",
     "unnamedActivity": "Attività senza nome",
     "comment": "Commento",
-    "trainerComment": "Commento del formatore",
+    "tutorComment": "Commento del Tutor",
     "rejectionReason": "Motivo del rifiuto",
     "completedOn": "Completata il",
     "validatedOn": "Validata il",
+    "activityType": "Tipo di attività: {{type}}",
+    "surgeryType": "Tipo di chirurgia: {{type}}",
+    "surgeonName": "Nome del chirurgo: {{name}}",
+    "participation": "Percentuale di partecipazione: {{percent}}%",
     "status": "Stato",
     "dialog": {
       "completeActivity": "Segna attività come completata",
       "completionDate": "Data di completamento",
       "comment": "Commento",
+      "surgery": "Nome dell'intervento",
+      "otherSurgery": "Altro intervento",
+      "otherSurgeryTooltip": "Inserisci il nome dell'intervento",
+      "surgeonName": "Nome del chirurgo",
+      "participation": "Percentuale di partecipazione",
       "selectFile": "Seleziona file",
       "cancel": "Annulla",
       "confirm": "Conferma",
@@ -876,6 +905,9 @@
       "selectDate": "Seleziona una data di completamento",
       "optionalFileHint": "Allega un file opzionale (max 5MB)",
       "fileTooLarge": "Il file supera la dimensione massima di 5MB.",
+      "surgeryRequired": "Seleziona o inserisci una procedura",
+      "surgeonNameRequired": "Inserisci il nome del chirurgo",
+      "participationRequired": "Seleziona una percentuale di partecipazione",
       "title": "Segna attività come completata",
       "date": "Data di completamento"
     },
@@ -892,7 +924,7 @@
     },
     "labels": {
       "comment": "Commento",
-      "trainerComment": "Commento del formatore",
+      "tutorComment": "Commento del Tutor",
       "rejectionReason": "Motivo del rifiuto",
       "completedDate": "Completata il",
       "validatedDate": "Validata il",

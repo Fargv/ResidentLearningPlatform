@@ -2,11 +2,11 @@
   "welcome": "Bem-vindo(a), {{name}}",
   "role": {
     "adminPanel": "Painel de Administração",
-    "trainer": "Formador de residentes do hospital {{hospital}}",
-    "coordinator": "Coordenador de residentes do hospital {{hospital}}",
+    "tutor": "Tutor de residentes do hospital {{hospital}}",
+    "csm": "Coordenador de residentes do hospital {{hospital}}",
     "resident": "Residente do hospital {{hospital}}",
-    "student": "Aluno do programa de sociedades {{title}}",
-    "instructor": "Instrutor do programa de sociedades {{title}}"
+    "participant": "Aluno do programa de sociedades {{title}}",
+    "professor": "Profesor do programa de sociedades {{title}}"
   },
   "actions": {
     "dashboard": "Painel",
@@ -30,6 +30,7 @@
     "societiesProgram": "Programa de Sociedades",
     "users": "Usuários",
     "accessCodes": "Códigos de Acesso",
+    "surgeryTypes": "Tipos de Cirurgia",
     "debug": "Depuração"
   },
   "progressByPhase": "Progresso por fase",
@@ -154,7 +155,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirurgia no Console",
-      "description": "Procedimentos realizados pelo residente com supervisão."
+      "description": "Cirurgias realizadas pelo residente com supervisão."
     }
   },
   "forms": {
@@ -194,15 +195,24 @@
     "markAsCompleted": "Marcar como concluída",
     "unnamedActivity": "Atividade sem nome",
     "comment": "Comentário",
-    "trainerComment": "Comentário do formador",
+    "tutorComment": "Comentário do Tutor",
     "rejectionReason": "Motivo da rejeição",
     "completedOn": "Data de conclusão",
     "validatedOn": "Validado em",
+    "activityType": "Tipo de atividade: {{type}}",
+    "surgeryType": "Tipo de cirurgia: {{type}}",
+    "surgeonName": "Nome do cirurgião: {{name}}",
+    "participation": "Percentual de participação: {{percent}}%",
     "status": "Status",
     "dialog": {
       "completeActivity": "Marcar atividade como concluída",
       "completionDate": "Data de realização",
       "comment": "Comentário",
+      "surgery": "Nome da cirurgia",
+      "otherSurgery": "Outra cirurgia",
+      "otherSurgeryTooltip": "Digite o nome da cirurgia",
+      "surgeonName": "Nome do cirurgião",
+      "participation": "Percentual de participação",
       "selectFile": "Selecionar arquivo",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
@@ -211,6 +221,9 @@
       "selectDate": "Selecione uma data de realização",
       "optionalFileHint": "Anexe um arquivo opcional (máx. 5MB)",
       "fileTooLarge": "O arquivo excede o tamanho máximo de 5MB.",
+      "surgeryRequired": "Selecione ou insira um procedimento",
+      "surgeonNameRequired": "Digite o nome do cirurgião",
+      "participationRequired": "Selecione uma porcentagem de participação",
       "title": "Marcar atividade como concluída",
       "date": "Data de realização"
     },
@@ -226,7 +239,7 @@
     },
     "labels": {
       "comment": "Comentário",
-      "trainerComment": "Comentário do formador",
+      "tutorComment": "Comentário do Tutor",
       "rejectionReason": "Motivo da rejeição",
       "completedDate": "Data de conclusão",
       "validatedDate": "Validado em",
@@ -338,10 +351,14 @@
     "observation": "Observação",
     "practice": "Prática",
     "theory": "Teórica",
-    "procedure": "Procedimento",
+    "surgery": "Cirurgia",
     "errorForbidden": "Você não tem permissão para ver esta seção",
     "errorLoadData": "Erro ao carregar os dados",
-    "empty": "Não há fases criadas. Crie uma nova fase para começar."
+    "empty": "Não há fases criadas. Crie uma nova fase para começar.",
+    "requiresValidation": "Requer validação",
+    "requiresSignature": "Requer assinatura",
+    "requiresPercentage": "Requer percentagem",
+    "requiresAttachment": "Requer anexo"
   },
   "society": {
     "convocatoria": {
@@ -354,7 +371,7 @@
       "label": "Apresentação",
       "intro": "Sessão de apresentação do programa.",
       "item1": "Introdução ao programa",
-      "item2": "Apresentação dos instrutores"
+      "item2": "Apresentação dos Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -376,7 +393,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedimentos Step By Step.",
+      "intro": "Cirurgias Step By Step.",
       "item1": "Material de apoio",
       "item2": "Revisão guiada"
     },
@@ -662,7 +679,11 @@
         "confirm": "Excluir",
         "cancel": "Cancelar"
       }
-    }
+    },
+    "requiresValidation": "Requer validação",
+    "requiresSignature": "Requer assinatura",
+    "requiresPercentage": "Requer percentagem",
+    "requiresAttachment": "Requer anexo"
   },
   "adminUserProgress": {
     "title": "Progresso de Usuários",
@@ -690,6 +711,9 @@
     "noTitle": "Sem título",
     "phaseStatusLabel": "Estado da fase",
     "activityStatusLabel": "Estado da atividade",
+    "masterStatusLabel": "Estado para todas as atividades",
+    "revert": "Reverter",
+    "confirmBulkChange": "Tem certeza de que deseja alterar o estado de todas as atividades?",
     "phaseStatus": {
       "blocked": "Bloqueada",
       "inProgress": "Em progresso",
@@ -708,6 +732,10 @@
     "noActivityName": "Atividade sem nome",
     "completedOn": "Data de conclusão: {{date}}",
     "validatedOn": "Validado em: {{date}}",
+    "surgeryType": "Tipo de cirurgia: {{type}}",
+    "surgeonName": "Nome do cirurgião: {{name}}",
+    "participation": "Percentual de participação: {{percent}}%",
+    "activityType": "Tipo de atividade: {{type}}",
     "statusWithValue": "Estado: {{status}}",
     "noProgress": "Não há progresso disponível."
   },
@@ -729,11 +757,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "formador": "Formador",
-    "coordinador": "Coordenador",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrador",
-    "alumno": "Aluno",
-    "instructor": "Instrutor"
+    "participante": "Aluno",
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notificações",
@@ -763,7 +791,7 @@
     "errorDelete": "Erro ao excluir o código",
     "errorSave": "Erro ao salvar o código"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Meus Usuários",
     "invite": "Convidar Usuário",
     "edit": "Editar Usuário",
@@ -790,7 +818,7 @@
       "role": "Função",
       "roles": {
         "resident": "Residente",
-        "trainer": "Formador"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -799,7 +827,7 @@
       "save": "Salvar",
       "invite": "Convidar"
     },
-    "_comment": "Gestão de usuários para formadores",
+    "_comment": "Gestão de usuários para Tutores",
     "buttons": {
       "invite": "Convidar Usuário",
       "cancel": "Cancelar",
@@ -816,7 +844,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "Formador"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Ativo",
@@ -838,18 +866,22 @@
   "progress": {
     "createSuccess": "Progresso formativo criado com sucesso"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validações",
     "tabs": {
-      "pending": "Pendentes ({{count}})",
-      "validated": "Validadas ({{count}})",
-      "rejected": "Rejeitadas ({{count}})",
+      "pending": "Pendentes",
+      "validated": "Validadas",
+      "rejected": "Rejeitadas",
       "aria": "abas de validações"
     },
     "table": {
       "activity": "Atividade",
+      "type": "Tipo",
       "resident": "Residente",
       "date": "Data",
+      "surgeryType": "Tipo de cirurgia",
+      "surgeon": "Cirurgião",
+      "participation": "Participação (%)",
       "comments": "Comentários",
       "actions": "Ações",
       "status": "Estado",
@@ -877,7 +909,7 @@
       "rejectReason": "Motivo da rejeição"
     },
     "errorLoad": "Erro ao carregar as validações",
-    "_comment": "Validações gerenciadas por formadores",
+    "_comment": "Validações gerenciadas por Tutores",
     "buttons": {
       "viewAttachment": "Ver anexo",
       "validate": "Validar",
@@ -915,7 +947,7 @@
     "tokenValid": "✅ Token válido e decodificado",
     "tokenInvalid": "❌ Token inválido ou corrompido"
   },
-   "privacyPolicy": {
+  "privacyPolicy": {
     "title": "Política de privacidade",
     "lastUpdated": "Última atualização: {{date}}"
   }

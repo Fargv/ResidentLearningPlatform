@@ -2,11 +2,11 @@
   "welcome": "Benvido/a, {{name}}",
   "role": {
     "adminPanel": "Panel de Administración",
-    "trainer": "Formador de residentes do hospital {{hospital}}",
-    "coordinator": "Coordinador de residentes do hospital {{hospital}}",
+    "tutor": "Tutor de residentes do hospital {{hospital}}",
+    "csm": "CSM de residentes do hospital {{hospital}}",
     "resident": "Residente do hospital {{hospital}}",
-    "student": "Alumno do programa de sociedades {{title}}",
-    "instructor": "Instrutor do programa de sociedades {{title}}"
+    "participant": "Participante do programa de sociedades {{title}}",
+    "professor": "Profesor do programa de sociedades {{title}}"
   },
   "actions": {
     "dashboard": "Panel",
@@ -30,6 +30,7 @@
     "societiesProgram": "Programa de Sociedades",
     "users": "Usuarios",
     "accessCodes": "Códigos de acceso",
+    "surgeryTypes": "Tipos de Cirurxía",
     "debug": "Depuración"
   },
   "adminPhases": {
@@ -130,10 +131,14 @@
     "observation": "Observación",
     "practice": "Práctica",
     "theory": "Teórica",
-    "procedure": "Procedemento",
+    "surgery": "Cirurxía",
     "errorForbidden": "Non tes permisos para ver esta sección",
     "errorLoadData": "Erro ao cargar os datos",
-    "empty": "Non hai fases creadas. Crea unha nova fase para comezar."
+    "empty": "Non hai fases creadas. Crea unha nova fase para comezar.",
+    "requiresValidation": "Require validación",
+    "requiresSignature": "Require sinatura",
+    "requiresPercentage": "Require porcentaxe",
+    "requiresAttachment": "Require adxunto"
   },
   "adminPhasesSoc": {
     "_comment": "Xestión de fases para o programa de Sociedades",
@@ -199,7 +204,11 @@
         "confirm": "Eliminar",
         "cancel": "Cancelar"
       }
-    }
+    },
+    "requiresValidation": "Require validación",
+    "requiresSignature": "Require sinatura",
+    "requiresPercentage": "Require porcentaxe",
+    "requiresAttachment": "Require adxunto"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Pechar",
@@ -267,7 +276,7 @@
       "label": "Presentación",
       "intro": "Sesión de presentación do programa.",
       "item1": "Introdución ao programa",
-      "item2": "Presentación de instrutores"
+      "item2": "Presentación de Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -289,7 +298,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedementos Step By Step.",
+      "intro": "Cirurxías Step By Step.",
       "item1": "Material de apoio",
       "item2": "Revisión guiada"
     },
@@ -545,6 +554,9 @@
     "noTitle": "Sen título",
     "phaseStatusLabel": "Estado da fase",
     "activityStatusLabel": "Estado da actividade",
+    "masterStatusLabel": "Estado para todas as actividades",
+    "revert": "Reverter",
+    "confirmBulkChange": "Estás seguro de que queres cambiar o estado de todas as actividades?",
     "phaseStatus": {
       "blocked": "Bloqueada",
       "inProgress": "En progreso",
@@ -563,6 +575,10 @@
     "noActivityName": "Actividade sen nome",
     "completedOn": "Data completada: {{date}}",
     "validatedOn": "Validado o: {{date}}",
+    "surgeryType": "Tipo de cirurxía: {{type}}",
+    "surgeonName": "Nome do cirurxián: {{name}}",
+    "participation": "Porcentaxe de participación: {{percent}}%",
+    "activityType": "Tipo de actividade: {{type}}",
     "statusWithValue": "Estado: {{status}}",
     "noProgress": "Non hai progreso dispoñible."
   },
@@ -621,11 +637,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "formador": "Formador",
-    "coordinador": "Coordinador",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrador",
-    "alumno": "Alumno",
-    "instructor": "Instrutor"
+    "participante": "Participante",
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notificacións",
@@ -655,7 +671,7 @@
     "errorDelete": "Erro ao eliminar o código",
     "errorSave": "Erro ao gardar o código"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Os meus usuarios",
     "invite": "Convidar usuario",
     "edit": "Editar usuario",
@@ -680,7 +696,7 @@
       "role": "Rol",
       "roles": {
         "resident": "Residente",
-        "trainer": "Formador"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -689,7 +705,7 @@
       "save": "Gardar",
       "invite": "Convidar"
     },
-    "_comment": "Xestión de usuarios para formadores",
+    "_comment": "Xestión de usuarios para Tutores",
     "buttons": {
       "invite": "Convidar usuario",
       "cancel": "Cancelar",
@@ -705,7 +721,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "Formador"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Activo",
@@ -727,18 +743,22 @@
   "progress": {
     "createSuccess": "Progreso formativo creado con éxito"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validacións",
     "tabs": {
-      "pending": "Pendentes ({{count}})",
-      "validated": "Validadas ({{count}})",
-      "rejected": "Rexeitadas ({{count}})",
+      "pending": "Pendentes",
+      "validated": "Validadas",
+      "rejected": "Rexeitadas",
       "aria": "lapelas de validacións"
     },
     "table": {
       "activity": "Actividade",
+      "type": "Tipo",
       "resident": "Residente",
       "date": "Data",
+      "surgeryType": "Tipo de cirurxía",
+      "surgeon": "Cirurxián",
+      "participation": "Participación (%)",
       "comments": "Comentarios",
       "actions": "Accións",
       "status": "Estado",
@@ -766,7 +786,7 @@
       "rejectReason": "Motivo do rexeitamento"
     },
     "errorLoad": "Erro ao cargar as validacións",
-    "_comment": "Validacións xestionadas por formadores",
+    "_comment": "Validacións xestionadas por Tutores",
     "buttons": {
       "viewAttachment": "Ver adxunto",
       "validate": "Validar",
@@ -807,7 +827,7 @@
   "certificate": {
     "title": "Certificado de Cumprimento",
     "body": "Certifícase que <strong>{{name}}</strong> completou satisfactoriamente a fase formativa asignada do Academic Program en tecnoloxías do robot Da Vinci®. <br /><br />Este curso enmárcase dentro do plan formativo en tecnoloxía robótica en colaboración co hospital <strong>{{hospital}}</strong> e baixo a supervisión do seu titor asignado.",
-    "dateLine": "Madrid, {{date}}",    
+    "dateLine": "Madrid, {{date}}",
     "footer": "Certificado xerado automaticamente por Academic Program Da Vinci · www.abexsl.es"
   },
   "forms": {
@@ -839,7 +859,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirurxía en Consola",
-      "description": "Procedementos realizados polo residente con supervisión."
+      "description": "Cirurxías realizadas polo residente con supervisión."
     }
   },
   "residentPhases": {
@@ -860,15 +880,24 @@
     "markAsCompleted": "Marcar como completada",
     "unnamedActivity": "Actividade sen nome",
     "comment": "Comentario",
-    "trainerComment": "Comentario do formador",
+    "tutorComment": "Comentario do Tutor",
     "rejectionReason": "Motivo do rexeitamento",
     "completedOn": "Data completada",
     "validatedOn": "Validado o",
+    "activityType": "Tipo de actividade: {{type}}",
+    "surgeryType": "Tipo de cirurxía: {{type}}",
+    "surgeonName": "Nome do cirurxián: {{name}}",
+    "participation": "Porcentaxe de participación: {{percent}}%",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividade como completada",
       "completionDate": "Data de realización",
       "comment": "Comentario",
+      "surgery": "Nome da cirurxía",
+      "otherSurgery": "Outra cirurxía",
+      "otherSurgeryTooltip": "Escriba o nome da cirurxía",
+      "surgeonName": "Nome do cirurxián",
+      "participation": "Porcentaxe de participación",
       "selectFile": "Seleccionar ficheiro",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
@@ -877,6 +906,9 @@
       "selectDate": "Selecciona unha data de realización",
       "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
       "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB.",
+      "surgeryRequired": "Selecciona ou escribe un procedemento",
+      "surgeonNameRequired": "Introduce o nome do cirurxián",
+      "participationRequired": "Selecciona unha porcentaxe de participación",
       "title": "Marcar actividade como completada",
       "date": "Data de realización"
     },
@@ -892,7 +924,7 @@
     },
     "labels": {
       "comment": "Comentario",
-      "trainerComment": "Comentario do formador",
+      "tutorComment": "Comentario do Tutor",
       "rejectionReason": "Motivo do rexeitamento",
       "completedDate": "Data completada",
       "validatedDate": "Validado o",

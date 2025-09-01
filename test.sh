@@ -88,11 +88,11 @@ ACTIVIDAD_RESULT=$(make_request "POST" "/actividades" "$ACTIVIDAD_DATA" "$ADMIN_
 ACTIVIDAD_ID=$(echo $ACTIVIDAD_RESULT | grep -o '"_id":"[^"]*' | cut -d'"' -f4)
 echo "ID de la actividad: $ACTIVIDAD_ID"
 
-# Prueba 7: Invitar a un formador
-echo "Prueba 7: Invitando a un formador..."
-FORMADOR_DATA="{\"nombre\":\"Formador\",\"apellidos\":\"Test\",\"email\":\"formador@test.com\",\"rol\":\"formador\",\"hospital\":\"$HOSPITAL_ID\"}"
-FORMADOR_RESULT=$(make_request "POST" "/users/invite" "$FORMADOR_DATA" "$ADMIN_TOKEN")
-echo "Resultado: $FORMADOR_RESULT"
+# Prueba 7: Invitar a un tutor
+echo "Prueba 7: Invitando a un tutor..."
+TUTOR_DATA="{\"nombre\":\"Tutor\",\"apellidos\":\"Test\",\"email\":\"tutor@test.com\",\"rol\":\"tutor\",\"hospital\":\"$HOSPITAL_ID\"}"
+TUTOR_RESULT=$(make_request "POST" "/users/invite" "$TUTOR_DATA" "$ADMIN_TOKEN")
+echo "Resultado: $TUTOR_RESULT"
 
 # Prueba 8: Invitar a un residente
 echo "Prueba 8: Invitando a un residente..."

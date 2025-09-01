@@ -7,11 +7,11 @@
     "rol": "administrador"
   },
   {
-    "email": "formador@example.com",
+    "email": "tutor@example.com",
     "password": "12345678",
-    "nombre": "Formador",
+    "nombre": "tutor",
     "apellidos": "Ejemplo",
-    "rol": "formador",
+    "rol": "tutor",
     "hospital": "ObjectId(\"64b000000000000000000001\")",
     "tipo": "Programa Residentes"
   },
@@ -23,6 +23,16 @@
     "rol": "residente",
     "hospital": "ObjectId(\"64b000000000000000000001\")",
     "especialidad": "URO",
+    "tipo": "Programa Residentes"
+  },
+  {
+    "email": "cirujano@example.com",
+    "password": "12345678",
+    "nombre": "Cirujano",
+    "apellidos": "Ejemplo",
+    "rol": "residente",
+    "hospital": "ObjectId(\"64b000000000000000000001\")",
+    "especialidad": "CIR",
     "tipo": "Programa Residentes"
   }
 ]

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   getSharePointListas,
@@ -11,7 +12,7 @@ const {
 
 // Todas las rutas requieren autenticación y rol de administrador
 router.use(protect);
-router.use(authorize('administrador'));
+router.use(authorize(Role.ADMINISTRADOR));
 
 // Rutas para interactuar con SharePoint
 router.route('/listas')

@@ -3,6 +3,11 @@ const { Schema } = mongoose;
 
 const actividadSchema = new Schema({
   nombre: { type: String, required: true },
+  tipo: {
+    type: String,
+    enum: ['teórica','práctica','evaluación','observación','cirugia'],
+    required: true
+  },
   completada: { type: Boolean, default: false },
   fechaRealizacion: Date,
   actividadModel: { type: String, default: 'Actividad' },
@@ -11,15 +16,20 @@ const actividadSchema = new Schema({
     refPath: 'actividades.actividadModel',
     required: true
   },
-  comentariosFormador: String,
+  comentariosTutor: String,
   comentariosRechazo: String,
   firmaDigital: String,
   fechaValidacion: Date,
   fechaRechazo: Date,
+  cirugia: {
+    type: Schema.Types.ObjectId,
+    ref: 'SurgeryType'
+  },
+  otraCirugia: String,
+  nombreCirujano: String,
   porcentajeParticipacion: {
     type: Number,
-    min: 0,
-    max: 100,
+    enum: [0, 25, 50, 75, 100],
     default: 100
   },
   comentariosResidente: String,

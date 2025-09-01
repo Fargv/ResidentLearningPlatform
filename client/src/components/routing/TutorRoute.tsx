@@ -2,12 +2,13 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { CircularProgress, Box } from '@mui/material';
+import Role from '../../types/roles';
 
-interface FormadorRouteProps {
+interface TutorRouteProps {
   children: React.ReactNode;
 }
 
-const FormadorRoute: React.FC<FormadorRouteProps> = ({ children }) => {
+const TutorRoute: React.FC<TutorRouteProps> = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
@@ -24,12 +25,12 @@ const FormadorRoute: React.FC<FormadorRouteProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Verificar si el usuario es formador, coordinador, instructor o administrador (los administradores pueden acceder a todo)
+  // Verificar si el usuario es tutor, csm, profesor o administrador (los administradores pueden acceder a todo)
   if (
-    user?.rol !== 'formador' &&
-    user?.rol !== 'coordinador' &&
-    user?.rol !== 'instructor' &&
-    user?.rol !== 'administrador'
+    user?.rol !== Role.TUTOR &&
+    user?.rol !== Role.CSM &&
+    user?.rol !== Role.PROFESOR &&
+    user?.rol !== Role.ADMINISTRADOR
   ) {
     // Redirigir al dashboard si no tiene permisos
     return <Navigate to="/dashboard" replace />;
@@ -38,4 +39,4 @@ const FormadorRoute: React.FC<FormadorRouteProps> = ({ children }) => {
   return <>{children}</>;
 };
 
-export default FormadorRoute;
+export default TutorRoute;

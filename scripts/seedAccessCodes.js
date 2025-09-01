@@ -5,10 +5,12 @@ require('dotenv').config();
 const uri = process.env.MONGO_URI;
 
 const codes = [
+  { codigo: 'ABEXADMIN2025', rol: 'administrador', tipo: 'Programa Residentes' },
+  { codigo: 'ABEXCOOR2025', rol: 'csm', tipo: 'Programa Residentes' },
   { codigo: 'ABEXRES2025', rol: 'residente', tipo: 'Programa Residentes' },
-  { codigo: 'ABEXFOR2025', rol: 'formador', tipo: 'Programa Residentes' },
-  { codigo: 'ABEXSOCUSER2025', rol: 'alumno', tipo: 'Programa Sociedades' },
-  { codigo: 'ABEXSOCFOR2025', rol: 'instructor', tipo: 'Programa Sociedades' }
+  { codigo: 'ABEXFOR2025', rol: 'tutor', tipo: 'Programa Residentes' },
+  { codigo: 'ABEXSOCUSER2025', rol: 'participante', tipo: 'Programa Sociedades' },
+  { codigo: 'ABEXSOCFOR2025', rol: 'profesor', tipo: 'Programa Sociedades' }
 ];
 
 async function run() {

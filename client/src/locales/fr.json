@@ -2,11 +2,11 @@
   "welcome": "Bienvenue, {{name}}",
   "role": {
     "adminPanel": "Panneau d'administration",
-    "trainer": "Formateur des résidents de l'hôpital {{hospital}}",
-    "coordinator": "Coordinateur des résidents de l'hôpital {{hospital}}",
+    "tutor": "Tutor des résidents de l'hôpital {{hospital}}",
+    "csm": "Coordinateur des résidents de l'hôpital {{hospital}}",
     "resident": "Résident de l'hôpital {{hospital}}",
-    "student": "Étudiant du programme des sociétés {{title}}",
-    "instructor": "Instructeur du programme des sociétés {{title}}"
+    "participant": "Participante du programme des sociétés {{title}}",
+    "professor": "Profesor du programme des sociétés {{title}}"
   },
   "actions": {
     "dashboard": "Tableau de bord",
@@ -30,6 +30,7 @@
     "societiesProgram": "Programme des sociétés",
     "users": "Utilisateurs",
     "accessCodes": "Codes d'accès",
+    "surgeryTypes": "Types de Chirurgie",
     "debug": "Débogage"
   },
   "progressByPhase": "Progrès par phase",
@@ -67,13 +68,13 @@
     "zone": "Zone",
     "specialty": "Spécialité",
     "specialties": {
-        "ALL": "Toutes",
-        "URO": "Urologie (URO)",
-        "GEN": "Chirurgie Générale (GEN)",
-        "GYN": "Gynécologie (GYN)",
-        "THOR": "Thoracique (THOR)",
-        "ORL": "ORL (ORL)"
-      },
+      "ALL": "Toutes",
+      "URO": "Urologie (URO)",
+      "GEN": "Chirurgie Générale (GEN)",
+      "GYN": "Gynécologie (GYN)",
+      "THOR": "Thoracique (THOR)",
+      "ORL": "ORL (ORL)"
+    },
     "society": "Société",
     "none": "Aucune",
     "invalidAccessCode": "Code d'accès invalide",
@@ -151,11 +152,11 @@
   },
   "roles": {
     "residente": "Résident",
-    "formador": "Formateur",
-    "coordinador": "Coordinateur",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrateur",
-    "alumno": "Étudiant",
-    "instructor": "Instructeur"
+    "participante": "Participante",
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notifications",
@@ -224,7 +225,7 @@
       "label": "Présentation",
       "intro": "Session de présentation du programme.",
       "item1": "Introduction au programme",
-      "item2": "Présentation des instructeurs"
+      "item2": "Présentation des Profesors"
     },
     "modOnline": {
       "label": "Mod. En ligne",
@@ -246,7 +247,7 @@
     },
     "stepByStep": {
       "label": "Étape par étape",
-      "intro": "Procédures étape par étape.",
+      "intro": "Chirurgies étape par étape.",
       "item1": "Matériel de soutien",
       "item2": "Révision guidée"
     },
@@ -272,7 +273,7 @@
     },
     "phase4": {
       "label": "Phase 4 - Chirurgie sur console",
-      "description": "Procédures réalisées par le résident sous supervision."
+      "description": "Chirurgies réalisées par le résident sous supervision."
     }
   },
   "adminUserProgress": {
@@ -300,6 +301,9 @@
     "noTitle": "Sans titre",
     "phaseStatusLabel": "Statut de la phase",
     "activityStatusLabel": "Statut de l'activité",
+    "masterStatusLabel": "Statut pour toutes les activités",
+    "revert": "Annuler",
+    "confirmBulkChange": "Êtes-vous sûr de vouloir changer le statut de toutes les activités ?",
     "phaseStatus": {
       "blocked": "Bloquée",
       "inProgress": "En cours",
@@ -318,6 +322,10 @@
     "noActivityName": "Activité sans nom",
     "completedOn": "Date de réalisation : {{date}}",
     "validatedOn": "Validée le : {{date}}",
+    "surgeryType": "Type de chirurgie : {{type}}",
+    "surgeonName": "Nom du chirurgien : {{name}}",
+    "participation": "Pourcentage de participation : {{percent}} %",
+    "activityType": "Type d'activité : {{type}}",
     "statusWithValue": "Statut : {{status}}",
     "noProgress": "Aucun progrès disponible."
   },
@@ -520,15 +528,24 @@
     "markAsCompleted": "Marquer comme complétée",
     "unnamedActivity": "Activité sans nom",
     "comment": "Commentaire",
-    "trainerComment": "Commentaire du formateur",
+    "tutorComment": "Commentaire du Tutor",
     "rejectionReason": "Motif du rejet",
     "completedOn": "Date de réalisation",
     "validatedOn": "Validée le",
+    "activityType": "Type d'activité : {{type}}",
+    "surgeryType": "Type de chirurgie : {{type}}",
+    "surgeonName": "Nom du chirurgien : {{name}}",
+    "participation": "Pourcentage de participation : {{percent}} %",
     "status": "Statut",
     "dialog": {
       "completeActivity": "Marquer l'activité comme complétée",
       "completionDate": "Date de réalisation",
       "comment": "Commentaire",
+      "surgery": "Nom de la chirurgie",
+      "otherSurgery": "Autre chirurgie",
+      "otherSurgeryTooltip": "Saisissez le nom de la chirurgie",
+      "surgeonName": "Nom du chirurgien",
+      "participation": "Pourcentage de participation",
       "selectFile": "Sélectionner un fichier",
       "cancel": "Annuler",
       "confirm": "Confirmer",
@@ -537,6 +554,9 @@
       "selectDate": "Sélectionnez une date de réalisation",
       "optionalFileHint": "Joindre un fichier facultatif (max. 5 Mo)",
       "fileTooLarge": "Le fichier dépasse la taille maximale de 5 Mo.",
+      "surgeryRequired": "Sélectionnez ou saisissez une procédure",
+      "surgeonNameRequired": "Entrez le nom du chirurgien",
+      "participationRequired": "Sélectionnez un pourcentage de participation",
       "title": "Marquer l'activité comme complétée",
       "date": "Date de réalisation"
     },
@@ -553,7 +573,7 @@
     },
     "labels": {
       "comment": "Commentaire",
-      "trainerComment": "Commentaire du formateur",
+      "tutorComment": "Commentaire du Tutor",
       "rejectionReason": "Motif du rejet",
       "completedDate": "Date de réalisation",
       "validatedDate": "Validée le",
@@ -566,18 +586,22 @@
       "notCompleted": "Non complétée"
     }
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validations",
     "tabs": {
-      "pending": "En attente ({{count}})",
-      "validated": "Validées ({{count}})",
-      "rejected": "Rejetées ({{count}})",
+      "pending": "En attente",
+      "validated": "Validées",
+      "rejected": "Rejetées",
       "aria": "onglets de validations"
     },
     "table": {
       "activity": "Activité",
+      "type": "Type",
       "resident": "Résident",
       "date": "Date",
+      "surgeryType": "Type de chirurgie",
+      "surgeon": "Chirurgien",
+      "participation": "Participation (%)",
       "comments": "Commentaires",
       "actions": "Actions",
       "status": "Statut",
@@ -605,7 +629,7 @@
       "rejectReason": "Motif du rejet"
     },
     "errorLoad": "Erreur lors du chargement des validations",
-    "_comment": "Validations gérées par les formateurs",
+    "_comment": "Validations gérées par les Tutors",
     "buttons": {
       "viewAttachment": "Voir la pièce jointe",
       "validate": "Valider",
@@ -656,7 +680,7 @@
     "observation": "Observation",
     "practice": "Pratique",
     "theory": "Théorie",
-    "procedure": "Procédure",
+    "surgery": "Chirurgie",
     "errorForbidden": "Vous n'avez pas la permission d'accéder à cette section",
     "errorLoadData": "Erreur lors du chargement des données",
     "tabs": {
@@ -757,7 +781,11 @@
         "cancel": "Annuler",
         "confirm": "Confirmer"
       }
-    }
+    },
+    "requiresValidation": "Nécessite une validation",
+    "requiresSignature": "Nécessite une signature",
+    "requiresPercentage": "Nécessite un pourcentage",
+    "requiresAttachment": "Nécessite une pièce jointe"
   },
   "adminPhasesSoc": {
     "_comment": "Gestion des phases pour le programme des sociétés",
@@ -823,9 +851,13 @@
         "confirm": "Supprimer",
         "cancel": "Annuler"
       }
-    }
+    },
+    "requiresValidation": "Nécessite une validation",
+    "requiresSignature": "Nécessite une signature",
+    "requiresPercentage": "Nécessite un pourcentage",
+    "requiresAttachment": "Nécessite une pièce jointe"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Mes utilisateurs",
     "invite": "Inviter un utilisateur",
     "edit": "Modifier l'utilisateur",
@@ -850,7 +882,7 @@
       "role": "Rôle",
       "roles": {
         "resident": "Résident",
-        "trainer": "Formateur"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -859,7 +891,7 @@
       "save": "Enregistrer",
       "invite": "Inviter"
     },
-    "_comment": "Gestion des utilisateurs pour les formateurs",
+    "_comment": "Gestion des utilisateurs pour les Tutors",
     "buttons": {
       "invite": "Inviter un utilisateur",
       "cancel": "Annuler",
@@ -875,7 +907,7 @@
     },
     "roles": {
       "resident": "Résident",
-      "trainer": "Formateur"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Actif",
@@ -899,4 +931,3 @@
     "lastUpdated": "Dernière mise à jour : {{date}}"
   }
 }
-

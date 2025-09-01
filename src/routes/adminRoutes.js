@@ -1,17 +1,41 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
-const {
-  getAllActiveProgress,
-  updateActivityStatus,
-  updatePhaseStatusAdmin
-} = require('../controllers/adminController');
+const { descargarCertificado } = require('../controllers/certificadoController');
+const { updateActivityStatus, updatePhaseStatusAdmin, bulkUpdateActivityStatus } = require('../controllers/adminController');
+const { Role } = require('../utils/roles');
 
 router.use(protect);
-router.use(authorize('administrador'));
 
-router.get('/progresos', getAllActiveProgress);
-router.post('/cambiar-estado-actividad', updateActivityStatus);
-router.post('/cambiar-estado-fase', updatePhaseStatusAdmin);
+router.get(
+  '/:id',
+  authorize(
+    Role.RESIDENTE,
+    Role.PARTICIPANTE,
+    Role.TUTOR,
+    Role.CSM,
+    Role.PROFESOR,
+    Role.ADMINISTRADOR
+  ),
+  descargarCertificado
+);
+
+router.post(
+  '/cambiar-estado-fase',
+  authorize(Role.ADMINISTRADOR),
+  updatePhaseStatusAdmin
+);
+
+router.post(
+  '/cambiar-estado-actividad',
+  authorize(Role.ADMINISTRADOR),
+  updateActivityStatus
+);
+
+router.post(
+  '/cambiar-estados-actividades',
+  authorize(Role.ADMINISTRADOR),
+  bulkUpdateActivityStatus
+);
 
 module.exports = router;

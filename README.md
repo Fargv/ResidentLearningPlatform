@@ -4,12 +4,9 @@ Este proyecto implementa una plataforma web completa para llevar el seguimiento 
 
 ## Características principales
 
-- Sistema de autenticación con diferentes roles (residentes, formadores, administradores)
-- Seguimiento del progreso de los residentes a través de las diferentes fases del programa
-- Validación de actividades por parte de los formadores
-- Panel de administración para gestionar usuarios, hospitales, fases y actividades
-- Diseño moderno y responsive con la identidad visual de Abex Excelencia Robótica e Intuitive Surgical
-
+- Sistema de autenticación con diferentes roles (residentes, participantes, tutores, profesores, CSM y administradores)
+ - Seguimiento del progreso de los residentes y participantes a través de las diferentes fases del programa
+ - Validación de actividades por parte de los tutores e profesores
 ## Estructura del proyecto
 
 ```
@@ -109,16 +106,18 @@ node scripts/migrateLegacyData.js
 node scripts/migrateOrdenFases.js
 node scripts/updateFaseOrden.js
 node scripts/ensureOrdenUnique.js
+node scripts/migrateRoles.js
 ```
 `migrateLegacyData.js` adapta datos antiguos y `ensureOrdenUnique.js` crea el
-índice único en el campo `orden`. Los demás actualizan el orden de las fases.
+índice único en el campo `orden`. `migrateRoles.js` convierte los roles
+antiguos `participante` e `profesor` a `residente` y `tutor`. Los demás
+actualizan el orden de las fases.
 
 ## Inicialización del progreso
-Al registrar un usuario con rol de **residente** se crea un progreso
+Al registrar un usuario con rol de **residente** o **participante** se crea un progreso
 formativo por cada fase del programa. Si alguna fase no tiene
 actividades asociadas, la función de inicialización registrará una
-advertencia en consola y no generará un `ProgresoResidente` para esa
-fase.
+advertencia en consola y no generará un progreso para esa fase.
 
 ## Migración de datos antiguos
 Si trabajas con una base de datos creada antes de la versión que incluye el
@@ -156,12 +155,12 @@ node scripts/resetUsers.js
 
 
 ## Códigos de acceso iniciales
-Para registrar los códigos de acceso por defecto para **administrador**,
-**formador** y **residente**, ejecuta el script `scripts/insertAccessCodes.js`.
-Necesita la variable `MONGO_URI` configurada.
+Para registrar códigos de acceso por defecto para **administrador**, **CSM**,
+**tutor**, **profesor**, **residente** y **participante**, ejecuta el script
+`scripts/seedAccessCodes.js`. Necesita la variable `MONGO_URI` configurada.
 
 ```bash
-node scripts/insertAccessCodes.js
+node scripts/seedAccessCodes.js
 ```
 
 ## Gestión de sociedades
@@ -191,7 +190,7 @@ plantilla `src/templates/certificado.html`.
 ### Endpoint `/api/certificado/:id`
 
 - `GET /api/certificado/:id` genera el certificado y lo envía como descarga.
-  Puede acceder el propio residente o alumno, así como formadores, instructores
+  Puede acceder el propio residente o participante, así como tutores, profesores
   y administradores.
 
 ### Consideraciones de despliegue
@@ -221,13 +220,24 @@ a través de la API.
 - `DELETE /api/access-codes/:id` elimina el código indicado (requiere rol de
   administrador).
 
-Ejemplo de creación de código:
+Ejemplos de creación de código:
+
+Código para un residente:
 
 ```bash
 curl -X POST http://localhost:5000/api/access-codes \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token-admin>" \
   -d '{"codigo":"ABEXRES2026","rol":"residente","tipo":"Programa Residentes"}'
+```
+
+Código para un participante del programa de sociedades:
+
+```bash
+curl -X POST http://localhost:5000/api/access-codes \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token-admin>" \
+  -d '{"codigo":"SOCALUM2026","rol":"participante","tipo":"Programa Sociedades"}'
 ```
 
 ## Gestión de usuarios
@@ -243,13 +253,24 @@ Los administradores pueden crear usuarios o cambiar contraseñas mediante estos 
 - `POST /api/users` crea un usuario directamente (requiere rol de administrador y **no necesita código de acceso**).
 - `PUT /api/users/:id/password` cambia la contraseña de otro usuario (requiere rol de administrador y **no necesita código de acceso**).
 
-Ejemplo de creación de usuario:
+Ejemplos de creación de usuario:
+
+Usuario residente:
 
 ```bash
 curl -X POST http://localhost:5000/api/users \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token-admin>" \
   -d '{"email":"nuevo@ejemplo.com","password":"Secreto1","rol":"residente","tipo":"Programa Residentes","hospital":"<id-hospital>"}'
+```
+
+Usuario participante del programa de sociedades:
+
+```bash
+curl -X POST http://localhost:5000/api/users \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token-admin>" \
+  -d '{"email":"participante@ejemplo.com","password":"Secreto1","rol":"participante","tipo":"Programa Sociedades","sociedad":"<id-sociedad>"}'
 ```
 
 Ejemplo de cambio de contraseña de otro usuario:
@@ -276,6 +297,7 @@ mongoose.set('strictQuery', false);
 ```
 
 Este ajuste ya está incluido en `src/config/database.js`.
+
 
 
 ## Licencia

@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { CircularProgress, Box } from '@mui/material';
+import Role from '../../types/roles';
 
 interface AdminRouteProps {
   children: React.ReactNode;
@@ -33,7 +34,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (user?.rol !== 'administrador') {
+  if (user?.rol !== Role.ADMINISTRADOR) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('⛔ Usuario no es administrador, redirigiendo a dashboard');
     }

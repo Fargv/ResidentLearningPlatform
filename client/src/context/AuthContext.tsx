@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
+import Role from '../types/roles';
 
 //const API = process.env.REACT_APP_API_URL;
 
@@ -21,13 +22,7 @@ interface User {
   apellidos: string;
   email: string;
   token: string;
-  rol:
-    | 'administrador'
-    | 'formador'
-    | 'coordinador'
-    | 'instructor'
-    | 'residente'
-    | 'alumno';
+  rol: Role;
   hospital?: {
     _id: string;
     nombre: string;

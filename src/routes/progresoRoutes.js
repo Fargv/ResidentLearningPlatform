@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   actualizarProgreso,
@@ -25,13 +26,13 @@ const {
 // ✅ Middleware de autenticación para todas las rutas
 router.use(protect);
 
-// ✅ Validaciones pendientes del formador
-router.get('/formador/validaciones/pendientes', authorize('formador', 'coordinador', 'instructor'), getValidacionesPendientes);
-router.get('/admin/validaciones/pendientes', authorize('administrador'), getValidacionesPendientesAdmin);
+// ✅ Validaciones pendientes del tutor
+router.get('/tutor/validaciones/pendientes', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR), getValidacionesPendientes);
+router.get('/admin/validaciones/pendientes', authorize(Role.ADMINISTRADOR), getValidacionesPendientesAdmin);
 
 // ✅ Listado general y creación de progreso
 router.route('/')
-  .get(authorize('administrador'), getAllProgreso)
+  .get(authorize(Role.ADMINISTRADOR), getAllProgreso)
   .post(registrarProgreso);
 
 // ✅ Obtener progreso de un residente
@@ -53,21 +54,21 @@ router.route('/:id')
 // ✅ Marcar actividad completada
 router.put('/:id/actividad/:index', marcarActividadCompletada);
 
-router.post('/:id/actividad/:index/validar', authorize('formador', 'coordinador', 'instructor', 'administrador'), validarActividad);
-router.post('/:id/actividad/:index/rechazar', authorize('formador', 'coordinador', 'instructor', 'administrador'), rechazarActividad);
+router.post('/:id/actividad/:index/validar', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), validarActividad);
+router.post('/:id/actividad/:index/rechazar', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), rechazarActividad);
 
 
 // ✅ Validar o rechazar progreso
 router.route('/:id/validar')
-  .post(authorize('formador', 'coordinador', 'instructor', 'administrador'), validarProgreso);
+  .post(authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), validarProgreso);
 
 router.route('/:id/rechazar')
-  .post(authorize('formador', 'coordinador', 'instructor', 'administrador'), rechazarProgreso);
+  .post(authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), rechazarProgreso);
 
 // ✅ Inicializar progreso formativo de un residente
-router.post('/init/:id', authorize('administrador'), inicializarProgresoFormativo);
+router.post('/init/:id', authorize(Role.ADMINISTRADOR), inicializarProgresoFormativo);
 
-router.post('/crear/:id', authorize('administrador'), crearProgresoParaUsuario);
+router.post('/crear/:id', authorize(Role.ADMINISTRADOR), crearProgresoParaUsuario);
 
 router.get('/actividad/:id/count', getCountProgresosByActividad);
 router.get('/fase/:id/count', getCountProgresosByFase);

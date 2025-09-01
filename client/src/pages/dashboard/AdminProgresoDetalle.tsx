@@ -49,6 +49,13 @@ interface Actividad {
   estado?: 'pendiente' | 'completado' | 'rechazado' | 'validado';
   fecha?: string;
   fechaValidacion?: string;
+  tipo: string;
+  porcentajeParticipacion?: number;
+  cirugia?: {
+    name?: string;
+  };
+  otraCirugia?: string;
+  nombreCirujano?: string;
 }
 
 interface ProgresoFase {
@@ -79,6 +86,8 @@ const AdminProgresoDetalle: React.FC = () => {
     message: '',
     severity: 'error' as 'error' | 'success'
   });
+  const [bulkStatus, setBulkStatus] = useState<Record<string, string>>({});
+  const [previousActivityStates, setPreviousActivityStates] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,6 +150,68 @@ const AdminProgresoDetalle: React.FC = () => {
         prev.map((p) => (p._id === updated._id ? updated : p))
       );
       setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
+    } catch (err: any) {
+      const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
+      setApiError(message);
+      setSnackbar({ open: true, message, severity: 'error' });
+    }
+  };
+
+  const handleBulkStatusChange = async (
+    progresoId: string,
+    estado: string
+  ) => {
+    if (!window.confirm(t('adminProgressDetail.confirmBulkChange'))) return;
+
+    const progreso = progresos.find((p) => p._id === progresoId);
+    const prevStates = progreso?.actividades.map((a) => a.estado || 'pendiente') || [];
+    setPreviousActivityStates((prev) => ({ ...prev, [progresoId]: prevStates }));
+
+    try {
+      setApiError(null);
+      const res = await api.post('/admin/cambiar-estados-actividades', {
+        progresoId,
+        estado
+      });
+      const updated = res.data.data;
+      setProgresos((prev) =>
+        prev.map((p) => (p._id === updated._id ? updated : p))
+      );
+      setBulkStatus((prev) => ({ ...prev, [progresoId]: '' }));
+      setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
+    } catch (err: any) {
+      const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
+      setApiError(message);
+      setSnackbar({ open: true, message, severity: 'error' });
+    }
+  };
+
+  const handleBulkRevert = async (progresoId: string) => {
+    const prevStates = previousActivityStates[progresoId];
+    if (!prevStates) return;
+    try {
+      setApiError(null);
+      let updated: ProgresoFase | null = null;
+      for (let i = 0; i < prevStates.length; i++) {
+        const res = await api.post('/admin/cambiar-estado-actividad', {
+          progresoId,
+          index: i,
+          estado: prevStates[i]
+        });
+        updated = res.data.data;
+      }
+      if (updated) {
+        setProgresos((prev) =>
+          prev.map((p) => (p._id === updated!._id ? updated! : p))
+        );
+        setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
+      }
+      setPreviousActivityStates((prev) => {
+        const copy = { ...prev };
+        delete copy[progresoId];
+        return copy;
+      });
+      setBulkStatus((prev) => ({ ...prev, [progresoId]: '' }));
     } catch (err: any) {
       const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
       setApiError(message);
@@ -254,6 +325,41 @@ const AdminProgresoDetalle: React.FC = () => {
                 <Typography variant="body2" sx={{ mb: 2 }}>
                   {t('adminProgressDetail.validatedProgress', { percent: porcentaje })}
                 </Typography>
+                {isAdmin && (
+                  <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
+                    <FormControl size="small" sx={{ minWidth: 160, mr: 2 }}>
+                      <InputLabel id={`bulk-${item._id}-estado-label`}>
+                        {t('adminProgressDetail.masterStatusLabel')}
+                      </InputLabel>
+                      <Select
+                        labelId={`bulk-${item._id}-estado-label`}
+                        value={bulkStatus[item._id] || ''}
+                        label={t('adminProgressDetail.masterStatusLabel')}
+                        onChange={(e) =>
+                          handleBulkStatusChange(item._id, e.target.value as string)
+                        }
+                      >
+                        <MenuItem value="pendiente">
+                          {t('adminProgressDetail.activityStatus.pending')}
+                        </MenuItem>
+                        <MenuItem value="completado">
+                          {t('adminProgressDetail.activityStatus.completed')}
+                        </MenuItem>
+                        <MenuItem value="validado">
+                          {t('adminProgressDetail.activityStatus.validated')}
+                        </MenuItem>
+                        <MenuItem value="rechazado">
+                          {t('adminProgressDetail.activityStatus.rejected')}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                    {previousActivityStates[item._id] && (
+                      <Button variant="outlined" onClick={() => handleBulkRevert(item._id)}>
+                        {t('adminProgressDetail.revert')}
+                      </Button>
+                    )}
+                  </Box>
+                )}
                 <List>
                   {item.actividades.map((act, idx) => (
                     <ListItem key={idx}>
@@ -279,6 +385,34 @@ const AdminProgresoDetalle: React.FC = () => {
                                 })}
                               </Typography>
                             )}
+                              {(act.cirugia?.name || act.otraCirugia || act.nombreCirujano) && (
+                                <>
+                                  {(act.cirugia?.name || act.otraCirugia) && (
+                                    <Typography variant="body2" color="text.secondary">
+                                      {t('adminProgressDetail.surgeryType', {
+                                        type: act.cirugia?.name || act.otraCirugia
+                                      })}
+                                    </Typography>
+                                  )}
+                                  {act.nombreCirujano && (
+                                    <Typography variant="body2" color="text.secondary">
+                                      {t('adminProgressDetail.surgeonName', {
+                                        name: act.nombreCirujano
+                                      })}
+                                    </Typography>
+                                  )}
+                                </>
+                              )}
+                            {act.tipo === 'cirugia' && typeof act.porcentajeParticipacion === 'number' && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('adminProgressDetail.participation', {
+                                  percent: act.porcentajeParticipacion
+                                })}
+                              </Typography>
+                            )}
+                            <Typography variant="body2" color="text.secondary">
+                              {t('adminProgressDetail.activityType', { type: act.tipo })}
+                            </Typography>
                             <Typography variant="body2" color="text.secondary">
                               {t('adminProgressDetail.statusWithValue', {
                                 status: t(

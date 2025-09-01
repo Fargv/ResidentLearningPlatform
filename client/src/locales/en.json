@@ -2,11 +2,11 @@
   "welcome": "Welcome, {{name}}",
   "role": {
     "adminPanel": "Administration Panel",
-    "trainer": "Trainer of residents at {{hospital}} hospital",
-    "coordinator": "Coordinator of residents at {{hospital}} hospital",
+    "tutor": "Tutor of residents at {{hospital}} hospital",
+    "csm": "CSM of residents at {{hospital}} hospital",
     "resident": "Resident at {{hospital}} hospital",
-    "student": "Student of the societies program {{title}}",
-    "instructor": "Instructor of the societies program {{title}}"
+    "participant": "Participante of the societies program {{title}}",
+    "professor": "Profesor of the societies program {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -30,6 +30,7 @@
     "societiesProgram": "Societies Program",
     "users": "Users",
     "accessCodes": "Access Codes",
+    "surgeryTypes": "Surgery Types",
     "debug": "Debug"
   },
   "adminPhases": {
@@ -46,7 +47,7 @@
     "observation": "Observation",
     "practice": "Practice",
     "theory": "Theory",
-    "procedure": "Procedure",
+    "surgery": "Surgery",
     "errorForbidden": "You do not have permission to view this section",
     "errorLoadData": "Error loading data",
     "tabs": {
@@ -133,7 +134,11 @@
       },
       "createActivity": "Creating activity for the phase: <strong>{{phase}}</strong>"
     },
-    "empty": "No phases created. Create a new phase to begin."
+    "empty": "No phases created. Create a new phase to begin.",
+    "requiresValidation": "Requires validation",
+    "requiresSignature": "Requires signature",
+    "requiresPercentage": "Requires percentage",
+    "requiresAttachment": "Requires attachment"
   },
   "progressByPhase": "Progress by phase",
   "close": "Close",
@@ -151,13 +156,13 @@
     "zone": "Zone",
     "specialty": "Specialty",
     "specialties": {
-        "ALL": "All",
-        "URO": "Urology (URO)",
-        "GEN": "General Surgery (GEN)",
-        "GYN": "Gynecology (GYN)",
-        "THOR": "Thoracic (THOR)",
-        "ORL": "ENT (ORL)"
-      },
+      "ALL": "All",
+      "URO": "Urology (URO)",
+      "GEN": "General Surgery (GEN)",
+      "GYN": "Gynecology (GYN)",
+      "THOR": "Thoracic (THOR)",
+      "ORL": "ENT (ORL)"
+    },
     "society": "Society",
     "none": "None",
     "invalidAccessCode": "Invalid access code",
@@ -182,7 +187,7 @@
       "label": "Presentation",
       "intro": "Program presentation session.",
       "item1": "Program introduction",
-      "item2": "Instructor presentation"
+      "item2": "Profesor presentation"
     },
     "modOnline": {
       "label": "Online Modules",
@@ -204,7 +209,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Step By Step procedures.",
+      "intro": "Step By Step surgeries.",
       "item1": "Support material",
       "item2": "Guided review"
     },
@@ -230,7 +235,7 @@
     },
     "phase4": {
       "label": "Phase 4 - Console Surgery",
-      "description": "Procedures performed by the resident with supervision."
+      "description": "Surgeries performed by the resident with supervision."
     }
   },
   "common": {
@@ -521,7 +526,11 @@
         "confirm": "Delete",
         "cancel": "Cancel"
       }
-    }
+    },
+    "requiresValidation": "Requires validation",
+    "requiresSignature": "Requires signature",
+    "requiresPercentage": "Requires percentage",
+    "requiresAttachment": "Requires attachment"
   },
   "adminUserProgress": {
     "title": "User Progress",
@@ -549,6 +558,9 @@
     "noTitle": "Untitled",
     "phaseStatusLabel": "Phase status",
     "activityStatusLabel": "Activity status",
+    "masterStatusLabel": "Status for all activities",
+    "revert": "Revert",
+    "confirmBulkChange": "Are you sure you want to change the status of all activities?",
     "phaseStatus": {
       "blocked": "Blocked",
       "inProgress": "In Progress",
@@ -567,6 +579,10 @@
     "noActivityName": "Unnamed activity",
     "completedOn": "Completed on: {{date}}",
     "validatedOn": "Validated on: {{date}}",
+    "surgeryType": "Surgery type: {{type}}",
+    "surgeonName": "Surgeon's name: {{name}}",
+    "participation": "Participation percentage: {{percent}}%",
+    "activityType": "Activity type: {{type}}",
     "statusWithValue": "Status: {{status}}",
     "noProgress": "No progress available."
   },
@@ -604,7 +620,7 @@
     "title": "Academic Program daVinci",
     "subtitle": "Da Vinci Systems Training Program",
     "email": "Email",
-      "logoUrl": "Logo URL",
+    "logoUrl": "Logo URL",
     "password": "Password",
     "signIn": "Log In",
     "forgotPassword": "Forgot your password?",
@@ -646,11 +662,11 @@
   },
   "roles": {
     "residente": "Resident",
-    "formador": "Trainer",
-    "coordinador": "Coordinator",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrator",
-    "alumno": "Student",
-    "instructor": "Instructor"
+    "participante": "Participante",
+    "profesor": "profesor"
   },
   "notifications": {
     "title": "Notifications",
@@ -680,7 +696,7 @@
     "errorDelete": "Error deleting code",
     "errorSave": "Error saving code"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "My Users",
     "invite": "Invite User",
     "edit": "Edit User",
@@ -707,7 +723,7 @@
       "role": "Role",
       "roles": {
         "resident": "Resident",
-        "trainer": "Trainer"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -716,7 +732,7 @@
       "save": "Save",
       "invite": "Invite"
     },
-    "_comment": "Trainer user management",
+    "_comment": "Tutor user management",
     "buttons": {
       "invite": "Invite User",
       "cancel": "Cancel",
@@ -733,7 +749,7 @@
     },
     "roles": {
       "resident": "Resident",
-      "trainer": "Trainer"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Active",
@@ -755,7 +771,7 @@
   "progress": {
     "createSuccess": "Training progress created successfully"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validations",
     "tabs": {
       "pending": "Pending",
@@ -765,8 +781,12 @@
     },
     "table": {
       "activity": "Activity",
+      "type": "Type",
       "resident": "Resident",
       "date": "Date",
+      "surgeryType": "Surgery type",
+      "surgeon": "Surgeon",
+      "participation": "Participation (%)",
       "comments": "Comments",
       "actions": "Actions",
       "status": "Status",
@@ -794,7 +814,7 @@
       "rejectReason": "Reason for rejection"
     },
     "errorLoad": "Error loading validations",
-    "_comment": "Validations managed by trainers",
+    "_comment": "Validations managed by Tutors",
     "buttons": {
       "viewAttachment": "View attachment",
       "validate": "Validate",
@@ -836,15 +856,24 @@
     "markAsCompleted": "Mark as completed",
     "unnamedActivity": "Unnamed activity",
     "comment": "Comment",
-    "trainerComment": "Trainer comment",
+    "tutorComment": "Tutor comment",
     "rejectionReason": "Rejection reason",
     "completedOn": "Completed on",
     "validatedOn": "Validated on",
+    "activityType": "Activity type: {{type}}",
+    "surgeryType": "Surgery type: {{type}}",
+    "surgeonName": "Surgeon's name: {{name}}",
+    "participation": "Participation percentage: {{percent}}%",
     "status": "Status",
     "dialog": {
       "completeActivity": "Mark activity as completed",
       "completionDate": "Completion date",
       "comment": "Comment",
+      "surgery": "Surgery name",
+      "otherSurgery": "Other surgery",
+      "otherSurgeryTooltip": "Enter the surgery name",
+      "surgeonName": "Surgeon's name",
+      "participation": "Participation percentage",
       "selectFile": "Select file",
       "cancel": "Cancel",
       "confirm": "Confirm",
@@ -853,6 +882,9 @@
       "selectDate": "Select a completion date",
       "optionalFileHint": "Attach an optional file (max 5MB)",
       "fileTooLarge": "The file exceeds the maximum size of 5MB.",
+      "surgeryRequired": "Select or enter a procedure",
+      "surgeonNameRequired": "Enter the surgeon's name",
+      "participationRequired": "Select a participation percentage",
       "title": "Mark activity as completed",
       "date": "Completion date"
     },
@@ -869,7 +901,7 @@
     },
     "labels": {
       "comment": "Comment",
-      "trainerComment": "Trainer comment",
+      "tutorComment": "Tutor comment",
       "rejectionReason": "Rejection reason",
       "completedDate": "Completed on",
       "validatedDate": "Validated on",
@@ -890,7 +922,7 @@
   },
   "certificate": {
     "title": "Certificate of Completion",
-   "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
+    "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificate automatically generated by Academic Program Da Vinci · www.abexsl.es"
   },
@@ -913,7 +945,7 @@
     "active": "Active",
     "inactive": "Inactive",
     "validated": "Validated",
-   "rejected": "Rejected"
+    "rejected": "Rejected"
   },
   "privacyPolicy": {
     "title": "Privacy Policy",

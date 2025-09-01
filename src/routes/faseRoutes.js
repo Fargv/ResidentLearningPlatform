@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   getFases,
@@ -17,24 +18,50 @@ router.use(protect);
 
 // Rutas para todos los roles
 router.route('/')
-  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getFases);
+  .get(
+    authorize(
+      Role.ADMINISTRADOR,
+      Role.TUTOR,
+      Role.CSM,
+      Role.RESIDENTE,
+      Role.PARTICIPANTE
+    ),
+    getFases
+  );
 
 router.route('/:id')
-  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getFase);
+  .get(
+    authorize(
+      Role.ADMINISTRADOR,
+      Role.TUTOR,
+      Role.CSM,
+      Role.RESIDENTE,
+      Role.PARTICIPANTE
+    ),
+    getFase
+  );
 
 router.route('/:id/actividades')
-  .get(authorize('administrador', 'formador', 'coordinador', 'residente', 'alumno'), getFaseActividades);
+  .get(
+    authorize(
+      Role.ADMINISTRADOR,
+      Role.TUTOR,
+      Role.CSM,
+      Role.RESIDENTE,
+      Role.PARTICIPANTE
+    ),
+    getFaseActividades
+  );
   
 // Rutas solo para administradores
 router.route('/')
-  .post(authorize('administrador'), createFase);
+  .post(authorize(Role.ADMINISTRADOR), createFase);
 
 router.route('/:id')
-  .put(authorize('administrador'), updateFase)
-  .delete(authorize('administrador'), deleteFase);
+  .put(authorize(Role.ADMINISTRADOR), updateFase)
+  .delete(authorize(Role.ADMINISTRADOR), deleteFase);
 
 router.route('/reorder')
-  .put(authorize('administrador'), reorderFases);
+  .put(authorize(Role.ADMINISTRADOR), reorderFases);
 
 module.exports = router;
-

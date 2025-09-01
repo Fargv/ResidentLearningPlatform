@@ -18,7 +18,8 @@ import {
   MenuItem,
   Badge,
   useMediaQuery,
-  useTheme
+  useTheme,
+  alpha
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -31,15 +32,18 @@ import {
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Brightness4 as Brightness4Icon,
+  Brightness7 as Brightness7Icon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
 import { useTranslation } from 'react-i18next';
+import { useColorMode } from '../context/ColorModeContext';
 
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
-import FormadorValidaciones from './dashboard/FormadorValidaciones';
+import TutorValidaciones from './dashboard/TutorValidaciones';
 import Usuarios from './dashboard/Usuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
@@ -53,6 +57,7 @@ import DebugDashboard from './DebugDashboard';
 import ResidenteFases from './dashboard/ResidenteFases';
 import AdminAccessCodes from './dashboard/AdminAccessCodes';
 import AdminConfiguracion from './dashboard/AdminConfiguracion';
+import AdminCirugias from './dashboard/AdminCirugias';
 import LanguageSelector from '../components/LanguageSelector';
 
 const drawerWidth = 240;
@@ -65,6 +70,7 @@ const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { toggleColorMode } = useColorMode();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const isDev = env === 'dev';
@@ -102,21 +108,21 @@ const Dashboard: React.FC = () => {
         text: t('actions.dashboard'),
         icon: <DashboardIcon />,
         path: '/dashboard',
-        roles: ['administrador', 'formador', 'coordinador', 'residente', 'alumno']
+        roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
       }
     ];
 
-    if (user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor') {
-      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'alumno', 'instructor'] });
+    if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
     }
 
 
-        if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
-      items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['formador', 'coordinador', 'instructor'] });
+        if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
     }
 
-    if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
-      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['formador', 'coordinador', 'instructor'] });
+    if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
     }
 
     if (user?.rol === 'administrador') {
@@ -159,12 +165,21 @@ const Dashboard: React.FC = () => {
               mr: 2,
               color: 'inherit',
               '.MuiSelect-select': { color: 'inherit' },
-              '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.5)' },
-              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#fff' },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#fff' },
+              '.MuiOutlinedInput-notchedOutline': {
+                borderColor: (theme) => alpha(theme.palette.common.white, 0.5),
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
               '.MuiSvgIcon-root': { color: 'inherit' }
             }}
           />
+          <IconButton
+            color="inherit"
+            onClick={toggleColorMode}
+            sx={{ mr: 1, color: 'inherit' }}
+          >
+            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
             <Badge badgeContent={unreadCount} color="secondary">
               <NotificationsIcon />
@@ -273,7 +288,7 @@ const Dashboard: React.FC = () => {
         <Toolbar />
         <Routes>
   <Route path="/" element={<DashboardHome />} />
-  <Route path="/validaciones" element={<FormadorValidaciones />} />
+  <Route path="/validaciones" element={<TutorValidaciones />} />
   <Route path="/usuarios" element={<Usuarios />} />
   <Route path="/hospitals" element={<AdminHospitales />} />
   {user?.rol === 'administrador' && (
@@ -281,6 +296,9 @@ const Dashboard: React.FC = () => {
   )}
   {user?.rol === 'administrador' && (
     <Route path="/access-codes" element={<AdminAccessCodes />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/cirugias" element={<AdminCirugias />} />
   )}
   {user?.rol === 'administrador' && (
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
@@ -295,7 +313,7 @@ const Dashboard: React.FC = () => {
     <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
   )}
   <Route path="/sociedades" element={<AdminSociedades />} />
-  {user?.rol === 'residente' || user?.rol === 'alumno' || user?.rol === 'instructor' ? (
+  {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
     <Route path="/fases" element={<ResidenteFases />} />
   ) : null}
   <Route path="/perfil" element={<Perfil />} />

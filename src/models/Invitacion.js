@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Role } = require('../utils/roles');
 
 const invitacionSchema = new mongoose.Schema({
   email: {
@@ -8,21 +9,14 @@ const invitacionSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: [
-      'residente',
-      'formador',
-      'administrador',
-      'alumno',
-      'instructor',
-      'coordinador'
-    ],
+    enum: Object.values(Role),
     required: [true, 'Por favor especifique un rol']
   },
   hospital: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
     required: function() {
-      return this.rol === 'residente' || this.rol === 'formador';
+      return this.rol === Role.RESIDENTE || this.rol === Role.TUTOR;
     }
   },
   token: {

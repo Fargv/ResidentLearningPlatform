@@ -2,11 +2,11 @@
   "welcome": "Willkommen, {{name}}",
   "role": {
     "adminPanel": "Administrationsbereich",
-    "trainer": "Ausbilder für Krankenhausbewohner {{hospital}}",
-    "coordinator": "Koordinator für Krankenhausbewohner {{hospital}}",
+    "tutor": "Tutor für Krankenhausbewohner {{hospital}}",
+    "csm": "Koordinator für Krankenhausbewohner {{hospital}}",
     "resident": "Bewohner des Krankenhauses {{hospital}}",
-    "student": "Teilnehmer am Gesellschaftsprogramm {{title}}",
-    "instructor": "Ausbilder im Gesellschaftsprogramm {{title}}"
+    "participant": "Participante am Gesellschaftsprogramm {{title}}",
+    "professor": "Tutor im Gesellschaftsprogramm {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -30,6 +30,7 @@
     "societiesProgram": "Gesellschaftsprogramm",
     "users": "Benutzer",
     "accessCodes": "Zugangscodes",
+    "surgeryTypes": "Operationsarten",
     "debug": "Fehlersuche"
   },
   "progressByPhase": "Fortschritt nach Phase",
@@ -68,13 +69,13 @@
     "zone": "Zone",
     "specialty": "Fachgebiet",
     "specialties": {
-        "ALL": "Alle",
-        "URO": "Urologie (URO)",
-        "GEN": "Allgemeinchirurgie (GEN)",
-        "GYN": "Gynäkologie (GYN)",
-        "THOR": "Thoraxchirurgie (THOR)",
-        "ORL": "HNO (ORL)"
-      },
+      "ALL": "Alle",
+      "URO": "Urologie (URO)",
+      "GEN": "Allgemeinchirurgie (GEN)",
+      "GYN": "Gynäkologie (GYN)",
+      "THOR": "Thoraxchirurgie (THOR)",
+      "ORL": "HNO (ORL)"
+    },
     "society": "Gesellschaft",
     "none": "Keine",
     "invalidAccessCode": "Ungültiger Zugangscode",
@@ -152,11 +153,11 @@
   },
   "roles": {
     "residente": "Bewohner",
-    "formador": "Ausbilder",
-    "coordinador": "Koordinator",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrator",
-    "alumno": "Teilnehmer",
-    "instructor": "Ausbilder"
+    "participante": "Participante",
+    "profesor": "Tutor"
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -225,7 +226,7 @@
       "label": "Präsentation",
       "intro": "Präsentationssitzung des Programms.",
       "item1": "Einführung in das Programm",
-      "item2": "Vorstellung der Ausbilder"
+      "item2": "Vorstellung der Tutor"
     },
     "modOnline": {
       "label": "Online-Modul",
@@ -247,7 +248,7 @@
     },
     "stepByStep": {
       "label": "Schritt für Schritt",
-      "intro": "Schritt-für-Schritt-Verfahren.",
+      "intro": "Schritt-für-Schritt-Chirurgien.",
       "item1": "Unterstützendes Material",
       "item2": "Geführte Überprüfung"
     },
@@ -276,7 +277,7 @@
       "description": "Durchführung von Eingriffen durch den Bewohner unter Aufsicht."
     }
   },
- "residentProgress": {
+  "residentProgress": {
     "title": "Mein Fortschritt",
     "errorLoad": "Fehler beim Laden des Fortschritts",
     "downloadError": "Fehler beim Herunterladen des Zertifikats",
@@ -305,15 +306,24 @@
     "markAsCompleted": "Als abgeschlossen markieren",
     "unnamedActivity": "Aktivität ohne Namen",
     "comment": "Kommentar",
-    "trainerComment": "Kommentar des Ausbilders",
+    "tutorComment": "Kommentar des Tutors",
     "rejectionReason": "Ablehnungsgrund",
     "completedOn": "Abschlussdatum",
     "validatedOn": "Validiert am",
+    "activityType": "Aktivitätstyp: {{type}}",
+    "surgeryType": "Operationsart: {{type}}",
+    "surgeonName": "Name des Chirurgen: {{name}}",
+    "participation": "Teilnahmeprozentsatz: {{percent}}%",
     "status": "Status",
     "dialog": {
       "completeActivity": "Aktivität als abgeschlossen markieren",
       "completionDate": "Abschlussdatum",
       "comment": "Kommentar",
+      "surgery": "Name der Operation",
+      "otherSurgery": "Andere Operation",
+      "otherSurgeryTooltip": "Geben Sie den Namen der Operation ein",
+      "surgeonName": "Name des Chirurgen",
+      "participation": "Teilnahmeprozentsatz",
       "selectFile": "Datei auswählen",
       "cancel": "Abbrechen",
       "confirm": "Bestätigen",
@@ -322,6 +332,9 @@
       "selectDate": "Wähle ein Abschlussdatum",
       "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
       "fileTooLarge": "Datei ist größer als 5MB.",
+      "surgeryRequired": "Wähle oder gib ein Verfahren ein",
+      "surgeonNameRequired": "Gib den Namen des Chirurgen ein",
+      "participationRequired": "Wähle einen Beteiligungsprozentsatz",
       "title": "Aktivität abschließen",
       "date": "Abschlussdatum"
     },
@@ -337,7 +350,7 @@
     },
     "labels": {
       "comment": "Kommentar",
-      "trainerComment": "Kommentar des Ausbilders",
+      "tutorComment": "Kommentar des Tutors",
       "rejectionReason": "Ablehnungsgrund",
       "completedDate": "Abgeschlossen am",
       "validatedDate": "Validiert am",
@@ -351,7 +364,7 @@
     },
     "_comment": "Resident phases and activities"
   },
- "adminPhases": {
+  "adminPhases": {
     "_comment": "Verwaltung der Phasen",
     "phase": "Phase",
     "activity": "Aktivität",
@@ -365,7 +378,7 @@
     "observation": "Beobachtung",
     "practice": "Praxis",
     "theory": "Theorie",
-    "procedure": "Verfahren",
+    "surgery": "Chirurgie",
     "errorForbidden": "Sie haben keine Berechtigung, diesen Abschnitt anzuzeigen",
     "errorLoadData": "Fehler beim Laden der Daten",
     "tabs": {
@@ -452,7 +465,11 @@
       },
       "createActivity": "Aktivität für die Phase <strong>{{phase}}</strong> wird erstellt"
     },
-    "empty": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen."
+    "empty": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen.",
+    "requiresValidation": "Benötigt Validierung",
+    "requiresSignature": "Benötigt Unterschrift",
+    "requiresPercentage": "Benötigt Prozentsatz",
+    "requiresAttachment": "Benötigt Anhang"
   },
   "profile": {
     "title": "Mein Profil",
@@ -724,7 +741,11 @@
         "confirm": "Löschen",
         "cancel": "Abbrechen"
       }
-    }
+    },
+    "requiresValidation": "Benötigt Validierung",
+    "requiresSignature": "Benötigt Unterschrift",
+    "requiresPercentage": "Benötigt Prozentsatz",
+    "requiresAttachment": "Benötigt Anhang"
   },
   "adminUserProgress": {
     "title": "Benutzerfortschritt",
@@ -751,6 +772,9 @@
     "noTitle": "Ohne Titel",
     "phaseStatusLabel": "Phasenstatus",
     "activityStatusLabel": "Aktivitätsstatus",
+    "masterStatusLabel": "Status für alle Aktivitäten",
+    "revert": "Rückgängig",
+    "confirmBulkChange": "Möchten Sie wirklich den Status aller Aktivitäten ändern?",
     "phaseStatus": {
       "blocked": "Gesperrt",
       "inProgress": "In Bearbeitung",
@@ -769,10 +793,14 @@
     "noActivityName": "Unbenannte Aktivität",
     "completedOn": "Abgeschlossen am: {{date}}",
     "validatedOn": "Validiert am: {{date}}",
+    "surgeryType": "Operationsart: {{type}}",
+    "surgeonName": "Name des Chirurgen: {{name}}",
+    "participation": "Teilnahmeprozentsatz: {{percent}}%",
+    "activityType": "Aktivitätstyp: {{type}}",
     "statusWithValue": "Status: {{status}}",
     "noProgress": "Kein Fortschritt verfügbar."
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Meine Benutzer",
     "invite": "Benutzer einladen",
     "edit": "Benutzer bearbeiten",
@@ -797,7 +825,7 @@
       "role": "Rolle",
       "roles": {
         "resident": "Bewohner",
-        "trainer": "Ausbilder"
+        "tutor": "Tutor"
       }
     },
     "dialog": {
@@ -806,7 +834,7 @@
       "save": "Speichern",
       "invite": "Einladen"
     },
-    "_comment": "Verwaltung von Ausbilderbenutzern",
+    "_comment": "Verwaltung von Tutorbenutzern",
     "buttons": {
       "invite": "Benutzer einladen",
       "cancel": "Abbrechen",
@@ -822,7 +850,7 @@
     },
     "roles": {
       "resident": "Bewohner",
-      "trainer": "Ausbilder"
+      "tutor": "Tutor"
     },
     "states": {
       "active": "Aktiv",
@@ -841,7 +869,7 @@
       "genericError": "Fehler"
     }
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validierungen",
     "tabs": {
       "pending": "Ausstehend",
@@ -851,8 +879,12 @@
     },
     "table": {
       "activity": "Aktivität",
+      "type": "Typ",
       "resident": "Bewohner",
       "date": "Datum",
+      "surgeryType": "Operationsart",
+      "surgeon": "Chirurg",
+      "participation": "Teilnahme (%)",
       "comments": "Kommentare",
       "actions": "Aktionen",
       "status": "Status",
@@ -880,7 +912,7 @@
       "rejectReason": "Ablehnungsgrund"
     },
     "errorLoad": "Fehler beim Laden der Validierungen",
-    "_comment": "Von Ausbildern verwaltete Validierungen",
+    "_comment": "Von Tutorn verwaltete Validierungen",
     "buttons": {
       "viewAttachment": "Anhang anzeigen",
       "validate": "Validieren",

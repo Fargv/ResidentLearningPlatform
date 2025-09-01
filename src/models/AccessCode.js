@@ -8,7 +8,7 @@ const accessCodeSchema = new mongoose.Schema({
   },
   rol: {
     type: String,
-    enum: ['residente', 'formador', 'administrador', 'alumno', 'instructor', 'coordinador'],
+    enum: ['residente', 'tutor', 'administrador', 'participante', 'profesor', 'csm'],
     required: [true, 'Por favor especifique un rol']
   },
   tipo: {

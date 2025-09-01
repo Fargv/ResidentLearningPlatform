@@ -15,6 +15,7 @@ import {
   DialogActions,
   Button,
   Backdrop,
+  useTheme,
 } from "@mui/material";
 import {
   Assignment as AssignmentIcon,
@@ -37,6 +38,7 @@ import type { Fase } from "../../components/ProgressPorFase";
 const DashboardHome: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
@@ -220,10 +222,10 @@ const DashboardHome: React.FC = () => {
       const isResidentes =
         user?.tipo === "Programa Residentes" &&
         user?._id &&
-        ["residente", "formador", "instructor", "alumno"].includes(user.rol);
+        ["residente", "tutor", "profesor", "participante"].includes(user.rol);
       const isSociedades =
         user?.tipo === "Programa Sociedades" &&
-        user?.rol === "alumno" &&
+        user?.rol === "participante" &&
         !!user?._id;
 
       if (!isResidentes && !isSociedades) {
@@ -268,7 +270,7 @@ const DashboardHome: React.FC = () => {
           setSocAllValidado(allValidado);
         }
       } catch (err: any) {
-        if (!(err?.response?.status === 404 && user?.rol === "coordinador")) {
+        if (!(err?.response?.status === 404 && user?.rol === "csm")) {
           console.error("Error cargando progreso", err);
         }
       } finally {
@@ -310,7 +312,7 @@ const DashboardHome: React.FC = () => {
 
   const actions: Action[] = [];
 
-  if (user?.rol === "residente" || user?.rol === "alumno") {
+  if (user?.rol === "residente" || user?.rol === "participante") {
     actions.push({
       label: t('actions.myProgress'),
       path: "/dashboard/progreso",
@@ -320,8 +322,8 @@ const DashboardHome: React.FC = () => {
 
   if (
     user?.rol === "residente" ||
-    user?.rol === "alumno" ||
-    user?.rol === "instructor"
+    user?.rol === "participante" ||
+    user?.rol === "profesor"
   ) {
     actions.push({
       label: t('actions.trainingPhases'),
@@ -330,7 +332,7 @@ const DashboardHome: React.FC = () => {
     });
   }
 
-  if (user?.rol === "formador" || user?.rol === "coordinador" || user?.rol === "instructor") {
+  if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
     actions.push({
       label: t('actions.validations'),
       path: "/dashboard/validaciones",
@@ -338,7 +340,7 @@ const DashboardHome: React.FC = () => {
     });
   }
 
-  if (user?.rol === "formador" || user?.rol === "coordinador") {
+  if (user?.rol === "tutor" || user?.rol === "csm") {
     actions.push({
       label: t('actions.myUsers'),
       path: "/dashboard/usuarios",
@@ -376,7 +378,7 @@ const DashboardHome: React.FC = () => {
 
   const allValidado =
     user?.tipo === 'Programa Residentes' &&
-    (user?.rol === 'residente' || user?.rol === 'alumno') &&
+    (user?.rol === 'residente' || user?.rol === 'participante') &&
     phaseSummary.length > 0 &&
     phaseSummary.every((p) => p.percent === 100);
 
@@ -399,19 +401,19 @@ const DashboardHome: React.FC = () => {
     switch (user.rol) {
       case "administrador":
         return t('role.adminPanel');
-      case "formador":
-        return hospital ? t('role.trainer', { hospital }) : "";
-      case "coordinador":
-        return hospital ? t('role.coordinator', { hospital }) : "";
+      case "tutor":
+        return hospital ? t('role.tutor', { hospital }) : "";
+      case "csm":
+        return hospital ? t('role.csm', { hospital }) : "";
       case "residente":
         return hospital ? t('role.resident', { hospital }) : "";
-      case "alumno":
+      case "participante":
         return sociedadInfo?.titulo
-          ? t('role.student', { title: sociedadInfo.titulo })
+          ? t('role.participant', { title: sociedadInfo.titulo })
           : "";
-      case "instructor":
+      case "profesor":
         return sociedadInfo?.titulo
-          ? t('role.instructor', { title: sociedadInfo.titulo })
+          ? t('role.professor', { title: sociedadInfo.titulo })
           : "";
       default:
         return "";
@@ -467,8 +469,8 @@ const DashboardHome: React.FC = () => {
                     elevation={2}
                     sx={{
                       p: 2,
-                      borderLeft: "6px solid #1E5B94",
-                      background: `linear-gradient(90deg, #E3F2FD ${percent}%, #F5F5F5 ${percent}%)`,
+                      borderLeft: `6px solid ${theme.palette.primary.main}`,
+                      background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
                     }}
                   >
                     <Typography
@@ -480,14 +482,14 @@ const DashboardHome: React.FC = () => {
                     <Typography
                       variant="body1"
                       fontWeight="bold"
-                      sx={{ color: '#1E5B94' }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {formatMonthYear(m.date || "") || "—"}
                     </Typography>
                     <Typography
                       variant="body2"
                       fontWeight="bold"
-                      sx={{ color: '#1E5B94' }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {percent}%
                     </Typography>
@@ -511,10 +513,10 @@ const DashboardHome: React.FC = () => {
       )}
       {user?.tipo === "Programa Residentes" &&
         (user?.rol === "residente" ||
-          user?.rol === "formador" ||
-          user?.rol === "coordinador" ||
-          user?.rol === "instructor" ||
-          user?.rol === "alumno") &&
+          user?.rol === "tutor" ||
+          user?.rol === "csm" ||
+          user?.rol === "profesor" ||
+          user?.rol === "participante") &&
         phaseSummary.length > 0 && (
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
@@ -544,8 +546,8 @@ const DashboardHome: React.FC = () => {
                       elevation={2}
                       sx={{
                         p: 2,
-                        borderLeft: "6px solid #1E5B94",
-                        background: `linear-gradient(90deg, #E3F2FD  ${p.percent}%, #F5F5F5  ${p.percent}%)`,
+                        borderLeft: `6px solid ${theme.palette.primary.main}`,
+                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
                       }}
                     >
                       <Typography variant="subtitle2" color="text.secondary">
@@ -633,7 +635,7 @@ const DashboardHome: React.FC = () => {
         </Dialog>
         <Backdrop
           open={downloadLoading}
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          sx={{ color: theme.palette.common.white, zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
           <CircularProgress color="inherit" />
         </Backdrop>

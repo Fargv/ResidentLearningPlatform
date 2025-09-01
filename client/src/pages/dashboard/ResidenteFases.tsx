@@ -21,7 +21,9 @@ import {
   Snackbar,
   Tooltip,
   CircularProgress,
-  Backdrop
+  Backdrop,
+  Autocomplete,
+  MenuItem
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -53,6 +55,13 @@ const ResidenteFases: React.FC = () => {
   const [snackbarError, setSnackbarError] = useState(false);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+  const [cirugia, setCirugia] = useState<any | null>(null);
+  const [otraCirugia, setOtraCirugia] = useState('');
+  const [nombreCirujano, setNombreCirujano] = useState('');
+  const [porcentaje, setPorcentaje] = useState<number>(0);
+  const [esCirugia, setEsCirugia] = useState(false);
+  const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -102,7 +111,7 @@ const ResidenteFases: React.FC = () => {
 
 
   useEffect(() => {
-    if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'alumno')) return;
+    if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'participante')) return;
   
     const fetchProgresos = async () => {
       try {
@@ -123,6 +132,19 @@ const ResidenteFases: React.FC = () => {
   
     fetchProgresos();
   }, [user, t]);
+
+  useEffect(() => {
+    const fetchSurgeryTypes = async () => {
+      try {
+        const res = await api.get('/surgery-types');
+        const data = res.data.data || res.data;
+        setSurgeryTypes(data);
+      } catch (err) {
+        console.error('Error cargando tipos de cirugía', err);
+      }
+    };
+    fetchSurgeryTypes();
+  }, []);
 
   useEffect(() => {
     const loadSociedad = async () => {
@@ -147,14 +169,21 @@ const ResidenteFases: React.FC = () => {
   const handleOpenDialog = (progresoId: string, index: number) => {
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
+    const progreso = progresos.find(p => p._id === progresoId);
+    const actividad = progreso?.actividades?.[index];
+    const esCirugia = actividad?.tipo === 'cirugia';
+    setEsCirugia(esCirugia);
     setComentario('');
     setFecha(new Date().toISOString().split('T')[0]);
     setArchivo(null);
     setArchivoError(false);
     setArchivoErrorMsg('');
-  
-    // Mover el console.log al final para que acceda a los parámetros directamente
-  
+    setCirugia(null);
+    setOtraCirugia('');
+    setOtraCirugiaSeleccionada(false);
+    setNombreCirujano('');
+    setPorcentaje(0);
+
     setDialogOpen(true);
   };
 
@@ -162,7 +191,11 @@ const ResidenteFases: React.FC = () => {
     Boolean(selectedProgresoId) &&
     selectedActividadIndex !== null &&
     Boolean(fecha) &&
-    !archivoError;
+    !archivoError &&
+    (!esCirugia ||
+      ((cirugia || otraCirugia.trim()) &&
+        nombreCirujano.trim() !== '' &&
+        porcentaje > 0));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -183,6 +216,16 @@ const ResidenteFases: React.FC = () => {
     }
   };
 
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setCirugia(null);
+    setOtraCirugia('');
+    setNombreCirujano('');
+    setPorcentaje(0);
+    setEsCirugia(false);
+    setOtraCirugiaSeleccionada(false);
+  };
+
 
 
   const handleCompletarActividad = async () => {
@@ -198,6 +241,21 @@ const ResidenteFases: React.FC = () => {
       const form = new FormData();
       form.append('fechaRealizacion', fecha);
       form.append('comentariosResidente', comentario);
+
+      const progreso = progresos.find(p => p._id === selectedProgresoId);
+      const actividad = progreso?.actividades?.[selectedActividadIndex!];
+      const esCirugia = actividad?.tipo === 'cirugia';
+
+      if (esCirugia) {
+        if (cirugia) {
+          form.append('cirugia', cirugia._id);
+        } else if (otraCirugia) {
+          form.append('otraCirugia', otraCirugia);
+        }
+        if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+        form.append('porcentajeParticipacion', String(porcentaje));
+      }
+
       if (archivo) form.append('adjunto', archivo);
 
       const { data } = await api.put(
@@ -228,7 +286,7 @@ const ResidenteFases: React.FC = () => {
       setSnackbarMsg(t('residentPhases.activitySaveError'));
       setSnackbarOpen(true);
     } finally {
-      setDialogOpen(false);
+      handleCloseDialog();
       setArchivo(null);
     }
   };
@@ -347,6 +405,9 @@ const ResidenteFases: React.FC = () => {
                     primary={act.nombre || t('residentPhases.unnamedActivity')}
                     secondary={
                       <>
+                        <Typography variant="body2" color="text.secondary">
+                          {t('residentPhases.activityType', { type: act.tipo })}
+                        </Typography>
                         {act.comentariosResidente && (
                           <Typography variant="body2" color="text.secondary">
                             {t('residentPhases.comment')}: {act.comentariosResidente}
@@ -357,9 +418,34 @@ const ResidenteFases: React.FC = () => {
                             {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
                           </Typography>
                         )}
-                        {act.comentariosFormador && (
+                        {act.tipo === 'cirugia' && act.estado !== 'pendiente' && (
+                          <>
+                            {(act.cirugia?.name || act.otraCirugia) && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('residentPhases.surgeryType', {
+                                  type: act.cirugia?.name || act.otraCirugia
+                                })}
+                              </Typography>
+                            )}
+                            {act.nombreCirujano && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('residentPhases.surgeonName', {
+                                  name: act.nombreCirujano
+                                })}
+                              </Typography>
+                            )}
+                            {typeof act.porcentajeParticipacion === 'number' && (
+                              <Typography variant="body2" color="text.secondary">
+                                {t('residentPhases.participation', {
+                                  percent: act.porcentajeParticipacion
+                                })}
+                              </Typography>
+                            )}
+                          </>
+                        )}
+                        {act.comentariosTutor && (
                           <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.trainerComment')}: {act.comentariosFormador}
+                            {t('residentPhases.tutorComment')}: {act.comentariosTutor}
                           </Typography>
                         )}
                         {act.estado === 'rechazado' && act.comentariosRechazo && (
@@ -440,7 +526,7 @@ const ResidenteFases: React.FC = () => {
 
 
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
         <DialogContent>
           <TextField
@@ -461,6 +547,93 @@ const ResidenteFases: React.FC = () => {
             rows={3}
             margin="normal"
           />
+          {esCirugia && (
+            <>
+              <Autocomplete
+                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+                isOptionEqualToValue={(opt, val) => opt._id === val._id}
+                getOptionLabel={(option: any) =>
+                  typeof option === 'string' ? option : option.name
+                }
+                value={cirugia}
+                inputValue={
+                  otraCirugiaSeleccionada
+                    ? otraCirugia
+                    : cirugia?.name || ''
+                }
+                onChange={(_, value) => {
+                  if (typeof value === 'string') {
+                    if (otraCirugiaSeleccionada) {
+                      setOtraCirugia(value);
+                    }
+                  } else if (!value) {
+                    setCirugia(null);
+                    setOtraCirugiaSeleccionada(false);
+                  } else if ((value as any)?._id === 'other') {
+                    setCirugia(null);
+                    setOtraCirugia('');
+                    setOtraCirugiaSeleccionada(true);
+                  } else {
+                    setCirugia(value);
+                    setOtraCirugiaSeleccionada(false);
+                  }
+                }}
+                onInputChange={(_, newValue) => {
+                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t('residentPhases.dialog.surgery')}
+                    margin="normal"
+                    error={esCirugia && !(cirugia || otraCirugia.trim())}
+                    helperText={
+                      esCirugia && !(cirugia || otraCirugia.trim())
+                        ? t('residentPhases.dialog.surgeryRequired')
+                        : otraCirugiaSeleccionada
+                        ? t('residentPhases.dialog.otherSurgeryTooltip')
+                        : ''
+                    }
+                  />
+                )}
+                fullWidth
+                freeSolo={otraCirugiaSeleccionada}
+              />
+              <TextField
+                label={t('residentPhases.dialog.surgeonName')}
+                value={nombreCirujano}
+                onChange={(e) => setNombreCirujano(e.target.value)}
+                fullWidth
+                margin="normal"
+                error={esCirugia && !nombreCirujano.trim()}
+                helperText={
+                  esCirugia && !nombreCirujano.trim()
+                    ? t('residentPhases.dialog.surgeonNameRequired')
+                    : ''
+                }
+              />
+              <TextField
+                select
+                label={t('residentPhases.dialog.participation')}
+                value={porcentaje}
+                onChange={(e) => setPorcentaje(Number(e.target.value))}
+                fullWidth
+                margin="normal"
+                error={esCirugia && porcentaje === 0}
+                helperText={
+                  esCirugia && porcentaje === 0
+                    ? t('residentPhases.dialog.participationRequired')
+                    : ''
+                }
+              >
+                {[0, 25, 50, 75, 100].map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {val}%
+                  </MenuItem>
+                ))}
+              </TextField>
+            </>
+          )}
           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
             {t('residentPhases.dialog.selectFile')}
             <input
@@ -483,7 +656,7 @@ const ResidenteFases: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>{t('residentPhases.dialog.cancel')}</Button>
+          <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
           <Tooltip
             title={
               archivoError
@@ -494,6 +667,12 @@ const ResidenteFases: React.FC = () => {
                 ? t('residentPhases.dialog.noActivitySelected')
                 : !fecha
                 ? t('residentPhases.dialog.selectDate')
+                : esCirugia && !(cirugia || otraCirugia.trim())
+                ? t('residentPhases.dialog.surgeryRequired')
+                : esCirugia && !nombreCirujano.trim()
+                ? t('residentPhases.dialog.surgeonNameRequired')
+                : esCirugia && porcentaje === 0
+                ? t('residentPhases.dialog.participationRequired')
                 : t('residentPhases.dialog.optionalFileHint')
             }
             arrow

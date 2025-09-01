@@ -2,11 +2,11 @@
   "welcome": "Ongietorri, {{name}}",
   "role": {
     "adminPanel": "Administrazio panela",
-    "trainer": "Erietxeko egoiliarren prestatzailea {{hospital}}",
-    "coordinator": "Erresidentziako koordinatzailea {{hospital}}",
+    "tutor": "Erietxeko egoiliarren prestatzailea {{hospital}}",
+    "csm": "Erresidentziako koordinatzailea {{hospital}}",
     "resident": "Erietxeko egoiliarra {{hospital}}",
-    "student": "Elkarteen programako ikaslea {{title}}",
-    "instructor": "Elkarteen programako irakaslea {{title}}"
+    "participant": "Elkarteen programako ikaslea {{title}}",
+    "professor": "Elkarteen programako irakaslea {{title}}"
   },
   "actions": {
     "dashboard": "Arbela",
@@ -30,6 +30,7 @@
     "societiesProgram": "Elkarteen Programa",
     "users": "Erabiltzaileak",
     "accessCodes": "Sarbide kodeak",
+    "surgeryTypes": "Kirurgia Motak",
     "debug": "Arazketa"
   },
   "adminPhases": {
@@ -130,10 +131,14 @@
     "observation": "Behaketa",
     "practice": "Praktika",
     "theory": "Teorikoa",
-    "procedure": "Prozedura",
+    "surgery": "Kirurgia",
     "errorForbidden": "Ez duzu baimenik atal hau ikusteko",
     "errorLoadData": "Errorea datuak kargatzean",
-    "empty": "Ez dago faserenik sortuta. Hasteko, sortu fase berri bat."
+    "empty": "Ez dago faserenik sortuta. Hasteko, sortu fase berri bat.",
+    "requiresValidation": "Balidazioa behar du",
+    "requiresSignature": "Sinadura behar du",
+    "requiresPercentage": "Ehunekoa behar du",
+    "requiresAttachment": "Eranskina behar du"
   },
   "progressByPhase": "Fasearen araberako aurrerapena",
   "close": "Itxi",
@@ -150,13 +155,14 @@
     "zone": "Eremua",
     "specialty": "Espezialitatea",
     "specialties": {
-        "ALL": "Guztiak",
-        "URO": "Urologia (URO)",
-        "GEN": "Kirurgia Orokorra (GEN)",
-        "GYN": "Ginekologia (GYN)",
-        "THOR": "Toraxekoa (THOR)",
-        "ORL": "Otorino (ORL)"
-      },    "society": "Elkartea",
+      "ALL": "Guztiak",
+      "URO": "Urologia (URO)",
+      "GEN": "Kirurgia Orokorra (GEN)",
+      "GYN": "Ginekologia (GYN)",
+      "THOR": "Toraxekoa (THOR)",
+      "ORL": "Otorino (ORL)"
+    },
+    "society": "Elkartea",
     "none": "Bat ere ez",
     "invalidAccessCode": "Sarbide kode baliogabea",
     "requiredFields": "Mesedez, bete derrigorrezko eremu guztiak.",
@@ -180,7 +186,7 @@
       "label": "Presentación",
       "intro": "Sesión de presentación del programa.",
       "item1": "Introducción al programa",
-      "item2": "Presentación de instructores"
+      "item2": "Presentación de Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -202,7 +208,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedimientos Step By Step.",
+      "intro": "Cirugías Step By Step.",
       "item1": "Material de apoyo",
       "item2": "Revisión guiada"
     },
@@ -228,7 +234,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirugía en Consola",
-      "description": "Procedimientos realizados por el residente con supervisión."
+      "description": "Cirugías realizadas por el residente con supervisión."
     }
   },
   "common": {
@@ -515,7 +521,11 @@
         "confirm": "Ezabatu",
         "cancel": "Utzi"
       }
-    }
+    },
+    "requiresValidation": "Balidazioa behar du",
+    "requiresSignature": "Sinadura behar du",
+    "requiresPercentage": "Ehunekoa behar du",
+    "requiresAttachment": "Eranskina behar du"
   },
   "adminUserProgress": {
     "title": "Erabiltzaileen aurrerapena",
@@ -542,6 +552,9 @@
     "noTitle": "Izenbururik gabe",
     "phaseStatusLabel": "Fasearen egoera",
     "activityStatusLabel": "Jardueraren egoera",
+    "masterStatusLabel": "Jarduera guztien egoera",
+    "revert": "Leheneratu",
+    "confirmBulkChange": "Ziur zaude jarduera guztien egoera aldatzea nahi duzula?",
     "phaseStatus": {
       "blocked": "Blokeatuta",
       "inProgress": "Prozesuan",
@@ -560,6 +573,10 @@
     "noActivityName": "Izenik gabeko jarduera",
     "completedOn": "Osatze data: {{date}}",
     "validatedOn": "Balidatua: {{date}}",
+    "surgeryType": "Kirurgia mota: {{type}}",
+    "surgeonName": "Zirujauaren izena: {{name}}",
+    "participation": "Parte-hartze portzentaia: {{percent}}%",
+    "activityType": "Jarduera mota: {{type}}",
     "statusWithValue": "Egoera: {{status}}",
     "noProgress": "Ez dago aurrerapenik eskuragarri."
   },
@@ -638,11 +655,11 @@
   },
   "roles": {
     "residente": "Egoilarra",
-    "formador": "Prestatzailea",
-    "coordinador": "Koordinatzailea",
+    "tutor": "Prestatzailea",
+    "csm": "CSM",
     "administrador": "Administratzailea",
-    "alumno": "Ikaslea",
-    "instructor": "Instruktorea"
+    "participante": "Ikaslea",
+    "profesor": "Instruktorea"
   },
   "notifications": {
     "title": "Jakinarazpenak",
@@ -672,7 +689,7 @@
     "errorDelete": "Errorea kodea ezabatzean",
     "errorSave": "Errorea kodea gordetzean"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Nire erabiltzaileak",
     "invite": "Erabiltzailea gonbidatu",
     "edit": "Erabiltzailea editatu",
@@ -697,7 +714,7 @@
       "role": "Rola",
       "roles": {
         "resident": "Egoiliarra",
-        "trainer": "Prestakuntza-emilea"
+        "tutor": "Prestakuntza-emilea"
       }
     },
     "dialog": {
@@ -722,7 +739,7 @@
     },
     "roles": {
       "resident": "Egoiliarra",
-      "trainer": "Prestakuntza-emilea"
+      "tutor": "Prestakuntza-emilea"
     },
     "states": {
       "active": "Aktibo",
@@ -744,18 +761,22 @@
   "progress": {
     "createSuccess": "Prestakuntza aurrerapena ondo sortu da"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Balidazioak",
     "tabs": {
-      "pending": "Zain ({{count}})",
-      "validated": "Balidatuak ({{count}})",
-      "rejected": "Baztertuta ({{count}})",
+      "pending": "Zain",
+      "validated": "Balidatuak",
+      "rejected": "Baztertuta",
       "aria": "balidazioen fitxak"
     },
     "table": {
       "activity": "Jarduera",
+      "type": "Mota",
       "resident": "Egoiliarra",
       "date": "Data",
+      "surgeryType": "Kirurgia mota",
+      "surgeon": "Zirujaua",
+      "participation": "Parte-hartzea (%)",
       "comments": "Iruzkinak",
       "actions": "Ekintzak",
       "status": "Egoera",
@@ -825,15 +846,24 @@
     "markAsCompleted": "Markatu osatutzat",
     "unnamedActivity": "Izenik gabeko jarduera",
     "comment": "Iruzkina",
-    "trainerComment": "Prestatzailearen iruzkina",
+    "tutorComment": "Prestatzailearen iruzkina",
     "rejectionReason": "Baztertzeko arrazoia",
     "completedOn": "Osatze data",
-    "validatedOn": "Balidatua: ",
+    "validatedOn": "Balidatua",
+    "activityType": "Jarduera mota: {{type}}",
+    "surgeryType": "Kirurgia mota: {{type}}",
+    "surgeonName": "Zirujauaren izena: {{name}}",
+    "participation": "Parte-hartze portzentaia: {{percent}}%",
     "status": "Egoera",
     "dialog": {
       "completeActivity": "Markatu jarduera osatutzat",
       "completionDate": "Osatze data",
       "comment": "Iruzkina",
+      "surgery": "Kirurgiaren izena",
+      "otherSurgery": "Beste kirurgia",
+      "otherSurgeryTooltip": "Idatzi kirurgiaren izena",
+      "surgeonName": "Zirujauaren izena",
+      "participation": "Parte-hartze ehunekoa",
       "selectFile": "Hautatu fitxategia",
       "cancel": "Utzi",
       "confirm": "Baieztatu",
@@ -842,6 +872,9 @@
       "selectDate": "Hautatu osatze data bat",
       "optionalFileHint": "Erantsi fitxategi aukerazkoa (geh. 5MB)",
       "fileTooLarge": "Fitxategia 5MB baino handiagoa da.",
+      "surgeryRequired": "Aukeratu edo idatzi prozedura bat",
+      "surgeonNameRequired": "Idatzi zirujauaren izena",
+      "participationRequired": "Aukeratu parte-hartzearen ehunekoa",
       "title": "Markatu jarduera osatutzat",
       "date": "Osatze data"
     },
@@ -858,7 +891,7 @@
     },
     "labels": {
       "comment": "Iruzkina",
-      "trainerComment": "Prestatzailearen iruzkina",
+      "tutorComment": "Prestatzailearen iruzkina",
       "rejectionReason": "Baztertzeko arrazoia",
       "completedDate": "Osatze data",
       "validatedDate": "Balidatua",
@@ -902,7 +935,7 @@
     "active": "Aktibo",
     "inactive": "Inaktibo",
     "validated": "Balidatuta",
-   "rejected": "Baztertuta"
+    "rejected": "Baztertuta"
   },
   "privacyPolicy": {
     "title": "Pribatutasun politika",

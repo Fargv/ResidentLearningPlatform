@@ -8,11 +8,11 @@ describe('getUsers tieneProgreso flag', () => {
     jest.restoreAllMocks();
   });
 
-  test('adds flag for residentes y alumnos', async () => {
+  test('adds flag for residentes y participantes', async () => {
     const users = [
       { _id: 'u1', rol: 'residente', toObject() { return { ...this }; } },
-      { _id: 'u2', rol: 'alumno', toObject() { return { ...this }; } },
-      { _id: 'u3', rol: 'formador', toObject() { return { ...this }; } }
+      { _id: 'u2', rol: 'participante', toObject() { return { ...this }; } },
+      { _id: 'u3', rol: 'tutor', toObject() { return { ...this }; } }
     ];
     const populate = jest.fn();
     populate.mockReturnValueOnce({ populate }).mockResolvedValueOnce(users);

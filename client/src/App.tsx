@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+// Theme handled via ColorModeProvider
 //import { Box } from '@mui/material';
 //import { useTranslation } from 'react-i18next';
 //import LanguageSelector from './components/LanguageSelector';
@@ -12,7 +11,7 @@ import { AuthProvider } from './context/AuthContext';
 // Componentes de enrutamiento
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
-import FormadorRoute from './components/routing/FormadorRoute';
+import TutorRoute from './components/routing/TutorRoute';
 import ResidenteRoute from './components/routing/ResidenteRoute';
 
 // Páginas públicas
@@ -26,7 +25,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Dashboard from './pages/Dashboard';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
-import FormadorValidaciones from './pages/dashboard/FormadorValidaciones';
+import TutorValidaciones from './pages/dashboard/TutorValidaciones';
 import Usuarios from './pages/dashboard/Usuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
@@ -36,86 +35,6 @@ import AdminSociedades from "./pages/dashboard/AdminSociedades";
 import AdminProgresoUsuarios from './pages/dashboard/AdminProgresoUsuarios';
 import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
 
-// Tema personalizado con colores de Abex e Intuitive
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1E5B94', // Azul Abex
-      light: '#4c7fb3',
-      dark: '#153e67',
-    },
-    secondary: {
-      main: '#6AB023', // Verde Abex
-      light: '#8cc94f',
-      dark: '#4a7b18',
-    },
-    background: {
-      default: '#f5f5f5',
-    },
-    error: {
-      main: '#d32f2f',
-    },
-    warning: {
-      main: '#ff9800',
-    },
-    info: {
-      main: '#1A2B3C', // Azul oscuro Intuitive
-    },
-    success: {
-      main: '#4caf50',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h1: {
-      fontWeight: 500,
-    },
-    h2: {
-      fontWeight: 500,
-    },
-    h3: {
-      fontWeight: 500,
-    },
-    h4: {
-      fontWeight: 500,
-    },
-    h5: {
-      fontWeight: 500,
-    },
-    h6: {
-      fontWeight: 500,
-    },
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          fontWeight: 500,
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        },
-      },
-    },
-  },
-});
 
 declare global {
   interface Window {
@@ -154,10 +73,9 @@ function App() {
         </div>
       )}
 
-      <ThemeProvider theme={theme}>
-      <CssBaseline />
-        <Router>
-          <AuthProvider>
+
+      <Router>
+        <AuthProvider>
           <Routes>
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
@@ -183,17 +101,18 @@ function App() {
                 </ResidenteRoute>
               } />
 
-              {/* Rutas para formadores */}
+
+              {/* Rutas para tutores */}
               <Route path="validaciones" element={
-                <FormadorRoute>
-                  <FormadorValidaciones />
-                </FormadorRoute>
+                <TutorRoute>
+                  <TutorValidaciones />
+                </TutorRoute>
               } />
-              {/* Rutas para formadores y administradores */}
+              {/* Rutas para tutores y administradores */}
               <Route path="usuarios" element={
-                <FormadorRoute>
+                <TutorRoute>
                   <Usuarios />
-                </FormadorRoute>
+                </TutorRoute>
               } />
 
               {/* Rutas solo para administradores */}
@@ -235,7 +154,6 @@ function App() {
           </Routes>
         </AuthProvider>
       </Router>
-    </ThemeProvider>
   </div>
   );
 }

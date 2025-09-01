@@ -25,6 +25,7 @@ import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/ico
 import api from '../../api';
 import { SelectChangeEvent } from '@mui/material/Select';
 import BackButton from '../../components/BackButton';
+import { useTranslation } from 'react-i18next';
 
 interface AccessCode {
   _id?: string;
@@ -47,6 +48,7 @@ const AdminAccessCodes: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<AccessCode | null>(null);
   const [formData, setFormData] = useState<AccessCode>(defaultData);
+  const { t } = useTranslation();
 
   const fetchCodes = async () => {
     try {
@@ -147,7 +149,7 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
               {codes.map((c) => (
                 <TableRow key={c._id || c.codigo} hover>
                   <TableCell>{c.codigo}</TableCell>
-                  <TableCell>{c.rol}</TableCell>
+                  <TableCell>{t(`roles.${c.rol}`)}</TableCell>
                   <TableCell>{c.tipo}</TableCell>
                   <TableCell align="right">
                     <IconButton color="primary" onClick={() => handleOpen(c)} size="small">
@@ -187,12 +189,12 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
               label="Rol"
               onChange={handleSelectChange}
             >
-              <MenuItem value="residente">Residente</MenuItem>
-              <MenuItem value="formador">Formador</MenuItem>
-              <MenuItem value="coordinador">Coordinador</MenuItem>
-              <MenuItem value="alumno">Alumno</MenuItem>
-              <MenuItem value="instructor">Instructor</MenuItem>
-              <MenuItem value="administrador">Administrador</MenuItem>
+              <MenuItem value="administrador">{t('roles.administrador')}</MenuItem>
+              <MenuItem value="residente">{t('roles.residente')}</MenuItem>
+              <MenuItem value="csm">{t('roles.csm')}</MenuItem>
+              <MenuItem value="tutor">{t('roles.tutor')}</MenuItem>
+              <MenuItem value="profesor">{t('roles.profesor')}</MenuItem>
+              <MenuItem value="participante">{t('roles.participante')}</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth margin="dense">

@@ -59,7 +59,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const FormadorValidaciones: React.FC = () => {
+const TutorValidaciones: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -78,14 +78,19 @@ const FormadorValidaciones: React.FC = () => {
   const formatFase = (fase: any) =>
     fase
       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
-      : t('trainerValidations.table.noPhase');
+      : t('tutorValidations.table.noPhase');
+
+  const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
+    if (cirugia?.name) return cirugia.name;
+    return otraCirugia || '-';
+  };
 
   const fetchValidaciones = useCallback(async () => {
     try {
       setLoading(true);
 
       const respuesta = await api.get(
-        '/progreso/formador/validaciones/pendientes'
+        '/progreso/tutor/validaciones/pendientes'
       );
 
       const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
@@ -93,14 +98,14 @@ const FormadorValidaciones: React.FC = () => {
       setValidadas(validadas || []);
       setRechazadas(rechazadas || []);
     } catch (err: any) {
-      setError(err.response?.data?.error || t('trainerValidations.errorLoad'));
+      setError(err.response?.data?.error || t('tutorValidations.errorLoad'));
     } finally {
       setLoading(false);
     }
   }, [t]);
 
 useEffect(() => {
-  if (user?.rol === 'formador' || user?.rol === 'coordinador' || user?.rol === 'instructor') {
+  if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
     fetchValidaciones();
   }
 }, [user, fetchValidaciones]);
@@ -206,7 +211,7 @@ const handleRechazar = async () => {
   return (
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
-        {t('trainerValidations.title')}
+        {t('tutorValidations.title')}
       </Typography>
 
       {/* Pestañas */}
@@ -215,20 +220,20 @@ const handleRechazar = async () => {
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
-            aria-label={t('trainerValidations.tabs.aria')}
+            aria-label={t('tutorValidations.tabs.aria')}
           >
             <Tab
-              label={`${t('trainerValidations.tabs.pending')} (${pendientes.length})`}
+              label={`${t('tutorValidations.tabs.pending')} (${pendientes.length})`}
               id="validaciones-tab-0"
               aria-controls="validaciones-tabpanel-0"
             />
             <Tab
-              label={`${t('trainerValidations.tabs.validated')} (${validadas.length})`}
+              label={`${t('tutorValidations.tabs.validated')} (${validadas.length})`}
               id="validaciones-tab-1"
               aria-controls="validaciones-tabpanel-1"
             />
             <Tab
-              label={`${t('trainerValidations.tabs.rejected')} (${rechazadas.length})`}
+              label={`${t('tutorValidations.tabs.rejected')} (${rechazadas.length})`}
               id="validaciones-tab-2"
               aria-controls="validaciones-tabpanel-2"
             />
@@ -239,30 +244,42 @@ const handleRechazar = async () => {
         <TabPanel value={tabValue} index={0}>
           {pendientes.length === 0 ? (
             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-              {t('trainerValidations.empty.pending')}
+              {t('tutorValidations.empty.pending')}
             </Typography>
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t('trainerValidations.table.phase')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.activity')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.resident')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.date')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.comments')}</TableCell>
-                    <TableCell align="right">{t('trainerValidations.table.actions')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.comments')}</TableCell>
+                    <TableCell align="right">{t('tutorValidations.table.actions')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {pendientes.map((progreso) => (
                     <TableRow key={progreso._id}>
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('trainerValidations.table.noName')}</TableCell>
+                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                      <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>
                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
                       </TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                      <TableCell>
+                        {progreso.actividad?.tipo === 'cirugia'
+                          ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                          : '-'}
+                      </TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
                         {progreso.tieneAdjunto && (
@@ -277,7 +294,7 @@ const handleRechazar = async () => {
                               )
                             }
                           >
-                            {t('trainerValidations.buttons.viewAttachment')}
+                            {t('tutorValidations.buttons.viewAttachment')}
                           </Button>
                         )}
                         <Button
@@ -294,7 +311,7 @@ const handleRechazar = async () => {
                             })
                           }
                         >
-                          {t('trainerValidations.buttons.validate')}
+                          {t('tutorValidations.buttons.validate')}
                         </Button>
                         <Button
                           variant="contained"
@@ -309,7 +326,7 @@ const handleRechazar = async () => {
                             })
                           }
                         >
-                          {t('trainerValidations.buttons.reject')}
+                          {t('tutorValidations.buttons.reject')}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -324,31 +341,43 @@ const handleRechazar = async () => {
         <TabPanel value={tabValue} index={1}>
           {validadas.length === 0 ? (
             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-              {t('trainerValidations.empty.validated')}
+              {t('tutorValidations.empty.validated')}
             </Typography>
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t('trainerValidations.table.phase')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.activity')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.resident')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.date')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.comments')}</TableCell>
-                    <TableCell align="right">{t('trainerValidations.table.state')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.comments')}</TableCell>
+                    <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {validadas.map(progreso => (
                     <TableRow key={progreso._id}>
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('trainerValidations.table.noName')}</TableCell>
+                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                      <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                      <TableCell>
+                        {progreso.actividad?.tipo === 'cirugia'
+                          ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                          : '-'}
+                      </TableCell>
                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
                       <TableCell align="right">
-                        <Chip icon={<CheckCircleIcon />} label={t('trainerValidations.states.validated')} color="success" size="small" variant="outlined" />
+                        <Chip icon={<CheckCircleIcon />} label={t('tutorValidations.states.validated')} color="success" size="small" variant="outlined" />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -363,31 +392,43 @@ const handleRechazar = async () => {
         <TabPanel value={tabValue} index={2}>
           {rechazadas.length === 0 ? (
             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-              {t('trainerValidations.empty.rejected')}
+              {t('tutorValidations.empty.rejected')}
             </Typography>
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t('trainerValidations.table.phase')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.activity')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.resident')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.date')}</TableCell>
-                    <TableCell>{t('trainerValidations.table.reason')}</TableCell>
-                    <TableCell align="right">{t('trainerValidations.table.state')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                    <TableCell>{t('tutorValidations.table.reason')}</TableCell>
+                    <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {rechazadas.map(progreso => (
                     <TableRow key={progreso._id}>
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('trainerValidations.table.noName')}</TableCell>
+                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                      <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                      <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                      <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                      <TableCell>
+                        {progreso.actividad?.tipo === 'cirugia'
+                          ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                          : '-'}
+                      </TableCell>
                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
                       <TableCell align="right">
-                        <Chip icon={<ErrorIcon />} label={t('trainerValidations.states.rejected')} color="error" size="small" variant="outlined" />
+                        <Chip icon={<ErrorIcon />} label={t('tutorValidations.states.rejected')} color="error" size="small" variant="outlined" />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -400,10 +441,10 @@ const handleRechazar = async () => {
       
       {/* Diálogo para validar */}
       <Dialog open={openValidarDialog} onClose={handleCloseValidarDialog}>
-        <DialogTitle>{t('trainerValidations.dialog.validateTitle')}</DialogTitle>
+        <DialogTitle>{t('tutorValidations.dialog.validateTitle')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t('trainerValidations.dialog.validateMessage', {
+            {t('tutorValidations.dialog.validateMessage', {
               activity: selectedProgreso?.actividad?.nombre,
               name: `${selectedProgreso?.residente?.nombre} ${selectedProgreso?.residente?.apellidos}`
             })}
@@ -412,7 +453,7 @@ const handleRechazar = async () => {
             autoFocus
             margin="dense"
             id="comentarios"
-            label={t('trainerValidations.dialog.optionalComments')}
+            label={t('tutorValidations.dialog.optionalComments')}
             type="text"
             fullWidth
             multiline
@@ -425,7 +466,7 @@ const handleRechazar = async () => {
           <TextField
             margin="dense"
             id="firma"
-            label={t('trainerValidations.dialog.digitalSignature')}
+            label={t('tutorValidations.dialog.digitalSignature')}
             type="text"
             fullWidth
             variant="outlined"
@@ -436,7 +477,7 @@ const handleRechazar = async () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseValidarDialog} color="primary">
-            {t('trainerValidations.buttons.cancel')}
+            {t('tutorValidations.buttons.cancel')}
           </Button>
           <Button
             onClick={handleValidar}
@@ -444,17 +485,17 @@ const handleRechazar = async () => {
             variant="contained"
             disabled={procesando || !firmaDigital}
           >
-            {procesando ? t('common.processing') : t('trainerValidations.buttons.validate')}
+            {procesando ? t('common.processing') : t('tutorValidations.buttons.validate')}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Diálogo para rechazar */}
       <Dialog open={openRechazarDialog} onClose={handleCloseRechazarDialog}>
-        <DialogTitle>{t('trainerValidations.dialog.rejectTitle')}</DialogTitle>
+        <DialogTitle>{t('tutorValidations.dialog.rejectTitle')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t('trainerValidations.dialog.rejectMessage', {
+            {t('tutorValidations.dialog.rejectMessage', {
               activity: selectedProgreso?.actividad?.nombre,
               name: `${selectedProgreso?.residente?.nombre} ${selectedProgreso?.residente?.apellidos}`
             })}
@@ -463,7 +504,7 @@ const handleRechazar = async () => {
             autoFocus
             margin="dense"
             id="comentarios"
-            label={t('trainerValidations.dialog.rejectReason')}
+            label={t('tutorValidations.dialog.rejectReason')}
             type="text"
             fullWidth
             multiline
@@ -476,7 +517,7 @@ const handleRechazar = async () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseRechazarDialog} color="primary">
-            {t('trainerValidations.buttons.cancel')}
+            {t('tutorValidations.buttons.cancel')}
           </Button>
           <Button
             onClick={handleRechazar}
@@ -484,7 +525,7 @@ const handleRechazar = async () => {
             variant="contained"
             disabled={procesando || !comentarios}
           >
-            {procesando ? t('common.processing') : t('trainerValidations.buttons.reject')}
+            {procesando ? t('common.processing') : t('tutorValidations.buttons.reject')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -492,5 +533,5 @@ const handleRechazar = async () => {
   );
 };
 
-export default FormadorValidaciones;
+export default TutorValidaciones;
 

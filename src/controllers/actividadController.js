@@ -82,6 +82,8 @@ exports.updateActividad = async (req, res, next) => {
       return next(new ErrorResponse(`Actividad no encontrada con id ${req.params.id}`, 404));
     }
 
+    const tipoAnterior = actividad.tipo;
+
     // Si se está cambiando la fase, verificar que existe
     if (req.body.fase && req.body.fase !== actividad.fase.toString()) {
       const fase = await Fase.findById(req.body.fase);
@@ -94,7 +96,17 @@ exports.updateActividad = async (req, res, next) => {
       new: true,
       runValidators: true
     }).populate('fase');
-    
+
+    let progresosActualizados = 0;
+    if (req.body.tipo && req.body.tipo !== tipoAnterior) {
+      const updateResult = await ProgresoResidente.updateMany(
+        { 'actividades.actividad': req.params.id },
+        { $set: { 'actividades.$[elem].tipo': req.body.tipo } },
+        { arrayFilters: [{ 'elem.actividad': req.params.id }] }
+      );
+      progresosActualizados = updateResult.modifiedCount;
+    }
+
     // Crear registro de auditoría
     await createAuditLog({
       usuario: req.user._id,
@@ -105,7 +117,8 @@ exports.updateActividad = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: actividad
+      data: actividad,
+      progresosActualizados
     });
   } catch (err) {
     next(err);

@@ -37,6 +37,7 @@ import api, { createUser, updateUserPassword } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
+import { getRoleChipSx } from "../../utils/roleChipColors";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -49,14 +50,14 @@ const AdminUsuarios: React.FC = () => {
       : "";
   const rolesResidentes = [
     "residente",
-    "formador",
-    "coordinador",
+    "tutor",
+    "csm",
     "administrador",
   ];
   const rolesSociedades = [
-    "alumno",
-    "instructor",
-    "coordinador",
+    "participante",
+    "profesor",
+    "csm",
     "administrador",
   ];
   const zonaOptions = [
@@ -223,7 +224,7 @@ const AdminUsuarios: React.FC = () => {
         updated.sociedad = "";
         updated.rol = "residente";
       } else if (value === "Programa Sociedades") {
-        updated.rol = "alumno";
+        updated.rol = "participante";
         updated.sociedad = sociedades[0]?._id || "";
       }
     } else if (name === "rol") {
@@ -234,18 +235,18 @@ const AdminUsuarios: React.FC = () => {
         updated.especialidad = "";
         updated.zona = "";
       } else {
-        if (value === "coordinador") {
+        if (value === "csm") {
           updated.hospital = "";
           updated.sociedad = "";
           updated.especialidad = "";
         }
         if (
           value === "residente" ||
-          value === "formador" ||
-          value === "coordinador"
+          value === "tutor" ||
+          value === "csm"
         ) {
           updated.tipo = "Programa Residentes";
-        } else if (value === "alumno" || value === "instructor") {
+        } else if (value === "participante" || value === "profesor") {
           updated.tipo = "Programa Sociedades";
         }
       }
@@ -666,14 +667,8 @@ const AdminUsuarios: React.FC = () => {
                   <TableCell>
                     <Chip
                       label={t(`roles.${usuario.rol}`)}
-                      color={
-                        usuario.rol === "administrador"
-                          ? "primary"
-                          : usuario.rol === "formador"
-                          ? "secondary"
-                          : "default"
-                      }
                       size="small"
+                      sx={getRoleChipSx(usuario.rol)}
                     />
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
@@ -712,7 +707,7 @@ const AdminUsuarios: React.FC = () => {
                         {t("adminUsers.actions.changePassword")}
                       </Button>
                     )}
-                    {['residente', 'alumno'].includes(usuario.rol) &&
+                    {['residente', 'participante'].includes(usuario.rol) &&
                       !usuario.tieneProgreso && (
                         <Button
                           variant="outlined"
@@ -871,9 +866,9 @@ const AdminUsuarios: React.FC = () => {
             ))}
           </TextField>
           {formData.rol !== "administrador" &&
-            formData.rol !== "coordinador" &&
+            formData.rol !== "csm" &&
             (formData.rol === "residente" ||
-              formData.rol === "formador" ||
+              formData.rol === "tutor" ||
               formData.tipo === "Programa Sociedades") && (
               <TextField
                 select
@@ -895,7 +890,7 @@ const AdminUsuarios: React.FC = () => {
                 ))}
               </TextField>
             )}
-          {(formData.rol === "residente" || formData.rol === "formador") && (
+          {(formData.rol === "residente" || formData.rol === "tutor") && (
             <TextField
               select
               margin="dense"
@@ -910,7 +905,7 @@ const AdminUsuarios: React.FC = () => {
               SelectProps={{ native: true }}
               sx={{ mb: 2 }}
             >
-              {formData.rol === "formador" && (
+              {formData.rol === "tutor" && (
                 <option value="ALL">ALL</option>
               )}
               <option value="URO">URO</option>
@@ -921,7 +916,7 @@ const AdminUsuarios: React.FC = () => {
             </TextField>
           )}
           {formData.rol !== "administrador" &&
-            formData.rol !== "coordinador" &&
+            formData.rol !== "csm" &&
             formData.tipo === "Programa Sociedades" && (
               <TextField
                 select
@@ -943,7 +938,7 @@ const AdminUsuarios: React.FC = () => {
                 ))}
               </TextField>
             )}
-          {formData.rol === "coordinador" && (
+          {formData.rol === "csm" && (
             <TextField
               select
               margin="dense"
@@ -978,11 +973,11 @@ const AdminUsuarios: React.FC = () => {
               !passwordValue ||
               !formData.nombre ||
               !formData.apellidos ||
-              ((formData.rol === "residente" || formData.rol === "formador") &&
+              ((formData.rol === "residente" || formData.rol === "tutor") &&
                 !formData.hospital) ||
-              ((formData.rol === "residente" || formData.rol === "formador") &&
+              ((formData.rol === "residente" || formData.rol === "tutor") &&
                 !formData.especialidad) ||
-              (formData.rol === "coordinador" && !formData.zona)
+              (formData.rol === "csm" && !formData.zona)
             }
           >
             {procesando
@@ -1044,9 +1039,9 @@ const AdminUsuarios: React.FC = () => {
             ))}
           </TextField>
           {formData.rol !== "administrador" &&
-            formData.rol !== "coordinador" &&
+            formData.rol !== "csm" &&
             (formData.rol === "residente" ||
-              formData.rol === "formador" ||
+              formData.rol === "tutor" ||
               formData.tipo === "Programa Sociedades") && (
               <TextField
                 select
@@ -1070,7 +1065,7 @@ const AdminUsuarios: React.FC = () => {
                 ))}
               </TextField>
             )}
-          {formData.rol === "coordinador" && (
+          {formData.rol === "csm" && (
             <TextField
               select
               margin="dense"
@@ -1092,7 +1087,7 @@ const AdminUsuarios: React.FC = () => {
               ))}
             </TextField>
           )}
-         {(formData.rol === "residente" || formData.rol === "formador") && (
+         {(formData.rol === "residente" || formData.rol === "tutor") && (
             <TextField
               select
               margin="dense"
@@ -1107,7 +1102,7 @@ const AdminUsuarios: React.FC = () => {
               SelectProps={{ native: true }}
               sx={{ mb: 2 }}
             >
-              {formData.rol === "formador" && (
+              {formData.rol === "tutor" && (
                 <option value="ALL">ALL</option>
               )}
               <option value="URO">URO</option>
@@ -1130,11 +1125,11 @@ const AdminUsuarios: React.FC = () => {
               procesando ||
               !formData.nombre ||
               !formData.apellidos ||
-              ((formData.rol === "residente" || formData.rol === "formador") &&
+              ((formData.rol === "residente" || formData.rol === "tutor") &&
                 !formData.hospital) ||
-              ((formData.rol === "residente" || formData.rol === "formador") &&
+              ((formData.rol === "residente" || formData.rol === "tutor") &&
                 !formData.especialidad) ||
-              (formData.rol === "coordinador" && !formData.zona)
+              (formData.rol === "csm" && !formData.zona)
             }
           >
             {procesando ? t("common.saving") : t("common.saveChanges")}

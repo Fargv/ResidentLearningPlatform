@@ -2,11 +2,11 @@
   "welcome": "Bienvenido/a, {{name}}",
   "role": {
     "adminPanel": "Panel de Administración",
-    "trainer": "Formador de residentes del hospital {{hospital}}",
-    "coordinator": "Coordinador de residentes del hospital {{hospital}}",
+    "tutor": "Tutor de residentes del hospital {{hospital}}",
+    "csm": "CSM de residentes del hospital {{hospital}}",
     "resident": "Residente del hospital {{hospital}}",
-    "student": "Alumno del programa de sociedades {{title}}",
-    "instructor": "Instructor del programa de sociedades {{title}}"
+    "participant": "Participante del programa de sociedades {{title}}",
+    "professor": "Profesor del programa de sociedades {{title}}"
   },
   "actions": {
     "dashboard": "Dashboard",
@@ -30,6 +30,7 @@
     "societiesProgram": "Programa Sociedades",
     "users": "Usuarios",
     "accessCodes": "Códigos de Acceso",
+    "surgeryTypes": "Tipos de Cirugía",
     "debug": "Debug"
   },
   "adminPhases": {
@@ -130,10 +131,14 @@
     "observation": "Observación",
     "practice": "Práctica",
     "theory": "Teórica",
-    "procedure": "Procedimiento",
+    "surgery": "Cirugía",
     "errorForbidden": "No tienes permisos para ver esta sección",
-     "errorLoadData": "Error al cargar los datos",
-    "empty": "No hay fases creadas. Crea una nueva fase para comenzar."
+    "errorLoadData": "Error al cargar los datos",
+    "empty": "No hay fases creadas. Crea una nueva fase para comenzar.",
+    "requiresValidation": "Requiere validación",
+    "requiresSignature": "Requiere firma",
+    "requiresPercentage": "Requiere porcentaje",
+    "requiresAttachment": "Requiere adjunto"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
@@ -150,13 +155,14 @@
     "zone": "Zona",
     "specialty": "Especialidad",
     "specialties": {
-        "ALL": "Todas",
-        "URO": "Urología (URO)",
-        "GEN": "Cirugía General (GEN)",
-        "GYN": "Ginecología (GYN)",
-        "THOR": "Torácica (THOR)",
-        "ORL": "Otorrino (ORL)"
-      },    "society": "Sociedad",
+      "ALL": "Todas",
+      "URO": "Urología (URO)",
+      "GEN": "Cirugía General (GEN)",
+      "GYN": "Ginecología (GYN)",
+      "THOR": "Torácica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
+    "society": "Sociedad",
     "none": "Ninguna",
     "invalidAccessCode": "Código de acceso no válido",
     "requiredFields": "Por favor, completa todos los campos obligatorios.",
@@ -180,7 +186,7 @@
       "label": "Presentación",
       "intro": "Sesión de presentación del programa.",
       "item1": "Introducción al programa",
-      "item2": "Presentación de instructores"
+      "item2": "Presentación de Profesores"
     },
     "modOnline": {
       "label": "Mod. Online",
@@ -202,7 +208,7 @@
     },
     "stepByStep": {
       "label": "Step By Step",
-      "intro": "Procedimientos Step By Step.",
+      "intro": "Cirugías Step By Step.",
       "item1": "Material de apoyo",
       "item2": "Revisión guiada"
     },
@@ -228,7 +234,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirugía en Consola",
-      "description": "Procedimientos realizados por el residente con supervisión."
+      "description": "Cirugías realizadas por el residente con supervisión."
     }
   },
   "common": {
@@ -515,7 +521,11 @@
         "confirm": "Eliminar",
         "cancel": "Cancelar"
       }
-    }
+    },
+    "requiresValidation": "Requiere validación",
+    "requiresSignature": "Requiere firma",
+    "requiresPercentage": "Requiere porcentaje",
+    "requiresAttachment": "Requiere adjunto"
   },
   "adminUserProgress": {
     "title": "Progreso de Usuarios",
@@ -542,6 +552,9 @@
     "noTitle": "Sin título",
     "phaseStatusLabel": "Estado fase",
     "activityStatusLabel": "Estado actividad",
+    "masterStatusLabel": "Estado para todas las actividades",
+    "revert": "Revertir",
+    "confirmBulkChange": "¿Estás seguro de que quieres cambiar el estado de todas las actividades?",
     "phaseStatus": {
       "blocked": "Bloqueada",
       "inProgress": "En progreso",
@@ -560,6 +573,10 @@
     "noActivityName": "Actividad sin nombre",
     "completedOn": "Fecha completada: {{date}}",
     "validatedOn": "Validado el: {{date}}",
+    "surgeryType": "Tipo de cirugía: {{type}}",
+    "surgeonName": "Nombre del cirujano: {{name}}",
+    "participation": "Porcentaje de participación: {{percent}}%",
+    "activityType": "Tipo de actividad: {{type}}",
     "statusWithValue": "Estado: {{status}}",
     "noProgress": "No hay progreso disponible."
   },
@@ -638,11 +655,11 @@
   },
   "roles": {
     "residente": "Residente",
-    "formador": "Formador",
-    "coordinador": "Coordinador",
+    "tutor": "Tutor",
+    "csm": "CSM",
     "administrador": "Administrador",
-    "alumno": "Alumno",
-    "instructor": "Instructor"
+    "participante": "Participante",
+    "profesor": "Profesor"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -672,7 +689,7 @@
     "errorDelete": "Error al eliminar el código",
     "errorSave": "Error al guardar el código"
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Mis Usuarios",
     "invite": "Invitar Usuario",
     "edit": "Editar Usuario",
@@ -697,7 +714,7 @@
       "role": "Rol",
       "roles": {
         "resident": "Residente",
-        "trainer": "Formador"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -706,7 +723,7 @@
       "save": "Guardar",
       "invite": "Invitar"
     },
-    "_comment": "Gestión de usuarios para formadores",
+    "_comment": "Gestión de usuarios para Tutores",
     "buttons": {
       "invite": "Invitar Usuario",
       "cancel": "Cancelar",
@@ -722,7 +739,7 @@
     },
     "roles": {
       "resident": "Residente",
-      "trainer": "Formador"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Activo",
@@ -744,18 +761,22 @@
   "progress": {
     "createSuccess": "Progreso formativo creado con éxito"
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validaciones",
     "tabs": {
-      "pending": "Pendientes ({{count}})",
-      "validated": "Validadas ({{count}})",
-      "rejected": "Rechazadas ({{count}})",
+      "pending": "Pendientes",
+      "validated": "Validadas",
+      "rejected": "Rechazadas",
       "aria": "pestañas de validaciones"
     },
     "table": {
       "activity": "Actividad",
+      "type": "Tipo",
       "resident": "Residente",
       "date": "Fecha",
+      "surgeryType": "Tipo de cirugía",
+      "surgeon": "Cirujano",
+      "participation": "Participación (%)",
       "comments": "Comentarios",
       "actions": "Acciones",
       "status": "Estado",
@@ -783,7 +804,7 @@
       "rejectReason": "Motivo del rechazo"
     },
     "errorLoad": "Error al cargar las validaciones",
-    "_comment": "Validaciones gestionadas por formadores",
+    "_comment": "Validaciones gestionadas por Tutores",
     "buttons": {
       "viewAttachment": "Ver adjunto",
       "validate": "Validar",
@@ -825,15 +846,24 @@
     "markAsCompleted": "Marcar como completada",
     "unnamedActivity": "Actividad sin nombre",
     "comment": "Comentario",
-    "trainerComment": "Comentario formador",
+    "tutorComment": "Comentario Tutor",
     "rejectionReason": "Motivo rechazo",
     "completedOn": "Fecha completada",
     "validatedOn": "Validado el",
+    "activityType": "Tipo de actividad: {{type}}",
+    "surgeryType": "Tipo de cirugía: {{type}}",
+    "surgeonName": "Nombre del cirujano: {{name}}",
+    "participation": "Porcentaje de participación: {{percent}}%",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividad como completada",
       "completionDate": "Fecha de realización",
       "comment": "Comentario",
+      "surgery": "Nombre del procedimiento",
+      "otherSurgery": "Otro procedimiento",
+      "otherSurgeryTooltip": "Escriba el nombre del procedimiento",
+      "surgeonName": "Nombre del cirujano",
+      "participation": "Porcentaje de participación",
       "selectFile": "Seleccionar archivo",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
@@ -842,6 +872,9 @@
       "selectDate": "Selecciona una fecha de realización",
       "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
       "fileTooLarge": "El archivo supera el tamaño máximo de 5MB.",
+      "surgeryRequired": "Selecciona o escribe un procedimiento",
+      "surgeonNameRequired": "Ingresa el nombre del cirujano",
+      "participationRequired": "Selecciona un porcentaje de participación",
       "title": "Marcar actividad como completada",
       "date": "Fecha de realización"
     },
@@ -858,7 +891,7 @@
     },
     "labels": {
       "comment": "Comentario",
-      "trainerComment": "Comentario formador",
+      "tutorComment": "Comentario Tutor",
       "rejectionReason": "Motivo rechazo",
       "completedDate": "Fecha completada",
       "validatedDate": "Validado el",

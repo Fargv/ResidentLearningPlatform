@@ -4,20 +4,20 @@ const { createAuditLog } = require('../src/utils/auditLog');
 
 jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
 
-describe('createUser - coordinador', () => {
+describe('createUser - csm', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  test('crea coordinador con zona', async () => {
-    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'coordinador', zona: 'NORTE' });
+  test('crea csm con zona', async () => {
+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'csm', zona: 'NORTE' });
     const req = {
       body: {
         nombre: 'Coord',
         apellidos: 'Test',
         email: 'coord@test.com',
         password: 'pass',
-        rol: 'coordinador',
+        rol: 'csm',
         tipo: 'Programa Residentes',
         zona: 'NORTE'
       },
@@ -29,9 +29,9 @@ describe('createUser - coordinador', () => {
     await createUser(req, res, jest.fn());
 
     expect(User.create).toHaveBeenCalledWith(
-      expect.objectContaining({ rol: 'coordinador', zona: 'NORTE' })
+      expect.objectContaining({ rol: 'csm', zona: 'NORTE' })
     );
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({ success: true, data: { _id: 'u1', rol: 'coordinador', zona: 'NORTE' } });
+    expect(res.json).toHaveBeenCalledWith({ success: true, data: { _id: 'u1', rol: 'csm', zona: 'NORTE' } });
   });
 });

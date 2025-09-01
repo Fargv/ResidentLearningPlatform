@@ -41,5 +41,13 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
 - 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
 - 2025-08-30: Creación de la página `PrivacyPolicy` con internacionalización y metadatos de actualización.
+- 2025-08-11: Actualización de roles `'formador'`, `'coordinador'`, `'instructor'` y `'alumno'` a `'tutor'`, `'csm'`, `'profesor'` y `'participante'` en modelos y pruebas.
+- 2025-08-12: Cambio de ruta a `/tutor/validaciones/pendientes` en `progresoRoutes.js`.
+- 2025-08-12: Reemplazo de `comentariosFormador` por `comentariosTutor` en `ResidenteFases` y verificación en `ProgresoResidente`.
+- 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
+- 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
 
+- 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
+- 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
+- 2025-09-01: Botón "Crear fase" ahora usa `variant="contained"` y `color="primary"` en `AdminFases` y `AdminFasesSoc`.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { CircularProgress, Box } from '@mui/material';
+import Role from '../../types/roles';
 
 interface ResidenteRouteProps {
   children: React.ReactNode;
@@ -26,11 +27,11 @@ const ResidenteRoute: React.FC<ResidenteRouteProps> = ({ children }) => {
 
   // Verificar si el usuario es residente o tiene permisos superiores
   if (
-    user?.rol !== 'residente' &&
-    user?.rol !== 'alumno' &&
-    user?.rol !== 'formador' &&
-    user?.rol !== 'coordinador' &&
-    user?.rol !== 'administrador'
+    user?.rol !== Role.RESIDENTE &&
+    user?.rol !== Role.PARTICIPANTE &&
+    user?.rol !== Role.TUTOR &&
+    user?.rol !== Role.CSM &&
+    user?.rol !== Role.ADMINISTRADOR
   ) {
     // Redirigir al dashboard si no tiene permisos
     return <Navigate to="/dashboard" replace />;

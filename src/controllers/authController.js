@@ -10,6 +10,7 @@ const Hospital = require('../models/Hospital');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
+const { Role } = require('../utils/roles');
 
 const checkAccessCode = async (req, res, next) => {
   try {
@@ -57,7 +58,7 @@ const register = async (req, res, next) => {
       zona = selectedHospital.zona;
     }
 
-    if (rol === 'coordinador' && !zona) {
+    if (rol === Role.CSM && !zona) {
       return next(new ErrorResponse('Zona requerida', 400));
     }
 
@@ -65,7 +66,11 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
     }
 
-    if (tipo === 'Programa Residentes' && !hospital && (rol === 'residente' || rol === 'formador')) {
+    if (
+      tipo === 'Programa Residentes' &&
+      !hospital &&
+      (rol === Role.RESIDENTE || rol === Role.TUTOR)
+    ) {
       return next(new ErrorResponse('Hospital requerido', 400));
     }
 
@@ -101,7 +106,7 @@ const register = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    if (rol === 'residente' || rol === 'alumno') {
+    if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
       await inicializarProgresoFormativo(newUser);
     }
 

@@ -2,7 +2,7 @@ const { getProgresoResidente } = require('../src/controllers/progresoController'
 const ProgresoResidente = require('../src/models/ProgresoResidente');
 const User = require('../src/models/User');
 
-describe('getProgresoResidente alumno', () => {
+describe('getProgresoResidente participante', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -11,9 +11,9 @@ describe('getProgresoResidente alumno', () => {
     const populate = jest.fn();
     populate.mockReturnValueOnce({ populate }).mockResolvedValueOnce([]);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ populate });
-    jest.spyOn(User, 'findById').mockResolvedValue({ _id: 'u1', rol: 'alumno', hospital: 'h1' });
+    jest.spyOn(User, 'findById').mockResolvedValue({ _id: 'u1', rol: 'participante', hospital: 'h1' });
 
-    const req = { params: { id: 'u1' }, user: { rol: 'alumno', id: 'u1' } };
+    const req = { params: { id: 'u1' }, user: { rol: 'participante', id: 'u1' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
     await getProgresoResidente(req, res, jest.fn());
@@ -28,9 +28,10 @@ describe('getProgresoResidente alumno', () => {
       estadoGeneral: 'en progreso',
       actividades: [{
         nombre: 'Act',
+        tipo: 'teórica',
         estado: 'validado',
         comentariosResidente: 'cr',
-        comentariosFormador: 'cf',
+        comentariosTutor: 'cf',
         fechaRealizacion: '2024-01-01',
         fechaValidacion: '2024-01-02',
         comentariosRechazo: 'rej',
@@ -43,15 +44,16 @@ describe('getProgresoResidente alumno', () => {
       .mockReturnValueOnce({ populate })
       .mockResolvedValueOnce(progresoData);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ populate });
-    jest.spyOn(User, 'findById').mockResolvedValue({ _id: 'u1', rol: 'alumno', hospital: 'h1' });
+    jest.spyOn(User, 'findById').mockResolvedValue({ _id: 'u1', rol: 'participante', hospital: 'h1' });
 
-    const req = { params: { id: 'u1' }, user: { rol: 'alumno', id: 'u1' } };
+    const req = { params: { id: 'u1' }, user: { rol: 'participante', id: 'u1' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
 
     await getProgresoResidente(req, res, jest.fn());
 
     const actividad = res.json.mock.calls[0][0].data[0].actividades[0];
-    expect(actividad).toHaveProperty('comentariosFormador', 'cf');
+    expect(actividad).toHaveProperty('tipo', 'teórica');
+    expect(actividad).toHaveProperty('comentariosTutor', 'cf');
     expect(actividad).toHaveProperty('fechaValidacion', '2024-01-02');
     expect(actividad).toHaveProperty('comentariosRechazo', 'rej');
     expect(actividad).toHaveProperty('fechaRechazo', '2024-01-03');

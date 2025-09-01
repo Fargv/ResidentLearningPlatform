@@ -1,12 +1,11 @@
 {
   "welcome": "Benvingut/da, {{name}}",
   "role": {
-    "adminPanel": "Panell d'administració",
-    "trainer": "Formador de residents de l'hospital {{hospital}}",
-    "coordinator": "Coordinador de residents de l'hospital {{hospital}}",
+    "tutor": "Tutor de residents de l'hospital {{hospital}}",
+    "csm": "CSM de residents de l'hospital {{hospital}}",
     "resident": "Resident de l'hospital {{hospital}}",
-    "student": "Alumne del programa de societats {{title}}",
-    "instructor": "Instructor del programa de societats {{title}}"
+    "participant": "Alumne del programa de societats {{title}}",
+    "professor": "Profesor del programa de societats {{title}}"
   },
   "actions": {
     "dashboard": "Tauler",
@@ -30,6 +29,7 @@
     "societiesProgram": "Programa de Societats",
     "users": "Usuaris",
     "accessCodes": "Codis d'accés",
+    "surgeryTypes": "Tipus de Cirurgia",
     "debug": "Depuració"
   },
   "progressByPhase": "Progrés per fase",
@@ -67,13 +67,13 @@
     "zone": "Zona",
     "specialty": "Especialitat",
     "specialties": {
-        "ALL": "Totes",
-        "URO": "Urologia (URO)",
-        "GEN": "Cirurgia General (GEN)",
-        "GYN": "Ginecologia (GYN)",
-        "THOR": "Toràcica (THOR)",
-        "ORL": "Otorrino (ORL)"
-      },
+      "ALL": "Totes",
+      "URO": "Urologia (URO)",
+      "GEN": "Cirurgia General (GEN)",
+      "GYN": "Ginecologia (GYN)",
+      "THOR": "Toràcica (THOR)",
+      "ORL": "Otorrino (ORL)"
+    },
     "society": "Societat",
     "none": "Cap",
     "invalidAccessCode": "Codi d'accés no vàlid",
@@ -146,7 +146,7 @@
       "email": "Correu electrònic",
       "actions": "Accions"
     },
-   "fields": {
+    "fields": {
       "name": "Nom",
       "numericCode": "Codi numèric",
       "address": "Adreça",
@@ -309,10 +309,14 @@
     "observation": "Observació",
     "practice": "Pràctica",
     "theory": "Teòrica",
-    "procedure": "Procediment",
+    "surgery": "Cirurgia",
     "errorForbidden": "No tens permisos per veure aquesta secció",
     "errorLoadData": "Error en carregar les dades",
-    "empty": "No hi ha fases creades. Crea una nova fase per començar."
+    "empty": "No hi ha fases creades. Crea una nova fase per començar.",
+    "requiresValidation": "Requereix validació",
+    "requiresSignature": "Requereix signatura",
+    "requiresPercentage": "Requereix percentatge",
+    "requiresAttachment": "Requereix adjunt"
   },
   "adminPhasesSoc": {
     "_comment": "Gestió de fases per al programa de Societats",
@@ -378,7 +382,11 @@
         "confirm": "Eliminar",
         "cancel": "Cancel·lar"
       }
-    }
+    },
+    "requiresValidation": "Requereix validació",
+    "requiresSignature": "Requereix signatura",
+    "requiresPercentage": "Requereix percentatge",
+    "requiresAttachment": "Requereix adjunt"
   },
   "adminProgressDetail": {
     "loadError": "Error en carregar el progrés",
@@ -393,6 +401,9 @@
     "noTitle": "Sense títol",
     "phaseStatusLabel": "Estat fase",
     "activityStatusLabel": "Estat activitat",
+    "masterStatusLabel": "Estat per a totes les activitats",
+    "revert": "Revertir",
+    "confirmBulkChange": "Segur que vols canviar l'estat de totes les activitats?",
     "phaseStatus": {
       "blocked": "Blocada",
       "inProgress": "En progrés",
@@ -411,6 +422,10 @@
     "noActivityName": "Activitat sense nom",
     "completedOn": "Data completada: {{date}}",
     "validatedOn": "Validat el: {{date}}",
+    "surgeryType": "Tipus de cirurgia: {{type}}",
+    "surgeonName": "Nom del cirurgià: {{name}}",
+    "participation": "Percentatge de participació: {{percent}}%",
+    "activityType": "Tipus d'activitat: {{type}}",
     "statusWithValue": "Estat: {{status}}",
     "noProgress": "No hi ha progrés disponible."
   },
@@ -449,7 +464,7 @@
     "passwordError": "Error en actualitzar la contrasenya",
     "createProgressSuccess": "Progrés formatiu creat amb èxit",
     "createProgressError": "Error en crear el progrés",
-   "table": {
+    "table": {
       "aria": "taula d'usuaris",
       "name": "Nom",
       "email": "Correu electrònic",
@@ -522,7 +537,7 @@
       "passwordError": "Error en actualitzar la contrasenya"
     }
   },
-  "trainerUsers": {
+  "tutorUsers": {
     "title": "Els meus usuaris",
     "invite": "Convidar usuari",
     "edit": "Editar usuari",
@@ -547,7 +562,7 @@
       "role": "Rol",
       "roles": {
         "resident": "Resident",
-        "trainer": "Formador"
+        "tutor": "tutor"
       }
     },
     "dialog": {
@@ -556,7 +571,7 @@
       "save": "Desar",
       "invite": "Convidar"
     },
-    "_comment": "Gestió d'usuaris per a formadors",
+    "_comment": "Gestió d'usuaris per a Tutors",
     "buttons": {
       "invite": "Convidar usuari",
       "cancel": "Cancel·lar",
@@ -572,7 +587,7 @@
     },
     "roles": {
       "resident": "Resident",
-      "trainer": "Formador"
+      "tutor": "tutor"
     },
     "states": {
       "active": "Actiu",
@@ -591,18 +606,22 @@
       "genericError": "Error"
     }
   },
-  "trainerValidations": {
+  "tutorValidations": {
     "title": "Validacions",
     "tabs": {
-      "pending": "Pendents ({{count}})",
-      "validated": "Validades ({{count}})",
-      "rejected": "Rebutjades ({{count}})",
+      "pending": "Pendents",
+      "validated": "Validades",
+      "rejected": "Rebutjades",
       "aria": "pestanyes de validacions"
     },
     "table": {
       "activity": "Activitat",
+      "type": "Tipus",
       "resident": "Resident",
       "date": "Data",
+      "surgeryType": "Tipus de cirurgia",
+      "surgeon": "Cirurgià",
+      "participation": "Participació (%)",
       "comments": "Comentaris",
       "actions": "Accions",
       "status": "Estat",
@@ -630,7 +649,7 @@
       "rejectReason": "Motiu del rebuig"
     },
     "errorLoad": "Error en carregar les validacions",
-    "_comment": "Validacions gestionades per formadors",
+    "_comment": "Validacions gestionades per Tutors",
     "buttons": {
       "viewAttachment": "Veure adjunt",
       "validate": "Validar",
@@ -705,12 +724,12 @@
     "programaSociedades": "Programa de Societats"
   },
   "roles": {
-    "residente": "Resident",
-    "formador": "Formador",
-    "coordinador": "Coordinador",
     "administrador": "Administrador",
-    "alumno": "Alumne",
-    "instructor": "Instructor"
+    "residente": "Residente",
+    "csm": "CSM",
+    "tutor": "Tutor",
+    "profesor": "Profesor",
+    "participante": "Participante"
   },
   "notifications": {
     "title": "Notificacions",
@@ -779,7 +798,7 @@
       "label": "Presentació",
       "intro": "Sessió de presentació del programa.",
       "item1": "Introducció al programa",
-      "item2": "Presentació dels instructors"
+      "professor": "profesor"
     },
     "modOnline": {
       "label": "Mod. En línia",
@@ -801,7 +820,7 @@
     },
     "stepByStep": {
       "label": "Pas a pas",
-      "intro": "Procediments pas a pas.",
+      "intro": "Cirurgies pas a pas.",
       "item1": "Material de suport",
       "item2": "Revisió guiada"
     },
@@ -827,7 +846,7 @@
     },
     "phase4": {
       "label": "Fase 4 - Cirurgia en Consola",
-      "description": "Procediments realitzats pel resident amb supervisió."
+      "description": "Cirurgies realitzades pel resident amb supervisió."
     }
   },
   "residentProgress": {
@@ -859,15 +878,24 @@
     "markAsCompleted": "Marcar com a completada",
     "unnamedActivity": "Activitat sense nom",
     "comment": "Comentari",
-    "trainerComment": "Comentari del formador",
+    "tutorComment": "Comentari del Tutor",
     "rejectionReason": "Motiu del rebuig",
     "completedOn": "Data completada",
     "validatedOn": "Validat el",
+    "activityType": "Tipus d'activitat: {{type}}",
+    "surgeryType": "Tipus de cirurgia: {{type}}",
+    "surgeonName": "Nom del cirurgià: {{name}}",
+    "participation": "Percentatge de participació: {{percent}}%",
     "status": "Estat",
     "dialog": {
       "completeActivity": "Marcar activitat com a completada",
       "completionDate": "Data de realització",
       "comment": "Comentari",
+      "surgery": "Nom de la cirurgia",
+      "otherSurgery": "Una altra cirurgia",
+      "otherSurgeryTooltip": "Escriu el nom de la cirurgia",
+      "surgeonName": "Nom del cirurgià",
+      "participation": "Percentatge de participació",
       "selectFile": "Seleccionar fitxer",
       "cancel": "Cancel·lar",
       "confirm": "Confirmar",
@@ -876,6 +904,9 @@
       "selectDate": "Selecciona una data de realització",
       "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
       "fileTooLarge": "El fitxer supera la mida màxima de 5MB.",
+      "surgeryRequired": "Selecciona o escriu un procediment",
+      "surgeonNameRequired": "Introdueix el nom del cirurgià",
+      "participationRequired": "Selecciona un percentatge de participació",
       "title": "Marcar activitat com a completada",
       "date": "Data de realització"
     },
@@ -891,7 +922,7 @@
     },
     "labels": {
       "comment": "Comentari",
-      "trainerComment": "Comentari del formador",
+      "tutorComment": "Comentari del Tutor",
       "rejectionReason": "Motiu del rebuig",
       "completedDate": "Data completada",
       "validatedDate": "Validat el",

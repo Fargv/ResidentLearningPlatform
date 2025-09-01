@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   getAccessCodes,
@@ -11,7 +12,7 @@ const {
 } = require('../controllers/accessCodeController');
 
 router.use(protect);
-router.use(authorize('administrador'));
+router.use(authorize(Role.ADMINISTRADOR));
 
 router.route('/')
   .get(getAccessCodes)

@@ -9,24 +9,25 @@ const { createAuditLog } = require('../utils/auditLog');
 const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
+const { Role } = require('../utils/roles');
 
 
 
 
-// @desc    Obtener todos los usuarios (admin), usuarios del hospital (formador)
-//         o alumnos de la sociedad (instructor)
+// @desc    Obtener todos los usuarios (admin), usuarios del hospital (tutor)
+//         o participantes de la sociedad (profesor)
 // @route   GET /api/users
-// @access  Private/Admin|Formador|Coordinador|Instructor
+// @access  Private/Admin|Tutor|CSM|Profesor
 exports.getUsers = async (req, res, next) => {
   try {
     let users;
 
-    if (req.user.rol === 'administrador') {
+    if (req.user.rol === Role.ADMINISTRADOR) {
       users = await User.find().populate('hospital').populate('sociedad');
-    } else if (req.user.rol === 'formador') {
+    } else if (req.user.rol === Role.TUTOR) {
       const query = {
         hospital: req.user.hospital,
-        rol: { $ne: 'administrador' }
+        rol: { $ne: Role.ADMINISTRADOR }
       };
       if (req.user.especialidad && req.user.especialidad !== 'ALL') {
         query.especialidad = req.user.especialidad;
@@ -34,20 +35,20 @@ exports.getUsers = async (req, res, next) => {
       users = await User.find(query)
         .populate('hospital')
         .populate('sociedad');
-    } else if (req.user.rol === 'coordinador') {
+    } else if (req.user.rol === Role.CSM) {
       const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
       const ids = hospitales.map(h => h._id);
       users = await User.find({
         hospital: { $in: ids },
-        rol: { $in: ['residente', 'formador'] },
+        rol: { $in: [Role.RESIDENTE, Role.TUTOR] },
         tipo: 'Programa Residentes'
       })
         .populate('hospital')
         .populate('sociedad');
-    } else if (req.user.rol === 'instructor') {
+    } else if (req.user.rol === Role.PROFESOR) {
       users = await User.find({
         sociedad: req.user.sociedad,
-        rol: 'alumno'
+        rol: Role.PARTICIPANTE
       })
         .populate('hospital')
         .populate('sociedad');
@@ -58,7 +59,7 @@ exports.getUsers = async (req, res, next) => {
     const usersWithFlag = await Promise.all(
       users.map(async (u) => {
         const obj = u.toObject();
-        if (u.rol === 'residente' || u.rol === 'alumno') {
+        if (u.rol === Role.RESIDENTE || u.rol === Role.PARTICIPANTE) {
           const existe = await ProgresoResidente.exists({ residente: u._id });
           obj.tieneProgreso = !!existe;
         }
@@ -95,18 +96,18 @@ exports.createUser = async (req, res, next) => {
     } = req.body;
     const hospitalId = hospital || undefined;
     let especialidadVal;
-    const tipoVal = rol === 'administrador' ? undefined : tipo;
+    const tipoVal = rol === Role.ADMINISTRADOR ? undefined : tipo;
     const sociedadId =
       tipoVal === 'Programa Sociedades' ? sociedad || undefined : undefined;
     let zonaVal = zona || undefined;
 
     const rolesValidos = [
-      'residente',
-      'formador',
-      'administrador',
-      'alumno',
-      'instructor',
-      'coordinador'
+      Role.RESIDENTE,
+      Role.TUTOR,
+      Role.ADMINISTRADOR,
+      Role.PARTICIPANTE,
+      Role.PROFESOR,
+      Role.CSM
     ];
     if (!rolesValidos.includes(rol)) {
       return next(new ErrorResponse('Rol inválido', 400));
@@ -115,27 +116,27 @@ exports.createUser = async (req, res, next) => {
     // Verificar combinaciones válidas de rol y tipo de programa
     if (
       tipo === 'Programa Residentes' &&
-      !['residente', 'formador', 'administrador', 'coordinador'].includes(rol)
+      ![Role.RESIDENTE, Role.TUTOR, Role.ADMINISTRADOR, Role.CSM].includes(rol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
 
     if (
       tipo === 'Programa Sociedades' &&
-      !['alumno', 'instructor', 'administrador'].includes(rol)
+      ![Role.PARTICIPANTE, Role.PROFESOR, Role.ADMINISTRADOR].includes(rol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
 
 
     if (
-      rol !== 'administrador' &&
+      rol !== Role.ADMINISTRADOR &&
       !['Programa Residentes', 'Programa Sociedades'].includes(tipoVal)
     ) {
       return next(new ErrorResponse('Tipo de programa inválido', 400));
     }
 
-    if ((rol === 'residente' || rol === 'formador') && !hospital) {
+    if ((rol === Role.RESIDENTE || rol === Role.TUTOR) && !hospital) {
       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
     }
 
@@ -147,8 +148,8 @@ exports.createUser = async (req, res, next) => {
       zonaVal = hosp.zona;
     }
 
-    if (rol === 'coordinador' && !zonaVal) {
-      return next(new ErrorResponse('Zona requerida para el rol coordinador', 400));
+    if (rol === Role.CSM && !zonaVal) {
+      return next(new ErrorResponse('Zona requerida para el rol csm', 400));
     }
 
     if (tipoVal === 'Programa Sociedades') {
@@ -162,14 +163,14 @@ exports.createUser = async (req, res, next) => {
       }
     }
 
-  if (rol === 'formador') {
+  if (rol === Role.TUTOR) {
       if (!especialidad) {
         return next(
-          new ErrorResponse('Especialidad requerida para el rol formador', 400)
+          new ErrorResponse('Especialidad requerida para el rol tutor', 400)
         );
       }
       especialidadVal = especialidad;
-    } else if (rol === 'residente') {
+    } else if (rol === Role.RESIDENTE) {
       if (especialidad === 'ALL') {
         return next(
           new ErrorResponse(
@@ -199,7 +200,7 @@ exports.createUser = async (req, res, next) => {
       fechaRegistro: Date.now()
     });
 
-    if (rol === 'residente' || rol === 'alumno') {
+    if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
       await inicializarProgresoFormativo(nuevoUsuario);
     }
 
@@ -256,9 +257,9 @@ exports.updateUser = async (req, res, next) => {
       );
     }
 
-    if (req.user.rol === 'instructor') {
+    if (req.user.rol === Role.PROFESOR) {
       if (
-        currentUser.rol !== 'alumno' ||
+        currentUser.rol !== Role.PARTICIPANTE ||
         !currentUser.sociedad ||
         currentUser.sociedad.toString() !== req.user.sociedad.toString()
       ) {
@@ -266,7 +267,7 @@ exports.updateUser = async (req, res, next) => {
           new ErrorResponse('No autorizado para modificar este usuario', 403)
         );
       }
-      if (updateData.rol && updateData.rol !== 'alumno') {
+      if (updateData.rol && updateData.rol !== Role.PARTICIPANTE) {
         return next(
           new ErrorResponse('No autorizado para cambiar el rol del usuario', 403)
         );
@@ -294,20 +295,20 @@ exports.updateUser = async (req, res, next) => {
     const sociedadId =
       newTipo === 'Programa Sociedades' ? updateData.sociedad || undefined : undefined;
 
-    if (newRol === 'administrador') {
+    if (newRol === Role.ADMINISTRADOR) {
       updateData.tipo = undefined;
     }
 
     if (
       newTipo === 'Programa Residentes' &&
-      !['residente', 'formador', 'administrador', 'coordinador'].includes(newRol)
+      ![Role.RESIDENTE, Role.TUTOR, Role.ADMINISTRADOR, Role.CSM].includes(newRol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
 
     if (
       newTipo === 'Programa Sociedades' &&
-      !['alumno', 'instructor', 'administrador'].includes(newRol)
+      ![Role.PARTICIPANTE, Role.PROFESOR, Role.ADMINISTRADOR].includes(newRol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
@@ -320,19 +321,19 @@ exports.updateUser = async (req, res, next) => {
       zonaVal = hosp.zona;
     }
 
-    if (newRol === 'coordinador' && !zonaVal) {
-      return next(new ErrorResponse('Zona requerida para el rol coordinador', 400));
+    if (newRol === Role.CSM && !zonaVal) {
+      return next(new ErrorResponse('Zona requerida para el rol csm', 400));
     }
 
-    if (newRol === 'formador') {
+    if (newRol === Role.TUTOR) {
       especialidadVal =
         especialidadInput || (roleChanged ? undefined : currentUser.especialidad);
       if (!especialidadVal) {
         return next(
-          new ErrorResponse('Especialidad requerida para el rol formador', 400)
+          new ErrorResponse('Especialidad requerida para el rol tutor', 400)
         );
       }
-    } else if (newRol === 'residente') {
+    } else if (newRol === Role.RESIDENTE) {
       if (roleChanged) {
         especialidadVal = especialidadInput;
       } else {
@@ -465,9 +466,9 @@ exports.deleteUser = async (req, res, next) => {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
     }
 
-    if (req.user.rol === 'instructor') {
+    if (req.user.rol === Role.PROFESOR) {
       if (
-        user.rol !== 'alumno' ||
+        user.rol !== Role.PARTICIPANTE ||
         !user.sociedad ||
         user.sociedad.toString() !== req.user.sociedad.toString()
       ) {
@@ -505,10 +506,10 @@ exports.inviteUser = async (req, res, next) => {
   try {
     const { email, rol, hospital, sociedad } = req.body;
 
-    if (req.user.rol === 'instructor') {
-      if (rol !== 'alumno') {
+    if (req.user.rol === Role.PROFESOR) {
+      if (rol !== Role.PARTICIPANTE) {
         return next(
-          new ErrorResponse('Los instructores solo pueden invitar alumnos', 403)
+          new ErrorResponse('Los profesores solo pueden invitar participantes', 403)
         );
       }
       if (
@@ -517,14 +518,14 @@ exports.inviteUser = async (req, res, next) => {
       ) {
         return next(
           new ErrorResponse(
-            'No autorizado para invitar alumnos de otra sociedad',
+            'No autorizado para invitar participantes de otra sociedad',
             403
           )
         );
       }
     }
 
-    if ((rol === 'alumno' || rol === 'instructor') && !sociedad) {
+    if ((rol === Role.PARTICIPANTE || rol === Role.PROFESOR) && !sociedad) {
       return next(new ErrorResponse('Se requiere una sociedad para este rol', 400));
     }
 
@@ -545,7 +546,7 @@ exports.inviteUser = async (req, res, next) => {
     }
 
     // Verificar hospital si el rol es residente o formador
-    if ((rol === 'residente' || rol === 'formador') && !hospital) {
+    if ((rol === Role.RESIDENTE || rol === Role.TUTOR) && !hospital) {
       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
     }
 
@@ -665,32 +666,32 @@ exports.cancelInvitation = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener residentes asignados a un formador
-// @route   GET /api/users/formador/:id/residentes
-// @access  Private/Admin,Formador
-exports.getFormadorResidentes = async (req, res, next) => {
+// @desc    Obtener residentes asignados a un tutor
+// @route   GET /api/users/tutor/:id/residentes
+// @access  Private/Admin,Tutor
+exports.getTutorResidentes = async (req, res, next) => {
   try {
-    const formador = await User.findById(req.params.id).populate('hospital');
+    const tutor = await User.findById(req.params.id).populate('hospital');
 
-    if (!formador) {
-      return next(new ErrorResponse(`Formador no encontrado con id ${req.params.id}`, 404));
+    if (!tutor) {
+      return next(new ErrorResponse(`Tutor no encontrado con id ${req.params.id}`, 404));
     }
 
-    if (formador.rol !== 'formador') {
-      return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un formador`, 400));
+    if (tutor.rol !== Role.TUTOR) {
+      return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un tutor`, 400));
     }
 
-    if (req.user.rol === 'coordinador' && formador.hospital.zona !== req.user.zona) {
+    if (req.user.rol === Role.CSM && tutor.hospital.zona !== req.user.zona) {
       return next(new ErrorResponse('No autorizado para ver residentes de otra zona', 403));
     }
 
-    // Obtener residentes del mismo hospital que el formador
+    // Obtener residentes del mismo hospital que el tutor
     const filtrosResidentes = {
-      hospital: formador.hospital,
-      rol: 'residente'
+      hospital: tutor.hospital,
+      rol: Role.RESIDENTE
     };
-    if (formador.especialidad && formador.especialidad !== 'ALL') {
-      filtrosResidentes.especialidad = formador.especialidad;
+    if (tutor.especialidad && tutor.especialidad !== 'ALL') {
+      filtrosResidentes.especialidad = tutor.especialidad;
     }
     const residentes = await User.find(filtrosResidentes)
       .populate('hospital')
@@ -706,10 +707,10 @@ exports.getFormadorResidentes = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener formadores de un residente
-// @route   GET /api/users/residente/:id/formadores
+// @desc    Obtener tutores de un residente
+// @route   GET /api/users/residente/:id/tutores
 // @access  Private/Admin,Residente
-exports.getResidenteFormadores = async (req, res, next) => {
+exports.getResidenteTutores = async (req, res, next) => {
   try {
     const residente = await User.findById(req.params.id).populate('hospital');
 
@@ -717,74 +718,74 @@ exports.getResidenteFormadores = async (req, res, next) => {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
     }
 
-    if (residente.rol !== 'residente') {
+    if (residente.rol !== Role.RESIDENTE) {
       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
     }
 
-    if (req.user.rol === 'coordinador' && residente.hospital.zona !== req.user.zona) {
-      return next(new ErrorResponse('No autorizado para ver formadores de otra zona', 403));
+    if (req.user.rol === Role.CSM && residente.hospital.zona !== req.user.zona) {
+      return next(new ErrorResponse('No autorizado para ver tutores de otra zona', 403));
     }
 
-    // Obtener formadores del mismo hospital que el residente
-    const filtrosFormadores = {
+    // Obtener tutores del mismo hospital que el residente
+    const filtrosTutores = {
       hospital: residente.hospital,
-      rol: 'formador'
+      rol: Role.TUTOR
     };
-    if (req.user.rol === 'formador' && req.user.especialidad && req.user.especialidad !== 'ALL') {
-      filtrosFormadores.especialidad = req.user.especialidad;
+    if (req.user.rol === Role.TUTOR && req.user.especialidad && req.user.especialidad !== 'ALL') {
+      filtrosTutores.especialidad = req.user.especialidad;
     }
-    const formadores = await User.find(filtrosFormadores)
+    const tutores = await User.find(filtrosTutores)
       .populate('hospital')
       .populate('sociedad');
 
     res.status(200).json({
       success: true,
-      count: formadores.length,
-      data: formadores
+      count: tutores.length,
+      data: tutores
     });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Obtener alumnos de un instructor
-// @route   GET /api/users/instructor/:id/alumnos
-// @access  Private/Admin,Instructor
-exports.getInstructorAlumnos = async (req, res, next) => {
+// @desc    Obtener participantes de un profesor
+// @route   GET /api/users/profesor/:id/participantes
+// @access  Private/Admin,Profesor
+exports.getProfesorParticipantes = async (req, res, next) => {
   try {
-    const instructor = await User.findById(req.params.id).populate('sociedad');
+    const profesor = await User.findById(req.params.id).populate('sociedad');
 
-    if (!instructor) {
+    if (!profesor) {
       return next(
-        new ErrorResponse(`Instructor no encontrado con id ${req.params.id}`, 404)
+        new ErrorResponse(`Profesor no encontrado con id ${req.params.id}`, 404)
       );
     }
 
-    if (instructor.rol !== 'instructor') {
+    if (profesor.rol !== Role.PROFESOR) {
       return next(
-        new ErrorResponse(`El usuario con id ${req.params.id} no es un instructor`, 400)
+        new ErrorResponse(`El usuario con id ${req.params.id} no es un profesor`, 400)
       );
     }
 
     if (
-      req.user.rol === 'instructor' &&
-      req.user._id.toString() !== instructor._id.toString()
+      req.user.rol === Role.PROFESOR &&
+      req.user._id.toString() !== profesor._id.toString()
     ) {
       return next(
-        new ErrorResponse('No autorizado para ver alumnos de otro instructor', 403)
+        new ErrorResponse('No autorizado para ver participantes de otro profesor', 403)
       );
     }
 
-    const alumnos = await User.find({
-      sociedad: instructor.sociedad,
-      rol: 'alumno',
-      tipo: instructor.tipo,
+    const participantes = await User.find({
+      sociedad: profesor.sociedad,
+      rol: Role.PARTICIPANTE,
+      tipo: profesor.tipo,
     }).populate('sociedad');
 
     res.status(200).json({
       success: true,
-      count: alumnos.length,
-      data: alumnos,
+      count: participantes.length,
+      data: participantes,
     });
   } catch (err) {
     next(err);
@@ -795,7 +796,7 @@ exports.getUsersByHospital = async (req, res) => {
   try {
     const { hospitalId } = req.params;
 
-    if (req.user.rol === 'coordinador') {
+    if (req.user.rol === Role.CSM) {
       const hosp = await Hospital.findById(hospitalId);
       if (!hosp || hosp.zona !== req.user.zona) {
         return res.status(403).json({ success: false, error: 'No autorizado' });
@@ -807,13 +808,13 @@ exports.getUsersByHospital = async (req, res) => {
       tipo: req.user.tipo,
       _id: { $ne: req.user._id }
     };
-    if (req.user.rol === 'formador') {
-      query.rol = 'residente';
+    if (req.user.rol === Role.TUTOR) {
+      query.rol = Role.RESIDENTE;
       if (req.user.especialidad && req.user.especialidad !== 'ALL') {
         query.especialidad = req.user.especialidad;
       }
-    } else if (req.user.rol === 'coordinador') {
-      query.rol = { $in: ['residente', 'formador'] };
+    } else if (req.user.rol === Role.CSM) {
+      query.rol = { $in: [Role.RESIDENTE, Role.TUTOR] };
     }
 
     const users = await User.find(query)

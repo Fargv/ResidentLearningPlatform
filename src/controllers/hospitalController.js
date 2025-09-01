@@ -160,7 +160,7 @@ exports.deleteHospital = async (req, res, next) => {
 
 // @desc    Obtener residentes de un hospital
 // @route   GET /api/hospitals/:id/residentes
-// @access  Private/Admin,Formador
+// @access  Private/Admin,tutor
 exports.getHospitalResidentes = async (req, res, next) => {
   try {
     const hospital = await Hospital.findById(req.params.id);
@@ -184,10 +184,10 @@ exports.getHospitalResidentes = async (req, res, next) => {
   }
 };
 
-// @desc    Obtener formadores de un hospital
-// @route   GET /api/hospitals/:id/formadores
+// @desc    Obtener tutores de un hospital
+// @route   GET /api/hospitals/:id/tutores
 // @access  Private/Admin
-exports.getHospitalFormadores = async (req, res, next) => {
+exports.getHospitalTutores = async (req, res, next) => {
   try {
     const hospital = await Hospital.findById(req.params.id);
 
@@ -195,15 +195,15 @@ exports.getHospitalFormadores = async (req, res, next) => {
       return next(new ErrorResponse(`Hospital no encontrado con id ${req.params.id}`, 404));
     }
 
-    const formadores = await User.find({ 
+    const tutores = await User.find({
       hospital: req.params.id,
-      rol: 'formador'
+      rol: 'tutor'
     });
 
     res.status(200).json({
       success: true,
-      count: formadores.length,
-      data: formadores
+      count: tutores.length,
+      data: tutores
     });
   } catch (err) {
     next(err);
@@ -212,7 +212,7 @@ exports.getHospitalFormadores = async (req, res, next) => {
 
 // @desc    Obtener estadísticas de un hospital
 // @route   GET /api/hospitals/:id/stats
-// @access  Private/Admin,Formador
+// @access  Private/Admin,tutor
 exports.getHospitalStats = async (req, res, next) => {
   try {
     const hospital = await Hospital.findById(req.params.id);
@@ -221,16 +221,16 @@ exports.getHospitalStats = async (req, res, next) => {
       return next(new ErrorResponse(`Hospital no encontrado con id ${req.params.id}`, 404));
     }
 
-    // Contar residentes y formadores
-    const residentesCount = await User.countDocuments({ 
-      hospital: req.params.id,
-      rol: 'residente'
-    });
-    
-    const formadoresCount = await User.countDocuments({ 
-      hospital: req.params.id,
-      rol: 'formador'
-    });
+  // Contar residentes y tutores
+  const residentesCount = await User.countDocuments({
+    hospital: req.params.id,
+    rol: 'residente'
+  });
+
+  const tutoresCount = await User.countDocuments({
+    hospital: req.params.id,
+    rol: 'tutor'
+  });
 
     // Obtener estadísticas adicionales si es necesario
     // Aquí se podrían agregar más consultas para obtener estadísticas de progreso, etc.
@@ -239,7 +239,7 @@ exports.getHospitalStats = async (req, res, next) => {
       success: true,
       data: {
         residentes: residentesCount,
-        formadores: formadoresCount,
+        tutores: tutoresCount,
         tipoSistema: hospital.tipoSistema
       }
     });
