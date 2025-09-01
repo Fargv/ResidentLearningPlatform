@@ -248,7 +248,8 @@
     "phase": "Fasea",
     "validate": "Balidatu",
     "reject": "Baztertu",
-    "processing": "Prozesatzen..."
+    "processing": "Prozesatzen...",
+    "none": "Bat ere ez"
   },
   "profile": {
     "title": "Nire profila",

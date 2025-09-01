@@ -320,7 +320,8 @@
     "phase": "Fase",
     "validate": "Validar",
     "reject": "Rexectar",
-    "processing": "Procesando..."
+    "processing": "Procesando...",
+    "none": "Ningún"
   },
   "profile": {
     "title": "O meu perfil",

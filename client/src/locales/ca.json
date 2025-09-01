@@ -98,7 +98,8 @@
     "phase": "Fase",
     "validate": "Validar",
     "reject": "Rebutjar",
-    "processing": "Processant..."
+    "processing": "Processant...",
+    "none": "Cap"
   },
   "profile": {
     "title": "El meu perfil",

@@ -249,7 +249,8 @@
     "phase": "Phase",
     "validate": "Validate",
     "reject": "Reject",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "none": "None"
   },
   "profile": {
     "title": "My Profile",

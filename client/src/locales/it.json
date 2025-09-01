@@ -206,7 +206,8 @@
     "phase": "Fase",
     "validate": "Convalida",
     "reject": "Rifiuta",
-    "processing": "Elaborazione in corso..."
+    "processing": "Elaborazione in corso...",
+    "none": "Nessuno"
   },
   "auth": {
     "login": "Accesso",

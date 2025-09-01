@@ -100,7 +100,8 @@
     "phase": "Fase",
     "validate": "Validar",
     "reject": "Rejeitar",
-    "processing": "Processando..."
+    "processing": "Processando...",
+    "none": "Nenhum"
   },
   "auth": {
     "login": "Entrar",

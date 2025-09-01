@@ -126,7 +126,8 @@
     "phase": "Phase",
     "validate": "Valider",
     "reject": "Rejeter",
-    "processing": "Traitement en cours..."
+    "processing": "Traitement en cours...",
+    "none": "Aucun"
   },
   "auth": {
     "login": "Connexion",

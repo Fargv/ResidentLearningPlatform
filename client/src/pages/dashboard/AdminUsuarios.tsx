@@ -962,6 +962,7 @@ const AdminUsuarios: React.FC = () => {
               id="tutor-create"
               name="tutor"
               label={t("adminUsers.fields.tutor")}
+              InputLabelProps={{ shrink: true }}
               fullWidth
               variant="outlined"
               value={formData.tutor}
@@ -1181,6 +1182,7 @@ const AdminUsuarios: React.FC = () => {
               id="tutor-edit"
               name="tutor"
               label={t("adminUsers.fields.tutor")}
+              InputLabelProps={{ shrink: true }}
               fullWidth
               variant="outlined"
               value={formData.tutor}

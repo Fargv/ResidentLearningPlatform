@@ -100,7 +100,8 @@
     "phase": "Phase",
     "validate": "Validieren",
     "reject": "Ablehnen",
-    "processing": "Verarbeite..."
+    "processing": "Verarbeite...",
+    "none": "Keine"
   },
   "auth": {
     "login": "Anmelden",
