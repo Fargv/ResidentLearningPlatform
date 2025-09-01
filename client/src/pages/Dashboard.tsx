@@ -18,7 +18,8 @@ import {
   MenuItem,
   Badge,
   useMediaQuery,
-  useTheme
+  useTheme,
+  alpha
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -31,11 +32,14 @@ import {
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Brightness4 as Brightness4Icon,
+  Brightness7 as Brightness7Icon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
 import { useTranslation } from 'react-i18next';
+import { useColorMode } from '../context/ColorModeContext';
 
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
@@ -66,6 +70,7 @@ const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { toggleColorMode } = useColorMode();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const isDev = env === 'dev';
@@ -160,12 +165,21 @@ const Dashboard: React.FC = () => {
               mr: 2,
               color: 'inherit',
               '.MuiSelect-select': { color: 'inherit' },
-              '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.5)' },
-              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#fff' },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#fff' },
+              '.MuiOutlinedInput-notchedOutline': {
+                borderColor: (theme) => alpha(theme.palette.common.white, 0.5),
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
               '.MuiSvgIcon-root': { color: 'inherit' }
             }}
           />
+          <IconButton
+            color="inherit"
+            onClick={toggleColorMode}
+            sx={{ mr: 1, color: 'inherit' }}
+          >
+            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
             <Badge badgeContent={unreadCount} color="secondary">
               <NotificationsIcon />

@@ -48,4 +48,5 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
 
 - 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
+- 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

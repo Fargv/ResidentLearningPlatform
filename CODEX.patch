@@ -1,257 +1,669 @@
-diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
-index 9c2edd02f9e5fea7a4a795ab76b63b45d623cb27..d92135612f4b8ef785b890e2d8012e8cf2254c00 100644
---- a/src/controllers/progresoController.js
-+++ b/src/controllers/progresoController.js
-@@ -582,106 +582,141 @@ const getEstadisticasResidente = async (req, res, next) => {
-       const total = item.actividades.length;
-       const completadas = item.actividades.filter(act => act.estado === 'validado').length;
-       return {
-         fase: item.fase,
-         total,
-         completadas,
-         porcentaje: total ? Math.round((completadas / total) * 100) : 0
-       };
-     });
+diff --git a/client/src/components/PhaseProgressChart.tsx b/client/src/components/PhaseProgressChart.tsx
+index e354aa68c0de4486fb8799b7eadb58ba08fc2071..17ee3c0ce3f5372f7a43fd76c589c23799f2f5e3 100644
+--- a/client/src/components/PhaseProgressChart.tsx
++++ b/client/src/components/PhaseProgressChart.tsx
+@@ -1,46 +1,53 @@
+ import React from 'react';
+ import { Box, Typography } from '@mui/material';
++import { useTheme } from '@mui/material/styles';
+ import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
  
-     res.status(200).json({
-       success: true,
-       data: estadisticas
-     });
-   } catch (err) {
-     console.error("Error en getEstadisticasResidente:", err);
-     next(err);
-   }
+ interface PhaseProgressChartProps {
+   phaseName: string;
+   pendiente: number;
+   completado: number;
+   rechazado: number;
+   validado: number;
+ }
+ 
+-const COLORS = ['#ff9800', '#2196f3', '#f44336', '#4caf50'];
+ 
+ const PhaseProgressChart: React.FC<PhaseProgressChartProps> = ({
+   phaseName,
+   pendiente,
+   completado,
+   rechazado,
+   validado,
+ }) => {
++  const theme = useTheme();
++  const COLORS = [
++    theme.palette.warning.main,
++    theme.palette.info.main,
++    theme.palette.error.main,
++    theme.palette.success.main,
++  ];
+   const data = [
+     { name: 'Pendiente', value: pendiente },
+     { name: 'Completado', value: completado },
+     { name: 'Rechazado', value: rechazado },
+     { name: 'Validado', value: validado },
+   ];
+ 
+   return (
+     <Box textAlign="center">
+       <Typography variant="subtitle1" gutterBottom>{phaseName}</Typography>
+       <PieChart width={250} height={250}>
+         <Pie
+           data={data}
+           dataKey="value"
+           nameKey="name"
+           cx="50%"
+           cy="50%"
+           outerRadius={80}
+           label
+         >
+           {data.map((_, index) => (
+             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+           ))}
+         </Pie>
+         <Tooltip />
+diff --git a/client/src/components/ProgressPorFase.tsx b/client/src/components/ProgressPorFase.tsx
+index 5517419ef00fdcd9aa5a57c81c4e69d1c9d37ded..a582797266fe37f369a5121f179fa87bba01b2a8 100644
+--- a/client/src/components/ProgressPorFase.tsx
++++ b/client/src/components/ProgressPorFase.tsx
+@@ -4,65 +4,65 @@ import { Paper, Box, Typography, LinearProgress } from '@mui/material';
+ export interface Fase {
+   nombre: string;
+   porcentaje: number; // entre 0 y 100
+   bloqueada?: boolean;
+ }
+ 
+ export interface Props {
+   fases: Fase[];
+   onFaseClick?: (fase: Fase, index: number) => void;
+ }
+ 
+ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
+   const visibles = fases.filter((f) => !f.bloqueada);
+ 
+   return (
+     <Box display="flex" flexWrap="wrap" gap={2} justifyContent="flex-start">
+       {visibles.map((fase, idx) => (
+         <Box
+           key={fase.nombre ?? idx}
+           sx={{ flex: '1 1 220px', minWidth: 200 }}
+           onClick={() => onFaseClick?.(fase, idx)}
+         >
+           <Paper sx={{ p: 2, borderRadius: 2 }}>
+             <Box
+               sx={{
+-                backgroundColor: '#F5F5F5',
+-                color: '#1E5B94',
++                backgroundColor: 'background.default',
++                color: 'primary.main',
+                 textAlign: 'center',
+                 borderRadius: 1,
+                 mb: 2,
+                 p: 1,
+                 fontWeight: 'bold',
+               }}
+             >
+               <Typography variant="subtitle1">{fase.nombre}</Typography>
+             </Box>
+             <Box>
+               <LinearProgress
+                 variant="determinate"
+                 value={fase.porcentaje}
+                 sx={{
+                   height: 10,
+                   borderRadius: 5,
+-                  backgroundColor: '#F5F5F5',
++                  backgroundColor: 'background.default',
+                   '& .MuiLinearProgress-bar': {
+-                    backgroundColor: '#E3F2FD',
++                    backgroundColor: 'primary.light',
+                   },
+                 }}
+               />
+               <Typography
+                 variant="body2"
+                 align="right"
+-                sx={{ mt: 1, color: '#1E5B94' }}
++                sx={{ mt: 1, color: 'primary.main' }}
+               >
+                 {fase.porcentaje}%
+               </Typography>
+             </Box>
+           </Paper>
+         </Box>
+       ))}
+     </Box>
+   );
  };
- // PUT /api/progreso/:id/actividad/:index
- const marcarActividadCompletada = async (req, res, next) => {
-   try {
-     const { id, index } = req.params;
-     const { fechaRealizacion, comentariosResidente, cirugia, otraCirugia, nombreCirujano, porcentajeParticipacion } = req.body;
  
--    const progreso = await ProgresoResidente.findById(id);
-+    const progreso = await ProgresoResidente.findById(id).populate([
-+      'residente',
-+      'actividades.actividad'
-+    ]);
-     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
-       return next(new ErrorResponse('Progreso o actividad no válida', 404));
+ export default ProgressPorFase;
+diff --git a/client/src/pages/DebugDashboard.tsx b/client/src/pages/DebugDashboard.tsx
+index 6f6559671e1a8b0a8a06e3715fad7f76f8acbc58..24d3c636d6278660a65d12f52e50483e6980e3ca 100644
+--- a/client/src/pages/DebugDashboard.tsx
++++ b/client/src/pages/DebugDashboard.tsx
+@@ -1,56 +1,57 @@
+ import React, { useEffect, useState } from 'react';
+-import { Box, Typography, Paper, Chip } from '@mui/material';
++import { Box, Typography, Paper, Chip, useTheme } from '@mui/material';
+ import { useAuth } from '../context/AuthContext';
+ 
+ const DebugDashboard = () => {
+   const { user } = useAuth();
++  const theme = useTheme();
+   const [token, setToken] = useState<string>('');
+   const [decoded, setDecoded] = useState<any>(null);
+   const [status, setStatus] = useState('');
+ 
+   useEffect(() => {
+     const storedToken = localStorage.getItem('token');
+     if (storedToken) {
+       setToken(storedToken);
+       try {
+         const payload = JSON.parse(atob(storedToken.split('.')[1]));
+         setDecoded(payload);
+         setStatus('✅ Token válido y decodificado');
+       } catch (error) {
+         setStatus('❌ Token no válido o corrupto');
+       }
+     } else {
+       setStatus('❌ Token no encontrado en localStorage');
      }
+   }, []);
  
-     const actividadOriginal = progreso.actividades[index];
-     if (!actividadOriginal || !actividadOriginal.actividad) {
-       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
-     }
+   return (
+     <Box sx={{ px: 3, py: 2 }}>
+       <Typography variant="h4" gutterBottom>
+         🛠️ Debug Panel - Diagnóstico de Sesión
+       </Typography>
  
-     const actividadExistente = progreso.actividades[index];
-+    const estadoPrevio = actividadExistente.estado;
+       <Paper sx={{ p: 3, mb: 3 }}>
+         <Typography variant="h6">Estado del token:</Typography>
+         <Chip label={status} color={status.includes('✅') ? 'success' : 'error'} sx={{ mt: 1 }} />
  
-     if (actividadOriginal.tipo === 'cirugia') {
-       const porcentaje = Number(porcentajeParticipacion);
-       if (!nombreCirujano) {
-         return next(new ErrorResponse('Nombre del cirujano es requerido', 400));
-       }
-       if (!cirugia && !otraCirugia) {
-         return next(new ErrorResponse('Debe especificar la cirugía', 400));
-       }
-       if (![0, 25, 50, 75, 100].includes(porcentaje)) {
-         return next(new ErrorResponse('Porcentaje de participación inválido', 400));
-       }
-       actividadExistente.cirugia = cirugia;
-       actividadExistente.otraCirugia = otraCirugia;
-       actividadExistente.nombreCirujano = nombreCirujano;
-       actividadExistente.porcentajeParticipacion = porcentaje;
-     }
+         <Typography variant="h6" sx={{ mt: 3 }}>Token JWT (abreviado):</Typography>
+         <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
+           {token ? `${token.slice(0, 60)}...` : 'No disponible'}
+         </Typography>
  
-     actividadExistente.estado = 'completado';
-     actividadExistente.completada = true;
-     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
-     actividadExistente.comentariosResidente = comentariosResidente;
+         <Typography variant="h6" sx={{ mt: 3 }}>Usuario decodificado:</Typography>
+-        <pre style={{ background: '#f4f4f4', padding: 10, borderRadius: 6 }}>
++        <pre style={{ background: theme.palette.grey[200], padding: 10, borderRadius: 6 }}>
+           {decoded ? JSON.stringify(decoded, null, 2) : 'No decodificado'}
+         </pre>
  
-     // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
-     if (req.files && req.files.adjunto) {
-       const file = req.files.adjunto;
-       const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
-       if (!allowed.includes(file.mimetype)) {
-         return next(new ErrorResponse('Tipo de archivo no permitido', 400));
-       }
-       if (file.size > 5 * 1024 * 1024) {
-         return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
-       }
-       await Adjunto.create({
-         progreso: id,
-         usuario: req.user._id,
-         actividadIndex: Number(index),
-         nombreArchivo: file.name,
-         mimeType: file.mimetype,
-         datos: file.data,
-         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
-       });
-     }
- 
-     await progreso.save();
-+
-+    if (
-+      estadoPrevio === 'pendiente' &&
-+      actividadExistente.actividad &&
-+      actividadExistente.actividad.requiereValidacion
-+    ) {
-+      const responsables = [
-+        progreso.residente.tutor,
-+        progreso.residente.profesor
-+      ]
-+        .filter(Boolean)
-+        .map(id => id.toString());
-+
-+      const destinatarios = [...new Set(responsables)];
-+
-+      const mensaje = `El residente ${progreso.residente.nombre} ${progreso.residente.apellidos} ha completado la actividad "${actividadExistente.actividad.nombre}" y requiere validación.`;
-+
-+      for (const usuario of destinatarios) {
-+        await Notificacion.create({
-+          usuario,
-+          tipo: 'validacion',
-+          mensaje,
-+          enlace: '/dashboard/validaciones',
-+          entidadRelacionada: {
-+            tipo: 'progreso',
-+            id: progreso._id
-+          }
-+        });
-+      }
-+    }
-+
-     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
- 
-     res.status(200).json({ success: true, data: progreso });
-   } catch (err) {
-     next(err);
-   }
+         <Typography variant="h6" sx={{ mt: 3 }}>Contexto de usuario (`useAuth`):</Typography>
+-        <pre style={{ background: '#f4f4f4', padding: 10, borderRadius: 6 }}>
++        <pre style={{ background: theme.palette.grey[200], padding: 10, borderRadius: 6 }}>
+           {user ? JSON.stringify(user, null, 2) : 'No cargado'}
+         </pre>
+       </Paper>
+     </Box>
+   );
  };
  
- // GET /api/progreso/tutor/pendientes
- // @access Private/Tutor|Profesor
- const getProgresosPendientesDelHospital = async (req, res, next) => {
-   try {
-     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'csm') {
-       return res.status(403).json({ success: false, error: 'No autorizado' });
-     }
+ export default DebugDashboard;
+diff --git a/client/src/pages/dashboard/AdminProgresoDetalle.tsx b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+index c4a56e5a6fbd3220ee9d5911fc55ff616cdfa654..613e170be27eca45de848773bc9138f4dfc8bd5a 100644
+--- a/client/src/pages/dashboard/AdminProgresoDetalle.tsx
++++ b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+@@ -242,54 +242,54 @@ const AdminProgresoDetalle: React.FC = () => {
+                         }
+                       >
+                         <MenuItem value="bloqueada">
+                           {t('adminProgressDetail.phaseStatus.blocked')}
+                         </MenuItem>
+                         <MenuItem value="en progreso">
+                           {t('adminProgressDetail.phaseStatus.inProgress')}
+                         </MenuItem>
+                         <MenuItem value="completado">
+                           {t('adminProgressDetail.phaseStatus.completed')}
+                         </MenuItem>
+                         <MenuItem value="validado">
+                           {t('adminProgressDetail.phaseStatus.validated')}
+                         </MenuItem>
+                       </Select>
+                     </FormControl>
+                   )}
+                 </Box>
+                 <LinearProgress variant="determinate" value={porcentaje} sx={{ height: 8, borderRadius: 5, mb: 1 }} />
+                 <Typography variant="body2" sx={{ mb: 2 }}>
+                   {t('adminProgressDetail.validatedProgress', { percent: porcentaje })}
+                 </Typography>
+                 <List>
+                   {item.actividades.map((act, idx) => (
+                     <ListItem key={idx}>
+-                      {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
+-                      {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
+-                      {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
+-                      {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
++                      {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'success.main', mr: 1 }} />}
++                      {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'info.main', mr: 1 }} />}
++                      {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'error.main', mr: 1 }} />}
++                      {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'text.secondary', mr: 1 }} />}
+                       <ListItemText
+                         primary={act.nombre || t('adminProgressDetail.noActivityName')}
+                         secondary={
+                           <>
+                             {act.fecha && (
+                               <Typography variant="body2" color="text.secondary">
+                                 {t('adminProgressDetail.completedOn', {
+                                   date: formatDayMonthYear(act.fecha)
+                                 })}
+                               </Typography>
+                             )}
+                             {act.fechaValidacion && (
+                               <Typography variant="body2" color="text.secondary">
+                                 {t('adminProgressDetail.validatedOn', {
+                                   date: formatDayMonthYear(act.fechaValidacion)
+                                 })}
+                               </Typography>
+                             )}
+                               {(act.cirugia?.name || act.otraCirugia || act.nombreCirujano) && (
+                                 <>
+                                   {(act.cirugia?.name || act.otraCirugia) && (
+                                     <Typography variant="body2" color="text.secondary">
+                                       {t('adminProgressDetail.surgeryType', {
+                                         type: act.cirugia?.name || act.otraCirugia
+                                       })}
+diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
+index 493776d433fc497c13b489e85b4031984068751a..1e13911dbd9dd70f6025e259d66b0d2b03d2c7af 100644
+--- a/client/src/pages/dashboard/DashboardHome.tsx
++++ b/client/src/pages/dashboard/DashboardHome.tsx
+@@ -445,71 +445,72 @@ const DashboardHome: React.FC = () => {
+                 socPhaseSummary.find((s) => s.phase === m.phase)?.percent ?? 0;
+               return (
+                 <CardActionArea
+                   key={m.label}
+                   onClick={() => handleOpenDialog(m)}
+                   sx={{
+                     flex: {
+                       xs: "1 1 100%",
+                       md:
+                         idx === 0
+                           ? "1 1 100%"
+                           : "1 1 calc(50% - 16px)",
+                     },
+                     minWidth: { xs: "250px", md: "250px" },
+                     "&:hover": {
+                       backgroundColor: "action.hover",
+                       transform: "scale(1.02)",
+                     },
+                     cursor: "pointer",
+                   }}
+                 >
+                   <Paper
+                     elevation={2}
+                     sx={{
+                       p: 2,
+-                      borderLeft: "6px solid #1E5B94",
+-                      background: `linear-gradient(90deg, #E3F2FD ${percent}%, #F5F5F5 ${percent}%)`,
++                      borderLeft: (theme) => `6px solid ${theme.palette.primary.main}`,
++                      background: (theme) =>
++                        `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.default} ${percent}%)`,
+                     }}
+                   >
+                     <Typography
+                       variant="subtitle2"
+                       sx={{ color: 'text.secondary' }}
+                     >
+                       {m.label}
+                     </Typography>
+                     <Typography
+                       variant="body1"
+                       fontWeight="bold"
+-                      sx={{ color: '#1E5B94' }}
++                      sx={{ color: 'primary.main' }}
+                     >
+                       {formatMonthYear(m.date || "") || "—"}
+                     </Typography>
+                     <Typography
+                       variant="body2"
+                       fontWeight="bold"
+-                      sx={{ color: '#1E5B94' }}
++                      sx={{ color: 'primary.main' }}
+                     >
+                       {percent}%
+                     </Typography>
+                   </Paper>
+                 </CardActionArea>
+               );
+             })}
+           </Box>
+           {socAllValidado && (
+             <Box textAlign="center" mt={2}>
+               <Button
+                 variant="contained"
+                 onClick={handleDescargarCertificado}
+                 disabled={downloadLoading}
+               >
+                 {t('residentProgress.downloadCertificate')}
+               </Button>
+             </Box>
+           )}
+        </Paper>
+       )}
+       {user?.tipo === "Programa Residentes" &&
+         (user?.rol === "residente" ||
+           user?.rol === "tutor" ||
+           user?.rol === "csm" ||
+diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
+index 493776d433fc497c13b489e85b4031984068751a..1e13911dbd9dd70f6025e259d66b0d2b03d2c7af 100644
+--- a/client/src/pages/dashboard/DashboardHome.tsx
++++ b/client/src/pages/dashboard/DashboardHome.tsx
+@@ -522,52 +523,53 @@ const DashboardHome: React.FC = () => {
+               </Typography>
+             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+               {phaseSummary.map((p, idx) => (
+                 <CardActionArea
+                   key={p.name}
+                   onClick={() =>
+                     onFaseClick(
+                       { nombre: p.name, porcentaje: p.percent },
+                       idx,
+                     )
+                   }
+                   sx={{
+                     flex: "1 1 calc(50% - 16px)",
+                     minWidth: "250px",
+                     "&:hover": {
+                       backgroundColor: "action.hover",
+                       transform: "scale(1.02)",
+                     },
+                     cursor: "pointer",
+                   }}
+                 >
+                   <Paper
+                       elevation={2}
+                       sx={{
+                         p: 2,
+-                        borderLeft: "6px solid #1E5B94",
+-                        background: `linear-gradient(90deg, #E3F2FD  ${p.percent}%, #F5F5F5  ${p.percent}%)`,
++                        borderLeft: (theme) => `6px solid ${theme.palette.primary.main}`,
++                        background: (theme) =>
++                          `linear-gradient(90deg, ${theme.palette.primary.light}  ${p.percent}%, ${theme.palette.background.default}  ${p.percent}%)`,
+                       }}
+                     >
+                       <Typography variant="subtitle2" color="text.secondary">
+                         {p.name}
+                       </Typography>
+                       <Typography
+                         variant="body1"
+                         fontWeight="bold"
+                         sx={{
+                           color: "text.secondary",
+                           textShadow: 'none',
+                         }}
+                       >
+                         {p.percent}%
+                       </Typography>
+                     </Paper>
+                 </CardActionArea>
+               ))}
+             </Box>
+             {allValidado && (
+               <Box textAlign="center" mt={2}>
+                 <Button
+                   variant="contained"
+                   onClick={handleDescargarCertificado}
+                   disabled={downloadLoading}
+diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
+index 493776d433fc497c13b489e85b4031984068751a..1e13911dbd9dd70f6025e259d66b0d2b03d2c7af 100644
+--- a/client/src/pages/dashboard/DashboardHome.tsx
++++ b/client/src/pages/dashboard/DashboardHome.tsx
+@@ -611,34 +613,34 @@ const DashboardHome: React.FC = () => {
+                 </CardContent>
+               </CardActionArea>
+             </Card>
+           </Box>
+         ))}
+       </Box>
  
-     const pendientes = await ProgresoResidente.find({
-       estado: { $in: ['pendiente', 'validado', 'rechazado'] }
-     })
-     .populate({
-       path: 'residente',
-       select: 'nombre apellidos hospital sociedad especialidad',
-       match: req.user.rol === 'profesor'
-         ? { sociedad: req.user.sociedad }
-         : req.user.rol === 'tutor'
-diff --git a/tests/marcarActividadCompletada.test.js b/tests/marcarActividadCompletada.test.js
-index df146fd2dbdf13b59dfbef8a96eb1beff43d6d83..51737790318dc745095ef5a8a8ef6986ac3193e5 100644
---- a/tests/marcarActividadCompletada.test.js
-+++ b/tests/marcarActividadCompletada.test.js
-@@ -1,30 +1,99 @@
- const { marcarActividadCompletada } = require('../src/controllers/progresoController');
- const ProgresoResidente = require('../src/models/ProgresoResidente');
--const mongoose = require('mongoose');
-+const Notificacion = require('../src/models/Notificacion');
  
- describe('marcarActividadCompletada', () => {
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
+       {renderContent()}
+         <Dialog open={openDialog} onClose={handleCloseDialog}>
+           <DialogTitle>{selectedPhase?.label}</DialogTitle>
+           <DialogContent>
+             {selectedPhase?.description}
+             {selectedPhase?.date && (
+               <Typography variant="body2" color="text.secondary">
+                 {formatDayMonthYear(selectedPhase.date)}
+               </Typography>
+             )}
+           </DialogContent>
+           <DialogActions>
+             <Button onClick={handleCloseDialog}>{t('close')}</Button>
+           </DialogActions>
+         </Dialog>
+         <Backdrop
+           open={downloadLoading}
+-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
++          sx={{ color: 'common.white', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+         >
+           <CircularProgress color="inherit" />
+         </Backdrop>
+       </Box>
+     );
+   };
  
-   test('populates fase before responding', async () => {
-     const progreso = {
-       actividades: [{ actividad: 'a1' }],
-       save: jest.fn().mockResolvedValue(),
-       populate: jest.fn().mockResolvedValue()
-     };
+ export default DashboardHome;
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 08d47521315033ea8e41c1c756441dbb162f71d1..35d11d59549aa0b98084a634c650ab4cca174611 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -375,54 +375,54 @@ const ResidenteFases: React.FC = () => {
+           </Box>
  
--    jest.spyOn(ProgresoResidente, 'findById').mockResolvedValue(progreso);
--    jest.spyOn(mongoose, 'model').mockReturnValue({
--      findById: jest.fn().mockResolvedValue({ tipo: 'teórica' })
--    });
-+    const query = { populate: jest.fn().mockResolvedValue(progreso) };
-+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
+           {(() => {
+             const total = item.actividades.length;
+             const validadas = item.actividades.filter((a: any) => a.estado === 'validado').length;
+             const porcentaje = total ? Math.round((validadas / total) * 100) : 0;
+             return (
+               <>
+                 <LinearProgress
+                   variant="determinate"
+                   value={porcentaje}
+                   sx={{ height: 8, borderRadius: 5, mb: 1 }}
+                 />
+                 <Typography variant="body2" sx={{ mb: 2 }}>
+                   {t('residentPhases.validatedProgress', { percent: porcentaje })}
+                 </Typography>
+               </>
+             );
+           })()}
  
-     const req = { params: { id: 'p1', index: '0' }, body: {} };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+           {item.estadoGeneral !== 'bloqueada' ? (
+             <List>
+               {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+                 item.actividades.map((act: any, idx: number) => (
+                   <ListItem key={idx}>
+-                  {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
+-                  {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
+-                  {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
+-                  {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
++                  {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'success.main', mr: 1 }} />}
++                  {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'info.main', mr: 1 }} />}
++                  {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'error.main', mr: 1 }} />}
++                  {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'text.secondary', mr: 1 }} />}
+                   <ListItemText
+                     primary={act.nombre || t('residentPhases.unnamedActivity')}
+                     secondary={
+                       <>
+                         <Typography variant="body2" color="text.secondary">
+                           {t('residentPhases.activityType', { type: act.tipo })}
+                         </Typography>
+                         {act.comentariosResidente && (
+                           <Typography variant="body2" color="text.secondary">
+                             {t('residentPhases.comment')}: {act.comentariosResidente}
+                           </Typography>
+                         )}
+                         {act.fecha && (
+                           <Typography variant="body2" color="text.secondary">
+                             {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
+                           </Typography>
+                         )}
+                         {act.tipo === 'cirugia' && act.estado !== 'pendiente' && (
+                           <>
+                             {(act.cirugia?.name || act.otraCirugia) && (
+                               <Typography variant="body2" color="text.secondary">
+                                 {t('residentPhases.surgeryType', {
+                                   type: act.cirugia?.name || act.otraCirugia
+                                 })}
+                               </Typography>
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 08d47521315033ea8e41c1c756441dbb162f71d1..35d11d59549aa0b98084a634c650ab4cca174611 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -496,51 +496,51 @@ const ResidenteFases: React.FC = () => {
+             <Typography variant="body2" color="text.secondary">
+               {t('residentPhases.phaseLocked')}
+             </Typography>
+           )}
+         </AccordionDetails>
+       </Accordion>
+     );
+   })
+ ) : (
+   <Alert severity="info">{t('residentPhases.noProgress')}</Alert>
+ )}
+       {allValidado && (
+         <Box textAlign="center" mt={2}>
+           <Button
+             variant="contained"
+             onClick={handleDescargarCertificado}
+             disabled={downloadLoading}
+           >
+             {t('residentProgress.downloadCertificate')}
+           </Button>
+         </Box>
+       )}
  
-     await marcarActividadCompletada(req, res, jest.fn());
+       <Backdrop
+         open={downloadLoading}
+-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
++        sx={{ color: 'common.white', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+       >
+         <CircularProgress color="inherit" />
+       </Backdrop>
  
--    expect(progreso.populate).toHaveBeenCalledWith(['fase', 'actividades.actividad']);
-+    expect(progreso.populate).toHaveBeenCalledWith([
-+      'fase',
-+      'actividades.actividad',
-+      'actividades.cirugia'
-+    ]);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: progreso });
-   });
-+
-+  test('creates validation notifications and avoids duplicates', async () => {
-+    const progreso = {
-+      _id: 'p1',
-+      residente: {
-+        nombre: 'Res',
-+        apellidos: 'Dent',
-+        tutor: 't1',
-+        profesor: 't1'
-+      },
-+      actividades: [
-+        { estado: 'pendiente', actividad: { nombre: 'Act', requiereValidacion: true } }
-+      ],
-+      save: jest.fn().mockResolvedValue(),
-+      populate: jest.fn().mockResolvedValue()
-+    };
-+
-+    const query = { populate: jest.fn().mockResolvedValue(progreso) };
-+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
-+    const createSpy = jest.spyOn(Notificacion, 'create').mockResolvedValue({});
-+
-+    const req = { params: { id: 'p1', index: '0' }, body: {} };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+
-+    await marcarActividadCompletada(req, res, jest.fn());
-+
-+    expect(createSpy).toHaveBeenCalledTimes(1);
-+    expect(createSpy).toHaveBeenCalledWith(
-+      expect.objectContaining({ usuario: 't1', tipo: 'validacion', enlace: '/dashboard/validaciones' })
-+    );
-+  });
-+
-+  test('creates notifications for both tutor and profesor', async () => {
-+    const progreso = {
-+      _id: 'p2',
-+      residente: {
-+        nombre: 'Res',
-+        apellidos: 'Dent',
-+        tutor: 't1',
-+        profesor: 'pr1'
-+      },
-+      actividades: [
-+        { estado: 'pendiente', actividad: { nombre: 'Act', requiereValidacion: true } }
-+      ],
-+      save: jest.fn().mockResolvedValue(),
-+      populate: jest.fn().mockResolvedValue()
-+    };
-+
-+    const query = { populate: jest.fn().mockResolvedValue(progreso) };
-+    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
-+    const createSpy = jest.spyOn(Notificacion, 'create').mockResolvedValue({});
-+
-+    const req = { params: { id: 'p2', index: '0' }, body: {} };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+
-+    await marcarActividadCompletada(req, res, jest.fn());
-+
-+    expect(createSpy).toHaveBeenCalledTimes(2);
-+    expect(createSpy).toHaveBeenNthCalledWith(
-+      1,
-+      expect.objectContaining({ usuario: 't1', tipo: 'validacion', enlace: '/dashboard/validaciones' })
-+    );
-+    expect(createSpy).toHaveBeenNthCalledWith(
-+      2,
-+      expect.objectContaining({ usuario: 'pr1', tipo: 'validacion', enlace: '/dashboard/validaciones' })
-+    );
-+  });
- });
+ 
+ 
+ 
+       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+         <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
+         <DialogContent>
+           <TextField
+             label={t('residentPhases.dialog.date')}
+             type="date"
+             value={fecha}
+             onChange={(e) => setFecha(e.target.value)}
+             fullWidth
+             margin="normal"
+             InputLabelProps={{ shrink: true }}
+           />
+           <TextField
+             label={t('residentPhases.dialog.comment')}
+             value={comentario}
+             onChange={(e) => setComentario(e.target.value)}
+             fullWidth
+             multiline
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 08d47521315033ea8e41c1c756441dbb162f71d1..35d11d59549aa0b98084a634c650ab4cca174611 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -677,33 +677,33 @@ const ResidenteFases: React.FC = () => {
+             }
+             arrow
+             disableHoverListener={botonConfirmarHabilitado}
+           >
+             <span>
+               <Button
+                 onClick={handleCompletarActividad}
+                 variant="contained"
+                 disabled={!botonConfirmarHabilitado}
+               >
+                 {t('residentPhases.dialog.confirm')}
+               </Button>
+             </span>
+           </Tooltip>
+         </DialogActions>
+ 
+       </Dialog>
+ 
+       <Snackbar
+         open={snackbarOpen}
+         autoHideDuration={4000}
+         onClose={handleCloseSnackbar}
+         message={snackbarMsg}
+         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+         ContentProps={{
+-          sx: { bgcolor: snackbarError ? 'error.main' : 'success.main', color: 'white' }
++          sx: { bgcolor: snackbarError ? 'error.main' : 'success.main', color: 'common.white' }
+         }}
+       />
+     </Box>
+   );
+ };
+ 
+ export default ResidenteFases;
+diff --git a/client/src/pages/dashboard/ResidenteProgreso.tsx b/client/src/pages/dashboard/ResidenteProgreso.tsx
+index fce2682ee8b74c254493246ff9f0fdd21079b6a0..5c09cb78e5ef1961d8017ad3c345feea0aa804f2 100644
+--- a/client/src/pages/dashboard/ResidenteProgreso.tsx
++++ b/client/src/pages/dashboard/ResidenteProgreso.tsx
+@@ -88,33 +88,33 @@ const ResidenteProgreso: React.FC = () => {
+   return (
+     <Box>
+       <Typography variant="h4" component="h1" gutterBottom>
+         {t('residentProgress.title')}
+       </Typography>
+       <Box display="flex" flexWrap="wrap" gap={2}>
+         {phaseStats.map(p => (
+           <Paper key={p.faseNombre} sx={{ p: 2 }}>
+             <PhaseProgressChart
+               phaseName={p.faseNombre}
+               pendiente={p.counts.pendiente}
+               completado={p.counts.completado}
+               rechazado={p.counts.rechazado}
+               validado={p.counts.validado}
+             />
+           </Paper>
+         ))}
+       </Box>
+       {allValidado && (
+         <Box textAlign="center" mt={2}>
+           <Button variant="contained" onClick={handleDescargarCertificado} disabled={downloadLoading}>
+             {t('residentProgress.downloadCertificate')}
+           </Button>
+         </Box>
+       )}
+-      <Backdrop open={downloadLoading} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
++      <Backdrop open={downloadLoading} sx={{ color: 'common.white', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+         <CircularProgress color="inherit" />
+       </Backdrop>
+     </Box>
+   );
+ };
+ 
+ export default ResidenteProgreso;
+diff --git a/client/src/utils/roleChipColors.ts b/client/src/utils/roleChipColors.ts
+index cc08047f84550dc8d9698b7c82f3283dd9c621d0..9c9f0e7419182d30006d2e0df1131f0398e70d26 100644
+--- a/client/src/utils/roleChipColors.ts
++++ b/client/src/utils/roleChipColors.ts
+@@ -1,16 +1,16 @@
+ import { SxProps, Theme } from '@mui/material/styles';
+ import { grey } from '@mui/material/colors';
+ 
+ const roleChipColors: Record<string, SxProps<Theme>> = {
+-  administrador: { bgcolor: 'error.main', color: 'white' },
+-  csm: { bgcolor: 'success.main', color: 'white' },
+-  tutor: { bgcolor: 'primary.main', color: 'white' },
+-  profesor: { bgcolor: 'primary.main', color: 'white' },
+-  participante: { bgcolor: grey[500], color: 'white' },
+-  residente: { bgcolor: grey[500], color: 'white' },
++  administrador: { bgcolor: 'error.main', color: 'common.white' },
++  csm: { bgcolor: 'success.main', color: 'common.white' },
++  tutor: { bgcolor: 'primary.main', color: 'common.white' },
++  profesor: { bgcolor: 'primary.main', color: 'common.white' },
++  participante: { bgcolor: grey[500], color: 'common.white' },
++  residente: { bgcolor: grey[500], color: 'common.white' },
+ };
+ 
+ export const getRoleChipSx = (role?: string): SxProps<Theme> =>
+-  roleChipColors[role ?? ''] || { bgcolor: grey[500], color: 'white' };
++  roleChipColors[role ?? ''] || { bgcolor: grey[500], color: 'common.white' };
+ 
+ export default roleChipColors;
