@@ -401,6 +401,9 @@
     "noTitle": "Sense títol",
     "phaseStatusLabel": "Estat fase",
     "activityStatusLabel": "Estat activitat",
+    "masterStatusLabel": "Estat per a totes les activitats",
+    "revert": "Revertir",
+    "confirmBulkChange": "Segur que vols canviar l'estat de totes les activitats?",
     "phaseStatus": {
       "blocked": "Blocada",
       "inProgress": "En progrés",

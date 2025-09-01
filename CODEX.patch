@@ -1,129 +1,449 @@
-diff --git a/client/src/context/ColorModeContext.test.tsx b/client/src/context/ColorModeContext.test.tsx
-index cbf8ffd0e18a6564a2c902e13888fc9851a10366..9cd2d6a614dcd6833a16ffa34bc1293db4cda6c9 100644
---- a/client/src/context/ColorModeContext.test.tsx
-+++ b/client/src/context/ColorModeContext.test.tsx
-@@ -1,39 +1,64 @@
- import React from 'react';
- import { render, screen, fireEvent } from '@testing-library/react';
-+import { useTheme } from '@mui/material/styles';
- import { ColorModeProvider, useColorMode } from './ColorModeContext';
+diff --git a/client/src/pages/dashboard/AdminProgresoDetalle.tsx b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+index c4a56e5a6fbd3220ee9d5911fc55ff616cdfa654..a157e370ac5f1f49f9b97d0075171a6d62b7c7d1 100644
+--- a/client/src/pages/dashboard/AdminProgresoDetalle.tsx
++++ b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+@@ -64,50 +64,52 @@ interface ProgresoFase {
+   estadoGeneral: string;
+   actividades: Actividad[];
+ }
  
- const TestComponent = () => {
-   const { mode, toggleColorMode } = useColorMode();
+ interface UserInfo {
+   nombre: string;
+   apellidos: string;
+ }
+ 
+ const AdminProgresoDetalle: React.FC = () => {
+   const { userId } = useParams();
+   const navigate = useNavigate();
+   const { user } = useAuth();
+   const isAdmin = user?.rol === 'administrador';
+   const { t } = useTranslation();
+   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
+   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [apiError, setApiError] = useState<string | null>(null);
+   const [snackbar, setSnackbar] = useState({
+     open: false,
+     message: '',
+     severity: 'error' as 'error' | 'success'
+   });
++  const [bulkStatus, setBulkStatus] = useState<Record<string, string>>({});
++  const [previousActivityStates, setPreviousActivityStates] = useState<Record<string, string[]>>({});
+ 
+   useEffect(() => {
+     const fetchData = async () => {
+       try {
+         const [userRes, progRes] = await Promise.all([
+           api.get(`/users/${userId}`),
+           api.get(`/progreso/residente/${userId}`)
+         ]);
+         setUserInfo(userRes.data.data || userRes.data);
+         setProgresos(progRes.data.data || progRes.data || []);
+       } catch (err: any) {
+         setError(err.response?.data?.error || 'Error al cargar el progreso');
+       } finally {
+         setLoading(false);
+       }
+     };
+     fetchData();
+   }, [userId]);
+ 
+   const handleCloseSnackbar = () => {
+     setSnackbar({ ...snackbar, open: false });
+   };
+ 
+   const handlePhaseStatusChange = async (
+     progresoId: string,
+diff --git a/client/src/pages/dashboard/AdminProgresoDetalle.tsx b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+index c4a56e5a6fbd3220ee9d5911fc55ff616cdfa654..a157e370ac5f1f49f9b97d0075171a6d62b7c7d1 100644
+--- a/client/src/pages/dashboard/AdminProgresoDetalle.tsx
++++ b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+@@ -133,50 +135,112 @@ const AdminProgresoDetalle: React.FC = () => {
+ 
+   const handleActivityStatusChange = async (
+     progresoId: string,
+     index: number,
+     estado: string
+   ) => {
+     try {
+       setApiError(null);
+       const res = await api.post('/admin/cambiar-estado-actividad', {
+         progresoId,
+         index,
+         estado
+       });
+       const updated = res.data.data;
+       setProgresos((prev) =>
+         prev.map((p) => (p._id === updated._id ? updated : p))
+       );
+       setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
+     } catch (err: any) {
+       const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
+       setApiError(message);
+       setSnackbar({ open: true, message, severity: 'error' });
+     }
+   };
+ 
++  const handleBulkStatusChange = async (
++    progresoId: string,
++    estado: string
++  ) => {
++    if (!window.confirm(t('adminProgressDetail.confirmBulkChange'))) return;
++
++    const progreso = progresos.find((p) => p._id === progresoId);
++    const prevStates = progreso?.actividades.map((a) => a.estado || 'pendiente') || [];
++    setPreviousActivityStates((prev) => ({ ...prev, [progresoId]: prevStates }));
++
++    try {
++      setApiError(null);
++      const res = await api.post('/admin/cambiar-estados-actividades', {
++        progresoId,
++        estado
++      });
++      const updated = res.data.data;
++      setProgresos((prev) =>
++        prev.map((p) => (p._id === updated._id ? updated : p))
++      );
++      setBulkStatus((prev) => ({ ...prev, [progresoId]: '' }));
++      setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
++    } catch (err: any) {
++      const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
++      setApiError(message);
++      setSnackbar({ open: true, message, severity: 'error' });
++    }
++  };
++
++  const handleBulkRevert = async (progresoId: string) => {
++    const prevStates = previousActivityStates[progresoId];
++    if (!prevStates) return;
++    try {
++      setApiError(null);
++      let updated: ProgresoFase | null = null;
++      for (let i = 0; i < prevStates.length; i++) {
++        const res = await api.post('/admin/cambiar-estado-actividad', {
++          progresoId,
++          index: i,
++          estado: prevStates[i]
++        });
++        updated = res.data.data;
++      }
++      if (updated) {
++        setProgresos((prev) =>
++          prev.map((p) => (p._id === updated!._id ? updated! : p))
++        );
++        setSnackbar({ open: true, message: t('adminProgressDetail.activityUpdateSuccess'), severity: 'success' });
++      }
++      setPreviousActivityStates((prev) => {
++        const copy = { ...prev };
++        delete copy[progresoId];
++        return copy;
++      });
++      setBulkStatus((prev) => ({ ...prev, [progresoId]: '' }));
++    } catch (err: any) {
++      const message = err.response?.data?.error || t('adminProgressDetail.activityUpdateError');
++      setApiError(message);
++      setSnackbar({ open: true, message, severity: 'error' });
++    }
++  };
++
+   if (loading) {
+     return (
+       <Box display="flex" justifyContent="center" mt={2}>
+         <CircularProgress />
+       </Box>
+     );
+   }
+ 
+   if (error) return <Alert severity="error">{error}</Alert>;
+ 
    return (
-     <div>
-       <span data-testid="mode">{mode}</span>
-       <button onClick={toggleColorMode}>toggle</button>
-     </div>
-   );
- };
+     <Box>
+       <Box display="flex" justifyContent="space-between" alignItems="center">
+         <Typography variant="h4" gutterBottom>
+           {userInfo
+             ? t('adminProgressDetail.titleWithName', {
+                 name: userInfo.nombre,
+                 surname: userInfo.apellidos
+               })
+             : t('adminProgressDetail.title')}
+         </Typography>
+         <Button variant="contained" onClick={() => navigate('/dashboard/progreso-usuarios')}>
+           {t('adminProgressDetail.back')}
+         </Button>
+       </Box>
+diff --git a/client/src/pages/dashboard/AdminProgresoDetalle.tsx b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+index c4a56e5a6fbd3220ee9d5911fc55ff616cdfa654..a157e370ac5f1f49f9b97d0075171a6d62b7c7d1 100644
+--- a/client/src/pages/dashboard/AdminProgresoDetalle.tsx
++++ b/client/src/pages/dashboard/AdminProgresoDetalle.tsx
+@@ -239,50 +303,85 @@ const AdminProgresoDetalle: React.FC = () => {
+                         label={t('adminProgressDetail.phaseStatusLabel')}
+                         onChange={(e) =>
+                           handlePhaseStatusChange(item._id, e.target.value as string)
+                         }
+                       >
+                         <MenuItem value="bloqueada">
+                           {t('adminProgressDetail.phaseStatus.blocked')}
+                         </MenuItem>
+                         <MenuItem value="en progreso">
+                           {t('adminProgressDetail.phaseStatus.inProgress')}
+                         </MenuItem>
+                         <MenuItem value="completado">
+                           {t('adminProgressDetail.phaseStatus.completed')}
+                         </MenuItem>
+                         <MenuItem value="validado">
+                           {t('adminProgressDetail.phaseStatus.validated')}
+                         </MenuItem>
+                       </Select>
+                     </FormControl>
+                   )}
+                 </Box>
+                 <LinearProgress variant="determinate" value={porcentaje} sx={{ height: 8, borderRadius: 5, mb: 1 }} />
+                 <Typography variant="body2" sx={{ mb: 2 }}>
+                   {t('adminProgressDetail.validatedProgress', { percent: porcentaje })}
+                 </Typography>
++                {isAdmin && (
++                  <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
++                    <FormControl size="small" sx={{ minWidth: 160, mr: 2 }}>
++                      <InputLabel id={`bulk-${item._id}-estado-label`}>
++                        {t('adminProgressDetail.masterStatusLabel')}
++                      </InputLabel>
++                      <Select
++                        labelId={`bulk-${item._id}-estado-label`}
++                        value={bulkStatus[item._id] || ''}
++                        label={t('adminProgressDetail.masterStatusLabel')}
++                        onChange={(e) =>
++                          handleBulkStatusChange(item._id, e.target.value as string)
++                        }
++                      >
++                        <MenuItem value="pendiente">
++                          {t('adminProgressDetail.activityStatus.pending')}
++                        </MenuItem>
++                        <MenuItem value="completado">
++                          {t('adminProgressDetail.activityStatus.completed')}
++                        </MenuItem>
++                        <MenuItem value="validado">
++                          {t('adminProgressDetail.activityStatus.validated')}
++                        </MenuItem>
++                        <MenuItem value="rechazado">
++                          {t('adminProgressDetail.activityStatus.rejected')}
++                        </MenuItem>
++                      </Select>
++                    </FormControl>
++                    {previousActivityStates[item._id] && (
++                      <Button variant="outlined" onClick={() => handleBulkRevert(item._id)}>
++                        {t('adminProgressDetail.revert')}
++                      </Button>
++                    )}
++                  </Box>
++                )}
+                 <List>
+                   {item.actividades.map((act, idx) => (
+                     <ListItem key={idx}>
+                       {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
+                       {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
+                       {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
+                       {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
+                       <ListItemText
+                         primary={act.nombre || t('adminProgressDetail.noActivityName')}
+                         secondary={
+                           <>
+                             {act.fecha && (
+                               <Typography variant="body2" color="text.secondary">
+                                 {t('adminProgressDetail.completedOn', {
+                                   date: formatDayMonthYear(act.fecha)
+                                 })}
+                               </Typography>
+                             )}
+                             {act.fechaValidacion && (
+                               <Typography variant="body2" color="text.secondary">
+                                 {t('adminProgressDetail.validatedOn', {
+                                   date: formatDayMonthYear(act.fechaValidacion)
+                                 })}
+                               </Typography>
+                             )}
+diff --git a/src/controllers/adminController.js b/src/controllers/adminController.js
+index ff82989cd29b1b49c247fbd56b7e95fb7cdaae45..b9a042dc6b5c98dbeb5d53b564f89b2c31a2409d 100644
+--- a/src/controllers/adminController.js
++++ b/src/controllers/adminController.js
+@@ -62,50 +62,94 @@ const updateActivityStatus = async (req, res, next) => {
+     }
  
-+const ThemeConsumer = () => {
-+  const theme = useTheme();
-+  return (
-+    <span data-testid="info">
-+      {theme.palette.info.main}-{theme.palette.info.contrastText}
-+    </span>
-+  );
-+};
-+
- beforeEach(() => {
-   localStorage.clear();
- });
+     const actividad = progreso.actividades[index];
+     actividad.estado = estado;
  
- test('default mode is light', () => {
-   render(
-     <ColorModeProvider>
-       <TestComponent />
-     </ColorModeProvider>
-   );
-   expect(screen.getByTestId('mode')).toHaveTextContent('light');
- });
+     if (estado === 'completado') {
+       actividad.completada = true;
+       actividad.fechaRealizacion = actividad.fechaRealizacion || new Date();
+     }
+     if (estado === 'validado') {
+       actividad.fechaValidacion = new Date();
+     }
+     if (estado === 'rechazado') {
+       actividad.fechaRechazo = new Date();
+     }
  
- test('toggleColorMode switches mode and persists choice', () => {
-   render(
-     <ColorModeProvider>
-       <TestComponent />
-     </ColorModeProvider>
-   );
+     await progreso.save();
+     await updatePhaseStatus(progreso);
  
-   fireEvent.click(screen.getByText('toggle'));
- 
-   expect(screen.getByTestId('mode')).toHaveTextContent('dark');
-   expect(localStorage.getItem('colorMode')).toBe('dark');
- });
-+
-+test('info palette updates with mode', () => {
-+  render(
-+    <ColorModeProvider>
-+      <TestComponent />
-+      <ThemeConsumer />
-+    </ColorModeProvider>
-+  );
-+
-+  expect(screen.getByTestId('info')).toHaveTextContent('#1976d2-#fff');
-+
-+  fireEvent.click(screen.getByText('toggle'));
-+
-+  expect(screen.getByTestId('info')).toHaveTextContent('#90caf9-#000');
-+});
-diff --git a/client/src/context/ColorModeContext.tsx b/client/src/context/ColorModeContext.tsx
-index 2b5551077192c5ab6253f26ce34833a56ec8d76d..6122fd3330819f6036cdf270aaa3978d9f4d5684 100644
---- a/client/src/context/ColorModeContext.tsx
-+++ b/client/src/context/ColorModeContext.tsx
-@@ -26,51 +26,54 @@ const getInitialMode = (): PaletteMode => {
-   } catch {
-     return 'light';
+     res.status(200).json({ success: true, data: progreso });
+   } catch (err) {
+     next(err);
    }
  };
  
- const getTheme = (mode: PaletteMode) =>
-   createTheme({
-     palette: {
-       mode,
-       primary: {
-         main: '#1E5B94',
-         light: '#4c7fb3',
-         dark: '#153e67',
-       },
-       secondary: {
-         main: '#6AB023',
-         light: '#8cc94f',
-         dark: '#4a7b18',
-       },
-       background: {
-         default: mode === 'light' ? '#f5f5f5' : '#121212',
-         paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
-       },
-       error: { main: '#d32f2f' },
-       warning: { main: '#ff9800' },
--      info: { main: '#1A2B3C' },
-+      info: {
-+        main: mode === 'light' ? '#1976d2' : '#90caf9',
-+        contrastText: mode === 'light' ? '#fff' : '#000',
-+      },
-       success: { main: '#4caf50' },
-     },
-     typography: {
-       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-       h1: { fontWeight: 500 },
-       h2: { fontWeight: 500 },
-       h3: { fontWeight: 500 },
-       h4: { fontWeight: 500 },
-       h5: { fontWeight: 500 },
-       h6: { fontWeight: 500 },
-     },
-     shape: { borderRadius: 8 },
-     components: {
-       MuiButton: {
-         styleOverrides: {
-           root: {
-             textTransform: 'none',
-             fontWeight: 500,
-           },
-         },
-       },
-       MuiCard: {
-         styleOverrides: {
-           root: {
-             borderRadius: 8,
++const bulkUpdateActivityStatus = async (req, res, next) => {
++  try {
++    const { progresoId, estado } = req.body;
++
++    const progreso = await ProgresoResidente
++      .findById(progresoId)
++      .populate(['fase', 'residente']);
++    if (!progreso) {
++      return next(new ErrorResponse('Progreso no encontrado', 404));
++    }
++
++    if (progreso.estadoGeneral !== 'en progreso') {
++      return next(
++        new ErrorResponse(
++          'Solo se puede editar el estado de la actividad mientras la fase está en progreso',
++          400
++        )
++      );
++    }
++
++    progreso.actividades.forEach((actividad) => {
++      actividad.estado = estado;
++
++      if (estado === 'completado') {
++        actividad.completada = true;
++        actividad.fechaRealizacion = actividad.fechaRealizacion || new Date();
++      }
++      if (estado === 'validado') {
++        actividad.fechaValidacion = new Date();
++      }
++      if (estado === 'rechazado') {
++        actividad.fechaRechazo = new Date();
++      }
++    });
++
++    await progreso.save();
++    await updatePhaseStatus(progreso);
++
++    res.status(200).json({ success: true, data: progreso });
++  } catch (err) {
++    next(err);
++  }
++};
++
+ const updatePhaseStatusAdmin = async (req, res, next) => {
+   try {
+     const { progresoId, estadoGeneral } = req.body;
+     const progreso = await ProgresoResidente.findById(progresoId).populate(['fase','residente']);
+     if (!progreso) {
+       return next(new ErrorResponse('Progreso no encontrado', 404));
+     }
+ 
+    // Permitir cambios desde cualquier estado a 'en progreso' o 'bloqueada'.
+     // Al volver a estos estados limpiamos fechaFin y validadoPor
+     if (estadoGeneral === 'en progreso' || estadoGeneral === 'bloqueada') {
+       progreso.estadoGeneral = estadoGeneral;
+       progreso.fechaFin = undefined;
+       progreso.validadoPor = undefined;
+       await progreso.save();
+       return res.status(200).json({ success: true, data: progreso });
+     }
+ 
+     // No se permite pasar de bloqueada directamente a completado o validado
+     if (progreso.estadoGeneral === 'bloqueada' &&
+         (estadoGeneral === 'completado' || estadoGeneral === 'validado')) {
+       return next(new ErrorResponse('No se puede pasar de bloqueada directamente a completado o validado', 400));
+     }
+ 
+     if (estadoGeneral === 'completado') {
+diff --git a/src/controllers/adminController.js b/src/controllers/adminController.js
+index ff82989cd29b1b49c247fbd56b7e95fb7cdaae45..b9a042dc6b5c98dbeb5d53b564f89b2c31a2409d 100644
+--- a/src/controllers/adminController.js
++++ b/src/controllers/adminController.js
+@@ -122,27 +166,28 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
+       if (progreso.estadoGeneral !== 'completado') {
+         return next(new ErrorResponse('La fase debe estar completada antes de validarla', 400));
+       }
+       const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
+       if (!todasValidadas) {
+         return next(new ErrorResponse('Todas las actividades deben estar validadas para marcar la fase como validada', 400));
+       }
+     }
+ 
+     progreso.estadoGeneral = estadoGeneral;
+     await progreso.save();
+     
+     if (estadoGeneral === 'validado') {
+       await updatePhaseStatus(progreso);
+     }
+ 
+     res.status(200).json({ success: true, data: progreso });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ module.exports = {
+   getAllActiveProgress,
+   updateActivityStatus,
+-  updatePhaseStatusAdmin
++  updatePhaseStatusAdmin,
++  bulkUpdateActivityStatus
+ };
+diff --git a/src/routes/adminRoutes.js b/src/routes/adminRoutes.js
+index 7ba5b700062314147db3db5ed455ed4144951db2..1935a2f6372d1a03ac063d3dd9a6ee842deef475 100644
+--- a/src/routes/adminRoutes.js
++++ b/src/routes/adminRoutes.js
+@@ -1,35 +1,41 @@
+ const express = require('express');
+ const router = express.Router();
+ const { protect, authorize } = require('../middleware/auth');
+ const { descargarCertificado } = require('../controllers/certificadoController');
+-const { updateActivityStatus, updatePhaseStatusAdmin } = require('../controllers/adminController');
++const { updateActivityStatus, updatePhaseStatusAdmin, bulkUpdateActivityStatus } = require('../controllers/adminController');
+ const { Role } = require('../utils/roles');
+ 
+ router.use(protect);
+ 
+ router.get(
+   '/:id',
+   authorize(
+     Role.RESIDENTE,
+     Role.PARTICIPANTE,
+     Role.TUTOR,
+     Role.CSM,
+     Role.PROFESOR,
+     Role.ADMINISTRADOR
+   ),
+   descargarCertificado
+ );
+ 
+ router.post(
+   '/cambiar-estado-fase',
+   authorize(Role.ADMINISTRADOR),
+   updatePhaseStatusAdmin
+ );
+ 
+-router.post(
+-  '/cambiar-estado-actividad',
+-  authorize(Role.ADMINISTRADOR),
+-  updateActivityStatus
+-);
++router.post(
++  '/cambiar-estado-actividad',
++  authorize(Role.ADMINISTRADOR),
++  updateActivityStatus
++);
++
++router.post(
++  '/cambiar-estados-actividades',
++  authorize(Role.ADMINISTRADOR),
++  bulkUpdateActivityStatus
++);
+ 
+ module.exports = router;

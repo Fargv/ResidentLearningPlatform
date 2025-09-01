@@ -554,6 +554,9 @@
     "noTitle": "Sen título",
     "phaseStatusLabel": "Estado da fase",
     "activityStatusLabel": "Estado da actividade",
+    "masterStatusLabel": "Estado para todas as actividades",
+    "revert": "Reverter",
+    "confirmBulkChange": "Estás seguro de que queres cambiar o estado de todas as actividades?",
     "phaseStatus": {
       "blocked": "Bloqueada",
       "inProgress": "En progreso",

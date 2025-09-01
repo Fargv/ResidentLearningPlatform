@@ -558,6 +558,9 @@
     "noTitle": "Untitled",
     "phaseStatusLabel": "Phase status",
     "activityStatusLabel": "Activity status",
+    "masterStatusLabel": "Status for all activities",
+    "revert": "Revert",
+    "confirmBulkChange": "Are you sure you want to change the status of all activities?",
     "phaseStatus": {
       "blocked": "Blocked",
       "inProgress": "In Progress",

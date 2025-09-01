@@ -772,6 +772,9 @@
     "noTitle": "Ohne Titel",
     "phaseStatusLabel": "Phasenstatus",
     "activityStatusLabel": "Aktivitätsstatus",
+    "masterStatusLabel": "Status für alle Aktivitäten",
+    "revert": "Rückgängig",
+    "confirmBulkChange": "Möchten Sie wirklich den Status aller Aktivitäten ändern?",
     "phaseStatus": {
       "blocked": "Gesperrt",
       "inProgress": "In Bearbeitung",

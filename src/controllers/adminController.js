@@ -84,6 +84,50 @@ const updateActivityStatus = async (req, res, next) => {
   }
 };
 
+const bulkUpdateActivityStatus = async (req, res, next) => {
+  try {
+    const { progresoId, estado } = req.body;
+
+    const progreso = await ProgresoResidente
+      .findById(progresoId)
+      .populate(['fase', 'residente']);
+    if (!progreso) {
+      return next(new ErrorResponse('Progreso no encontrado', 404));
+    }
+
+    if (progreso.estadoGeneral !== 'en progreso') {
+      return next(
+        new ErrorResponse(
+          'Solo se puede editar el estado de la actividad mientras la fase está en progreso',
+          400
+        )
+      );
+    }
+
+    progreso.actividades.forEach((actividad) => {
+      actividad.estado = estado;
+
+      if (estado === 'completado') {
+        actividad.completada = true;
+        actividad.fechaRealizacion = actividad.fechaRealizacion || new Date();
+      }
+      if (estado === 'validado') {
+        actividad.fechaValidacion = new Date();
+      }
+      if (estado === 'rechazado') {
+        actividad.fechaRechazo = new Date();
+      }
+    });
+
+    await progreso.save();
+    await updatePhaseStatus(progreso);
+
+    res.status(200).json({ success: true, data: progreso });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const updatePhaseStatusAdmin = async (req, res, next) => {
   try {
     const { progresoId, estadoGeneral } = req.body;
@@ -144,5 +188,6 @@ const updatePhaseStatusAdmin = async (req, res, next) => {
 module.exports = {
   getAllActiveProgress,
   updateActivityStatus,
-  updatePhaseStatusAdmin
+  updatePhaseStatusAdmin,
+  bulkUpdateActivityStatus
 };

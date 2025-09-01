@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const { descargarCertificado } = require('../controllers/certificadoController');
-const { updateActivityStatus, updatePhaseStatusAdmin } = require('../controllers/adminController');
+const { updateActivityStatus, updatePhaseStatusAdmin, bulkUpdateActivityStatus } = require('../controllers/adminController');
 const { Role } = require('../utils/roles');
 
 router.use(protect);
@@ -30,6 +30,12 @@ router.post(
   '/cambiar-estado-actividad',
   authorize(Role.ADMINISTRADOR),
   updateActivityStatus
+);
+
+router.post(
+  '/cambiar-estados-actividades',
+  authorize(Role.ADMINISTRADOR),
+  bulkUpdateActivityStatus
 );
 
 module.exports = router;

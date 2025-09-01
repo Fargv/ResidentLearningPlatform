@@ -552,6 +552,9 @@
     "noTitle": "Izenbururik gabe",
     "phaseStatusLabel": "Fasearen egoera",
     "activityStatusLabel": "Jardueraren egoera",
+    "masterStatusLabel": "Jarduera guztien egoera",
+    "revert": "Leheneratu",
+    "confirmBulkChange": "Ziur zaude jarduera guztien egoera aldatzea nahi duzula?",
     "phaseStatus": {
       "blocked": "Blokeatuta",
       "inProgress": "Prozesuan",
