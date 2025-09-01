@@ -1,62 +1,257 @@
-diff --git a/client/src/pages/dashboard/Notificaciones.tsx b/client/src/pages/dashboard/Notificaciones.tsx
-index ae0e014ff2cf711083f6b244fd612312e5b951ff..e1a9cbbd98b90a4cbbfca9c14941a725c3d7fec3 100644
---- a/client/src/pages/dashboard/Notificaciones.tsx
-+++ b/client/src/pages/dashboard/Notificaciones.tsx
-@@ -144,51 +144,56 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
-                 aria-controls="notificaciones-tabpanel-1"
-               />
-             </Tabs>
-           </Box>
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index 9c2edd02f9e5fea7a4a795ab76b63b45d623cb27..d92135612f4b8ef785b890e2d8012e8cf2254c00 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -582,106 +582,141 @@ const getEstadisticasResidente = async (req, res, next) => {
+       const total = item.actividades.length;
+       const completadas = item.actividades.filter(act => act.estado === 'validado').length;
+       return {
+         fase: item.fase,
+         total,
+         completadas,
+         porcentaje: total ? Math.round((completadas / total) * 100) : 0
+       };
+     });
  
-           <TabPanel value={tabValue} index={0}>
-             {pendientes.length === 0 ? (
-               <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-                 {t('notifications.empty.pending')}
-               </Typography>
-             ) : (
-               <TableContainer component={Paper}>
-                 <Table size="small">
-                   <TableHead>
-                     <TableRow>
-                       <TableCell>{t('notifications.table.message')}</TableCell>
-                       <TableCell>{t('notifications.table.date')}</TableCell>
-                       <TableCell>{t('notifications.table.type')}</TableCell>
-                       <TableCell align="right">{t('notifications.table.actions')}</TableCell>
-                     </TableRow>
-                   </TableHead>
-                   <TableBody>
-                     {pendientes.map((n) => (
-                       <TableRow
-                         key={n._id}
--                        onClick={() => n.enlace && navigate(n.enlace)}
-+                        onClick={async () => {
-+                          if (n.enlace) {
-+                            await handleMarcarLeida(n._id);
-+                            navigate(n.enlace);
-+                          }
-+                        }}
-                         sx={{ cursor: n.enlace ? 'pointer' : 'default' }}
-                       >
-                         <TableCell>{n.mensaje}</TableCell>
-                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
-                         <TableCell>
-                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}
-                         </TableCell>
-                         <TableCell align="right">
-                           <IconButton
-                             aria-label="read"
-                             onClick={(e) => {
-                               e.stopPropagation();
-                               handleMarcarLeida(n._id);
-                             }}
-                           >
-                             <DoneIcon />
-                           </IconButton>
-                         </TableCell>
-                       </TableRow>
-                     ))}
-                   </TableBody>
-                 </Table>
-               </TableContainer>
-             )}
-           </TabPanel>
+     res.status(200).json({
+       success: true,
+       data: estadisticas
+     });
+   } catch (err) {
+     console.error("Error en getEstadisticasResidente:", err);
+     next(err);
+   }
+ };
+ // PUT /api/progreso/:id/actividad/:index
+ const marcarActividadCompletada = async (req, res, next) => {
+   try {
+     const { id, index } = req.params;
+     const { fechaRealizacion, comentariosResidente, cirugia, otraCirugia, nombreCirujano, porcentajeParticipacion } = req.body;
+ 
+-    const progreso = await ProgresoResidente.findById(id);
++    const progreso = await ProgresoResidente.findById(id).populate([
++      'residente',
++      'actividades.actividad'
++    ]);
+     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
+       return next(new ErrorResponse('Progreso o actividad no válida', 404));
+     }
+ 
+     const actividadOriginal = progreso.actividades[index];
+     if (!actividadOriginal || !actividadOriginal.actividad) {
+       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
+     }
+ 
+     const actividadExistente = progreso.actividades[index];
++    const estadoPrevio = actividadExistente.estado;
+ 
+     if (actividadOriginal.tipo === 'cirugia') {
+       const porcentaje = Number(porcentajeParticipacion);
+       if (!nombreCirujano) {
+         return next(new ErrorResponse('Nombre del cirujano es requerido', 400));
+       }
+       if (!cirugia && !otraCirugia) {
+         return next(new ErrorResponse('Debe especificar la cirugía', 400));
+       }
+       if (![0, 25, 50, 75, 100].includes(porcentaje)) {
+         return next(new ErrorResponse('Porcentaje de participación inválido', 400));
+       }
+       actividadExistente.cirugia = cirugia;
+       actividadExistente.otraCirugia = otraCirugia;
+       actividadExistente.nombreCirujano = nombreCirujano;
+       actividadExistente.porcentajeParticipacion = porcentaje;
+     }
+ 
+     actividadExistente.estado = 'completado';
+     actividadExistente.completada = true;
+     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+     actividadExistente.comentariosResidente = comentariosResidente;
+ 
+     // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
+     if (req.files && req.files.adjunto) {
+       const file = req.files.adjunto;
+       const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
+       if (!allowed.includes(file.mimetype)) {
+         return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+       }
+       if (file.size > 5 * 1024 * 1024) {
+         return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+       }
+       await Adjunto.create({
+         progreso: id,
+         usuario: req.user._id,
+         actividadIndex: Number(index),
+         nombreArchivo: file.name,
+         mimeType: file.mimetype,
+         datos: file.data,
+         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+       });
+     }
+ 
+     await progreso.save();
++
++    if (
++      estadoPrevio === 'pendiente' &&
++      actividadExistente.actividad &&
++      actividadExistente.actividad.requiereValidacion
++    ) {
++      const responsables = [
++        progreso.residente.tutor,
++        progreso.residente.profesor
++      ]
++        .filter(Boolean)
++        .map(id => id.toString());
++
++      const destinatarios = [...new Set(responsables)];
++
++      const mensaje = `El residente ${progreso.residente.nombre} ${progreso.residente.apellidos} ha completado la actividad "${actividadExistente.actividad.nombre}" y requiere validación.`;
++
++      for (const usuario of destinatarios) {
++        await Notificacion.create({
++          usuario,
++          tipo: 'validacion',
++          mensaje,
++          enlace: '/dashboard/validaciones',
++          entidadRelacionada: {
++            tipo: 'progreso',
++            id: progreso._id
++          }
++        });
++      }
++    }
++
+     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
+ 
+     res.status(200).json({ success: true, data: progreso });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // GET /api/progreso/tutor/pendientes
+ // @access Private/Tutor|Profesor
+ const getProgresosPendientesDelHospital = async (req, res, next) => {
+   try {
+     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'csm') {
+       return res.status(403).json({ success: false, error: 'No autorizado' });
+     }
+ 
+     const pendientes = await ProgresoResidente.find({
+       estado: { $in: ['pendiente', 'validado', 'rechazado'] }
+     })
+     .populate({
+       path: 'residente',
+       select: 'nombre apellidos hospital sociedad especialidad',
+       match: req.user.rol === 'profesor'
+         ? { sociedad: req.user.sociedad }
+         : req.user.rol === 'tutor'
+diff --git a/tests/marcarActividadCompletada.test.js b/tests/marcarActividadCompletada.test.js
+index df146fd2dbdf13b59dfbef8a96eb1beff43d6d83..51737790318dc745095ef5a8a8ef6986ac3193e5 100644
+--- a/tests/marcarActividadCompletada.test.js
++++ b/tests/marcarActividadCompletada.test.js
+@@ -1,30 +1,99 @@
+ const { marcarActividadCompletada } = require('../src/controllers/progresoController');
+ const ProgresoResidente = require('../src/models/ProgresoResidente');
+-const mongoose = require('mongoose');
++const Notificacion = require('../src/models/Notificacion');
+ 
+ describe('marcarActividadCompletada', () => {
+   afterEach(() => {
+     jest.restoreAllMocks();
+   });
+ 
+   test('populates fase before responding', async () => {
+     const progreso = {
+       actividades: [{ actividad: 'a1' }],
+       save: jest.fn().mockResolvedValue(),
+       populate: jest.fn().mockResolvedValue()
+     };
+ 
+-    jest.spyOn(ProgresoResidente, 'findById').mockResolvedValue(progreso);
+-    jest.spyOn(mongoose, 'model').mockReturnValue({
+-      findById: jest.fn().mockResolvedValue({ tipo: 'teórica' })
+-    });
++    const query = { populate: jest.fn().mockResolvedValue(progreso) };
++    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
+ 
+     const req = { params: { id: 'p1', index: '0' }, body: {} };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await marcarActividadCompletada(req, res, jest.fn());
+ 
+-    expect(progreso.populate).toHaveBeenCalledWith(['fase', 'actividades.actividad']);
++    expect(progreso.populate).toHaveBeenCalledWith([
++      'fase',
++      'actividades.actividad',
++      'actividades.cirugia'
++    ]);
+     expect(res.json).toHaveBeenCalledWith({ success: true, data: progreso });
+   });
++
++  test('creates validation notifications and avoids duplicates', async () => {
++    const progreso = {
++      _id: 'p1',
++      residente: {
++        nombre: 'Res',
++        apellidos: 'Dent',
++        tutor: 't1',
++        profesor: 't1'
++      },
++      actividades: [
++        { estado: 'pendiente', actividad: { nombre: 'Act', requiereValidacion: true } }
++      ],
++      save: jest.fn().mockResolvedValue(),
++      populate: jest.fn().mockResolvedValue()
++    };
++
++    const query = { populate: jest.fn().mockResolvedValue(progreso) };
++    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
++    const createSpy = jest.spyOn(Notificacion, 'create').mockResolvedValue({});
++
++    const req = { params: { id: 'p1', index: '0' }, body: {} };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++
++    await marcarActividadCompletada(req, res, jest.fn());
++
++    expect(createSpy).toHaveBeenCalledTimes(1);
++    expect(createSpy).toHaveBeenCalledWith(
++      expect.objectContaining({ usuario: 't1', tipo: 'validacion', enlace: '/dashboard/validaciones' })
++    );
++  });
++
++  test('creates notifications for both tutor and profesor', async () => {
++    const progreso = {
++      _id: 'p2',
++      residente: {
++        nombre: 'Res',
++        apellidos: 'Dent',
++        tutor: 't1',
++        profesor: 'pr1'
++      },
++      actividades: [
++        { estado: 'pendiente', actividad: { nombre: 'Act', requiereValidacion: true } }
++      ],
++      save: jest.fn().mockResolvedValue(),
++      populate: jest.fn().mockResolvedValue()
++    };
++
++    const query = { populate: jest.fn().mockResolvedValue(progreso) };
++    jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
++    const createSpy = jest.spyOn(Notificacion, 'create').mockResolvedValue({});
++
++    const req = { params: { id: 'p2', index: '0' }, body: {} };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++
++    await marcarActividadCompletada(req, res, jest.fn());
++
++    expect(createSpy).toHaveBeenCalledTimes(2);
++    expect(createSpy).toHaveBeenNthCalledWith(
++      1,
++      expect.objectContaining({ usuario: 't1', tipo: 'validacion', enlace: '/dashboard/validaciones' })
++    );
++    expect(createSpy).toHaveBeenNthCalledWith(
++      2,
++      expect.objectContaining({ usuario: 'pr1', tipo: 'validacion', enlace: '/dashboard/validaciones' })
++    );
++  });
+ });

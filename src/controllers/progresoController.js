@@ -604,7 +604,10 @@ const marcarActividadCompletada = async (req, res, next) => {
     const { id, index } = req.params;
     const { fechaRealizacion, comentariosResidente, cirugia, otraCirugia, nombreCirujano, porcentajeParticipacion } = req.body;
 
-    const progreso = await ProgresoResidente.findById(id);
+    const progreso = await ProgresoResidente.findById(id).populate([
+      'residente',
+      'actividades.actividad'
+    ]);
     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
       return next(new ErrorResponse('Progreso o actividad no válida', 404));
     }
@@ -615,6 +618,7 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     const actividadExistente = progreso.actividades[index];
+    const estadoPrevio = actividadExistente.estado;
 
     if (actividadOriginal.tipo === 'cirugia') {
       const porcentaje = Number(porcentajeParticipacion);
@@ -660,6 +664,37 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     await progreso.save();
+
+    if (
+      estadoPrevio === 'pendiente' &&
+      actividadExistente.actividad &&
+      actividadExistente.actividad.requiereValidacion
+    ) {
+      const responsables = [
+        progreso.residente.tutor,
+        progreso.residente.profesor
+      ]
+        .filter(Boolean)
+        .map(id => id.toString());
+
+      const destinatarios = [...new Set(responsables)];
+
+      const mensaje = `El residente ${progreso.residente.nombre} ${progreso.residente.apellidos} ha completado la actividad "${actividadExistente.actividad.nombre}" y requiere validación.`;
+
+      for (const usuario of destinatarios) {
+        await Notificacion.create({
+          usuario,
+          tipo: 'validacion',
+          mensaje,
+          enlace: '/dashboard/validaciones',
+          entidadRelacionada: {
+            tipo: 'progreso',
+            id: progreso._id
+          }
+        });
+      }
+    }
+
     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
 
     res.status(200).json({ success: true, data: progreso });
