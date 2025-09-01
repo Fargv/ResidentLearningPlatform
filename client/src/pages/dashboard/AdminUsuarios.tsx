@@ -689,14 +689,6 @@ const AdminUsuarios: React.FC = () => {
                 <TableRow key={usuario._id} hover>
                   <TableCell>
                     {usuario.nombre} {usuario.apellidos}
-                    {usuario.rol === "residente" && !usuario.tutor && (
-                      <Chip
-                        color="warning"
-                        label={t("adminUsers.noTutorResident")}
-                        size="small"
-                        sx={{ ml: 1 }}
-                      />
-                    )}
                   </TableCell>
                   <TableCell>{usuario.email}</TableCell>
                   <TableCell>

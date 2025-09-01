@@ -13,16 +13,23 @@ const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
 const { resolveTutor } = require('../utils/resolveTutor');
 
+const legacyRoles = {
+  formador: Role.TUTOR,
+  coordinador: Role.CSM,
+  instructor: Role.PROFESOR,
+  alumno: Role.PARTICIPANTE
+};
+
 const checkAccessCode = async (req, res, next) => {
   try {
     const { codigo } = req.params;
-    const data = await AccessCode.findOne({ codigo });
+    const data = await AccessCode.findOne({ codigo }).lean();
 
     if (!data) {
       return next(new ErrorResponse('Código de acceso inválido', 400));
     }
-
-    res.status(200).json({ success: true, data });
+    const role = legacyRoles[data.rol] || data.rol;
+    res.status(200).json({ success: true, data: { ...data, rol: role } });
   } catch (err) {
     next(err);
   }
@@ -49,7 +56,8 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Código de acceso inválido', 400));
     }
 
-    const { rol, tipo } = access;
+    const { rol: rawRol, tipo } = access;
+    const rol = legacyRoles[rawRol] || rawRol;
 
     let zona = zonaInput;
     if (hospital) {

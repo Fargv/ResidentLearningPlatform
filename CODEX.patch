@@ -1,264 +1,180 @@
-diff --git a/tests/authControllerRegister.test.js b/tests/authControllerRegister.test.js
-index 328966840d85e9f51bf603f9b2f728df7c4abd3d..f62c082b266b63eda631711633a752f022bde684 100644
---- a/tests/authControllerRegister.test.js
-+++ b/tests/authControllerRegister.test.js
-@@ -1,69 +1,71 @@
- const { register } = require('../src/controllers/authController');
- const User = require('../src/models/User');
- const Sociedades = require('../src/models/Sociedades');
-+const Hospital = require('../src/models/Hospital');
- jest.mock('../src/models/AccessCode', () => {
-   let docs = [];
-   return {
-     create: jest.fn(async (doc) => {
-       docs.push({ ...doc });
-       return doc;
-     }),
-     findOne: jest.fn(async (query) =>
-       docs.find((d) => d.codigo === query.codigo) || null
-     ),
-     deleteMany: jest.fn(async () => {
-       docs = [];
-     })
-   };
- });
- const AccessCode = require('../src/models/AccessCode');
- const { inicializarProgresoFormativo } = require('../src/utils/initProgreso');
- const ErrorResponse = require('../src/utils/errorResponse');
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index e4991971ad22b67e2c59ad7cf5222c46473e1435..ada7bda0eb20d4cd76310609d67e869bd6484229 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -1,38 +1,44 @@
+ // userController.js COMPLETO CON INICIALIZACIÓN DEL PROGRESO
+ const ErrorResponse = require('../utils/errorResponse');
+ const User = require('../models/User');
+ const Hospital = require('../models/Hospital');
+ const Invitacion = require('../models/Invitacion');
+ const crypto = require('crypto');
+ const sendEmail = require('../utils/sendEmail');
+ const { createAuditLog } = require('../utils/auditLog');
+ const ProgresoResidente = require('../models/ProgresoResidente');
+ const Sociedades = require('../models/Sociedades');
+ const { inicializarProgresoFormativo } = require('../utils/initProgreso');
+ const { Role } = require('../utils/roles');
+-const { resolveTutor } = require('../utils/resolveTutor');
++
++const legacyRoles = {
++  formador: Role.TUTOR,
++  coordinador: Role.CSM,
++  instructor: Role.PROFESOR,
++  alumno: Role.PARTICIPANTE
++};
  
- jest.mock('../src/utils/initProgreso');
  
- describe('register access codes', () => {
-   afterEach(async () => {
-     jest.restoreAllMocks();
-     await AccessCode.deleteMany();
-   });
  
-   test('ABEXFOR2025 asigna rol tutor y tipo Programa Residentes', async () => {
-     const req = {
-       body: {
-         nombre: 'a',
-         apellidos: 'b',
-         email: 'a@b.com',
-         password: '12345678',
-         codigoAcceso: 'ABEXFOR2025',
-         hospital: 'h1',
-         consentimientoDatos: true
+ 
+ // @desc    Obtener todos los usuarios (admin), usuarios del hospital (tutor)
+ //         o participantes de la sociedad (profesor)
+ // @route   GET /api/users
+ // @access  Private/Admin|Tutor|CSM|Profesor
+ exports.getUsers = async (req, res, next) => {
+   try {
+     let users;
+ 
+     if (req.user.rol === Role.ADMINISTRADOR) {
+       users = await User.find()
+         .populate('hospital')
+         .populate('sociedad')
+         .populate('tutor', 'nombre apellidos');
+     } else if (req.user.rol === Role.TUTOR) {
+       const query = {
+         hospital: req.user.hospital,
+         rol: { $ne: Role.ADMINISTRADOR }
+       };
+       if (req.user.especialidad && req.user.especialidad !== 'ALL') {
+         query.especialidad = req.user.especialidad;
        }
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-     await AccessCode.create({ codigo: 'ABEXFOR2025', rol: 'tutor', tipo: 'Programa Residentes' });
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-     jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'tutor', tipo: 'Programa Residentes', hospital: 'h1' });
- 
-     await register(req, res, jest.fn());
- 
-     expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'tutor', tipo: 'Programa Residentes', hospital: 'h1' }));
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXFOR2025' });
-   });
- 
-   test('ABEXSOCUSER2025 requiere sociedad', async () => {
-     const req = {
-       body: {
-         nombre: 'a',
-         apellidos: 'b',
-         email: 'soc@a.com',
-         password: '12345678',
-         codigoAcceso: 'ABEXSOCUSER2025',
-         consentimientoDatos: true
-       }
-     };
-     await AccessCode.create({ codigo: 'ABEXSOCUSER2025', rol: 'participante', tipo: 'Programa Sociedades' });
-     const next = jest.fn();
-     await register(req, {}, next);
-     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
-diff --git a/tests/authControllerRegister.test.js b/tests/authControllerRegister.test.js
-index 328966840d85e9f51bf603f9b2f728df7c4abd3d..f62c082b266b63eda631711633a752f022bde684 100644
---- a/tests/authControllerRegister.test.js
-+++ b/tests/authControllerRegister.test.js
-@@ -72,26 +74,105 @@ describe('register access codes', () => {
- 
-   test('ABEXSOCUSER2025 crea usuario de sociedad', async () => {
-     const req = {
-       body: {
-         nombre: 'a',
-         apellidos: 'b',
-         email: 'soc@a.com',
-         password: '12345678',
-         codigoAcceso: 'ABEXSOCUSER2025',
-         sociedad: 's1',
-         consentimientoDatos: true
-       }
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-     await AccessCode.create({ codigo: 'ABEXSOCUSER2025', rol: 'participante', tipo: 'Programa Sociedades' });
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Sociedades, 'findOne').mockResolvedValue({ _id: 's1', status: 'ACTIVO' });
-     jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'participante', tipo: 'Programa Sociedades', sociedad: 's1' });
- 
-     await register(req, res, jest.fn());
- 
-     expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'participante', tipo: 'Programa Sociedades', sociedad: 's1' }));
-     expect(inicializarProgresoFormativo).toHaveBeenCalled();
-     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXSOCUSER2025' });
-   });
-+
-+  test('registro de residente con tutor disponible', async () => {
-+    const req = {
-+      body: {
-+        nombre: 'r',
-+        apellidos: 's',
-+        email: 'r@s.com',
-+        password: '12345678',
-+        codigoAcceso: 'ABEXRES2025',
-+        hospital: 'h1',
-+        especialidad: 'URO',
-+        tutor: 'ALL',
-+        consentimientoDatos: true
-+      }
-+    };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+    await AccessCode.create({ codigo: 'ABEXRES2025', rol: 'residente', tipo: 'Programa Residentes' });
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-+    jest
-+      .spyOn(User, 'findOne')
-+      .mockImplementationOnce(() => Promise.resolve(null))
-+      .mockImplementationOnce(() => ({
-+        select: jest.fn().mockResolvedValue({ _id: 't1' })
-+      }));
-+    jest
-+      .spyOn(User, 'create')
-+      .mockResolvedValue({
-+        _id: 'u3',
-+        rol: 'residente',
-+        tutor: 't1',
-+        hospital: 'h1',
-+        tipo: 'Programa Residentes',
-+        especialidad: 'URO'
-+      });
-+
-+    await register(req, res, jest.fn());
-+
-+    expect(User.create).toHaveBeenCalledWith(
-+      expect.objectContaining({ rol: 'residente', tutor: 't1' })
-+    );
-+    expect(inicializarProgresoFormativo).toHaveBeenCalled();
-+    expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXRES2025' });
-+  });
-+
-+  test('registro sin tutor asigna tutor null', async () => {
-+    const req = {
-+      body: {
-+        nombre: 'r2',
-+        apellidos: 's2',
-+        email: 'r2@s.com',
-+        password: '12345678',
-+        codigoAcceso: 'ABEXRES2026',
-+        hospital: 'h1',
-+        especialidad: 'URO',
-+        consentimientoDatos: true
-+      }
-+    };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+    await AccessCode.create({ codigo: 'ABEXRES2026', rol: 'residente', tipo: 'Programa Residentes' });
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-+    jest.spyOn(User, 'findOne').mockResolvedValue(null);
-+    jest
-+      .spyOn(User, 'create')
-+      .mockResolvedValue({
-+        _id: 'u4',
-+        rol: 'residente',
-+        tutor: null,
-+        hospital: 'h1',
-+        tipo: 'Programa Residentes',
-+        especialidad: 'URO'
-+      });
-+
-+    await register(req, res, jest.fn());
-+
-+    expect(User.create).toHaveBeenCalledWith(
-+      expect.objectContaining({ rol: 'residente', tutor: null })
-+    );
-+    expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXRES2026' });
-+  });
- });
-diff --git a/tests/createUserAdmin.test.js b/tests/createUserAdmin.test.js
-index addf45aaf6517ef19120711a934b39a484178665..18a341a4af715347069691083081b01bff561405 100644
---- a/tests/createUserAdmin.test.js
-+++ b/tests/createUserAdmin.test.js
-@@ -1,38 +1,72 @@
--const { createUser } = require('../src/controllers/userController');
- const User = require('../src/models/User');
- const Hospital = require('../src/models/Hospital');
- const Sociedades = require('../src/models/Sociedades');
- const { createAuditLog } = require('../src/utils/auditLog');
-+const { inicializarProgresoFormativo } = require('../src/utils/initProgreso');
-+const { resolveTutor } = require('../src/utils/resolveTutor');
- 
- jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
-+jest.mock('../src/utils/initProgreso');
-+jest.mock('../src/utils/resolveTutor', () => ({ resolveTutor: jest.fn() }));
-+
-+const { createUser } = require('../src/controllers/userController');
- 
- describe('createUser - administrador', () => {
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
- 
-   test('crea administrador sin tipo', async () => {
-     jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'administrador' });
-     const req = {
-       body: {
-         nombre: 'Admin',
-         apellidos: 'Test',
-         email: 'admin@test.com',
-         password: 'pass',
-         rol: 'administrador',
-         tipo: 'invalido'
-       },
-       user: { _id: 'creator' },
-       ip: '::1'
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
- 
-     await createUser(req, res, jest.fn());
- 
-     expect(User.create).toHaveBeenCalledWith(
-       expect.objectContaining({ rol: 'administrador', tipo: undefined })
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index e4991971ad22b67e2c59ad7cf5222c46473e1435..ada7bda0eb20d4cd76310609d67e869bd6484229 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -67,63 +73,65 @@ exports.getUsers = async (req, res, next) => {
+       users.map(async (u) => {
+         const obj = u.toObject();
+         if (u.rol === Role.RESIDENTE || u.rol === Role.PARTICIPANTE) {
+           const existe = await ProgresoResidente.exists({ residente: u._id });
+           obj.tieneProgreso = !!existe;
+         }
+         return obj;
+       })
      );
-     expect(res.status).toHaveBeenCalledWith(201);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: { _id: 'u1', rol: 'administrador' } });
-   });
-+
-+  test('autoasigna tutor al crear residente sin especificarlo', async () => {
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-+    resolveTutor.mockResolvedValue('t1');
-+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'residente', tutor: 't1' });
-+    const req = {
-+      body: {
-+        nombre: 'Res',
-+        apellidos: 'Test',
-+        email: 'res@test.com',
-+        password: 'pass',
-+        rol: 'residente',
-+        tipo: 'Programa Residentes',
-+        hospital: 'h1',
-+        especialidad: 'URO'
-+      },
-+      user: { _id: 'creator' },
-+      ip: '::1'
-+    };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+
-+    await createUser(req, res, jest.fn());
-+
-+    expect(resolveTutor).toHaveBeenCalledWith('ALL', 'h1', 'URO');
-+    expect(User.create).toHaveBeenCalledWith(
-+      expect.objectContaining({ rol: 'residente', tutor: 't1' })
-+    );
-+    expect(inicializarProgresoFormativo).toHaveBeenCalled();
-+  });
- });
+ 
+     res.status(200).json({
+       success: true,
+       count: usersWithFlag.length,
+       data: usersWithFlag
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Crear un usuario desde administración
+ // @route   POST /api/users
+ // @access  Private/Admin
+ exports.createUser = async (req, res, next) => {
+   try {
+-    const {
++    let {
+       nombre,
+       apellidos,
+       email,
+       password,
+       rol,
+       tipo,
+       hospital,
+       sociedad,
+       especialidad,
+       zona,
+       tutor
+     } = req.body;
++    rol = legacyRoles[rol] || rol;
++    req.body.rol = rol;
+     const hospitalId = hospital || undefined;
+     let especialidadVal;
+     const tipoVal = rol === Role.ADMINISTRADOR ? undefined : tipo;
+     const sociedadId =
+       tipoVal === 'Programa Sociedades' ? sociedad || undefined : undefined;
+     let zonaVal = zona || undefined;
+ 
+     const rolesValidos = [
+       Role.RESIDENTE,
+       Role.TUTOR,
+       Role.ADMINISTRADOR,
+       Role.PARTICIPANTE,
+       Role.PROFESOR,
+       Role.CSM
+     ];
+     if (!rolesValidos.includes(rol)) {
+       return next(new ErrorResponse('Rol inválido', 400));
+     }
+ 
+     // Verificar combinaciones válidas de rol y tipo de programa
+     if (
+       tipo === 'Programa Residentes' &&
+       ![Role.RESIDENTE, Role.TUTOR, Role.ADMINISTRADOR, Role.CSM].includes(rol)
+     ) {
+       return next(new ErrorResponse('Rol inválido para el programa', 400));
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index e4991971ad22b67e2c59ad7cf5222c46473e1435..ada7bda0eb20d4cd76310609d67e869bd6484229 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -247,50 +255,54 @@ exports.getUser = async (req, res, next) => {
+     const user = await User.findById(req.params.id)
+       .populate('hospital')
+       .populate('sociedad')
+       .populate('tutor', 'nombre apellidos');
+ 
+     if (!user) {
+       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
+     }
+ 
+     res.status(200).json({
+       success: true,
+       data: user
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Actualizar un usuario
+ // @route   PUT /api/users/:id
+ // @access  Private/Admin
+ exports.updateUser = async (req, res, next) => {
+   try {
+     // Eliminar campos que no deben ser actualizados por esta ruta
+     const { password, tutor: tutorInput, ...updateData } = req.body;
++    if (updateData.rol) {
++      updateData.rol = legacyRoles[updateData.rol] || updateData.rol;
++      req.body.rol = updateData.rol;
++    }
+     const hospitalId = updateData.hospital || undefined;
+     let zonaVal = updateData.zona || undefined;
+     const currentUser = await User.findById(req.params.id);
+     if (!currentUser) {
+       return next(
+         new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
+       );
+     }
+ 
+     if (req.user.rol === Role.PROFESOR) {
+       if (
+         currentUser.rol !== Role.PARTICIPANTE ||
+         !currentUser.sociedad ||
+         currentUser.sociedad.toString() !== req.user.sociedad.toString()
+       ) {
+         return next(
+           new ErrorResponse('No autorizado para modificar este usuario', 403)
+         );
+       }
+       if (updateData.rol && updateData.rol !== Role.PARTICIPANTE) {
+         return next(
+           new ErrorResponse('No autorizado para cambiar el rol del usuario', 403)
+         );
+       }
+       if (

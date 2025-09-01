@@ -10,7 +10,13 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
-const { resolveTutor } = require('../utils/resolveTutor');
+
+const legacyRoles = {
+  formador: Role.TUTOR,
+  coordinador: Role.CSM,
+  instructor: Role.PROFESOR,
+  alumno: Role.PARTICIPANTE
+};
 
 
 
@@ -89,7 +95,7 @@ exports.getUsers = async (req, res, next) => {
 // @access  Private/Admin
 exports.createUser = async (req, res, next) => {
   try {
-    const {
+    let {
       nombre,
       apellidos,
       email,
@@ -102,6 +108,8 @@ exports.createUser = async (req, res, next) => {
       zona,
       tutor
     } = req.body;
+    rol = legacyRoles[rol] || rol;
+    req.body.rol = rol;
     const hospitalId = hospital || undefined;
     let especialidadVal;
     const tipoVal = rol === Role.ADMINISTRADOR ? undefined : tipo;
@@ -209,7 +217,6 @@ exports.createUser = async (req, res, next) => {
       especialidad: especialidadVal,
       tutor: tutorId,
       zona: zonaVal,
-      tutor: tutorId,
       activo: true,
       consentimientoDatos: true,
       fechaRegistro: Date.now()
@@ -219,10 +226,9 @@ exports.createUser = async (req, res, next) => {
       await inicializarProgresoFormativo(nuevoUsuario);
     }
 
-    await nuevoUsuario
-      .populate('hospital')
-      .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+    await nuevoUsuario.populate('hospital');
+    await nuevoUsuario.populate('sociedad');
+    await nuevoUsuario.populate('tutor', 'nombre apellidos');
 
     await createAuditLog({
       usuario: req.user._id,
@@ -269,6 +275,10 @@ exports.updateUser = async (req, res, next) => {
   try {
     // Eliminar campos que no deben ser actualizados por esta ruta
     const { password, tutor: tutorInput, ...updateData } = req.body;
+    if (updateData.rol) {
+      updateData.rol = legacyRoles[updateData.rol] || updateData.rol;
+      req.body.rol = updateData.rol;
+    }
     const hospitalId = updateData.hospital || undefined;
     let zonaVal = updateData.zona || undefined;
     const currentUser = await User.findById(req.params.id);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import AdminUsuarios from './AdminUsuarios';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../i18n';
@@ -89,4 +89,36 @@ test('muestra botones Editar y Eliminar', async () => {
   );
   expect(await screen.findByText('Editar')).toBeInTheDocument();
   expect(screen.getByText('Eliminar')).toBeInTheDocument();
+});
+
+test('muestra advertencia en columna Tutor cuando residente no tiene tutor', async () => {
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'u1',
+            nombre: 'Res',
+            apellidos: 'A',
+            email: 'r@a.com',
+            rol: 'residente',
+            tipo: 'Programa Residentes',
+            tutor: null,
+          },
+        ],
+      },
+    })
+    .mockResolvedValueOnce({ data: { data: [] } })
+    .mockResolvedValueOnce({ data: [] });
+
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
+
+  const nameCell = await screen.findByText('Res A');
+  const row = nameCell.closest('tr') as HTMLElement;
+  const cells = within(row).getAllByRole('cell');
+  expect(cells[7]).toHaveTextContent(i18n.t('adminUsers.noTutor'));
 });
