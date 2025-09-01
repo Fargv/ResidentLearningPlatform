@@ -1,6 +1,7 @@
 const { register } = require('../src/controllers/authController');
 const User = require('../src/models/User');
 const Sociedades = require('../src/models/Sociedades');
+const Hospital = require('../src/models/Hospital');
 jest.mock('../src/models/AccessCode', () => {
   let docs = [];
   return {
@@ -42,6 +43,7 @@ describe('register access codes', () => {
     };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     await AccessCode.create({ codigo: 'ABEXFOR2025', rol: 'tutor', tipo: 'Programa Residentes' });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
     jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'tutor', tipo: 'Programa Residentes', hospital: 'h1' });
 
@@ -93,5 +95,84 @@ describe('register access codes', () => {
     expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ rol: 'participante', tipo: 'Programa Sociedades', sociedad: 's1' }));
     expect(inicializarProgresoFormativo).toHaveBeenCalled();
     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXSOCUSER2025' });
+  });
+
+  test('registro de residente con tutor disponible', async () => {
+    const req = {
+      body: {
+        nombre: 'r',
+        apellidos: 's',
+        email: 'r@s.com',
+        password: '12345678',
+        codigoAcceso: 'ABEXRES2025',
+        hospital: 'h1',
+        especialidad: 'URO',
+        tutor: 'ALL',
+        consentimientoDatos: true
+      }
+    };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    await AccessCode.create({ codigo: 'ABEXRES2025', rol: 'residente', tipo: 'Programa Residentes' });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
+    jest
+      .spyOn(User, 'findOne')
+      .mockImplementationOnce(() => Promise.resolve(null))
+      .mockImplementationOnce(() => ({
+        select: jest.fn().mockResolvedValue({ _id: 't1' })
+      }));
+    jest
+      .spyOn(User, 'create')
+      .mockResolvedValue({
+        _id: 'u3',
+        rol: 'residente',
+        tutor: 't1',
+        hospital: 'h1',
+        tipo: 'Programa Residentes',
+        especialidad: 'URO'
+      });
+
+    await register(req, res, jest.fn());
+
+    expect(User.create).toHaveBeenCalledWith(
+      expect.objectContaining({ rol: 'residente', tutor: 't1' })
+    );
+    expect(inicializarProgresoFormativo).toHaveBeenCalled();
+    expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXRES2025' });
+  });
+
+  test('registro sin tutor asigna tutor null', async () => {
+    const req = {
+      body: {
+        nombre: 'r2',
+        apellidos: 's2',
+        email: 'r2@s.com',
+        password: '12345678',
+        codigoAcceso: 'ABEXRES2026',
+        hospital: 'h1',
+        especialidad: 'URO',
+        consentimientoDatos: true
+      }
+    };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    await AccessCode.create({ codigo: 'ABEXRES2026', rol: 'residente', tipo: 'Programa Residentes' });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
+    jest.spyOn(User, 'findOne').mockResolvedValue(null);
+    jest
+      .spyOn(User, 'create')
+      .mockResolvedValue({
+        _id: 'u4',
+        rol: 'residente',
+        tutor: null,
+        hospital: 'h1',
+        tipo: 'Programa Residentes',
+        especialidad: 'URO'
+      });
+
+    await register(req, res, jest.fn());
+
+    expect(User.create).toHaveBeenCalledWith(
+      expect.objectContaining({ rol: 'residente', tutor: null })
+    );
+    expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABEXRES2026' });
   });
 });

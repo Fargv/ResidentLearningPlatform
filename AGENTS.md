@@ -50,4 +50,5 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
 - 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
 - 2025-09-01: Botón "Crear fase" ahora usa `variant="contained"` y `color="primary"` en `AdminFases` y `AdminFasesSoc`.
+- 2025-09-01: Índices compuestos en `User` y validación de `tutor` solo para residentes.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

@@ -326,16 +326,19 @@
     "title": "O meu perfil",
     "personalData": "Datos persoais",
     "changePassword": "Cambiar contrasinal",
+    "noTutor": "Sen tutor asignado",
     "fields": {
       "name": "Nome",
       "lastName": "Apelidos",
       "email": "Correo electrónico",
       "hospital": "Hospital",
       "society": "Sociedade",
+      "tutor": "Tutor",
       "currentPassword": "Contrasinal actual",
       "newPassword": "Novo contrasinal",
       "confirmPassword": "Confirmar contrasinal"
     },
+    
     "messages": {
       "updateSuccess": "Perfil actualizado",
       "updateError": "Erro ao actualizar o perfil",
@@ -456,6 +459,7 @@
     "passwordError": "Erro ao actualizar o contrasinal",
     "createProgressSuccess": "Progreso formativo creado con éxito",
     "createProgressError": "Erro ao crear o progreso",
+    "noTutor": "Sen tutor asignado",
     "table": {
       "aria": "táboa de usuarios",
       "name": "Nome",
@@ -464,7 +468,9 @@
       "society": "Sociedade",
       "role": "Rol",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialidade",
+      
       "zone": "Zona",
       "actions": "Accións"
     },
@@ -476,7 +482,9 @@
       "type": "Tipo",
       "role": "Rol",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialidade",
+      
       "society": "Sociedade",
       "zone": "Zona"
     },

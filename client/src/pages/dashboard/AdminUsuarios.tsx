@@ -33,7 +33,7 @@ import {
   //Email as EmailIcon
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
-import api, { createUser, updateUserPassword } from "../../api";
+import api, { createUser, updateUserPassword, getTutors } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
@@ -88,6 +88,7 @@ const AdminUsuarios: React.FC = () => {
     rol: "residente",
     hospital: "",
     especialidad: "",
+    tutor: "",
     tipo: "Programa Residentes",
     sociedad: "",
     zona: "",
@@ -112,6 +113,7 @@ const AdminUsuarios: React.FC = () => {
   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
+  const [tutores, setTutores] = useState<any[]>([]);
 
   const roleOptions =
     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
@@ -143,6 +145,26 @@ const AdminUsuarios: React.FC = () => {
     fetchData();
   }, [t]);
 
+  useEffect(() => {
+    const fetchTutores = async () => {
+      if (
+        formData.rol === "residente" &&
+        formData.hospital &&
+        formData.especialidad
+      ) {
+        try {
+          const res = await getTutors(formData.hospital, formData.especialidad);
+          setTutores(res.data.data);
+        } catch {
+          setTutores([]);
+        }
+      } else {
+        setTutores([]);
+      }
+    };
+    fetchTutores();
+  }, [formData.rol, formData.hospital, formData.especialidad]);
+
 
   const handleOpenInvitarDialog = () => {
     setOpenInvitarDialog(true);
@@ -156,6 +178,7 @@ const AdminUsuarios: React.FC = () => {
       rol: "residente",
       hospital: hospitales.length > 0 ? hospitales[0]._id : "",
       especialidad: "",
+      tutor: "",
       tipo: "Programa Residentes",
       sociedad: sociedades.length > 0 ? sociedades[0]._id : "",
       zona: "",
@@ -181,6 +204,7 @@ const AdminUsuarios: React.FC = () => {
       rol: usuario.rol,
       hospital: usuario.hospital?._id || "",
       especialidad: usuario.especialidad || "",
+      tutor: usuario.tutor?._id || "",
       tipo: usuario.tipo || "",
       sociedad: usuario.sociedad?._id || "",
       zona: usuario.zona || "",
@@ -234,6 +258,7 @@ const AdminUsuarios: React.FC = () => {
         updated.sociedad = "";
         updated.especialidad = "";
         updated.zona = "";
+        updated.tutor = "";
       } else {
         if (value === "csm") {
           updated.hospital = "";
@@ -249,10 +274,16 @@ const AdminUsuarios: React.FC = () => {
         } else if (value === "participante" || value === "profesor") {
           updated.tipo = "Programa Sociedades";
         }
+        if (value !== "residente") {
+          updated.tutor = "";
+        }
       }
     } else if (name === "hospital") {
       const selected = hospitales.find((h) => h._id === value);
       updated.zona = selected?.zona || "";
+      updated.tutor = "";
+    } else if (name === "especialidad") {
+      updated.tutor = "";
     }
     setFormData(updated);
   };
@@ -266,7 +297,7 @@ const AdminUsuarios: React.FC = () => {
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
       if (!payload.zona) delete payload.zona;
-      if (!payload.zona) delete payload.zona;
+      if (!payload.tutor) delete payload.tutor;
       const res = await createUser(payload);
       setUsuariosLista([...usuarios, res.data.data]);
       handleCloseCrearDialog();
@@ -298,6 +329,7 @@ const AdminUsuarios: React.FC = () => {
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
+      if (!payload.tutor) delete payload.tutor;
 
       const res = await api.put(`/users/${selectedUsuario._id}`, payload);
 
@@ -647,6 +679,7 @@ const AdminUsuarios: React.FC = () => {
                   {t("adminUsers.table.hospital")}
                 </TableCell>
                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
+                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
               </TableRow>
@@ -656,6 +689,14 @@ const AdminUsuarios: React.FC = () => {
                 <TableRow key={usuario._id} hover>
                   <TableCell>
                     {usuario.nombre} {usuario.apellidos}
+                    {usuario.rol === "residente" && !usuario.tutor && (
+                      <Chip
+                        color="warning"
+                        label={t("adminUsers.noTutorResident")}
+                        size="small"
+                        sx={{ ml: 1 }}
+                      />
+                    )}
                   </TableCell>
                   <TableCell>{usuario.email}</TableCell>
                   <TableCell>
@@ -673,6 +714,13 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
                   <TableCell>{usuario.especialidad || "-"}</TableCell>
+                  <TableCell>
+                    {usuario.rol === "residente"
+                      ? usuario.tutor && typeof usuario.tutor === "object"
+                        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
+                        : <Chip color="warning" label={t("adminUsers.noTutor")} />
+                      : "-"}
+                  </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell align="right">
                     <Button
@@ -915,6 +963,28 @@ const AdminUsuarios: React.FC = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
+          {formData.rol === "residente" && (
+            <TextField
+              select
+              margin="dense"
+              id="tutor-create"
+              name="tutor"
+              label={t("adminUsers.fields.tutor")}
+              fullWidth
+              variant="outlined"
+              value={formData.tutor}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              <option value="">{t("common.none")}</option>
+              {tutores.map((tutor) => (
+                <option key={tutor._id} value={tutor._id}>
+                  {tutor.nombre} {tutor.apellidos}
+                </option>
+              ))}
+            </TextField>
+          )}
           {formData.rol !== "administrador" &&
             formData.rol !== "csm" &&
             formData.tipo === "Programa Sociedades" && (
@@ -1110,6 +1180,28 @@ const AdminUsuarios: React.FC = () => {
               <option value="GYN">GYN</option>
               <option value="THOR">THOR</option>
               <option value="ORL">ORL</option>
+            </TextField>
+          )}
+          {formData.rol === "residente" && (
+            <TextField
+              select
+              margin="dense"
+              id="tutor-edit"
+              name="tutor"
+              label={t("adminUsers.fields.tutor")}
+              fullWidth
+              variant="outlined"
+              value={formData.tutor}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              <option value="">{t("common.none")}</option>
+              {tutores.map((tutor) => (
+                <option key={tutor._id} value={tutor._id}>
+                  {tutor.nombre} {tutor.apellidos}
+                </option>
+              ))}
             </TextField>
           )}
         </DialogContent>

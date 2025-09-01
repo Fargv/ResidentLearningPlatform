@@ -255,6 +255,7 @@
     "title": "My Profile",
     "personalData": "Personal Data",
     "changePassword": "Change Password",
+    "noTutor": "No tutor assigned",
     "fields": {
       "name": "Name",
       "lastName": "Last Name",
@@ -262,10 +263,12 @@
       "logoUrl": "Logo URL",
       "hospital": "Hospital",
       "society": "Society",
+      "tutor": "Tutor",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
       "confirmPassword": "Confirm Password"
     },
+    
     "messages": {
       "updateSuccess": "Profile updated",
       "updateError": "Error updating profile",
@@ -387,6 +390,7 @@
     "passwordError": "Error updating password",
     "createProgressSuccess": "Training progress created successfully",
     "createProgressError": "Error creating progress",
+    "noTutor": "No tutor assigned",
     "table": {
       "aria": "users table",
       "name": "Name",
@@ -396,7 +400,9 @@
       "society": "Society",
       "role": "Role",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Specialty",
+      
       "zone": "Zone",
       "actions": "Actions"
     },
@@ -409,7 +415,9 @@
       "type": "Type",
       "role": "Role",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Specialty",
+      
       "society": "Society",
       "zone": "Zone"
     },

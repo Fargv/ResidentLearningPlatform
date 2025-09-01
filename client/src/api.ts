@@ -32,4 +32,7 @@ export const createUser = (data: Record<string, any>) => api.post('/users', data
 export const updateUserPassword = (id: string, newPassword: string) =>
   api.put(`/users/${id}/password`, { password: newPassword });
 
+export const getTutors = (hospital: string, especialidad: string) =>
+  api.get('/users/tutores', { params: { hospital, especialidad } });
+
 

@@ -98,6 +98,10 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Índices compuestos para búsquedas frecuentes
+userSchema.index({ hospital: 1, especialidad: 1, rol: 1 });
+userSchema.index({ hospital: 1, rol: 1 });
+
 // Middleware para encriptar la contraseña antes de guardar
 userSchema.pre('save', async function(next) {
   // Solo encriptar si la contraseña ha sido modificada
@@ -108,6 +112,14 @@ userSchema.pre('save', async function(next) {
   // Generar salt y hash
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// Asegurar que solo los residentes tengan asignado un tutor
+userSchema.pre('save', function(next) {
+  if (this.rol !== Role.RESIDENTE) {
+    this.tutor = null;
+  }
   next();
 });
 

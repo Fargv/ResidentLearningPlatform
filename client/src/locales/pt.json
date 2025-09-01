@@ -408,6 +408,7 @@
     "title": "Meu Perfil",
     "personalData": "Dados pessoais",
     "changePassword": "Alterar Senha",
+    "noTutor": "Nenhum tutor atribuído",
     "fields": {
       "name": "Nome",
       "lastName": "Sobrenome",
@@ -415,10 +416,12 @@
       "logoUrl": "URL do logo",
       "hospital": "Hospital",
       "society": "Sociedade",
+      "tutor": "Tutor",
       "currentPassword": "Senha Atual",
       "newPassword": "Nova Senha",
       "confirmPassword": "Confirmar Senha"
     },
+    
     "messages": {
       "updateSuccess": "Perfil atualizado",
       "updateError": "Erro ao atualizar o perfil",
@@ -540,6 +543,7 @@
     "passwordError": "Erro ao atualizar a senha",
     "createProgressSuccess": "Progresso formativo criado com sucesso",
     "createProgressError": "Erro ao criar o progresso",
+    "noTutor": "Nenhum tutor atribuído",
     "table": {
       "aria": "tabela de usuários",
       "name": "Nome",
@@ -549,7 +553,9 @@
       "society": "Sociedade",
       "role": "Função",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialidade",
+      
       "zone": "Zona",
       "actions": "Ações"
     },
@@ -562,7 +568,9 @@
       "type": "Tipo",
       "role": "Função",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialidade",
+      
       "society": "Sociedade",
       "zone": "Zona"
     },

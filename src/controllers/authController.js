@@ -11,6 +11,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
+const { resolveTutor } = require('../utils/resolveTutor');
 
 const checkAccessCode = async (req, res, next) => {
   try {
@@ -39,6 +40,7 @@ const register = async (req, res, next) => {
       sociedad,
       consentimientoDatos,
       especialidad,
+      tutor,
       zona: zonaInput
     } = req.body;
 
@@ -90,6 +92,9 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('El usuario ya está registrado', 400));
     }
 
+    const resolvedTutor =
+      rol === Role.RESIDENTE ? await resolveTutor(tutor, hospital, especialidad) : null;
+
     const newUser = await User.create({
       nombre,
       apellidos,
@@ -100,6 +105,7 @@ const register = async (req, res, next) => {
       hospital: tipo === 'Programa Residentes' ? hospital : undefined,
       sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
       especialidad,
+      tutor: resolvedTutor,
       zona,
       activo: true,
       consentimientoDatos: true,
@@ -124,6 +130,7 @@ const register = async (req, res, next) => {
         hospital: newUser.hospital,
         sociedad: newUser.sociedad,
         tipo: newUser.tipo,
+        tutor: newUser.tutor,
         zona: newUser.zona
       }
     });
@@ -173,7 +180,9 @@ const login = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).populate('hospital', 'nombre');
+    const user = await User.findById(req.user.id)
+      .populate('hospital', 'nombre')
+      .populate('tutor', 'nombre apellidos');
     res.status(200).json({ success: true, data: user });
   } catch (err) {
     next(err);

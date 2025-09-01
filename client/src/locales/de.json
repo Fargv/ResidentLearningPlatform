@@ -475,16 +475,19 @@
     "title": "Mein Profil",
     "personalData": "Persönliche Daten",
     "changePassword": "Passwort ändern",
+    "noTutor": "Kein Tutor zugewiesen",
     "fields": {
       "name": "Name",
       "lastName": "Nachname",
       "email": "E-Mail",
       "hospital": "Krankenhaus",
       "society": "Gesellschaft",
+      "tutor": "Tutor",
       "currentPassword": "Aktuelles Passwort",
       "newPassword": "Neues Passwort",
       "confirmPassword": "Passwort bestätigen"
     },
+    
     "messages": {
       "updateSuccess": "Profil aktualisiert",
       "updateError": "Fehler beim Aktualisieren des Profils",
@@ -604,6 +607,7 @@
     "passwordError": "Fehler beim Aktualisieren des Passworts",
     "createProgressSuccess": "Ausbildungsfortschritt erfolgreich erstellt",
     "createProgressError": "Fehler beim Erstellen des Fortschritts",
+    "noTutor": "Kein Tutor zugewiesen",
     "table": {
       "aria": "Benutzertabelle",
       "name": "Name",
@@ -612,7 +616,9 @@
       "society": "Gesellschaft",
       "role": "Rolle",
       "hospital": "Krankenhaus",
+      "tutor": "Tutor",
       "specialty": "Fachgebiet",
+      
       "zone": "Zone",
       "actions": "Aktionen"
     },
@@ -624,7 +630,9 @@
       "type": "Typ",
       "role": "Rolle",
       "hospital": "Krankenhaus",
+      "tutor": "Tutor",
       "specialty": "Fachgebiet",
+      
       "society": "Gesellschaft",
       "zone": "Zone"
     },

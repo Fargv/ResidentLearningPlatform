@@ -254,12 +254,14 @@
     "title": "Nire profila",
     "personalData": "Datu pertsonalak",
     "changePassword": "Pasahitza aldatu",
+    "noTutor": "Ez dago prestatzaile esleituta",
     "fields": {
       "name": "Izena",
       "lastName": "Abizenak",
       "email": "Emaila",
       "hospital": "Ospitalea",
       "society": "Elkartea",
+      "tutor": "Prestatzailea",
       "currentPassword": "Oraingo pasahitza",
       "newPassword": "Pasahitz berria",
       "confirmPassword": "Pasahitza berretsi"
@@ -384,6 +386,7 @@
     "passwordError": "Errorea pasahitza eguneratzean",
     "createProgressSuccess": "Aurrerapen formatiboa sortu da",
     "createProgressError": "Errorea aurrerapena sortzean",
+    
     "table": {
       "aria": "erabiltzaileen taula",
       "name": "Izena",
@@ -392,7 +395,9 @@
       "society": "Elkartea",
       "role": "Rola",
       "hospital": "Ospitalea",
+      "tutor": "Prestatzailea",
       "specialty": "Espezialitatea",
+      
       "zone": "Eremua",
       "actions": "Ekintzak"
     },
@@ -404,7 +409,9 @@
       "type": "Mota",
       "role": "Rola",
       "hospital": "Ospitalea",
+      "tutor": "Prestatzailea",
       "specialty": "Espezialitatea",
+      
       "society": "Elkartea",
       "zone": "Eremua"
     },

@@ -171,6 +171,15 @@ const Perfil: React.FC = () => {
             value={formData.hospital}
             disabled
           />
+          {user?.rol === 'residente' && (
+            <TextField
+              label={t('profile.fields.tutor')}
+              fullWidth
+              margin="normal"
+              value={user?.tutor ? `${user.tutor.nombre} ${user.tutor.apellidos}` : t('profile.noTutor')}
+              disabled
+            />
+          )}
           {formData.sociedad && (
             <TextField
               label={t('profile.fields.society')}

@@ -104,16 +104,19 @@
     "title": "El meu perfil",
     "personalData": "Dades personals",
     "changePassword": "Canviar contrasenya",
+    "noTutor": "Sense tutor assignat",
     "fields": {
       "name": "Nom",
       "lastName": "Cognoms",
       "email": "Correu electrònic",
       "hospital": "Hospital",
       "society": "Societat",
+      "tutor": "Tutor",
       "currentPassword": "Contrasenya actual",
       "newPassword": "Nova contrasenya",
       "confirmPassword": "Confirmar contrasenya"
     },
+    
     "messages": {
       "updateSuccess": "Perfil actualitzat",
       "updateError": "Error en actualitzar el perfil",
@@ -464,6 +467,7 @@
     "passwordError": "Error en actualitzar la contrasenya",
     "createProgressSuccess": "Progrés formatiu creat amb èxit",
     "createProgressError": "Error en crear el progrés",
+    "noTutor": "Sense tutor assignat",
     "table": {
       "aria": "taula d'usuaris",
       "name": "Nom",
@@ -472,7 +476,9 @@
       "society": "Societat",
       "role": "Rol",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialitat",
+      
       "zone": "Zona",
       "actions": "Accions"
     },
@@ -484,7 +490,9 @@
       "type": "Tipus",
       "role": "Rol",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialitat",
+      
       "society": "Societat",
       "zone": "Zona"
     },

@@ -22,6 +22,33 @@
     "users": "Utilisateurs",
     "logout": "Déconnexion"
   },
+  "profile": {
+    "title": "Mon profil",
+    "personalData": "Données personnelles",
+    "changePassword": "Changer le mot de passe",
+    "noTutor": "Aucun tuteur assigné",
+    "fields": {
+      "name": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "hospital": "Hôpital",
+      "society": "Société",
+      "tutor": "Tuteur",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe"
+    },
+    "messages": {
+      "updateSuccess": "Profil mis à jour",
+      "updateError": "Erreur lors de la mise à jour du profil",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordUpdateSuccess": "Mot de passe mis à jour",
+      "passwordUpdateError": "Erreur lors du changement de mot de passe"
+    },
+    "buttons": {
+      "changePassword": "Changer le mot de passe"
+    }
+  },
   "adminConfig": {
     "title": "Paramètres",
     "hospitals": "Hôpitaux",
@@ -438,6 +465,7 @@
     "passwordError": "Erreur lors de la mise à jour du mot de passe",
     "createProgressSuccess": "Progrès de formation créé avec succès",
     "createProgressError": "Erreur lors de la création du progrès",
+    "noTutor": "Aucun tuteur assigné",
     "table": {
       "aria": "tableau des utilisateurs",
       "name": "Nom",
@@ -446,7 +474,9 @@
       "society": "Société",
       "role": "Rôle",
       "hospital": "Hôpital",
+      "tutor": "Tuteur",
       "specialty": "Spécialité",
+      
       "zone": "Zone",
       "actions": "Actions"
     },
@@ -458,7 +488,9 @@
       "type": "Type",
       "role": "Rôle",
       "hospital": "Hôpital",
+      "tutor": "Tuteur",
       "specialty": "Spécialité",
+      
       "society": "Société",
       "zone": "Zone"
     },

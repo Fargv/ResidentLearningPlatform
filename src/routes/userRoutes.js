@@ -16,6 +16,7 @@ const {
   cancelInvitation,
   getTutorResidentes,
   getResidenteTutores,
+  getAvailableTutors,
   getProfesorParticipantes,
   getUsersByHospital,
   deleteUser
@@ -26,6 +27,7 @@ router.use(protect);
 
 // Rutas solo para administradores, tutores y CSM
 router.get('/hospital/:hospitalId', authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getUsersByHospital);
+router.get('/tutores', authorize(Role.ADMINISTRADOR, Role.CSM, Role.TUTOR), getAvailableTutors);
 
 // Rutas para administradores, tutores, CSM y profesores
 router.route('/')
