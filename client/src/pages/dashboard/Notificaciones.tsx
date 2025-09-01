@@ -166,7 +166,12 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
                     {pendientes.map((n) => (
                       <TableRow
                         key={n._id}
-                        onClick={() => n.enlace && navigate(n.enlace)}
+                        onClick={async () => {
+                          if (n.enlace) {
+                            await handleMarcarLeida(n._id);
+                            navigate(n.enlace);
+                          }
+                        }}
                         sx={{ cursor: n.enlace ? 'pointer' : 'default' }}
                       >
                         <TableCell>{n.mensaje}</TableCell>

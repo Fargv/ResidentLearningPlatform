@@ -1,188 +1,62 @@
-diff --git a/src/controllers/actividadController.js b/src/controllers/actividadController.js
-index 0df4b3647e70794e637a708a54876059ad6debd4..6ed00d02faadbf810050892ea7cab6ab52bc6594 100644
---- a/src/controllers/actividadController.js
-+++ b/src/controllers/actividadController.js
-@@ -60,74 +60,87 @@ exports.createActividad = async (req, res, next) => {
-       accion: 'crear_actividad',
-       descripcion: `Actividad creada: ${actividad.nombre}`,
-       ip: req.ip
-     });
+diff --git a/client/src/pages/dashboard/Notificaciones.tsx b/client/src/pages/dashboard/Notificaciones.tsx
+index ae0e014ff2cf711083f6b244fd612312e5b951ff..e1a9cbbd98b90a4cbbfca9c14941a725c3d7fec3 100644
+--- a/client/src/pages/dashboard/Notificaciones.tsx
++++ b/client/src/pages/dashboard/Notificaciones.tsx
+@@ -144,51 +144,56 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
+                 aria-controls="notificaciones-tabpanel-1"
+               />
+             </Tabs>
+           </Box>
  
-     res.status(201).json({
-       success: true,
-       data: actividad
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Actualizar una actividad
- // @route   PUT /api/actividades/:id
- // @access  Private/Admin
- exports.updateActividad = async (req, res, next) => {
-   try {
-     let actividad = await Actividad.findById(req.params.id);
- 
-     if (!actividad) {
-       return next(new ErrorResponse(`Actividad no encontrada con id ${req.params.id}`, 404));
-     }
- 
-+    const tipoAnterior = actividad.tipo;
-+
-     // Si se está cambiando la fase, verificar que existe
-     if (req.body.fase && req.body.fase !== actividad.fase.toString()) {
-       const fase = await Fase.findById(req.body.fase);
-       if (!fase) {
-         return next(new ErrorResponse(`Fase no encontrada con id ${req.body.fase}`, 404));
-       }
-     }
- 
-     actividad = await Actividad.findByIdAndUpdate(req.params.id, req.body, {
-       new: true,
-       runValidators: true
-     }).populate('fase');
--    
-+
-+    let progresosActualizados = 0;
-+    if (req.body.tipo && req.body.tipo !== tipoAnterior) {
-+      const updateResult = await ProgresoResidente.updateMany(
-+        { 'actividades.actividad': req.params.id },
-+        { $set: { 'actividades.$[elem].tipo': req.body.tipo } },
-+        { arrayFilters: [{ 'elem.actividad': req.params.id }] }
-+      );
-+      progresosActualizados = updateResult.modifiedCount;
-+    }
-+
-     // Crear registro de auditoría
-     await createAuditLog({
-       usuario: req.user._id,
-       accion: 'actualizar_actividad',
-       descripcion: `Actividad actualizada: ${actividad.nombre}`,
-       ip: req.ip
-     });
- 
-     res.status(200).json({
-       success: true,
--      data: actividad
-+      data: actividad,
-+      progresosActualizados
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Eliminar una actividad
- // @route   DELETE /api/actividades/:id
- // @access  Private/Admin
- exports.deleteActividad = async (req, res, next) => {
-   try {
-     const actividad = await Actividad.findById(req.params.id);
- 
-     if (!actividad) {
-       return next(new ErrorResponse('Actividad no encontrada', 404));
-     }
- 
-    // Eliminar actividad de los progresos que la contengan y no esté validada
-     const updateResult = await ProgresoResidente.updateMany(
-       { 'actividades.actividad': req.params.id },
-       { $pull: { actividades: { actividad: req.params.id, estado: { $ne: 'validado' } } } }
-     );
- 
-     // Luego eliminar la actividad
-     await actividad.deleteOne();
-diff --git a/src/controllers/actividadSocController.js b/src/controllers/actividadSocController.js
-index 498e02e737a876a5db0a5f3147e02d4a1c63ad8e..69c074bd8beee3237ae4fc8242844477cac50f96 100644
---- a/src/controllers/actividadSocController.js
-+++ b/src/controllers/actividadSocController.js
-@@ -60,74 +60,87 @@ exports.createActividad = async (req, res, next) => {
-       accion: 'crear_actividad',
-       descripcion: `Actividad creada: ${actividad.nombre}`,
-       ip: req.ip
-     });
- 
-     res.status(201).json({
-       success: true,
-       data: actividad
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Actualizar una actividad
- // @route   PUT /api/actividades/:id
- // @access  Private/Admin
- exports.updateActividad = async (req, res, next) => {
-   try {
-     let actividad = await ActividadSoc.findById(req.params.id);
- 
-     if (!actividad) {
-       return next(new ErrorResponse(`Actividad no encontrada con id ${req.params.id}`, 404));
-     }
- 
-+    const tipoAnterior = actividad.tipo;
-+
-     // Si se está cambiando la fase, verificar que existe
-     if (req.body.fase && req.body.fase !== actividad.fase.toString()) {
-       const fase = await FaseSoc.findById(req.body.fase);
-       if (!fase) {
-         return next(new ErrorResponse(`Fase no encontrada con id ${req.body.fase}`, 404));
-       }
-     }
- 
-     actividad = await ActividadSoc.findByIdAndUpdate(req.params.id, req.body, {
-       new: true,
-       runValidators: true
-     }).populate('fase');
--    
-+
-+    let progresosActualizados = 0;
-+    if (req.body.tipo && req.body.tipo !== tipoAnterior) {
-+      const updateResult = await ProgresoResidente.updateMany(
-+        { 'actividades.actividad': req.params.id },
-+        { $set: { 'actividades.$[elem].tipo': req.body.tipo } },
-+        { arrayFilters: [{ 'elem.actividad': req.params.id }] }
-+      );
-+      progresosActualizados = updateResult.modifiedCount;
-+    }
-+
-     // Crear registro de auditoría
-     await createAuditLog({
-       usuario: req.user._id,
-       accion: 'actualizar_actividad',
-       descripcion: `Actividad actualizada: ${actividad.nombre}`,
-       ip: req.ip
-     });
- 
-     res.status(200).json({
-       success: true,
--      data: actividad
-+      data: actividad,
-+      progresosActualizados
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Eliminar una actividad
- // @route   DELETE /api/actividades/:id
- // @access  Private/Admin
- exports.deleteActividad = async (req, res, next) => {
-   try {
-     const actividad = await ActividadSoc.findById(req.params.id);
- 
-     if (!actividad) {
-       return next(new ErrorResponse('Actividad no encontrada', 404));
-     }
- 
-    // Eliminar actividad de los progresos que la contengan y no esté validada
-     const updateResult = await ProgresoResidente.updateMany(
-       { 'actividades.actividad': req.params.id },
-       { $pull: { actividades: { actividad: req.params.id, estado: { $ne: 'validado' } } } }
-     );
- 
-     // Luego eliminar la actividad
-     await actividad.deleteOne();
+           <TabPanel value={tabValue} index={0}>
+             {pendientes.length === 0 ? (
+               <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+                 {t('notifications.empty.pending')}
+               </Typography>
+             ) : (
+               <TableContainer component={Paper}>
+                 <Table size="small">
+                   <TableHead>
+                     <TableRow>
+                       <TableCell>{t('notifications.table.message')}</TableCell>
+                       <TableCell>{t('notifications.table.date')}</TableCell>
+                       <TableCell>{t('notifications.table.type')}</TableCell>
+                       <TableCell align="right">{t('notifications.table.actions')}</TableCell>
+                     </TableRow>
+                   </TableHead>
+                   <TableBody>
+                     {pendientes.map((n) => (
+                       <TableRow
+                         key={n._id}
+-                        onClick={() => n.enlace && navigate(n.enlace)}
++                        onClick={async () => {
++                          if (n.enlace) {
++                            await handleMarcarLeida(n._id);
++                            navigate(n.enlace);
++                          }
++                        }}
+                         sx={{ cursor: n.enlace ? 'pointer' : 'default' }}
+                       >
+                         <TableCell>{n.mensaje}</TableCell>
+                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
+                         <TableCell>
+                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}
+                         </TableCell>
+                         <TableCell align="right">
+                           <IconButton
+                             aria-label="read"
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               handleMarcarLeida(n._id);
+                             }}
+                           >
+                             <DoneIcon />
+                           </IconButton>
+                         </TableCell>
+                       </TableRow>
+                     ))}
+                   </TableBody>
+                 </Table>
+               </TableContainer>
+             )}
+           </TabPanel>

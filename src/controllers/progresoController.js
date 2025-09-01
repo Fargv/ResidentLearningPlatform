@@ -268,38 +268,25 @@ const registrarProgreso = async (req, res, next) => {
       estado: actividad.requiereValidacion ? 'pendiente' : 'completado'
     });
 
-// Si la actividad requiere validación, crear notificación para tutores y profesores
+// Si la actividad requiere validación, crear notificación para tutores y profesores asignados
       if (actividad.requiereValidacion) {
-        // Obtener tutores del hospital del residente
-        const tutores = await User.find({
-          hospital: residente.hospital,
-          rol: 'tutor',
-          especialidad: { $in: [residente.especialidad, 'ALL'] }
-        });
+        const destinatarios = [residente.tutor, residente.profesor].filter(Boolean);
 
-        // Obtener profesores de la misma sociedad, si aplica
-        const profesores = residente.sociedad
-          ? await User.find({ sociedad: residente.sociedad, rol: 'profesor' })
-          : [];
+        const notificacionesPromises = destinatarios.map(usuarioId =>
+          Notificacion.create({
+            usuario: usuarioId,
+            tipo: 'validacion',
+            mensaje: `El residente ${residente.nombre} ${residente.apellidos} ha completado la actividad "${actividad.nombre}" y requiere validación.`,
+            enlace: '/dashboard/validaciones',
+            entidadRelacionada: {
+              tipo: 'progreso',
+              id: progreso._id
+            }
+          })
+        );
 
-        const destinatarios = [...tutores, ...profesores];
-
-      // Crear notificaciones para cada destinatario
-      const notificacionesPromises = destinatarios.map(user => {
-        return Notificacion.create({
-          usuario: user._id,
-          tipo: 'validacion',
-          mensaje: `El residente ${residente.nombre} ${residente.apellidos} ha completado la actividad "${actividad.nombre}" y requiere validación.`,
-          enlace: '/dashboard/validaciones',
-          entidadRelacionada: {
-            tipo: 'progreso',
-            id: progreso._id
-          }
-        });
-      });
-
-      await Promise.all(notificacionesPromises);
-    }
+        await Promise.all(notificacionesPromises);
+      }
 
     // Crear registro de auditoría
     await createAuditLog({
@@ -441,18 +428,11 @@ const validarProgreso = async (req, res, next) => {
     progreso.estado = 'validado';
     await progreso.save();
 
-    // Eliminar notificaciones pendientes para tutores y profesores
-    const tutoresIds = (await User.find({
-      hospital: progreso.residente.hospital,
-      rol: 'tutor',
-      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
-    })).map(f => f._id);
-    const profesoresIds = progreso.residente.sociedad
-      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
-      : [];
+    // Eliminar notificaciones pendientes para tutor y profesor asignados
+    const destinatarios = [progreso.residente.tutor, progreso.residente.profesor].filter(Boolean);
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...tutoresIds, ...profesoresIds] },
+        usuario: { $in: destinatarios },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },
@@ -547,18 +527,11 @@ const rechazarProgreso = async (req, res, next) => {
     progreso.estado = 'rechazado';
     await progreso.save();
 
-    // Eliminar notificaciones pendientes para tutores y profesores
-    const tutoresIds = (await User.find({
-      hospital: progreso.residente.hospital,
-      rol: 'tutor',
-      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
-    })).map(f => f._id);
-    const profesoresIds = progreso.residente.sociedad
-      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
-      : [];
+    // Eliminar notificaciones pendientes para tutor y profesor asignados
+    const destinatariosRechazo = [progreso.residente.tutor, progreso.residente.profesor].filter(Boolean);
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...tutoresIds, ...profesoresIds] },
+        usuario: { $in: destinatariosRechazo },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },
@@ -926,17 +899,10 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
     await progreso.save();
     await updatePhaseStatus(progreso);
 
-    const tutoresIds = (await User.find({
-      hospital: progreso.residente.hospital,
-      rol: 'tutor',
-      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
-    })).map(f => f._id);
-    const profesoresIds = progreso.residente.sociedad
-      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
-      : [];
+    const destinatarios = [progreso.residente.tutor, progreso.residente.profesor].filter(Boolean);
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...tutoresIds, ...profesoresIds] },
+        usuario: { $in: destinatarios },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },
@@ -989,17 +955,10 @@ const rechazarActividad = async (req, res, next) => {
     await progreso.save();
     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
     
-    const tutoresIds = (await User.find({
-      hospital: progreso.residente.hospital,
-      rol: 'tutor',
-      especialidad: { $in: [progreso.residente.especialidad, 'ALL'] }
-    })).map(f => f._id);
-    const profesoresIds = progreso.residente.sociedad
-      ? (await User.find({ sociedad: progreso.residente.sociedad, rol: 'profesor' })).map(i => i._id)
-      : [];
+    const destinatarios = [progreso.residente.tutor, progreso.residente.profesor].filter(Boolean);
     await Notificacion.updateMany(
       {
-        usuario: { $in: [...tutoresIds, ...profesoresIds] },
+        usuario: { $in: destinatarios },
         'entidadRelacionada.tipo': 'progreso',
         'entidadRelacionada.id': progreso._id
       },

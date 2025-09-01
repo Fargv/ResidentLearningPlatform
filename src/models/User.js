@@ -61,6 +61,14 @@ const userSchema = new mongoose.Schema({
       return this.tipo === 'Programa Sociedades';
     }
   },
+  tutor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  profesor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   zona: {
     type: String,
     enum: ['NORDESTE', 'NORTE', 'CENTRO', 'ANDALUCÍA', 'PORTUGAL', 'LEVANTE', 'CANARIAS'],
