@@ -556,8 +556,8 @@ const AdminFases: React.FC = () => {
             <TabPanel key={fase._id} value={tabValue} index={index}>
               <Box>
                 <Button
-                  variant="outlined"
-                  color="info"
+                  variant="contained"
+                  color="primary"
                   startIcon={<AddIcon />}
                   onClick={handleOpenCrearFaseDialog}
                   sx={{ mr: 1 }}

@@ -48,7 +48,10 @@ const getTheme = (mode: PaletteMode) =>
       },
       error: { main: '#d32f2f' },
       warning: { main: '#ff9800' },
-      info: { main: '#1A2B3C' },
+      info: {
+        main: mode === 'light' ? '#1976d2' : '#90caf9',
+        contrastText: mode === 'light' ? '#fff' : '#000',
+      },
       success: { main: '#4caf50' },
     },
     typography: {

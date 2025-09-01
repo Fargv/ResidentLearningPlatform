@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Box, Typography, LinearProgress } from '@mui/material';
+import { Paper, Box, Typography, LinearProgress, useTheme } from '@mui/material';
 
 export interface Fase {
   nombre: string;
@@ -13,6 +13,7 @@ export interface Props {
 }
 
 const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
+  const theme = useTheme();
   const visibles = fases.filter((f) => !f.bloqueada);
 
   return (
@@ -26,8 +27,8 @@ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
           <Paper sx={{ p: 2, borderRadius: 2 }}>
             <Box
               sx={{
-                backgroundColor: '#F5F5F5',
-                color: '#1E5B94',
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.primary.main,
                 textAlign: 'center',
                 borderRadius: 1,
                 mb: 2,
@@ -44,16 +45,16 @@ const ProgressPorFase: React.FC<Props> = ({ fases, onFaseClick }) => {
                 sx={{
                   height: 10,
                   borderRadius: 5,
-                  backgroundColor: '#F5F5F5',
+                  backgroundColor: theme.palette.background.paper,
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: '#E3F2FD',
+                    backgroundColor: theme.palette.primary.light,
                   },
                 }}
               />
               <Typography
                 variant="body2"
                 align="right"
-                sx={{ mt: 1, color: '#1E5B94' }}
+                sx={{ mt: 1, color: theme.palette.primary.main }}
               >
                 {fase.porcentaje}%
               </Typography>

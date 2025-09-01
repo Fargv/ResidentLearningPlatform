@@ -15,6 +15,7 @@ import {
   DialogActions,
   Button,
   Backdrop,
+  useTheme,
 } from "@mui/material";
 import {
   Assignment as AssignmentIcon,
@@ -37,6 +38,7 @@ import type { Fase } from "../../components/ProgressPorFase";
 const DashboardHome: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
@@ -467,8 +469,8 @@ const DashboardHome: React.FC = () => {
                     elevation={2}
                     sx={{
                       p: 2,
-                      borderLeft: "6px solid #1E5B94",
-                      background: `linear-gradient(90deg, #E3F2FD ${percent}%, #F5F5F5 ${percent}%)`,
+                      borderLeft: `6px solid ${theme.palette.primary.main}`,
+                      background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
                     }}
                   >
                     <Typography
@@ -480,14 +482,14 @@ const DashboardHome: React.FC = () => {
                     <Typography
                       variant="body1"
                       fontWeight="bold"
-                      sx={{ color: '#1E5B94' }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {formatMonthYear(m.date || "") || "—"}
                     </Typography>
                     <Typography
                       variant="body2"
                       fontWeight="bold"
-                      sx={{ color: '#1E5B94' }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {percent}%
                     </Typography>
@@ -544,8 +546,8 @@ const DashboardHome: React.FC = () => {
                       elevation={2}
                       sx={{
                         p: 2,
-                        borderLeft: "6px solid #1E5B94",
-                        background: `linear-gradient(90deg, #E3F2FD  ${p.percent}%, #F5F5F5  ${p.percent}%)`,
+                        borderLeft: `6px solid ${theme.palette.primary.main}`,
+                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
                       }}
                     >
                       <Typography variant="subtitle2" color="text.secondary">
@@ -633,7 +635,7 @@ const DashboardHome: React.FC = () => {
         </Dialog>
         <Backdrop
           open={downloadLoading}
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          sx={{ color: theme.palette.common.white, zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
