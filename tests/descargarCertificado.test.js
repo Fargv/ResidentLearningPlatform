@@ -11,7 +11,18 @@ describe('descargarCertificado', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
     jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('<html></html>');
+    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
+      if (filePath.includes('certificado.html')) {
+        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
+      }
+      if (filePath.includes('firma-javier.png')) {
+        return Buffer.from('');
+      }
+      if (filePath.includes('locales')) {
+        return JSON.stringify({ certificate: { title: '', body: '', dateLine: '{{date}}', footer: '', tutorPrefix: '', tutorPlaceholder: '' } });
+      }
+      return '';
+    });
     jest.spyOn(fs, 'unlink').mockImplementation((path, cb) => cb());
   });
 

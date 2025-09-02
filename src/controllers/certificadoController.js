@@ -6,7 +6,9 @@ const ProgresoResidente = require("../models/ProgresoResidente");
 
 exports.descargarCertificado = async (req, res, next) => {
   try {
-    const usuario = await User.findById(req.params.id).populate("hospital");
+    const usuario = await User.findById(req.params.id)
+      .populate("hospital")
+      .populate("tutor", "nombre apellidos");
     if (!usuario) {
       return res
         .status(404)
@@ -30,14 +32,25 @@ exports.descargarCertificado = async (req, res, next) => {
 
     const lang = req.query.lang || "es";
 
+    const programa =
+      usuario.rol === "residente"
+        ? "Programa Residentes"
+        : usuario.rol === "participante"
+          ? "Programa Sociedades"
+          : usuario.tipo;
+
     const uploadDir = path.join(__dirname, "../../public/uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
     const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
     const filePath = path.join(uploadDir, fileName);
 
+    const templateFile =
+      programa === "Programa Residentes"
+        ? "certificado_residente.html"
+        : "certificado.html";
     const templatePath = path.resolve(
       process.cwd(),
-      "client/src/templates/certificado.html",
+      `client/src/templates/${templateFile}`,
     );
     if (!fs.existsSync(templatePath)) {
       console.error(`Plantilla de certificado no encontrada: ${templatePath}`);
@@ -72,21 +85,17 @@ exports.descargarCertificado = async (req, res, next) => {
       certificateStrings = localeData.certificate;
     }
 
-    const programa =
-      usuario.rol === "residente"
-        ? "Programa Residentes"
-        : usuario.rol === "participante"
-          ? "Programa Sociedades"
-          : usuario.tipo;
-
-    const corporateLogo = 'https://www.abexsl.es/images/logo.png';
+    const corporateLogo = "https://www.abexsl.es/images/logo.png";
     let logosHtml;
-    if (programa === 'Programa Sociedades') {
+    if (programa === "Programa Sociedades") {
       logosHtml = `<div class="logo-center"><img src="${corporateLogo}" alt="Logo" /></div>`;
+    } else if (programa === "Programa Residentes") {
+      logosHtml = `<div class="logo-center"><img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" /></div>`;
     } else {
-      const hospiLogo = usuario.hospital && usuario.hospital.urlHospiLogo
-        ? `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`
-        : '';
+      const hospiLogo =
+        usuario.hospital && usuario.hospital.urlHospiLogo
+          ? `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`
+          : "";
       logosHtml = `<div class="logos"><img src="${corporateLogo}" alt="Logo" />${hospiLogo}</div>`;
     }
 
@@ -101,16 +110,39 @@ exports.descargarCertificado = async (req, res, next) => {
     }).format(new Date());
     const dateLine = certificateStrings.dateLine.replace("{{date}}", formattedDate);
 
+    const tutorName =
+      certificateStrings.tutorPrefix +
+      (usuario.hospital ? usuario.hospital.nombre : "");
+    const tutorRoleLine = certificateStrings.tutorPlaceholder;
+
     html = html
-      .replace("{{LOGOS}}", logosHtml)
       .replace("{{CERT_TITLE}}", certificateStrings.title)
       .replace("{{PROGRAMA}}", programa)
       .replace("{{CERT_BODY}}", formattedBody)
       .replace("{{CERT_DATE}}", dateLine)
       .replace("{{CERT_FOOTER}}", certificateStrings.footer)
+      .replace("{{TUTOR_NAME}}", tutorName)
+      .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine)
       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
       .replace("{{SIGNATURE_LOGO}}", signatureBase64)
       .replace("{{LANG}}", lang);
+
+    if (programa === "Programa Residentes") {
+      const tutorName = usuario.tutor
+        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
+        : "Tutor del programa: __________";
+      const tutorRoleLine = usuario.tutor
+        ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
+        : "";
+      html = html
+        .replace("{{HOSPITAL_LOGO}}", logosHtml)
+        .replace("{{TUTOR_NAME}}", tutorName)
+        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
+    } else {
+      html = html
+        .replace("{{LOGOS}}", logosHtml)
+        .replace("{{SIGNATURE_LOGO}}", signatureBase64);
+    }
 
     const pdfBuffer = await pdf.generatePdf(
       { content: html },

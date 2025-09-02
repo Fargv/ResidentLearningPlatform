@@ -923,7 +923,9 @@
     "title": "Certificado de Cumplimiento",
     "body": "Se certifica que <strong>{{name}}</strong> ha completado satisfactoriamente la fase formativa asignada del Academic Program en tecnologías del robot Da Vinci®. <br /><br />Este curso se enmarca dentro del plan formativo en tecnología robótica en colaboración con el hospital <strong>{{hospital}}</strong> y bajo la supervisión de su tutor asignado.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · www.abexsl.es",
+    "tutorPrefix": "Tutor del programa de residentes del ",
+    "tutorPlaceholder": "Tutor del programa: __________"
   },
   "emails": {
     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
