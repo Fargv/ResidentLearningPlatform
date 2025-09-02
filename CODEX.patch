@@ -1,56 +1,97 @@
-diff --git a/tests/descargarCertificado.test.js b/tests/descargarCertificado.test.js
-index 10b17bf97a08076d4f1350fc1622c46f427f46aa..5e8508552640a49e279dcf61d0682416d091b279 100644
---- a/tests/descargarCertificado.test.js
-+++ b/tests/descargarCertificado.test.js
-@@ -1,39 +1,50 @@
- jest.mock('html-pdf-node');
+diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
+index 7ac455256e4185ac9c9ff15f4a03690c60c3f54c..8d26466f635e62c04ca44945f3a293891cc82443 100644
+--- a/src/controllers/certificadoController.js
++++ b/src/controllers/certificadoController.js
+@@ -88,78 +88,73 @@ exports.descargarCertificado = async (req, res, next) => {
+     const corporateLogo = "https://www.abexsl.es/images/logo.png";
+     let logosHtml;
+     if (programa === "Programa Sociedades") {
+       logosHtml = `<div class="logo-center"><img src="${corporateLogo}" alt="Logo" /></div>`;
+     } else if (programa === "Programa Residentes") {
+       logosHtml = `<div class="logo-center"><img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" /></div>`;
+     } else {
+       const hospiLogo =
+         usuario.hospital && usuario.hospital.urlHospiLogo
+           ? `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`
+           : "";
+       logosHtml = `<div class="logos"><img src="${corporateLogo}" alt="Logo" />${hospiLogo}</div>`;
+     }
  
- const { descargarCertificado } = require('../src/controllers/certificadoController');
- const User = require('../src/models/User');
- const ProgresoResidente = require('../src/models/ProgresoResidente');
- const pdf = require('html-pdf-node');
- const fs = require('fs');
+     const formattedBody = certificateStrings.body
+       .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
+       .replace("{{hospital}}", usuario.hospital ? usuario.hospital.nombre : "");
  
- describe('descargarCertificado', () => {
-   beforeEach(() => {
-     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
-     jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
--    jest.spyOn(fs, 'readFileSync').mockReturnValue('<html></html>');
-+    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
-+      if (filePath.includes('certificado.html')) {
-+        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
-+      }
-+      if (filePath.includes('firma-javier.png')) {
-+        return Buffer.from('');
-+      }
-+      if (filePath.includes('locales')) {
-+        return JSON.stringify({ certificate: { title: '', body: '', dateLine: '{{date}}', footer: '', tutorPrefix: '', tutorPlaceholder: '' } });
-+      }
-+      return '';
-+    });
-     jest.spyOn(fs, 'unlink').mockImplementation((path, cb) => cb());
-   });
+     const formattedDate = new Intl.DateTimeFormat(lang, {
+       day: "numeric",
+       month: "long",
+       year: "numeric",
+     }).format(new Date());
+     const dateLine = certificateStrings.dateLine.replace("{{date}}", formattedDate);
  
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
+-    const tutorName =
++    let tutorName =
+       certificateStrings.tutorPrefix +
+       (usuario.hospital ? usuario.hospital.nombre : "");
+-    const tutorRoleLine = certificateStrings.tutorPlaceholder;
++    let tutorRoleLine = certificateStrings.tutorPlaceholder;
++
++    if (programa === "Programa Residentes") {
++      tutorName = usuario.tutor
++        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
++        : certificateStrings.tutorPlaceholder;
++      tutorRoleLine = usuario.tutor
++        ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
++        : "";
++      html = html.replace("{{HOSPITAL_LOGO}}", logosHtml);
++    } else {
++      html = html.replace("{{LOGOS}}", logosHtml);
++    }
  
-   test('returns 400 when phases not validated', async () => {
-     jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1' }) });
-     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ estadoGeneral: 'en progreso' }]) });
+     html = html
+       .replace("{{CERT_TITLE}}", certificateStrings.title)
+       .replace("{{PROGRAMA}}", programa)
+       .replace("{{CERT_BODY}}", formattedBody)
+       .replace("{{CERT_DATE}}", dateLine)
+       .replace("{{CERT_FOOTER}}", certificateStrings.footer)
+       .replace("{{TUTOR_NAME}}", tutorName)
+       .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine)
+       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
+       .replace("{{SIGNATURE_LOGO}}", signatureBase64)
+       .replace("{{LANG}}", lang);
  
-     const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+-    if (programa === "Programa Residentes") {
+-      const tutorName = usuario.tutor
+-        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
+-        : "Tutor del programa: __________";
+-      const tutorRoleLine = usuario.tutor
+-        ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
+-        : "";
+-      html = html
+-        .replace("{{HOSPITAL_LOGO}}", logosHtml)
+-        .replace("{{TUTOR_NAME}}", tutorName)
+-        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
+-    } else {
+-      html = html
+-        .replace("{{LOGOS}}", logosHtml)
+-        .replace("{{SIGNATURE_LOGO}}", signatureBase64);
+-    }
+-
+     const pdfBuffer = await pdf.generatePdf(
+       { content: html },
+       { format: "A4" },
+     );
+     fs.writeFileSync(filePath, pdfBuffer);
  
-     await descargarCertificado(req, res, jest.fn());
-     expect(res.status).toHaveBeenCalledWith(400);
-   });
- 
-   test('sends pdf when validated', async () => {
-     jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1', nombre: 'A', apellidos: 'B', tipo: 'Programa', hospital: { nombre: 'H' } }) });
-     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]) });
- 
-     const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
-     const res = { set: jest.fn(), download: jest.fn((path, name, cb) => cb()) };
+     res.set("Content-Type", "application/pdf");
+     res.download(filePath, "certificado.pdf", (err) => {
+       fs.unlink(filePath, (unlinkErr) => {
+         if (unlinkErr)
+           console.error("Error eliminando certificado temporal", unlinkErr);
+       });
+       if (err) next(err);
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
  

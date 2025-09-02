@@ -110,10 +110,22 @@ exports.descargarCertificado = async (req, res, next) => {
     }).format(new Date());
     const dateLine = certificateStrings.dateLine.replace("{{date}}", formattedDate);
 
-    const tutorName =
+    let tutorName =
       certificateStrings.tutorPrefix +
       (usuario.hospital ? usuario.hospital.nombre : "");
-    const tutorRoleLine = certificateStrings.tutorPlaceholder;
+    let tutorRoleLine = certificateStrings.tutorPlaceholder;
+
+    if (programa === "Programa Residentes") {
+      tutorName = usuario.tutor
+        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
+        : certificateStrings.tutorPlaceholder;
+      tutorRoleLine = usuario.tutor
+        ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
+        : "";
+      html = html.replace("{{HOSPITAL_LOGO}}", logosHtml);
+    } else {
+      html = html.replace("{{LOGOS}}", logosHtml);
+    }
 
     html = html
       .replace("{{CERT_TITLE}}", certificateStrings.title)
@@ -121,28 +133,9 @@ exports.descargarCertificado = async (req, res, next) => {
       .replace("{{CERT_BODY}}", formattedBody)
       .replace("{{CERT_DATE}}", dateLine)
       .replace("{{CERT_FOOTER}}", certificateStrings.footer)
-      .replace("{{TUTOR_NAME}}", tutorName)
-      .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine)
       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
       .replace("{{SIGNATURE_LOGO}}", signatureBase64)
       .replace("{{LANG}}", lang);
-
-    if (programa === "Programa Residentes") {
-      const tutorName = usuario.tutor
-        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
-        : "Tutor del programa: __________";
-      const tutorRoleLine = usuario.tutor
-        ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
-        : "";
-      html = html
-        .replace("{{HOSPITAL_LOGO}}", logosHtml)
-        .replace("{{TUTOR_NAME}}", tutorName)
-        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
-    } else {
-      html = html
-        .replace("{{LOGOS}}", logosHtml)
-        .replace("{{SIGNATURE_LOGO}}", signatureBase64);
-    }
 
     const pdfBuffer = await pdf.generatePdf(
       { content: html },
