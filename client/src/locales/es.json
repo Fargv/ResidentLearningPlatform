@@ -255,7 +255,7 @@
     "title": "Mi Perfil",
     "personalData": "Datos personales",
     "changePassword": "Cambiar Contraseña",
-    "noTutor": "Sin tutor asignado",
+      "noTutor": "Sin tutor asignado",
     "fields": {
       "name": "Nombre",
       "lastName": "Apellidos",
@@ -388,7 +388,7 @@
     "passwordError": "Error al actualizar la contraseña",
     "createProgressSuccess": "Progreso formativo creado con éxito",
     "createProgressError": "Error al crear el progreso",
-    "noTutor": "Sin tutor asignado",
+    "noTutor": "Residente sin tutor asignado",
     "table": {
       "aria": "tabla de usuarios",
       "name": "Nombre",

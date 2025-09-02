@@ -297,7 +297,7 @@ const AdminUsuarios: React.FC = () => {
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
       if (!payload.zona) delete payload.zona;
-      if (!payload.tutor) delete payload.tutor;
+      if (payload.tutor === undefined) delete payload.tutor;
       const res = await createUser(payload);
       setUsuariosLista([...usuarios, res.data.data]);
       handleCloseCrearDialog();
@@ -329,7 +329,7 @@ const AdminUsuarios: React.FC = () => {
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
-      if (!payload.tutor) delete payload.tutor;
+      if (payload.tutor === undefined) delete payload.tutor;
 
       const res = await api.put(`/users/${selectedUsuario._id}`, payload);
 

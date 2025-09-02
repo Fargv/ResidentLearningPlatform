@@ -1,135 +1,455 @@
-diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
-index eb3ccca11693f09a186aa5a51da54b4a12378a22..b56523dee649070a5d52790867e3f646d54bee93 100644
---- a/src/controllers/certificadoController.js
-+++ b/src/controllers/certificadoController.js
-@@ -25,51 +25,53 @@ exports.descargarCertificado = async (req, res, next) => {
-       residente: req.params.id,
-     }).sort({ createdAt: 1 });
-     if (!progresos.every((p) => p.estadoGeneral === "validado")) {
-       return res
-         .status(400)
-         .json({ success: false, error: "Existen fases sin validar" });
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index 6242a7bcbf39fc22f0bfb969c6a4455d79cfcd8a..be6743105b8270bab42686537dc3c47ed335dfb2 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -233,51 +233,51 @@
+       "description": "Participación como asistente en quirófano."
+     },
+     "phase4": {
+       "label": "Fase 4 - Cirugía en Consola",
+       "description": "Cirugías realizadas por el residente con supervisión."
      }
- 
-     const lang = req.query.lang || "es";
- 
-     const programa =
-       usuario.rol === "residente"
-         ? "Programa Residentes"
-         : usuario.rol === "participante"
-           ? "Programa Sociedades"
-           : usuario.tipo;
- 
-     const uploadDir = path.join(__dirname, "../../public/uploads");
-     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-     const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
-     const filePath = path.join(uploadDir, fileName);
- 
-     const templateFile =
-       programa === "Programa Residentes"
-         ? "certificado_residente.html"
--        : "certificado.html";
-+        : programa === "Programa Sociedades"
-+          ? "certificado_sociedad.html"
-+          : "certificado.html";
-     const templatePath = path.resolve(
-       process.cwd(),
-       `client/src/templates/${templateFile}`,
-     );
-     if (!fs.existsSync(templatePath)) {
-       console.error(`Plantilla de certificado no encontrada: ${templatePath}`);
-       return res
-         .status(500)
-         .json({ success: false, error: "Plantilla no encontrada" });
+   },
+   "common": {
+     "cancel": "Cancelar",
+     "create": "Crear",
+     "creating": "Creando...",
+     "saveChanges": "Guardar Cambios",
+     "saving": "Guardando...",
+     "delete": "Eliminar",
+     "deleting": "Eliminando...",
+     "phase": "Fase",
+     "validate": "Validar",
+     "reject": "Rechazar",
+     "processing": "Procesando...",
+     "none": "Ninguno"
+   },
+   "profile": {
+     "title": "Mi Perfil",
+     "personalData": "Datos personales",
+     "changePassword": "Cambiar Contraseña",
+-    "noTutor": "Sin tutor asignado",
++      "noTutor": "Sin tutor asignado",
+     "fields": {
+       "name": "Nombre",
+       "lastName": "Apellidos",
+       "email": "Email",
+       "hospital": "Hospital",
+       "society": "Sociedad",
+       "tutor": "Tutor",
+       "currentPassword": "Contraseña Actual",
+       "newPassword": "Nueva Contraseña",
+       "confirmPassword": "Confirmar Contraseña"
+     },
+     
+     "messages": {
+       "updateSuccess": "Perfil actualizado",
+       "updateError": "Error al actualizar el perfil",
+       "passwordMismatch": "Las contraseñas no coinciden",
+       "passwordUpdateSuccess": "Contraseña actualizada",
+       "passwordUpdateError": "Error al cambiar la contraseña"
+     },
+     "buttons": {
+       "changePassword": "Cambiar Contraseña"
      }
-     let html = fs.readFileSync(templatePath, "utf8");
+   },
+   "adminHospitals": {
+     "title": "Gestión de Hospitales",
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index 6242a7bcbf39fc22f0bfb969c6a4455d79cfcd8a..be6743105b8270bab42686537dc3c47ed335dfb2 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -366,51 +366,51 @@
+     }
+   },
+   "adminUsers": {
+     "titleAll": "Gestión de Todos los Usuarios",
+     "titleHospital": "Usuarios de Tu Hospital",
+     "searchPlaceholder": "Buscar por nombre o email",
+     "loadError": "Error al cargar los datos",
+     "actions": {
+       "create": "Crear Usuario",
+       "invite": "Invitar Usuario",
+       "edit": "Editar",
+       "delete": "Eliminar",
+       "changePassword": "Cambiar contraseña",
+       "createProgress": "Crear progreso"
+     },
+     "createSuccess": "Usuario creado correctamente",
+     "createError": "Error al crear el usuario",
+     "updateSuccess": "Usuario actualizado correctamente",
+     "updateError": "Error al actualizar el usuario",
+     "deleteSuccess": "Usuario eliminado correctamente",
+     "deleteError": "Error al eliminar el usuario",
+     "passwordUpdated": "Contraseña actualizada",
+     "passwordError": "Error al actualizar la contraseña",
+     "createProgressSuccess": "Progreso formativo creado con éxito",
+     "createProgressError": "Error al crear el progreso",
+-    "noTutor": "Sin tutor asignado",
++    "noTutor": "Residente sin tutor asignado",
+     "table": {
+       "aria": "tabla de usuarios",
+       "name": "Nombre",
+       "email": "Email",
+       "type": "Tipo",
+       "society": "Sociedad",
+       "role": "Rol",
+       "hospital": "Hospital",
+       "tutor": "Tutor",
+       "specialty": "Especialidad",
+       
+       "zone": "Zona",
+       "actions": "Acciones"
+     },
+     "fields": {
+       "email": "Email",
+       "password": "Contraseña",
+       "name": "Nombre",
+       "surname": "Apellidos",
+       "type": "Tipo",
+       "role": "Rol",
+       "hospital": "Hospital",
+       "tutor": "Tutor",
+       "specialty": "Especialidad",
+       
+diff --git a/client/src/pages/dashboard/AdminUsuarios.test.tsx b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+index 2c36e77788f93be26ad36215014a8219f114fc08..5ce589d1704b1d17e859e6588145c06a9c0096f8 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.test.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+@@ -1,42 +1,44 @@
+ import React from 'react';
+-import { render, screen, within } from '@testing-library/react';
++import { render, screen, within, waitFor } from '@testing-library/react';
++import userEvent from '@testing-library/user-event';
+ import AdminUsuarios from './AdminUsuarios';
+ import { I18nextProvider } from 'react-i18next';
+ import i18n from '../../i18n';
  
-     const signaturePath = path.resolve(
-       process.cwd(),
-       "client/public/firma-javier.png",
-     );
-     const signatureData = fs.readFileSync(signaturePath);
-     const signatureBase64 = `data:image/png;base64,${signatureData.toString("base64")}`;
+ jest.mock('../../api');
+ jest.mock('../../context/AuthContext');
+ jest.mock('react-router-dom', () => ({
+   useNavigate: () => jest.fn()
+ }));
  
-     let certificateStrings;
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ 
+ const mockedUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+ const mockedGet = (api as any).get as jest.Mock;
++const mockedPut = (api as any).put as jest.Mock;
+ 
+ beforeEach(() => {
+   mockedUseAuth.mockReturnValue({ user: { rol: 'administrador' } } as any);
+   i18n.changeLanguage('es');
+ });
+ 
+ afterEach(() => {
+   jest.clearAllMocks();
+ });
+ 
+ test('muestra boton Crear progreso cuando no existe progreso', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   expect(await screen.findByText('Crear progreso')).toBeInTheDocument();
+ });
+diff --git a/client/src/pages/dashboard/AdminUsuarios.test.tsx b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+index 2c36e77788f93be26ad36215014a8219f114fc08..5ce589d1704b1d17e859e6588145c06a9c0096f8 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.test.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+@@ -96,29 +98,83 @@ test('muestra advertencia en columna Tutor cuando residente no tiene tutor', asy
+     .mockResolvedValueOnce({
+       data: {
+         data: [
+           {
+             _id: 'u1',
+             nombre: 'Res',
+             apellidos: 'A',
+             email: 'r@a.com',
+             rol: 'residente',
+             tipo: 'Programa Residentes',
+             tutor: null,
+           },
+         ],
+       },
+     })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+ 
+   const nameCell = await screen.findByText('Res A');
+-  const row = nameCell.closest('tr') as HTMLElement;
+-  const cells = within(row).getAllByRole('cell');
+-  expect(cells[7]).toHaveTextContent(i18n.t('adminUsers.noTutor'));
+-});
++  const row = nameCell.closest('tr') as HTMLElement;
++  const cells = within(row).getAllByRole('cell');
++  expect(cells[7]).toHaveTextContent(i18n.t('adminUsers.noTutor'));
++});
++
++test('envía tutor vacío al desasignar en edición', async () => {
++  mockedGet
++    .mockResolvedValueOnce({
++      data: {
++        data: [
++          {
++            _id: 'u1',
++            nombre: 'Res',
++            apellidos: 'A',
++            email: 'r@a.com',
++            rol: 'residente',
++            tipo: 'Programa Residentes',
++            hospital: { _id: 'h1', nombre: 'H1' },
++            especialidad: 'URO',
++            tutor: { _id: 't1', nombre: 'Tut', apellidos: 'Uno' },
++          },
++        ],
++      },
++    })
++    .mockResolvedValueOnce({ data: { data: [{ _id: 'h1', nombre: 'H1', zona: 'NORTE' }] } })
++    .mockResolvedValueOnce({ data: { data: [] } })
++    .mockResolvedValueOnce({ data: { data: [{ _id: 't1', nombre: 'Tut', apellidos: 'Uno' }] } });
++
++  mockedPut.mockResolvedValueOnce({ data: { data: {} } });
++
++  render(
++    <I18nextProvider i18n={i18n}>
++      <AdminUsuarios />
++    </I18nextProvider>
++  );
++
++  const editBtn = await screen.findByRole('button', {
++    name: i18n.t('adminUsers.actions.edit'),
++  });
++  await userEvent.click(editBtn);
++
++  const tutorSelect = await screen.findByLabelText(
++    i18n.t('adminUsers.fields.tutor')
++  );
++  await userEvent.selectOptions(tutorSelect, '');
++
++  const saveBtn = screen.getByRole('button', {
++    name: i18n.t('common.saveChanges'),
++  });
++  await userEvent.click(saveBtn);
++
++  await waitFor(() => {
++    expect(mockedPut).toHaveBeenCalledWith(
++      '/users/u1',
++      expect.objectContaining({ tutor: '' })
++    );
++  });
++});
+diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
+index f0f2e3f31d023c25c3e9558e362b578473fe986b..c27f6fd750a0bc510f2ea57cddbb97461e23a8d7 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.tsx
+@@ -275,83 +275,83 @@ const AdminUsuarios: React.FC = () => {
+           updated.tipo = "Programa Sociedades";
+         }
+         if (value !== "residente") {
+           updated.tutor = "";
+         }
+       }
+     } else if (name === "hospital") {
+       const selected = hospitales.find((h) => h._id === value);
+       updated.zona = selected?.zona || "";
+       updated.tutor = "";
+     } else if (name === "especialidad") {
+       updated.tutor = "";
+     }
+     setFormData(updated);
+   };
+ 
+   const handleCrear = async () => {
      try {
-       const localePath = path.resolve(
-         process.cwd(),
-         `client/src/locales/${lang}.json`,
-       );
-diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
-index eb3ccca11693f09a186aa5a51da54b4a12378a22..b56523dee649070a5d52790867e3f646d54bee93 100644
---- a/src/controllers/certificadoController.js
-+++ b/src/controllers/certificadoController.js
-@@ -98,57 +100,64 @@ exports.descargarCertificado = async (req, res, next) => {
-     }
- 
-     const formattedBody = certificateStrings.body
-       .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
-       .replace("{{hospital}}", usuario.hospital ? usuario.hospital.nombre : "");
- 
-     const formattedDate = new Intl.DateTimeFormat(lang, {
-       day: "numeric",
-       month: "long",
-       year: "numeric",
-     }).format(new Date());
-     const dateLine = certificateStrings.dateLine.replace("{{date}}", formattedDate);
- 
-     let tutorName =
-       certificateStrings.tutorPrefix +
-       (usuario.hospital ? usuario.hospital.nombre : "");
-     let tutorRoleLine = certificateStrings.tutorPlaceholder;
- 
-     if (programa === "Programa Residentes") {
-       tutorName = usuario.tutor
-         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
-         : certificateStrings.tutorPlaceholder;
-       tutorRoleLine = usuario.tutor
-         ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
-         : "";
--      html = html
--        .replace(
--          "{{HOSPITAL_LOGO}}",
--          `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
--        )
--        .replace("{{TUTOR_NAME}}", tutorName)
--        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
-+      html = html
-+        .replace(
-+          "{{HOSPITAL_LOGO}}",
-+          `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
-+        )
-+        .replace("{{TUTOR_NAME}}", tutorName)
-+        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
-+    } else if (programa === "Programa Sociedades") {
-+      html = html
-+        .replace("{{LOGOS}}", logosHtml)
-+        .replace(
-+          "{{HOSPITAL_NOMBRE}}",
-+          usuario.hospital ? usuario.hospital.nombre : "",
-+        );
-     } else {
-       html = html.replace("{{LOGOS}}", logosHtml);
-     }
- 
-     html = html
-       .replace("{{CERT_TITLE}}", certificateStrings.title)
-       .replace("{{PROGRAMA}}", programa)
-       .replace("{{CERT_BODY}}", formattedBody)
-       .replace("{{CERT_DATE}}", dateLine)
-       .replace("{{CERT_FOOTER}}", certificateStrings.footer)
-       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
-       .replace("{{SIGNATURE_LOGO}}", signatureBase64)
-       .replace("{{LANG}}", lang);
- 
-     if (programa === "Programa Residentes" && html.includes("{{")) {
-       return res.status(500).json({
-         success: false,
-         error: "Marcadores sin reemplazar en la plantilla",
+       setProcesando(true);
+       const payload = { ...formData, password: passwordValue } as any;
+       if (payload.rol === "administrador") delete payload.tipo;
+       if (!payload.hospital) delete payload.hospital;
+       if (!payload.especialidad) delete payload.especialidad;
+       if (!payload.sociedad) delete payload.sociedad;
+       if (!payload.zona) delete payload.zona;
+-      if (!payload.tutor) delete payload.tutor;
++      if (payload.tutor === undefined) delete payload.tutor;
+       const res = await createUser(payload);
+       setUsuariosLista([...usuarios, res.data.data]);
+       handleCloseCrearDialog();
+       setSnackbar({
+         open: true,
+         message: t("adminUsers.createSuccess"),
+         severity: "success",
        });
+     } catch (err: any) {
+       setSnackbar({
+         open: true,
+         message:
+           err.response?.data?.error || t("adminUsers.createError"),
+         severity: "error",
+       });
+     } finally {
+       setProcesando(false);
      }
-     const pdfBuffer = await pdf.generatePdf(
-       { content: html },
-       { format: "A4" },
-     );
-     fs.writeFileSync(filePath, pdfBuffer);
+   };
+ 
+   const handleEditar = async () => {
+     if (!selectedUsuario) return;
+ 
+     try {
+       setProcesando(true);
+ 
+       const payload = { ...formData, password: passwordValue } as any;
+       if (payload.rol === "administrador") delete payload.tipo;
+       if (!payload.hospital) delete payload.hospital;
+       if (!payload.especialidad) delete payload.especialidad;
+       if (!payload.sociedad) delete payload.sociedad;
+-      if (!payload.tutor) delete payload.tutor;
++      if (payload.tutor === undefined) delete payload.tutor;
+ 
+       const res = await api.put(`/users/${selectedUsuario._id}`, payload);
+ 
+       // Actualizar lista de usuarios
+       setUsuariosLista(
+         usuarios.map((u) =>
+           u._id === selectedUsuario._id ? res.data.data : u,
+         ),
+       );
+ 
+       handleCloseEditarDialog();
+ 
+       setSnackbar({
+         open: true,
+         message: t("adminUsers.updateSuccess"),
+         severity: "success",
+       });
+     } catch (err: any) {
+       setError(err.response?.data?.error || t("adminUsers.updateError"));
+ 
+       setSnackbar({
+         open: true,
+         message:
+           err.response?.data?.error || t("adminUsers.updateError"),
+         severity: "error",
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index 4ee1c979725026d972e974d846c200f0016db6b4..d9f6647f6b90732489a37b6f27782d2a638f8d38 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -1,37 +1,38 @@
+ // userController.js COMPLETO CON INICIALIZACIÓN DEL PROGRESO
+ const ErrorResponse = require('../utils/errorResponse');
+ const User = require('../models/User');
+ const Hospital = require('../models/Hospital');
+ const Invitacion = require('../models/Invitacion');
+ const crypto = require('crypto');
+ const sendEmail = require('../utils/sendEmail');
+ const { createAuditLog } = require('../utils/auditLog');
+ const ProgresoResidente = require('../models/ProgresoResidente');
+ const Sociedades = require('../models/Sociedades');
+ const { inicializarProgresoFormativo } = require('../utils/initProgreso');
+ const { Role } = require('../utils/roles');
++const { resolveTutor } = require('../utils/resolveTutor');
+ 
+ const legacyRoles = {
+   formador: Role.TUTOR,
+   coordinador: Role.CSM,
+   instructor: Role.PROFESOR,
+   alumno: Role.PARTICIPANTE
+ };
+ 
+ 
+ 
+ 
+ // @desc    Obtener todos los usuarios (admin), usuarios del hospital (tutor)
+ //         o participantes de la sociedad (profesor)
+ // @route   GET /api/users
+ // @access  Private/Admin|Tutor|CSM|Profesor
+ exports.getUsers = async (req, res, next) => {
+   try {
+     let users;
+ 
+     if (req.user.rol === Role.ADMINISTRADOR) {
+       users = await User.find()
+         .populate('hospital')
+         .populate('sociedad')
+         .populate('tutor', 'nombre apellidos');
+     } else if (req.user.rol === Role.TUTOR) {
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index 4ee1c979725026d972e974d846c200f0016db6b4..d9f6647f6b90732489a37b6f27782d2a638f8d38 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -369,54 +370,58 @@ exports.updateUser = async (req, res, next) => {
+         especialidadVal = especialidadInput;
+       } else {
+         especialidadVal =
+           especialidadInput !== undefined
+             ? especialidadInput
+             : currentUser.especialidad;
+       }
+       if (especialidadVal === 'ALL') {
+         return next(
+           new ErrorResponse(
+             'La especialidad no puede ser ALL para residente',
+             400
+           )
+         );
+       }
+     } else {
+       especialidadVal = undefined;
+     }
+ 
+     updateData.hospital = hospitalId;
+     updateData.especialidad = especialidadVal;
+     updateData.sociedad = sociedadId;
+     updateData.zona = zonaVal;
+ 
+     if (newRol === Role.RESIDENTE) {
+-      let tutorVal = tutorInput;
+-      if (!tutorVal) {
++      let tutorVal;
++      if (tutorInput === '') {
++        tutorVal = null;            // desasignar explicitamente
++      } else if (tutorInput === undefined) {
+         const hId = hospitalId || currentUser.hospital;
+-        tutorVal = await resolveTutor({ hospital: hId, especialidad: especialidadVal });
++        tutorVal = await resolveTutor('ALL', hId, especialidadVal);
++      } else {
++        tutorVal = tutorInput;
+       }
+       updateData.tutor = tutorVal;
+     } else if (roleChanged) {
+       updateData.tutor = undefined;
+     }
+ 
+     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
+       new: true,
+       runValidators: true
+     })
+       .populate('hospital')
+       .populate('sociedad')
+       .populate('tutor', 'nombre apellidos');
+ 
+     if (!user) {
+       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
+     }
+     
+     // Crear registro de auditoría
+     await createAuditLog({
+       usuario: req.user._id,
+       accion: 'actualizar_usuario',
+       descripcion: `Usuario actualizado: ${user.email}`,
+       ip: req.ip
+     });

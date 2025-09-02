@@ -10,6 +10,7 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
+const { resolveTutor } = require('../utils/resolveTutor');
 
 const legacyRoles = {
   formador: Role.TUTOR,
@@ -391,10 +392,14 @@ exports.updateUser = async (req, res, next) => {
     updateData.zona = zonaVal;
 
     if (newRol === Role.RESIDENTE) {
-      let tutorVal = tutorInput;
-      if (!tutorVal) {
+      let tutorVal;
+      if (tutorInput === '') {
+        tutorVal = null;            // desasignar explicitamente
+      } else if (tutorInput === undefined) {
         const hId = hospitalId || currentUser.hospital;
-        tutorVal = await resolveTutor({ hospital: hId, especialidad: especialidadVal });
+        tutorVal = await resolveTutor('ALL', hId, especialidadVal);
+      } else {
+        tutorVal = tutorInput;
       }
       updateData.tutor = tutorVal;
     } else if (roleChanged) {

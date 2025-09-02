@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import AdminUsuarios from './AdminUsuarios';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../i18n';
@@ -15,6 +16,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const mockedUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 const mockedGet = (api as any).get as jest.Mock;
+const mockedPut = (api as any).put as jest.Mock;
 
 beforeEach(() => {
   mockedUseAuth.mockReturnValue({ user: { rol: 'administrador' } } as any);
@@ -121,4 +123,58 @@ test('muestra advertencia en columna Tutor cuando residente no tiene tutor', asy
   const row = nameCell.closest('tr') as HTMLElement;
   const cells = within(row).getAllByRole('cell');
   expect(cells[7]).toHaveTextContent(i18n.t('adminUsers.noTutor'));
+});
+
+test('envía tutor vacío al desasignar en edición', async () => {
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'u1',
+            nombre: 'Res',
+            apellidos: 'A',
+            email: 'r@a.com',
+            rol: 'residente',
+            tipo: 'Programa Residentes',
+            hospital: { _id: 'h1', nombre: 'H1' },
+            especialidad: 'URO',
+            tutor: { _id: 't1', nombre: 'Tut', apellidos: 'Uno' },
+          },
+        ],
+      },
+    })
+    .mockResolvedValueOnce({ data: { data: [{ _id: 'h1', nombre: 'H1', zona: 'NORTE' }] } })
+    .mockResolvedValueOnce({ data: { data: [] } })
+    .mockResolvedValueOnce({ data: { data: [{ _id: 't1', nombre: 'Tut', apellidos: 'Uno' }] } });
+
+  mockedPut.mockResolvedValueOnce({ data: { data: {} } });
+
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
+
+  const editBtn = await screen.findByRole('button', {
+    name: i18n.t('adminUsers.actions.edit'),
+  });
+  await userEvent.click(editBtn);
+
+  const tutorSelect = await screen.findByLabelText(
+    i18n.t('adminUsers.fields.tutor')
+  );
+  await userEvent.selectOptions(tutorSelect, '');
+
+  const saveBtn = screen.getByRole('button', {
+    name: i18n.t('common.saveChanges'),
+  });
+  await userEvent.click(saveBtn);
+
+  await waitFor(() => {
+    expect(mockedPut).toHaveBeenCalledWith(
+      '/users/u1',
+      expect.objectContaining({ tutor: '' })
+    );
+  });
 });
