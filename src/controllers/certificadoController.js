@@ -89,9 +89,7 @@ exports.descargarCertificado = async (req, res, next) => {
     let logosHtml;
     if (programa === "Programa Sociedades") {
       logosHtml = `<div class="logo-center"><img src="${corporateLogo}" alt="Logo" /></div>`;
-    } else if (programa === "Programa Residentes") {
-      logosHtml = `<div class="logo-center"><img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" /></div>`;
-    } else {
+    } else if (programa !== "Programa Residentes") {
       const hospiLogo =
         usuario.hospital && usuario.hospital.urlHospiLogo
           ? `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`
@@ -122,7 +120,13 @@ exports.descargarCertificado = async (req, res, next) => {
       tutorRoleLine = usuario.tutor
         ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
         : "";
-      html = html.replace("{{HOSPITAL_LOGO}}", logosHtml);
+      html = html
+        .replace(
+          "{{HOSPITAL_LOGO}}",
+          `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
+        )
+        .replace("{{TUTOR_NAME}}", tutorName)
+        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
     } else {
       html = html.replace("{{LOGOS}}", logosHtml);
     }
@@ -137,6 +141,12 @@ exports.descargarCertificado = async (req, res, next) => {
       .replace("{{SIGNATURE_LOGO}}", signatureBase64)
       .replace("{{LANG}}", lang);
 
+    if (programa === "Programa Residentes" && html.includes("{{")) {
+      return res.status(500).json({
+        success: false,
+        error: "Marcadores sin reemplazar en la plantilla",
+      });
+    }
     const pdfBuffer = await pdf.generatePdf(
       { content: html },
       { format: "A4" },
