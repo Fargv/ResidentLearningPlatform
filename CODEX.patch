@@ -1,8 +1,53 @@
 diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
-index 321a58447d98e4dc6915949f46c38028951b88f9..f741d4193accf06656e07effaa3630e70c979760 100644
+index eb3ccca11693f09a186aa5a51da54b4a12378a22..b56523dee649070a5d52790867e3f646d54bee93 100644
 --- a/src/controllers/certificadoController.js
 +++ b/src/controllers/certificadoController.js
-@@ -67,92 +67,102 @@ exports.descargarCertificado = async (req, res, next) => {
+@@ -25,51 +25,53 @@ exports.descargarCertificado = async (req, res, next) => {
+       residente: req.params.id,
+     }).sort({ createdAt: 1 });
+     if (!progresos.every((p) => p.estadoGeneral === "validado")) {
+       return res
+         .status(400)
+         .json({ success: false, error: "Existen fases sin validar" });
+     }
+ 
+     const lang = req.query.lang || "es";
+ 
+     const programa =
+       usuario.rol === "residente"
+         ? "Programa Residentes"
+         : usuario.rol === "participante"
+           ? "Programa Sociedades"
+           : usuario.tipo;
+ 
+     const uploadDir = path.join(__dirname, "../../public/uploads");
+     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+     const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
+     const filePath = path.join(uploadDir, fileName);
+ 
+     const templateFile =
+       programa === "Programa Residentes"
+         ? "certificado_residente.html"
+-        : "certificado.html";
++        : programa === "Programa Sociedades"
++          ? "certificado_sociedad.html"
++          : "certificado.html";
+     const templatePath = path.resolve(
+       process.cwd(),
+       `client/src/templates/${templateFile}`,
+     );
+     if (!fs.existsSync(templatePath)) {
+       console.error(`Plantilla de certificado no encontrada: ${templatePath}`);
+       return res
+         .status(500)
+         .json({ success: false, error: "Plantilla no encontrada" });
+     }
+     let html = fs.readFileSync(templatePath, "utf8");
+ 
+     const signaturePath = path.resolve(
+       process.cwd(),
+       "client/public/firma-javier.png",
+     );
      const signatureData = fs.readFileSync(signaturePath);
      const signatureBase64 = `data:image/png;base64,${signatureData.toString("base64")}`;
  
@@ -12,31 +57,11 @@ index 321a58447d98e4dc6915949f46c38028951b88f9..f741d4193accf06656e07effaa3630e7
          process.cwd(),
          `client/src/locales/${lang}.json`,
        );
-       const localeData = JSON.parse(fs.readFileSync(localePath, "utf8"));
-       certificateStrings = localeData.certificate;
-     } catch (e) {
-       const localeData = JSON.parse(
-         fs.readFileSync(
-           path.resolve(process.cwd(), "client/src/locales/es.json"),
-           "utf8",
-         ),
-       );
-       certificateStrings = localeData.certificate;
-     }
- 
-     const corporateLogo = "https://www.abexsl.es/images/logo.png";
-     let logosHtml;
-     if (programa === "Programa Sociedades") {
-       logosHtml = `<div class="logo-center"><img src="${corporateLogo}" alt="Logo" /></div>`;
--    } else if (programa === "Programa Residentes") {
--      logosHtml = `<div class="logo-center"><img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" /></div>`;
--    } else {
-+    } else if (programa !== "Programa Residentes") {
-       const hospiLogo =
-         usuario.hospital && usuario.hospital.urlHospiLogo
-           ? `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`
-           : "";
-       logosHtml = `<div class="logos"><img src="${corporateLogo}" alt="Logo" />${hospiLogo}</div>`;
+diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
+index eb3ccca11693f09a186aa5a51da54b4a12378a22..b56523dee649070a5d52790867e3f646d54bee93 100644
+--- a/src/controllers/certificadoController.js
++++ b/src/controllers/certificadoController.js
+@@ -98,57 +100,64 @@ exports.descargarCertificado = async (req, res, next) => {
      }
  
      const formattedBody = certificateStrings.body
@@ -62,7 +87,13 @@ index 321a58447d98e4dc6915949f46c38028951b88f9..f741d4193accf06656e07effaa3630e7
        tutorRoleLine = usuario.tutor
          ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
          : "";
--      html = html.replace("{{HOSPITAL_LOGO}}", logosHtml);
+-      html = html
+-        .replace(
+-          "{{HOSPITAL_LOGO}}",
+-          `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
+-        )
+-        .replace("{{TUTOR_NAME}}", tutorName)
+-        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
 +      html = html
 +        .replace(
 +          "{{HOSPITAL_LOGO}}",
@@ -70,6 +101,13 @@ index 321a58447d98e4dc6915949f46c38028951b88f9..f741d4193accf06656e07effaa3630e7
 +        )
 +        .replace("{{TUTOR_NAME}}", tutorName)
 +        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
++    } else if (programa === "Programa Sociedades") {
++      html = html
++        .replace("{{LOGOS}}", logosHtml)
++        .replace(
++          "{{HOSPITAL_NOMBRE}}",
++          usuario.hospital ? usuario.hospital.nombre : "",
++        );
      } else {
        html = html.replace("{{LOGOS}}", logosHtml);
      }
@@ -84,28 +122,14 @@ index 321a58447d98e4dc6915949f46c38028951b88f9..f741d4193accf06656e07effaa3630e7
        .replace("{{SIGNATURE_LOGO}}", signatureBase64)
        .replace("{{LANG}}", lang);
  
-+    if (programa === "Programa Residentes" && html.includes("{{")) {
-+      return res.status(500).json({
-+        success: false,
-+        error: "Marcadores sin reemplazar en la plantilla",
-+      });
-+    }
+     if (programa === "Programa Residentes" && html.includes("{{")) {
+       return res.status(500).json({
+         success: false,
+         error: "Marcadores sin reemplazar en la plantilla",
+       });
+     }
      const pdfBuffer = await pdf.generatePdf(
        { content: html },
        { format: "A4" },
      );
      fs.writeFileSync(filePath, pdfBuffer);
- 
-     res.set("Content-Type", "application/pdf");
-     res.download(filePath, "certificado.pdf", (err) => {
-       fs.unlink(filePath, (unlinkErr) => {
-         if (unlinkErr)
-           console.error("Error eliminando certificado temporal", unlinkErr);
-       });
-       if (err) next(err);
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 

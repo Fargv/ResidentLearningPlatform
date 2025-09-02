@@ -47,7 +47,9 @@ exports.descargarCertificado = async (req, res, next) => {
     const templateFile =
       programa === "Programa Residentes"
         ? "certificado_residente.html"
-        : "certificado.html";
+        : programa === "Programa Sociedades"
+          ? "certificado_sociedad.html"
+          : "certificado.html";
     const templatePath = path.resolve(
       process.cwd(),
       `client/src/templates/${templateFile}`,
@@ -127,6 +129,13 @@ exports.descargarCertificado = async (req, res, next) => {
         )
         .replace("{{TUTOR_NAME}}", tutorName)
         .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
+    } else if (programa === "Programa Sociedades") {
+      html = html
+        .replace("{{LOGOS}}", logosHtml)
+        .replace(
+          "{{HOSPITAL_NOMBRE}}",
+          usuario.hospital ? usuario.hospital.nombre : "",
+        );
     } else {
       html = html.replace("{{LOGOS}}", logosHtml);
     }
