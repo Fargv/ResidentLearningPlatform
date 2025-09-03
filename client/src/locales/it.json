@@ -396,7 +396,9 @@
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Tutor del programma di residenti del ",
-    "tutorPlaceholder": "Tutor del programma: ________________________________________"
+    "tutorTitle": "Tutor del programma di residenti",
+    "tutorPlaceholder": "Tutor del programma:",
+    "signatureLine": "________________________________________"
   },
   "tutorUsers": {
     "title": "I miei utenti",

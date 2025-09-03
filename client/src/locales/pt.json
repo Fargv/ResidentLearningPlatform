@@ -949,7 +949,9 @@
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Tutor do programa de residentes do ",
-    "tutorPlaceholder": "Tutor do programa: ________________________________________"
+    "tutorTitle": "Tutor do programa de residentes",
+    "tutorPlaceholder": "Tutor do programa:",
+    "signatureLine": "________________________________________"
   },
   "emails": {
     "inviteSubject": "Convite para a Plataforma de Formação Da Vinci"

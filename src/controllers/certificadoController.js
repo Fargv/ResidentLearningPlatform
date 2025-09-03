@@ -45,7 +45,9 @@ exports.descargarCertificado = async (req, res, next) => {
 
     const uploadDir = path.join(__dirname, "../../public/uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-    const fileName = `certificado_${usuario._id}_${Date.now()}.pdf`;
+    const year = new Date().getFullYear();
+    const residentName = `${usuario.nombre}_${usuario.apellidos}`.replace(/\s+/g, "_");
+    const fileName = `Certificado_DaVinci_Academic_Program_${residentName}_${year}.pdf`;
     const filePath = path.join(uploadDir, fileName);
 
     const templateFile =
@@ -114,25 +116,24 @@ exports.descargarCertificado = async (req, res, next) => {
     }).format(new Date());
     const dateLine = certificateStrings.dateLine.replace("{{date}}", formattedDate);
 
-    let tutorName =
-      certificateStrings.tutorPrefix +
-      (usuario.hospital ? usuario.hospital.nombre : "");
-    let tutorRoleLine = certificateStrings.tutorPlaceholder;
-
     if (programa === "Programa Residentes") {
-      tutorName = usuario.tutor
+      const tutorName = usuario.tutor
         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
         : certificateStrings.tutorPlaceholder;
-      tutorRoleLine = usuario.tutor
-        ? `Tutor del programa de residentes del ${usuario.hospital.nombre}`
+      const tutorRoleLine = usuario.tutor
+        ? certificateStrings.tutorTitle
         : "";
+      const tutorHospitalLine = usuario.tutor
+        ? usuario.hospital.nombre
+        : certificateStrings.signatureLine;
       html = html
         .replace(
           "{{HOSPITAL_LOGO}}",
           `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
         )
         .replace("{{TUTOR_NAME}}", tutorName)
-        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine);
+        .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine)
+        .replace("{{TUTOR_HOSPITAL_LINE}}", tutorHospitalLine);
     } else if (programa === "Programa Sociedades") {
       html = html
         .replace("{{LOGOS}}", logosHtml)
@@ -170,7 +171,7 @@ exports.descargarCertificado = async (req, res, next) => {
     fs.writeFileSync(filePath, pdfBuffer);
 
     res.set("Content-Type", "application/pdf");
-    res.download(filePath, "certificado.pdf", (err) => {
+    res.download(filePath, fileName, (err) => {
       fs.unlink(filePath, (unlinkErr) => {
         if (unlinkErr)
           console.error("Error eliminando certificado temporal", unlinkErr);

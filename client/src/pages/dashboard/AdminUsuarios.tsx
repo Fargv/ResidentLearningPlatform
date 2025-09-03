@@ -709,7 +709,7 @@ const AdminUsuarios: React.FC = () => {
                   <TableCell>
                     {usuario.rol === "residente"
                       ? usuario.tutor && typeof usuario.tutor === "object"
-                        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}`
+                        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
                         : <Chip color="warning" label={t("adminUsers.noTutor")} />
                       : "-"}
                   </TableCell>
@@ -974,6 +974,7 @@ const AdminUsuarios: React.FC = () => {
               {tutores.map((tutor) => (
                 <option key={tutor._id} value={tutor._id}>
                   {tutor.nombre} {tutor.apellidos}
+                  {tutor.especialidad ? ` (${tutor.especialidad})` : ""}
                 </option>
               ))}
             </TextField>
@@ -1194,6 +1195,7 @@ const AdminUsuarios: React.FC = () => {
               {tutores.map((tutor) => (
                 <option key={tutor._id} value={tutor._id}>
                   {tutor.nombre} {tutor.apellidos}
+                  {tutor.especialidad ? ` (${tutor.especialidad})` : ""}
                 </option>
               ))}
             </TextField>

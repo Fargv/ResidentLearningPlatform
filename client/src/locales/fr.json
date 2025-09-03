@@ -699,7 +699,9 @@
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Tuteur du programme de résidents de ",
-    "tutorPlaceholder": "Tuteur du programme : ________________________________________"
+    "tutorTitle": "Tuteur du programme de résidents",
+    "tutorPlaceholder": "Tuteur du programme :",
+    "signatureLine": "________________________________________"
   },
   "adminPhases": {
     "_comment": "Gestion des phases d'administration",

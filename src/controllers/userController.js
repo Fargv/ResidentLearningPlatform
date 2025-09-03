@@ -34,7 +34,7 @@ exports.getUsers = async (req, res, next) => {
       users = await User.find()
         .populate('hospital')
         .populate('sociedad')
-        .populate('tutor', 'nombre apellidos');
+        .populate('tutor', 'nombre apellidos especialidad');
     } else if (req.user.rol === Role.TUTOR) {
       const query = {
         hospital: req.user.hospital,
@@ -46,7 +46,7 @@ exports.getUsers = async (req, res, next) => {
       users = await User.find(query)
         .populate('hospital')
         .populate('sociedad')
-        .populate('tutor', 'nombre apellidos');
+        .populate('tutor', 'nombre apellidos especialidad');
     } else if (req.user.rol === Role.CSM) {
       const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
       const ids = hospitales.map(h => h._id);
@@ -57,7 +57,7 @@ exports.getUsers = async (req, res, next) => {
       })
         .populate('hospital')
         .populate('sociedad')
-        .populate('tutor', 'nombre apellidos');
+        .populate('tutor', 'nombre apellidos especialidad');
     } else if (req.user.rol === Role.PROFESOR) {
       users = await User.find({
         sociedad: req.user.sociedad,
@@ -65,7 +65,7 @@ exports.getUsers = async (req, res, next) => {
       })
         .populate('hospital')
         .populate('sociedad')
-        .populate('tutor', 'nombre apellidos');
+        .populate('tutor', 'nombre apellidos especialidad');
     } else {
       return next(new ErrorResponse('No autorizado para ver usuarios', 403));
     }
@@ -229,7 +229,7 @@ exports.createUser = async (req, res, next) => {
 
     await nuevoUsuario.populate('hospital');
     await nuevoUsuario.populate('sociedad');
-    await nuevoUsuario.populate('tutor', 'nombre apellidos');
+    await nuevoUsuario.populate('tutor', 'nombre apellidos especialidad');
 
     await createAuditLog({
       usuario: req.user._id,
@@ -254,7 +254,7 @@ exports.getUser = async (req, res, next) => {
     const user = await User.findById(req.params.id)
       .populate('hospital')
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -412,7 +412,7 @@ exports.updateUser = async (req, res, next) => {
     })
       .populate('hospital')
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -455,7 +455,7 @@ exports.updateUserStatus = async (req, res, next) => {
       }
     )
       .populate('hospital')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -723,7 +723,7 @@ exports.getTutorResidentes = async (req, res, next) => {
   try {
     const tutor = await User.findById(req.params.id)
       .populate('hospital')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!tutor) {
       return next(new ErrorResponse(`Tutor no encontrado con id ${req.params.id}`, 404));
@@ -748,7 +748,7 @@ exports.getTutorResidentes = async (req, res, next) => {
     const residentes = await User.find(filtrosResidentes)
       .populate('hospital')
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,
@@ -767,7 +767,7 @@ exports.getResidenteTutores = async (req, res, next) => {
   try {
     const residente = await User.findById(req.params.id)
       .populate('hospital')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!residente) {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
@@ -792,7 +792,7 @@ exports.getResidenteTutores = async (req, res, next) => {
     const tutores = await User.find(filtrosTutores)
       .populate('hospital')
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,
@@ -817,10 +817,7 @@ exports.getAvailableTutors = async (req, res, next) => {
     if (especialidad !== 'ALL') {
       query.$or = [{ especialidad }, { especialidad: 'ALL' }];
     }
-    const tutores = await User.find(query)
-      .populate('hospital')
-      .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+    const tutores = await User.find(query).select('nombre apellidos especialidad');
     res.status(200).json({
       success: true,
       count: tutores.length,
@@ -838,7 +835,7 @@ exports.getProfesorParticipantes = async (req, res, next) => {
   try {
     const profesor = await User.findById(req.params.id)
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!profesor) {
       return next(
@@ -867,7 +864,7 @@ exports.getProfesorParticipantes = async (req, res, next) => {
       tipo: profesor.tipo,
     })
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,
@@ -907,7 +904,7 @@ exports.getUsersByHospital = async (req, res) => {
     const users = await User.find(query)
       .populate('hospital')
       .populate('sociedad')
-      .populate('tutor', 'nombre apellidos');
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,

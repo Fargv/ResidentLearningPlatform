@@ -924,7 +924,9 @@
     "dateLine": "Madril, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Egoiliarren programaren tutorea ",
-    "tutorPlaceholder": "Programaren tutorea: ________________________________________"
+    "tutorTitle": "Egoiliarren programaren tutorea",
+    "tutorPlaceholder": "Programaren tutorea:",
+    "signatureLine": "________________________________________"
   },
   "emails": {
     "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"

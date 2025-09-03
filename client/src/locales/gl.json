@@ -839,7 +839,9 @@
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Titor do programa de residentes do ",
-    "tutorPlaceholder": "Titor do programa: ________________________________________"
+    "tutorTitle": "Titor do programa de residentes",
+    "tutorPlaceholder": "Titor do programa:",
+    "signatureLine": "________________________________________"
   },
   "forms": {
     "code": "Código",
