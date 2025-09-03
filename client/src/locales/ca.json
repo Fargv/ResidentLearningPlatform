@@ -19,7 +19,9 @@
     "notifications": "Notificacions",
     "profile": "Perfil",
     "users": "Usuaris",
-    "logout": "Tancar sessió"
+    "logout": "Tancar sessió",
+    "downloadSurgeryReport": "Descarregar informe de cirurgies fase {{num}}",
+    "downloadSurgeryReportError": "Error en descarregar l'informe de cirurgies"
   },
   "adminConfig": {
     "title": "Configuració",
@@ -456,7 +458,8 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Canviar contrasenya",
-      "createProgress": "Crear progrés"
+      "createProgress": "Crear progrés",
+      "downloadSurgeryReport": "Descarregar informe de cirurgies de {{phase}}"
     },
     "createSuccess": "Usuari creat correctament",
     "createError": "Error en crear l'usuari",
@@ -613,6 +616,9 @@
       "deleteSuccess": "Usuari eliminat",
       "deleteError": "Error en eliminar",
       "genericError": "Error"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Descarregar informe de cirurgies de {{phase}}"
     }
   },
   "tutorValidations": {
@@ -862,7 +868,9 @@
     "title": "El meu progrés",
     "errorLoad": "Error en carregar el progrés",
     "downloadError": "Error en descarregar el certificat",
-    "downloadCertificate": "Descarregar certificat"
+    "downloadCertificate": "Descarregar certificat",
+    "downloadSurgeryReport": "Descarregar informe de cirurgies fase {{num}}",
+    "downloadSurgeryReportError": "Error en descarregar l'informe de cirurgies"
   },
   "certificate": {
     "title": "Certificat de Compliment",

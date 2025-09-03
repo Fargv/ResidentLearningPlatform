@@ -375,7 +375,8 @@
       "edit": "Editatu",
       "delete": "Ezabatu",
       "changePassword": "Pasahitza aldatu",
-      "createProgress": "Aurrerapena sortu"
+      "createProgress": "Aurrerapena sortu",
+      "downloadSurgeryReport": "Kirurgia txostena deskargatu {{phase}}"
     },
     "createSuccess": "Erabiltzailea ongi sortu da",
     "createError": "Errorea erabiltzailea sortzean",
@@ -764,6 +765,9 @@
       "deleteSuccess": "Usuario eliminado",
       "deleteError": "Error al eliminar",
       "genericError": "Error"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Kirurgia txostena deskargatu {{phase}}"
     }
   },
   "progress": {
@@ -916,7 +920,9 @@
     "title": "Nire aurrerapena",
     "errorLoad": "Errorea aurrerapena kargatzean",
     "downloadError": "Errorea ziurtagiria deskargatzean",
-    "downloadCertificate": "Deskargatu ziurtagiria"
+    "downloadCertificate": "Deskargatu ziurtagiria",
+    "downloadSurgeryReport": "Deskargatu kirurgia txostena {{phase}}. fasea",
+    "downloadSurgeryReportError": "Errorea kirurgia txostena deskargatzean"
   },
   "certificate": {
     "title": "Osaketaren Ziurtagiria",

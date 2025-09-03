@@ -5,9 +5,9 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   IconButton, Chip, LinearProgress, Alert, Snackbar,
-  Autocomplete
+  Autocomplete, Tooltip, CircularProgress, Backdrop
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../../api';
@@ -44,6 +44,7 @@ const TutorUsuarios: React.FC = () => {
     message: '',
     severity: 'success' as 'success' | 'error'
   });
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedHospitals, setSelectedHospitals] = useState<string[]>([]);
@@ -65,7 +66,29 @@ const TutorUsuarios: React.FC = () => {
         const filtrados = res.data.data.filter(
           (u: any) => u._id !== user?._id && u.tipo === user?.tipo
         );
-        setUsuarios(filtrados);
+        const usuariosConProgreso = await Promise.all(
+          filtrados.map(async (u: any) => {
+            let fasesCirugia: { id: string; fase: string }[] = [];
+            if (["residente", "participante"].includes(u.rol)) {
+              try {
+                const progRes = await api.get(`/progreso/residente/${u._id}`);
+                fasesCirugia = progRes.data.data
+                  .filter(
+                    (p: any) =>
+                      p.estadoGeneral === "validado" &&
+                      p.actividades.some(
+                        (a: any) => a.cirugia && a.estado === "validado",
+                      ),
+                  )
+                  .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+              } catch {
+                fasesCirugia = [];
+              }
+            }
+            return { ...u, fasesCirugia };
+          }),
+        );
+        setUsuarios(usuariosConProgreso);
       }
     } catch (err: any) {
       setError(err.response?.data?.error || t('tutorUsers.loadError'));
@@ -133,6 +156,33 @@ const TutorUsuarios: React.FC = () => {
       });
     } finally {
       setProcesando(false);
+    }
+  };
+
+  const handleDownloadInforme = async (
+    progresoId: string,
+    fase: string,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `informe-cirugias-${fase}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t('tutorUsers.loadError'),
+        severity: 'error',
+      });
+    } finally {
+      setDownloadLoading(false);
     }
   };
 
@@ -376,21 +426,44 @@ const TutorUsuarios: React.FC = () => {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton onClick={() => {
-                      setEditar(true);
-                      setSelected(usuario);
-                      setFormData({
-                        email: usuario.email,
-                        nombre: usuario.nombre,
-                        apellidos: usuario.apellidos,
-                        rol: usuario.rol,
-                        hospital: usuario.hospital?._id || ''
-                      });
-                      setOpenDialog(true);
-                    }}>
+                    {usuario.fasesCirugia?.map((fase) => (
+                      <Tooltip
+                        key={fase.id}
+                        title={t(
+                          'tutorUsers.actions.downloadSurgeryReport',
+                          { phase: fase.fase },
+                        )}
+                      >
+                        <IconButton
+                          onClick={() =>
+                            handleDownloadInforme(fase.id, fase.fase)
+                          }
+                          sx={{ mr: 1 }}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
+                    ))}
+                    <IconButton
+                      onClick={() => {
+                        setEditar(true);
+                        setSelected(usuario);
+                        setFormData({
+                          email: usuario.email,
+                          nombre: usuario.nombre,
+                          apellidos: usuario.apellidos,
+                          rol: usuario.rol,
+                          hospital: usuario.hospital?._id || ''
+                        });
+                        setOpenDialog(true);
+                      }}
+                    >
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(usuario._id)}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDelete(usuario._id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -429,7 +502,17 @@ const TutorUsuarios: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+      <Backdrop
+        open={downloadLoading}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
         <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </Box>

@@ -22,12 +22,17 @@ import {
   Alert,
   Snackbar,
   Autocomplete,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   VpnKey as VpnKeyIcon,
+  Download as DownloadIcon,
 
    //Person as PersonIcon,
   //Email as EmailIcon
@@ -99,6 +104,7 @@ const AdminUsuarios: React.FC = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<
     "nombre" | "email" | "hospital" | "rol"
@@ -125,7 +131,30 @@ const AdminUsuarios: React.FC = () => {
 
         const usuariosRes = await api.get("/users");
 
-        setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
+        const usuariosConProgreso = await Promise.all(
+          usuariosRes.data.data.map(async (u: any) => {
+            let fasesCirugia: { id: string; fase: string }[] = [];
+            if (["residente", "participante"].includes(u.rol)) {
+              try {
+                const progRes = await api.get(`/progreso/residente/${u._id}`);
+                fasesCirugia = progRes.data.data
+                  .filter(
+                    (p: any) =>
+                      p.estadoGeneral === "validado" &&
+                      p.actividades.some(
+                        (a: any) => a.cirugia && a.estado === "validado",
+                      ),
+                  )
+                  .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+              } catch {
+                fasesCirugia = [];
+              }
+            }
+            return { ...u, fasesCirugia };
+          }),
+        );
+
+        setUsuariosLista(usuariosConProgreso);
 
         const hospitalesRes = await api.get("/hospitals");
 
@@ -437,6 +466,33 @@ const AdminUsuarios: React.FC = () => {
       setProcesando(false);
     }
   };
+
+  const handleDownloadInforme = async (
+    progresoId: string,
+    fase: string,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `informe-cirugias-${fase}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t("adminUsers.loadError"),
+        severity: "error",
+      });
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
   const handleCloseSnackbar = () => {
     setSnackbar({
       ...snackbar,
@@ -715,6 +771,25 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell align="right">
+                    {usuario.fasesCirugia?.map((fase) => (
+                      <Tooltip
+                        key={fase.id}
+                        title={t(
+                          "adminUsers.actions.downloadSurgeryReport",
+                          { phase: fase.fase },
+                        )}
+                      >
+                        <IconButton
+                          onClick={() =>
+                            handleDownloadInforme(fase.id, fase.fase)
+                          }
+                          size="small"
+                          sx={{ mr: 1 }}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
+                    ))}
                     <Button
                       variant="outlined"
                       color="primary"
@@ -1253,6 +1328,13 @@ const AdminUsuarios: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Backdrop
+        open={downloadLoading}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       {/* Snackbar para notificaciones */}
       <Snackbar

@@ -18,6 +18,7 @@
     "express-fileupload": "^1.4.0",
     "helmet": "^6.0.1",
     "html-pdf-node": "^1.0.0",
+    "exceljs": "^4.4.0",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "jsonwebtoken": "^9.0.0",

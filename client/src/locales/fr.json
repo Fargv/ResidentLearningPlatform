@@ -20,7 +20,9 @@
     "notifications": "Notifications",
     "profile": "Profil",
     "users": "Utilisateurs",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "downloadSurgeryReport": "Télécharger le rapport des chirurgies de la phase {{num}}",
+    "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
   },
   "profile": {
     "title": "Mon profil",
@@ -454,7 +456,8 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "changePassword": "Changer le mot de passe",
-      "createProgress": "Créer un progrès"
+      "createProgress": "Créer un progrès",
+      "downloadSurgeryReport": "Télécharger le rapport chirurgical de {{phase}}"
     },
     "createSuccess": "Utilisateur créé avec succès",
     "createError": "Erreur lors de la création de l'utilisateur",
@@ -691,7 +694,9 @@
     "title": "Mon progrès",
     "errorLoad": "Erreur lors du chargement du progrès",
     "downloadError": "Erreur lors du téléchargement du certificat",
-    "downloadCertificate": "Télécharger le certificat"
+    "downloadCertificate": "Télécharger le certificat",
+    "downloadSurgeryReport": "Télécharger le rapport des chirurgies de la phase {{num}}",
+    "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
   },
   "certificate": {
     "title": "Certificat de réussite",
@@ -963,6 +968,9 @@
       "deleteSuccess": "Utilisateur supprimé",
       "deleteError": "Erreur lors de la suppression",
       "genericError": "Erreur"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Télécharger le rapport chirurgical de {{phase}}"
     }
   },
   "privacyPolicy": {

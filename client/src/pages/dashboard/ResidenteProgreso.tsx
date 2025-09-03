@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 interface Actividad {
   estado: 'pendiente' | 'completado' | 'rechazado' | 'validado';
+  tipo?: string;
 }
 
 interface ProgresoFase {
@@ -14,6 +15,7 @@ interface ProgresoFase {
   fase: {
     _id: string;
     nombre: string;
+    numero?: number;
   };
   faseModel: string;
   estadoGeneral: string;
@@ -62,6 +64,33 @@ const ResidenteProgreso: React.FC = () => {
     }
   };
 
+  const handleDescargarInformeCirugias = async (
+    progresoId: string,
+    faseNumero?: number,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `Informe_Cirugias_Fase(${faseNumero})_${nombreUsuario}.xlsx`,
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setError(t('residentProgress.downloadSurgeryReportError'));
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={2}>
@@ -80,7 +109,15 @@ const ResidenteProgreso: React.FC = () => {
       if (a.estado === 'rechazado') counts.rechazado += 1;
       if (a.estado === 'validado') counts.validado += 1;
     });
-    return { faseNombre: p.fase.nombre, estadoGeneral: p.estadoGeneral, counts };
+    const hasSurgery = p.actividades.some(a => a.tipo === 'cirugia');
+    return {
+      progresoId: p._id,
+      faseNombre: p.fase.nombre,
+      faseNumero: p.fase.numero,
+      estadoGeneral: p.estadoGeneral,
+      counts,
+      hasSurgery,
+    };
   });
 
   const allValidado = filteredProgresos.every(p => p.estadoGeneral === 'validado');
@@ -92,7 +129,7 @@ const ResidenteProgreso: React.FC = () => {
       </Typography>
       <Box display="flex" flexWrap="wrap" gap={2}>
         {phaseStats.map(p => (
-          <Paper key={p.faseNombre} sx={{ p: 2 }}>
+          <Paper key={p.progresoId} sx={{ p: 2 }}>
             <PhaseProgressChart
               phaseName={p.faseNombre}
               pendiente={p.counts.pendiente}
@@ -100,6 +137,24 @@ const ResidenteProgreso: React.FC = () => {
               rechazado={p.counts.rechazado}
               validado={p.counts.validado}
             />
+            {p.estadoGeneral === 'validado' && p.hasSurgery && (
+              <Box textAlign="center" mt={2}>
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    handleDescargarInformeCirugias(
+                      p.progresoId,
+                      p.faseNumero,
+                    )
+                  }
+                  disabled={downloadLoading}
+                >
+                  {t('residentProgress.downloadSurgeryReport', {
+                    phase: p.faseNumero,
+                  })}
+                </Button>
+              </Box>
+            )}
           </Paper>
         ))}
       </Box>

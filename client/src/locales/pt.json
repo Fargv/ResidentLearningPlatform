@@ -20,7 +20,9 @@
     "notifications": "Notificações",
     "profile": "Perfil",
     "users": "Usuários",
-    "logout": "Sair"
+    "logout": "Sair",
+    "downloadSurgeryReport": "Baixar Relatório de Cirurgias Fase {{num}}",
+    "downloadSurgeryReportError": "Erro ao baixar relatório de cirurgias"
   },
   "adminConfig": {
     "title": "Configuração",
@@ -177,7 +179,9 @@
     "title": "Meu Progresso",
     "errorLoad": "Erro ao carregar o progresso",
     "downloadError": "Erro ao baixar certificado",
-    "downloadCertificate": "Baixar certificado"
+    "downloadCertificate": "Baixar certificado",
+    "downloadSurgeryReport": "Baixar Relatório de Cirurgias Fase {{num}}",
+    "downloadSurgeryReportError": "Erro ao baixar relatório de cirurgias"
   },
   "residentPhases": {
     "title": "Minhas Fases Formativas",
@@ -534,7 +538,8 @@
       "edit": "Editar",
       "delete": "Excluir",
       "changePassword": "Alterar senha",
-      "createProgress": "Criar progresso"
+      "createProgress": "Criar progresso",
+      "downloadSurgeryReport": "Baixar relatório de cirurgias de {{phase}}"
     },
     "createSuccess": "Usuário criado com sucesso",
     "createError": "Erro ao criar o usuário",
@@ -872,6 +877,9 @@
       "deleteSuccess": "Usuário excluído",
       "deleteError": "Erro ao excluir",
       "genericError": "Erro"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Baixar relatório de cirurgias de {{phase}}"
     }
   },
   "progress": {

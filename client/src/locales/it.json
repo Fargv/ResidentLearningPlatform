@@ -388,7 +388,9 @@
     "title": "Il mio progresso",
     "errorLoad": "Errore durante il caricamento del progresso",
     "downloadError": "Errore durante il download del certificato",
-    "downloadCertificate": "Scarica certificato"
+    "downloadCertificate": "Scarica certificato",
+    "downloadSurgeryReport": "Scarica report chirurgie fase {{phase}}",
+    "downloadSurgeryReportError": "Errore nel download del report delle chirurgie"
   },
   "certificate": {
     "title": "Certificato di Completamento",
@@ -469,6 +471,9 @@
       "deleteSuccess": "Utente eliminato",
       "deleteError": "Errore durante l'eliminazione",
       "genericError": "Errore"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Scarica report chirurgico di {{phase}}"
     }
   },
   "profile": {
@@ -596,7 +601,8 @@
       "edit": "Modifica",
       "delete": "Elimina",
       "changePassword": "Cambia password",
-      "createProgress": "Crea progresso"
+      "createProgress": "Crea progresso",
+      "downloadSurgeryReport": "Scarica report chirurgico di {{phase}}"
     },
     "createSuccess": "Utente creato correttamente",
     "createError": "Errore nella creazione dell'utente",

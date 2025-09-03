@@ -1,68 +1,34 @@
-diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
-index 9552f9cf56c2c7ae2e0331b75e77189ff4e52dde..355b98e8ff20381a0701699cc41dc8439aadf955 100644
---- a/src/controllers/certificadoController.js
-+++ b/src/controllers/certificadoController.js
-@@ -134,54 +134,59 @@ exports.descargarCertificado = async (req, res, next) => {
-       const tutorRoleLine = usuario.tutor
-         ? certificateStrings.tutorTitle
-         : "";
-       const tutorHospitalLine = usuario.tutor
-         ? usuario.hospital.nombre
-         : certificateStrings.signatureLine;
-       html = html
-         .replace(
-           "{{HOSPITAL_LOGO}}",
-           `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
-         )
-         .replace("{{TUTOR_NAME}}", tutorName)
-         .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine)
-         .replace("{{TUTOR_HOSPITAL_LINE}}", tutorHospitalLine);
-     } else if (programa === "Programa Sociedades") {
-       html = html
-         .replace("{{LOGOS}}", logosHtml)
-         .replace(
-           "{{HOSPITAL_NOMBRE}}",
-           usuario.hospital ? usuario.hospital.nombre : "",
-         )
-         .replace(
-           "{{RESPONSABLE_NOMBRE}}",
-           usuario.sociedad ? usuario.sociedad.responsablePrograma : "",
-         )
--        .replace(
--          "{{RESPONSABLE_TITULO}}",
--          usuario.sociedad ? usuario.sociedad.titulo : "",
--        );
-+        .replace(
-+          "{{RESPONSABLE_TITULO}}",
-+          usuario.sociedad
-+            ? certificateStrings.responsableTitle.replace(
-+                "{{programa}}",
-+                usuario.sociedad.titulo,
-+              )
-+            : "",
-+        );
-     } else {
-       html = html.replace("{{LOGOS}}", logosHtml);
-     }
+diff --git a/AGENTS.md b/AGENTS.md
+index b9e3cc02bce501aee038f6a7fb5ad1ffe35f1759..f30cdbdf82063d33ac80382af58e0400b11d2b59 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -30,27 +30,28 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
+ - 2025-07-17: Nuevo formateador `formatDayMonthYear` y fecha corta en `ResidenteFases`.
+ - 2025-07-17: Milestones del Dashboard con diálogo y test de apertura al hacer clic.
+ - 2025-07-22: npm test ahora ejecuta pruebas del cliente con react-scripts antes de las pruebas de backend.
+ - 2025-07-18: Validación de tamaño de archivo en `ResidenteFases` y mensaje de error.
+ - 2025-07-21: Banner de desarrollo y fondo rojo claro en `App.tsx` cuando
+   `REACT_APP_ENV` es `dev`.
+ - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
+ - 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
+ - 2025-07-30: Eliminada la vista `AdminValidaciones` y ruta `/dashboard/validaciones-admin`; se reemplaza por `informes`.
+ - 2025-07-31: Añadidas dependencias `ajv` y `ajv-keywords` al cliente e intento de regenerar el lockfile.
+ - 2025-08-01: Localización de AdminConfiguracion y claves `adminConfig` en los archivos de idioma.
+ - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
+ - 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
+ - 2025-08-30: Creación de la página `PrivacyPolicy` con internacionalización y metadatos de actualización.
+ - 2025-08-11: Actualización de roles `'formador'`, `'coordinador'`, `'instructor'` y `'alumno'` a `'tutor'`, `'csm'`, `'profesor'` y `'participante'` en modelos y pruebas.
+ - 2025-08-12: Cambio de ruta a `/tutor/validaciones/pendientes` en `progresoRoutes.js`.
+ - 2025-08-12: Reemplazo de `comentariosFormador` por `comentariosTutor` en `ResidenteFases` y verificación en `ProgresoResidente`.
+ - 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
+ - 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
  
-     html = html
-       .replace("{{CERT_TITLE}}", certificateStrings.title)
-       .replace("{{PROGRAMA}}", programa)
-       .replace("{{CERT_BODY}}", formattedBody)
-       .replace("{{CERT_DATE}}", dateLine)
-       .replace(
-         "{{CERT_FOOTER}}",
-         certificateStrings.footer.replace("{{url}}", frontendUrl),
-       )
-       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
-       .replace("{{LANG}}", lang);
- 
-     if (programa === "Programa Residentes" && html.includes("{{")) {
-       return res.status(500).json({
-         success: false,
-         error: "Marcadores sin reemplazar en la plantilla",
-       });
-     }
-     const pdfBuffer = await pdf.generatePdf(
-       { content: html },
-       { format: "A4" },
+ - 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
+ - 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
+ - 2025-09-01: Botón "Crear fase" ahora usa `variant="contained"` y `color="primary"` en `AdminFases` y `AdminFasesSoc`.
+ - 2025-09-01: Índices compuestos en `User` y validación de `tutor` solo para residentes.
+ - 2025-09-03: Certificados usan `FRONTEND_URL` y footer con enlace dinámico.
+-- 2025-09-04: Certificados de sociedades incluyen logo, responsable y texto específicos; eliminada firma.
++- 2025-09-04: Certificados de sociedades incluyen logo, responsable y texto específicos; eliminada firma.
++- 2025-09-03: Pruebas para ruta de informe de cirugías con Supertest.
+ ⚠️ Este archivo no interfiere con el código ni el despliegue.
