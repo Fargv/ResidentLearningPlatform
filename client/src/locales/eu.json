@@ -922,9 +922,9 @@
     "title": "Osaketaren Ziurtagiria",
     "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
     "dateLine": "Madril, {{date}}",
-    "footer": "Ziurtagiria automatikoki sortua Academic Program Da Vinci-k · www.abexsl.es",
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Egoiliarren programaren tutorea ",
-    "tutorPlaceholder": "Programaren tutorea: __________"
+    "tutorPlaceholder": "Programaren tutorea: ________________________________________"
   },
   "emails": {
     "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"

@@ -288,9 +288,9 @@
     "title": "Zertifikat über den Abschluss",
     "body": "Hiermit wird bestätigt, dass <strong>{{name}}</strong> die zugewiesene Ausbildungsphase des Academic Program zu Technologien des Da Vinci®-Roboters erfolgreich abgeschlossen hat.<br /><br />Dieser Kurs ist Teil des Ausbildungsplans für Robotertechnologie in Zusammenarbeit mit dem Krankenhaus <strong>{{hospital}}</strong> und unter der Aufsicht des zugewiesenen Tutors.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Zertifikat automatisch erstellt vom Academic Program Da Vinci · www.abexsl.es",
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Tutor des Residenzprogramms des ",
-    "tutorPlaceholder": "Tutor des Programms: __________"
+    "tutorPlaceholder": "Tutor des Programms: ________________________________________"
   },
   "residentPhases": {
     "title": "Meine Ausbildungsphasen",

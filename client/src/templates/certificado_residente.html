@@ -57,14 +57,8 @@
       text-align: right;
     }
 
-    .firma .linea {
-      border-top: 1px solid #1E5B94;
-      width: 240px;
-      margin-left: auto;
-    }
-
     .tutor-line {
-      margin-top: 8px;
+      margin-top: 40px;
       font-size: 14px;
       color: #1E5B94;
     }
@@ -106,8 +100,10 @@
     <div class="sign-section">
       <div class="date">{{CERT_DATE}}</div>
       <div class="firma">
-        <div class="linea"></div>
-        <div class="tutor-line"><span class="tutor-name">{{TUTOR_NAME}}</span> {{TUTOR_ROLE_LINE}}</div>
+        <div class="tutor-line">
+          <span class="tutor-name">{{TUTOR_NAME}}</span><br>
+          {{TUTOR_ROLE_LINE}}
+        </div>
       </div>
     </div>
 

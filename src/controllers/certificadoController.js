@@ -4,6 +4,10 @@ const fs = require("fs");
 const User = require("../models/User");
 const ProgresoResidente = require("../models/ProgresoResidente");
 
+const frontendUrl =
+  process.env.FRONTEND_URL ||
+  "https://residentlearningplatform.netlify.app";
+
 exports.descargarCertificado = async (req, res, next) => {
   try {
     const usuario = await User.findById(req.params.id)
@@ -145,7 +149,10 @@ exports.descargarCertificado = async (req, res, next) => {
       .replace("{{PROGRAMA}}", programa)
       .replace("{{CERT_BODY}}", formattedBody)
       .replace("{{CERT_DATE}}", dateLine)
-      .replace("{{CERT_FOOTER}}", certificateStrings.footer)
+      .replace(
+        "{{CERT_FOOTER}}",
+        certificateStrings.footer.replace("{{url}}", frontendUrl),
+      )
       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
       .replace("{{SIGNATURE_LOGO}}", signatureBase64)
       .replace("{{LANG}}", lang);

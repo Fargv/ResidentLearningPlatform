@@ -697,9 +697,9 @@
     "title": "Certificat de réussite",
     "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificat généré automatiquement par Academic Program Da Vinci · www.abexsl.es",
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Tuteur du programme de résidents de ",
-    "tutorPlaceholder": "Tuteur du programme : __________"
+    "tutorPlaceholder": "Tuteur du programme : ________________________________________"
   },
   "adminPhases": {
     "_comment": "Gestion des phases d'administration",
