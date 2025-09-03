@@ -1,151 +1,68 @@
-diff --git a/tests/descargarCertificado.test.js b/tests/descargarCertificado.test.js
-index aec628351d972280f3b2c1d41304f55c8388efe2..5ae94c6bea87261bad08ef163ffdcf65efce6d14 100644
---- a/tests/descargarCertificado.test.js
-+++ b/tests/descargarCertificado.test.js
-@@ -1,57 +1,130 @@
- jest.mock('html-pdf-node');
+diff --git a/src/controllers/certificadoController.js b/src/controllers/certificadoController.js
+index 9552f9cf56c2c7ae2e0331b75e77189ff4e52dde..355b98e8ff20381a0701699cc41dc8439aadf955 100644
+--- a/src/controllers/certificadoController.js
++++ b/src/controllers/certificadoController.js
+@@ -134,54 +134,59 @@ exports.descargarCertificado = async (req, res, next) => {
+       const tutorRoleLine = usuario.tutor
+         ? certificateStrings.tutorTitle
+         : "";
+       const tutorHospitalLine = usuario.tutor
+         ? usuario.hospital.nombre
+         : certificateStrings.signatureLine;
+       html = html
+         .replace(
+           "{{HOSPITAL_LOGO}}",
+           `<img src="${usuario.hospital.urlHospiLogo}" alt="Logo Hospital" />`,
+         )
+         .replace("{{TUTOR_NAME}}", tutorName)
+         .replace("{{TUTOR_ROLE_LINE}}", tutorRoleLine)
+         .replace("{{TUTOR_HOSPITAL_LINE}}", tutorHospitalLine);
+     } else if (programa === "Programa Sociedades") {
+       html = html
+         .replace("{{LOGOS}}", logosHtml)
+         .replace(
+           "{{HOSPITAL_NOMBRE}}",
+           usuario.hospital ? usuario.hospital.nombre : "",
+         )
+         .replace(
+           "{{RESPONSABLE_NOMBRE}}",
+           usuario.sociedad ? usuario.sociedad.responsablePrograma : "",
+         )
+-        .replace(
+-          "{{RESPONSABLE_TITULO}}",
+-          usuario.sociedad ? usuario.sociedad.titulo : "",
+-        );
++        .replace(
++          "{{RESPONSABLE_TITULO}}",
++          usuario.sociedad
++            ? certificateStrings.responsableTitle.replace(
++                "{{programa}}",
++                usuario.sociedad.titulo,
++              )
++            : "",
++        );
+     } else {
+       html = html.replace("{{LOGOS}}", logosHtml);
+     }
  
- const { descargarCertificado } = require('../src/controllers/certificadoController');
- const User = require('../src/models/User');
- const ProgresoResidente = require('../src/models/ProgresoResidente');
- const pdf = require('html-pdf-node');
- const fs = require('fs');
+     html = html
+       .replace("{{CERT_TITLE}}", certificateStrings.title)
+       .replace("{{PROGRAMA}}", programa)
+       .replace("{{CERT_BODY}}", formattedBody)
+       .replace("{{CERT_DATE}}", dateLine)
+       .replace(
+         "{{CERT_FOOTER}}",
+         certificateStrings.footer.replace("{{url}}", frontendUrl),
+       )
+       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
+       .replace("{{LANG}}", lang);
  
- describe('descargarCertificado', () => {
-   beforeEach(() => {
-     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
-     jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
--    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
--      if (filePath.includes('certificado.html')) {
--        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
--      }
--      if (filePath.includes('firma-javier.png')) {
--        return Buffer.from('');
--      }
--      if (filePath.includes('locales')) {
--        return JSON.stringify({ certificate: { title: '', body: '', dateLine: '{{date}}', footer: '', tutorPrefix: '', tutorPlaceholder: '' } });
--      }
--      return '';
--    });
-+    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
-+      if (filePath.includes('certificado_sociedad.html')) {
-+        return '<html>{{LOGOS}}{{CERT_BODY}}</html>';
-+      }
-+      if (filePath.includes('certificado_residente.html')) {
-+        return '<html>{{CERT_BODY}}</html>';
-+      }
-+      if (filePath.includes('certificado.html')) {
-+        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
-+      }
-+      if (filePath.includes('firma-javier.png')) {
-+        return Buffer.from('');
-+      }
-+      if (filePath.includes('locales')) {
-+        return JSON.stringify({
-+          certificate: {
-+            title: '',
-+            body: 'Responsable: Dr. Responsable',
-+            dateLine: '{{date}}',
-+            footer: '',
-+            tutorPrefix: '',
-+            tutorPlaceholder: '',
-+          },
-+        });
-+      }
-+      return '';
-+    });
-     jest.spyOn(fs, 'unlink').mockImplementation((path, cb) => cb());
-   });
- 
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
- 
-   test('returns 400 when phases not validated', async () => {
--    jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1' }) });
-+    const query = {
-+      populate: jest.fn().mockReturnThis(),
-+      then: (resolve) => Promise.resolve(resolve({ _id: 'u1' })),
-+    };
-+    jest.spyOn(User, 'findById').mockReturnValue(query);
-     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ estadoGeneral: 'en progreso' }]) });
- 
-     const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
- 
-     await descargarCertificado(req, res, jest.fn());
-     expect(res.status).toHaveBeenCalledWith(400);
-   });
- 
-   test('sends pdf when validated', async () => {
--    jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1', nombre: 'A', apellidos: 'B', tipo: 'Programa', hospital: { nombre: 'H' } }) });
-+    const query = {
-+      populate: jest.fn().mockReturnThis(),
-+      then: (resolve) =>
-+        Promise.resolve(
-+          resolve({
-+            _id: 'u1',
-+            nombre: 'A',
-+            apellidos: 'B',
-+            rol: 'residente',
-+            tipo: 'Programa',
-+            hospital: { nombre: 'H' },
-+          }),
-+        ),
-+    };
-+    jest.spyOn(User, 'findById').mockReturnValue(query);
-     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]) });
- 
--    const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
--    const res = { set: jest.fn(), download: jest.fn((path, name, cb) => cb()) };
-+    const req = { params: { id: 'u1' }, query: {}, user: { id: 'u1', rol: 'residente' } };
-+    const res = {
-+      set: jest.fn(),
-+      download: jest.fn((path, name, cb) => cb()),
-+      status: jest.fn().mockReturnThis(),
-+      json: jest.fn(),
-+    };
- 
-     await descargarCertificado(req, res, jest.fn());
-     expect(pdf.generatePdf).toHaveBeenCalled();
-     expect(res.set).toHaveBeenCalledWith('Content-Type', 'application/pdf');
-     expect(res.download).toHaveBeenCalled();
-     expect(fs.unlink).toHaveBeenCalled();
-   });
-+
-+  test('sends pdf for society without signature or subtitle', async () => {
-+    const user = {
-+      _id: 'u1',
-+      nombre: 'A',
-+      apellidos: 'B',
-+      rol: 'participante',
-+      hospital: { nombre: 'H' },
-+      sociedad: { urlLogo: 'https://logo.com/logo.png', responsablePrograma: 'Dr. Responsable' },
-+    };
-+    const query = {
-+      populate: jest.fn().mockReturnThis(),
-+      then: (resolve) => Promise.resolve(resolve(user)),
-+    };
-+    jest.spyOn(User, 'findById').mockReturnValue(query);
-+    jest.spyOn(ProgresoResidente, 'find').mockReturnValue({
-+      sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]),
-+    });
-+
-+    const req = { params: { id: 'u1' }, query: {}, user: { id: 'u1', rol: 'participante' } };
-+    const res = {
-+      set: jest.fn(),
-+      download: jest.fn((path, name, cb) => cb()),
-+      status: jest.fn().mockReturnThis(),
-+      json: jest.fn(),
-+    };
-+
-+    await descargarCertificado(req, res, jest.fn());
-+
-+    expect(pdf.generatePdf).toHaveBeenCalled();
-+    const html = pdf.generatePdf.mock.calls[0][0].content;
-+    expect(html).not.toContain('SIGNATURE_LOGO');
-+    expect(html).not.toContain('<h2>');
-+    expect(html).toContain('Responsable: Dr. Responsable');
-+  });
- });
+     if (programa === "Programa Residentes" && html.includes("{{")) {
+       return res.status(500).json({
+         success: false,
+         error: "Marcadores sin reemplazar en la plantilla",
+       });
+     }
+     const pdfBuffer = await pdf.generatePdf(
+       { content: html },
+       { format: "A4" },

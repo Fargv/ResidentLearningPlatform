@@ -399,7 +399,8 @@
     "tutorPrefix": "Tutor del programma di residenti del ",
     "tutorTitle": "Tutor del programma di residenti",
     "tutorPlaceholder": "Tutor del programma:",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsabile della formazione del programma {{programa}}"
   },
   "tutorUsers": {
     "title": "I miei utenti",

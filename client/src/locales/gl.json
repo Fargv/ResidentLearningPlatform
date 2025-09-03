@@ -844,7 +844,8 @@
     "tutorPrefix": "Titor do programa de residentes do ",
     "tutorTitle": "Titor do programa de residentes",
     "tutorPlaceholder": "Titor do programa:",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsable de formación do programa {{programa}}"
   },
   "forms": {
     "code": "Código",

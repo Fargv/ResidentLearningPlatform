@@ -702,7 +702,8 @@
     "tutorPrefix": "Tuteur du programme de résidents de ",
     "tutorTitle": "Tuteur du programme de résidents",
     "tutorPlaceholder": "Tuteur du programme :",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsable de formation du programme {{programa}}"
   },
   "adminPhases": {
     "_comment": "Gestion des phases d'administration",

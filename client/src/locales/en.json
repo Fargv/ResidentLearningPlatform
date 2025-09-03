@@ -938,7 +938,8 @@
     "tutorPrefix": "Residents program tutor at ",
     "tutorTitle": "Residents program tutor",
     "tutorPlaceholder": "Program tutor:",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Training manager of the {{programa}} program"
   },
   "emails": {
     "inviteSubject": "Invitation to the Da Vinci Training Platform"

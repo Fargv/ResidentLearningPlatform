@@ -873,7 +873,8 @@
     "tutorPrefix": "Tutor del programa de residents del ",
     "tutorTitle": "Tutor del programa de residents",
     "tutorPlaceholder": "Tutor del programa:",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsable de formació del programa {{programa}}"
   },
   "residentPhases": {
     "title": "Les meves fases formatives",

@@ -29,6 +29,7 @@ describe('descargarCertificado', () => {
           certificate: {
             title: '',
             body: 'Responsable: Dr. Responsable',
+            bodySociedad: 'Responsable: Dr. Responsable en {{sociedad}}',
             dateLine: '{{date}}',
             footer: '',
             tutorPrefix: '',
@@ -100,7 +101,11 @@ describe('descargarCertificado', () => {
       apellidos: 'B',
       rol: 'participante',
       hospital: { nombre: 'H' },
-      sociedad: { urlLogo: 'https://logo.com/logo.png', responsablePrograma: 'Dr. Responsable' },
+      sociedad: {
+        urlLogo: 'https://logo.com/logo.png',
+        responsablePrograma: 'Dr. Responsable',
+        titulo: 'Sociedad X',
+      },
     };
     const query = {
       populate: jest.fn().mockReturnThis(),

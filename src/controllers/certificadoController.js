@@ -109,7 +109,7 @@ exports.descargarCertificado = async (req, res, next) => {
         .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
         .replace(
           "{{sociedad}}",
-          usuario.sociedad ? usuario.sociedad.nombre : "",
+          usuario.sociedad ? usuario.sociedad.titulo : "",
         );
     } else {
       formattedBody = certificateStrings.body
@@ -158,7 +158,12 @@ exports.descargarCertificado = async (req, res, next) => {
         )
         .replace(
           "{{RESPONSABLE_TITULO}}",
-          usuario.sociedad ? usuario.sociedad.titulo : "",
+          usuario.sociedad
+            ? certificateStrings.responsableTitle.replace(
+                "{{programa}}",
+                usuario.sociedad.titulo,
+              )
+            : "",
         );
     } else {
       html = html.replace("{{LOGOS}}", logosHtml);

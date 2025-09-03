@@ -954,7 +954,8 @@
     "tutorPrefix": "Tutor do programa de residentes do ",
     "tutorTitle": "Tutor do programa de residentes",
     "tutorPlaceholder": "Tutor do programa:",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsável pela formação do programa {{programa}}"
   },
   "emails": {
     "inviteSubject": "Convite para a Plataforma de Formação Da Vinci"

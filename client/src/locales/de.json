@@ -293,7 +293,8 @@
     "tutorPrefix": "Tutor des Residenzprogramms des ",
     "tutorTitle": "Tutor des Residenzprogramms",
     "tutorPlaceholder": "Tutor des Programms:",
-    "signatureLine": "________________________________________"
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Verantwortlicher für die Ausbildung des Programms {{programa}}"
   },
   "residentPhases": {
     "title": "Meine Ausbildungsphasen",
