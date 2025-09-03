@@ -43,6 +43,7 @@ import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
 import { getRoleChipSx } from "../../utils/roleChipColors";
+import { FaseCirugia } from "../../types/FaseCirugia";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -133,7 +134,7 @@ const AdminUsuarios: React.FC = () => {
 
         const usuariosConProgreso = await Promise.all(
           usuariosRes.data.data.map(async (u: any) => {
-            let fasesCirugia: { id: string; fase: string }[] = [];
+            let fasesCirugia: FaseCirugia[] = [];
             if (["residente", "participante"].includes(u.rol)) {
               try {
                 const progRes = await api.get(`/progreso/residente/${u._id}`);
@@ -771,7 +772,7 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell align="right">
-                    {usuario.fasesCirugia?.map((fase) => (
+                    {usuario.fasesCirugia?.map((fase: FaseCirugia) => (
                       <Tooltip
                         key={fase.id}
                         title={t(

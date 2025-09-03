@@ -12,6 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import api from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
+import { FaseCirugia } from '../../types/FaseCirugia';
 
 const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -68,7 +69,7 @@ const TutorUsuarios: React.FC = () => {
         );
         const usuariosConProgreso = await Promise.all(
           filtrados.map(async (u: any) => {
-            let fasesCirugia: { id: string; fase: string }[] = [];
+            let fasesCirugia: FaseCirugia[] = [];
             if (["residente", "participante"].includes(u.rol)) {
               try {
                 const progRes = await api.get(`/progreso/residente/${u._id}`);
@@ -426,7 +427,7 @@ const TutorUsuarios: React.FC = () => {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    {usuario.fasesCirugia?.map((fase) => (
+                    {usuario.fasesCirugia?.map((fase: FaseCirugia) => (
                       <Tooltip
                         key={fase.id}
                         title={t(
