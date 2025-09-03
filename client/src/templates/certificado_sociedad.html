@@ -30,12 +30,6 @@
       margin-bottom: 8px;
     }
 
-    .header h2 {
-        color: #6AB023;
-        font-size: 16px; /* antes 18px */
-        font-weight: normal;
-      }
-
     .contenido {
       font-size: 16px;
       line-height: 1.6;
@@ -99,7 +93,6 @@
     {{LOGOS}}
     <div class="header">
       <h1>{{CERT_TITLE}}</h1>
-      <h2>{{PROGRAMA}}</h2>
     </div>
 
     <div class="contenido">
@@ -109,10 +102,9 @@
     <div class="sign-section">
       <div class="date">{{CERT_DATE}}</div>
       <div class="firma">
-        <img src="{{SIGNATURE_LOGO}}" alt="Firma" style="max-height: 80px; display: block; margin-left: auto; margin-right: 60px;margin-bottom: -5px;" />
         <div class="linea">
-          Javier Trujillo Menacho<br />
-          Hospital Marketing Manager
+          {{RESPONSABLE_NOMBRE}}<br />
+          {{RESPONSABLE_TITULO}}
         </div>
       </div>
     </div>

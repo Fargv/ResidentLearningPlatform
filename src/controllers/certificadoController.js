@@ -12,6 +12,7 @@ exports.descargarCertificado = async (req, res, next) => {
   try {
     const usuario = await User.findById(req.params.id)
       .populate("hospital")
+      .populate("sociedad")
       .populate("tutor", "nombre apellidos");
     if (!usuario) {
       return res
@@ -68,13 +69,6 @@ exports.descargarCertificado = async (req, res, next) => {
     }
     let html = fs.readFileSync(templatePath, "utf8");
 
-    const signaturePath = path.resolve(
-      process.cwd(),
-      "client/public/firma-javier.png",
-    );
-    const signatureData = fs.readFileSync(signaturePath);
-    const signatureBase64 = `data:image/png;base64,${signatureData.toString("base64")}`;
-
     let certificateStrings;
     try {
       const localePath = path.resolve(
@@ -96,7 +90,11 @@ exports.descargarCertificado = async (req, res, next) => {
     const corporateLogo = "https://www.abexsl.es/images/logo.png";
     let logosHtml;
     if (programa === "Programa Sociedades") {
-      logosHtml = `<div class="logo-center"><img src="${corporateLogo}" alt="Logo" /></div>`;
+      const sociedadLogo =
+        usuario.sociedad && usuario.sociedad.urlLogo
+          ? usuario.sociedad.urlLogo
+          : corporateLogo;
+      logosHtml = `<div class="logo-center"><img src="${sociedadLogo}" alt="Logo" /></div>`;
     } else if (programa !== "Programa Residentes") {
       const hospiLogo =
         usuario.hospital && usuario.hospital.urlHospiLogo
@@ -105,9 +103,22 @@ exports.descargarCertificado = async (req, res, next) => {
       logosHtml = `<div class="logos"><img src="${corporateLogo}" alt="Logo" />${hospiLogo}</div>`;
     }
 
-    const formattedBody = certificateStrings.body
-      .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
-      .replace("{{hospital}}", usuario.hospital ? usuario.hospital.nombre : "");
+    let formattedBody;
+    if (programa === "Programa Sociedades") {
+      formattedBody = certificateStrings.bodySociedad
+        .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
+        .replace(
+          "{{sociedad}}",
+          usuario.sociedad ? usuario.sociedad.nombre : "",
+        );
+    } else {
+      formattedBody = certificateStrings.body
+        .replace("{{name}}", `${usuario.nombre} ${usuario.apellidos}`)
+        .replace(
+          "{{hospital}}",
+          usuario.hospital ? usuario.hospital.nombre : "",
+        );
+    }
 
     const formattedDate = new Intl.DateTimeFormat(lang, {
       day: "numeric",
@@ -140,6 +151,14 @@ exports.descargarCertificado = async (req, res, next) => {
         .replace(
           "{{HOSPITAL_NOMBRE}}",
           usuario.hospital ? usuario.hospital.nombre : "",
+        )
+        .replace(
+          "{{RESPONSABLE_NOMBRE}}",
+          usuario.sociedad ? usuario.sociedad.responsablePrograma : "",
+        )
+        .replace(
+          "{{RESPONSABLE_TITULO}}",
+          usuario.sociedad ? usuario.sociedad.titulo : "",
         );
     } else {
       html = html.replace("{{LOGOS}}", logosHtml);
@@ -155,7 +174,6 @@ exports.descargarCertificado = async (req, res, next) => {
         certificateStrings.footer.replace("{{url}}", frontendUrl),
       )
       .replace("{{LOGO_TOP}}", "https://www.abexsl.es/images/logo.png")
-      .replace("{{SIGNATURE_LOGO}}", signatureBase64)
       .replace("{{LANG}}", lang);
 
     if (programa === "Programa Residentes" && html.includes("{{")) {

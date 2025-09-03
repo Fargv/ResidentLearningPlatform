@@ -28,6 +28,8 @@ interface Sociedad {
   _id?: string;
   titulo: string;
   status?: string;
+  urlLogo?: string;
+  responsablePrograma?: string;
   fechaConvocatoria?: string;
   fechaPresentacion?: string;
   fechaModulosOnline?: string;
@@ -46,6 +48,8 @@ const AdminSociedades = () => {
   const [formData, setFormData] = useState<Sociedad>({
     titulo: '',
     status: 'ACTIVO',
+    urlLogo: '',
+    responsablePrograma: '',
     fechaConvocatoria: '',
     fechaPresentacion: '',
     fechaModulosOnline: '',
@@ -72,6 +76,8 @@ const AdminSociedades = () => {
       setFormData({
         ...s,
         status: s.status || 'ACTIVO',
+        urlLogo: s.urlLogo || '',
+        responsablePrograma: s.responsablePrograma || '',
         fechaConvocatoria: s.fechaConvocatoria?.slice(0, 10) || '',
         fechaPresentacion: s.fechaPresentacion?.slice(0, 10) || '',
         fechaModulosOnline: s.fechaModulosOnline?.slice(0, 10) || '',
@@ -84,6 +90,8 @@ const AdminSociedades = () => {
       setFormData({
         titulo: '',
         status: 'ACTIVO',
+        urlLogo: '',
+        responsablePrograma: '',
         fechaConvocatoria: '',
         fechaPresentacion: '',
         fechaModulosOnline: '',
@@ -100,6 +108,8 @@ const AdminSociedades = () => {
     setFormData({
       titulo: '',
       status: 'ACTIVO',
+      urlLogo: '',
+      responsablePrograma: '',
       fechaConvocatoria: '',
       fechaPresentacion: '',
       fechaModulosOnline: '',
@@ -297,6 +307,22 @@ const AdminSociedades = () => {
               <MenuItem value="INACTIVO">INACTIVO</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            margin="dense"
+            label={t('adminSocieties.fields.urlLogo')}
+            name="urlLogo"
+            fullWidth
+            value={formData.urlLogo}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            label={t('adminSocieties.fields.responsablePrograma')}
+            name="responsablePrograma"
+            fullWidth
+            value={formData.responsablePrograma}
+            onChange={handleChange}
+          />
           {[
             'fechaConvocatoria',
             'fechaPresentacion',

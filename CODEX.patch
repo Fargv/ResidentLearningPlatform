@@ -1,94 +1,151 @@
-diff --git a/tests/createUserAdmin.test.js b/tests/createUserAdmin.test.js
-index 290b6d817b8d63617c9d037b05a070ddb1f7bdc3..247c94962ac662e07ae1a48522e6e6e9fa9b55dc 100644
---- a/tests/createUserAdmin.test.js
-+++ b/tests/createUserAdmin.test.js
-@@ -19,54 +19,80 @@ describe('createUser - administrador', () => {
-   test('crea administrador sin tipo', async () => {
-     jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u1', rol: 'administrador' });
-     const req = {
-       body: {
-         nombre: 'Admin',
-         apellidos: 'Test',
-         email: 'admin@test.com',
-         password: 'pass',
-         rol: 'administrador',
-         tipo: 'invalido'
-       },
-       user: { _id: 'creator' },
-       ip: '::1'
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+diff --git a/tests/descargarCertificado.test.js b/tests/descargarCertificado.test.js
+index aec628351d972280f3b2c1d41304f55c8388efe2..5ae94c6bea87261bad08ef163ffdcf65efce6d14 100644
+--- a/tests/descargarCertificado.test.js
++++ b/tests/descargarCertificado.test.js
+@@ -1,57 +1,130 @@
+ jest.mock('html-pdf-node');
  
-     await createUser(req, res, jest.fn());
+ const { descargarCertificado } = require('../src/controllers/certificadoController');
+ const User = require('../src/models/User');
+ const ProgresoResidente = require('../src/models/ProgresoResidente');
+ const pdf = require('html-pdf-node');
+ const fs = require('fs');
  
-     expect(User.create).toHaveBeenCalledWith(
-       expect.objectContaining({ rol: 'administrador', tipo: undefined })
-     );
-     expect(res.status).toHaveBeenCalledWith(201);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: { _id: 'u1', rol: 'administrador' } });
+ describe('descargarCertificado', () => {
+   beforeEach(() => {
+     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
+     jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+-    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
+-      if (filePath.includes('certificado.html')) {
+-        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
+-      }
+-      if (filePath.includes('firma-javier.png')) {
+-        return Buffer.from('');
+-      }
+-      if (filePath.includes('locales')) {
+-        return JSON.stringify({ certificate: { title: '', body: '', dateLine: '{{date}}', footer: '', tutorPrefix: '', tutorPlaceholder: '' } });
+-      }
+-      return '';
+-    });
++    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
++      if (filePath.includes('certificado_sociedad.html')) {
++        return '<html>{{LOGOS}}{{CERT_BODY}}</html>';
++      }
++      if (filePath.includes('certificado_residente.html')) {
++        return '<html>{{CERT_BODY}}</html>';
++      }
++      if (filePath.includes('certificado.html')) {
++        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
++      }
++      if (filePath.includes('firma-javier.png')) {
++        return Buffer.from('');
++      }
++      if (filePath.includes('locales')) {
++        return JSON.stringify({
++          certificate: {
++            title: '',
++            body: 'Responsable: Dr. Responsable',
++            dateLine: '{{date}}',
++            footer: '',
++            tutorPrefix: '',
++            tutorPlaceholder: '',
++          },
++        });
++      }
++      return '';
++    });
+     jest.spyOn(fs, 'unlink').mockImplementation((path, cb) => cb());
    });
  
--  test('autoasigna tutor al crear residente sin especificarlo', async () => {
--    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
--    resolveTutor.mockResolvedValue('t1');
--    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'residente', tutor: 't1' });
-+  test('autoasigna tutor al crear residente sin especificarlo', async () => {
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-+    resolveTutor.mockResolvedValue('t1');
-+    jest.spyOn(User, 'create').mockResolvedValue({ _id: 'u2', rol: 'residente', tutor: 't1' });
-     const req = {
-       body: {
-         nombre: 'Res',
-         apellidos: 'Test',
-         email: 'res@test.com',
-         password: 'pass',
-         rol: 'residente',
-         tipo: 'Programa Residentes',
-         hospital: 'h1',
-         especialidad: 'URO'
-       },
-       user: { _id: 'creator' },
-       ip: '::1'
-     };
+   afterEach(() => {
+     jest.restoreAllMocks();
+   });
+ 
+   test('returns 400 when phases not validated', async () => {
+-    jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1' }) });
++    const query = {
++      populate: jest.fn().mockReturnThis(),
++      then: (resolve) => Promise.resolve(resolve({ _id: 'u1' })),
++    };
++    jest.spyOn(User, 'findById').mockReturnValue(query);
+     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ estadoGeneral: 'en progreso' }]) });
+ 
+     const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
  
-     await createUser(req, res, jest.fn());
+     await descargarCertificado(req, res, jest.fn());
+     expect(res.status).toHaveBeenCalledWith(400);
+   });
  
-     expect(resolveTutor).toHaveBeenCalledWith('ALL', 'h1', 'URO');
--    expect(User.create).toHaveBeenCalledWith(
--      expect.objectContaining({ rol: 'residente', tutor: 't1' })
--    );
--    expect(inicializarProgresoFormativo).toHaveBeenCalled();
--  });
-+    expect(User.create).toHaveBeenCalledWith(
-+      expect.objectContaining({ rol: 'residente', tutor: 't1' })
-+    );
-+    expect(inicializarProgresoFormativo).toHaveBeenCalled();
-+  });
-+
-+  test('crea participante en Programa Residentes', async () => {
-+    jest
-+      .spyOn(User, 'create')
-+      .mockResolvedValue({ _id: 'u3', rol: 'participante', tipo: 'Programa Residentes' });
-+    const req = {
-+      body: {
-+        nombre: 'Part',
-+        apellidos: 'Test',
-+        email: 'part@test.com',
-+        password: 'pass',
-+        rol: 'participante',
-+        tipo: 'Programa Residentes'
-+      },
-+      user: { _id: 'creator' },
-+      ip: '::1'
+   test('sends pdf when validated', async () => {
+-    jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1', nombre: 'A', apellidos: 'B', tipo: 'Programa', hospital: { nombre: 'H' } }) });
++    const query = {
++      populate: jest.fn().mockReturnThis(),
++      then: (resolve) =>
++        Promise.resolve(
++          resolve({
++            _id: 'u1',
++            nombre: 'A',
++            apellidos: 'B',
++            rol: 'residente',
++            tipo: 'Programa',
++            hospital: { nombre: 'H' },
++          }),
++        ),
 +    };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++    jest.spyOn(User, 'findById').mockReturnValue(query);
+     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]) });
+ 
+-    const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
+-    const res = { set: jest.fn(), download: jest.fn((path, name, cb) => cb()) };
++    const req = { params: { id: 'u1' }, query: {}, user: { id: 'u1', rol: 'residente' } };
++    const res = {
++      set: jest.fn(),
++      download: jest.fn((path, name, cb) => cb()),
++      status: jest.fn().mockReturnThis(),
++      json: jest.fn(),
++    };
+ 
+     await descargarCertificado(req, res, jest.fn());
+     expect(pdf.generatePdf).toHaveBeenCalled();
+     expect(res.set).toHaveBeenCalledWith('Content-Type', 'application/pdf');
+     expect(res.download).toHaveBeenCalled();
+     expect(fs.unlink).toHaveBeenCalled();
+   });
 +
-+    await createUser(req, res, jest.fn());
++  test('sends pdf for society without signature or subtitle', async () => {
++    const user = {
++      _id: 'u1',
++      nombre: 'A',
++      apellidos: 'B',
++      rol: 'participante',
++      hospital: { nombre: 'H' },
++      sociedad: { urlLogo: 'https://logo.com/logo.png', responsablePrograma: 'Dr. Responsable' },
++    };
++    const query = {
++      populate: jest.fn().mockReturnThis(),
++      then: (resolve) => Promise.resolve(resolve(user)),
++    };
++    jest.spyOn(User, 'findById').mockReturnValue(query);
++    jest.spyOn(ProgresoResidente, 'find').mockReturnValue({
++      sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]),
++    });
 +
-+    expect(User.create).toHaveBeenCalledWith(
-+      expect.objectContaining({ rol: 'participante', tipo: 'Programa Residentes' })
-+    );
-+    expect(inicializarProgresoFormativo).toHaveBeenCalled();
++    const req = { params: { id: 'u1' }, query: {}, user: { id: 'u1', rol: 'participante' } };
++    const res = {
++      set: jest.fn(),
++      download: jest.fn((path, name, cb) => cb()),
++      status: jest.fn().mockReturnThis(),
++      json: jest.fn(),
++    };
++
++    await descargarCertificado(req, res, jest.fn());
++
++    expect(pdf.generatePdf).toHaveBeenCalled();
++    const html = pdf.generatePdf.mock.calls[0][0].content;
++    expect(html).not.toContain('SIGNATURE_LOGO');
++    expect(html).not.toContain('<h2>');
++    expect(html).toContain('Responsable: Dr. Responsable');
 +  });
  });

@@ -921,6 +921,7 @@
   "certificate": {
     "title": "Osaketaren Ziurtagiria",
     "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madril, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Egoiliarren programaren tutorea ",

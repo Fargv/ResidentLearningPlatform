@@ -434,7 +434,9 @@
       "fechaSimulacion": "Simulación",
       "fechaAtividadesFirstAssistant": "First Assistant",
       "fechaModuloOnlineStepByStep": "Step By Step",
-      "fechaHandOn": "Hand On"
+      "fechaHandOn": "Hand On",
+      "urlLogo": "URL do logotipo",
+      "responsablePrograma": "Responsable do programa"
     }
   },
   "adminUsers": {
@@ -836,6 +838,7 @@
   "certificate": {
     "title": "Certificado de Cumprimento",
     "body": "Certifícase que <strong>{{name}}</strong> completou satisfactoriamente a fase formativa asignada do Academic Program en tecnoloxías do robot Da Vinci®. <br /><br />Este curso enmárcase dentro do plan formativo en tecnoloxía robótica en colaboración co hospital <strong>{{hospital}}</strong> e baixo a supervisión do seu titor asignado.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
     "tutorPrefix": "Titor do programa de residentes do ",
