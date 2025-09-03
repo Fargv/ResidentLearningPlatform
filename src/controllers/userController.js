@@ -133,7 +133,13 @@ exports.createUser = async (req, res, next) => {
     // Verificar combinaciones válidas de rol y tipo de programa
     if (
       tipo === 'Programa Residentes' &&
-      ![Role.RESIDENTE, Role.TUTOR, Role.ADMINISTRADOR, Role.CSM].includes(rol)
+      ![
+        Role.RESIDENTE,
+        Role.TUTOR,
+        Role.ADMINISTRADOR,
+        Role.CSM,
+        Role.PARTICIPANTE
+      ].includes(rol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
@@ -206,25 +212,39 @@ exports.createUser = async (req, res, next) => {
         ? await resolveTutor(tutor || 'ALL', hospitalId, especialidadVal)
         : null;
 
-    const nuevoUsuario = await User.create({
-      nombre,
-      apellidos,
-      email,
-      password,
-      rol,
-      tipo: tipoVal,
-      hospital: hospitalId,
-      sociedad: sociedadId,
-      especialidad: especialidadVal,
-      tutor: tutorId,
-      zona: zonaVal,
-      activo: true,
-      consentimientoDatos: true,
-      fechaRegistro: Date.now()
-    });
+    let nuevoUsuario;
+    try {
+      nuevoUsuario = await User.create({
+        nombre,
+        apellidos,
+        email,
+        password,
+        rol,
+        tipo: tipoVal,
+        hospital: hospitalId,
+        sociedad: sociedadId,
+        especialidad: especialidadVal,
+        tutor: tutorId,
+        zona: zonaVal,
+        activo: true,
+        consentimientoDatos: true,
+        fechaRegistro: Date.now()
+      });
 
-    if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
-      await inicializarProgresoFormativo(nuevoUsuario);
+      if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
+        await inicializarProgresoFormativo(nuevoUsuario);
+      }
+    } catch (err) {
+      if (nuevoUsuario) {
+        await ProgresoResidente.deleteMany({ residente: nuevoUsuario._id });
+        await User.deleteOne({ _id: nuevoUsuario._id });
+      }
+      return next(
+        new ErrorResponse(
+          'No se pudo crear el usuario ni el progreso formativo',
+          500
+        )
+      );
     }
 
     await nuevoUsuario.populate('hospital');

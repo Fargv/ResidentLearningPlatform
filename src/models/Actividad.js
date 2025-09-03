@@ -17,7 +17,7 @@ const actividadSchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ['teórica', 'práctica', 'evaluación', 'observación', 'cirugia'],
+    enum: ['teórica', 'práctica', 'evaluación', 'observación', 'procedimiento', 'cirugia'],
     required: [true, 'Por favor especifique el tipo de actividad']
   },
   requiereValidacion: {

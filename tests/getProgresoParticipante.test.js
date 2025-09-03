@@ -9,9 +9,14 @@ describe('getProgresoResidente participante', () => {
 
   test('populates fase and actividades.actividad', async () => {
     const populate = jest.fn();
-    populate.mockReturnValueOnce({ populate }).mockResolvedValueOnce([]);
+    populate
+      .mockReturnValueOnce({ populate })
+      .mockReturnValueOnce({ populate })
+      .mockResolvedValueOnce([]);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ populate });
-    jest.spyOn(User, 'findById').mockResolvedValue({ _id: 'u1', rol: 'participante', hospital: 'h1' });
+    jest.spyOn(User, 'findById').mockReturnValue({
+      populate: jest.fn().mockResolvedValue({ _id: 'u1', rol: 'participante', hospital: { _id: 'h1' } })
+    });
 
     const req = { params: { id: 'u1' }, user: { rol: 'participante', id: 'u1' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
@@ -20,6 +25,7 @@ describe('getProgresoResidente participante', () => {
 
     expect(populate).toHaveBeenNthCalledWith(1, 'fase');
     expect(populate).toHaveBeenNthCalledWith(2, 'actividades.actividad');
+    expect(populate).toHaveBeenNthCalledWith(3, 'actividades.cirugia');
   });
   test('includes validation and rejection fields in actividades', async () => {
     const progresoData = [{
@@ -28,7 +34,7 @@ describe('getProgresoResidente participante', () => {
       estadoGeneral: 'en progreso',
       actividades: [{
         nombre: 'Act',
-        tipo: 'teórica',
+        tipo: 'procedimiento',
         estado: 'validado',
         comentariosResidente: 'cr',
         comentariosTutor: 'cf',
@@ -42,9 +48,12 @@ describe('getProgresoResidente participante', () => {
     const populate = jest.fn();
     populate
       .mockReturnValueOnce({ populate })
+      .mockReturnValueOnce({ populate })
       .mockResolvedValueOnce(progresoData);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ populate });
-    jest.spyOn(User, 'findById').mockResolvedValue({ _id: 'u1', rol: 'participante', hospital: 'h1' });
+    jest.spyOn(User, 'findById').mockReturnValue({
+      populate: jest.fn().mockResolvedValue({ _id: 'u1', rol: 'participante', hospital: { _id: 'h1' } })
+    });
 
     const req = { params: { id: 'u1' }, user: { rol: 'participante', id: 'u1' } };
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
@@ -52,7 +61,7 @@ describe('getProgresoResidente participante', () => {
     await getProgresoResidente(req, res, jest.fn());
 
     const actividad = res.json.mock.calls[0][0].data[0].actividades[0];
-    expect(actividad).toHaveProperty('tipo', 'teórica');
+    expect(actividad).toHaveProperty('tipo', 'procedimiento');
     expect(actividad).toHaveProperty('comentariosTutor', 'cf');
     expect(actividad).toHaveProperty('fechaValidacion', '2024-01-02');
     expect(actividad).toHaveProperty('comentariosRechazo', 'rej');

@@ -78,6 +78,26 @@ const register = async (req, res, next) => {
 
     if (
       tipo === 'Programa Residentes' &&
+      ![
+        Role.RESIDENTE,
+        Role.TUTOR,
+        Role.ADMINISTRADOR,
+        Role.CSM,
+        Role.PARTICIPANTE
+      ].includes(rol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
+    }
+
+    if (
+      tipo === 'Programa Sociedades' &&
+      ![Role.PARTICIPANTE, Role.PROFESOR, Role.ADMINISTRADOR].includes(rol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
+    }
+
+    if (
+      tipo === 'Programa Residentes' &&
       !hospital &&
       (rol === Role.RESIDENTE || rol === Role.TUTOR)
     ) {
@@ -103,25 +123,39 @@ const register = async (req, res, next) => {
     const resolvedTutor =
       rol === Role.RESIDENTE ? await resolveTutor(tutor, hospital, especialidad) : null;
 
-    const newUser = await User.create({
-      nombre,
-      apellidos,
-      email,
-      password,
-      rol,
-      tipo,
-      hospital: tipo === 'Programa Residentes' ? hospital : undefined,
-      sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
-      especialidad,
-      tutor: resolvedTutor,
-      zona,
-      activo: true,
-      consentimientoDatos: true,
-      fechaRegistro: Date.now()
-    });
+    let newUser;
+    try {
+      newUser = await User.create({
+        nombre,
+        apellidos,
+        email,
+        password,
+        rol,
+        tipo,
+        hospital: tipo === 'Programa Residentes' ? hospital : undefined,
+        sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
+        especialidad,
+        tutor: resolvedTutor,
+        zona,
+        activo: true,
+        consentimientoDatos: true,
+        fechaRegistro: Date.now()
+      });
 
-    if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
-      await inicializarProgresoFormativo(newUser);
+      if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
+        await inicializarProgresoFormativo(newUser);
+      }
+    } catch (err) {
+      if (newUser) {
+        await ProgresoResidente.deleteMany({ residente: newUser._id });
+        await User.deleteOne({ _id: newUser._id });
+      }
+      return next(
+        new ErrorResponse(
+          'No se pudo completar el registro. Ni el usuario ni el progreso fueron creados',
+          500
+        )
+      );
     }
 
     const jwtToken = generateToken(newUser);
