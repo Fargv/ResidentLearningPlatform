@@ -2,15 +2,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Typography, Paper, Button, TextField,
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   IconButton, Chip, LinearProgress, Alert, Snackbar,
   Autocomplete, Tooltip, CircularProgress, Backdrop, Menu, MenuItem
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import { useTranslation } from 'react-i18next';
-import api from '../../api';
+import { useTranslation, Trans } from 'react-i18next';
+import api, { updateUserPassword } from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
 import { FaseCirugia } from '../../types/FaseCirugia';
 
@@ -31,6 +31,9 @@ const TutorUsuarios: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editar, setEditar] = useState(false);
   const [selected, setSelected] = useState<any>(null);
+  const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [passwordValue, setPasswordValue] = useState('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -123,6 +126,11 @@ const TutorUsuarios: React.FC = () => {
     fetchUsuarios();
   }, [fetchUsuarios, t]);
 
+  const handleCloseEditarDialog = (clearSelected = true) => {
+    setOpenDialog(false);
+    if (clearSelected) setSelected(null);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name as string]: value });
@@ -141,7 +149,7 @@ const TutorUsuarios: React.FC = () => {
         setUsuarios([...usuarios, res.data.data]);
       }
 
-      setOpenDialog(false);
+      handleCloseEditarDialog();
       setSnackbar({
         open: true,
         message: editar ? t('tutorUsers.updated') : t('tutorUsers.invited'),
@@ -174,6 +182,55 @@ const TutorUsuarios: React.FC = () => {
       setSnackbar({
         open: true,
         message: err.response?.data?.error || t('tutorUsers.deleteError'),
+        severity: 'error'
+      });
+    } finally {
+      setProcesando(false);
+    }
+  };
+
+  const handleOpenEliminarDialog = (usuario: any) => {
+    setSelected(usuario);
+    setOpenEliminarDialog(true);
+  };
+
+  const handleCloseEliminarDialog = () => {
+    setOpenEliminarDialog(false);
+    setSelected(null);
+  };
+
+  const handleConfirmEliminar = async () => {
+    if (!selected) return;
+    await handleDelete(selected._id);
+    handleCloseEliminarDialog();
+  };
+
+  const handleOpenPasswordDialog = (usuario: any) => {
+    setSelected(usuario);
+    setOpenPasswordDialog(true);
+  };
+
+  const handleClosePasswordDialog = () => {
+    setOpenPasswordDialog(false);
+    setPasswordValue('');
+    setSelected(null);
+  };
+
+  const handleActualizarPassword = async () => {
+    if (!selected) return;
+    try {
+      setProcesando(true);
+      await updateUserPassword(selected._id, passwordValue);
+      handleClosePasswordDialog();
+      setSnackbar({
+        open: true,
+        message: t('adminUsers.passwordUpdated'),
+        severity: 'success'
+      });
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t('adminUsers.passwordError'),
         severity: 'error'
       });
     } finally {
@@ -557,7 +614,7 @@ const TutorUsuarios: React.FC = () => {
         </TableContainer>
       </Paper>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+      <Dialog open={openDialog} onClose={() => handleCloseEditarDialog()}>
         <DialogTitle>{t(editar ? 'tutorUsers.edit' : 'tutorUsers.invite')}</DialogTitle>
         <DialogContent>
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
@@ -578,34 +635,97 @@ const TutorUsuarios: React.FC = () => {
           </TextField>
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleCloseEditarDialog()}>
+            {t('tutorUsers.dialog.cancel')}
+          </Button>
           {editar && selected && (
-            <Button
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={() => {
-                if (
-                  window.confirm(
-                    t('adminUsers.dialogs.deleteConfirm', {
-                      name: selected.nombre,
-                      lastName: selected.apellidos,
-                    }),
-                  )
-                ) {
-                  handleDelete(selected._id);
-                  setOpenDialog(false);
-                }
-              }}
-            >
-              {t('tutorUsers.buttons.delete')}
-            </Button>
+            <>
+              <Button
+                onClick={() => {
+                  handleOpenPasswordDialog(selected);
+                  handleCloseEditarDialog(false);
+                }}
+                color="secondary"
+                variant="outlined"
+              >
+                {t('adminUsers.actions.changePassword')}
+              </Button>
+              <Button
+                color="error"
+                startIcon={<DeleteIcon />}
+                onClick={() => {
+                  handleOpenEliminarDialog(selected);
+                  handleCloseEditarDialog(false);
+                }}
+              >
+                {t('tutorUsers.buttons.delete')}
+              </Button>
+            </>
           )}
-          <Button onClick={() => setOpenDialog(false)}>{t('tutorUsers.dialog.cancel')}</Button>
           <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
             {procesando
               ? t('tutorUsers.dialog.saving')
               : editar
               ? t('tutorUsers.dialog.save')
               : t('tutorUsers.dialog.invite')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
+        <DialogTitle>{t('adminUsers.password.title')}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            margin="dense"
+            id="password-update"
+            label={t('adminUsers.password.label')}
+            type="password"
+            value={passwordValue}
+            onChange={(e) => setPasswordValue(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePasswordDialog} color="primary">
+            {t('common.cancel')}
+          </Button>
+          <Button
+            onClick={handleActualizarPassword}
+            color="secondary"
+            variant="contained"
+            disabled={procesando || !passwordValue}
+          >
+            {procesando
+              ? t('adminUsers.password.updating')
+              : t('adminUsers.password.update')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openEliminarDialog} onClose={handleCloseEliminarDialog}>
+        <DialogTitle>{t('adminUsers.delete.title')}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Trans
+              i18nKey="adminUsers.delete.confirm"
+              values={{
+                name: `${selected?.nombre} ${selected?.apellidos}`,
+              }}
+              components={{ strong: <strong /> }}
+            />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEliminarDialog} color="primary">
+            {t('common.cancel')}
+          </Button>
+          <Button
+            onClick={handleConfirmEliminar}
+            color="error"
+            variant="contained"
+            disabled={procesando}
+          >
+            {procesando ? t('common.deleting') : t('common.delete')}
           </Button>
         </DialogActions>
       </Dialog>

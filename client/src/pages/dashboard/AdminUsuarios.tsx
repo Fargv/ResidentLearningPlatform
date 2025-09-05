@@ -265,9 +265,9 @@ const AdminUsuarios: React.FC = () => {
     setOpenEditarDialog(true);
   };
 
-  const handleCloseEditarDialog = () => {
+  const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenEditarDialog(false);
-    setSelectedUsuario(null);
+    if (clearSelected) setSelectedUsuario(null);
   };
 
   const handleOpenEliminarDialog = (usuario: any) => {
@@ -1210,7 +1210,7 @@ const AdminUsuarios: React.FC = () => {
       </Dialog>
 
       {/* Diálogo para editar usuario */}
-      <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
+      <Dialog open={openEditarDialog} onClose={() => handleCloseEditarDialog()}>
         <DialogTitle>{t("adminUsers.edit.title")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -1360,12 +1360,15 @@ const AdminUsuarios: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditarDialog} color="primary">
+          <Button onClick={() => handleCloseEditarDialog()} color="primary">
             {t("common.cancel")}
           </Button>
           {user?.rol === "administrador" && (
             <Button
-              onClick={() => handleOpenPasswordDialog(selectedUsuario)}
+              onClick={() => {
+                handleOpenPasswordDialog(selectedUsuario);
+                handleCloseEditarDialog(false);
+              }}
               color="secondary"
               variant="outlined"
             >
@@ -1373,7 +1376,10 @@ const AdminUsuarios: React.FC = () => {
             </Button>
           )}
           <Button
-            onClick={() => handleOpenEliminarDialog(selectedUsuario)}
+            onClick={() => {
+              handleOpenEliminarDialog(selectedUsuario);
+              handleCloseEditarDialog(false);
+            }}
             color="error"
             variant="outlined"
           >
