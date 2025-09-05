@@ -180,7 +180,7 @@
     "errorLoad": "Erro ao carregar o progresso",
     "downloadError": "Erro ao baixar certificado",
     "downloadCertificate": "Baixar certificado",
-    "downloadSurgeryReport": "Baixar Relatório de Cirurgias Fase {{num}}",
+    "downloadSurgeryReport": "Baixar relatório de cirurgias de {{phase}}",
     "downloadSurgeryReportError": "Erro ao baixar relatório de cirurgias"
   },
   "residentPhases": {

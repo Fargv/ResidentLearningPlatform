@@ -840,7 +840,7 @@
     "errorLoad": "Erro ao cargar o progreso",
     "downloadError": "Erro ao descargar o certificado",
     "downloadCertificate": "Descargar certificado",
-    "downloadSurgeryReport": "Descargar informe de cirurxías fase {{num}}",
+    "downloadSurgeryReport": "Descargar informe de cirurxías de {{phase}}",
     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
   },
   "certificate": {

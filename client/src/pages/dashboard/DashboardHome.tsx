@@ -340,7 +340,7 @@ const DashboardHome: React.FC = () => {
 
   const handleDescargarInformeCirugias = async (
     progresoId: string,
-    faseNumero?: number,
+    nombreFase: string,
   ) => {
     setDownloadLoading(true);
     try {
@@ -353,7 +353,7 @@ const DashboardHome: React.FC = () => {
       link.href = url;
       link.setAttribute(
         'download',
-        `Informe_Cirugias_Fase(${faseNumero})_${nombreUsuario}.xlsx`,
+        `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
       );
       document.body.appendChild(link);
       link.click();
@@ -571,13 +571,13 @@ const DashboardHome: React.FC = () => {
                           onClick={() =>
                             handleDescargarInformeCirugias(
                               phaseData.progresoId,
-                              phaseData.phase,
+                              `${t('adminPhases.phase')} ${phaseData.phase}`,
                             )
                           }
                           disabled={downloadLoading}
                         >
                           {t('residentProgress.downloadSurgeryReport', {
-                            phase: phaseData.phase,
+                            phase: m.label,
                           })}
                         </Button>
                       </Box>
@@ -664,13 +664,13 @@ const DashboardHome: React.FC = () => {
                         onClick={() =>
                           handleDescargarInformeCirugias(
                             p.progresoId,
-                            p.faseNumero,
+                            `${t('adminPhases.phase')} ${p.faseNumero}`,
                           )
                         }
                         disabled={downloadLoading}
                       >
                         {t('residentProgress.downloadSurgeryReport', {
-                          phase: p.faseNumero,
+                          phase: p.name,
                         })}
                       </Button>
                     </Box>

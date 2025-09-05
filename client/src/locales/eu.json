@@ -921,7 +921,7 @@
     "errorLoad": "Errorea aurrerapena kargatzean",
     "downloadError": "Errorea ziurtagiria deskargatzean",
     "downloadCertificate": "Deskargatu ziurtagiria",
-    "downloadSurgeryReport": "Deskargatu kirurgia txostena {{phase}}. fasea",
+    "downloadSurgeryReport": "Kirurgia txostena deskargatu {{phase}}",
     "downloadSurgeryReportError": "Errorea kirurgia txostena deskargatzean"
   },
   "certificate": {

@@ -66,7 +66,7 @@ const ResidenteProgreso: React.FC = () => {
 
   const handleDescargarInformeCirugias = async (
     progresoId: string,
-    faseNumero?: number,
+    nombreFase: string,
   ) => {
     setDownloadLoading(true);
     try {
@@ -79,7 +79,7 @@ const ResidenteProgreso: React.FC = () => {
       link.href = url;
       link.setAttribute(
         'download',
-        `Informe_Cirugias_Fase(${faseNumero})_${nombreUsuario}.xlsx`,
+        `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
       );
       document.body.appendChild(link);
       link.click();
@@ -144,13 +144,13 @@ const ResidenteProgreso: React.FC = () => {
                   onClick={() =>
                     handleDescargarInformeCirugias(
                       p.progresoId,
-                      p.faseNumero,
+                      `${t('adminPhases.phase')} ${p.faseNumero}`,
                     )
                   }
                   disabled={downloadLoading}
                 >
                   {t('residentProgress.downloadSurgeryReport', {
-                    phase: p.faseNumero,
+                    phase: p.faseNombre,
                   })}
                 </Button>
               </Box>

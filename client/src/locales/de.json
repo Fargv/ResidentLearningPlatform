@@ -283,7 +283,7 @@
     "errorLoad": "Fehler beim Laden des Fortschritts",
     "downloadError": "Fehler beim Herunterladen des Zertifikats",
     "downloadCertificate": "Zertifikat herunterladen",
-    "downloadSurgeryReport": "Chirurgiebericht Phase {{phase}} herunterladen",
+    "downloadSurgeryReport": "Chirurgiebericht für {{phase}} herunterladen",
     "downloadSurgeryReportError": "Fehler beim Herunterladen des Chirurgieberichts"
   },
   "certificate": {

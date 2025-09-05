@@ -934,7 +934,7 @@
     "errorLoad": "Error loading progress",
     "downloadError": "Error downloading certificate",
     "downloadCertificate": "Download certificate",
-    "downloadSurgeryReport": "Download Surgery Report Phase {{num}}",
+    "downloadSurgeryReport": "Download surgery report for {{phase}}",
     "downloadSurgeryReportError": "Error downloading surgery report"
   },
   "certificate": {

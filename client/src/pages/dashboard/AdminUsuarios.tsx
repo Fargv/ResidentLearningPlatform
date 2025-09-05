@@ -26,6 +26,8 @@ import {
   Tooltip,
   CircularProgress,
   Backdrop,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -106,6 +108,8 @@ const AdminUsuarios: React.FC = () => {
     severity: "success" as "success" | "error",
   });
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [anchorElInforme, setAnchorElInforme] = useState<null | HTMLElement>(null);
+  const [menuUsuario, setMenuUsuario] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<
     "nombre" | "email" | "hospital" | "rol"
@@ -472,6 +476,8 @@ const AdminUsuarios: React.FC = () => {
   const handleDownloadInforme = async (
     progresoId: string,
     fase: string,
+    nombreUsuario: string,
+    usuario?: any,
   ) => {
     setDownloadLoading(true);
     try {
@@ -481,7 +487,10 @@ const AdminUsuarios: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `informe-cirugias-${fase}.xlsx`);
+      link.setAttribute(
+        "download",
+        `informe-cirugias-${fase}_${nombreUsuario}.xlsx`,
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -494,6 +503,19 @@ const AdminUsuarios: React.FC = () => {
     } finally {
       setDownloadLoading(false);
     }
+  };
+
+  const handleOpenInformeMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    usuario: any,
+  ) => {
+    setAnchorElInforme(event.currentTarget);
+    setMenuUsuario(usuario);
+  };
+
+  const handleCloseInformeMenu = () => {
+    setAnchorElInforme(null);
+    setMenuUsuario(null);
   };
   const handleCloseSnackbar = () => {
     setSnackbar({
@@ -773,25 +795,43 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell align="right">
-                    {usuario.fasesCirugia?.map((fase: FaseCirugia) => (
-                      <Tooltip
-                        key={fase.id}
-                        title={t(
-                          "adminUsers.actions.downloadSurgeryReport",
-                          { phase: fase.fase },
-                        )}
-                      >
-                        <IconButton
-                          onClick={() =>
-                            handleDownloadInforme(fase.id, fase.fase)
+                    {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
+                      <>
+                        <Tooltip title="Descargar informes">
+                          <IconButton
+                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
+                            size="small"
+                            sx={{ mr: 1 }}
+                          >
+                            <DownloadIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Menu
+                          anchorEl={anchorElInforme}
+                          open={
+                            Boolean(anchorElInforme) &&
+                            menuUsuario?._id === usuario._id
                           }
-                          size="small"
-                          sx={{ mr: 1 }}
+                          onClose={handleCloseInformeMenu}
                         >
-                          <DownloadIcon />
-                        </IconButton>
-                      </Tooltip>
-                    ))}
+                          {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                            <MenuItem
+                              key={fase.id}
+                              onClick={() => {
+                                handleDownloadInforme(
+                                  fase.id,
+                                  fase.fase,
+                                  menuUsuario,
+                                );
+                                handleCloseInformeMenu();
+                              }}
+                            >
+                              {fase.fase}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </>
+                    )}
                     <Button
                       variant="outlined"
                       color="primary"

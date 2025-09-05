@@ -389,7 +389,7 @@
     "errorLoad": "Errore durante il caricamento del progresso",
     "downloadError": "Errore durante il download del certificato",
     "downloadCertificate": "Scarica certificato",
-    "downloadSurgeryReport": "Scarica report chirurgie fase {{phase}}",
+    "downloadSurgeryReport": "Scarica report chirurgico di {{phase}}",
     "downloadSurgeryReportError": "Errore nel download del report delle chirurgie"
   },
   "certificate": {
