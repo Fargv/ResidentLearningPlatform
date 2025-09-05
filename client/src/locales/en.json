@@ -21,7 +21,7 @@
     "profile": "Profile",
     "users": "Users",
     "logout": "Logout",
-    "downloadSurgeryReport": "Download Surgery Report Phase {{num}}",
+    "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Error downloading surgery report"
   },
   "adminConfig": {
@@ -382,7 +382,7 @@
       "delete": "Delete",
       "changePassword": "Change password",
       "createProgress": "Create progress",
-      "downloadSurgeryReport": "Download surgery report for {{phase}}"
+      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
     },
     "createSuccess": "User created successfully",
     "createError": "Error creating user",
@@ -780,7 +780,7 @@
       "genericError": "Error"
     },
     "actions": {
-      "downloadSurgeryReport": "Download surgery report for {{phase}}"
+      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
     }
   },
   "progress": {
@@ -933,7 +933,7 @@
     "title": "My Progress",
     "errorLoad": "Error loading progress",
     "downloadError": "Error downloading certificate",
-    "downloadCertificate": "Download certificate",
+    "downloadCertificate": "Certificado de Cumplimiento",
     "downloadSurgeryReport": "Download surgery report for {{phase}}",
     "downloadSurgeryReportError": "Error downloading surgery report"
   },

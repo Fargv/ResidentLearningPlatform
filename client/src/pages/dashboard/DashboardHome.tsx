@@ -590,6 +590,7 @@ const DashboardHome: React.FC = () => {
             <Box textAlign="center" mt={2}>
               <Button
                 variant="contained"
+                color="secondary"
                 onClick={handleDescargarCertificado}
                 disabled={downloadLoading}
               >
@@ -682,6 +683,7 @@ const DashboardHome: React.FC = () => {
               <Box textAlign="center" mt={2}>
                 <Button
                   variant="contained"
+                  color="secondary"
                   onClick={handleDescargarCertificado}
                   disabled={downloadLoading}
                 >

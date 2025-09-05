@@ -160,7 +160,12 @@ const ResidenteProgreso: React.FC = () => {
       </Box>
       {allValidado && (
         <Box textAlign="center" mt={2}>
-          <Button variant="contained" onClick={handleDescargarCertificado} disabled={downloadLoading}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleDescargarCertificado}
+            disabled={downloadLoading}
+          >
             {t('residentProgress.downloadCertificate')}
           </Button>
         </Box>

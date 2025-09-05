@@ -54,6 +54,7 @@ const TutorUsuarios: React.FC = () => {
   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
+  const [selectedFases, setSelectedFases] = useState<string[]>([]);
 
   const fetchUsuarios = useCallback(async () => {
     try {
@@ -72,10 +73,12 @@ const TutorUsuarios: React.FC = () => {
         const usuariosConProgreso = await Promise.all(
           filtrados.map(async (u: any) => {
             let fasesCirugia: FaseCirugia[] = [];
+            let faseActual: string | undefined;
             if (["residente", "participante"].includes(u.rol)) {
               try {
                 const progRes = await api.get(`/progreso/residente/${u._id}`);
-                fasesCirugia = progRes.data.data
+                const progresos = progRes.data.data;
+                fasesCirugia = progresos
                   .filter(
                     (p: any) =>
                       p.estadoGeneral === "validado" &&
@@ -85,11 +88,25 @@ const TutorUsuarios: React.FC = () => {
                       ),
                   )
                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+
+                const enProgreso = progresos.filter(
+                  (p: any) => p.estadoGeneral === "en progreso",
+                );
+                if (enProgreso.length > 0) {
+                  faseActual = String(
+                    Math.max(...enProgreso.map((p: any) => p.fase.numero)),
+                  );
+                } else if (
+                  progresos.length > 0 &&
+                  progresos.every((p: any) => p.estadoGeneral === "validado")
+                ) {
+                  faseActual = "Programa Completado";
+                }
               } catch {
                 fasesCirugia = [];
               }
             }
-            return { ...u, fasesCirugia };
+            return { ...u, fasesCirugia, faseActual };
           }),
         );
         setUsuarios(usuariosConProgreso);
@@ -167,7 +184,6 @@ const TutorUsuarios: React.FC = () => {
     progresoId: string,
     fase: string,
     nombreUsuario: string,
-    usuario?: any,
   ) => {
     setDownloadLoading(true);
     try {
@@ -177,10 +193,7 @@ const TutorUsuarios: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute(
-        'download',
-        `informe-cirugias-${fase}_${nombreUsuario}.xlsx`,
-      );
+      link.setAttribute('download', `informe-${fase}_${nombreUsuario}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -246,6 +259,13 @@ const TutorUsuarios: React.FC = () => {
         .filter((t): t is string => Boolean(t)),
     ),
   );
+  const faseOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.faseActual)
+        .filter((f): f is string => Boolean(f)),
+    ),
+  );
 
   const displayUsuarios = usuarios
     .filter((u) =>
@@ -268,6 +288,11 @@ const TutorUsuarios: React.FC = () => {
     )
     .filter((u) =>
       selectedTipos.length > 0 ? selectedTipos.includes(u.tipo) : true,
+    )
+    .filter((u) =>
+      selectedFases.length > 0
+        ? selectedFases.includes(u.faseActual ?? '')
+        : true,
     );
 
   if (loading) return <LinearProgress />;
@@ -331,6 +356,21 @@ const TutorUsuarios: React.FC = () => {
           }
           renderInput={(params) => (
             <TextField {...params} label={t('adminUsers.fields.type')} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={faseOptions}
+          value={selectedFases}
+          onChange={(e, newValue) =>
+            setSelectedFases(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t('adminUsers.fields.phase', 'Fase')}
+            />
           )}
           sx={{ minWidth: 200 }}
         />
@@ -406,6 +446,7 @@ const TutorUsuarios: React.FC = () => {
                 <TableCell>{t('adminUsers.table.hospital')}</TableCell>
                 <TableCell>{t('adminUsers.table.specialty')}</TableCell>
                 <TableCell>{t('adminUsers.table.zone')}</TableCell>
+                <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
                 <TableCell>{t('tutorUsers.table.status')}</TableCell>
                 <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
               </TableRow>
@@ -436,6 +477,7 @@ const TutorUsuarios: React.FC = () => {
                   <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
                   <TableCell>{usuario.especialidad || '-'}</TableCell>
                   <TableCell>{usuario.zona || '-'}</TableCell>
+                  <TableCell>{usuario.faseActual || '-'}</TableCell>
                   <TableCell>
                     <Chip
                       label={t(
@@ -450,7 +492,11 @@ const TutorUsuarios: React.FC = () => {
                   <TableCell align="right">
                     {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
                       <>
-                        <Tooltip title="Descargar informes">
+                        <Tooltip
+                          title={t('tutorUsers.actions.downloadSurgeryReport', {
+                            phase: t('adminPhases.phase').toLowerCase(),
+                          })}
+                        >
                           <IconButton
                             onClick={(e) => handleOpenInformeMenu(e, usuario)}
                             sx={{ mr: 1 }}
@@ -473,12 +519,14 @@ const TutorUsuarios: React.FC = () => {
                                 handleDownloadInforme(
                                   fase.id,
                                   fase.fase,
-                                  menuUsuario,
+                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
                                 );
                                 handleCloseInformeMenu();
                               }}
                             >
-                              {fase.fase}
+                              {t('tutorUsers.actions.downloadSurgeryReport', {
+                                phase: fase.fase,
+                              })}
                             </MenuItem>
                           ))}
                         </Menu>

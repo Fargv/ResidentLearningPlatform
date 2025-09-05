@@ -124,6 +124,7 @@ const AdminUsuarios: React.FC = () => {
   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
+  const [selectedFases, setSelectedFases] = useState<string[]>([]);
   const [tutores, setTutores] = useState<any[]>([]);
 
   const roleOptions =
@@ -139,10 +140,12 @@ const AdminUsuarios: React.FC = () => {
         const usuariosConProgreso = await Promise.all(
           usuariosRes.data.data.map(async (u: any) => {
             let fasesCirugia: FaseCirugia[] = [];
+            let faseActual: string | undefined;
             if (["residente", "participante"].includes(u.rol)) {
               try {
                 const progRes = await api.get(`/progreso/residente/${u._id}`);
-                fasesCirugia = progRes.data.data
+                const progresos = progRes.data.data;
+                fasesCirugia = progresos
                   .filter(
                     (p: any) =>
                       p.estadoGeneral === "validado" &&
@@ -152,11 +155,25 @@ const AdminUsuarios: React.FC = () => {
                       ),
                   )
                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+
+                const enProgreso = progresos.filter(
+                  (p: any) => p.estadoGeneral === "en progreso",
+                );
+                if (enProgreso.length > 0) {
+                  faseActual = String(
+                    Math.max(...enProgreso.map((p: any) => p.fase.numero)),
+                  );
+                } else if (
+                  progresos.length > 0 &&
+                  progresos.every((p: any) => p.estadoGeneral === "validado")
+                ) {
+                  faseActual = "Programa Completado";
+                }
               } catch {
                 fasesCirugia = [];
               }
             }
-            return { ...u, fasesCirugia };
+            return { ...u, fasesCirugia, faseActual };
           }),
         );
 
@@ -477,7 +494,6 @@ const AdminUsuarios: React.FC = () => {
     progresoId: string,
     fase: string,
     nombreUsuario: string,
-    usuario?: any,
   ) => {
     setDownloadLoading(true);
     try {
@@ -487,10 +503,7 @@ const AdminUsuarios: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute(
-        "download",
-        `informe-cirugias-${fase}_${nombreUsuario}.xlsx`,
-      );
+      link.setAttribute("download", `informe-${fase}_${nombreUsuario}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -558,6 +571,13 @@ const AdminUsuarios: React.FC = () => {
         .filter((e): e is string => Boolean(e)),
     ),
   );
+  const faseOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.faseActual)
+        .filter((f): f is string => Boolean(f)),
+    ),
+  );
   const hospitalSociedadOptions = [
     ...hospitales.map((h) => ({ _id: h._id, nombre: h.nombre })),
     ...sociedades.map((s) => ({ _id: s._id, nombre: s.titulo })),
@@ -591,6 +611,11 @@ const AdminUsuarios: React.FC = () => {
     )
     .filter((u) =>
       selectedTipos.length > 0 ? selectedTipos.includes(u.tipo) : true,
+    )
+    .filter((u) =>
+      selectedFases.length > 0
+        ? selectedFases.includes(u.faseActual ?? "")
+        : true,
     )
     .sort((a, b) => {
       let aVal = "";
@@ -724,6 +749,19 @@ const AdminUsuarios: React.FC = () => {
           )}
           sx={{ minWidth: 200 }}
         />
+        <Autocomplete
+          multiple
+          options={faseOptions}
+          value={selectedFases}
+          onChange={(e, newValue) => setSelectedFases(newValue as string[])}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t("adminUsers.fields.phase", "Fase")}
+            />
+          )}
+          sx={{ minWidth: 200 }}
+        />
       </Box>
 
      {/* Tabla de usuarios */}
@@ -761,6 +799,7 @@ const AdminUsuarios: React.FC = () => {
                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
                 <TableCell>{t("adminUsers.table.tutor")}</TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
+                <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
               </TableRow>
             </TableHead>
@@ -794,10 +833,15 @@ const AdminUsuarios: React.FC = () => {
                       : "-"}
                   </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
+                  <TableCell>{usuario.faseActual || "-"}</TableCell>
                   <TableCell align="right">
                     {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
                       <>
-                        <Tooltip title="Descargar informes">
+                        <Tooltip
+                          title={t('adminUsers.actions.downloadSurgeryReport', {
+                            phase: t('adminPhases.phase').toLowerCase(),
+                          })}
+                        >
                           <IconButton
                             onClick={(e) => handleOpenInformeMenu(e, usuario)}
                             size="small"
@@ -821,12 +865,14 @@ const AdminUsuarios: React.FC = () => {
                                 handleDownloadInforme(
                                   fase.id,
                                   fase.fase,
-                                  menuUsuario,
+                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
                                 );
                                 handleCloseInformeMenu();
                               }}
                             >
-                              {fase.fase}
+                              {t('adminUsers.actions.downloadSurgeryReport', {
+                                phase: fase.fase,
+                              })}
                             </MenuItem>
                           ))}
                         </Menu>

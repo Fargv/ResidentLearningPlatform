@@ -21,7 +21,7 @@
     "profile": "Perfil",
     "users": "Usuarios",
     "logout": "Cerrar sesión",
-    "downloadSurgeryReport": "Descargar Informe Cirugías Fase {{num}}",
+    "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Error al descargar informe de cirugías"
   },
   "adminConfig": {
@@ -925,7 +925,7 @@
     "title": "Mi Progreso",
     "errorLoad": "Error al cargar el progreso",
     "downloadError": "Error al descargar certificado",
-    "downloadCertificate": "Descargar certificado",
+    "downloadCertificate": "Certificado de Cumplimiento",
     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Error al descargar informe de cirugías"
   },

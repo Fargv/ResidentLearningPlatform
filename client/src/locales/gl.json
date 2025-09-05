@@ -21,7 +21,7 @@
     "profile": "Perfil",
     "users": "Usuarios",
     "logout": "Pechar sesión",
-    "downloadSurgeryReport": "Descargar informe de cirurxías fase {{num}}",
+    "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
   },
   "adminConfig": {
@@ -453,7 +453,7 @@
       "delete": "Eliminar",
       "changePassword": "Cambiar contrasinal",
       "createProgress": "Crear progreso",
-      "downloadSurgeryReport": "Descargar informe de cirurxías de {{phase}}"
+      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
     },
     "createSuccess": "Usuario creado correctamente",
     "createError": "Erro ao crear o usuario",
@@ -754,7 +754,7 @@
       "genericError": "Erro"
     },
     "actions": {
-      "downloadSurgeryReport": "Descargar informe de cirurxías de {{phase}}"
+      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
     }
   },
   "progress": {
@@ -839,7 +839,7 @@
     "title": "O meu progreso",
     "errorLoad": "Erro ao cargar o progreso",
     "downloadError": "Erro ao descargar o certificado",
-    "downloadCertificate": "Descargar certificado",
+    "downloadCertificate": "Certificado de Cumplimiento",
     "downloadSurgeryReport": "Descargar informe de cirurxías de {{phase}}",
     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
   },
