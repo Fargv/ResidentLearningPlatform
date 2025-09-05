@@ -27,6 +27,34 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+test('muestra boton Ver Progreso cuando tiene progreso', async () => {
+  mockedGet
+    .mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            _id: 'u1',
+            nombre: 'Res',
+            apellidos: 'A',
+            email: 'r@a.com',
+            rol: 'residente',
+            tipo: 'Programa Residentes',
+            tieneProgreso: true,
+          },
+        ],
+      },
+    })
+    .mockResolvedValueOnce({ data: { data: [] } })
+    .mockResolvedValueOnce({ data: [] });
+
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
+  expect(await screen.findByText('Ver Progreso')).toBeInTheDocument();
+});
+
 test('muestra boton Crear progreso cuando no existe progreso', async () => {
   mockedGet
     .mockResolvedValueOnce({ data: { data: [

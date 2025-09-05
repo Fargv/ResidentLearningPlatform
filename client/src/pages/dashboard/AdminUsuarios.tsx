@@ -40,6 +40,7 @@ import {
   //Email as EmailIcon
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import api, { createUser, updateUserPassword, getTutors } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
@@ -50,6 +51,7 @@ import { FaseCirugia } from "../../types/FaseCirugia";
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const typeKey = (tipo?: string) =>
     tipo === "Programa Sociedades"
       ? "programaSociedades"
@@ -160,9 +162,10 @@ const AdminUsuarios: React.FC = () => {
                   (p: any) => p.estadoGeneral === "en progreso",
                 );
                 if (enProgreso.length > 0) {
-                  faseActual = String(
-                    Math.max(...enProgreso.map((p: any) => p.fase.numero)),
+                  const numero = Math.max(
+                    ...enProgreso.map((p: any) => p.fase.numero),
                   );
+                  faseActual = `${t("adminPhases.phase")} ${numero}`;
                 } else if (
                   progresos.length > 0 &&
                   progresos.every((p: any) => p.estadoGeneral === "validado")
@@ -910,6 +913,22 @@ const AdminUsuarios: React.FC = () => {
                         {t("adminUsers.actions.changePassword")}
                       </Button>
                     )}
+                    {['residente', 'participante'].includes(usuario.rol) &&
+                      user?.rol === "administrador" &&
+                      usuario.tieneProgreso && (
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/progreso-usuario/${usuario._id}`,
+                            )
+                          }
+                          sx={{ mr: 1, minWidth: 150 }}
+                        >
+                          {t('adminUserProgress.viewProgress')}
+                        </Button>
+                      )}
                     {['residente', 'participante'].includes(usuario.rol) &&
                       !usuario.tieneProgreso && (
                         <Button

@@ -93,9 +93,10 @@ const TutorUsuarios: React.FC = () => {
                   (p: any) => p.estadoGeneral === "en progreso",
                 );
                 if (enProgreso.length > 0) {
-                  faseActual = String(
-                    Math.max(...enProgreso.map((p: any) => p.fase.numero)),
+                  const numero = Math.max(
+                    ...enProgreso.map((p: any) => p.fase.numero),
                   );
+                  faseActual = `${t('adminPhases.phase')} ${numero}`;
                 } else if (
                   progresos.length > 0 &&
                   progresos.every((p: any) => p.estadoGeneral === "validado")
@@ -120,7 +121,7 @@ const TutorUsuarios: React.FC = () => {
 
   useEffect(() => {
     fetchUsuarios();
-  }, [fetchUsuarios]);
+  }, [fetchUsuarios, t]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;

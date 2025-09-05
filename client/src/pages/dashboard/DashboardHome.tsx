@@ -24,7 +24,8 @@ import {
   Settings as SettingsIcon,
   Person as PersonIcon,
   Notifications as NotificationsIcon,
-  TrendingUp as TrendingUpIcon
+  TrendingUp as TrendingUpIcon,
+  WorkspacePremium as WorkspacePremiumIcon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -593,6 +594,7 @@ const DashboardHome: React.FC = () => {
                 color="secondary"
                 onClick={handleDescargarCertificado}
                 disabled={downloadLoading}
+                startIcon={<WorkspacePremiumIcon />}
               >
                 {t('residentProgress.downloadCertificate')}
               </Button>
@@ -686,6 +688,7 @@ const DashboardHome: React.FC = () => {
                   color="secondary"
                   onClick={handleDescargarCertificado}
                   disabled={downloadLoading}
+                  startIcon={<WorkspacePremiumIcon />}
                 >
                   {t('residentProgress.downloadCertificate')}
                 </Button>

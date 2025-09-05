@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Alert, Paper, Button, CircularProgress, Backdrop } from '@mui/material';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import PhaseProgressChart from '../../components/PhaseProgressChart';
@@ -165,6 +166,7 @@ const ResidenteProgreso: React.FC = () => {
             color="secondary"
             onClick={handleDescargarCertificado}
             disabled={downloadLoading}
+            startIcon={<WorkspacePremiumIcon />}
           >
             {t('residentProgress.downloadCertificate')}
           </Button>

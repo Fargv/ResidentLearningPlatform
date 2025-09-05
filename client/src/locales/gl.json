@@ -453,7 +453,7 @@
       "delete": "Eliminar",
       "changePassword": "Cambiar contrasinal",
       "createProgress": "Crear progreso",
-      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
+      "downloadSurgeryReport": "Descargar informe de {{phase}}"
     },
     "createSuccess": "Usuario creado correctamente",
     "createError": "Erro ao crear o usuario",
@@ -754,7 +754,7 @@
       "genericError": "Erro"
     },
     "actions": {
-      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
+      "downloadSurgeryReport": "Descargar informe de {{phase}}"
     }
   },
   "progress": {
@@ -840,7 +840,7 @@
     "errorLoad": "Erro ao cargar o progreso",
     "downloadError": "Erro ao descargar o certificado",
     "downloadCertificate": "Certificado de Cumplimiento",
-    "downloadSurgeryReport": "Descargar informe de cirurxías de {{phase}}",
+    "downloadSurgeryReport": "Descargar informe de {{phase}}",
     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
   },
   "certificate": {

@@ -30,6 +30,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
@@ -559,6 +560,7 @@ const ResidenteFases: React.FC = () => {
             color="secondary"
             onClick={handleDescargarCertificado}
             disabled={downloadLoading}
+            startIcon={<WorkspacePremiumIcon />}
           >
             {t('residentProgress.downloadCertificate')}
           </Button>

@@ -283,7 +283,7 @@
     "errorLoad": "Fehler beim Laden des Fortschritts",
     "downloadError": "Fehler beim Herunterladen des Zertifikats",
     "downloadCertificate": "Certificado de Cumplimiento",
-    "downloadSurgeryReport": "Chirurgiebericht für {{phase}} herunterladen",
+    "downloadSurgeryReport": "Bericht für {{phase}} herunterladen",
     "downloadSurgeryReportError": "Fehler beim Herunterladen des Chirurgieberichts"
   },
   "certificate": {
@@ -605,7 +605,7 @@
       "delete": "Löschen",
       "changePassword": "Passwort ändern",
       "createProgress": "Fortschritt erstellen",
-      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
+      "downloadSurgeryReport": "Bericht für {{phase}} herunterladen"
     },
     "createSuccess": "Benutzer erfolgreich erstellt",
     "createError": "Fehler beim Erstellen des Benutzers",
@@ -887,7 +887,7 @@
       "genericError": "Fehler"
     },
     "actions": {
-      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
+      "downloadSurgeryReport": "Bericht für {{phase}} herunterladen"
     }
   },
   "tutorValidations": {

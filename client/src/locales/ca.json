@@ -459,7 +459,7 @@
       "delete": "Eliminar",
       "changePassword": "Canviar contrasenya",
       "createProgress": "Crear progrés",
-      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
+      "downloadSurgeryReport": "Descarregar informe de {{phase}}"
     },
     "createSuccess": "Usuari creat correctament",
     "createError": "Error en crear l'usuari",
@@ -618,7 +618,7 @@
       "genericError": "Error"
     },
     "actions": {
-      "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}"
+      "downloadSurgeryReport": "Descarregar informe de {{phase}}"
     }
   },
   "tutorValidations": {
@@ -869,7 +869,7 @@
     "errorLoad": "Error en carregar el progrés",
     "downloadError": "Error en descarregar el certificat",
     "downloadCertificate": "Certificado de Cumplimiento",
-    "downloadSurgeryReport": "Descarregar informe de cirurgies de {{phase}}",
+    "downloadSurgeryReport": "Descarregar informe de {{phase}}",
     "downloadSurgeryReportError": "Error en descarregar l'informe de cirurgies"
   },
   "certificate": {
