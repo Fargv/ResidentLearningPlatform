@@ -54,4 +54,5 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-09-03: Certificados usan `FRONTEND_URL` y footer con enlace dinámico.
 - 2025-09-04: Certificados de sociedades incluyen logo, responsable y texto específicos; eliminada firma.
 - 2025-09-03: Pruebas para ruta de informe de cirugías con Supertest.
+- 2025-09-05: Botones de eliminar y cambiar contraseña movidos al diálogo de edición en `AdminUsuarios`.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

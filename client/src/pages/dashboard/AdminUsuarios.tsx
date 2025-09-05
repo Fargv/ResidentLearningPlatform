@@ -32,8 +32,6 @@ import {
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  VpnKey as VpnKeyIcon,
   Download as DownloadIcon,
 
    //Person as PersonIcon,
@@ -891,28 +889,6 @@ const AdminUsuarios: React.FC = () => {
                     >
                       {t("adminUsers.actions.edit")}
                     </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleOpenEliminarDialog(usuario)}
-                      size="small"
-                      startIcon={<DeleteIcon />}
-                      sx={{ mr: 1, minWidth: 150 }}
-                    >
-                      {t("adminUsers.actions.delete")}
-                    </Button>
-                    {user?.rol === "administrador" && (
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => handleOpenPasswordDialog(usuario)}
-                        size="small"
-                        startIcon={<VpnKeyIcon />}
-                        sx={{ mr: 1, minWidth: 150 }}
-                      >
-                        {t("adminUsers.actions.changePassword")}
-                      </Button>
-                    )}
                     {['residente', 'participante'].includes(usuario.rol) &&
                       user?.rol === "administrador" &&
                       usuario.tieneProgreso && (
@@ -1386,6 +1362,22 @@ const AdminUsuarios: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseEditarDialog} color="primary">
             {t("common.cancel")}
+          </Button>
+          {user?.rol === "administrador" && (
+            <Button
+              onClick={() => handleOpenPasswordDialog(selectedUsuario)}
+              color="secondary"
+              variant="outlined"
+            >
+              {t("adminUsers.actions.changePassword")}
+            </Button>
+          )}
+          <Button
+            onClick={() => handleOpenEliminarDialog(selectedUsuario)}
+            color="error"
+            variant="outlined"
+          >
+            {t("adminUsers.delete.title")}
           </Button>
           <Button
             onClick={handleEditar}

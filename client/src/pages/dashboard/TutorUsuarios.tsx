@@ -549,12 +549,6 @@ const TutorUsuarios: React.FC = () => {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(usuario._id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -584,9 +578,34 @@ const TutorUsuarios: React.FC = () => {
           </TextField>
         </DialogContent>
         <DialogActions>
+          {editar && selected && (
+            <Button
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={() => {
+                if (
+                  window.confirm(
+                    t('adminUsers.dialogs.deleteConfirm', {
+                      name: selected.nombre,
+                      lastName: selected.apellidos,
+                    }),
+                  )
+                ) {
+                  handleDelete(selected._id);
+                  setOpenDialog(false);
+                }
+              }}
+            >
+              {t('tutorUsers.buttons.delete')}
+            </Button>
+          )}
           <Button onClick={() => setOpenDialog(false)}>{t('tutorUsers.dialog.cancel')}</Button>
           <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
-            {procesando ? t('tutorUsers.dialog.saving') : editar ? t('tutorUsers.dialog.save') : t('tutorUsers.dialog.invite')}
+            {procesando
+              ? t('tutorUsers.dialog.saving')
+              : editar
+              ? t('tutorUsers.dialog.save')
+              : t('tutorUsers.dialog.invite')}
           </Button>
         </DialogActions>
       </Dialog>
