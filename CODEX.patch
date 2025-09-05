@@ -1,330 +1,184 @@
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index 9eae2abf8200ed7330399a6e665dc9db197bc676..1e940b5d66de1f398dd70c68bd59ae4fb7f96541 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -21,50 +21,51 @@ import {
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Autocomplete,
-   IconButton,
-   Tooltip,
-   CircularProgress,
-   Backdrop,
- } from "@mui/material";
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Delete as DeleteIcon,
-   VpnKey as VpnKeyIcon,
-   Download as DownloadIcon,
+diff --git a/src/controllers/informeCirugiasController.js b/src/controllers/informeCirugiasController.js
+index 7643e4510d2230a30f31dee760f255347d377783..4afd45602862563fd1a0a773db6586b20651da70 100644
+--- a/src/controllers/informeCirugiasController.js
++++ b/src/controllers/informeCirugiasController.js
+@@ -1,52 +1,52 @@
+ const path = require('path');
+ const fs = require('fs');
+ const ExcelJS = require('exceljs');
+ const ProgresoResidente = require('../models/ProgresoResidente');
  
-    //Person as PersonIcon,
-   //Email as EmailIcon
- } from "@mui/icons-material";
- import { useAuth } from "../../context/AuthContext";
- import api, { createUser, updateUserPassword, getTutors } from "../../api";
- import InviteUsersMail from "../../components/InviteUsersMail";
- import BackButton from "../../components/BackButton";
- import { useTranslation, Trans } from "react-i18next";
- import { getRoleChipSx } from "../../utils/roleChipColors";
-+import { FaseCirugia } from "../../types/FaseCirugia";
+ exports.descargarInformeCirugias = async (req, res, next) => {
+   try {
+     const progreso = await ProgresoResidente.findById(req.params.id)
+       .populate({
+         path: 'residente',
+         select: 'nombre apellidos tipo hospital sociedad especialidad',
+         populate: { path: 'hospital', select: 'zona' },
+       })
+       .populate('fase')
+       .populate('actividades.cirugia');
  
- const AdminUsuarios: React.FC = () => {
-   const { user } = useAuth();
-   const { t } = useTranslation();
-   const typeKey = (tipo?: string) =>
-     tipo === "Programa Sociedades"
-       ? "programaSociedades"
-       : tipo === "Programa Residentes"
-       ? "programaResidentes"
-       : "";
-   const rolesResidentes = [
-     "residente",
-     "tutor",
-     "csm",
-     "administrador",
-   ];
-   const rolesSociedades = [
-     "participante",
-     "profesor",
-     "csm",
-     "administrador",
-   ];
-   const zonaOptions = [
-     "NORDESTE",
-     "NORTE",
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index 9eae2abf8200ed7330399a6e665dc9db197bc676..1e940b5d66de1f398dd70c68bd59ae4fb7f96541 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -111,51 +112,51 @@ const AdminUsuarios: React.FC = () => {
-   >("nombre");
-   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+     if (!progreso) {
+       return res
+         .status(404)
+         .json({ success: false, error: 'Progreso no encontrado' });
+     }
  
-   const allRoles = Array.from(
-     new Set([...rolesResidentes, ...rolesSociedades]),
-   );
-   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-   const [selectedHospitals, setSelectedHospitals] = useState<string[]>([]);
-   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
-   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
-   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
-   const [tutores, setTutores] = useState<any[]>([]);
+     const usuario = progreso.residente;
+-    if (!usuario || usuario.tipo !== 'Programa Residentes') {
++    if (!usuario) {
+       return res.status(400).json({
+         success: false,
+-        error: 'El usuario no pertenece al Programa Residentes',
++        error: 'Usuario no encontrado',
+       });
+     }
  
-   const roleOptions =
-     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
+     if (
+       req.user.rol === 'residente' &&
+       req.user.id !== usuario._id.toString()
+     ) {
+       return res.status(403).json({ success: false, error: 'No autorizado' });
+     }
  
-   useEffect(() => {
-     const fetchData = async () => {
-       try {
-         setLoading(true);
+     if (req.user.rol === 'tutor') {
+       if (
+         req.user.hospital.toString() !== usuario.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' &&
+           req.user.especialidad !== usuario.especialidad)
+       ) {
+         return res.status(403).json({ success: false, error: 'No autorizado' });
+       }
+     }
  
-         const usuariosRes = await api.get("/users");
+     if (
+       req.user.rol === 'csm' &&
+       req.user.zona !== usuario.hospital.zona
+     ) {
+       return res.status(403).json({ success: false, error: 'No autorizado' });
+diff --git a/tests/descargarInformeCirugias.test.js b/tests/descargarInformeCirugias.test.js
+index ef0654f9c1622cbfc02b1d0f9c1721d48b5232c1..7ffdaf5303456cf36b8b3a462b42dd9fed5c1fe1 100644
+--- a/tests/descargarInformeCirugias.test.js
++++ b/tests/descargarInformeCirugias.test.js
+@@ -1,75 +1,75 @@
+ const { descargarInformeCirugias } = require('../src/controllers/informeCirugiasController');
+ const ProgresoResidente = require('../src/models/ProgresoResidente');
+ const fs = require('fs');
  
-         const usuariosConProgreso = await Promise.all(
-           usuariosRes.data.data.map(async (u: any) => {
--            let fasesCirugia: { id: string; fase: string }[] = [];
-+            let fasesCirugia: FaseCirugia[] = [];
-             if (["residente", "participante"].includes(u.rol)) {
-               try {
-                 const progRes = await api.get(`/progreso/residente/${u._id}`);
-                 fasesCirugia = progRes.data.data
-                   .filter(
-                     (p: any) =>
-                       p.estadoGeneral === "validado" &&
-                       p.actividades.some(
-                         (a: any) => a.cirugia && a.estado === "validado",
-                       ),
-                   )
-                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
-               } catch {
-                 fasesCirugia = [];
-               }
-             }
-             return { ...u, fasesCirugia };
-           }),
-         );
- 
-         setUsuariosLista(usuariosConProgreso);
- 
-         const hospitalesRes = await api.get("/hospitals");
- 
-         setHospitales(hospitalesRes.data.data);
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index 9eae2abf8200ed7330399a6e665dc9db197bc676..1e940b5d66de1f398dd70c68bd59ae4fb7f96541 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -749,51 +750,51 @@ const AdminUsuarios: React.FC = () => {
-                   <TableCell>{usuario.email}</TableCell>
-                   <TableCell>
-                     {usuario.tipo
-                       ? t(`types.${typeKey(usuario.tipo)}`)
-                       : "-"}
-                   </TableCell>
-                   <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
-                   <TableCell>
-                     <Chip
-                       label={t(`roles.${usuario.rol}`)}
-                       size="small"
-                       sx={getRoleChipSx(usuario.rol)}
-                     />
-                   </TableCell>
-                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
-                   <TableCell>{usuario.especialidad || "-"}</TableCell>
-                   <TableCell>
-                     {usuario.rol === "residente"
-                       ? usuario.tutor && typeof usuario.tutor === "object"
-                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
-                         : <Chip color="warning" label={t("adminUsers.noTutor")} />
-                       : "-"}
-                   </TableCell>
-                   <TableCell>{usuario.zona || "-"}</TableCell>
-                   <TableCell align="right">
--                    {usuario.fasesCirugia?.map((fase) => (
-+                    {usuario.fasesCirugia?.map((fase: FaseCirugia) => (
-                       <Tooltip
-                         key={fase.id}
-                         title={t(
-                           "adminUsers.actions.downloadSurgeryReport",
-                           { phase: fase.fase },
-                         )}
-                       >
-                         <IconButton
-                           onClick={() =>
-                             handleDownloadInforme(fase.id, fase.fase)
-                           }
-                           size="small"
-                           sx={{ mr: 1 }}
-                         >
-                           <DownloadIcon />
-                         </IconButton>
-                       </Tooltip>
-                     ))}
-                     <Button
-                       variant="outlined"
-                       color="primary"
-                       onClick={() => handleOpenEditarDialog(usuario)}
-                       size="small"
-                       startIcon={<EditIcon />}
-                       sx={{ mr: 1, minWidth: 150 }}
-
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index 040b50bb5246ec538b1635d98ff9d95015faca36..22934439876f66cf1a4ce58b4b8403f9df525f8a 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -1,39 +1,40 @@
- 
- import React, { useState, useEffect, useCallback } from 'react';
- import {
-   Box, Typography, Paper, Button, TextField,
-   Dialog, DialogTitle, DialogContent, DialogActions,
-   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-   IconButton, Chip, LinearProgress, Alert, Snackbar,
-   Autocomplete, Tooltip, CircularProgress, Backdrop
- } from '@mui/material';
- import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
- import { useAuth } from '../../context/AuthContext';
- import { useTranslation } from 'react-i18next';
- import api from '../../api';
- import { getRoleChipSx } from '../../utils/roleChipColors';
-+import { FaseCirugia } from '../../types/FaseCirugia';
- 
- const TutorUsuarios: React.FC = () => {
-   const { user } = useAuth();
-   const { t } = useTranslation();
-   const typeKey = (tipo?: string) =>
-     tipo === 'Programa Sociedades'
-       ? 'programaSociedades'
-       : tipo === 'Programa Residentes'
-       ? 'programaResidentes'
-       : '';
-   const [usuarios, setUsuarios] = useState<any[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [procesando, setProcesando] = useState(false);
- 
-   const [openDialog, setOpenDialog] = useState(false);
-   const [editar, setEditar] = useState(false);
-   const [selected, setSelected] = useState<any>(null);
- 
-   const [formData, setFormData] = useState({
-     email: '',
-     nombre: '',
-     apellidos: '',
-     rol: user?.rol === 'profesor' ? 'participante' : 'residente',
-     hospital: user?.hospital?._id || ''
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index 040b50bb5246ec538b1635d98ff9d95015faca36..22934439876f66cf1a4ce58b4b8403f9df525f8a 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -46,51 +47,51 @@ const TutorUsuarios: React.FC = () => {
+ describe('descargarInformeCirugias', () => {
+   beforeEach(() => {
+     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
+     jest.spyOn(fs, 'unlink').mockImplementation((path, cb) => cb());
    });
-   const [downloadLoading, setDownloadLoading] = useState(false);
  
-   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-   const [selectedHospitals, setSelectedHospitals] = useState<string[]>([]);
-   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
-   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
-   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
+   afterEach(() => {
+     jest.restoreAllMocks();
+   });
  
-   const fetchUsuarios = useCallback(async () => {
-     try {
-       let res;
-       if (user?.rol === 'csm') {
-         res = await api.get('/users');
-       } else if (user?.rol === 'profesor') {
-         res = await api.get(`/users/profesor/${user._id}/participantes`);
-       } else if (user?.hospital?._id) {
-         res = await api.get(`/users/hospital/${user.hospital._id}`);
-       }
-       if (res) {
-         const filtrados = res.data.data.filter(
-           (u: any) => u._id !== user?._id && u.tipo === user?.tipo
-         );
-         const usuariosConProgreso = await Promise.all(
-           filtrados.map(async (u: any) => {
--            let fasesCirugia: { id: string; fase: string }[] = [];
-+            let fasesCirugia: FaseCirugia[] = [];
-             if (["residente", "participante"].includes(u.rol)) {
-               try {
-                 const progRes = await api.get(`/progreso/residente/${u._id}`);
-                 fasesCirugia = progRes.data.data
-                   .filter(
-                     (p: any) =>
-                       p.estadoGeneral === "validado" &&
-                       p.actividades.some(
-                         (a: any) => a.cirugia && a.estado === "validado",
-                       ),
-                   )
-                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
-               } catch {
-                 fasesCirugia = [];
-               }
-             }
-             return { ...u, fasesCirugia };
-           }),
-         );
-         setUsuarios(usuariosConProgreso);
-       }
-     } catch (err: any) {
-       setError(err.response?.data?.error || t('tutorUsers.loadError'));
-     } finally {
-       setLoading(false);
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index 040b50bb5246ec538b1635d98ff9d95015faca36..22934439876f66cf1a4ce58b4b8403f9df525f8a 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -404,51 +405,51 @@ const TutorUsuarios: React.FC = () => {
-                         usuario.rol === 'administrador'
-                           ? 'primary'
-                           : usuario.rol === 'tutor'
-                           ? 'secondary'
-                           : 'default'
-                       }
-                       size="small"
-                       sx={getRoleChipSx(usuario.rol)}
-                     />
-                   </TableCell>
-                   <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
-                   <TableCell>{usuario.especialidad || '-'}</TableCell>
-                   <TableCell>{usuario.zona || '-'}</TableCell>
-                   <TableCell>
-                     <Chip
-                       label={t(
-                         usuario.activo
-                           ? 'tutorUsers.states.active'
-                           : 'tutorUsers.states.inactive'
-                       )}
-                       color={usuario.activo ? 'success' : 'error'}
-                       size="small"
-                     />
-                   </TableCell>
-                   <TableCell align="right">
--                    {usuario.fasesCirugia?.map((fase) => (
-+                    {usuario.fasesCirugia?.map((fase: FaseCirugia) => (
-                       <Tooltip
-                         key={fase.id}
-                         title={t(
-                           'tutorUsers.actions.downloadSurgeryReport',
-                           { phase: fase.fase },
-                         )}
-                       >
-                         <IconButton
-                           onClick={() =>
-                             handleDownloadInforme(fase.id, fase.fase)
-                           }
-                           sx={{ mr: 1 }}
-                         >
-                           <DownloadIcon />
-                         </IconButton>
-                       </Tooltip>
-                     ))}
-                     <IconButton
-                       onClick={() => {
-                         setEditar(true);
-                         setSelected(usuario);
-                         setFormData({
-                           email: usuario.email,
-                           nombre: usuario.nombre,
-                           apellidos: usuario.apellidos,
+   test('returns 400 when phase not validated', async () => {
+     const progreso = {
+       _id: 'p1',
+       estadoGeneral: 'en progreso',
+       residente: {
+         _id: 'u1',
+-        tipo: 'Programa Residentes',
++        tipo: 'Programa Sociedades',
+         hospital: { _id: 'h1', zona: 'NORTE' },
+         especialidad: 'URO',
+       },
+       actividades: [],
+       fase: { nombre: 'F1' },
+     };
+     const query = {
+       populate: jest.fn().mockReturnThis(),
+       then: (resolve) => Promise.resolve(resolve(progreso)),
+     };
+     jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
+ 
+     const req = { params: { id: 'p1' }, user: { id: 'u1', rol: 'residente' } };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await descargarInformeCirugias(req, res, jest.fn());
+     expect(res.status).toHaveBeenCalledWith(400);
+   });
+ 
+   test('creates excel when validated', async () => {
+     const progreso = {
+       _id: 'p1',
+       estadoGeneral: 'validado',
+       residente: {
+         _id: 'u1',
+         nombre: 'A',
+         apellidos: 'B',
+-        tipo: 'Programa Residentes',
++        tipo: 'Programa Sociedades',
+         hospital: { _id: 'h1', zona: 'NORTE' },
+         especialidad: 'URO',
+       },
+       actividades: [
+         {
+           tipo: 'cirugia',
+           nombre: 'Act1',
+           estado: 'validado',
+           fechaRealizacion: new Date('2025-01-01'),
+           cirugia: { name: 'Proc1' },
+           nombreCirujano: 'Dr X',
+           porcentajeParticipacion: 50,
+           comentariosResidente: 'com',
+         },
+       ],
+       fase: { nombre: 'F1' },
+     };
+     const query = {
+       populate: jest.fn().mockReturnThis(),
+       then: (resolve) => Promise.resolve(resolve(progreso)),
+     };
+     jest.spyOn(ProgresoResidente, 'findById').mockReturnValue(query);
+ 
+     const req = { params: { id: 'p1' }, user: { id: 'u1', rol: 'residente' } };
+     const res = {
+diff --git a/tests/informeCirugias.test.js b/tests/informeCirugias.test.js
+index 8a6d9e8b2f158a67d1a2e471d1fdf6628452eae9..69715171d0225fa61b927983790184e0fbce2f32 100644
+--- a/tests/informeCirugias.test.js
++++ b/tests/informeCirugias.test.js
+@@ -33,27 +33,38 @@ app.get('/api/progreso/:faseId/informe-cirugias', (req, res) => {
+   res.set('Content-Disposition', 'attachment; filename="informe-cirugias.csv"');
+   res.download(TEMP_FILE, 'informe-cirugias.csv', () => {
+     fs.unlinkSync(TEMP_FILE);
+   });
+ });
+ 
+ describe('GET /api/progreso/:faseId/informe-cirugias', () => {
+   test('404 cuando la fase no existe', async () => {
+     const res = await request(app).get('/api/progreso/inexistente/informe-cirugias');
+     expect(res.status).toBe(404);
+   });
+ 
+   test('400 cuando la fase no tiene cirug\u00edas validadas', async () => {
+     const res = await request(app).get('/api/progreso/faseSinCirugias/informe-cirugias');
+     expect(res.status).toBe(400);
+   });
+ 
+   test('200 y descarga cuando la fase es v\u00e1lida', async () => {
+     expect(fs.existsSync(TEMP_FILE)).toBe(false);
+     const res = await request(app).get('/api/progreso/faseValida/informe-cirugias');
+     expect(res.status).toBe(200);
+     expect(res.headers['content-disposition']).toContain('attachment');
+     expect(res.headers['content-disposition']).toContain('informe-cirugias.csv');
+     expect(fs.existsSync(TEMP_FILE)).toBe(false);
+   });
++
++  test('200 y descarga para Programa Sociedades cuando la fase es v\u00e1lida', async () => {
++    expect(fs.existsSync(TEMP_FILE)).toBe(false);
++    const res = await request(app).get(
++      '/api/progreso/faseValida/informe-cirugias?tipo=Programa%20Sociedades'
++    );
++    expect(res.status).toBe(200);
++    expect(res.headers['content-disposition']).toContain('attachment');
++    expect(res.headers['content-disposition']).toContain('informe-cirugias.csv');
++    expect(fs.existsSync(TEMP_FILE)).toBe(false);
++  });
+ });
+ 

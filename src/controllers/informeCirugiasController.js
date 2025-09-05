@@ -21,10 +21,10 @@ exports.descargarInformeCirugias = async (req, res, next) => {
     }
 
     const usuario = progreso.residente;
-    if (!usuario || usuario.tipo !== 'Programa Residentes') {
+    if (!usuario) {
       return res.status(400).json({
         success: false,
-        error: 'El usuario no pertenece al Programa Residentes',
+        error: 'Usuario no encontrado',
       });
     }
 

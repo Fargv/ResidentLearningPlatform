@@ -78,7 +78,8 @@ const TutorUsuarios: React.FC = () => {
                     (p: any) =>
                       p.estadoGeneral === "validado" &&
                       p.actividades.some(
-                        (a: any) => a.cirugia && a.estado === "validado",
+                        (a: any) =>
+                          a.tipo === "cirugia" && a.estado === "validado",
                       ),
                   )
                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
@@ -172,7 +173,7 @@ const TutorUsuarios: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `informe-cirugias-${fase}.pdf`);
+      link.setAttribute('download', `informe-cirugias-${fase}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();

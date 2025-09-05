@@ -55,5 +55,16 @@ describe('GET /api/progreso/:faseId/informe-cirugias', () => {
     expect(res.headers['content-disposition']).toContain('informe-cirugias.csv');
     expect(fs.existsSync(TEMP_FILE)).toBe(false);
   });
+
+  test('200 y descarga para Programa Sociedades cuando la fase es v\u00e1lida', async () => {
+    expect(fs.existsSync(TEMP_FILE)).toBe(false);
+    const res = await request(app).get(
+      '/api/progreso/faseValida/informe-cirugias?tipo=Programa%20Sociedades'
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers['content-disposition']).toContain('attachment');
+    expect(res.headers['content-disposition']).toContain('informe-cirugias.csv');
+    expect(fs.existsSync(TEMP_FILE)).toBe(false);
+  });
 });
 

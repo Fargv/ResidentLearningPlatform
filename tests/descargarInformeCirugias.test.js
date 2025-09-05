@@ -19,7 +19,7 @@ describe('descargarInformeCirugias', () => {
       estadoGeneral: 'en progreso',
       residente: {
         _id: 'u1',
-        tipo: 'Programa Residentes',
+        tipo: 'Programa Sociedades',
         hospital: { _id: 'h1', zona: 'NORTE' },
         especialidad: 'URO',
       },
@@ -47,7 +47,7 @@ describe('descargarInformeCirugias', () => {
         _id: 'u1',
         nombre: 'A',
         apellidos: 'B',
-        tipo: 'Programa Residentes',
+        tipo: 'Programa Sociedades',
         hospital: { _id: 'h1', zona: 'NORTE' },
         especialidad: 'URO',
       },
