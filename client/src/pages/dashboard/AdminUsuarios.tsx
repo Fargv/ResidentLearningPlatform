@@ -33,6 +33,7 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Download as DownloadIcon,
+  Assessment as AssessmentIcon,
 
    //Person as PersonIcon,
   //Email as EmailIcon
@@ -836,89 +837,92 @@ const AdminUsuarios: React.FC = () => {
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell>{usuario.faseActual || "-"}</TableCell>
                   <TableCell align="right">
-                    {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
-                      <>
-                        <Tooltip
-                          title={t('adminUsers.actions.downloadSurgeryReport', {
-                            phase: t('adminPhases.phase').toLowerCase(),
-                          })}
-                        >
-                          <IconButton
-                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
-                            size="small"
-                            sx={{ mr: 1 }}
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                      {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
+                        <>
+                          <Tooltip
+                            title={t('adminUsers.actions.downloadSurgeryReport', {
+                              phase: t('adminPhases.phase').toLowerCase(),
+                            })}
                           >
-                            <DownloadIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Menu
-                          anchorEl={anchorElInforme}
-                          open={
-                            Boolean(anchorElInforme) &&
-                            menuUsuario?._id === usuario._id
-                          }
-                          onClose={handleCloseInformeMenu}
-                        >
-                          {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
-                            <MenuItem
-                              key={fase.id}
-                              onClick={() => {
-                                handleDownloadInforme(
-                                  fase.id,
-                                  fase.fase,
-                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
-                                );
-                                handleCloseInformeMenu();
-                              }}
+                            <IconButton
+                              onClick={(e) => handleOpenInformeMenu(e, usuario)}
+                              size="small"
                             >
-                              {t('adminUsers.actions.downloadSurgeryReport', {
-                                phase: fase.fase,
-                              })}
-                            </MenuItem>
-                          ))}
-                        </Menu>
-                      </>
-                    )}
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => handleOpenEditarDialog(usuario)}
-                      size="small"
-                      startIcon={<EditIcon />}
-                      sx={{ mr: 1, minWidth: 150 }}
-                    >
-                      {t("adminUsers.actions.edit")}
-                    </Button>
-                    {['residente', 'participante'].includes(usuario.rol) &&
-                      user?.rol === "administrador" &&
-                      usuario.tieneProgreso && (
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() =>
-                            navigate(
-                              `/dashboard/progreso-usuario/${usuario._id}`,
-                            )
-                          }
-                          sx={{ mr: 1, minWidth: 150 }}
-                        >
-                          {t('adminUserProgress.viewProgress')}
-                        </Button>
+                              <DownloadIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Menu
+                            anchorEl={anchorElInforme}
+                            open={
+                              Boolean(anchorElInforme) &&
+                              menuUsuario?._id === usuario._id
+                            }
+                            onClose={handleCloseInformeMenu}
+                          >
+                            {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                              <MenuItem
+                                key={fase.id}
+                                onClick={() => {
+                                  handleDownloadInforme(
+                                    fase.id,
+                                    fase.fase,
+                                    `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
+                                  );
+                                  handleCloseInformeMenu();
+                                }}
+                              >
+                                {t('adminUsers.actions.downloadSurgeryReport', {
+                                  phase: fase.fase,
+                                })}
+                              </MenuItem>
+                            ))}
+                          </Menu>
+                        </>
                       )}
-                    {['residente', 'participante'].includes(usuario.rol) &&
-                      !usuario.tieneProgreso && (
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleCrearProgreso(usuario._id)}
-                          size="small"
-                          sx={{ mr: 1, minWidth: 150 }}
-                        >
-                          {t("adminUsers.actions.createProgress")}
-                        </Button>
-                      )}
-                  </TableCell>
-                </TableRow>
-              ))}
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleOpenEditarDialog(usuario)}
+                        size="small"
+                        startIcon={<EditIcon />}
+                        sx={{ minWidth: 150 }}
+                      >
+                        {t("adminUsers.actions.edit")}
+                      </Button>
+                      {['residente', 'participante'].includes(usuario.rol) &&
+                        user?.rol === "administrador" &&
+                        usuario.tieneProgreso && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            color="secondary"
+                            startIcon={<AssessmentIcon />}
+                            onClick={() =>
+                              navigate(
+                                `/dashboard/progreso-usuario/${usuario._id}`,
+                              )
+                            }
+                            sx={{ minWidth: 150 }}
+                          >
+                            {t('adminUserProgress.viewProgress')}
+                          </Button>
+                        )}
+                      {['residente', 'participante'].includes(usuario.rol) &&
+                        !usuario.tieneProgreso && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleCrearProgreso(usuario._id)}
+                            size="small"
+                            sx={{ minWidth: 150 }}
+                          >
+                            {t("adminUsers.actions.createProgress")}
+                          </Button>
+                        )}
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
