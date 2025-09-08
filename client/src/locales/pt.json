@@ -130,7 +130,8 @@
     "submit": "Enviar email ao administrador",
     "backToLogin": "Voltar ao login",
     "requestSent": "Pedido enviado.",
-    "error": "Erro ao enviar o pedido."
+    "error": "Erro ao enviar o pedido.",
+    "emailNotFound": "Não existe um usuário com esse e-mail. Insira um válido."
   },
   "resetPassword": {
     "title": "Redefinir palavra-passe",

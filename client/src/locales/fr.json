@@ -156,7 +156,8 @@
     "submit": "Envoyer un email à l'administrateur",
     "backToLogin": "Retour à la connexion",
     "requestSent": "Demande envoyée.",
-    "error": "Erreur lors de l'envoi de la demande."
+    "error": "Erreur lors de l'envoi de la demande.",
+    "emailNotFound": "Aucun utilisateur avec cet e-mail n'existe. Veuillez en saisir un valide."
   },
   "resetPassword": {
     "title": "Réinitialiser le mot de passe",

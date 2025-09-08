@@ -128,7 +128,8 @@
     "submit": "E-Mail an Administrator senden",
     "backToLogin": "Zurück zur Anmeldung",
     "requestSent": "Anfrage gesendet.",
-    "error": "Fehler beim Senden der Anfrage."
+    "error": "Fehler beim Senden der Anfrage.",
+    "emailNotFound": "Es existiert kein Benutzer mit dieser E-Mail. Bitte gib eine gültige ein."
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",

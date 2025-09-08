@@ -630,7 +630,8 @@
     "submit": "Enviar correo ao administrador",
     "backToLogin": "Volver ao inicio de sesión",
     "requestSent": "Solicitude enviada.",
-    "error": "Erro ao enviar a solicitude."
+    "error": "Erro ao enviar a solicitude.",
+    "emailNotFound": "Non existe ningún usuario con ese correo. Introduce un válido."
   },
   "resetPassword": {
     "title": "Restablecer contrasinal",

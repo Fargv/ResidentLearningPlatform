@@ -634,7 +634,8 @@
     "submit": "Send email to administrator",
     "backToLogin": "Back to login",
     "requestSent": "Request sent.",
-    "error": "Error sending request."
+    "error": "Error sending request.",
+    "emailNotFound": "No user with that email exists. Please enter a valid one."
   },
   "resetPassword": {
     "title": "Reset Password",

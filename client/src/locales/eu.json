@@ -625,7 +625,8 @@
     "submit": "Bidali emaila administratzaileari",
     "backToLogin": "Itzuli saioa hasteko",
     "requestSent": "Eskaera bidalia.",
-    "error": "Errorea eskaera bidaltzean."
+    "error": "Errorea eskaera bidaltzean.",
+    "emailNotFound": "Ez dago helbide elektroniko horrekin erabiltzailearik. Sartu baliozko bat."
   },
   "resetPassword": {
     "title": "Pasahitza berrezarri",

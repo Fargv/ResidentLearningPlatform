@@ -28,8 +28,12 @@ const ForgotPassword: React.FC = () => {
       setStatusMessage(t('forgotPassword.requestSent'));
       setIsError(false);
       window.location.href = mailtoLink;
-    } catch (e) {
-      setStatusMessage(t('forgotPassword.error'));
+    } catch (e: any) {
+      if (e?.response?.status === 404) {
+        setStatusMessage(t('forgotPassword.emailNotFound'));
+      } else {
+        setStatusMessage(t('forgotPassword.error'));
+      }
       setIsError(true);
     }
   };

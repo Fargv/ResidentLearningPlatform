@@ -234,7 +234,8 @@
     "submit": "Invia email all'amministratore",
     "backToLogin": "Torna al login",
     "requestSent": "Richiesta inviata.",
-    "error": "Errore durante l'invio della richiesta."
+    "error": "Errore durante l'invio della richiesta.",
+    "emailNotFound": "Non esiste un utente con quella email. Inserisci un indirizzo valido."
   },
   "resetPassword": {
     "title": "Reimposta password",

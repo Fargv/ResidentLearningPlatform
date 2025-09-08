@@ -719,7 +719,8 @@
     "submit": "Enviar correu a l'administrador",
     "backToLogin": "Tornar a iniciar sessió",
     "requestSent": "Sol·licitud enviada.",
-    "error": "Error en enviar la sol·licitud."
+    "error": "Error en enviar la sol·licitud.",
+    "emailNotFound": "No existeix cap usuari amb aquest correu. Introdueix-ne un de vàlid."
   },
   "resetPassword": {
     "title": "Restablir contrasenya",

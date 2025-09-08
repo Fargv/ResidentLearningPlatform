@@ -630,7 +630,8 @@
     "submit": "Enviar correo al administrador",
     "backToLogin": "Volver al inicio de sesión",
     "requestSent": "Solicitud enviada.",
-    "error": "Error al enviar la solicitud."
+    "error": "Error al enviar la solicitud.",
+    "emailNotFound": "No existe un usuario con ese correo. Introduce uno válido."
   },
   "resetPassword": {
     "title": "Restablecer contraseña",
