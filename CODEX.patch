@@ -1,73 +1,36 @@
-diff --git a/src/models/User.js b/src/models/User.js
-index f502a5962911671ae2fa0caf40aba9dc0d2d67a8..31e040da343409b2ac430870038f978ce2d29ff1 100644
---- a/src/models/User.js
-+++ b/src/models/User.js
-@@ -107,62 +107,62 @@ userSchema.pre('save', async function(next) {
-   // Solo encriptar si la contraseña ha sido modificada
-   if (!this.isModified('password')) {
-     return next();
-   }
-   
-   // Generar salt y hash
-   const salt = await bcrypt.genSalt(10);
-   this.password = await bcrypt.hash(this.password, salt);
-   next();
- });
+diff --git a/client/src/api.ts b/client/src/api.ts
+index 44e7465d7acce277fce60e7b971f538ddec1dcce..cf13b73ee0e52968a4f89f77146105409a52ff5a 100644
+--- a/client/src/api.ts
++++ b/client/src/api.ts
+@@ -13,29 +13,29 @@ api.interceptors.request.use(
+     }
+     return config;
+   },
+   (error) => Promise.reject(error)
+ );
  
- // Asegurar que solo los residentes tengan asignado un tutor
- userSchema.pre('save', function(next) {
-   if (this.rol !== Role.RESIDENTE) {
-     this.tutor = null;
-   }
-   next();
- });
+ export default api;
  
- // Método para comparar contraseñas
- userSchema.methods.matchPassword = async function(enteredPassword) {
-   return await bcrypt.compare(enteredPassword, this.password);
- };
+ export const getNotificaciones = () => api.get('/notificaciones');
+ export const getNotificacionesNoLeidas = () => api.get('/notificaciones/no-leidas');
+ export const marcarNotificacionLeida = (id: string) => api.put(`/notificaciones/${id}/leer`);
+ export const eliminarNotificacion = (id: string) => api.delete(`/notificaciones/${id}`);
+ export const updateProfile = (data: { nombre: string; apellidos: string; email: string }) =>
+   api.put('/auth/updatedetails', data);
+ export const changePassword = (data: { currentPassword: string; newPassword: string }) =>
+   api.put('/auth/updatepassword', data);
  
- // Método para generar token de restablecimiento de contraseña
--userSchema.methods.getResetPasswordToken = function() {
-+userSchema.methods.getResetPasswordToken = function(durationMs = 10 * 60 * 1000) {
-   // Generar token
-   const resetToken = crypto.randomBytes(20).toString('hex');
--  
-+
-   // Hash token y establecer en resetPasswordToken
-   this.resetPasswordToken = crypto
-     .createHash('sha256')
-     .update(resetToken)
-     .digest('hex');
--    
--  // Establecer expiración (10 minutos)
--  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
--  
-+
-+  // Establecer expiración utilizando la duración proporcionada
-+  this.resetPasswordExpire = Date.now() + durationMs;
-+
-   return resetToken;
- };
+ // Admin user management
+ export const createUser = (data: Record<string, any>) => api.post('/users', data);
+ export const updateUserPassword = (id: string, newPassword: string) =>
+   api.put(`/users/${id}/password`, { password: newPassword });
  
- // Método para registrar el último acceso
- userSchema.methods.updateLastAccess = function() {
-   this.ultimoAcceso = Date.now();
-   return this.save();
- };
+ export const getTutors = (hospital: string, especialidad: string) =>
+   api.get('/users/tutores', { params: { hospital, especialidad } });
  
- // Método para verificar si el usuario ha dado consentimiento LOPD
- userSchema.methods.hasConsent = function() {
-   return this.consentimientoDatos === true;
- };
+-export const getUserResetToken = (id: string) =>
+-  api.post(`/users/${id}/reset-token`);
++export const getUserResetToken = (id: string) =>
++  api.post(`/users/${id}/reset-password`);
  
- // Método para registrar consentimiento LOPD
- userSchema.methods.giveConsent = function() {
-   this.consentimientoDatos = true;
-   this.fechaConsentimiento = Date.now();
-   return this.save();
- };
  
- const User = mongoose.model('User', userSchema);
- 
- module.exports = User;
