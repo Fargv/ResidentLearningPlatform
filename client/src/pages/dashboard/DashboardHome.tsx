@@ -24,7 +24,6 @@ import {
   Settings as SettingsIcon,
   Person as PersonIcon,
   Notifications as NotificationsIcon,
-  TrendingUp as TrendingUpIcon,
   WorkspacePremium as WorkspacePremiumIcon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -414,11 +413,6 @@ const DashboardHome: React.FC = () => {
 
   if (user?.rol === "administrador") {
     actions.push(
-      {
-        label: t('actions.usersProgress'),
-        path: "/dashboard/progreso-usuarios",
-        icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
-      },
       {
         label: t('actions.settings'),
         path: "/dashboard/config",

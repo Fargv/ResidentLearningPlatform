@@ -32,7 +32,6 @@ import AdminFases from './pages/dashboard/AdminFases';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
-import AdminProgresoUsuarios from './pages/dashboard/AdminProgresoUsuarios';
 import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
 
 
@@ -128,7 +127,7 @@ function App() {
               } />
               <Route path="progreso-usuarios" element={
                 <AdminRoute>
-                  <AdminProgresoUsuarios />
+                  <Navigate to="/dashboard/usuarios" />
                 </AdminRoute>
               } />
               <Route path="progreso-usuario/:userId" element={
