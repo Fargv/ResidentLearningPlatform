@@ -1,277 +1,158 @@
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index a88a67ab3ef7a0c8e337235f2715237556fa9b0a..f2082e5e82e0a5e9cb85a46c627948ae2cb1d045 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -11,50 +11,51 @@ import {
-   DialogContent,
-   DialogContentText,
-   DialogActions,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Autocomplete,
-   IconButton,
-   Tooltip,
-   CircularProgress,
-   Backdrop,
-   Menu,
-   MenuItem,
- } from "@mui/material";
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Download as DownloadIcon,
-+  Assessment as AssessmentIcon,
+diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
+index 45ee7b29f37c22a891343e9dff76b4798147d38e..1361bec164ee5dcf2094d212d766af7777b5b636 100644
+--- a/client/src/pages/dashboard/TutorUsuarios.tsx
++++ b/client/src/pages/dashboard/TutorUsuarios.tsx
+@@ -482,136 +482,136 @@ const TutorUsuarios: React.FC = () => {
+             }
+             renderInput={(params) => (
+               <TextField
+                 {...params}
+                 label={t('adminUsers.fields.society')}
+               />
+             )}
+             sx={{ minWidth: 200 }}
+           />
+         )}
+       </Box>
  
-    //Person as PersonIcon,
-   //Email as EmailIcon
- } from "@mui/icons-material";
- import { useAuth } from "../../context/AuthContext";
- import { useNavigate } from "react-router-dom";
- import api, { createUser, updateUserPassword, getTutors } from "../../api";
- import InviteUsersMail from "../../components/InviteUsersMail";
- import BackButton from "../../components/BackButton";
- import { useTranslation, Trans } from "react-i18next";
- import { getRoleChipSx } from "../../utils/roleChipColors";
- import { FaseCirugia } from "../../types/FaseCirugia";
- 
- const AdminUsuarios: React.FC = () => {
-   const { user } = useAuth();
-   const { t } = useTranslation();
-   const navigate = useNavigate();
-   const typeKey = (tipo?: string) =>
-     tipo === "Programa Sociedades"
-       ? "programaSociedades"
-       : tipo === "Programa Residentes"
-       ? "programaResidentes"
-       : "";
-   const rolesResidentes = [
-     "residente",
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index a88a67ab3ef7a0c8e337235f2715237556fa9b0a..f2082e5e82e0a5e9cb85a46c627948ae2cb1d045 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -814,133 +815,136 @@ const AdminUsuarios: React.FC = () => {
+       <Paper>
+         <TableContainer>
+           <Table>
+             <TableHead>
+               <TableRow>
+                 <TableCell>{t('tutorUsers.table.name')}</TableCell>
+                 <TableCell>{t('tutorUsers.table.email')}</TableCell>
+                 <TableCell>{t('adminUsers.table.type')}</TableCell>
+                 <TableCell>{t('adminUsers.table.society')}</TableCell>
+                 <TableCell>{t('adminUsers.table.role')}</TableCell>
+                 <TableCell>{t('adminUsers.table.hospital')}</TableCell>
+                 <TableCell>{t('adminUsers.table.specialty')}</TableCell>
+                 <TableCell>{t('adminUsers.table.zone')}</TableCell>
+-                <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
++                <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
+                 <TableCell>{t('tutorUsers.table.status')}</TableCell>
++                <TableCell sx={{ width: 40 }} />
+                 <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
+               </TableRow>
+             </TableHead>
+             <TableBody>
+               {displayUsuarios.map(usuario => (
+                 <TableRow key={usuario._id}>
+                   <TableCell>{usuario.nombre} {usuario.apellidos}</TableCell>
+                   <TableCell>{usuario.email}</TableCell>
                    <TableCell>
-                     {usuario.tipo
-                       ? t(`types.${typeKey(usuario.tipo)}`)
-                       : "-"}
+                     {usuario.tipo ? t(`types.${typeKey(usuario.tipo)}`) : '-'}
                    </TableCell>
-                   <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
+                   <TableCell>{usuario.sociedad?.titulo || '-'}</TableCell>
                    <TableCell>
                      <Chip
                        label={t(`roles.${usuario.rol}`)}
+                       color={
+                         usuario.rol === 'administrador'
+                           ? 'primary'
+                           : usuario.rol === 'tutor'
+                           ? 'secondary'
+                           : 'default'
+                       }
                        size="small"
                        sx={getRoleChipSx(usuario.rol)}
                      />
                    </TableCell>
-                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
-                   <TableCell>{usuario.especialidad || "-"}</TableCell>
+                   <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
+                   <TableCell>{usuario.especialidad || '-'}</TableCell>
+                   <TableCell>{usuario.zona || '-'}</TableCell>
+                   <TableCell>{usuario.faseActual || '-'}</TableCell>
                    <TableCell>
-                     {usuario.rol === "residente"
-                       ? usuario.tutor && typeof usuario.tutor === "object"
-                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
-                         : <Chip color="warning" label={t("adminUsers.noTutor")} />
-                       : "-"}
+                     <Chip
+                       label={t(
+                         usuario.activo
+                           ? 'tutorUsers.states.active'
+                           : 'tutorUsers.states.inactive'
+                       )}
+                       color={usuario.activo ? 'success' : 'error'}
+                       size="small"
+                     />
                    </TableCell>
-                   <TableCell>{usuario.zona || "-"}</TableCell>
-                   <TableCell>{usuario.faseActual || "-"}</TableCell>
-                   <TableCell align="right">
+-                  <TableCell align="right">
 -                    {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
--                      <>
++                  <TableCell align="center" sx={{ width: 40 }}>
++                    {usuario.fasesCirugia?.length ? (
+                       <>
 -                        <Tooltip
--                          title={t('adminUsers.actions.downloadSurgeryReport', {
+-                          title={t('tutorUsers.actions.downloadSurgeryReport', {
 -                            phase: t('adminPhases.phase').toLowerCase(),
 -                          })}
 -                        >
 -                          <IconButton
 -                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
--                            size="small"
 -                            sx={{ mr: 1 }}
-+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-+                      {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
-+                        <>
-+                          <Tooltip
-+                            title={t('adminUsers.actions.downloadSurgeryReport', {
-+                              phase: t('adminPhases.phase').toLowerCase(),
-+                            })}
-                           >
--                            <DownloadIcon />
--                          </IconButton>
--                        </Tooltip>
--                        <Menu
--                          anchorEl={anchorElInforme}
--                          open={
--                            Boolean(anchorElInforme) &&
--                            menuUsuario?._id === usuario._id
--                          }
--                          onClose={handleCloseInformeMenu}
--                        >
--                          {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
--                            <MenuItem
--                              key={fase.id}
--                              onClick={() => {
--                                handleDownloadInforme(
--                                  fase.id,
--                                  fase.fase,
+-                          >
++                        <Tooltip
++                          title={t('tutorUsers.actions.downloadSurgeryReport', {
++                            phase: t('adminPhases.phase').toLowerCase(),
++                          })}
++                        >
++                          <IconButton onClick={(e) => handleOpenInformeMenu(e, usuario)}>
+                             <DownloadIcon />
+                           </IconButton>
+                         </Tooltip>
+                         <Menu
+                           anchorEl={anchorElInforme}
+                           open={
+                             Boolean(anchorElInforme) &&
+                             menuUsuario?._id === usuario._id
+                           }
+                           onClose={handleCloseInformeMenu}
+                         >
+                           {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                             <MenuItem
+                               key={fase.id}
+                               onClick={() => {
+                                 handleDownloadInforme(
+                                   fase.id,
+                                   fase.fase,
 -                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
--                                );
--                                handleCloseInformeMenu();
--                              }}
-+                            <IconButton
-+                              onClick={(e) => handleOpenInformeMenu(e, usuario)}
-+                              size="small"
++                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
+                                 );
+                                 handleCloseInformeMenu();
+                               }}
                              >
--                              {t('adminUsers.actions.downloadSurgeryReport', {
+-                              {t('tutorUsers.actions.downloadSurgeryReport', {
 -                                phase: fase.fase,
 -                              })}
--                            </MenuItem>
--                          ))}
--                        </Menu>
--                      </>
++                              {t('tutorUsers.actions.downloadSurgeryReport', {
++                                phase: fase.fase,
++                              })}
+                             </MenuItem>
+                           ))}
+                         </Menu>
+                       </>
 -                    )}
--                    <Button
--                      variant="outlined"
--                      color="primary"
--                      onClick={() => handleOpenEditarDialog(usuario)}
--                      size="small"
--                      startIcon={<EditIcon />}
--                      sx={{ mr: 1, minWidth: 150 }}
--                    >
--                      {t("adminUsers.actions.edit")}
--                    </Button>
--                    {['residente', 'participante'].includes(usuario.rol) &&
--                      user?.rol === "administrador" &&
--                      usuario.tieneProgreso && (
--                        <Button
--                          variant="outlined"
--                          size="small"
--                          onClick={() =>
--                            navigate(
--                              `/dashboard/progreso-usuario/${usuario._id}`,
--                            )
--                          }
--                          sx={{ mr: 1, minWidth: 150 }}
--                        >
--                          {t('adminUserProgress.viewProgress')}
--                        </Button>
--                      )}
--                    {['residente', 'participante'].includes(usuario.rol) &&
--                      !usuario.tieneProgreso && (
--                        <Button
--                          variant="outlined"
--                          onClick={() => handleCrearProgreso(usuario._id)}
--                          size="small"
--                          sx={{ mr: 1, minWidth: 150 }}
--                        >
--                          {t("adminUsers.actions.createProgress")}
--                        </Button>
-+                              <DownloadIcon />
-+                            </IconButton>
-+                          </Tooltip>
-+                          <Menu
-+                            anchorEl={anchorElInforme}
-+                            open={
-+                              Boolean(anchorElInforme) &&
-+                              menuUsuario?._id === usuario._id
-+                            }
-+                            onClose={handleCloseInformeMenu}
-+                          >
-+                            {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
-+                              <MenuItem
-+                                key={fase.id}
-+                                onClick={() => {
-+                                  handleDownloadInforme(
-+                                    fase.id,
-+                                    fase.fase,
-+                                    `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
-+                                  );
-+                                  handleCloseInformeMenu();
-+                                }}
-+                              >
-+                                {t('adminUsers.actions.downloadSurgeryReport', {
-+                                  phase: fase.fase,
-+                                })}
-+                              </MenuItem>
-+                            ))}
-+                          </Menu>
-+                        </>
-                       )}
--                  </TableCell>
--                </TableRow>
--              ))}
-+                      <Button
-+                        variant="outlined"
-+                        color="primary"
-+                        onClick={() => handleOpenEditarDialog(usuario)}
-+                        size="small"
-+                        startIcon={<EditIcon />}
-+                        sx={{ minWidth: 150 }}
-+                      >
-+                        {t("adminUsers.actions.edit")}
-+                      </Button>
-+                      {['residente', 'participante'].includes(usuario.rol) &&
-+                        user?.rol === "administrador" &&
-+                        usuario.tieneProgreso && (
-+                          <Button
-+                            variant="outlined"
-+                            size="small"
-+                            color="secondary"
-+                            startIcon={<AssessmentIcon />}
-+                            onClick={() =>
-+                              navigate(
-+                                `/dashboard/progreso-usuario/${usuario._id}`,
-+                              )
-+                            }
-+                            sx={{ minWidth: 150 }}
-+                          >
-+                            {t('adminUserProgress.viewProgress')}
-+                          </Button>
-+                        )}
-+                      {['residente', 'participante'].includes(usuario.rol) &&
-+                        !usuario.tieneProgreso && (
-+                          <Button
-+                            variant="outlined"
-+                            onClick={() => handleCrearProgreso(usuario._id)}
-+                            size="small"
-+                            sx={{ minWidth: 150 }}
-+                          >
-+                            {t("adminUsers.actions.createProgress")}
-+                          </Button>
-+                        )}
-+                      </Box>
-+                    </TableCell>
-+                  </TableRow>
-+                ))}
++                    ) : null}
++                  </TableCell>
++                  <TableCell align="right">
+                     <IconButton
+                       onClick={() => {
+                         setEditar(true);
+                         setSelected(usuario);
+                         setFormData({
+                           email: usuario.email,
+                           nombre: usuario.nombre,
+                           apellidos: usuario.apellidos,
+                           rol: usuario.rol,
+                           hospital: usuario.hospital?._id || ''
+                         });
+                         setOpenDialog(true);
+                       }}
+                     >
+                       <EditIcon />
+                     </IconButton>
+                   </TableCell>
+                 </TableRow>
+               ))}
              </TableBody>
            </Table>
          </TableContainer>
        </Paper>
  
- 
-       {/* Diálogo para invitar usuario */}
-       <InviteUsersMail
-         open={openInvitarDialog}
-         onClose={handleCloseInvitarDialog}
-       />
- 
-       {/* Diálogo para actualizar contraseña */}
-       <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
-         <DialogTitle>{t("adminUsers.password.title")}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="password-update"
-             label={t("adminUsers.password.label")}
-             type="password"
-             fullWidth
-             variant="outlined"
-             value={passwordValue}
+       <Dialog open={openDialog} onClose={() => handleCloseEditarDialog()}>

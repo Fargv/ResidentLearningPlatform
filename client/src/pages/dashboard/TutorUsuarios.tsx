@@ -506,6 +506,7 @@ const TutorUsuarios: React.FC = () => {
                 <TableCell>{t('adminUsers.table.zone')}</TableCell>
                 <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
                 <TableCell>{t('tutorUsers.table.status')}</TableCell>
+                <TableCell sx={{ width: 40 }} />
                 <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
               </TableRow>
             </TableHead>
@@ -547,18 +548,15 @@ const TutorUsuarios: React.FC = () => {
                       size="small"
                     />
                   </TableCell>
-                  <TableCell align="right">
-                    {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
+                  <TableCell align="center" sx={{ width: 40 }}>
+                    {usuario.fasesCirugia?.length ? (
                       <>
                         <Tooltip
                           title={t('tutorUsers.actions.downloadSurgeryReport', {
                             phase: t('adminPhases.phase').toLowerCase(),
                           })}
                         >
-                          <IconButton
-                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
-                            sx={{ mr: 1 }}
-                          >
+                          <IconButton onClick={(e) => handleOpenInformeMenu(e, usuario)}>
                             <DownloadIcon />
                           </IconButton>
                         </Tooltip>
@@ -589,7 +587,9 @@ const TutorUsuarios: React.FC = () => {
                           ))}
                         </Menu>
                       </>
-                    )}
+                    ) : null}
+                  </TableCell>
+                  <TableCell align="right">
                     <IconButton
                       onClick={() => {
                         setEditar(true);

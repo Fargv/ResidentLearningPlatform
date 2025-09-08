@@ -802,6 +802,7 @@ const AdminUsuarios: React.FC = () => {
                 <TableCell>{t("adminUsers.table.tutor")}</TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
                 <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
+                <TableCell sx={{ width: 40 }}></TableCell>
                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
               </TableRow>
             </TableHead>
@@ -836,57 +837,62 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
                   <TableCell>{usuario.faseActual || "-"}</TableCell>
-                  <TableCell align="right">
-                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                      {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
-                        <>
-                          <Tooltip
-                            title={t('adminUsers.actions.downloadSurgeryReport', {
-                              phase: t('adminPhases.phase').toLowerCase(),
-                            })}
+                  <TableCell align="center" sx={{ width: 40 }}>
+                    {usuario.fasesCirugia?.length ? (
+                      <>
+                        <Tooltip
+                          title={t('adminUsers.actions.downloadSurgeryReport', {
+                            phase: t('adminPhases.phase').toLowerCase(),
+                          })}
+                        >
+                          <IconButton
+                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
+                            size="small"
                           >
-                            <IconButton
-                              onClick={(e) => handleOpenInformeMenu(e, usuario)}
-                              size="small"
+                            <DownloadIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Menu
+                          anchorEl={anchorElInforme}
+                          open={Boolean(anchorElInforme) && menuUsuario?._id === usuario._id}
+                          onClose={handleCloseInformeMenu}
+                        >
+                          {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                            <MenuItem
+                              key={fase.id}
+                              onClick={() => {
+                                handleDownloadInforme(
+                                  fase.id,
+                                  fase.fase,
+                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
+                                );
+                                handleCloseInformeMenu();
+                              }}
                             >
-                              <DownloadIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Menu
-                            anchorEl={anchorElInforme}
-                            open={
-                              Boolean(anchorElInforme) &&
-                              menuUsuario?._id === usuario._id
-                            }
-                            onClose={handleCloseInformeMenu}
-                          >
-                            {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
-                              <MenuItem
-                                key={fase.id}
-                                onClick={() => {
-                                  handleDownloadInforme(
-                                    fase.id,
-                                    fase.fase,
-                                    `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
-                                  );
-                                  handleCloseInformeMenu();
-                                }}
-                              >
-                                {t('adminUsers.actions.downloadSurgeryReport', {
-                                  phase: fase.fase,
-                                })}
-                              </MenuItem>
-                            ))}
-                          </Menu>
-                        </>
-                      )}
+                              {t('adminUsers.actions.downloadSurgeryReport', {
+                                phase: fase.fase,
+                              })}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </>
+                    ) : null}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 2,
+                        flexWrap: 'wrap',
+                        '& > *': { minWidth: 150 },
+                      }}
+                    >
                       <Button
                         variant="outlined"
                         color="primary"
                         onClick={() => handleOpenEditarDialog(usuario)}
                         size="small"
                         startIcon={<EditIcon />}
-                        sx={{ minWidth: 150 }}
                       >
                         {t("adminUsers.actions.edit")}
                       </Button>
@@ -903,7 +909,6 @@ const AdminUsuarios: React.FC = () => {
                                 `/dashboard/progreso-usuario/${usuario._id}`,
                               )
                             }
-                            sx={{ minWidth: 150 }}
                           >
                             {t('adminUserProgress.viewProgress')}
                           </Button>
@@ -914,15 +919,14 @@ const AdminUsuarios: React.FC = () => {
                             variant="outlined"
                             onClick={() => handleCrearProgreso(usuario._id)}
                             size="small"
-                            sx={{ minWidth: 150 }}
                           >
                             {t("adminUsers.actions.createProgress")}
                           </Button>
                         )}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
