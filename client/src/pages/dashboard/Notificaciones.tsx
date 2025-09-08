@@ -224,11 +224,7 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
                         }}
                         sx={{ cursor: n.enlace || n.tipo === 'passwordReset' ? 'pointer' : 'default' }}
                       >
-                        <TableCell>
-                          {n.tipo === 'passwordReset'
-                            ? t('notifications.messages.resetRequest')
-                            : n.mensaje}
-                        </TableCell>
+                        <TableCell>{n.mensaje}</TableCell>
                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
                         <TableCell>
                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}

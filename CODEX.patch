@@ -1,8 +1,128 @@
+diff --git a/client/src/pages/dashboard/Notificaciones.test.tsx b/client/src/pages/dashboard/Notificaciones.test.tsx
+index dbefdb98b3996af6b7f4393dc3915d93f2b442ba..c530b2322443110a7ebdae6d67ef97ff1d0c4f0b 100644
+--- a/client/src/pages/dashboard/Notificaciones.test.tsx
++++ b/client/src/pages/dashboard/Notificaciones.test.tsx
+@@ -40,25 +40,50 @@ beforeEach(() => {
+     },
+   });
+   mockedMarcar.mockResolvedValue({});
+ });
+ 
+ afterEach(() => {
+   jest.clearAllMocks();
+ });
+ 
+ test('marca la notificación como leída al abrirla', async () => {
+   render(
+     <I18nextProvider i18n={i18n}>
+       <Notificaciones />
+     </I18nextProvider>
+   );
+ 
+   const rowText = await screen.findByText('Test');
+   fireEvent.click(rowText.closest('tr')!);
+ 
+   await waitFor(() => {
+     expect(mockedMarcar).toHaveBeenCalledWith('1');
+     expect(mockedNavigate).toHaveBeenCalledWith('/foo');
+   });
+   await waitFor(() => expect(screen.queryByText('Test')).not.toBeInTheDocument());
+ });
++
++test('muestra nombre y email en notificaciones de reseteo de contraseña', async () => {
++  const mensaje = 'User (user@test.com) ha solicitado un reseteo de contraseña.';
++  mockedGet.mockResolvedValueOnce({
++    data: {
++      data: [
++        {
++          _id: '1',
++          mensaje,
++          fechaCreacion: new Date().toISOString(),
++          leida: false,
++          tipo: 'passwordReset'
++        }
++      ]
++    }
++  });
++
++  render(
++    <I18nextProvider i18n={i18n}>
++      <Notificaciones />
++    </I18nextProvider>
++  );
++
++  expect(await screen.findByText(mensaje)).toBeInTheDocument();
++});
+diff --git a/client/src/pages/dashboard/Notificaciones.tsx b/client/src/pages/dashboard/Notificaciones.tsx
+index 148c71766972be048847368d8802eb974f61c510..f72aab6c23678e557759e7a9dee2f3ffa9b0c0bc 100644
+--- a/client/src/pages/dashboard/Notificaciones.tsx
++++ b/client/src/pages/dashboard/Notificaciones.tsx
+@@ -202,55 +202,51 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
+             ) : (
+               <TableContainer component={Paper}>
+                 <Table size="small">
+                   <TableHead>
+                     <TableRow>
+                       <TableCell>{t('notifications.table.message')}</TableCell>
+                       <TableCell>{t('notifications.table.date')}</TableCell>
+                       <TableCell>{t('notifications.table.type')}</TableCell>
+                       <TableCell align="right">{t('notifications.table.actions')}</TableCell>
+                     </TableRow>
+                   </TableHead>
+                   <TableBody>
+                     {pendientes.map((n) => (
+                       <TableRow
+                         key={n._id}
+                         onClick={async () => {
+                           if (n.tipo === 'passwordReset') {
+                             await handleSendResetLink(n);
+                           } else if (n.enlace) {
+                             await handleMarcarLeida(n._id);
+                             navigate(n.enlace);
+                           }
+                         }}
+                         sx={{ cursor: n.enlace || n.tipo === 'passwordReset' ? 'pointer' : 'default' }}
+                       >
+-                        <TableCell>
+-                          {n.tipo === 'passwordReset'
+-                            ? t('notifications.messages.resetRequest')
+-                            : n.mensaje}
+-                        </TableCell>
++                        <TableCell>{n.mensaje}</TableCell>
+                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
+                         <TableCell>
+                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}
+                         </TableCell>
+                         <TableCell align="right">
+                           {n.tipo === 'passwordReset' ? (
+                             <Button
+                               size="small"
+                               variant="contained"
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handleSendResetLink(n);
+                               }}
+                             >
+                               {t('notifications.actions.sendResetLink')}
+                             </Button>
+                           ) : (
+                             <IconButton
+                               aria-label="read"
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handleMarcarLeida(n._id);
+                               }}
+                             >
+                               <DoneIcon />
 diff --git a/src/controllers/authController.js b/src/controllers/authController.js
-index 70c80fe799ae61c622ca99758189888dc5b24bfb..fd23bbc24db131153d093c0ee0eb8c41c1d72dfc 100644
+index de357e510f26a220a24fcedacc2d05223404a180..240e2e01ab225bea41d1ae77b653d6eb5f912ff1 100644
 --- a/src/controllers/authController.js
 +++ b/src/controllers/authController.js
-@@ -294,52 +294,52 @@ const requestPasswordReset = async (req, res, next) => {
+@@ -290,56 +290,56 @@ const requestPasswordReset = async (req, res, next) => {
+     }
+ 
+     let zona;
+     if (user.hospital) {
        const hospital = user.hospital.zona ? user.hospital : await Hospital.findById(user.hospital);
        zona = hospital?.zona;
      }
@@ -24,12 +144,16 @@ index 70c80fe799ae61c622ca99758189888dc5b24bfb..fd23bbc24db131153d093c0ee0eb8c41
        tutoresAll.forEach((u) => destinatarios.add(u._id.toString()));
      }
  
-     const notificaciones = Array.from(destinatarios).map((id) => ({
-       usuario: id,
-       tipo: 'passwordReset',
-       mensaje: `El usuario ${user.email} ha solicitado un reseteo de contraseña.`,
--      entidadRelacionada: { tipo: 'user', id: user._id }
+-    const notificaciones = Array.from(destinatarios).map((id) => ({
+-      usuario: id,
+-      tipo: 'passwordReset',
+-      mensaje: `El usuario ${user.email} ha solicitado un reseteo de contraseña.`,
+-      entidadRelacionada: { tipo: 'usuario', id: user._id }
 -    }));
++    const notificaciones = Array.from(destinatarios).map((id) => ({
++      usuario: id,
++      tipo: 'passwordReset',
++      mensaje: `${user.nombre} (${user.email}) ha solicitado un reseteo de contraseña.`,
 +      entidadRelacionada: { tipo: 'usuario', id: user._id }
 +    }));
  
@@ -57,3 +181,107 @@ index 70c80fe799ae61c622ca99758189888dc5b24bfb..fd23bbc24db131153d093c0ee0eb8c41
      res.status(200).json({ success: true, resetToken });
    } catch (err) {
      next(err);
+diff --git a/tests/notificaciones.test.js b/tests/notificaciones.test.js
+index d209af5a64ab5fcabf301f16b31a056e1ac4de4c..8dbfbfaed5c60aaebbeff599d66eab5027765982 100644
+--- a/tests/notificaciones.test.js
++++ b/tests/notificaciones.test.js
+@@ -1,32 +1,35 @@
+ const {
+   getNotificacionesUsuario,
+   marcarComoLeida,
+   eliminarNotificacion,
+   crearNotificacion
+ } = require('../src/controllers/notificacionController');
+ const Notificacion = require('../src/models/Notificacion');
++const { requestPasswordReset } = require('../src/controllers/authController');
++const User = require('../src/models/User');
++const { Role } = require('../src/utils/roles');
+ 
+ describe('notificacionController', () => {
+   afterEach(() => {
+     jest.restoreAllMocks();
+   });
+ 
+   test('getNotificacionesUsuario obtiene notificaciones del usuario', async () => {
+     const list = [{ _id: 'n1' }, { _id: 'n2' }];
+     const sort = jest.fn().mockResolvedValue(list);
+     jest.spyOn(Notificacion, 'find').mockReturnValue({ sort });
+ 
+     const req = { user: { id: 'u1' } };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await getNotificacionesUsuario(req, res, jest.fn());
+ 
+     expect(Notificacion.find).toHaveBeenCalledWith({ usuario: 'u1' });
+     expect(sort).toHaveBeenCalledWith('-fechaCreacion');
+     expect(res.status).toHaveBeenCalledWith(200);
+     expect(res.json).toHaveBeenCalledWith({ success: true, count: 2, data: list });
+   });
+ 
+   test('marcarComoLeida marca la notificacion y la devuelve', async () => {
+     const notif = { usuario: 'u1', marcarComoLeida: jest.fn().mockResolvedValue() };
+     const updated = { _id: 'n1', usuario: 'u1', leida: true };
+diff --git a/tests/notificaciones.test.js b/tests/notificaciones.test.js
+index d209af5a64ab5fcabf301f16b31a056e1ac4de4c..8dbfbfaed5c60aaebbeff599d66eab5027765982 100644
+--- a/tests/notificaciones.test.js
++++ b/tests/notificaciones.test.js
+@@ -49,26 +52,59 @@ describe('notificacionController', () => {
+ 
+   test('eliminarNotificacion borra la notificacion del usuario', async () => {
+     const notif = { usuario: 'u1', remove: jest.fn().mockResolvedValue() };
+     jest.spyOn(Notificacion, 'findById').mockResolvedValue(notif);
+ 
+     const req = { params: { id: 'n1' }, user: { id: 'u1' } };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await eliminarNotificacion(req, res, jest.fn());
+ 
+     expect(Notificacion.findById).toHaveBeenCalledWith('n1');
+     expect(notif.remove).toHaveBeenCalled();
+     expect(res.status).toHaveBeenCalledWith(200);
+     expect(res.json).toHaveBeenCalledWith({ success: true, data: {} });
+   });
+ 
+   test('crearNotificacion acepta tipo passwordReset', async () => {
+     const datos = { usuario: 'u1', tipo: 'passwordReset', mensaje: 'Reset' };
+     jest.spyOn(Notificacion, 'create').mockResolvedValue(datos);
+ 
+     const res = await crearNotificacion(datos);
+ 
+     expect(Notificacion.create).toHaveBeenCalledWith(datos);
+     expect(res).toEqual(datos);
+   });
++
++  test('requestPasswordReset incluye nombre y email en la notificación', async () => {
++    const user = { _id: 'u1', email: 'user@test.com', nombre: 'User', tutor: null, hospital: null };
++    jest
++      .spyOn(User, 'findOne')
++      .mockReturnValue({ populate: jest.fn().mockResolvedValue(user) });
++
++    jest.spyOn(User, 'find').mockImplementation((query) => {
++      if (query.rol === Role.ADMINISTRADOR) {
++        return { select: jest.fn().mockResolvedValue([{ _id: 'admin1' }]) };
++      }
++      return { select: jest.fn().mockResolvedValue([]) };
++    });
++
++    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
++
++    const req = { body: { email: 'user@test.com' } };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++    const next = jest.fn();
++
++    await requestPasswordReset(req, res, next);
++
++    expect(insertSpy).toHaveBeenCalledWith([
++      {
++        usuario: 'admin1',
++        tipo: 'passwordReset',
++        mensaje: 'User (user@test.com) ha solicitado un reseteo de contraseña.',
++        entidadRelacionada: { tipo: 'usuario', id: 'u1' }
++      }
++    ]);
++    expect(res.status).toHaveBeenCalledWith(200);
++    expect(res.json).toHaveBeenCalledWith({ success: true });
++  });
+ });

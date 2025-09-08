@@ -5,6 +5,9 @@ const {
   crearNotificacion
 } = require('../src/controllers/notificacionController');
 const Notificacion = require('../src/models/Notificacion');
+const { requestPasswordReset } = require('../src/controllers/authController');
+const User = require('../src/models/User');
+const { Role } = require('../src/utils/roles');
 
 describe('notificacionController', () => {
   afterEach(() => {
@@ -70,5 +73,38 @@ describe('notificacionController', () => {
 
     expect(Notificacion.create).toHaveBeenCalledWith(datos);
     expect(res).toEqual(datos);
+  });
+
+  test('requestPasswordReset incluye nombre y email en la notificación', async () => {
+    const user = { _id: 'u1', email: 'user@test.com', nombre: 'User', tutor: null, hospital: null };
+    jest
+      .spyOn(User, 'findOne')
+      .mockReturnValue({ populate: jest.fn().mockResolvedValue(user) });
+
+    jest.spyOn(User, 'find').mockImplementation((query) => {
+      if (query.rol === Role.ADMINISTRADOR) {
+        return { select: jest.fn().mockResolvedValue([{ _id: 'admin1' }]) };
+      }
+      return { select: jest.fn().mockResolvedValue([]) };
+    });
+
+    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
+
+    const req = { body: { email: 'user@test.com' } };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const next = jest.fn();
+
+    await requestPasswordReset(req, res, next);
+
+    expect(insertSpy).toHaveBeenCalledWith([
+      {
+        usuario: 'admin1',
+        tipo: 'passwordReset',
+        mensaje: 'User (user@test.com) ha solicitado un reseteo de contraseña.',
+        entidadRelacionada: { tipo: 'usuario', id: 'u1' }
+      }
+    ]);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true });
   });
 });

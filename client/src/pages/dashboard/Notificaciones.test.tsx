@@ -62,3 +62,28 @@ test('marca la notificación como leída al abrirla', async () => {
   });
   await waitFor(() => expect(screen.queryByText('Test')).not.toBeInTheDocument());
 });
+
+test('muestra nombre y email en notificaciones de reseteo de contraseña', async () => {
+  const mensaje = 'User (user@test.com) ha solicitado un reseteo de contraseña.';
+  mockedGet.mockResolvedValueOnce({
+    data: {
+      data: [
+        {
+          _id: '1',
+          mensaje,
+          fechaCreacion: new Date().toISOString(),
+          leida: false,
+          tipo: 'passwordReset'
+        }
+      ]
+    }
+  });
+
+  render(
+    <I18nextProvider i18n={i18n}>
+      <Notificaciones />
+    </I18nextProvider>
+  );
+
+  expect(await screen.findByText(mensaje)).toBeInTheDocument();
+});
