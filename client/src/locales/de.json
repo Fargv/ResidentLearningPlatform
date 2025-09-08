@@ -90,6 +90,7 @@
     "registerButton": "Registrieren"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Abbrechen",
     "create": "Erstellen",
     "creating": "Erstelle...",
@@ -129,6 +130,7 @@
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
+    "for": "Passwort für {{email}} wird zurückgesetzt",
     "newPassword": "Neues Passwort",
     "confirmPassword": "Passwort bestätigen",
     "submit": "Passwort ändern",
@@ -674,8 +676,8 @@
       "update": "Aktualisieren"
     },
     "resetEmail": {
-      "subject": "Passwort zurücksetzen",
-      "body": "Klicke auf den folgenden Link, um dein Passwort zurückzusetzen:\n\n{{link}}"
+      "subject": "Passwort für {{app}} zurücksetzen",
+      "body": "Hallo {{name}},\n\nDu hast beantragt, dein Passwort für {{app}} zurückzusetzen. Klicke auf den folgenden Link, um ein neues zu wählen:\n\n{{link}}\n\nDieser Link ist persönlich, gilt nur einmal und läuft in {{days}} Tagen ab.\n\nAdministrador del entorno"
     },
     "_comment": "Benutzerverwaltung",
     "buttons": {

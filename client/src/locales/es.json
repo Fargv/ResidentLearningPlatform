@@ -240,6 +240,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancelar",
     "create": "Crear",
     "creating": "Creando...",
@@ -440,8 +441,8 @@
       "update": "Actualizar"
     },
     "resetEmail": {
-      "subject": "Restablecer contraseña",
-      "body": "Haz clic en el siguiente enlace para restablecer tu contraseña:\n\n{{link}}"
+      "subject": "Restablecer contraseña de {{app}}",
+      "body": "Hola {{name}},\n\nHas solicitado restablecer tu contraseña en {{app}}. Haz clic en el siguiente enlace para elegir una nueva:\n\n{{link}}\n\nEste enlace es personal, válido solo una vez y caduca en {{days}} días.\n\nAdministrador del entorno"
     },
     "_comment": "Gestión de usuarios para administradores",
     "buttons": {
@@ -631,6 +632,7 @@
   },
   "resetPassword": {
     "title": "Restablecer contraseña",
+    "for": "Restableciendo contraseña para {{email}}",
     "newPassword": "Nueva contraseña",
     "confirmPassword": "Confirmar contraseña",
     "submit": "Cambiar contraseña",

@@ -56,4 +56,5 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-09-03: Pruebas para ruta de informe de cirugías con Supertest.
 - 2025-09-05: Botones de eliminar y cambiar contraseña movidos al diálogo de edición en `AdminUsuarios`.
 - 2025-09-08: Eliminado test `AdminProgresoUsuarios` por comportamiento de redirección.
+- 2025-09-08: Endpoint `getResetPasswordUser`, ruta asociada y localización `resetPassword.for`.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

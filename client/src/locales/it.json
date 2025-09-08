@@ -196,6 +196,7 @@
     "registerButton": "Registrati"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Annulla",
     "create": "Crea",
     "creating": "Creazione in corso...",
@@ -235,6 +236,7 @@
   },
   "resetPassword": {
     "title": "Reimposta password",
+    "for": "Reimpostazione della password per {{email}}",
     "newPassword": "Nuova password",
     "confirmPassword": "Conferma password",
     "submit": "Cambia password",
@@ -671,8 +673,8 @@
       "update": "Aggiorna"
     },
     "resetEmail": {
-      "subject": "Reimpostare la password",
-      "body": "Fai clic sul seguente link per reimpostare la tua password:\n\n{{link}}"
+      "subject": "Reimposta la password di {{app}}",
+      "body": "Ciao {{name}},\n\nHai richiesto di reimpostare la tua password per {{app}}. Clicca sul link seguente per sceglierne una nuova:\n\n{{link}}\n\nQuesto link è personale, valido una sola volta e scade in {{days}} giorni.\n\nAdministrador del entorno"
     },
     "_comment": "Gestione utenti per amministratori",
     "buttons": {

@@ -294,7 +294,10 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
-    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.resettoken)
+      .digest('hex');
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }
@@ -316,6 +319,27 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
+const getResetPasswordUser = async (req, res, next) => {
+  try {
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return next(new ErrorResponse('Token inválido o expirado', 400));
+    }
+
+    res.status(200).json({ success: true, email: user.email });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email, rol: user.rol },
@@ -332,5 +356,6 @@ module.exports = {
   updatePassword,
   forgotPassword,
   resetPassword,
+  getResetPasswordUser,
   checkAccessCode
 };

@@ -92,6 +92,7 @@
     "registerButton": "Registrar"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancelar",
     "create": "Criar",
     "creating": "Criando...",
@@ -131,6 +132,7 @@
   },
   "resetPassword": {
     "title": "Redefinir palavra-passe",
+    "for": "Redefinindo a senha para {{email}}",
     "newPassword": "Nova palavra-passe",
     "confirmPassword": "Confirmar palavra-passe",
     "submit": "Alterar palavra-passe",
@@ -610,8 +612,8 @@
       "update": "Atualizar"
     },
     "resetEmail": {
-      "subject": "Redefinir senha",
-      "body": "Clique no seguinte link para redefinir sua senha:\n\n{{link}}"
+      "subject": "Redefinir a senha de {{app}}",
+      "body": "Olá {{name}},\n\nVocê solicitou redefinir sua senha no {{app}}. Clique no link abaixo para escolher uma nova:\n\n{{link}}\n\nEste link é pessoal, válido apenas uma vez e expira em {{days}} dias.\n\nAdministrador del entorno"
     },
     "_comment": "Gestão de usuários para administradores",
     "buttons": {

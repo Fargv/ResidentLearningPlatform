@@ -238,6 +238,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Utzi",
     "create": "Sortu",
     "creating": "Sortzen...",
@@ -435,8 +436,8 @@
       "update": "Eguneratu"
     },
     "resetEmail": {
-      "subject": "Pasahitza berrezarri",
-      "body": "Egin klik hurrengo estekan zure pasahitza berrezartzeko:\n\n{{link}}"
+      "subject": "{{app}} pasahitza berrezarri",
+      "body": "Kaixo {{name}},\n\n{{app}} aplikazioan zure pasahitza berrezartzea eskatu duzu. Esteka honetan klik egin berria aukeratzeko:\n\n{{link}}\n\nEsteka hau pertsonala da, behin bakarrik balio du eta {{days}} egunetan iraungitzen da.\n\nAdministrador del entorno"
     },
     "_comment": "Administratzaileentzako erabiltzaileen kudeaketa",
     "buttons": {
@@ -626,6 +627,7 @@
   },
   "resetPassword": {
     "title": "Pasahitza berrezarri",
+    "for": "Berrezartzen pasahitza {{email}}-rentzat",
     "newPassword": "Pasahitz berria",
     "confirmPassword": "Pasahitz berria baieztatu",
     "submit": "Pasahitza aldatu",

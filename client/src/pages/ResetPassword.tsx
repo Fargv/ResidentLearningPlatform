@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Container, Paper, Typography, TextField, Button, Alert, Link } from '@mui/material';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,19 @@ const ResetPassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const { data } = await api.get(`/auth/resetpassword/${token}`);
+        setUserEmail(data.email);
+      } catch {
+        setError(t('resetPassword.error'));
+      }
+    };
+    fetchEmail();
+  }, [token, t]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,6 +77,11 @@ const ResetPassword: React.FC = () => {
             <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
               {success}
             </Alert>
+          )}
+          {userEmail && (
+            <Typography gutterBottom>
+              {t('resetPassword.for', { email: userEmail })}
+            </Typography>
           )}
           <Box component="form" onSubmit={onSubmit} sx={{ width: '100%' }}>
             <TextField

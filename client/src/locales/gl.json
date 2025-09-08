@@ -312,6 +312,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancelar",
     "create": "Crear",
     "creating": "Creando...",
@@ -512,8 +513,8 @@
       "update": "Actualizar"
     },
     "resetEmail": {
-      "subject": "Restablecer contrasinal",
-      "body": "Fai clic na seguinte ligazón para restablecer o teu contrasinal:\n\n{{link}}"
+      "subject": "Restablecer contrasinal de {{app}}",
+      "body": "Ola {{name}},\n\nSolicitaches restablecer o teu contrasinal en {{app}}. Preme na seguinte ligazón para escoller un novo:\n\n{{link}}\n\nEsta ligazón é persoal, só é válida unha vez e caduca en {{days}} días.\n\nAdministrador del entorno"
     },
     "_comment": "Xestión de usuarios para administradores",
     "buttons": {
@@ -631,6 +632,7 @@
   },
   "resetPassword": {
     "title": "Restablecer contrasinal",
+    "for": "Restablecendo o contrasinal para {{email}}",
     "newPassword": "Novo contrasinal",
     "confirmPassword": "Confirmar contrasinal",
     "submit": "Cambiar contrasinal",

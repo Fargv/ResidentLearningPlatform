@@ -90,6 +90,7 @@
     "registerButton": "Registrar-se"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancel·lar",
     "create": "Crear",
     "creating": "Creant...",
@@ -518,8 +519,8 @@
       "update": "Actualitzar"
     },
     "resetEmail": {
-      "subject": "Restablir contrasenya",
-      "body": "Fes clic al següent enllaç per restablir la teva contrasenya:\n\n{{link}}"
+      "subject": "Restablir la contrasenya de {{app}}",
+      "body": "Hola {{name}},\n\nHas sol·licitat restablir la teva contrasenya a {{app}}. Fes clic en l'enllaç següent per triar-ne una de nova:\n\n{{link}}\n\nAquest enllaç és personal, només és vàlid una vegada i caduca en {{days}} dies.\n\nAdministrador del entorno"
     },
     "_comment": "Gestió d'usuaris per a administradors",
     "buttons": {
@@ -720,6 +721,7 @@
   },
   "resetPassword": {
     "title": "Restablir contrasenya",
+    "for": "Restablint la contrasenya per a {{email}}",
     "newPassword": "Nova contrasenya",
     "confirmPassword": "Confirmar contrasenya",
     "submit": "Canviar contrasenya",

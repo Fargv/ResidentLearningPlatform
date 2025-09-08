@@ -1,36 +1,842 @@
-diff --git a/client/src/api.ts b/client/src/api.ts
-index 44e7465d7acce277fce60e7b971f538ddec1dcce..cf13b73ee0e52968a4f89f77146105409a52ff5a 100644
---- a/client/src/api.ts
-+++ b/client/src/api.ts
-@@ -13,29 +13,29 @@ api.interceptors.request.use(
-     }
-     return config;
+diff --git a/AGENTS.md b/AGENTS.md
+index 429e631dc4ead7dcf74c1ff2b69fc8f378dcdeb9..e12799e953703b61b9916ca562db57ff40132df9 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -33,27 +33,28 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
+ - 2025-07-18: Validación de tamaño de archivo en `ResidenteFases` y mensaje de error.
+ - 2025-07-21: Banner de desarrollo y fondo rojo claro en `App.tsx` cuando
+   `REACT_APP_ENV` es `dev`.
+ - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
+ - 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
+ - 2025-07-30: Eliminada la vista `AdminValidaciones` y ruta `/dashboard/validaciones-admin`; se reemplaza por `informes`.
+ - 2025-07-31: Añadidas dependencias `ajv` y `ajv-keywords` al cliente e intento de regenerar el lockfile.
+ - 2025-08-01: Localización de AdminConfiguracion y claves `adminConfig` en los archivos de idioma.
+ - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
+ - 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
+ - 2025-08-30: Creación de la página `PrivacyPolicy` con internacionalización y metadatos de actualización.
+ - 2025-08-11: Actualización de roles `'formador'`, `'coordinador'`, `'instructor'` y `'alumno'` a `'tutor'`, `'csm'`, `'profesor'` y `'participante'` en modelos y pruebas.
+ - 2025-08-12: Cambio de ruta a `/tutor/validaciones/pendientes` en `progresoRoutes.js`.
+ - 2025-08-12: Reemplazo de `comentariosFormador` por `comentariosTutor` en `ResidenteFases` y verificación en `ProgresoResidente`.
+ - 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
+ - 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
+ 
+ - 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
+ - 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
+ - 2025-09-01: Botón "Crear fase" ahora usa `variant="contained"` y `color="primary"` en `AdminFases` y `AdminFasesSoc`.
+ - 2025-09-01: Índices compuestos en `User` y validación de `tutor` solo para residentes.
+ - 2025-09-03: Certificados usan `FRONTEND_URL` y footer con enlace dinámico.
+ - 2025-09-04: Certificados de sociedades incluyen logo, responsable y texto específicos; eliminada firma.
+ - 2025-09-03: Pruebas para ruta de informe de cirugías con Supertest.
+ - 2025-09-05: Botones de eliminar y cambiar contraseña movidos al diálogo de edición en `AdminUsuarios`.
+-- 2025-09-08: Eliminado test `AdminProgresoUsuarios` por comportamiento de redirección.
++- 2025-09-08: Eliminado test `AdminProgresoUsuarios` por comportamiento de redirección.
++- 2025-09-08: Endpoint `getResetPasswordUser`, ruta asociada y localización `resetPassword.for`.
+ ⚠️ Este archivo no interfiere con el código ni el despliegue.
+diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
+index 002a6bafac3d6957a73f218cd75a99b8f1d93c66..f3bda0d1869ece59fd465e388b4910d406b2f5ff 100644
+--- a/client/src/locales/ca.json
++++ b/client/src/locales/ca.json
+@@ -696,53 +696,54 @@
    },
-   (error) => Promise.reject(error)
- );
+   "auth": {
+     "login": "Iniciar sessió",
+     "logout": "Tancar sessió",
+     "password": "Contrasenya",
+     "passwordCurrent": "Contrasenya actual",
+     "passwordNew": "Nova contrasenya",
+     "passwordConfirm": "Confirmar contrasenya",
+     "passwordUpdated": "Contrasenya actualitzada",
+     "passwordMismatch": "Les contrasenyes no coincideixen",
+     "accessCode": "Codi d'accés",
+     "invalidAccessCode": "Codi d'accés no vàlid",
+     "changePassword": "Canviar contrasenya",
+     "resetRequest": "Sol·licitud de restabliment de contrasenya",
+     "errorLogin": "Error en iniciar sessió",
+     "errorChangePassword": "Error en canviar la contrasenya",
+     "errorUpdatePassword": "Error en actualitzar la contrasenya"
+   },
+   "forgotPassword": {
+     "heading": "Has oblidat la contrasenya?",
+     "description": "Per restablir la contrasenya posa't en contacte amb l'administrador del sistema.",
+     "emailLabel": "El teu correu",
+     "submit": "Enviar correu a l'administrador",
+     "backToLogin": "Tornar a iniciar sessió"
+   },
+-  "resetPassword": {
+-    "title": "Restablir contrasenya",
+-    "newPassword": "Nova contrasenya",
++  "resetPassword": {
++    "title": "Restablir contrasenya",
++    "for": "Restablint la contrasenya per a {{email}}",
++    "newPassword": "Nova contrasenya",
+     "confirmPassword": "Confirmar contrasenya",
+     "submit": "Canviar contrasenya",
+     "success": "Contrasenya actualitzada correctament. Redirigint a l'inici de sessió...",
+     "error": "No s'ha pogut actualitzar la contrasenya.",
+     "passwordMismatch": "Les contrasenyes no coincideixen.",
+     "backToLogin": "Tornar a l'inici de sessió"
+   },
+   "login": {
+     "title": "Programa Acadèmic da Vinci",
+     "subtitle": "Tecnologies del Robot da Vinci",
+     "email": "Correu electrònic",
+     "password": "Contrasenya",
+     "signIn": "Iniciar sessió",
+     "forgotPassword": "Has oblidat la contrasenya?",
+     "noAccount": "No tens compte?",
+     "registerHere": "Registra't aquí",
+     "copyright": "© {{year}} Abex Excel·lència Robòtica",
+     "poweredBy": "Desenvolupat per FARGV",
+     "logoAlt": "Abex Excel·lència Robòtica"
+   },
+   "types": {
+     "theoretical": "Teòrica",
+     "practical": "Pràctica",
+     "evaluation": "Avaluació",
+     "observation": "Observació",
+diff --git a/client/src/locales/de.json b/client/src/locales/de.json
+index 8fe6271f4e0d17b8f975a3d9a6a72f3df65373b1..590d9cf166d3a7e63314983e93c8774f7ca3ab81 100644
+--- a/client/src/locales/de.json
++++ b/client/src/locales/de.json
+@@ -105,53 +105,54 @@
+   },
+   "auth": {
+     "login": "Anmelden",
+     "logout": "Abmelden",
+     "password": "Passwort",
+     "passwordCurrent": "Aktuelles Passwort",
+     "passwordNew": "Neues Passwort",
+     "passwordConfirm": "Passwort bestätigen",
+     "passwordUpdated": "Passwort aktualisiert",
+     "passwordMismatch": "Passwörter stimmen nicht überein",
+     "accessCode": "Zugangscode",
+     "invalidAccessCode": "Ungültiger Zugangscode",
+     "changePassword": "Passwort ändern",
+     "resetRequest": "Passwort-Zurücksetzung anfordern",
+     "errorLogin": "Fehler beim Anmelden",
+     "errorChangePassword": "Fehler beim Ändern des Passworts",
+     "errorUpdatePassword": "Fehler beim Aktualisieren des Passworts"
+   },
+   "forgotPassword": {
+     "heading": "Passwort vergessen?",
+     "description": "Um Ihr Passwort zurückzusetzen, wenden Sie sich bitte an den Systemadministrator.",
+     "emailLabel": "Ihre E-Mail",
+     "submit": "E-Mail an Administrator senden",
+     "backToLogin": "Zurück zur Anmeldung"
+   },
+-  "resetPassword": {
+-    "title": "Passwort zurücksetzen",
+-    "newPassword": "Neues Passwort",
++  "resetPassword": {
++    "title": "Passwort zurücksetzen",
++    "for": "Passwort für {{email}} wird zurückgesetzt",
++    "newPassword": "Neues Passwort",
+     "confirmPassword": "Passwort bestätigen",
+     "submit": "Passwort ändern",
+     "success": "Passwort erfolgreich geändert. Weiterleitung zum Login...",
+     "error": "Passwort konnte nicht geändert werden.",
+     "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+     "backToLogin": "Zurück zum Login"
+   },
+   "login": {
+     "title": "Da Vinci Ausbildungsprogramm",
+     "subtitle": "Technologien des Da Vinci Roboters",
+     "email": "E-Mail",
+     "password": "Passwort",
+     "signIn": "Anmelden",
+     "forgotPassword": "Passwort vergessen?",
+     "noAccount": "Noch kein Konto?",
+     "registerHere": "Hier registrieren",
+     "copyright": "© {{year}} Abex Roboterexzellenz",
+     "poweredBy": "Entwickelt von FARGV",
+     "logoAlt": "Abex Roboterexzellenz"
+   },
+   "types": {
+     "theoretical": "Theoretisch",
+     "practical": "Praktisch",
+     "evaluation": "Bewertung",
+     "observation": "Beobachtung",
+diff --git a/client/src/locales/en.json b/client/src/locales/en.json
+index 1b6fd655cb6cd6eece22b6efba57819e9f7fc345..129b6093974e72da855b079986ef8e243ddedbd7 100644
+--- a/client/src/locales/en.json
++++ b/client/src/locales/en.json
+@@ -611,53 +611,54 @@
+   },
+   "auth": {
+     "login": "Log In",
+     "logout": "Log Out",
+     "password": "Password",
+     "passwordCurrent": "Current Password",
+     "passwordNew": "New Password",
+     "passwordConfirm": "Confirm Password",
+     "passwordUpdated": "Password updated",
+     "passwordMismatch": "Passwords do not match",
+     "accessCode": "Access Code",
+     "invalidAccessCode": "Invalid access code",
+     "changePassword": "Change Password",
+     "resetRequest": "Password reset request",
+     "errorLogin": "Login error",
+     "errorChangePassword": "Error changing password",
+     "errorUpdatePassword": "Error updating password"
+   },
+   "forgotPassword": {
+     "heading": "Forgot your password?",
+     "description": "To reset the password please contact the system administrator.",
+     "emailLabel": "Your email",
+     "submit": "Send email to administrator",
+     "backToLogin": "Back to login"
+   },
+-  "resetPassword": {
+-    "title": "Reset Password",
+-    "newPassword": "New Password",
++  "resetPassword": {
++    "title": "Reset Password",
++    "for": "Resetting password for {{email}}",
++    "newPassword": "New Password",
+     "confirmPassword": "Confirm Password",
+     "submit": "Change Password",
+     "success": "Password successfully reset. Redirecting to login...",
+     "error": "Failed to reset password.",
+     "passwordMismatch": "Passwords do not match.",
+     "backToLogin": "Back to login"
+   },
+   "login": {
+     "title": "Academic Program daVinci",
+     "subtitle": "Da Vinci Systems Training Program",
+     "email": "Email",
+     "logoUrl": "Logo URL",
+     "password": "Password",
+     "signIn": "Log In",
+     "forgotPassword": "Forgot your password?",
+     "noAccount": "Don't have an account?",
+     "registerHere": "Register here",
+     "copyright": "© {{year}} Abex Excelencia Robótica",
+     "poweredBy": "Powered by FARGV",
+     "logoAlt": "Abex Excelencia Robótica"
+   },
+   "dashboard": {
+     "manageAllUsers": "Manage All Users",
+     "noPermissions": "You do not have permission to view this section"
+   },
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index 787de304879dafe15d1310e14d893e4f1a88d8dd..1424e030b6c690688ed63ac2dd7839caa7b7b089 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -607,53 +607,54 @@
+   },
+   "auth": {
+     "login": "Iniciar Sesión",
+     "logout": "Cerrar Sesión",
+     "password": "Contraseña",
+     "passwordCurrent": "Contraseña Actual",
+     "passwordNew": "Nueva Contraseña",
+     "passwordConfirm": "Confirmar Contraseña",
+     "passwordUpdated": "Contraseña actualizada",
+     "passwordMismatch": "Las contraseñas no coinciden",
+     "accessCode": "Código de Acceso",
+     "invalidAccessCode": "Código de acceso no válido",
+     "changePassword": "Cambiar Contraseña",
+     "resetRequest": "Solicitud de reseteo de contraseña",
+     "errorLogin": "Error al iniciar sesión",
+     "errorChangePassword": "Error al cambiar la contraseña",
+     "errorUpdatePassword": "Error al actualizar la contraseña"
+   },
+   "forgotPassword": {
+     "heading": "¿Olvidaste tu contraseña?",
+     "description": "Para resetear la contraseña póngase en contacto con el administrador del sistema.",
+     "emailLabel": "Tu email",
+     "submit": "Enviar correo al administrador",
+     "backToLogin": "Volver al inicio de sesión"
+   },
+-  "resetPassword": {
+-    "title": "Restablecer contraseña",
+-    "newPassword": "Nueva contraseña",
++  "resetPassword": {
++    "title": "Restablecer contraseña",
++    "for": "Restableciendo contraseña para {{email}}",
++    "newPassword": "Nueva contraseña",
+     "confirmPassword": "Confirmar contraseña",
+     "submit": "Cambiar contraseña",
+     "success": "Contraseña actualizada correctamente. Redirigiendo al inicio de sesión...",
+     "error": "No se pudo actualizar la contraseña.",
+     "passwordMismatch": "Las contraseñas no coinciden.",
+     "backToLogin": "Volver al inicio de sesión"
+   },
+   "login": {
+     "title": "Programa Académico daVinci",
+     "subtitle": "Tecnologías del Robot da Vinci",
+     "email": "Email",
+     "password": "Contraseña",
+     "signIn": "Iniciar Sesión",
+     "forgotPassword": "¿Olvidaste tu contraseña?",
+     "noAccount": "¿No tienes cuenta?",
+     "registerHere": "Regístrate aquí",
+     "copyright": "© {{year}} Abex Excelencia Robótica",
+     "poweredBy": "Desarrollado por FARGV",
+     "logoAlt": "Abex Excelencia Robótica"
+   },
+   "dashboard": {
+     "manageAllUsers": "Gestión de Todos los Usuarios",
+     "noPermissions": "No tienes permisos para ver esta sección"
+   },
+   "forms": {
+diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
+index 71311234c69443a9f7cbf619e2febb1f86a5a773..7278262c7efd676b4cc37ca7dac6f39c372dd2b3 100644
+--- a/client/src/locales/eu.json
++++ b/client/src/locales/eu.json
+@@ -602,53 +602,54 @@
+   },
+   "auth": {
+     "login": "Hasi saioa",
+     "logout": "Saioa itxi",
+     "password": "Pasahitza",
+     "passwordCurrent": "Uneko pasahitza",
+     "passwordNew": "Pasahitz berria",
+     "passwordConfirm": "Berretsi pasahitza",
+     "passwordUpdated": "Pasahitza eguneratua",
+     "passwordMismatch": "Pasahitzak ez datoz bat",
+     "accessCode": "Sarbide kodea",
+     "invalidAccessCode": "Sarbide kode baliogabea",
+     "changePassword": "Aldatu pasahitza",
+     "resetRequest": "Pasahitza berrezartzeko eskaera",
+     "errorLogin": "Errorea saioa hastean",
+     "errorChangePassword": "Errorea pasahitza aldatzean",
+     "errorUpdatePassword": "Errorea pasahitza eguneratzean"
+   },
+   "forgotPassword": {
+     "heading": "Pasahitza ahaztuta?",
+     "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
+     "emailLabel": "Zure emaila",
+     "submit": "Bidali emaila administratzaileari",
+     "backToLogin": "Itzuli saioa hasteko"
+   },
+-  "resetPassword": {
+-    "title": "Pasahitza berrezarri",
+-    "newPassword": "Pasahitz berria",
++  "resetPassword": {
++    "title": "Pasahitza berrezarri",
++    "for": "Berrezartzen pasahitza {{email}}-rentzat",
++    "newPassword": "Pasahitz berria",
+     "confirmPassword": "Pasahitz berria baieztatu",
+     "submit": "Pasahitza aldatu",
+     "success": "Pasahitza behar bezala aldatu da. Saio-hasierara birbideratzen...",
+     "error": "Pasahitza ezin izan da aldatu.",
+     "passwordMismatch": "Pasahitzak ez datoz bat.",
+     "backToLogin": "Itzuli saio-hasierara"
+   },
+   "login": {
+     "title": "Da Vinci Akademia Programa",
+     "subtitle": "Da Vinci Robotaren Teknologiak",
+     "email": "Posta elektronikoa",
+     "password": "Pasahitza",
+     "signIn": "Hasi saioa",
+     "forgotPassword": "Pasahitza ahaztuta?",
+     "noAccount": "Ez duzu konturik?",
+     "registerHere": "Erregistratu hemen",
+     "copyright": "© {{year}} Abex Robotikako Bikaintasuna",
+     "poweredBy": "FARGV garatua",
+     "logoAlt": "Abex Robotikako Bikaintasuna"
+   },
+   "dashboard": {
+     "manageAllUsers": "Gestión de Todos los Usuarios",
+     "noPermissions": "No tienes permisos para ver esta sección"
+   },
+   "forms": {
+diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
+index a99fd768438ebc39ec69794b652d4361e0d72a46..7b8cf210d84d1909a898d17cdad2774e68e2a9c9 100644
+--- a/client/src/locales/fr.json
++++ b/client/src/locales/fr.json
+@@ -133,53 +133,54 @@
+   },
+   "auth": {
+     "login": "Connexion",
+     "logout": "Déconnexion",
+     "password": "Mot de passe",
+     "passwordCurrent": "Mot de passe actuel",
+     "passwordNew": "Nouveau mot de passe",
+     "passwordConfirm": "Confirmer le mot de passe",
+     "passwordUpdated": "Mot de passe mis à jour",
+     "passwordMismatch": "Les mots de passe ne correspondent pas",
+     "accessCode": "Code d'accès",
+     "invalidAccessCode": "Code d'accès invalide",
+     "changePassword": "Changer le mot de passe",
+     "resetRequest": "Demande de réinitialisation du mot de passe",
+     "errorLogin": "Erreur lors de la connexion",
+     "errorChangePassword": "Erreur lors du changement de mot de passe",
+     "errorUpdatePassword": "Erreur lors de la mise à jour du mot de passe"
+   },
+   "forgotPassword": {
+     "heading": "Mot de passe oublié ?",
+     "description": "Pour réinitialiser votre mot de passe, veuillez contacter l’administrateur du système.",
+     "emailLabel": "Votre email",
+     "submit": "Envoyer un email à l'administrateur",
+     "backToLogin": "Retour à la connexion"
+   },
+-  "resetPassword": {
+-    "title": "Réinitialiser le mot de passe",
+-    "newPassword": "Nouveau mot de passe",
++  "resetPassword": {
++    "title": "Réinitialiser le mot de passe",
++    "for": "Réinitialisation du mot de passe pour {{email}}",
++    "newPassword": "Nouveau mot de passe",
+     "confirmPassword": "Confirmer le mot de passe",
+     "submit": "Changer le mot de passe",
+     "success": "Mot de passe réinitialisé avec succès. Redirection vers la connexion...",
+     "error": "Échec de la réinitialisation du mot de passe.",
+     "passwordMismatch": "Les mots de passe ne correspondent pas.",
+     "backToLogin": "Retour à la connexion"
+   },
+   "login": {
+     "title": "Programme Académique da Vinci",
+     "subtitle": "Technologies du robot da Vinci",
+     "email": "Email",
+     "password": "Mot de passe",
+     "signIn": "Se connecter",
+     "forgotPassword": "Mot de passe oublié ?",
+     "noAccount": "Vous n'avez pas de compte ?",
+     "registerHere": "Inscrivez-vous ici",
+     "copyright": "© {{year}} Abex Excellence Robotique",
+     "poweredBy": "Développé par FARGV",
+     "logoAlt": "Abex Excellence Robotique"
+   },
+   "types": {
+     "theoretical": "Théorique",
+     "practical": "Pratique",
+     "evaluation": "Évaluation",
+     "observation": "Observation",
+diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
+index 0f2de86111565a8af02c4e6babc372df85a3e771..5cbf1c2cb8b4a027c54d10580874061116856034 100644
+--- a/client/src/locales/gl.json
++++ b/client/src/locales/gl.json
+@@ -607,53 +607,54 @@
+   },
+   "auth": {
+     "login": "Iniciar sesión",
+     "logout": "Pechar sesión",
+     "password": "Contrasinal",
+     "passwordCurrent": "Contrasinal actual",
+     "passwordNew": "Novo contrasinal",
+     "passwordConfirm": "Confirmar contrasinal",
+     "passwordUpdated": "Contrasinal actualizado",
+     "passwordMismatch": "Os contrasinais non coinciden",
+     "accessCode": "Código de acceso",
+     "invalidAccessCode": "Código de acceso non válido",
+     "changePassword": "Cambiar contrasinal",
+     "resetRequest": "Solicitude de restablecemento de contrasinal",
+     "errorLogin": "Erro ao iniciar sesión",
+     "errorChangePassword": "Erro ao cambiar o contrasinal",
+     "errorUpdatePassword": "Erro ao actualizar o contrasinal"
+   },
+   "forgotPassword": {
+     "heading": "Esqueciches o contrasinal?",
+     "description": "Para restablecer o contrasinal, contacta co administrador do sistema.",
+     "emailLabel": "O teu correo",
+     "submit": "Enviar correo ao administrador",
+     "backToLogin": "Volver ao inicio de sesión"
+   },
+-  "resetPassword": {
+-    "title": "Restablecer contrasinal",
+-    "newPassword": "Novo contrasinal",
++  "resetPassword": {
++    "title": "Restablecer contrasinal",
++    "for": "Restablecendo o contrasinal para {{email}}",
++    "newPassword": "Novo contrasinal",
+     "confirmPassword": "Confirmar contrasinal",
+     "submit": "Cambiar contrasinal",
+     "success": "O contrasinal actualizouse correctamente. Redirixindo ao inicio de sesión...",
+     "error": "Non se puido actualizar o contrasinal.",
+     "passwordMismatch": "Os contrasinais non coinciden.",
+     "backToLogin": "Volver ao inicio de sesión"
+   },
+   "login": {
+     "title": "Programa Académico da Vinci",
+     "subtitle": "Tecnoloxías do Robot da Vinci",
+     "email": "Correo electrónico",
+     "password": "Contrasinal",
+     "signIn": "Iniciar sesión",
+     "forgotPassword": "Esqueciches o contrasinal?",
+     "noAccount": "Non tes conta?",
+     "registerHere": "Rexístrate aquí",
+     "copyright": "© {{year}} Abex Excelencia Robótica",
+     "poweredBy": "Desenvolvido por FARGV",
+     "logoAlt": "Abex Excelencia Robótica"
+   },
+   "types": {
+     "theoretical": "Teórica",
+     "practical": "Práctica",
+     "evaluation": "Avaliación",
+     "observation": "Observación",
+diff --git a/client/src/locales/it.json b/client/src/locales/it.json
+index 0ee51d878a0dc19a55fd188c45690da0faf69b31..8a7b67eefd558a9c93f3ea53a683768b681ad177 100644
+--- a/client/src/locales/it.json
++++ b/client/src/locales/it.json
+@@ -211,53 +211,54 @@
+   },
+   "auth": {
+     "login": "Accesso",
+     "logout": "Disconnetti",
+     "password": "Password",
+     "passwordCurrent": "Password attuale",
+     "passwordNew": "Nuova password",
+     "passwordConfirm": "Conferma password",
+     "passwordUpdated": "Password aggiornata",
+     "passwordMismatch": "Le password non corrispondono",
+     "accessCode": "Codice di accesso",
+     "invalidAccessCode": "Codice di accesso non valido",
+     "changePassword": "Cambia password",
+     "resetRequest": "Richiesta di reimpostazione della password",
+     "errorLogin": "Errore durante l'accesso",
+     "errorChangePassword": "Errore durante il cambio password",
+     "errorUpdatePassword": "Errore durante l'aggiornamento della password"
+   },
+   "forgotPassword": {
+     "heading": "Hai dimenticato la password?",
+     "description": "Per reimpostare la password, contatta l'amministratore del sistema.",
+     "emailLabel": "La tua email",
+     "submit": "Invia email all'amministratore",
+     "backToLogin": "Torna al login"
+   },
+-  "resetPassword": {
+-    "title": "Reimposta password",
+-    "newPassword": "Nuova password",
++  "resetPassword": {
++    "title": "Reimposta password",
++    "for": "Reimpostazione della password per {{email}}",
++    "newPassword": "Nuova password",
+     "confirmPassword": "Conferma password",
+     "submit": "Cambia password",
+     "success": "Password aggiornata con successo. Reindirizzamento al login...",
+     "error": "Impossibile aggiornare la password.",
+     "passwordMismatch": "Le password non coincidono.",
+     "backToLogin": "Torna al login"
+   },
+   "login": {
+     "title": "Programma Accademico da Vinci",
+     "subtitle": "Tecnologie del robot da Vinci",
+     "email": "Email",
+     "password": "Password",
+     "signIn": "Accedi",
+     "forgotPassword": "Hai dimenticato la password?",
+     "noAccount": "Non hai un account?",
+     "registerHere": "Registrati qui",
+     "copyright": "© {{year}} Abex Eccellenza Robotica",
+     "poweredBy": "Sviluppato da FARGV",
+     "logoAlt": "Abex Eccellenza Robotica"
+   },
+   "types": {
+     "theoretical": "Teorica",
+     "practical": "Pratica",
+     "evaluation": "Valutazione",
+     "observation": "Osservazione",
+diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
+index 7e062eb20870d2b8b1fc5d2a86416a20738afe5a..1bdc7668c6dabac40f87f1dee2cb8040ca8d03f8 100644
+--- a/client/src/locales/pt.json
++++ b/client/src/locales/pt.json
+@@ -107,53 +107,54 @@
+   },
+   "auth": {
+     "login": "Entrar",
+     "logout": "Sair",
+     "password": "Senha",
+     "passwordCurrent": "Senha Atual",
+     "passwordNew": "Nova Senha",
+     "passwordConfirm": "Confirmar Senha",
+     "passwordUpdated": "Senha atualizada",
+     "passwordMismatch": "As senhas não coincidem",
+     "accessCode": "Código de Acesso",
+     "invalidAccessCode": "Código de acesso inválido",
+     "changePassword": "Alterar Senha",
+     "resetRequest": "Solicitação de redefinição de senha",
+     "errorLogin": "Erro ao entrar",
+     "errorChangePassword": "Erro ao alterar a senha",
+     "errorUpdatePassword": "Erro ao atualizar a senha"
+   },
+   "forgotPassword": {
+     "heading": "Esqueceu sua senha?",
+     "description": "Para redefinir a senha, entre em contato com o administrador do sistema.",
+     "emailLabel": "Seu email",
+     "submit": "Enviar email ao administrador",
+     "backToLogin": "Voltar ao login"
+   },
+-  "resetPassword": {
+-    "title": "Redefinir palavra-passe",
+-    "newPassword": "Nova palavra-passe",
++  "resetPassword": {
++    "title": "Redefinir palavra-passe",
++    "for": "Redefinindo a senha para {{email}}",
++    "newPassword": "Nova palavra-passe",
+     "confirmPassword": "Confirmar palavra-passe",
+     "submit": "Alterar palavra-passe",
+     "success": "Palavra-passe atualizada com sucesso. A redirecionar para o início de sessão...",
+     "error": "Não foi possível atualizar a palavra-passe.",
+     "passwordMismatch": "As palavras-passe não coincidem.",
+     "backToLogin": "Voltar ao início de sessão"
+   },
+   "login": {
+     "title": "Programa Acadêmico da Vinci",
+     "subtitle": "Tecnologias do Robô da Vinci",
+     "email": "Email",
+     "logoUrl": "URL do logo",
+     "password": "Senha",
+     "signIn": "Entrar",
+     "forgotPassword": "Esqueceu sua senha?",
+     "noAccount": "Não tem uma conta?",
+     "registerHere": "Cadastre-se aqui",
+     "copyright": "© {{year}} Abex Excelência Robótica",
+     "poweredBy": "Desenvolvido por FARGV",
+     "logoAlt": "Abex Excelência Robótica"
+   },
+   "residentMilestones": {
+     "phase1": {
+       "label": "Fase 1 - Preparação Inicial",
+       "description": "Familiarização com o sistema Da Vinci e aspectos teóricos iniciais."
+diff --git a/client/src/pages/ResetPassword.tsx b/client/src/pages/ResetPassword.tsx
+index 3364952359ed202e6b4f8e8d00acabd81bf5d5fa..3f91e4b30069c234ac7a57dad8bcf29956197745 100644
+--- a/client/src/pages/ResetPassword.tsx
++++ b/client/src/pages/ResetPassword.tsx
+@@ -1,39 +1,52 @@
+-import React, { useState } from 'react';
++import React, { useEffect, useState } from 'react';
+ import { Box, Container, Paper, Typography, TextField, Button, Alert, Link } from '@mui/material';
+ import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+ import { useTranslation } from 'react-i18next';
+ import api from '../api';
  
- export default api;
+ const ResetPassword: React.FC = () => {
+   const { token } = useParams<{ token: string }>();
+   const navigate = useNavigate();
+   const { t } = useTranslation();
+   const [password, setPassword] = useState('');
+   const [confirmPassword, setConfirmPassword] = useState('');
+   const [error, setError] = useState<string | null>(null);
+   const [success, setSuccess] = useState<string | null>(null);
++  const [userEmail, setUserEmail] = useState('');
++
++  useEffect(() => {
++    const fetchEmail = async () => {
++      try {
++        const { data } = await api.get(`/auth/resetpassword/${token}`);
++        setUserEmail(data.email);
++      } catch {
++        setError(t('resetPassword.error'));
++      }
++    };
++    fetchEmail();
++  }, [token, t]);
  
- export const getNotificaciones = () => api.get('/notificaciones');
- export const getNotificacionesNoLeidas = () => api.get('/notificaciones/no-leidas');
- export const marcarNotificacionLeida = (id: string) => api.put(`/notificaciones/${id}/leer`);
- export const eliminarNotificacion = (id: string) => api.delete(`/notificaciones/${id}`);
- export const updateProfile = (data: { nombre: string; apellidos: string; email: string }) =>
-   api.put('/auth/updatedetails', data);
- export const changePassword = (data: { currentPassword: string; newPassword: string }) =>
-   api.put('/auth/updatepassword', data);
+   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+     e.preventDefault();
+     setError(null);
+     setSuccess(null);
+     if (password !== confirmPassword) {
+       setError(t('resetPassword.passwordMismatch'));
+       return;
+     }
+     try {
+       await api.put(`/auth/resetpassword/${token}`, { password });
+       setSuccess(t('resetPassword.success'));
+       setTimeout(() => navigate('/login'), 3000);
+     } catch (err) {
+       setError(t('resetPassword.error'));
+     }
+   };
  
- // Admin user management
- export const createUser = (data: Record<string, any>) => api.post('/users', data);
- export const updateUserPassword = (id: string, newPassword: string) =>
-   api.put(`/users/${id}/password`, { password: newPassword });
+   return (
+     <Box
+       sx={{
+         minHeight: '100vh',
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+diff --git a/client/src/pages/ResetPassword.tsx b/client/src/pages/ResetPassword.tsx
+index 3364952359ed202e6b4f8e8d00acabd81bf5d5fa..3f91e4b30069c234ac7a57dad8bcf29956197745 100644
+--- a/client/src/pages/ResetPassword.tsx
++++ b/client/src/pages/ResetPassword.tsx
+@@ -43,50 +56,55 @@ const ResetPassword: React.FC = () => {
+     >
+       <Container maxWidth="sm">
+         <Paper
+           elevation={3}
+           sx={{
+             p: 4,
+             display: 'flex',
+             flexDirection: 'column',
+             alignItems: 'center',
+             borderRadius: 2,
+           }}
+         >
+           <Typography variant="h5" component="h1" gutterBottom>
+             {t('resetPassword.title')}
+           </Typography>
+           {error && (
+             <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+               {error}
+             </Alert>
+           )}
+           {success && (
+             <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
+               {success}
+             </Alert>
+           )}
++          {userEmail && (
++            <Typography gutterBottom>
++              {t('resetPassword.for', { email: userEmail })}
++            </Typography>
++          )}
+           <Box component="form" onSubmit={onSubmit} sx={{ width: '100%' }}>
+             <TextField
+               margin="normal"
+               required
+               fullWidth
+               type="password"
+               label={t('resetPassword.newPassword')}
+               value={password}
+               onChange={(e) => setPassword(e.target.value)}
+             />
+             <TextField
+               margin="normal"
+               required
+               fullWidth
+               type="password"
+               label={t('resetPassword.confirmPassword')}
+               value={confirmPassword}
+               onChange={(e) => setConfirmPassword(e.target.value)}
+             />
+             <Button
+               type="submit"
+               fullWidth
+               variant="contained"
+               color="primary"
+               sx={{ mt: 3 }}
+diff --git a/src/controllers/authController.js b/src/controllers/authController.js
+index 83a73213ab1a28e41f5345d429a27cef4f2e9144..fa497d6515bd9a0b642e64fe28c30055de089ed3 100644
+--- a/src/controllers/authController.js
++++ b/src/controllers/authController.js
+@@ -272,65 +272,90 @@ const updatePassword = async (req, res, next) => {
+     next(err);
+   }
+ };
  
- export const getTutors = (hospital: string, especialidad: string) =>
-   api.get('/users/tutores', { params: { hospital, especialidad } });
+ const forgotPassword = async (req, res, next) => {
+   try {
+     const { email } = req.body;
+     const user = await User.findOne({ email });
+     if (!user) {
+       return next(new ErrorResponse('No existe un usuario con ese email', 404));
+     }
  
--export const getUserResetToken = (id: string) =>
--  api.post(`/users/${id}/reset-token`);
-+export const getUserResetToken = (id: string) =>
-+  api.post(`/users/${id}/reset-password`);
+     // Generar token y establecer expiración (por ejemplo, 1 día)
+     const resetToken = user.getResetPasswordToken(24 * 60 * 60 * 1000);
  
+     await user.save({ validateBeforeSave: false });
  
+     res.status(200).json({ success: true, resetToken });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ const resetPassword = async (req, res, next) => {
+   try {
+-    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
++    const resetPasswordToken = crypto
++      .createHash('sha256')
++      .update(req.params.resettoken)
++      .digest('hex');
+     const user = await User.findOne({
+       resetPasswordToken,
+       resetPasswordExpire: { $gt: Date.now() }
+     });
+ 
+     if (!user) {
+       return next(new ErrorResponse('Token inválido o expirado', 400));
+     }
+ 
+     user.password = req.body.password;
+     user.resetPasswordToken = undefined;
+     user.resetPasswordExpire = undefined;
+     await user.save();
+ 
+     const token = generateToken(user);
+     res.status(200).json({ success: true, token });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
++const getResetPasswordUser = async (req, res, next) => {
++  try {
++    const resetPasswordToken = crypto
++      .createHash('sha256')
++      .update(req.params.token)
++      .digest('hex');
++    const user = await User.findOne({
++      resetPasswordToken,
++      resetPasswordExpire: { $gt: Date.now() }
++    });
++
++    if (!user) {
++      return next(new ErrorResponse('Token inválido o expirado', 400));
++    }
++
++    res.status(200).json({ success: true, email: user.email });
++  } catch (err) {
++    next(err);
++  }
++};
++
+ const generateToken = (user) => {
+   return jwt.sign(
+     { id: user._id, email: user.email, rol: user.rol },
+     config.jwtSecret,
+     { expiresIn: config.jwtExpire }
+   );
+ };
+ 
+ module.exports = {
+   register,
+   login,
+   getMe,
+   updateDetails,
+   updatePassword,
+   forgotPassword,
+   resetPassword,
++  getResetPasswordUser,
+   checkAccessCode
+-};
++};
+diff --git a/src/routes/authRoutes.js b/src/routes/authRoutes.js
+index c456d32cd55ec254b818b4b33419246ffcf090c3..63328cfeaf69ff7a1360c95c24603d069d9c660f 100644
+--- a/src/routes/authRoutes.js
++++ b/src/routes/authRoutes.js
+@@ -1,28 +1,30 @@
+ const express = require('express');
+ const {
+   register,
+   login,
+   getMe,
+   updateDetails,
+   updatePassword,
+   forgotPassword,
+   resetPassword,
++  getResetPasswordUser,
+   checkAccessCode
+ } = require('../controllers/authController');
+ const { protect } = require('../middleware/auth');
+ 
+ const router = express.Router();
+ 
+ // Rutas públicas
+ router.post('/register', register);
+ router.post('/login', login);
+ router.post('/forgotpassword', forgotPassword);
++router.get('/resetpassword/:token', getResetPasswordUser);
+ router.put('/resetpassword/:resettoken', resetPassword);
+ router.get('/codigos/:codigo', checkAccessCode);
+ 
+ // Rutas protegidas
+ router.get('/me', protect, getMe);
+ router.put('/updatedetails', protect, updateDetails);
+ router.put('/updatepassword', protect, updatePassword);
+ 
+ module.exports = router;

@@ -241,6 +241,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancel",
     "create": "Create",
     "creating": "Creating...",
@@ -443,8 +444,8 @@
       "update": "Update"
     },
     "resetEmail": {
-      "subject": "Password reset",
-      "body": "Click the following link to reset your password:\n\n{{link}}"
+      "subject": "Reset your {{app}} password",
+      "body": "Hello {{name}},\n\nYou requested to reset your password for {{app}}. Click the link below to choose a new one:\n\n{{link}}\n\nThis link is personal, valid only once and expires in {{days}} days.\n\nAdministrador del entorno"
     },
     "_comment": "Admin user management",
     "buttons": {
@@ -635,6 +636,7 @@
   },
   "resetPassword": {
     "title": "Reset Password",
+    "for": "Resetting password for {{email}}",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
     "submit": "Change Password",

@@ -118,6 +118,7 @@
     "registerButton": "S'inscrire"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Annuler",
     "create": "Créer",
     "creating": "Création en cours...",
@@ -157,6 +158,7 @@
   },
   "resetPassword": {
     "title": "Réinitialiser le mot de passe",
+    "for": "Réinitialisation du mot de passe pour {{email}}",
     "newPassword": "Nouveau mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "submit": "Changer le mot de passe",
@@ -526,8 +528,8 @@
       "update": "Mettre à jour"
     },
     "resetEmail": {
-      "subject": "Réinitialiser le mot de passe",
-      "body": "Cliquez sur le lien suivant pour réinitialiser votre mot de passe:\n\n{{link}}"
+      "subject": "Réinitialiser le mot de passe de {{app}}",
+      "body": "Bonjour {{name}},\n\nVous avez demandé à réinitialiser votre mot de passe pour {{app}}. Cliquez sur le lien ci-dessous pour en choisir un nouveau :\n\n{{link}}\n\nCe lien est personnel, valable une seule fois et expire dans {{days}} jours.\n\nAdministrador del entorno"
     },
     "_comment": "Gestion des utilisateurs pour les administrateurs",
     "buttons": {
