@@ -1,32 +1,211 @@
-diff --git a/AGENTS.md b/AGENTS.md
-index 7391e1e60d86bd205262146fb439570f48c83558..f5738b485f6c74d457a903fbab558a2e8e256a5f 100644
---- a/AGENTS.md
-+++ b/AGENTS.md
-@@ -33,26 +33,27 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
- - 2025-07-18: Validación de tamaño de archivo en `ResidenteFases` y mensaje de error.
- - 2025-07-21: Banner de desarrollo y fondo rojo claro en `App.tsx` cuando
-   `REACT_APP_ENV` es `dev`.
- - 2025-07-22: userController copia `zona` del hospital y valida rol `coordinador`.
- - 2025-07-22: formData.tipo predeterminado 'Programa Residentes' y ajustes en handleChange
- - 2025-07-30: Eliminada la vista `AdminValidaciones` y ruta `/dashboard/validaciones-admin`; se reemplaza por `informes`.
- - 2025-07-31: Añadidas dependencias `ajv` y `ajv-keywords` al cliente e intento de regenerar el lockfile.
- - 2025-08-01: Localización de AdminConfiguracion y claves `adminConfig` en los archivos de idioma.
- - 2025-08-01: Internacionalización de la página de perfil con nuevas traducciones `profile`.
- - 2025-08-04: Internacionalización de `AdminFases` con claves `adminPhases` y reutilización de textos comunes.
- - 2025-08-30: Creación de la página `PrivacyPolicy` con internacionalización y metadatos de actualización.
- - 2025-08-11: Actualización de roles `'formador'`, `'coordinador'`, `'instructor'` y `'alumno'` a `'tutor'`, `'csm'`, `'profesor'` y `'participante'` en modelos y pruebas.
- - 2025-08-12: Cambio de ruta a `/tutor/validaciones/pendientes` en `progresoRoutes.js`.
- - 2025-08-12: Reemplazo de `comentariosFormador` por `comentariosTutor` en `ResidenteFases` y verificación en `ProgresoResidente`.
- - 2025-08-12: Actualizada la versión de Node a 20 LTS en `.nvmrc`, `package.json` y `netlify.toml` para unificar el entorno.
- - 2025-08-14: Detalle de cirugías en `ResidenteFases` muestra nombre, cirujano y porcentaje de participación.
+diff --git a/client/src/pages/dashboard/AdminUsuarios.test.tsx b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+index f593d1647448bca5dce53d6e3048ded90bf80863..f32900c582b506414f1f8fec7a3e45e457630fb7 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.test.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+@@ -19,64 +19,65 @@ const mockedGet = (api as any).get as jest.Mock;
+ beforeEach(() => {
+   mockedUseAuth.mockReturnValue({ user: { rol: 'administrador' } } as any);
+   i18n.changeLanguage('es');
+ });
  
- - 2025-08-14: Añadida entrada "activityType" en "residentPhases" de los archivos de idioma.
- - 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
- - 2025-09-01: Botón "Crear fase" ahora usa `variant="contained"` y `color="primary"` en `AdminFases` y `AdminFasesSoc`.
- - 2025-09-01: Índices compuestos en `User` y validación de `tutor` solo para residentes.
- - 2025-09-03: Certificados usan `FRONTEND_URL` y footer con enlace dinámico.
- - 2025-09-04: Certificados de sociedades incluyen logo, responsable y texto específicos; eliminada firma.
- - 2025-09-03: Pruebas para ruta de informe de cirugías con Supertest.
- - 2025-09-05: Botones de eliminar y cambiar contraseña movidos al diálogo de edición en `AdminUsuarios`.
-+- 2025-09-08: Eliminado test `AdminProgresoUsuarios` por comportamiento de redirección.
- ⚠️ Este archivo no interfiere con el código ni el despliegue.
+ afterEach(() => {
+   jest.clearAllMocks();
+ });
+ 
+ test('muestra boton Crear progreso cuando no existe progreso', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   expect(await screen.findByText('Crear progreso')).toBeInTheDocument();
+ });
+ 
+-test('no muestra boton cuando tiene progreso', async () => {
++test('muestra boton Ver Progreso cuando tiene progreso', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: true }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   await screen.findByText('Res A');
++  expect(screen.getByText('Ver Progreso')).toBeInTheDocument();
+   expect(screen.queryByText('Crear progreso')).not.toBeInTheDocument();
+ });
+ 
+ test('muestra boton Cambiar contraseña para administradores', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   expect(await screen.findByText('Cambiar contraseña')).toBeInTheDocument();
+ });
+ 
+ test('muestra botones Editar y Eliminar', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
+index ab3a0a69a9431d1289c8d84186b812f4a79380e7..c252703d26939059c8e80b709e8cddac7bae3772 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.tsx
+@@ -6,64 +6,67 @@ import {
+   //Divider,
+   Button,
+   TextField,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogContentText,
+   DialogActions,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   Chip,
+   LinearProgress,
+   Alert,
+   Snackbar,
+   Autocomplete,
+ } from "@mui/material";
+ import {
+   Add as AddIcon,
+   Edit as EditIcon,
+   Delete as DeleteIcon,
+   VpnKey as VpnKeyIcon,
++  TrendingUp as TrendingUpIcon,
+ 
+    //Person as PersonIcon,
+   //Email as EmailIcon
+ } from "@mui/icons-material";
+ import { useAuth } from "../../context/AuthContext";
++import { useNavigate } from "react-router-dom";
+ import api, { createUser, updateUserPassword } from "../../api";
+ import InviteUsersMail from "../../components/InviteUsersMail";
+ import BackButton from "../../components/BackButton";
+ import { useTranslation, Trans } from "react-i18next";
+ import { getRoleChipSx } from "../../utils/roleChipColors";
+ 
+ const AdminUsuarios: React.FC = () => {
+   const { user } = useAuth();
+   const { t } = useTranslation();
++  const navigate = useNavigate();
+   const typeKey = (tipo?: string) =>
+     tipo === "Programa Sociedades"
+       ? "programaSociedades"
+       : tipo === "Programa Residentes"
+       ? "programaResidentes"
+       : "";
+   const rolesResidentes = [
+     "residente",
+     "tutor",
+     "csm",
+     "administrador",
+   ];
+   const rolesSociedades = [
+     "participante",
+     "profesor",
+     "csm",
+     "administrador",
+   ];
+   const zonaOptions = [
+     "NORDESTE",
+     "NORTE",
+     "CENTRO",
+     "ANDALUCÍA",
+     "PORTUGAL",
+     "LEVANTE",
+diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
+index ab3a0a69a9431d1289c8d84186b812f4a79380e7..c252703d26939059c8e80b709e8cddac7bae3772 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.tsx
+@@ -663,50 +666,63 @@ const AdminUsuarios: React.FC = () => {
+                       ? t(`types.${typeKey(usuario.tipo)}`)
+                       : "-"}
+                   </TableCell>
+                   <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
+                   <TableCell>
+                     <Chip
+                       label={t(`roles.${usuario.rol}`)}
+                       size="small"
+                       sx={getRoleChipSx(usuario.rol)}
+                     />
+                   </TableCell>
+                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
+                   <TableCell>{usuario.especialidad || "-"}</TableCell>
+                   <TableCell>{usuario.zona || "-"}</TableCell>
+                   <TableCell align="right">
+                     <Button
+                       variant="outlined"
+                       color="primary"
+                       onClick={() => handleOpenEditarDialog(usuario)}
+                       size="small"
+                       startIcon={<EditIcon />}
+                       sx={{ mr: 1, minWidth: 150 }}
+                     >
+                       {t("adminUsers.actions.edit")}
+                     </Button>
++                    {['residente', 'participante'].includes(usuario.rol) &&
++                      usuario.tieneProgreso && (
++                        <Button
++                          variant="outlined"
++                          color="success"
++                          onClick={() => navigate(`/dashboard/progreso-usuario/${usuario._id}`)}
++                          size="small"
++                          startIcon={<TrendingUpIcon />}
++                          sx={{ mx: 1, minWidth: 150 }}
++                        >
++                          {t('adminUserProgress.viewProgress')}
++                        </Button>
++                      )}
+                     <Button
+                       variant="outlined"
+                       color="error"
+                       onClick={() => handleOpenEliminarDialog(usuario)}
+                       size="small"
+                       startIcon={<DeleteIcon />}
+                       sx={{ mr: 1, minWidth: 150 }}
+                     >
+                       {t("adminUsers.actions.delete")}
+                     </Button>
+                     {user?.rol === "administrador" && (
+                       <Button
+                         variant="outlined"
+                         color="secondary"
+                         onClick={() => handleOpenPasswordDialog(usuario)}
+                         size="small"
+                         startIcon={<VpnKeyIcon />}
+                         sx={{ mr: 1, minWidth: 150 }}
+                       >
+                         {t("adminUsers.actions.changePassword")}
+                       </Button>
+                     )}
+                     {['residente', 'participante'].includes(usuario.rol) &&
+                       !usuario.tieneProgreso && (
+                         <Button

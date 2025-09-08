@@ -71,7 +71,7 @@ test('muestra boton Crear progreso cuando no existe progreso', async () => {
   expect(await screen.findByText('Crear progreso')).toBeInTheDocument();
 });
 
-test('no muestra boton cuando tiene progreso', async () => {
+test('muestra boton Ver Progreso cuando tiene progreso', async () => {
   mockedGet
     .mockResolvedValueOnce({ data: { data: [
       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: true }
@@ -85,6 +85,7 @@ test('no muestra boton cuando tiene progreso', async () => {
     </I18nextProvider>
   );
   await screen.findByText('Res A');
+  expect(screen.getByText('Ver Progreso')).toBeInTheDocument();
   expect(screen.queryByText('Crear progreso')).not.toBeInTheDocument();
 });
 
