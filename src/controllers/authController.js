@@ -316,7 +316,7 @@ const requestPasswordReset = async (req, res, next) => {
       usuario: id,
       tipo: 'passwordReset',
       mensaje: `El usuario ${user.email} ha solicitado un reseteo de contraseña.`,
-      entidadRelacionada: { tipo: 'user', id: user._id }
+      entidadRelacionada: { tipo: 'usuario', id: user._id }
     }));
 
     await Notificacion.insertMany(notificaciones);
