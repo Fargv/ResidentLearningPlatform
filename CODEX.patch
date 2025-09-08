@@ -1,158 +1,73 @@
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index 45ee7b29f37c22a891343e9dff76b4798147d38e..1361bec164ee5dcf2094d212d766af7777b5b636 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -482,136 +482,136 @@ const TutorUsuarios: React.FC = () => {
-             }
-             renderInput={(params) => (
-               <TextField
-                 {...params}
-                 label={t('adminUsers.fields.society')}
-               />
-             )}
-             sx={{ minWidth: 200 }}
-           />
-         )}
-       </Box>
+diff --git a/src/models/User.js b/src/models/User.js
+index f502a5962911671ae2fa0caf40aba9dc0d2d67a8..31e040da343409b2ac430870038f978ce2d29ff1 100644
+--- a/src/models/User.js
++++ b/src/models/User.js
+@@ -107,62 +107,62 @@ userSchema.pre('save', async function(next) {
+   // Solo encriptar si la contraseña ha sido modificada
+   if (!this.isModified('password')) {
+     return next();
+   }
+   
+   // Generar salt y hash
+   const salt = await bcrypt.genSalt(10);
+   this.password = await bcrypt.hash(this.password, salt);
+   next();
+ });
  
-       <Paper>
-         <TableContainer>
-           <Table>
-             <TableHead>
-               <TableRow>
-                 <TableCell>{t('tutorUsers.table.name')}</TableCell>
-                 <TableCell>{t('tutorUsers.table.email')}</TableCell>
-                 <TableCell>{t('adminUsers.table.type')}</TableCell>
-                 <TableCell>{t('adminUsers.table.society')}</TableCell>
-                 <TableCell>{t('adminUsers.table.role')}</TableCell>
-                 <TableCell>{t('adminUsers.table.hospital')}</TableCell>
-                 <TableCell>{t('adminUsers.table.specialty')}</TableCell>
-                 <TableCell>{t('adminUsers.table.zone')}</TableCell>
--                <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
-+                <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
-                 <TableCell>{t('tutorUsers.table.status')}</TableCell>
-+                <TableCell sx={{ width: 40 }} />
-                 <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
-               </TableRow>
-             </TableHead>
-             <TableBody>
-               {displayUsuarios.map(usuario => (
-                 <TableRow key={usuario._id}>
-                   <TableCell>{usuario.nombre} {usuario.apellidos}</TableCell>
-                   <TableCell>{usuario.email}</TableCell>
-                   <TableCell>
-                     {usuario.tipo ? t(`types.${typeKey(usuario.tipo)}`) : '-'}
-                   </TableCell>
-                   <TableCell>{usuario.sociedad?.titulo || '-'}</TableCell>
-                   <TableCell>
-                     <Chip
-                       label={t(`roles.${usuario.rol}`)}
-                       color={
-                         usuario.rol === 'administrador'
-                           ? 'primary'
-                           : usuario.rol === 'tutor'
-                           ? 'secondary'
-                           : 'default'
-                       }
-                       size="small"
-                       sx={getRoleChipSx(usuario.rol)}
-                     />
-                   </TableCell>
-                   <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
-                   <TableCell>{usuario.especialidad || '-'}</TableCell>
-                   <TableCell>{usuario.zona || '-'}</TableCell>
-                   <TableCell>{usuario.faseActual || '-'}</TableCell>
-                   <TableCell>
-                     <Chip
-                       label={t(
-                         usuario.activo
-                           ? 'tutorUsers.states.active'
-                           : 'tutorUsers.states.inactive'
-                       )}
-                       color={usuario.activo ? 'success' : 'error'}
-                       size="small"
-                     />
-                   </TableCell>
--                  <TableCell align="right">
--                    {usuario.fasesCirugia && usuario.fasesCirugia.length > 0 && (
-+                  <TableCell align="center" sx={{ width: 40 }}>
-+                    {usuario.fasesCirugia?.length ? (
-                       <>
--                        <Tooltip
--                          title={t('tutorUsers.actions.downloadSurgeryReport', {
--                            phase: t('adminPhases.phase').toLowerCase(),
--                          })}
--                        >
--                          <IconButton
--                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
--                            sx={{ mr: 1 }}
--                          >
-+                        <Tooltip
-+                          title={t('tutorUsers.actions.downloadSurgeryReport', {
-+                            phase: t('adminPhases.phase').toLowerCase(),
-+                          })}
-+                        >
-+                          <IconButton onClick={(e) => handleOpenInformeMenu(e, usuario)}>
-                             <DownloadIcon />
-                           </IconButton>
-                         </Tooltip>
-                         <Menu
-                           anchorEl={anchorElInforme}
-                           open={
-                             Boolean(anchorElInforme) &&
-                             menuUsuario?._id === usuario._id
-                           }
-                           onClose={handleCloseInformeMenu}
-                         >
-                           {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
-                             <MenuItem
-                               key={fase.id}
-                               onClick={() => {
-                                 handleDownloadInforme(
-                                   fase.id,
-                                   fase.fase,
--                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
-+                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
-                                 );
-                                 handleCloseInformeMenu();
-                               }}
-                             >
--                              {t('tutorUsers.actions.downloadSurgeryReport', {
--                                phase: fase.fase,
--                              })}
-+                              {t('tutorUsers.actions.downloadSurgeryReport', {
-+                                phase: fase.fase,
-+                              })}
-                             </MenuItem>
-                           ))}
-                         </Menu>
-                       </>
--                    )}
-+                    ) : null}
-+                  </TableCell>
-+                  <TableCell align="right">
-                     <IconButton
-                       onClick={() => {
-                         setEditar(true);
-                         setSelected(usuario);
-                         setFormData({
-                           email: usuario.email,
-                           nombre: usuario.nombre,
-                           apellidos: usuario.apellidos,
-                           rol: usuario.rol,
-                           hospital: usuario.hospital?._id || ''
-                         });
-                         setOpenDialog(true);
-                       }}
-                     >
-                       <EditIcon />
-                     </IconButton>
-                   </TableCell>
-                 </TableRow>
-               ))}
-             </TableBody>
-           </Table>
-         </TableContainer>
-       </Paper>
+ // Asegurar que solo los residentes tengan asignado un tutor
+ userSchema.pre('save', function(next) {
+   if (this.rol !== Role.RESIDENTE) {
+     this.tutor = null;
+   }
+   next();
+ });
  
-       <Dialog open={openDialog} onClose={() => handleCloseEditarDialog()}>
+ // Método para comparar contraseñas
+ userSchema.methods.matchPassword = async function(enteredPassword) {
+   return await bcrypt.compare(enteredPassword, this.password);
+ };
+ 
+ // Método para generar token de restablecimiento de contraseña
+-userSchema.methods.getResetPasswordToken = function() {
++userSchema.methods.getResetPasswordToken = function(durationMs = 10 * 60 * 1000) {
+   // Generar token
+   const resetToken = crypto.randomBytes(20).toString('hex');
+-  
++
+   // Hash token y establecer en resetPasswordToken
+   this.resetPasswordToken = crypto
+     .createHash('sha256')
+     .update(resetToken)
+     .digest('hex');
+-    
+-  // Establecer expiración (10 minutos)
+-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+-  
++
++  // Establecer expiración utilizando la duración proporcionada
++  this.resetPasswordExpire = Date.now() + durationMs;
++
+   return resetToken;
+ };
+ 
+ // Método para registrar el último acceso
+ userSchema.methods.updateLastAccess = function() {
+   this.ultimoAcceso = Date.now();
+   return this.save();
+ };
+ 
+ // Método para verificar si el usuario ha dado consentimiento LOPD
+ userSchema.methods.hasConsent = function() {
+   return this.consentimientoDatos === true;
+ };
+ 
+ // Método para registrar consentimiento LOPD
+ userSchema.methods.giveConsent = function() {
+   this.consentimientoDatos = true;
+   this.fechaConsentimiento = Date.now();
+   return this.save();
+ };
+ 
+ const User = mongoose.model('User', userSchema);
+ 
+ module.exports = User;

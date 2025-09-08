@@ -452,6 +452,7 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Cambiar contrasinal",
+      "sendResetLink": "Enviar ligazón de restablecemento",
       "createProgress": "Crear progreso",
       "downloadSurgeryReport": "Descargar informe de {{phase}}"
     },
@@ -509,6 +510,10 @@
       "label": "Novo contrasinal",
       "updating": "Actualizando...",
       "update": "Actualizar"
+    },
+    "resetEmail": {
+      "subject": "Restablecer contrasinal",
+      "body": "Fai clic na seguinte ligazón para restablecer o teu contrasinal:\n\n{{link}}"
     },
     "_comment": "Xestión de usuarios para administradores",
     "buttons": {
@@ -622,6 +627,16 @@
     "description": "Para restablecer o contrasinal, contacta co administrador do sistema.",
     "emailLabel": "O teu correo",
     "submit": "Enviar correo ao administrador",
+    "backToLogin": "Volver ao inicio de sesión"
+  },
+  "resetPassword": {
+    "title": "Restablecer contrasinal",
+    "newPassword": "Novo contrasinal",
+    "confirmPassword": "Confirmar contrasinal",
+    "submit": "Cambiar contrasinal",
+    "success": "O contrasinal actualizouse correctamente. Redirixindo ao inicio de sesión...",
+    "error": "Non se puido actualizar o contrasinal.",
+    "passwordMismatch": "Os contrasinais non coinciden.",
     "backToLogin": "Volver ao inicio de sesión"
   },
   "login": {

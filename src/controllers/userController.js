@@ -12,6 +12,11 @@ const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
 const { resolveTutor } = require('../utils/resolveTutor');
 
+const RESET_PASSWORD_EXPIRE_DAYS = parseInt(
+  process.env.RESET_PASSWORD_EXPIRE_DAYS || '3',
+  10
+);
+
 const legacyRoles = {
   formador: Role.TUTOR,
   coordinador: Role.CSM,
@@ -520,6 +525,38 @@ exports.updateUserPassword = async (req, res, next) => {
     });
 
     res.status(200).json({ success: true, data: {} });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Generar token de reseteo de contraseña para un usuario
+// @route   POST /api/users/:id/reset-password
+// @access  Private/Admin
+exports.generatePasswordResetToken = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return next(
+        new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
+      );
+    }
+
+    const resetToken = user.getResetPasswordToken();
+    user.resetPasswordExpire =
+      Date.now() + RESET_PASSWORD_EXPIRE_DAYS * 24 * 60 * 60 * 1000;
+
+    await user.save({ validateBeforeSave: false });
+
+    await createAuditLog({
+      usuario: req.user._id,
+      accion: 'generar_token_reset_password',
+      descripcion: `Token de reseteo generado para usuario: ${user.email}`,
+      ip: req.ip
+    });
+
+    res.status(200).json({ success: true, resetToken });
   } catch (err) {
     next(err);
   }

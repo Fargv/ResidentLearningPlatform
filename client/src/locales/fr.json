@@ -155,6 +155,16 @@
     "submit": "Envoyer un email à l'administrateur",
     "backToLogin": "Retour à la connexion"
   },
+  "resetPassword": {
+    "title": "Réinitialiser le mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submit": "Changer le mot de passe",
+    "success": "Mot de passe réinitialisé avec succès. Redirection vers la connexion...",
+    "error": "Échec de la réinitialisation du mot de passe.",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "backToLogin": "Retour à la connexion"
+  },
   "login": {
     "title": "Programme Académique da Vinci",
     "subtitle": "Technologies du robot da Vinci",
@@ -456,6 +466,7 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "changePassword": "Changer le mot de passe",
+      "sendResetLink": "Envoyer le lien de réinitialisation",
       "createProgress": "Créer un progrès",
       "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
     },
@@ -513,6 +524,10 @@
       "label": "Nouveau mot de passe",
       "updating": "Mise à jour en cours...",
       "update": "Mettre à jour"
+    },
+    "resetEmail": {
+      "subject": "Réinitialiser le mot de passe",
+      "body": "Cliquez sur le lien suivant pour réinitialiser votre mot de passe:\n\n{{link}}"
     },
     "_comment": "Gestion des utilisateurs pour les administrateurs",
     "buttons": {

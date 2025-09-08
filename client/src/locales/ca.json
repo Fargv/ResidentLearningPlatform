@@ -458,6 +458,7 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Canviar contrasenya",
+      "sendResetLink": "Enviar enllaç de restabliment",
       "createProgress": "Crear progrés",
       "downloadSurgeryReport": "Descarregar informe de {{phase}}"
     },
@@ -515,6 +516,10 @@
       "label": "Nova contrasenya",
       "updating": "Actualitzant...",
       "update": "Actualitzar"
+    },
+    "resetEmail": {
+      "subject": "Restablir contrasenya",
+      "body": "Fes clic al següent enllaç per restablir la teva contrasenya:\n\n{{link}}"
     },
     "_comment": "Gestió d'usuaris per a administradors",
     "buttons": {
@@ -712,6 +717,16 @@
     "emailLabel": "El teu correu",
     "submit": "Enviar correu a l'administrador",
     "backToLogin": "Tornar a iniciar sessió"
+  },
+  "resetPassword": {
+    "title": "Restablir contrasenya",
+    "newPassword": "Nova contrasenya",
+    "confirmPassword": "Confirmar contrasenya",
+    "submit": "Canviar contrasenya",
+    "success": "Contrasenya actualitzada correctament. Redirigint a l'inici de sessió...",
+    "error": "No s'ha pogut actualitzar la contrasenya.",
+    "passwordMismatch": "Les contrasenyes no coincideixen.",
+    "backToLogin": "Tornar a l'inici de sessió"
   },
   "login": {
     "title": "Programa Acadèmic da Vinci",

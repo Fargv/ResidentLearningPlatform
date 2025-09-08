@@ -380,6 +380,7 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Cambiar contraseña",
+      "sendResetLink": "Enviar enlace de reseteo",
       "createProgress": "Crear progreso",
       "downloadSurgeryReport": "Descargar informe de {{phase}}"
     },
@@ -437,6 +438,10 @@
       "label": "Nueva contraseña",
       "updating": "Actualizando...",
       "update": "Actualizar"
+    },
+    "resetEmail": {
+      "subject": "Restablecer contraseña",
+      "body": "Haz clic en el siguiente enlace para restablecer tu contraseña:\n\n{{link}}"
     },
     "_comment": "Gestión de usuarios para administradores",
     "buttons": {
@@ -622,6 +627,16 @@
     "description": "Para resetear la contraseña póngase en contacto con el administrador del sistema.",
     "emailLabel": "Tu email",
     "submit": "Enviar correo al administrador",
+    "backToLogin": "Volver al inicio de sesión"
+  },
+  "resetPassword": {
+    "title": "Restablecer contraseña",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "submit": "Cambiar contraseña",
+    "success": "Contraseña actualizada correctamente. Redirigiendo al inicio de sesión...",
+    "error": "No se pudo actualizar la contraseña.",
+    "passwordMismatch": "Las contraseñas no coinciden.",
     "backToLogin": "Volver al inicio de sesión"
   },
   "login": {

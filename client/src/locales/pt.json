@@ -129,6 +129,16 @@
     "submit": "Enviar email ao administrador",
     "backToLogin": "Voltar ao login"
   },
+  "resetPassword": {
+    "title": "Redefinir palavra-passe",
+    "newPassword": "Nova palavra-passe",
+    "confirmPassword": "Confirmar palavra-passe",
+    "submit": "Alterar palavra-passe",
+    "success": "Palavra-passe atualizada com sucesso. A redirecionar para o início de sessão...",
+    "error": "Não foi possível atualizar a palavra-passe.",
+    "passwordMismatch": "As palavras-passe não coincidem.",
+    "backToLogin": "Voltar ao início de sessão"
+  },
   "login": {
     "title": "Programa Acadêmico da Vinci",
     "subtitle": "Tecnologias do Robô da Vinci",
@@ -538,6 +548,7 @@
       "edit": "Editar",
       "delete": "Excluir",
       "changePassword": "Alterar senha",
+      "sendResetLink": "Enviar link de redefinição",
       "createProgress": "Criar progresso",
       "downloadSurgeryReport": "Baixar relatório de {{phase}}"
     },
@@ -597,6 +608,10 @@
       "label": "Nova senha",
       "updating": "Atualizando...",
       "update": "Atualizar"
+    },
+    "resetEmail": {
+      "subject": "Redefinir senha",
+      "body": "Clique no seguinte link para redefinir sua senha:\n\n{{link}}"
     },
     "_comment": "Gestão de usuários para administradores",
     "buttons": {

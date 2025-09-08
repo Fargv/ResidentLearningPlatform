@@ -233,6 +233,16 @@
     "submit": "Invia email all'amministratore",
     "backToLogin": "Torna al login"
   },
+  "resetPassword": {
+    "title": "Reimposta password",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "submit": "Cambia password",
+    "success": "Password aggiornata con successo. Reindirizzamento al login...",
+    "error": "Impossibile aggiornare la password.",
+    "passwordMismatch": "Le password non coincidono.",
+    "backToLogin": "Torna al login"
+  },
   "login": {
     "title": "Programma Accademico da Vinci",
     "subtitle": "Tecnologie del robot da Vinci",
@@ -601,6 +611,7 @@
       "edit": "Modifica",
       "delete": "Elimina",
       "changePassword": "Cambia password",
+      "sendResetLink": "Invia link di reset",
       "createProgress": "Crea progresso",
       "downloadSurgeryReport": "Scarica il report di {{phase}}"
     },
@@ -658,6 +669,10 @@
       "label": "Nuova password",
       "updating": "Aggiornamento...",
       "update": "Aggiorna"
+    },
+    "resetEmail": {
+      "subject": "Reimpostare la password",
+      "body": "Fai clic sul seguente link per reimpostare la tua password:\n\n{{link}}"
     },
     "_comment": "Gestione utenti per amministratori",
     "buttons": {

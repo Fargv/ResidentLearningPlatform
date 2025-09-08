@@ -40,7 +40,12 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import api, { createUser, updateUserPassword, getTutors } from "../../api";
+import api, {
+  createUser,
+  updateUserPassword,
+  getTutors,
+  getUserResetToken,
+} from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
@@ -290,6 +295,31 @@ const AdminUsuarios: React.FC = () => {
   const handleClosePasswordDialog = () => {
     setOpenPasswordDialog(false);
     setSelectedUsuario(null);
+  };
+
+  const handleSendResetEmail = async (usuario: any) => {
+    try {
+      const res = await getUserResetToken(usuario._id);
+      const resetToken = res.data.resetToken;
+      const frontendUrl =
+        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
+      const subject = encodeURIComponent(
+        t("adminUsers.resetEmail.subject"),
+      );
+      const body = encodeURIComponent(
+        t("adminUsers.resetEmail.body", {
+          link: `${frontendUrl}/reset-password/${resetToken}`,
+        }),
+      );
+      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t("common.error"),
+        severity: "error",
+      });
+    }
   };
 
   const handleChange = (
@@ -1381,6 +1411,15 @@ const AdminUsuarios: React.FC = () => {
               variant="outlined"
             >
               {t("adminUsers.actions.changePassword")}
+            </Button>
+          )}
+          {user?.rol === "administrador" && (
+            <Button
+              onClick={() => handleSendResetEmail(selectedUsuario)}
+              color="info"
+              variant="outlined"
+            >
+              {t("adminUsers.actions.sendResetLink")}
             </Button>
           )}
           <Button

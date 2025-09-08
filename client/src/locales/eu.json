@@ -375,6 +375,7 @@
       "edit": "Editatu",
       "delete": "Ezabatu",
       "changePassword": "Pasahitza aldatu",
+      "sendResetLink": "Berrezartze esteka bidali",
       "createProgress": "Aurrerapena sortu",
       "downloadSurgeryReport": "Deskargatu {{phase}} txostena"
     },
@@ -432,6 +433,10 @@
       "label": "Pasahitz berria",
       "updating": "Eguneratzen...",
       "update": "Eguneratu"
+    },
+    "resetEmail": {
+      "subject": "Pasahitza berrezarri",
+      "body": "Egin klik hurrengo estekan zure pasahitza berrezartzeko:\n\n{{link}}"
     },
     "_comment": "Administratzaileentzako erabiltzaileen kudeaketa",
     "buttons": {
@@ -618,6 +623,16 @@
     "emailLabel": "Zure emaila",
     "submit": "Bidali emaila administratzaileari",
     "backToLogin": "Itzuli saioa hasteko"
+  },
+  "resetPassword": {
+    "title": "Pasahitza berrezarri",
+    "newPassword": "Pasahitz berria",
+    "confirmPassword": "Pasahitz berria baieztatu",
+    "submit": "Pasahitza aldatu",
+    "success": "Pasahitza behar bezala aldatu da. Saio-hasierara birbideratzen...",
+    "error": "Pasahitza ezin izan da aldatu.",
+    "passwordMismatch": "Pasahitzak ez datoz bat.",
+    "backToLogin": "Itzuli saio-hasierara"
   },
   "login": {
     "title": "Da Vinci Akademia Programa",

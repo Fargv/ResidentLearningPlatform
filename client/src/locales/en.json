@@ -381,6 +381,7 @@
       "edit": "Edit",
       "delete": "Delete",
       "changePassword": "Change password",
+      "sendResetLink": "Send reset link",
       "createProgress": "Create progress",
       "downloadSurgeryReport": "Download report for {{phase}}"
     },
@@ -440,6 +441,10 @@
       "label": "New password",
       "updating": "Updating...",
       "update": "Update"
+    },
+    "resetEmail": {
+      "subject": "Password reset",
+      "body": "Click the following link to reset your password:\n\n{{link}}"
     },
     "_comment": "Admin user management",
     "buttons": {
@@ -626,6 +631,16 @@
     "description": "To reset the password please contact the system administrator.",
     "emailLabel": "Your email",
     "submit": "Send email to administrator",
+    "backToLogin": "Back to login"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Change Password",
+    "success": "Password successfully reset. Redirecting to login...",
+    "error": "Failed to reset password.",
+    "passwordMismatch": "Passwords do not match.",
     "backToLogin": "Back to login"
   },
   "login": {

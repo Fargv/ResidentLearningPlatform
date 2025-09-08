@@ -127,6 +127,16 @@
     "submit": "E-Mail an Administrator senden",
     "backToLogin": "Zurück zur Anmeldung"
   },
+  "resetPassword": {
+    "title": "Passwort zurücksetzen",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "submit": "Passwort ändern",
+    "success": "Passwort erfolgreich geändert. Weiterleitung zum Login...",
+    "error": "Passwort konnte nicht geändert werden.",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+    "backToLogin": "Zurück zum Login"
+  },
   "login": {
     "title": "Da Vinci Ausbildungsprogramm",
     "subtitle": "Technologien des Da Vinci Roboters",
@@ -604,6 +614,7 @@
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "changePassword": "Passwort ändern",
+      "sendResetLink": "Reset-Link senden",
       "createProgress": "Fortschritt erstellen",
       "downloadSurgeryReport": "Bericht für {{phase}} herunterladen"
     },
@@ -661,6 +672,10 @@
       "label": "Neues Passwort",
       "updating": "Aktualisiere...",
       "update": "Aktualisieren"
+    },
+    "resetEmail": {
+      "subject": "Passwort zurücksetzen",
+      "body": "Klicke auf den folgenden Link, um dein Passwort zurückzusetzen:\n\n{{link}}"
     },
     "_comment": "Benutzerverwaltung",
     "buttons": {

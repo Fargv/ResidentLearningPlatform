@@ -11,6 +11,7 @@ const {
   updateUser,
   updateUserStatus,
   updateUserPassword,
+  generatePasswordResetToken,
   inviteUser,
   getInvitations,
   cancelInvitation,
@@ -62,6 +63,9 @@ router.route('/:id')
 
 router.route('/:id/password')
   .put(authorize(Role.ADMINISTRADOR), updateUserPassword);
+
+router.route('/:id/reset-password')
+  .post(authorize(Role.ADMINISTRADOR), generatePasswordResetToken);
 
 router.route('/:id/status')
   .put(authorize(Role.ADMINISTRADOR), updateUserStatus);

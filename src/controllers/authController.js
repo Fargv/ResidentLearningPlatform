@@ -281,9 +281,8 @@ const forgotPassword = async (req, res, next) => {
       return next(new ErrorResponse('No existe un usuario con ese email', 404));
     }
 
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+    // Generar token y establecer expiración (por ejemplo, 1 día)
+    const resetToken = user.getResetPasswordToken(24 * 60 * 60 * 1000);
 
     await user.save({ validateBeforeSave: false });
 
