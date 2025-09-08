@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
+const { Role } = require('../utils/roles');
 
 const {
   getNotificacionesUsuario,
   getNotificacionesNoLeidas,
   marcarComoLeida,
   marcarTodasComoLeidas,
-  eliminarNotificacion
+  eliminarNotificacion,
+  clearPasswordResetNotifications
 } = require('../controllers/notificacionController');
 
 // Todas las rutas requieren autenticación
@@ -26,6 +28,12 @@ router.route('/:id/leer')
 
 router.route('/leer-todas')
   .put(marcarTodasComoLeidas);
+
+router.delete(
+  '/password-reset/:userId',
+  authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM),
+  clearPasswordResetNotifications
+);
 
 // Ruta para eliminar notificación
 router.route('/:id')

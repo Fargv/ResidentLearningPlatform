@@ -623,7 +623,9 @@
     "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
     "emailLabel": "Zure emaila",
     "submit": "Bidali emaila administratzaileari",
-    "backToLogin": "Itzuli saioa hasteko"
+    "backToLogin": "Itzuli saioa hasteko",
+    "requestSent": "Eskaera bidalia.",
+    "error": "Errorea eskaera bidaltzean."
   },
   "resetPassword": {
     "title": "Pasahitza berrezarri",
@@ -706,7 +708,13 @@
       "viewed": "Ez dago ikusitako jakinarazpenik"
     },
     "errorLoad": "Errorea jakinarazpenak kargatzean",
-    "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean"
+    "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean",
+    "actions": {
+      "sendResetLink": "Esteka bidali"
+    },
+    "messages": {
+      "resetRequest": "Pasahitza berrezartzeko eskaera"
+    }
   },
   "codes": {
     "new": "Kode berria",

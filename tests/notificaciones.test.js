@@ -1,7 +1,8 @@
 const {
   getNotificacionesUsuario,
   marcarComoLeida,
-  eliminarNotificacion
+  eliminarNotificacion,
+  crearNotificacion
 } = require('../src/controllers/notificacionController');
 const Notificacion = require('../src/models/Notificacion');
 
@@ -59,5 +60,15 @@ describe('notificacionController', () => {
     expect(notif.remove).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ success: true, data: {} });
+  });
+
+  test('crearNotificacion acepta tipo passwordReset', async () => {
+    const datos = { usuario: 'u1', tipo: 'passwordReset', mensaje: 'Reset' };
+    jest.spyOn(Notificacion, 'create').mockResolvedValue(datos);
+
+    const res = await crearNotificacion(datos);
+
+    expect(Notificacion.create).toHaveBeenCalledWith(datos);
+    expect(res).toEqual(datos);
   });
 });

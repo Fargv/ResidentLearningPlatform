@@ -7,6 +7,8 @@ import Notificaciones from './Notificaciones';
 jest.mock('../../api', () => ({
   getNotificaciones: jest.fn(),
   marcarNotificacionLeida: jest.fn(),
+  getUserResetToken: jest.fn(),
+  clearResetNotifications: jest.fn(),
 }));
 
 let mockedNavigate: jest.Mock;

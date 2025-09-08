@@ -5,6 +5,7 @@ import {
   Box,
   Typography,
   IconButton,
+  Button,
   CircularProgress,
   Alert,
   Chip,
@@ -21,7 +22,9 @@ import {
 import DoneIcon from '@mui/icons-material/Done';
 import {
   getNotificaciones,
-  marcarNotificacionLeida
+  marcarNotificacionLeida,
+  getUserResetToken,
+  clearResetNotifications
 } from '../../api';
 
 interface TabPanelProps {
@@ -53,6 +56,10 @@ interface Notificacion {
   leida: boolean;
   tipo?: string;
   enlace?: string;
+  entidadRelacionada?: {
+    id: string;
+    tipo?: string;
+  };
 }
 
 interface NotificacionesProps {
@@ -98,6 +105,47 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
       onChange?.();
     } catch (err: any) {
       console.error('Error marcando notificación como leída', err);
+    }
+  };
+
+  const handleSendResetLink = async (n: Notificacion) => {
+    if (!n.entidadRelacionada?.id) return;
+    try {
+      const res = await getUserResetToken(n.entidadRelacionada.id);
+      const data = res.data.data || res.data;
+      const { resetToken, email, name } = data;
+      const frontendUrl =
+        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
+      const days = parseInt(
+        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
+        10
+      );
+      const subject = encodeURIComponent(
+        t('adminUsers.resetEmail.subject', { app: t('common.appName') })
+      );
+      const body = encodeURIComponent(
+        t('adminUsers.resetEmail.body', {
+          name,
+          app: t('common.appName'),
+          link: `${frontendUrl}/reset-password/${resetToken}`,
+          days
+        })
+      );
+      const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+      await clearResetNotifications(n.entidadRelacionada.id);
+      setPendientes((prev) =>
+        prev.filter(
+          (p) =>
+            !(
+              p.tipo === 'passwordReset' &&
+              p.entidadRelacionada?.id === n.entidadRelacionada?.id
+            )
+        )
+      );
+      onChange?.();
+    } catch (err) {
+      console.error('Error sending reset link', err);
     }
   };
 
@@ -167,28 +215,47 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
                       <TableRow
                         key={n._id}
                         onClick={async () => {
-                          if (n.enlace) {
+                          if (n.tipo === 'passwordReset') {
+                            await handleSendResetLink(n);
+                          } else if (n.enlace) {
                             await handleMarcarLeida(n._id);
                             navigate(n.enlace);
                           }
                         }}
-                        sx={{ cursor: n.enlace ? 'pointer' : 'default' }}
+                        sx={{ cursor: n.enlace || n.tipo === 'passwordReset' ? 'pointer' : 'default' }}
                       >
-                        <TableCell>{n.mensaje}</TableCell>
+                        <TableCell>
+                          {n.tipo === 'passwordReset'
+                            ? t('notifications.messages.resetRequest')
+                            : n.mensaje}
+                        </TableCell>
                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
                         <TableCell>
                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton
-                            aria-label="read"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleMarcarLeida(n._id);
-                            }}
-                          >
-                            <DoneIcon />
-                          </IconButton>
+                          {n.tipo === 'passwordReset' ? (
+                            <Button
+                              size="small"
+                              variant="contained"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSendResetLink(n);
+                              }}
+                            >
+                              {t('notifications.actions.sendResetLink')}
+                            </Button>
+                          ) : (
+                            <IconButton
+                              aria-label="read"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleMarcarLeida(n._id);
+                              }}
+                            >
+                              <DoneIcon />
+                            </IconButton>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}

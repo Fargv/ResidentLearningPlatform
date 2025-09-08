@@ -65,7 +65,7 @@ router.route('/:id/password')
   .put(authorize(Role.ADMINISTRADOR), updateUserPassword);
 
 router.route('/:id/reset-password')
-  .post(authorize(Role.ADMINISTRADOR), generatePasswordResetToken);
+  .post(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), generatePasswordResetToken);
 
 router.route('/:id/status')
   .put(authorize(Role.ADMINISTRADOR), updateUserStatus);

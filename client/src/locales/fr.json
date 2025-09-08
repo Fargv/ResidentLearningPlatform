@@ -154,7 +154,9 @@
     "description": "Pour réinitialiser votre mot de passe, veuillez contacter l’administrateur du système.",
     "emailLabel": "Votre email",
     "submit": "Envoyer un email à l'administrateur",
-    "backToLogin": "Retour à la connexion"
+    "backToLogin": "Retour à la connexion",
+    "requestSent": "Demande envoyée.",
+    "error": "Erreur lors de l'envoi de la demande."
   },
   "resetPassword": {
     "title": "Réinitialiser le mot de passe",
@@ -219,7 +221,13 @@
       "viewed": "Aucune notification vue"
     },
     "errorLoad": "Erreur lors du chargement des notifications",
-    "errorMarkAsRead": "Erreur lors du marquage de la notification comme lue"
+    "errorMarkAsRead": "Erreur lors du marquage de la notification comme lue",
+    "actions": {
+      "sendResetLink": "Envoyer le lien"
+    },
+    "messages": {
+      "resetRequest": "Demande de réinitialisation du mot de passe"
+    }
   },
   "codes": {
     "new": "Nouveau code",

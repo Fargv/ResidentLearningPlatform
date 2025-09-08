@@ -45,6 +45,7 @@ import api, {
   updateUserPassword,
   getTutors,
   getUserResetToken,
+  clearResetNotifications,
 } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
@@ -320,6 +321,7 @@ const AdminUsuarios: React.FC = () => {
       );
       const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
       window.location.href = mailtoLink;
+      await clearResetNotifications(usuario._id);
     } catch (err: any) {
       setSnackbar({
         open: true,

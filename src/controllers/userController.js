@@ -556,7 +556,7 @@ exports.generatePasswordResetToken = async (req, res, next) => {
       ip: req.ip
     });
 
-    res.status(200).json({ success: true, resetToken });
+    res.status(200).json({ success: true, resetToken, email: user.email, name: user.nombre });
   } catch (err) {
     next(err);
   }

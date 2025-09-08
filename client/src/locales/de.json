@@ -126,7 +126,9 @@
     "description": "Um Ihr Passwort zurückzusetzen, wenden Sie sich bitte an den Systemadministrator.",
     "emailLabel": "Ihre E-Mail",
     "submit": "E-Mail an Administrator senden",
-    "backToLogin": "Zurück zur Anmeldung"
+    "backToLogin": "Zurück zur Anmeldung",
+    "requestSent": "Anfrage gesendet.",
+    "error": "Fehler beim Senden der Anfrage."
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
@@ -191,7 +193,13 @@
       "viewed": "Keine angesehenen Benachrichtigungen"
     },
     "errorLoad": "Fehler beim Laden der Benachrichtigungen",
-    "errorMarkAsRead": "Fehler beim Markieren als gelesen"
+    "errorMarkAsRead": "Fehler beim Markieren als gelesen",
+    "actions": {
+      "sendResetLink": "Link senden"
+    },
+    "messages": {
+      "resetRequest": "Anforderung zum Zurücksetzen des Passworts"
+    }
   },
   "codes": {
     "new": "Neuer Code",

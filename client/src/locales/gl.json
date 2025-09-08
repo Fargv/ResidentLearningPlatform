@@ -628,7 +628,9 @@
     "description": "Para restablecer o contrasinal, contacta co administrador do sistema.",
     "emailLabel": "O teu correo",
     "submit": "Enviar correo ao administrador",
-    "backToLogin": "Volver ao inicio de sesión"
+    "backToLogin": "Volver ao inicio de sesión",
+    "requestSent": "Solicitude enviada.",
+    "error": "Erro ao enviar a solicitude."
   },
   "resetPassword": {
     "title": "Restablecer contrasinal",
@@ -693,7 +695,13 @@
       "viewed": "Non hai notificacións vistas"
     },
     "errorLoad": "Erro ao cargar as notificacións",
-    "errorMarkAsRead": "Erro ao marcar a notificación como lida"
+    "errorMarkAsRead": "Erro ao marcar a notificación como lida",
+    "actions": {
+      "sendResetLink": "Enviar ligazón"
+    },
+    "messages": {
+      "resetRequest": "Solicitude de restablecemento do contrasinal"
+    }
   },
   "codes": {
     "new": "Novo código",

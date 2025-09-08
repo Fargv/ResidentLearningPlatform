@@ -38,4 +38,10 @@ export const getTutors = (hospital: string, especialidad: string) =>
 export const getUserResetToken = (id: string) =>
   api.post(`/users/${id}/reset-password`);
 
+export const clearResetNotifications = (userId: string) =>
+  api.delete(`/notificaciones/password-reset/${userId}`);
+
+export const requestPasswordReset = (email: string) =>
+  api.post('/auth/request-reset', { email });
+
 

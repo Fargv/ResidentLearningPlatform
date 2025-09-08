@@ -232,7 +232,9 @@
     "description": "Per reimpostare la password, contatta l'amministratore del sistema.",
     "emailLabel": "La tua email",
     "submit": "Invia email all'amministratore",
-    "backToLogin": "Torna al login"
+    "backToLogin": "Torna al login",
+    "requestSent": "Richiesta inviata.",
+    "error": "Errore durante l'invio della richiesta."
   },
   "resetPassword": {
     "title": "Reimposta password",
@@ -297,7 +299,13 @@
       "viewed": "Nessuna notifica vista"
     },
     "errorLoad": "Errore durante il caricamento delle notifiche",
-    "errorMarkAsRead": "Errore nel segnare la notifica come letta"
+    "errorMarkAsRead": "Errore nel segnare la notifica come letta",
+    "actions": {
+      "sendResetLink": "Invia link"
+    },
+    "messages": {
+      "resetRequest": "Richiesta di reimpostazione della password"
+    }
   },
   "codes": {
     "new": "Nuovo codice",

@@ -5,6 +5,7 @@ const {
   getMe,
   updateDetails,
   updatePassword,
+  requestPasswordReset,
   forgotPassword,
   resetPassword,
   getResetPasswordUser,
@@ -20,6 +21,7 @@ router.post('/login', login);
 router.post('/forgotpassword', forgotPassword);
 router.get('/resetpassword/:token', getResetPasswordUser);
 router.put('/resetpassword/:resettoken', resetPassword);
+router.post('/request-reset', requestPasswordReset);
 router.get('/codigos/:codigo', checkAccessCode);
 
 // Rutas protegidas

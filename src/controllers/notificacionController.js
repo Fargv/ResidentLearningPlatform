@@ -123,6 +123,25 @@ exports.eliminarNotificacion = async (req, res, next) => {
   }
 };
 
+// @desc    Eliminar notificaciones de reseteo de contraseña de un usuario
+// @route   DELETE /api/notificaciones/password-reset/:userId
+// @access  Private
+exports.clearPasswordResetNotifications = async (req, res, next) => {
+  try {
+    await Notificacion.deleteMany({
+      tipo: 'passwordReset',
+      'entidadRelacionada.id': req.params.userId
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Crear una notificación (para uso interno)
 // @access  Private
 exports.crearNotificacion = async (datos) => {

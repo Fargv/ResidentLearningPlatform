@@ -628,7 +628,9 @@
     "description": "Para resetear la contraseña póngase en contacto con el administrador del sistema.",
     "emailLabel": "Tu email",
     "submit": "Enviar correo al administrador",
-    "backToLogin": "Volver al inicio de sesión"
+    "backToLogin": "Volver al inicio de sesión",
+    "requestSent": "Solicitud enviada.",
+    "error": "Error al enviar la solicitud."
   },
   "resetPassword": {
     "title": "Restablecer contraseña",
@@ -711,7 +713,13 @@
       "viewed": "No hay notificaciones vistas"
     },
     "errorLoad": "Error al cargar notificaciones",
-    "errorMarkAsRead": "Error marcando notificación como leída"
+    "errorMarkAsRead": "Error marcando notificación como leída",
+    "actions": {
+      "sendResetLink": "Enviar enlace"
+    },
+    "messages": {
+      "resetRequest": "Solicitud de restablecimiento de contraseña"
+    }
   },
   "codes": {
     "new": "Nuevo Código",

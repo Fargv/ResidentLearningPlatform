@@ -7,6 +7,7 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const AccessCode = require('../models/AccessCode');
 const Hospital = require('../models/Hospital');
+const Notificacion = require('../models/Notificacion');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
@@ -273,6 +274,58 @@ const updatePassword = async (req, res, next) => {
   }
 };
 
+const requestPasswordReset = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }).populate('hospital');
+
+    if (!user) {
+      return next(new ErrorResponse('No existe un usuario con ese email', 404));
+    }
+
+    const destinatarios = new Set();
+
+    if (user.tutor) {
+      destinatarios.add(user.tutor.toString());
+    }
+
+    let zona;
+    if (user.hospital) {
+      const hospital = user.hospital.zona ? user.hospital : await Hospital.findById(user.hospital);
+      zona = hospital?.zona;
+    }
+
+    if (zona) {
+      const csms = await User.find({ rol: Role.CSM, zona }).select('_id');
+      csms.forEach((u) => destinatarios.add(u._id.toString()));
+    }
+
+    const admins = await User.find({ rol: Role.ADMINISTRADOR }).select('_id');
+    admins.forEach((u) => destinatarios.add(u._id.toString()));
+
+    if (user.hospital) {
+      const tutoresAll = await User.find({
+        rol: { $in: [Role.TUTOR, Role.PROFESOR] },
+        hospital: user.hospital._id || user.hospital,
+        especialidad: 'ALL'
+      }).select('_id');
+      tutoresAll.forEach((u) => destinatarios.add(u._id.toString()));
+    }
+
+    const notificaciones = Array.from(destinatarios).map((id) => ({
+      usuario: id,
+      tipo: 'passwordReset',
+      mensaje: `El usuario ${user.email} ha solicitado un reseteo de contraseña.`
+    }));
+
+    await Notificacion.insertMany(notificaciones);
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -354,6 +407,7 @@ module.exports = {
   getMe,
   updateDetails,
   updatePassword,
+  requestPasswordReset,
   forgotPassword,
   resetPassword,
   getResetPasswordUser,

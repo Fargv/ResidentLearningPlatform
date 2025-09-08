@@ -717,7 +717,9 @@
     "description": "Per restablir la contrasenya posa't en contacte amb l'administrador del sistema.",
     "emailLabel": "El teu correu",
     "submit": "Enviar correu a l'administrador",
-    "backToLogin": "Tornar a iniciar sessió"
+    "backToLogin": "Tornar a iniciar sessió",
+    "requestSent": "Sol·licitud enviada.",
+    "error": "Error en enviar la sol·licitud."
   },
   "resetPassword": {
     "title": "Restablir contrasenya",
@@ -782,7 +784,13 @@
       "viewed": "No hi ha notificacions vistes"
     },
     "errorLoad": "Error en carregar les notificacions",
-    "errorMarkAsRead": "Error en marcar la notificació com a llegida"
+    "errorMarkAsRead": "Error en marcar la notificació com a llegida",
+    "actions": {
+      "sendResetLink": "Enviar enllaç"
+    },
+    "messages": {
+      "resetRequest": "Sol·licitud de restabliment de contrasenya"
+    }
   },
   "codes": {
     "new": "Nou codi",

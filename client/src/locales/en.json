@@ -632,7 +632,9 @@
     "description": "To reset the password please contact the system administrator.",
     "emailLabel": "Your email",
     "submit": "Send email to administrator",
-    "backToLogin": "Back to login"
+    "backToLogin": "Back to login",
+    "requestSent": "Request sent.",
+    "error": "Error sending request."
   },
   "resetPassword": {
     "title": "Reset Password",
@@ -716,7 +718,13 @@
       "viewed": "No viewed notifications"
     },
     "errorLoad": "Error loading notifications",
-    "errorMarkAsRead": "Error marking notification as read"
+    "errorMarkAsRead": "Error marking notification as read",
+    "actions": {
+      "sendResetLink": "Send link"
+    },
+    "messages": {
+      "resetRequest": "Password reset request"
+    }
   },
   "codes": {
     "new": "New Code",
