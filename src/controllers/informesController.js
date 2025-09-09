@@ -13,7 +13,7 @@ const ProgresoResidente = require('../models/ProgresoResidente');
  * Exporta usuarios en CSV o XLSX.
  * GET /informes/usuarios?format=csv|xlsx
  */
-exports.exportarUsuarios = async (req, res, next) => {
+const exportarUsuarios = async (req, res, next) => {
   try {
     const usuarios = await User.find().lean();
 
@@ -89,7 +89,7 @@ exports.exportarUsuarios = async (req, res, next) => {
  * Exporta listado de Actividades por Fase (para residentes) en XLSX.
  * GET /informes/actividades-residentes
  */
-exports.exportarActividadesResidentes = async (req, res, next) => {
+const exportarActividadesResidentes = async (req, res, next) => {
   try {
     // Cargamos todas las fases con sus actividades
     const fases = await Fase.find().populate('actividades').lean();
@@ -157,7 +157,7 @@ exports.exportarActividadesResidentes = async (req, res, next) => {
  * Exporta actividades del Programa Sociedades (CSV o XLSX).
  * GET /informes/actividades-sociedades?format=csv|xlsx
  */
-exports.exportarActividadesSociedades = async (req, res, next) => {
+const exportarActividadesSociedades = async (req, res, next) => {
   try {
     const { format } = req.query;
     const fases = await FaseSoc.find().populate('actividades').lean();
@@ -271,7 +271,7 @@ exports.exportarActividadesSociedades = async (req, res, next) => {
  * Exporta el progreso detallado de usuarios (CSV o XLSX).
  * GET /informes/progreso-usuarios?formato=csv|xlsx
  */
-exports.exportarProgresoUsuarios = async (req, res, next) => {
+const exportarProgresoUsuarios = async (req, res, next) => {
   try {
     const formato = (req.query.formato || 'xlsx').toLowerCase();
     const progresos = await ProgresoResidente.find()
