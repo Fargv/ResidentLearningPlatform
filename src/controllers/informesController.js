@@ -2,7 +2,7 @@
 const path = require('path');
 const fs = require('fs');
 const ExcelJS = require('exceljs');
-const { Parser } = require('json2csv');
+const { Parser } = require('@json2csv/plainjs');
 
 const User = require('../models/User');
 const Fase = require('../models/Fase');
