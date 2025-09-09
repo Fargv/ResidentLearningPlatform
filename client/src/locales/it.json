@@ -20,7 +20,9 @@
     "notifications": "Notifiche",
     "profile": "Profilo",
     "users": "Utenti",
-    "logout": "Disconnetti"
+    "logout": "Disconnetti",
+    "reports": "Report",
+    "download": "Scarica"
   },
   "adminConfig": {
     "title": "Configurazione",

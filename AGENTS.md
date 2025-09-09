@@ -58,4 +58,7 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-09-08: Eliminado test `AdminProgresoUsuarios` por comportamiento de redirección.
 - 2025-09-08: Endpoint `getResetPasswordUser`, ruta asociada y localización `resetPassword.for`.
 - 2025-09-08: `requestPasswordReset` añade `entidadRelacionada` del usuario; manejo de email inexistente en cliente y prueba.
+- 2025-09-08: Exportación de actividades de sociedades en CSV/XLSX y botón en `AdminInformes`.
+- 2025-09-08: `requestPasswordReset` añade `entidadRelacionada` del usuario; manejo de email inexistente en cliente y prueba.
+- 2025-09-09: Exportación de progreso de usuarios a CSV/XLSX con página `AdminInformes` y nueva ruta protegida.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

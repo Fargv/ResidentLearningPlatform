@@ -22,6 +22,7 @@ import {
   School as SchoolIcon,
   People as PeopleIcon,
   Settings as SettingsIcon,
+  Assessment as AssessmentIcon,
   Person as PersonIcon,
   Notifications as NotificationsIcon,
   WorkspacePremium as WorkspacePremiumIcon
@@ -413,6 +414,11 @@ const DashboardHome: React.FC = () => {
 
   if (user?.rol === "administrador") {
     actions.push(
+      {
+        label: t('actions.reports'),
+        path: "/dashboard/informes",
+        icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
+      },
       {
         label: t('actions.settings'),
         path: "/dashboard/config",

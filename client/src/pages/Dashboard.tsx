@@ -28,12 +28,14 @@ import {
   People as PeopleIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
+  Assessment as AssessmentIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
   Settings as SettingsIcon,
   Brightness4 as Brightness4Icon,
-  Brightness7 as Brightness7Icon
+  Brightness7 as Brightness7Icon,
+  Description as DescriptionIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -57,6 +59,7 @@ import AdminAccessCodes from './dashboard/AdminAccessCodes';
 import AdminConfiguracion from './dashboard/AdminConfiguracion';
 import AdminCirugias from './dashboard/AdminCirugias';
 import LanguageSelector from '../components/LanguageSelector';
+import AdminInformes from './dashboard/AdminInformes';
 
 const drawerWidth = 240;
 
@@ -126,6 +129,7 @@ const Dashboard: React.FC = () => {
     if (user?.rol === 'administrador') {
       items.push(
         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+        { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
     }
@@ -299,6 +303,9 @@ const Dashboard: React.FC = () => {
   )}
   {user?.rol === 'administrador' && (
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/informes" element={<AdminInformes />} />
   )}
   {user?.rol === 'administrador' && (
     <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />

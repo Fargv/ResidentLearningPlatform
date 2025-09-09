@@ -20,7 +20,9 @@
     "notifications": "Benachrichtigungen",
     "profile": "Profil",
     "users": "Benutzer",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "reports": "Berichte",
+    "download": "Herunterladen"
   },
   "adminConfig": {
     "title": "Konfiguration",

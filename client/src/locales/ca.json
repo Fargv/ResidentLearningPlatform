@@ -19,7 +19,9 @@
     "notifications": "Notificacions",
     "profile": "Perfil",
     "users": "Usuaris",
+    "reports": "Informes",
     "logout": "Tancar sessió",
+    "download": "Descarregar",
     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Error en descarregar l'informe de cirurgies"
   },

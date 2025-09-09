@@ -20,7 +20,9 @@
     "notifications": "Jakinarazpenak",
     "profile": "Profila",
     "users": "Erabiltzaileak",
-    "logout": "Saioa itxi"
+    "logout": "Saioa itxi",
+    "reports": "Txostenak",
+    "download": "Deskargatu"
   },
   "adminConfig": {
     "title": "Konfigurazioa",

@@ -20,7 +20,9 @@
     "notifications": "Notificações",
     "profile": "Perfil",
     "users": "Usuários",
+    "reports": "Relatórios",
     "logout": "Sair",
+    "download": "Baixar",
     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Erro ao baixar relatório de cirurgias"
   },

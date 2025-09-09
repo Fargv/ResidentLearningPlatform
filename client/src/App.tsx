@@ -34,6 +34,7 @@ import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
 import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
+import AdminInformes from './pages/dashboard/AdminInformes';
 
 
 declare global {
@@ -143,6 +144,11 @@ function App() {
                   </AdminRoute>
                 }
               />
+              <Route path="informes" element={
+                <AdminRoute>
+                  <AdminInformes />
+                </AdminRoute>
+              } />
 
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />
