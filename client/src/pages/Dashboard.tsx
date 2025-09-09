@@ -28,7 +28,6 @@ import {
   People as PeopleIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
-  Assessment as AssessmentIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
