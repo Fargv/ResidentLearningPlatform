@@ -993,5 +993,8 @@
   "privacyPolicy": {
     "title": "Pribatutasun politika",
     "lastUpdated": "Azken eguneratzea: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Ospitaleak"
   }
 }

@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Fase = require('../models/Fase');
 const FaseSoc = require('../models/FaseSoc');
 const ProgresoResidente = require('../models/ProgresoResidente');
+const Hospital = require('../models/Hospital');
 
 /**
  * Exporta usuarios en CSV o XLSX.
@@ -73,6 +74,75 @@ const exportarUsuarios = async (req, res, next) => {
 
     res.download(filePath, fileName, (err) => {
       // Limpieza del temporal, ocurra o no error de envío
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error('Error eliminando informe temporal', unlinkErr);
+        }
+      });
+      if (err) next(err);
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Exporta hospitales en CSV o XLSX.
+ * GET /informes/hospitales?format=csv|xlsx
+ */
+const exportarHospitales = async (req, res, next) => {
+  try {
+    const hospitales = await Hospital.find().lean();
+
+    const fields = hospitales.length > 0 ? Object.keys(hospitales[0]) : [];
+
+    const rows = hospitales.map((hospital) =>
+      fields.map((field) => {
+        const value = hospital[field];
+        if (value instanceof Date) return value.toISOString();
+        if (typeof value === 'object' && value !== null) {
+          return JSON.stringify(value);
+        }
+        return value;
+      }),
+    );
+
+    const uploadDir = path.join(__dirname, '../../public/uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+
+    const format = req.query.format === 'csv' ? 'csv' : 'xlsx';
+    const fileName = `Hospitales_${timestamp}.${format}`;
+    const filePath = path.join(uploadDir, fileName);
+
+    if (format === 'csv') {
+      const parser = new Parser({ fields });
+      const csv = parser.parse(hospitales);
+      fs.writeFileSync(filePath, csv);
+      res.set('Content-Type', 'text/csv');
+    } else {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Hospitales');
+
+      worksheet.addTable({
+        name: 'Hospitales',
+        ref: 'A1',
+        headerRow: true,
+        style: { theme: 'TableStyleMedium2', showRowStripes: true },
+        columns: fields.map((f) => ({ name: f })),
+        rows,
+      });
+
+      await workbook.xlsx.writeFile(filePath);
+      res.set(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
+    }
+
+    res.download(filePath, fileName, (err) => {
       fs.unlink(filePath, (unlinkErr) => {
         if (unlinkErr) {
           console.error('Error eliminando informe temporal', unlinkErr);
@@ -366,6 +436,7 @@ const exportarProgresoUsuarios = async (req, res, next) => {
 
 module.exports = {
   exportarUsuarios,
+  exportarHospitales,
   exportarActividadesResidentes,
   exportarActividadesSociedades,
   exportarProgresoUsuarios,

@@ -994,5 +994,8 @@
   "privacyPolicy": {
     "title": "Política de Privacitat",
     "lastUpdated": "Última actualització: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Hospitals"
   }
 }

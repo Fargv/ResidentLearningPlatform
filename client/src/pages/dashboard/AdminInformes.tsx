@@ -118,7 +118,41 @@ const AdminInformes: React.FC = () => {
     }
   };
 
+  const handleExportHospitales = async (format: "csv" | "xlsx") => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informes/hospitales`, {
+        params: { format },
+        responseType: "blob",
+      });
+      const blob = new Blob([res.data], {
+        type:
+          format === "csv"
+            ? "text/csv"
+            : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Hospitales.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   const reports = [
+    {
+      title: t("adminReports.exportHospitals", "Hospitales"),
+      formats: [
+        { label: "CSV", handler: () => handleExportHospitales("csv") },
+        { label: "XLSX", handler: () => handleExportHospitales("xlsx") },
+      ],
+    },
     {
       title: t(
         "adminReports.exportSocietyActivities",

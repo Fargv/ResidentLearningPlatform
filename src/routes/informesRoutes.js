@@ -4,6 +4,7 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const {
   exportarUsuarios,
+  exportarHospitales,
   exportarActividadesResidentes,
   exportarActividadesSociedades,
   exportarProgresoUsuarios,
@@ -15,6 +16,9 @@ router.use(protect);
 
 // /api/informes/usuarios?format=csv|xlsx
 router.get('/usuarios', authorize('administrador'), exportarUsuarios);
+
+// /api/informes/hospitales?format=csv|xlsx
+router.get('/hospitales', authorize('administrador'), exportarHospitales);
 
 // /api/informes/actividades-residentes  (XLSX)
 router.get(

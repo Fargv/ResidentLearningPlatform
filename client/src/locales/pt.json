@@ -1008,5 +1008,8 @@
   "privacyPolicy": {
     "title": "Política de privacidade",
     "lastUpdated": "Última atualização: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Hospitais"
   }
 }

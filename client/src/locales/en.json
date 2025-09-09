@@ -1006,5 +1006,8 @@
   "privacyPolicy": {
     "title": "Privacy Policy",
     "lastUpdated": "Last updated: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Hospitals"
   }
 }
