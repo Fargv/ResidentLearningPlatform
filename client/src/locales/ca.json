@@ -787,7 +787,12 @@
     "errorLoad": "Error en carregar les notificacions",
     "errorMarkAsRead": "Error en marcar la notificació com a llegida",
     "actions": {
-      "sendResetLink": "Enviar enllaç"
+      "sendResetLink": "Enviar enllaç",
+      "delete": "Eliminar",
+      "markRead": "Marcar com a llegida",
+      "markUnread": "Marcar com a no llegida",
+      "selectAll": "Seleccionar totes",
+      "deselectAll": "Desseleccionar totes"
     },
     "messages": {
       "resetRequest": "Sol·licitud de restabliment de contrasenya"

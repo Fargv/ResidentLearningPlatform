@@ -196,7 +196,12 @@
     "errorLoad": "Fehler beim Laden der Benachrichtigungen",
     "errorMarkAsRead": "Fehler beim Markieren als gelesen",
     "actions": {
-      "sendResetLink": "Link senden"
+      "sendResetLink": "Link senden",
+      "delete": "Löschen",
+      "markRead": "Als gelesen markieren",
+      "markUnread": "Als ungelesen markieren",
+      "selectAll": "Alle auswählen",
+      "deselectAll": "Alle abwählen"
     },
     "messages": {
       "resetRequest": "Anforderung zum Zurücksetzen des Passworts"

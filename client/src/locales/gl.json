@@ -698,7 +698,12 @@
     "errorLoad": "Erro ao cargar as notificacións",
     "errorMarkAsRead": "Erro ao marcar a notificación como lida",
     "actions": {
-      "sendResetLink": "Enviar ligazón"
+      "sendResetLink": "Enviar ligazón",
+      "delete": "Eliminar",
+      "markRead": "Marcar como lida",
+      "markUnread": "Marcar como non lida",
+      "selectAll": "Seleccionar todas",
+      "deselectAll": "Deseleccionar todas"
     },
     "messages": {
       "resetRequest": "Solicitude de restablecemento do contrasinal"

@@ -20,8 +20,14 @@ export default api;
 
 export const getNotificaciones = () => api.get('/notificaciones');
 export const getNotificacionesNoLeidas = () => api.get('/notificaciones/no-leidas');
-export const marcarNotificacionLeida = (id: string) => api.put(`/notificaciones/${id}/leer`);
+export const marcarNotificacionLeida = (id: string, p0: boolean) => api.put(`/notificaciones/${id}/leer`);
 export const eliminarNotificacion = (id: string) => api.delete(`/notificaciones/${id}`);
+export const marcarNotificaciones = (ids: string[], leida: boolean) =>
+  api.put('/notificaciones/marcar-multiples', { ids, leida });
+export const eliminarNotificaciones = (ids: string[]) =>
+  api.delete('/notificaciones', { data: { ids } });
+export const marcarNotificacionNoLeida = (id: string) =>
+  api.put(`/notificaciones/${id}/no-leer`);
 export const updateProfile = (data: { nombre: string; apellidos: string; email: string }) =>
   api.put('/auth/updatedetails', data);
 export const changePassword = (data: { currentPassword: string; newPassword: string }) =>

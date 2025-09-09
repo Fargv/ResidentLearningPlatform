@@ -224,7 +224,12 @@
     "errorLoad": "Erreur lors du chargement des notifications",
     "errorMarkAsRead": "Erreur lors du marquage de la notification comme lue",
     "actions": {
-      "sendResetLink": "Envoyer le lien"
+      "sendResetLink": "Envoyer le lien",
+      "delete": "Supprimer",
+      "markRead": "Marquer comme lue",
+      "markUnread": "Marquer comme non lue",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner"
     },
     "messages": {
       "resetRequest": "Demande de réinitialisation du mot de passe"

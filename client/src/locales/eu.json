@@ -711,7 +711,12 @@
     "errorLoad": "Errorea jakinarazpenak kargatzean",
     "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean",
     "actions": {
-      "sendResetLink": "Esteka bidali"
+      "sendResetLink": "Esteka bidali",
+      "delete": "Ezabatu",
+      "markRead": "Irakurritako gisa markatu",
+      "markUnread": "Irakurri gabeko gisa markatu",
+      "selectAll": "Guztiak hautatu",
+      "deselectAll": "Guztiak desautatu"
     },
     "messages": {
       "resetRequest": "Pasahitza berrezartzeko eskaera"

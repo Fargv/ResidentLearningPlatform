@@ -820,7 +820,12 @@
     "errorLoad": "Erro ao carregar notificações",
     "errorMarkAsRead": "Erro ao marcar notificação como lida",
     "actions": {
-      "sendResetLink": "Enviar link"
+      "sendResetLink": "Enviar link",
+      "delete": "Excluir",
+      "markRead": "Marcar como lida",
+      "markUnread": "Marcar como não lida",
+      "selectAll": "Selecionar todas",
+      "deselectAll": "Desmarcar todas"
     },
     "messages": {
       "resetRequest": "Solicitação de redefinição de senha"

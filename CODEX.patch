@@ -1,287 +1,594 @@
-diff --git a/client/src/pages/dashboard/Notificaciones.test.tsx b/client/src/pages/dashboard/Notificaciones.test.tsx
-index dbefdb98b3996af6b7f4393dc3915d93f2b442ba..c530b2322443110a7ebdae6d67ef97ff1d0c4f0b 100644
---- a/client/src/pages/dashboard/Notificaciones.test.tsx
-+++ b/client/src/pages/dashboard/Notificaciones.test.tsx
-@@ -40,25 +40,50 @@ beforeEach(() => {
+diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
+index 43d74cbf1e61e2254d87ed022056fd01a4d2ff9d..b35dbe52624cd396012c3c9ba9b74c4b125d8507 100644
+--- a/client/src/locales/ca.json
++++ b/client/src/locales/ca.json
+@@ -764,53 +764,58 @@
+     "csm": "CSM",
+     "tutor": "Tutor",
+     "profesor": "Profesor",
+     "participante": "Participante"
+   },
+   "notifications": {
+     "title": "Notificacions",
+     "tabs": {
+       "aria": "pestanyes de notificacions",
+       "pending": "Pendents",
+       "viewed": "Vistes"
      },
-   });
-   mockedMarcar.mockResolvedValue({});
- });
- 
- afterEach(() => {
-   jest.clearAllMocks();
- });
- 
- test('marca la notificación como leída al abrirla', async () => {
-   render(
-     <I18nextProvider i18n={i18n}>
-       <Notificaciones />
-     </I18nextProvider>
-   );
- 
-   const rowText = await screen.findByText('Test');
-   fireEvent.click(rowText.closest('tr')!);
- 
-   await waitFor(() => {
-     expect(mockedMarcar).toHaveBeenCalledWith('1');
-     expect(mockedNavigate).toHaveBeenCalledWith('/foo');
-   });
-   await waitFor(() => expect(screen.queryByText('Test')).not.toBeInTheDocument());
- });
-+
-+test('muestra nombre y email en notificaciones de reseteo de contraseña', async () => {
-+  const mensaje = 'User (user@test.com) ha solicitado un reseteo de contraseña.';
-+  mockedGet.mockResolvedValueOnce({
-+    data: {
-+      data: [
-+        {
-+          _id: '1',
-+          mensaje,
-+          fechaCreacion: new Date().toISOString(),
-+          leida: false,
-+          tipo: 'passwordReset'
-+        }
-+      ]
-+    }
-+  });
-+
-+  render(
-+    <I18nextProvider i18n={i18n}>
-+      <Notificaciones />
-+    </I18nextProvider>
-+  );
-+
-+  expect(await screen.findByText(mensaje)).toBeInTheDocument();
-+});
-diff --git a/client/src/pages/dashboard/Notificaciones.tsx b/client/src/pages/dashboard/Notificaciones.tsx
-index 148c71766972be048847368d8802eb974f61c510..f72aab6c23678e557759e7a9dee2f3ffa9b0c0bc 100644
---- a/client/src/pages/dashboard/Notificaciones.tsx
-+++ b/client/src/pages/dashboard/Notificaciones.tsx
-@@ -202,55 +202,51 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
-             ) : (
-               <TableContainer component={Paper}>
-                 <Table size="small">
-                   <TableHead>
-                     <TableRow>
-                       <TableCell>{t('notifications.table.message')}</TableCell>
-                       <TableCell>{t('notifications.table.date')}</TableCell>
-                       <TableCell>{t('notifications.table.type')}</TableCell>
-                       <TableCell align="right">{t('notifications.table.actions')}</TableCell>
-                     </TableRow>
-                   </TableHead>
-                   <TableBody>
-                     {pendientes.map((n) => (
-                       <TableRow
-                         key={n._id}
-                         onClick={async () => {
-                           if (n.tipo === 'passwordReset') {
-                             await handleSendResetLink(n);
-                           } else if (n.enlace) {
-                             await handleMarcarLeida(n._id);
-                             navigate(n.enlace);
-                           }
-                         }}
-                         sx={{ cursor: n.enlace || n.tipo === 'passwordReset' ? 'pointer' : 'default' }}
-                       >
--                        <TableCell>
--                          {n.tipo === 'passwordReset'
--                            ? t('notifications.messages.resetRequest')
--                            : n.mensaje}
--                        </TableCell>
-+                        <TableCell>{n.mensaje}</TableCell>
-                         <TableCell>{new Date(n.fechaCreacion).toLocaleString()}</TableCell>
-                         <TableCell>
-                           {n.tipo ? <Chip label={n.tipo} size="small" color="primary" /> : '-'}
-                         </TableCell>
-                         <TableCell align="right">
-                           {n.tipo === 'passwordReset' ? (
-                             <Button
-                               size="small"
-                               variant="contained"
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 handleSendResetLink(n);
-                               }}
-                             >
-                               {t('notifications.actions.sendResetLink')}
-                             </Button>
-                           ) : (
-                             <IconButton
-                               aria-label="read"
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 handleMarcarLeida(n._id);
-                               }}
-                             >
-                               <DoneIcon />
-diff --git a/src/controllers/authController.js b/src/controllers/authController.js
-index de357e510f26a220a24fcedacc2d05223404a180..240e2e01ab225bea41d1ae77b653d6eb5f912ff1 100644
---- a/src/controllers/authController.js
-+++ b/src/controllers/authController.js
-@@ -290,56 +290,56 @@ const requestPasswordReset = async (req, res, next) => {
+     "table": {
+       "message": "Missatge",
+       "date": "Data",
+       "type": "Tipus",
+       "actions": "Accions"
+     },
+     "empty": {
+       "all": "No hi ha notificacions",
+       "pending": "No hi ha notificacions pendents",
+       "viewed": "No hi ha notificacions vistes"
+     },
+     "errorLoad": "Error en carregar les notificacions",
+     "errorMarkAsRead": "Error en marcar la notificació com a llegida",
+-    "actions": {
+-      "sendResetLink": "Enviar enllaç"
+-    },
++    "actions": {
++      "sendResetLink": "Enviar enllaç",
++      "delete": "Eliminar",
++      "markRead": "Marcar com a llegida",
++      "markUnread": "Marcar com a no llegida",
++      "selectAll": "Seleccionar totes",
++      "deselectAll": "Desseleccionar totes"
++    },
+     "messages": {
+       "resetRequest": "Sol·licitud de restabliment de contrasenya"
      }
- 
-     let zona;
-     if (user.hospital) {
-       const hospital = user.hospital.zona ? user.hospital : await Hospital.findById(user.hospital);
-       zona = hospital?.zona;
+   },
+   "codes": {
+     "new": "Nou codi",
+     "edit": "Editar codi",
+     "errorLoad": "Error en carregar els codis",
+     "errorDelete": "Error en eliminar el codi",
+     "errorSave": "Error en desar el codi"
+   },
+   "progress": {
+     "createSuccess": "Progrés formatiu creat amb èxit"
+   },
+   "emails": {
+     "inviteSubject": "Invitació a la Plataforma de Formació Da Vinci"
+   },
+   "debug": {
+     "tokenValid": "✅ Token vàlid i descodificat",
+     "tokenInvalid": "❌ Token no vàlid o corrupte"
+   },
+   "dashboard": {
+     "manageAllUsers": "Gestió de tots els usuaris",
+     "noPermissions": "No tens permisos per veure aquesta secció"
+   },
+diff --git a/client/src/locales/de.json b/client/src/locales/de.json
+index ed2a888a7fdb77cba4bf5962d4c9ef748e01d3a9..6420fd197cb1290c21f1e16d0fa4fbf200f03897 100644
+--- a/client/src/locales/de.json
++++ b/client/src/locales/de.json
+@@ -173,53 +173,58 @@
+     "csm": "CSM",
+     "administrador": "Administrator",
+     "participante": "Participante",
+     "profesor": "Tutor"
+   },
+   "notifications": {
+     "title": "Benachrichtigungen",
+     "tabs": {
+       "aria": "Benachrichtigungs-Tabs",
+       "pending": "Ausstehend",
+       "viewed": "Gesehen"
+     },
+     "table": {
+       "message": "Nachricht",
+       "date": "Datum",
+       "type": "Typ",
+       "actions": "Aktionen"
+     },
+     "empty": {
+       "all": "Keine Benachrichtigungen",
+       "pending": "Keine ausstehenden Benachrichtigungen",
+       "viewed": "Keine angesehenen Benachrichtigungen"
+     },
+     "errorLoad": "Fehler beim Laden der Benachrichtigungen",
+     "errorMarkAsRead": "Fehler beim Markieren als gelesen",
+-    "actions": {
+-      "sendResetLink": "Link senden"
+-    },
++    "actions": {
++      "sendResetLink": "Link senden",
++      "delete": "Löschen",
++      "markRead": "Als gelesen markieren",
++      "markUnread": "Als ungelesen markieren",
++      "selectAll": "Alle auswählen",
++      "deselectAll": "Alle abwählen"
++    },
+     "messages": {
+       "resetRequest": "Anforderung zum Zurücksetzen des Passworts"
      }
- 
-     if (zona) {
-       const csms = await User.find({ rol: Role.CSM, zona }).select('_id');
-       csms.forEach((u) => destinatarios.add(u._id.toString()));
+   },
+   "codes": {
+     "new": "Neuer Code",
+     "edit": "Code bearbeiten",
+     "errorLoad": "Fehler beim Laden der Codes",
+     "errorDelete": "Fehler beim Löschen des Codes",
+     "errorSave": "Fehler beim Speichern des Codes"
+   },
+   "progress": {
+     "createSuccess": "Ausbildungsfortschritt erfolgreich erstellt"
+   },
+   "emails": {
+     "inviteSubject": "Einladung zur Da Vinci Ausbildungsplattform"
+   },
+   "debug": {
+     "tokenValid": "✅ Token ist gültig und entschlüsselt",
+     "tokenInvalid": "❌ Token ist ungültig oder beschädigt"
+   },
+   "dashboard": {
+     "manageAllUsers": "Alle Benutzer verwalten",
+     "noPermissions": "Sie haben keine Berechtigung, diesen Bereich zu sehen"
+   },
+diff --git a/client/src/locales/en.json b/client/src/locales/en.json
+index 4b2e56df665a50e7d72a277abf2b1e78434ce03f..27d210881290592e5994b1c970f0331cd08f4375 100644
+--- a/client/src/locales/en.json
++++ b/client/src/locales/en.json
+@@ -698,53 +698,58 @@
+     "csm": "CSM",
+     "administrador": "Administrator",
+     "participante": "Participante",
+     "profesor": "profesor"
+   },
+   "notifications": {
+     "title": "Notifications",
+     "tabs": {
+       "aria": "notifications tabs",
+       "pending": "Pending",
+       "viewed": "Viewed"
+     },
+     "table": {
+       "message": "Message",
+       "date": "Date",
+       "type": "Type",
+       "actions": "Actions"
+     },
+     "empty": {
+       "all": "No notifications",
+       "pending": "No pending notifications",
+       "viewed": "No viewed notifications"
+     },
+     "errorLoad": "Error loading notifications",
+     "errorMarkAsRead": "Error marking notification as read",
+-    "actions": {
+-      "sendResetLink": "Send link"
+-    },
++    "actions": {
++      "sendResetLink": "Send link",
++      "delete": "Delete",
++      "markRead": "Mark as read",
++      "markUnread": "Mark as unread",
++      "selectAll": "Select all",
++      "deselectAll": "Deselect all"
++    },
+     "messages": {
+       "resetRequest": "Password reset request"
      }
- 
-     const admins = await User.find({ rol: Role.ADMINISTRADOR }).select('_id');
-     admins.forEach((u) => destinatarios.add(u._id.toString()));
- 
-     if (user.hospital) {
-       const tutoresAll = await User.find({
-         rol: { $in: [Role.TUTOR, Role.PROFESOR] },
-         hospital: user.hospital._id || user.hospital,
-         especialidad: 'ALL'
-       }).select('_id');
-       tutoresAll.forEach((u) => destinatarios.add(u._id.toString()));
+   },
+   "codes": {
+     "new": "New Code",
+     "edit": "Edit Code",
+     "errorLoad": "Error loading codes",
+     "errorDelete": "Error deleting code",
+     "errorSave": "Error saving code"
+   },
+   "tutorUsers": {
+     "title": "My Users",
+     "invite": "Invite User",
+     "edit": "Edit User",
+     "updated": "User updated",
+     "invited": "User invited",
+     "deleted": "User deleted",
+     "error": "Error",
+     "deleteError": "Error deleting",
+     "loadError": "Error loading users",
+     "table": {
+       "name": "Name",
+       "email": "Email",
+       "logoUrl": "Logo URL",
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index 7cd0ebc33b1a86ede1cc3512392e3577578fe399..ea10e2a07730d534f88d3c18dc77eb7d84f8f0b0 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -693,53 +693,58 @@
+     "csm": "CSM",
+     "administrador": "Administrador",
+     "participante": "Participante",
+     "profesor": "Profesor"
+   },
+   "notifications": {
+     "title": "Notificaciones",
+     "tabs": {
+       "aria": "pestañas de notificaciones",
+       "pending": "Pendientes",
+       "viewed": "Vistas"
+     },
+     "table": {
+       "message": "Mensaje",
+       "date": "Fecha",
+       "type": "Tipo",
+       "actions": "Acciones"
+     },
+     "empty": {
+       "all": "No hay notificaciones",
+       "pending": "No hay notificaciones pendientes",
+       "viewed": "No hay notificaciones vistas"
+     },
+     "errorLoad": "Error al cargar notificaciones",
+     "errorMarkAsRead": "Error marcando notificación como leída",
+-    "actions": {
+-      "sendResetLink": "Enviar enlace"
+-    },
++    "actions": {
++      "sendResetLink": "Enviar enlace",
++      "delete": "Eliminar",
++      "markRead": "Marcar como leída",
++      "markUnread": "Marcar como no leída",
++      "selectAll": "Seleccionar todas",
++      "deselectAll": "Deseleccionar todas"
++    },
+     "messages": {
+       "resetRequest": "Solicitud de restablecimiento de contraseña"
      }
- 
--    const notificaciones = Array.from(destinatarios).map((id) => ({
--      usuario: id,
--      tipo: 'passwordReset',
--      mensaje: `El usuario ${user.email} ha solicitado un reseteo de contraseña.`,
--      entidadRelacionada: { tipo: 'usuario', id: user._id }
--    }));
-+    const notificaciones = Array.from(destinatarios).map((id) => ({
-+      usuario: id,
-+      tipo: 'passwordReset',
-+      mensaje: `${user.nombre} (${user.email}) ha solicitado un reseteo de contraseña.`,
-+      entidadRelacionada: { tipo: 'usuario', id: user._id }
-+    }));
- 
-     await Notificacion.insertMany(notificaciones);
- 
-     res.status(200).json({ success: true });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- const forgotPassword = async (req, res, next) => {
-   try {
-     const { email } = req.body;
-     const user = await User.findOne({ email });
-     if (!user) {
-       return next(new ErrorResponse('No existe un usuario con ese email', 404));
+   },
+   "codes": {
+     "new": "Nuevo Código",
+     "edit": "Editar Código",
+     "errorLoad": "Error al cargar los códigos",
+     "errorDelete": "Error al eliminar el código",
+     "errorSave": "Error al guardar el código"
+   },
+   "tutorUsers": {
+     "title": "Mis Usuarios",
+     "invite": "Invitar Usuario",
+     "edit": "Editar Usuario",
+     "updated": "Usuario actualizado",
+     "invited": "Usuario invitado",
+     "deleted": "Usuario eliminado",
+     "error": "Error",
+     "deleteError": "Error al eliminar",
+     "loadError": "Error al cargar usuarios",
+     "table": {
+       "name": "Nombre",
+       "email": "Email",
+       "role": "Rol",
+diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
+index 140768548065add92a455dbcfd41886e9105d1b2..dfc88fc4b3838d613e382926cc7b247824cd1aea 100644
+--- a/client/src/locales/eu.json
++++ b/client/src/locales/eu.json
+@@ -688,53 +688,58 @@
+     "csm": "CSM",
+     "administrador": "Administratzailea",
+     "participante": "Ikaslea",
+     "profesor": "Instruktorea"
+   },
+   "notifications": {
+     "title": "Jakinarazpenak",
+     "tabs": {
+       "aria": "jakinarazpenen fitxak",
+       "pending": "Zain",
+       "viewed": "Ikusita"
+     },
+     "table": {
+       "message": "Mezua",
+       "date": "Data",
+       "type": "Mota",
+       "actions": "Ekintzak"
+     },
+     "empty": {
+       "all": "Ez dago jakinarazpenik",
+       "pending": "Ez dago zain dauden jakinarazpenik",
+       "viewed": "Ez dago ikusitako jakinarazpenik"
+     },
+     "errorLoad": "Errorea jakinarazpenak kargatzean",
+     "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean",
+-    "actions": {
+-      "sendResetLink": "Esteka bidali"
+-    },
++    "actions": {
++      "sendResetLink": "Esteka bidali",
++      "delete": "Ezabatu",
++      "markRead": "Irakurritako gisa markatu",
++      "markUnread": "Irakurri gabeko gisa markatu",
++      "selectAll": "Guztiak hautatu",
++      "deselectAll": "Guztiak desautatu"
++    },
+     "messages": {
+       "resetRequest": "Pasahitza berrezartzeko eskaera"
      }
- 
-     // Generar token y establecer expiración (por ejemplo, 1 día)
-     const resetToken = user.getResetPasswordToken(24 * 60 * 60 * 1000);
- 
-     await user.save({ validateBeforeSave: false });
- 
-     res.status(200).json({ success: true, resetToken });
-   } catch (err) {
-     next(err);
-diff --git a/tests/notificaciones.test.js b/tests/notificaciones.test.js
-index d209af5a64ab5fcabf301f16b31a056e1ac4de4c..8dbfbfaed5c60aaebbeff599d66eab5027765982 100644
---- a/tests/notificaciones.test.js
-+++ b/tests/notificaciones.test.js
-@@ -1,32 +1,35 @@
- const {
-   getNotificacionesUsuario,
-   marcarComoLeida,
-   eliminarNotificacion,
-   crearNotificacion
- } = require('../src/controllers/notificacionController');
- const Notificacion = require('../src/models/Notificacion');
-+const { requestPasswordReset } = require('../src/controllers/authController');
-+const User = require('../src/models/User');
-+const { Role } = require('../src/utils/roles');
- 
- describe('notificacionController', () => {
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
- 
-   test('getNotificacionesUsuario obtiene notificaciones del usuario', async () => {
-     const list = [{ _id: 'n1' }, { _id: 'n2' }];
-     const sort = jest.fn().mockResolvedValue(list);
-     jest.spyOn(Notificacion, 'find').mockReturnValue({ sort });
- 
-     const req = { user: { id: 'u1' } };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
- 
-     await getNotificacionesUsuario(req, res, jest.fn());
- 
-     expect(Notificacion.find).toHaveBeenCalledWith({ usuario: 'u1' });
-     expect(sort).toHaveBeenCalledWith('-fechaCreacion');
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, count: 2, data: list });
-   });
- 
-   test('marcarComoLeida marca la notificacion y la devuelve', async () => {
-     const notif = { usuario: 'u1', marcarComoLeida: jest.fn().mockResolvedValue() };
-     const updated = { _id: 'n1', usuario: 'u1', leida: true };
-diff --git a/tests/notificaciones.test.js b/tests/notificaciones.test.js
-index d209af5a64ab5fcabf301f16b31a056e1ac4de4c..8dbfbfaed5c60aaebbeff599d66eab5027765982 100644
---- a/tests/notificaciones.test.js
-+++ b/tests/notificaciones.test.js
-@@ -49,26 +52,59 @@ describe('notificacionController', () => {
- 
-   test('eliminarNotificacion borra la notificacion del usuario', async () => {
-     const notif = { usuario: 'u1', remove: jest.fn().mockResolvedValue() };
-     jest.spyOn(Notificacion, 'findById').mockResolvedValue(notif);
- 
-     const req = { params: { id: 'n1' }, user: { id: 'u1' } };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
- 
-     await eliminarNotificacion(req, res, jest.fn());
- 
-     expect(Notificacion.findById).toHaveBeenCalledWith('n1');
-     expect(notif.remove).toHaveBeenCalled();
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: {} });
-   });
- 
-   test('crearNotificacion acepta tipo passwordReset', async () => {
-     const datos = { usuario: 'u1', tipo: 'passwordReset', mensaje: 'Reset' };
-     jest.spyOn(Notificacion, 'create').mockResolvedValue(datos);
- 
-     const res = await crearNotificacion(datos);
- 
-     expect(Notificacion.create).toHaveBeenCalledWith(datos);
-     expect(res).toEqual(datos);
-   });
-+
-+  test('requestPasswordReset incluye nombre y email en la notificación', async () => {
-+    const user = { _id: 'u1', email: 'user@test.com', nombre: 'User', tutor: null, hospital: null };
-+    jest
-+      .spyOn(User, 'findOne')
-+      .mockReturnValue({ populate: jest.fn().mockResolvedValue(user) });
-+
-+    jest.spyOn(User, 'find').mockImplementation((query) => {
-+      if (query.rol === Role.ADMINISTRADOR) {
-+        return { select: jest.fn().mockResolvedValue([{ _id: 'admin1' }]) };
-+      }
-+      return { select: jest.fn().mockResolvedValue([]) };
-+    });
-+
-+    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
-+
-+    const req = { body: { email: 'user@test.com' } };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+    const next = jest.fn();
-+
-+    await requestPasswordReset(req, res, next);
-+
-+    expect(insertSpy).toHaveBeenCalledWith([
-+      {
-+        usuario: 'admin1',
-+        tipo: 'passwordReset',
-+        mensaje: 'User (user@test.com) ha solicitado un reseteo de contraseña.',
-+        entidadRelacionada: { tipo: 'usuario', id: 'u1' }
-+      }
-+    ]);
-+    expect(res.status).toHaveBeenCalledWith(200);
-+    expect(res.json).toHaveBeenCalledWith({ success: true });
-+  });
- });
+   },
+   "codes": {
+     "new": "Kode berria",
+     "edit": "Editatu kodea",
+     "errorLoad": "Errorea kodeak kargatzean",
+     "errorDelete": "Errorea kodea ezabatzean",
+     "errorSave": "Errorea kodea gordetzean"
+   },
+   "tutorUsers": {
+     "title": "Nire erabiltzaileak",
+     "invite": "Erabiltzailea gonbidatu",
+     "edit": "Erabiltzailea editatu",
+     "updated": "Erabiltzailea eguneratua",
+     "invited": "Erabiltzailea gonbidatua",
+     "deleted": "Erabiltzailea ezabatua",
+     "error": "Errorea",
+     "deleteError": "Errorea ezabatzean",
+     "loadError": "Errorea erabiltzaileak kargatzean",
+     "table": {
+       "name": "Izena",
+       "email": "Emaila",
+       "role": "Rola",
+diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
+index 5d1c5c39640b34533497947b46edd5ed08666302..af00e72956f416e94d669845384c97921f74e05d 100644
+--- a/client/src/locales/fr.json
++++ b/client/src/locales/fr.json
+@@ -201,53 +201,58 @@
+     "csm": "CSM",
+     "administrador": "Administrateur",
+     "participante": "Participante",
+     "profesor": "Profesor"
+   },
+   "notifications": {
+     "title": "Notifications",
+     "tabs": {
+       "aria": "onglets de notifications",
+       "pending": "En attente",
+       "viewed": "Vues"
+     },
+     "table": {
+       "message": "Message",
+       "date": "Date",
+       "type": "Type",
+       "actions": "Actions"
+     },
+     "empty": {
+       "all": "Aucune notification",
+       "pending": "Aucune notification en attente",
+       "viewed": "Aucune notification vue"
+     },
+     "errorLoad": "Erreur lors du chargement des notifications",
+     "errorMarkAsRead": "Erreur lors du marquage de la notification comme lue",
+-    "actions": {
+-      "sendResetLink": "Envoyer le lien"
+-    },
++    "actions": {
++      "sendResetLink": "Envoyer le lien",
++      "delete": "Supprimer",
++      "markRead": "Marquer comme lue",
++      "markUnread": "Marquer comme non lue",
++      "selectAll": "Tout sélectionner",
++      "deselectAll": "Tout désélectionner"
++    },
+     "messages": {
+       "resetRequest": "Demande de réinitialisation du mot de passe"
+     }
+   },
+   "codes": {
+     "new": "Nouveau code",
+     "edit": "Modifier le code",
+     "errorLoad": "Erreur lors du chargement des codes",
+     "errorDelete": "Erreur lors de la suppression du code",
+     "errorSave": "Erreur lors de l'enregistrement du code"
+   },
+   "progress": {
+     "createSuccess": "Progrès de formation créé avec succès"
+   },
+   "emails": {
+     "inviteSubject": "Invitation à la Plateforme de Formation Da Vinci"
+   },
+   "debug": {
+     "tokenValid": "✅ Jeton valide et décodé",
+     "tokenInvalid": "❌ Jeton invalide ou corrompu"
+   },
+   "dashboard": {
+     "manageAllUsers": "Gestion de tous les utilisateurs",
+     "noPermissions": "Vous n'avez pas la permission de voir cette section"
+   },
+diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
+index 8ac378c0dfd2bf19d34c9767fc53e58e2a92f74b..7a41147e13d293ec570a1b2a2b0063ce107119f3 100644
+--- a/client/src/locales/gl.json
++++ b/client/src/locales/gl.json
+@@ -675,53 +675,58 @@
+     "csm": "CSM",
+     "administrador": "Administrador",
+     "participante": "Participante",
+     "profesor": "Profesor"
+   },
+   "notifications": {
+     "title": "Notificacións",
+     "tabs": {
+       "aria": "lapelas de notificacións",
+       "pending": "Pendentes",
+       "viewed": "Vistas"
+     },
+     "table": {
+       "message": "Mensaxe",
+       "date": "Data",
+       "type": "Tipo",
+       "actions": "Accións"
+     },
+     "empty": {
+       "all": "Non hai notificacións",
+       "pending": "Non hai notificacións pendentes",
+       "viewed": "Non hai notificacións vistas"
+     },
+     "errorLoad": "Erro ao cargar as notificacións",
+     "errorMarkAsRead": "Erro ao marcar a notificación como lida",
+-    "actions": {
+-      "sendResetLink": "Enviar ligazón"
+-    },
++    "actions": {
++      "sendResetLink": "Enviar ligazón",
++      "delete": "Eliminar",
++      "markRead": "Marcar como lida",
++      "markUnread": "Marcar como non lida",
++      "selectAll": "Seleccionar todas",
++      "deselectAll": "Deseleccionar todas"
++    },
+     "messages": {
+       "resetRequest": "Solicitude de restablecemento do contrasinal"
+     }
+   },
+   "codes": {
+     "new": "Novo código",
+     "edit": "Editar código",
+     "errorLoad": "Erro ao cargar os códigos",
+     "errorDelete": "Erro ao eliminar o código",
+     "errorSave": "Erro ao gardar o código"
+   },
+   "tutorUsers": {
+     "title": "Os meus usuarios",
+     "invite": "Convidar usuario",
+     "edit": "Editar usuario",
+     "updated": "Usuario actualizado",
+     "invited": "Usuario convidado",
+     "deleted": "Usuario eliminado",
+     "error": "Erro",
+     "deleteError": "Erro ao eliminar",
+     "loadError": "Erro ao cargar usuarios",
+     "table": {
+       "name": "Nome",
+       "email": "Correo electrónico",
+       "role": "Rol",
+diff --git a/client/src/locales/it.json b/client/src/locales/it.json
+index 02b13876d7395ca97919ca99d4374511e1f7c360..c949d68d2f32aaa9ddc83bd6dfd62e2faa9958d9 100644
+--- a/client/src/locales/it.json
++++ b/client/src/locales/it.json
+@@ -279,53 +279,58 @@
+     "csm": "CSMe",
+     "administrador": "Amministratore",
+     "participante": "Participantee",
+     "profesor": "Profesor"
+   },
+   "notifications": {
+     "title": "Notifiche",
+     "tabs": {
+       "aria": "schede notifiche",
+       "pending": "In attesa",
+       "viewed": "Viste"
+     },
+     "table": {
+       "message": "Messaggio",
+       "date": "Data",
+       "type": "Tipo",
+       "actions": "Azioni"
+     },
+     "empty": {
+       "all": "Nessuna notifica",
+       "pending": "Nessuna notifica in attesa",
+       "viewed": "Nessuna notifica vista"
+     },
+     "errorLoad": "Errore durante il caricamento delle notifiche",
+     "errorMarkAsRead": "Errore nel segnare la notifica come letta",
+-    "actions": {
+-      "sendResetLink": "Invia link"
+-    },
++    "actions": {
++      "sendResetLink": "Invia link",
++      "delete": "Elimina",
++      "markRead": "Segna come letta",
++      "markUnread": "Segna come non letta",
++      "selectAll": "Seleziona tutte",
++      "deselectAll": "Deseleziona tutte"
++    },
+     "messages": {
+       "resetRequest": "Richiesta di reimpostazione della password"
+     }
+   },
+   "codes": {
+     "new": "Nuovo codice",
+     "edit": "Modifica codice",
+     "errorLoad": "Errore durante il caricamento dei codici",
+     "errorDelete": "Errore durante l'eliminazione del codice",
+     "errorSave": "Errore durante il salvataggio del codice"
+   },
+   "progress": {
+     "createSuccess": "Avanzamento formativo creato con successo"
+   },
+   "emails": {
+     "inviteSubject": "Invito alla Piattaforma di Formazione Da Vinci"
+   },
+   "debug": {
+     "tokenValid": "✅ Token valido e decodificato",
+     "tokenInvalid": "❌ Token non valido o corrotto"
+   },
+   "dashboard": {
+     "manageAllUsers": "Gestione di tutti gli utenti",
+     "noPermissions": "Non hai i permessi per visualizzare questa sezione"
+   },
+diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
+index 924792362043e2cac8de3f4a1585a5ba02a3ab8a..9fc3747e58da77d35f3d5544cf89818bce1f8739 100644
+--- a/client/src/locales/pt.json
++++ b/client/src/locales/pt.json
+@@ -797,53 +797,58 @@
+     "csm": "CSM",
+     "administrador": "Administrador",
+     "participante": "Aluno",
+     "profesor": "Profesor"
+   },
+   "notifications": {
+     "title": "Notificações",
+     "tabs": {
+       "aria": "abas de notificações",
+       "pending": "Pendentes",
+       "viewed": "Visualizadas"
+     },
+     "table": {
+       "message": "Mensagem",
+       "date": "Data",
+       "type": "Tipo",
+       "actions": "Ações"
+     },
+     "empty": {
+       "all": "Não há notificações",
+       "pending": "Não há notificações pendentes",
+       "viewed": "Não há notificações visualizadas"
+     },
+     "errorLoad": "Erro ao carregar notificações",
+     "errorMarkAsRead": "Erro ao marcar notificação como lida",
+-    "actions": {
+-      "sendResetLink": "Enviar link"
+-    },
++    "actions": {
++      "sendResetLink": "Enviar link",
++      "delete": "Excluir",
++      "markRead": "Marcar como lida",
++      "markUnread": "Marcar como não lida",
++      "selectAll": "Selecionar todas",
++      "deselectAll": "Desmarcar todas"
++    },
+     "messages": {
+       "resetRequest": "Solicitação de redefinição de senha"
+     }
+   },
+   "codes": {
+     "new": "Novo Código",
+     "edit": "Editar Código",
+     "errorLoad": "Erro ao carregar os códigos",
+     "errorDelete": "Erro ao excluir o código",
+     "errorSave": "Erro ao salvar o código"
+   },
+   "tutorUsers": {
+     "title": "Meus Usuários",
+     "invite": "Convidar Usuário",
+     "edit": "Editar Usuário",
+     "updated": "Usuário atualizado",
+     "invited": "Usuário convidado",
+     "deleted": "Usuário excluído",
+     "error": "Erro",
+     "deleteError": "Erro ao excluir",
+     "loadError": "Erro ao carregar usuários",
+     "table": {
+       "name": "Nome",
+       "email": "E-mail",
+       "logoUrl": "URL do logo",

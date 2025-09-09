@@ -7,17 +7,21 @@ const {
   getNotificacionesUsuario,
   getNotificacionesNoLeidas,
   marcarComoLeida,
+  marcarComoNoLeida,
   marcarTodasComoLeidas,
+  marcarMultiple,
   eliminarNotificacion,
+  eliminarMultiples,
   clearPasswordResetNotifications
 } = require('../controllers/notificacionController');
 
 // Todas las rutas requieren autenticación
 router.use(protect);
 
-// Rutas para obtener notificaciones del usuario actual
+// Rutas para obtener o eliminar notificaciones del usuario actual
 router.route('/')
-  .get(getNotificacionesUsuario);
+  .get(getNotificacionesUsuario)
+  .delete(eliminarMultiples);
 
 router.route('/no-leidas')
   .get(getNotificacionesNoLeidas);
@@ -26,8 +30,14 @@ router.route('/no-leidas')
 router.route('/:id/leer')
   .put(marcarComoLeida);
 
+router.route('/:id/no-leer')
+  .put(marcarComoNoLeida);
+
 router.route('/leer-todas')
   .put(marcarTodasComoLeidas);
+
+router.route('/marcar-multiples')
+  .put(marcarMultiple);
 
 router.delete(
   '/password-reset/:userId',

@@ -302,7 +302,12 @@
     "errorLoad": "Errore durante il caricamento delle notifiche",
     "errorMarkAsRead": "Errore nel segnare la notifica come letta",
     "actions": {
-      "sendResetLink": "Invia link"
+      "sendResetLink": "Invia link",
+      "delete": "Elimina",
+      "markRead": "Segna come letta",
+      "markUnread": "Segna come non letta",
+      "selectAll": "Seleziona tutte",
+      "deselectAll": "Deseleziona tutte"
     },
     "messages": {
       "resetRequest": "Richiesta di reimpostazione della password"

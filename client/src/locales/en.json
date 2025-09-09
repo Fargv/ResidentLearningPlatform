@@ -721,7 +721,12 @@
     "errorLoad": "Error loading notifications",
     "errorMarkAsRead": "Error marking notification as read",
     "actions": {
-      "sendResetLink": "Send link"
+      "sendResetLink": "Send link",
+      "delete": "Delete",
+      "markRead": "Mark as read",
+      "markUnread": "Mark as unread",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all"
     },
     "messages": {
       "resetRequest": "Password reset request"

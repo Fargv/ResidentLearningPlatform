@@ -716,7 +716,12 @@
     "errorLoad": "Error al cargar notificaciones",
     "errorMarkAsRead": "Error marcando notificación como leída",
     "actions": {
-      "sendResetLink": "Enviar enlace"
+      "sendResetLink": "Enviar enlace",
+      "delete": "Eliminar",
+      "markRead": "Marcar como leída",
+      "markUnread": "Marcar como no leída",
+      "selectAll": "Seleccionar todas",
+      "deselectAll": "Deseleccionar todas"
     },
     "messages": {
       "resetRequest": "Solicitud de restablecimiento de contraseña"
