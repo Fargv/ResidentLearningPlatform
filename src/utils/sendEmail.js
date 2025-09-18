@@ -128,7 +128,10 @@ const sendEmail = async (options = {}) => {
     return;
   }
 
-  const senderEmail = config.email?.from;
+  const brevoSenderEmail = config.brevo?.senderEmail;
+  const brevoSenderName = config.brevo?.senderName;
+  const senderEmail = brevoSenderEmail || config.email?.from;
+  const senderName = brevoSenderEmail ? brevoSenderName : undefined;
   const payload = {
     to: toField,
     subject,
@@ -136,7 +139,9 @@ const sendEmail = async (options = {}) => {
     htmlContent: html || toHtml(message)
   };
 
-  if (senderEmail) {
+  if (senderEmail && senderName) {
+    payload.sender = { email: senderEmail, name: senderName };
+  } else if (senderEmail) {
     payload.sender = { email: senderEmail };
   }
 

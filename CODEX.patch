@@ -1,194 +1,80 @@
-diff --git a/tests/authController.test.js b/tests/authController.test.js
-index d194b106eae9c3c7a403b5dce40127bdf3d81e66..d5bf44ae8586c8d9e45245fac611e42fb42530b0 100644
---- a/tests/authController.test.js
-+++ b/tests/authController.test.js
-@@ -1,63 +1,163 @@
--const { checkAccessCode, requestPasswordReset } = require('../src/controllers/authController');
-+jest.mock('../src/utils/sendEmail');
-+
-+const { checkAccessCode, requestPasswordReset } = require('../src/controllers/authController');
- const AccessCode = require('../src/models/AccessCode');
--const User = require('../src/models/User');
--const Notificacion = require('../src/models/Notificacion');
-+const User = require('../src/models/User');
-+const Notificacion = require('../src/models/Notificacion');
- const ErrorResponse = require('../src/utils/errorResponse');
-+const Hospital = require('../src/models/Hospital');
-+const sendEmail = require('../src/utils/sendEmail');
+diff --git a/src/utils/sendEmail.js b/src/utils/sendEmail.js
+index ca4e81860e98346743bb07d5ba2473c5af7e63b4..6a957f9d2d23b1c4f9215a9d3dd943d0a0d39e45 100644
+--- a/src/utils/sendEmail.js
++++ b/src/utils/sendEmail.js
+@@ -106,59 +106,64 @@ const sendEmail = async (options = {}) => {
  
- describe('checkAccessCode', () => {
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
+   const apiKey = config.brevoApiKey || process.env.BREVO_API_KEY;
+   if (!apiKey) {
+     console.warn('[sendEmail] BREVO_API_KEY no configurada. Se omite el envío.');
+     return;
+   }
  
-   test('returns rol and tipo for valid code', async () => {
-     const access = { rol: 'residente', tipo: 'Programa Residentes' };
-     const req = { params: { codigo: 'ABCD' } };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+   if (!brevoClient) {
+     console.warn('[sendEmail] Cliente de Brevo no inicializado. Se omite el envío.');
+     return;
+   }
  
-     jest
-       .spyOn(AccessCode, 'findOne')
-       .mockReturnValue({ lean: jest.fn().mockResolvedValue(access) });
+   ensureApiKey(brevoClient, apiKey);
  
-     await checkAccessCode(req, res, jest.fn());
+   const recipients = [];
+   normalizeRecipients(recipients, to);
+   normalizeRecipients(recipients, emails);
+   normalizeRecipients(recipients, email);
  
-     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABCD' });
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: access });
-   });
+   const toField = uniqueRecipients(recipients);
+   if (!toField.length) {
+     console.warn('[sendEmail] No se proporcionaron destinatarios.');
+     return;
+   }
  
-   test('passes error when code not found', async () => {
-     const req = { params: { codigo: 'BAD' } };
-     const next = jest.fn();
-     jest
-       .spyOn(AccessCode, 'findOne')
-       .mockReturnValue({ lean: jest.fn().mockResolvedValue(null) });
- 
-     await checkAccessCode(req, {}, next);
- 
-     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
-   });
- });
- 
--describe('requestPasswordReset', () => {
--  afterEach(() => {
--    jest.restoreAllMocks();
--  });
+-  const senderEmail = config.email?.from;
+-  const payload = {
+-    to: toField,
+-    subject,
+-    textContent: message?.trim(),
+-    htmlContent: html || toHtml(message)
+-  };
 -
--  test('returns 404 and does not create notifications when email not found', async () => {
--    const req = { body: { email: 'missing@test.com' } };
--    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
--    const next = jest.fn();
--
--    jest
--      .spyOn(User, 'findOne')
--      .mockReturnValue({ populate: jest.fn().mockResolvedValue(null) });
--    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
--
--    await requestPasswordReset(req, res, next);
--
--    expect(User.findOne).toHaveBeenCalledWith({ email: 'missing@test.com' });
--    expect(insertSpy).not.toHaveBeenCalled();
--    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
--    expect(next.mock.calls[0][0].statusCode).toBe(404);
--  });
--});
-+describe('requestPasswordReset', () => {
-+  const originalFrontendUrl = process.env.FRONTEND_URL;
-+
-+  const createFindOneQuery = (result) => {
-+    const promise = Promise.resolve(result);
-+    promise.populate = jest.fn().mockReturnValue(Promise.resolve(result));
-+    return promise;
+-  if (senderEmail) {
+-    payload.sender = { email: senderEmail };
+-  }
++  const brevoSenderEmail = config.brevo?.senderEmail;
++  const brevoSenderName = config.brevo?.senderName;
++  const senderEmail = brevoSenderEmail || config.email?.from;
++  const senderName = brevoSenderEmail ? brevoSenderName : undefined;
++  const payload = {
++    to: toField,
++    subject,
++    textContent: message?.trim(),
++    htmlContent: html || toHtml(message)
 +  };
 +
-+  const createUser = (overrides = {}) => {
-+    const user = {
-+      _id: 'user-id',
-+      email: 'user@test.com',
-+      nombre: 'Usuario',
-+      tutor: null,
-+      hospital: null,
-+      resetPasswordToken: undefined,
-+      resetPasswordExpire: undefined,
-+      getResetPasswordToken: jest.fn().mockImplementation(() => {
-+        user.resetPasswordToken = 'hashed-token';
-+        user.resetPasswordExpire = new Date(Date.now() + 3600000);
-+        return 'raw-token';
-+      }),
-+      save: jest.fn().mockResolvedValue(),
-+      ...overrides
-+    };
-+    return user;
-+  };
-+
-+  afterEach(() => {
-+    jest.restoreAllMocks();
-+    jest.clearAllMocks();
-+    sendEmail.mockReset();
-+    if (originalFrontendUrl === undefined) {
-+      delete process.env.FRONTEND_URL;
-+    } else {
-+      process.env.FRONTEND_URL = originalFrontendUrl;
-+    }
-+  });
-+
-+  test('returns 404 and does not create notifications when email not found', async () => {
-+    const req = { body: { email: 'missing@test.com' } };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+    const next = jest.fn();
-+
-+    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(null));
-+    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
-+
-+    await requestPasswordReset(req, res, next);
-+
-+    expect(User.findOne).toHaveBeenCalledWith({ email: 'missing@test.com' });
-+    expect(insertSpy).not.toHaveBeenCalled();
-+    expect(sendEmail).not.toHaveBeenCalled();
-+    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
-+    expect(next.mock.calls[0][0].statusCode).toBe(404);
-+  });
-+
-+  test('returns success when automatic mode sends email', async () => {
-+    const user = createUser();
-+    const req = { body: { email: user.email, mode: 'automatic' } };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+    const next = jest.fn();
-+
-+    process.env.FRONTEND_URL = 'https://frontend.example';
-+
-+    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(user));
-+    jest
-+      .spyOn(User, 'find')
-+      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) });
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
-+    jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
-+    sendEmail.mockResolvedValue();
-+
-+    await requestPasswordReset(req, res, next);
-+
-+    expect(User.findOne).toHaveBeenCalledWith({ email: user.email });
-+    expect(user.getResetPasswordToken).toHaveBeenCalled();
-+    expect(user.save).toHaveBeenCalledWith({ validateBeforeSave: false });
-+    expect(sendEmail).toHaveBeenCalledWith(
-+      expect.objectContaining({ email: user.email })
-+    );
-+    expect(Notificacion.insertMany).not.toHaveBeenCalled();
-+    expect(res.status).toHaveBeenCalledWith(200);
-+    expect(res.json).toHaveBeenCalledWith({ success: true });
-+    expect(next).not.toHaveBeenCalled();
-+  });
-+
-+  test('restores reset token fields when email sending fails', async () => {
-+    const user = createUser({
-+      resetPasswordToken: 'existing-token',
-+      resetPasswordExpire: new Date(Date.now() + 1000)
-+    });
-+    const req = { body: { email: user.email, mode: 'automatic' } };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+    const next = jest.fn();
-+
-+    process.env.FRONTEND_URL = 'https://frontend.example';
-+
-+    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(user));
-+    jest
-+      .spyOn(User, 'find')
-+      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) });
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
-+    jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
-+    sendEmail.mockRejectedValue(new Error('mailer failure'));
-+
-+    await requestPasswordReset(req, res, next);
-+
-+    expect(sendEmail).toHaveBeenCalled();
-+    expect(user.save.mock.calls.length).toBeGreaterThanOrEqual(2);
-+    expect(user.resetPasswordToken).toBeUndefined();
-+    expect(user.resetPasswordExpire).toBeUndefined();
-+    expect(Notificacion.insertMany).not.toHaveBeenCalled();
-+    expect(res.status).not.toHaveBeenCalled();
-+    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
-+    expect(next.mock.calls[0][0].statusCode).toBe(500);
-+  });
-+});
++  if (senderEmail && senderName) {
++    payload.sender = { email: senderEmail, name: senderName };
++  } else if (senderEmail) {
++    payload.sender = { email: senderEmail };
++  }
+ 
+   Object.keys(payload).forEach((key) => {
+     if (payload[key] === undefined) {
+       delete payload[key];
+     }
+   });
+ 
+   try {
+     return await brevoClient.sendTransacEmail(payload);
+   } catch (error) {
+     console.error(
+       '[sendEmail] Error enviando email transaccional a través de Brevo',
+       {
+         to: toField.map((recipient) => recipient.email),
+         subject,
+         error: error?.message || error
+       }
+     );
+     throw error;
+   }
+ };
+ 
+ module.exports = sendEmail;
