@@ -20,7 +20,11 @@
     "notifications": "Notifications",
     "profile": "Profile",
     "users": "Users",
-    "logout": "Logout"
+    "reports": "Reports",
+    "logout": "Logout",
+    "download": "Download",
+    "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+    "downloadSurgeryReportError": "Error downloading surgery report"
   },
   "adminConfig": {
     "title": "Settings",
@@ -239,6 +243,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancel",
     "create": "Create",
     "creating": "Creating...",
@@ -249,12 +254,14 @@
     "phase": "Phase",
     "validate": "Validate",
     "reject": "Reject",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "none": "None"
   },
   "profile": {
     "title": "My Profile",
     "personalData": "Personal Data",
     "changePassword": "Change Password",
+    "noTutor": "No tutor assigned",
     "fields": {
       "name": "Name",
       "lastName": "Last Name",
@@ -262,10 +269,12 @@
       "logoUrl": "Logo URL",
       "hospital": "Hospital",
       "society": "Society",
+      "tutor": "Tutor",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
       "confirmPassword": "Confirm Password"
     },
+    
     "messages": {
       "updateSuccess": "Profile updated",
       "updateError": "Error updating profile",
@@ -375,7 +384,9 @@
       "edit": "Edit",
       "delete": "Delete",
       "changePassword": "Change password",
-      "createProgress": "Create progress"
+      "sendResetLink": "Send reset link",
+      "createProgress": "Create progress",
+      "downloadSurgeryReport": "Download report for {{phase}}"
     },
     "createSuccess": "User created successfully",
     "createError": "Error creating user",
@@ -387,6 +398,7 @@
     "passwordError": "Error updating password",
     "createProgressSuccess": "Training progress created successfully",
     "createProgressError": "Error creating progress",
+    "noTutor": "No tutor assigned",
     "table": {
       "aria": "users table",
       "name": "Name",
@@ -396,7 +408,9 @@
       "society": "Society",
       "role": "Role",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Specialty",
+      
       "zone": "Zone",
       "actions": "Actions"
     },
@@ -409,7 +423,9 @@
       "type": "Type",
       "role": "Role",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Specialty",
+      
       "society": "Society",
       "zone": "Zone"
     },
@@ -428,6 +444,10 @@
       "label": "New password",
       "updating": "Updating...",
       "update": "Update"
+    },
+    "resetEmail": {
+      "subject": "Reset your {{app}} password",
+      "body": "Hello {{name}},\n\nYou requested to reset your password for {{app}}. Click the link below to choose a new one:\n\n{{link}}\n\nThis link is personal, valid only once and expires in {{days}} days.\n\nAdministrador del entorno"
     },
     "_comment": "Admin user management",
     "buttons": {
@@ -614,6 +634,20 @@
     "description": "To reset the password please contact the system administrator.",
     "emailLabel": "Your email",
     "submit": "Send email to administrator",
+    "backToLogin": "Back to login",
+    "requestSent": "Request sent.",
+    "error": "Error sending request.",
+    "emailNotFound": "No user with that email exists. Please enter a valid one."
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "for": "Resetting password for {{email}}",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Change Password",
+    "success": "Password successfully reset. Redirecting to login...",
+    "error": "Failed to reset password.",
+    "passwordMismatch": "Passwords do not match.",
     "backToLogin": "Back to login"
   },
   "login": {
@@ -687,7 +721,18 @@
       "viewed": "No viewed notifications"
     },
     "errorLoad": "Error loading notifications",
-    "errorMarkAsRead": "Error marking notification as read"
+    "errorMarkAsRead": "Error marking notification as read",
+    "actions": {
+      "sendResetLink": "Send link",
+      "delete": "Delete",
+      "markRead": "Mark as read",
+      "markUnread": "Mark as unread",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all"
+    },
+    "messages": {
+      "resetRequest": "Password reset request"
+    }
   },
   "codes": {
     "new": "New Code",
@@ -766,6 +811,9 @@
       "deleteSuccess": "User deleted",
       "deleteError": "Error deleting",
       "genericError": "Error"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Download report for {{phase}}"
     }
   },
   "progress": {
@@ -918,13 +966,21 @@
     "title": "My Progress",
     "errorLoad": "Error loading progress",
     "downloadError": "Error downloading certificate",
-    "downloadCertificate": "Download certificate"
+    "downloadCertificate": "Certificado de Cumplimiento",
+    "downloadSurgeryReport": "Download report for {{phase}}",
+    "downloadSurgeryReportError": "Error downloading surgery report"
   },
   "certificate": {
     "title": "Certificate of Completion",
     "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
+    "bodySociedad": "This certifies that <strong>{{name}}</strong> has completed the INTUITIVE / {{sociedad}} robotic surgery training curriculum.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificate automatically generated by Academic Program Da Vinci · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "tutorPrefix": "Residents program tutor at ",
+    "tutorTitle": "Residents program tutor",
+    "tutorPlaceholder": "Program tutor:",
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Training manager of the {{programa}} program"
   },
   "emails": {
     "inviteSubject": "Invitation to the Da Vinci Training Platform"
@@ -950,5 +1006,8 @@
   "privacyPolicy": {
     "title": "Privacy Policy",
     "lastUpdated": "Last updated: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Hospitals"
   }
 }

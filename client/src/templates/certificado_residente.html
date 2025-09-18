@@ -57,24 +57,15 @@
       text-align: right;
     }
 
-    .firma .linea {
+    .tutor-line {
       margin-top: 40px;
-      border-top: 1px solid #1E5B94;
-      width: 240px;
-      margin-left: auto;
       font-size: 14px;
       color: #1E5B94;
     }
 
-    .logos {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 40px;
-    }
-
-    .logos img {
-      max-height: 50px;
+    .tutor-name {
+      color: #1E5B94;
+      font-weight: bold;
     }
 
     .logo-center {
@@ -96,7 +87,7 @@
 </head>
 <body>
   <div class="certificado">
-    {{LOGOS}}
+    <div class="logo-center">{{HOSPITAL_LOGO}}</div>
     <div class="header">
       <h1>{{CERT_TITLE}}</h1>
       <h2>{{PROGRAMA}}</h2>
@@ -109,12 +100,10 @@
     <div class="sign-section">
       <div class="date">{{CERT_DATE}}</div>
       <div class="firma">
-        <img src="{{SIGNATURE_LOGO}}" alt="Firma" style="max-height: 80px; display: block; margin-left: auto; margin-right: 60px;margin-bottom: -5px;" />
-        <div class="linea">
-          Javier Trujillo Menacho<br />
-          Hospital Marketing Manager<br />
-          {{TUTOR_NAME}}<br />
-          {{TUTOR_ROLE_LINE}}
+        <div class="tutor-line">
+          <span class="tutor-name">{{TUTOR_NAME}}</span><br>
+          {{TUTOR_ROLE_LINE}}<br>
+          {{TUTOR_HOSPITAL_LINE}}
         </div>
       </div>
     </div>

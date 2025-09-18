@@ -69,6 +69,46 @@ exports.marcarComoLeida = async (req, res, next) => {
   }
 };
 
+// @desc    Marcar notificación como no leída
+// @route   PUT /api/notificaciones/:id/no-leer
+// @access  Private
+exports.marcarComoNoLeida = async (req, res, next) => {
+  try {
+    let notificacion = await Notificacion.findById(req.params.id);
+
+    if (!notificacion) {
+      return next(
+        new ErrorResponse(
+          `Notificación no encontrada con id ${req.params.id}`,
+          404
+        )
+      );
+    }
+
+    // Verificar que la notificación pertenece al usuario
+    if (notificacion.usuario.toString() !== req.user.id) {
+      return next(
+        new ErrorResponse(
+          'No autorizado para acceder a esta notificación',
+          403
+        )
+      );
+    }
+
+    notificacion.leida = false;
+    await notificacion.save();
+
+    notificacion = await Notificacion.findById(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      data: notificacion
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Marcar todas las notificaciones como leídas
 // @route   PUT /api/notificaciones/leer-todas
 // @access  Private
@@ -96,6 +136,41 @@ exports.marcarTodasComoLeidas = async (req, res, next) => {
   }
 };
 
+// @desc    Marcar múltiples notificaciones
+// @route   PUT /api/notificaciones/marcar-multiples
+// @access  Private
+exports.marcarMultiple = async (req, res, next) => {
+  try {
+    const { ids, leida } = req.body;
+
+    const count = await Notificacion.countDocuments({
+      _id: { $in: ids },
+      usuario: req.user.id
+    });
+
+    if (count !== ids.length) {
+      return next(
+        new ErrorResponse(
+          'No autorizado para modificar alguna notificación',
+          403
+        )
+      );
+    }
+
+    await Notificacion.updateMany(
+      { _id: { $in: ids }, usuario: req.user.id },
+      { leida }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Eliminar una notificación
 // @route   DELETE /api/notificaciones/:id
 // @access  Private
@@ -113,6 +188,57 @@ exports.eliminarNotificacion = async (req, res, next) => {
     }
 
     await notificacion.remove();
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Eliminar múltiples notificaciones
+// @route   DELETE /api/notificaciones
+// @access  Private
+exports.eliminarMultiples = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+
+    const count = await Notificacion.countDocuments({
+      _id: { $in: ids },
+      usuario: req.user.id
+    });
+
+    if (count !== ids.length) {
+      return next(
+        new ErrorResponse(
+          'No autorizado para eliminar alguna notificación',
+          403
+        )
+      );
+    }
+
+    await Notificacion.deleteMany({ _id: { $in: ids }, usuario: req.user.id });
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Eliminar notificaciones de reseteo de contraseña de un usuario
+// @route   DELETE /api/notificaciones/password-reset/:userId
+// @access  Private
+exports.clearPasswordResetNotifications = async (req, res, next) => {
+  try {
+    await Notificacion.deleteMany({
+      tipo: 'passwordReset',
+      'entidadRelacionada.id': req.params.userId
+    });
 
     res.status(200).json({
       success: true,

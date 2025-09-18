@@ -129,19 +129,19 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
 };
 
 // Método para generar token de restablecimiento de contraseña
-userSchema.methods.getResetPasswordToken = function() {
+userSchema.methods.getResetPasswordToken = function(durationMs = 10 * 60 * 1000) {
   // Generar token
   const resetToken = crypto.randomBytes(20).toString('hex');
-  
+
   // Hash token y establecer en resetPasswordToken
   this.resetPasswordToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-    
-  // Establecer expiración (10 minutos)
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
-  
+
+  // Establecer expiración utilizando la duración proporcionada
+  this.resetPasswordExpire = Date.now() + durationMs;
+
   return resetToken;
 };
 

@@ -20,7 +20,38 @@
     "notifications": "Notifications",
     "profile": "Profil",
     "users": "Utilisateurs",
-    "logout": "Déconnexion"
+    "reports": "Rapports",
+    "logout": "Déconnexion",
+    "download": "Télécharger",
+    "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+    "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
+  },
+  "profile": {
+    "title": "Mon profil",
+    "personalData": "Données personnelles",
+    "changePassword": "Changer le mot de passe",
+    "noTutor": "Aucun tuteur assigné",
+    "fields": {
+      "name": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "hospital": "Hôpital",
+      "society": "Société",
+      "tutor": "Tuteur",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe"
+    },
+    "messages": {
+      "updateSuccess": "Profil mis à jour",
+      "updateError": "Erreur lors de la mise à jour du profil",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordUpdateSuccess": "Mot de passe mis à jour",
+      "passwordUpdateError": "Erreur lors du changement de mot de passe"
+    },
+    "buttons": {
+      "changePassword": "Changer le mot de passe"
+    }
   },
   "adminConfig": {
     "title": "Paramètres",
@@ -89,6 +120,7 @@
     "registerButton": "S'inscrire"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Annuler",
     "create": "Créer",
     "creating": "Création en cours...",
@@ -99,7 +131,8 @@
     "phase": "Phase",
     "validate": "Valider",
     "reject": "Rejeter",
-    "processing": "Traitement en cours..."
+    "processing": "Traitement en cours...",
+    "none": "Aucun"
   },
   "auth": {
     "login": "Connexion",
@@ -123,6 +156,20 @@
     "description": "Pour réinitialiser votre mot de passe, veuillez contacter l’administrateur du système.",
     "emailLabel": "Votre email",
     "submit": "Envoyer un email à l'administrateur",
+    "backToLogin": "Retour à la connexion",
+    "requestSent": "Demande envoyée.",
+    "error": "Erreur lors de l'envoi de la demande.",
+    "emailNotFound": "Aucun utilisateur avec cet e-mail n'existe. Veuillez en saisir un valide."
+  },
+  "resetPassword": {
+    "title": "Réinitialiser le mot de passe",
+    "for": "Réinitialisation du mot de passe pour {{email}}",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submit": "Changer le mot de passe",
+    "success": "Mot de passe réinitialisé avec succès. Redirection vers la connexion...",
+    "error": "Échec de la réinitialisation du mot de passe.",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
     "backToLogin": "Retour à la connexion"
   },
   "login": {
@@ -177,7 +224,18 @@
       "viewed": "Aucune notification vue"
     },
     "errorLoad": "Erreur lors du chargement des notifications",
-    "errorMarkAsRead": "Erreur lors du marquage de la notification comme lue"
+    "errorMarkAsRead": "Erreur lors du marquage de la notification comme lue",
+    "actions": {
+      "sendResetLink": "Envoyer le lien",
+      "delete": "Supprimer",
+      "markRead": "Marquer comme lue",
+      "markUnread": "Marquer comme non lue",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner"
+    },
+    "messages": {
+      "resetRequest": "Demande de réinitialisation du mot de passe"
+    }
   },
   "codes": {
     "new": "Nouveau code",
@@ -426,7 +484,9 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "changePassword": "Changer le mot de passe",
-      "createProgress": "Créer un progrès"
+      "sendResetLink": "Envoyer le lien de réinitialisation",
+      "createProgress": "Créer un progrès",
+      "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
     },
     "createSuccess": "Utilisateur créé avec succès",
     "createError": "Erreur lors de la création de l'utilisateur",
@@ -438,6 +498,7 @@
     "passwordError": "Erreur lors de la mise à jour du mot de passe",
     "createProgressSuccess": "Progrès de formation créé avec succès",
     "createProgressError": "Erreur lors de la création du progrès",
+    "noTutor": "Aucun tuteur assigné",
     "table": {
       "aria": "tableau des utilisateurs",
       "name": "Nom",
@@ -446,7 +507,9 @@
       "society": "Société",
       "role": "Rôle",
       "hospital": "Hôpital",
+      "tutor": "Tuteur",
       "specialty": "Spécialité",
+      
       "zone": "Zone",
       "actions": "Actions"
     },
@@ -458,7 +521,9 @@
       "type": "Type",
       "role": "Rôle",
       "hospital": "Hôpital",
+      "tutor": "Tuteur",
       "specialty": "Spécialité",
+      
       "society": "Société",
       "zone": "Zone"
     },
@@ -477,6 +542,10 @@
       "label": "Nouveau mot de passe",
       "updating": "Mise à jour en cours...",
       "update": "Mettre à jour"
+    },
+    "resetEmail": {
+      "subject": "Réinitialiser le mot de passe de {{app}}",
+      "body": "Bonjour {{name}},\n\nVous avez demandé à réinitialiser votre mot de passe pour {{app}}. Cliquez sur le lien ci-dessous pour en choisir un nouveau :\n\n{{link}}\n\nCe lien est personnel, valable une seule fois et expire dans {{days}} jours.\n\nAdministrador del entorno"
     },
     "_comment": "Gestion des utilisateurs pour les administrateurs",
     "buttons": {
@@ -658,13 +727,21 @@
     "title": "Mon progrès",
     "errorLoad": "Erreur lors du chargement du progrès",
     "downloadError": "Erreur lors du téléchargement du certificat",
-    "downloadCertificate": "Télécharger le certificat"
+    "downloadCertificate": "Certificado de Cumplimiento",
+    "downloadSurgeryReport": "Télécharger le rapport de {{phase}}",
+    "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
   },
   "certificate": {
     "title": "Certificat de réussite",
     "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificat généré automatiquement par Academic Program Da Vinci · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "tutorPrefix": "Tuteur du programme de résidents de ",
+    "tutorTitle": "Tuteur du programme de résidents",
+    "tutorPlaceholder": "Tuteur du programme :",
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsable de formation du programme {{programa}}"
   },
   "adminPhases": {
     "_comment": "Gestion des phases d'administration",
@@ -924,10 +1001,16 @@
       "deleteSuccess": "Utilisateur supprimé",
       "deleteError": "Erreur lors de la suppression",
       "genericError": "Erreur"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
     }
   },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
     "lastUpdated": "Dernière mise à jour : {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Hôpitaux"
   }
 }

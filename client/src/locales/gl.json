@@ -20,7 +20,11 @@
     "notifications": "Notificacións",
     "profile": "Perfil",
     "users": "Usuarios",
-    "logout": "Pechar sesión"
+    "reports": "Informes",
+    "logout": "Pechar sesión",
+    "download": "Descargar",
+    "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+    "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
   },
   "adminConfig": {
     "title": "Configuración",
@@ -310,6 +314,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Cancelar",
     "create": "Crear",
     "creating": "Creando...",
@@ -320,22 +325,26 @@
     "phase": "Fase",
     "validate": "Validar",
     "reject": "Rexectar",
-    "processing": "Procesando..."
+    "processing": "Procesando...",
+    "none": "Ningún"
   },
   "profile": {
     "title": "O meu perfil",
     "personalData": "Datos persoais",
     "changePassword": "Cambiar contrasinal",
+    "noTutor": "Sen tutor asignado",
     "fields": {
       "name": "Nome",
       "lastName": "Apelidos",
       "email": "Correo electrónico",
       "hospital": "Hospital",
       "society": "Sociedade",
+      "tutor": "Tutor",
       "currentPassword": "Contrasinal actual",
       "newPassword": "Novo contrasinal",
       "confirmPassword": "Confirmar contrasinal"
     },
+    
     "messages": {
       "updateSuccess": "Perfil actualizado",
       "updateError": "Erro ao actualizar o perfil",
@@ -430,7 +439,9 @@
       "fechaSimulacion": "Simulación",
       "fechaAtividadesFirstAssistant": "First Assistant",
       "fechaModuloOnlineStepByStep": "Step By Step",
-      "fechaHandOn": "Hand On"
+      "fechaHandOn": "Hand On",
+      "urlLogo": "URL do logotipo",
+      "responsablePrograma": "Responsable do programa"
     }
   },
   "adminUsers": {
@@ -444,7 +455,9 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Cambiar contrasinal",
-      "createProgress": "Crear progreso"
+      "sendResetLink": "Enviar ligazón de restablecemento",
+      "createProgress": "Crear progreso",
+      "downloadSurgeryReport": "Descargar informe de {{phase}}"
     },
     "createSuccess": "Usuario creado correctamente",
     "createError": "Erro ao crear o usuario",
@@ -456,6 +469,7 @@
     "passwordError": "Erro ao actualizar o contrasinal",
     "createProgressSuccess": "Progreso formativo creado con éxito",
     "createProgressError": "Erro ao crear o progreso",
+    "noTutor": "Sen tutor asignado",
     "table": {
       "aria": "táboa de usuarios",
       "name": "Nome",
@@ -464,7 +478,9 @@
       "society": "Sociedade",
       "role": "Rol",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialidade",
+      
       "zone": "Zona",
       "actions": "Accións"
     },
@@ -476,7 +492,9 @@
       "type": "Tipo",
       "role": "Rol",
       "hospital": "Hospital",
+      "tutor": "Tutor",
       "specialty": "Especialidade",
+      
       "society": "Sociedade",
       "zone": "Zona"
     },
@@ -495,6 +513,10 @@
       "label": "Novo contrasinal",
       "updating": "Actualizando...",
       "update": "Actualizar"
+    },
+    "resetEmail": {
+      "subject": "Restablecer contrasinal de {{app}}",
+      "body": "Ola {{name}},\n\nSolicitaches restablecer o teu contrasinal en {{app}}. Preme na seguinte ligazón para escoller un novo:\n\n{{link}}\n\nEsta ligazón é persoal, só é válida unha vez e caduca en {{days}} días.\n\nAdministrador del entorno"
     },
     "_comment": "Xestión de usuarios para administradores",
     "buttons": {
@@ -608,6 +630,20 @@
     "description": "Para restablecer o contrasinal, contacta co administrador do sistema.",
     "emailLabel": "O teu correo",
     "submit": "Enviar correo ao administrador",
+    "backToLogin": "Volver ao inicio de sesión",
+    "requestSent": "Solicitude enviada.",
+    "error": "Erro ao enviar a solicitude.",
+    "emailNotFound": "Non existe ningún usuario con ese correo. Introduce un válido."
+  },
+  "resetPassword": {
+    "title": "Restablecer contrasinal",
+    "for": "Restablecendo o contrasinal para {{email}}",
+    "newPassword": "Novo contrasinal",
+    "confirmPassword": "Confirmar contrasinal",
+    "submit": "Cambiar contrasinal",
+    "success": "O contrasinal actualizouse correctamente. Redirixindo ao inicio de sesión...",
+    "error": "Non se puido actualizar o contrasinal.",
+    "passwordMismatch": "Os contrasinais non coinciden.",
     "backToLogin": "Volver ao inicio de sesión"
   },
   "login": {
@@ -662,7 +698,18 @@
       "viewed": "Non hai notificacións vistas"
     },
     "errorLoad": "Erro ao cargar as notificacións",
-    "errorMarkAsRead": "Erro ao marcar a notificación como lida"
+    "errorMarkAsRead": "Erro ao marcar a notificación como lida",
+    "actions": {
+      "sendResetLink": "Enviar ligazón",
+      "delete": "Eliminar",
+      "markRead": "Marcar como lida",
+      "markUnread": "Marcar como non lida",
+      "selectAll": "Seleccionar todas",
+      "deselectAll": "Deseleccionar todas"
+    },
+    "messages": {
+      "resetRequest": "Solicitude de restablecemento do contrasinal"
+    }
   },
   "codes": {
     "new": "Novo código",
@@ -738,6 +785,9 @@
       "deleteSuccess": "Usuario eliminado",
       "deleteError": "Erro ao eliminar",
       "genericError": "Erro"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Descargar informe de {{phase}}"
     }
   },
   "progress": {
@@ -822,13 +872,21 @@
     "title": "O meu progreso",
     "errorLoad": "Erro ao cargar o progreso",
     "downloadError": "Erro ao descargar o certificado",
-    "downloadCertificate": "Descargar certificado"
+    "downloadCertificate": "Certificado de Cumplimiento",
+    "downloadSurgeryReport": "Descargar informe de {{phase}}",
+    "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
   },
   "certificate": {
     "title": "Certificado de Cumprimento",
     "body": "Certifícase que <strong>{{name}}</strong> completou satisfactoriamente a fase formativa asignada do Academic Program en tecnoloxías do robot Da Vinci®. <br /><br />Este curso enmárcase dentro do plan formativo en tecnoloxía robótica en colaboración co hospital <strong>{{hospital}}</strong> e baixo a supervisión do seu titor asignado.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado xerado automaticamente por Academic Program Da Vinci · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "tutorPrefix": "Titor do programa de residentes do ",
+    "tutorTitle": "Titor do programa de residentes",
+    "tutorPlaceholder": "Titor do programa:",
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsable de formación do programa {{programa}}"
   },
   "forms": {
     "code": "Código",
@@ -940,6 +998,9 @@
   "privacyPolicy": {
     "title": "Política de privacidade",
     "lastUpdated": "Última actualización: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Hospitais"
   }
 }
 

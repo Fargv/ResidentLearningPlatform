@@ -18,6 +18,7 @@ import ResidenteRoute from './components/routing/ResidenteRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 
@@ -32,8 +33,8 @@ import AdminFases from './pages/dashboard/AdminFases';
 import Perfil from './pages/dashboard/Perfil';
 import Notificaciones from './pages/dashboard/Notificaciones';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
-import AdminProgresoUsuarios from './pages/dashboard/AdminProgresoUsuarios';
 import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
+import AdminInformes from './pages/dashboard/AdminInformes';
 
 
 declare global {
@@ -81,6 +82,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
 
             {/* Ruta raíz redirige a dashboard o login */}
@@ -128,7 +130,7 @@ function App() {
               } />
               <Route path="progreso-usuarios" element={
                 <AdminRoute>
-                  <AdminProgresoUsuarios />
+                  <Navigate to="/dashboard/usuarios" />
                 </AdminRoute>
               } />
               <Route path="progreso-usuario/:userId" element={
@@ -142,6 +144,11 @@ function App() {
                   </AdminRoute>
                 }
               />
+              <Route path="informes" element={
+                <AdminRoute>
+                  <AdminInformes />
+                </AdminRoute>
+              } />
 
               {/* Rutas comunes */}
               <Route path="perfil" element={<Perfil />} />

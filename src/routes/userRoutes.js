@@ -11,11 +11,13 @@ const {
   updateUser,
   updateUserStatus,
   updateUserPassword,
+  generatePasswordResetToken,
   inviteUser,
   getInvitations,
   cancelInvitation,
   getTutorResidentes,
   getResidenteTutores,
+  getAvailableTutors,
   getProfesorParticipantes,
   getUsersByHospital,
   deleteUser
@@ -26,6 +28,7 @@ router.use(protect);
 
 // Rutas solo para administradores, tutores y CSM
 router.get('/hospital/:hospitalId', authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getUsersByHospital);
+router.get('/tutores', authorize(Role.ADMINISTRADOR, Role.CSM, Role.TUTOR), getAvailableTutors);
 
 // Rutas para administradores, tutores, CSM y profesores
 router.route('/')
@@ -60,6 +63,9 @@ router.route('/:id')
 
 router.route('/:id/password')
   .put(authorize(Role.ADMINISTRADOR), updateUserPassword);
+
+router.route('/:id/reset-password')
+  .post(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), generatePasswordResetToken);
 
 router.route('/:id/status')
   .put(authorize(Role.ADMINISTRADOR), updateUserStatus);

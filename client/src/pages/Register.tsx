@@ -31,6 +31,13 @@ interface Sociedad {
   titulo: string;
 }
 
+const legacyRoles: Record<string, string> = {
+  formador: 'tutor',
+  coordinador: 'csm',
+  instructor: 'profesor',
+  alumno: 'participante'
+};
+
 const Register: React.FC = () => {
   const { t } = useTranslation();
   const zonaOptions = [
@@ -102,11 +109,12 @@ const Register: React.FC = () => {
       try {
         const res = await api.get(`/auth/codigos/${codigoAcceso}`);
         const { rol: rolResp, tipo: tipoResp } = res.data.data;
+        const mappedRol = legacyRoles[rolResp] || rolResp;
         setFormData((prev) => ({
           ...prev,
-          rol: rolResp,
+          rol: mappedRol,
           tipo: tipoResp,
-          ...(rolResp === 'csm' && { hospital: '', sociedad: '' })
+          ...(mappedRol === 'csm' && { hospital: '', sociedad: '' })
         }));
         setCodigoError(null);
         setShowForm(true);

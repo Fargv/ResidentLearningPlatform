@@ -20,7 +20,9 @@
     "notifications": "Benachrichtigungen",
     "profile": "Profil",
     "users": "Benutzer",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "reports": "Berichte",
+    "download": "Herunterladen"
   },
   "adminConfig": {
     "title": "Konfiguration",
@@ -90,6 +92,7 @@
     "registerButton": "Registrieren"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Abbrechen",
     "create": "Erstellen",
     "creating": "Erstelle...",
@@ -100,7 +103,8 @@
     "phase": "Phase",
     "validate": "Validieren",
     "reject": "Ablehnen",
-    "processing": "Verarbeite..."
+    "processing": "Verarbeite...",
+    "none": "Keine"
   },
   "auth": {
     "login": "Anmelden",
@@ -124,7 +128,21 @@
     "description": "Um Ihr Passwort zurückzusetzen, wenden Sie sich bitte an den Systemadministrator.",
     "emailLabel": "Ihre E-Mail",
     "submit": "E-Mail an Administrator senden",
-    "backToLogin": "Zurück zur Anmeldung"
+    "backToLogin": "Zurück zur Anmeldung",
+    "requestSent": "Anfrage gesendet.",
+    "error": "Fehler beim Senden der Anfrage.",
+    "emailNotFound": "Es existiert kein Benutzer mit dieser E-Mail. Bitte gib eine gültige ein."
+  },
+  "resetPassword": {
+    "title": "Passwort zurücksetzen",
+    "for": "Passwort für {{email}} wird zurückgesetzt",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "submit": "Passwort ändern",
+    "success": "Passwort erfolgreich geändert. Weiterleitung zum Login...",
+    "error": "Passwort konnte nicht geändert werden.",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+    "backToLogin": "Zurück zum Login"
   },
   "login": {
     "title": "Da Vinci Ausbildungsprogramm",
@@ -178,7 +196,18 @@
       "viewed": "Keine angesehenen Benachrichtigungen"
     },
     "errorLoad": "Fehler beim Laden der Benachrichtigungen",
-    "errorMarkAsRead": "Fehler beim Markieren als gelesen"
+    "errorMarkAsRead": "Fehler beim Markieren als gelesen",
+    "actions": {
+      "sendResetLink": "Link senden",
+      "delete": "Löschen",
+      "markRead": "Als gelesen markieren",
+      "markUnread": "Als ungelesen markieren",
+      "selectAll": "Alle auswählen",
+      "deselectAll": "Alle abwählen"
+    },
+    "messages": {
+      "resetRequest": "Anforderung zum Zurücksetzen des Passworts"
+    }
   },
   "codes": {
     "new": "Neuer Code",
@@ -281,13 +310,21 @@
     "title": "Mein Fortschritt",
     "errorLoad": "Fehler beim Laden des Fortschritts",
     "downloadError": "Fehler beim Herunterladen des Zertifikats",
-    "downloadCertificate": "Zertifikat herunterladen"
+    "downloadCertificate": "Certificado de Cumplimiento",
+    "downloadSurgeryReport": "Bericht für {{phase}} herunterladen",
+    "downloadSurgeryReportError": "Fehler beim Herunterladen des Chirurgieberichts"
   },
   "certificate": {
     "title": "Zertifikat über den Abschluss",
     "body": "Hiermit wird bestätigt, dass <strong>{{name}}</strong> die zugewiesene Ausbildungsphase des Academic Program zu Technologien des Da Vinci®-Roboters erfolgreich abgeschlossen hat.<br /><br />Dieser Kurs ist Teil des Ausbildungsplans für Robotertechnologie in Zusammenarbeit mit dem Krankenhaus <strong>{{hospital}}</strong> und unter der Aufsicht des zugewiesenen Tutors.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Zertifikat automatisch erstellt vom Academic Program Da Vinci · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "tutorPrefix": "Tutor des Residenzprogramms des ",
+    "tutorTitle": "Tutor des Residenzprogramms",
+    "tutorPlaceholder": "Tutor des Programms:",
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Verantwortlicher für die Ausbildung des Programms {{programa}}"
   },
   "residentPhases": {
     "title": "Meine Ausbildungsphasen",
@@ -475,16 +512,19 @@
     "title": "Mein Profil",
     "personalData": "Persönliche Daten",
     "changePassword": "Passwort ändern",
+    "noTutor": "Kein Tutor zugewiesen",
     "fields": {
       "name": "Name",
       "lastName": "Nachname",
       "email": "E-Mail",
       "hospital": "Krankenhaus",
       "society": "Gesellschaft",
+      "tutor": "Tutor",
       "currentPassword": "Aktuelles Passwort",
       "newPassword": "Neues Passwort",
       "confirmPassword": "Passwort bestätigen"
     },
+    
     "messages": {
       "updateSuccess": "Profil aktualisiert",
       "updateError": "Fehler beim Aktualisieren des Profils",
@@ -592,7 +632,9 @@
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "changePassword": "Passwort ändern",
-      "createProgress": "Fortschritt erstellen"
+      "sendResetLink": "Reset-Link senden",
+      "createProgress": "Fortschritt erstellen",
+      "downloadSurgeryReport": "Bericht für {{phase}} herunterladen"
     },
     "createSuccess": "Benutzer erfolgreich erstellt",
     "createError": "Fehler beim Erstellen des Benutzers",
@@ -604,6 +646,7 @@
     "passwordError": "Fehler beim Aktualisieren des Passworts",
     "createProgressSuccess": "Ausbildungsfortschritt erfolgreich erstellt",
     "createProgressError": "Fehler beim Erstellen des Fortschritts",
+    "noTutor": "Kein Tutor zugewiesen",
     "table": {
       "aria": "Benutzertabelle",
       "name": "Name",
@@ -612,7 +655,9 @@
       "society": "Gesellschaft",
       "role": "Rolle",
       "hospital": "Krankenhaus",
+      "tutor": "Tutor",
       "specialty": "Fachgebiet",
+      
       "zone": "Zone",
       "actions": "Aktionen"
     },
@@ -624,7 +669,9 @@
       "type": "Typ",
       "role": "Rolle",
       "hospital": "Krankenhaus",
+      "tutor": "Tutor",
       "specialty": "Fachgebiet",
+      
       "society": "Gesellschaft",
       "zone": "Zone"
     },
@@ -643,6 +690,10 @@
       "label": "Neues Passwort",
       "updating": "Aktualisiere...",
       "update": "Aktualisieren"
+    },
+    "resetEmail": {
+      "subject": "Passwort für {{app}} zurücksetzen",
+      "body": "Hallo {{name}},\n\nDu hast beantragt, dein Passwort für {{app}} zurückzusetzen. Klicke auf den folgenden Link, um ein neues zu wählen:\n\n{{link}}\n\nDieser Link ist persönlich, gilt nur einmal und läuft in {{days}} Tagen ab.\n\nAdministrador del entorno"
     },
     "_comment": "Benutzerverwaltung",
     "buttons": {
@@ -867,6 +918,9 @@
       "deleteSuccess": "Benutzer gelöscht",
       "deleteError": "Fehler beim Löschen",
       "genericError": "Fehler"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Bericht für {{phase}} herunterladen"
     }
   },
   "tutorValidations": {
@@ -940,5 +994,8 @@
   "privacyPolicy": {
     "title": "Datenschutzerklärung",
     "lastUpdated": "Zuletzt aktualisiert: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Krankenhäuser"
   }
 }

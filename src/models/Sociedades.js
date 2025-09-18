@@ -7,6 +7,8 @@ const SociedadSchema = new mongoose.Schema({
     enum: ['ACTIVO', 'INACTIVO'],
     default: 'ACTIVO'
   },
+  urlLogo: { type: String },
+  responsablePrograma: { type: String },
   fechaConvocatoria: { type: Date },
   fechaPresentacion: { type: Date },
   fechaModulosOnline: { type: Date },

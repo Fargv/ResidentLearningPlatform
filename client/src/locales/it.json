@@ -20,7 +20,9 @@
     "notifications": "Notifiche",
     "profile": "Profilo",
     "users": "Utenti",
-    "logout": "Disconnetti"
+    "logout": "Disconnetti",
+    "reports": "Report",
+    "download": "Scarica"
   },
   "adminConfig": {
     "title": "Configurazione",
@@ -196,6 +198,7 @@
     "registerButton": "Registrati"
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Annulla",
     "create": "Crea",
     "creating": "Creazione in corso...",
@@ -206,7 +209,8 @@
     "phase": "Fase",
     "validate": "Convalida",
     "reject": "Rifiuta",
-    "processing": "Elaborazione in corso..."
+    "processing": "Elaborazione in corso...",
+    "none": "Nessuno"
   },
   "auth": {
     "login": "Accesso",
@@ -230,6 +234,20 @@
     "description": "Per reimpostare la password, contatta l'amministratore del sistema.",
     "emailLabel": "La tua email",
     "submit": "Invia email all'amministratore",
+    "backToLogin": "Torna al login",
+    "requestSent": "Richiesta inviata.",
+    "error": "Errore durante l'invio della richiesta.",
+    "emailNotFound": "Non esiste un utente con quella email. Inserisci un indirizzo valido."
+  },
+  "resetPassword": {
+    "title": "Reimposta password",
+    "for": "Reimpostazione della password per {{email}}",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "submit": "Cambia password",
+    "success": "Password aggiornata con successo. Reindirizzamento al login...",
+    "error": "Impossibile aggiornare la password.",
+    "passwordMismatch": "Le password non coincidono.",
     "backToLogin": "Torna al login"
   },
   "login": {
@@ -284,7 +302,18 @@
       "viewed": "Nessuna notifica vista"
     },
     "errorLoad": "Errore durante il caricamento delle notifiche",
-    "errorMarkAsRead": "Errore nel segnare la notifica come letta"
+    "errorMarkAsRead": "Errore nel segnare la notifica come letta",
+    "actions": {
+      "sendResetLink": "Invia link",
+      "delete": "Elimina",
+      "markRead": "Segna come letta",
+      "markUnread": "Segna come non letta",
+      "selectAll": "Seleziona tutte",
+      "deselectAll": "Deseleziona tutte"
+    },
+    "messages": {
+      "resetRequest": "Richiesta di reimpostazione della password"
+    }
   },
   "codes": {
     "new": "Nuovo codice",
@@ -387,13 +416,21 @@
     "title": "Il mio progresso",
     "errorLoad": "Errore durante il caricamento del progresso",
     "downloadError": "Errore durante il download del certificato",
-    "downloadCertificate": "Scarica certificato"
+    "downloadCertificate": "Certificado de Cumplimiento",
+    "downloadSurgeryReport": "Scarica il report di {{phase}}",
+    "downloadSurgeryReportError": "Errore nel download del report delle chirurgie"
   },
   "certificate": {
     "title": "Certificato di Completamento",
     "body": "Si certifica che <strong>{{name}}</strong> ha completato con successo la fase formativa assegnata dell'Academic Program sulle tecnologie del robot Da Vinci®. <br /><br />Questo corso rientra nel piano formativo sulla tecnologia robotica in collaborazione con l'ospedale <strong>{{hospital}}</strong> e sotto la supervisione del tutor assegnato.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificato generato automaticamente da Academic Program Da Vinci · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "tutorPrefix": "Tutor del programma di residenti del ",
+    "tutorTitle": "Tutor del programma di residenti",
+    "tutorPlaceholder": "Tutor del programma:",
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Responsabile della formazione del programma {{programa}}"
   },
   "tutorUsers": {
     "title": "I miei utenti",
@@ -462,22 +499,28 @@
       "deleteSuccess": "Utente eliminato",
       "deleteError": "Errore durante l'eliminazione",
       "genericError": "Errore"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Scarica il report di {{phase}}"
     }
   },
   "profile": {
     "title": "Il mio profilo",
     "personalData": "Dati personali",
     "changePassword": "Cambia password",
+    "noTutor": "Nessun tutor assegnato",
     "fields": {
       "name": "Nome",
       "lastName": "Cognome",
       "email": "Email",
       "hospital": "Ospedale",
       "society": "Società",
+      "tutor": "Tutor",
       "currentPassword": "Password attuale",
       "newPassword": "Nuova password",
       "confirmPassword": "Conferma password"
     },
+    
     "messages": {
       "updateSuccess": "Profilo aggiornato",
       "updateError": "Errore nell'aggiornamento del profilo",
@@ -586,7 +629,9 @@
       "edit": "Modifica",
       "delete": "Elimina",
       "changePassword": "Cambia password",
-      "createProgress": "Crea progresso"
+      "sendResetLink": "Invia link di reset",
+      "createProgress": "Crea progresso",
+      "downloadSurgeryReport": "Scarica il report di {{phase}}"
     },
     "createSuccess": "Utente creato correttamente",
     "createError": "Errore nella creazione dell'utente",
@@ -598,6 +643,7 @@
     "passwordError": "Errore nell'aggiornamento della password",
     "createProgressSuccess": "Progresso formativo creato correttamente",
     "createProgressError": "Errore nella creazione del progresso",
+    "noTutor": "Nessun tutor assegnato",
     "table": {
       "aria": "tabella utenti",
       "name": "Nome",
@@ -606,7 +652,9 @@
       "society": "Società",
       "role": "Ruolo",
       "hospital": "Ospedale",
+      "tutor": "Tutor",
       "specialty": "Specializzazione",
+      
       "zone": "Zona",
       "actions": "Azioni"
     },
@@ -618,7 +666,9 @@
       "type": "Tipo",
       "role": "Ruolo",
       "hospital": "Ospedale",
+      "tutor": "Tutor",
       "specialty": "Specializzazione",
+      
       "society": "Società",
       "zone": "Zona"
     },
@@ -637,6 +687,10 @@
       "label": "Nuova password",
       "updating": "Aggiornamento...",
       "update": "Aggiorna"
+    },
+    "resetEmail": {
+      "subject": "Reimposta la password di {{app}}",
+      "body": "Ciao {{name}},\n\nHai richiesto di reimpostare la tua password per {{app}}. Clicca sul link seguente per sceglierne una nuova:\n\n{{link}}\n\nQuesto link è personale, valido una sola volta e scade in {{days}} giorni.\n\nAdministrador del entorno"
     },
     "_comment": "Gestione utenti per amministratori",
     "buttons": {
@@ -940,5 +994,8 @@
   "privacyPolicy": {
     "title": "Informativa sulla privacy",
     "lastUpdated": "Ultimo aggiornamento: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Ospedali"
   }
 }

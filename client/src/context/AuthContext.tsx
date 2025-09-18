@@ -32,6 +32,7 @@ interface User {
   tipo?: string; // ← Añadido para usuarios tipo "Programa Sociedades"
   sociedad?: string | { _id: string }; // ← Añadido para compatibilidad flexible
   avatar?: string;
+  tutor?: { _id: string; nombre: string; apellidos: string } | null;
   activo: boolean;
 }
 
@@ -84,9 +85,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const res = await api.get('/auth/me');
+        const userData = res.data.data;
         const userWithToken: User = {
-          ...res.data.data,
-          especialidad: res.data.data.especialidad,
+          ...userData,
+          especialidad: userData.especialidad,
+          tutor: userData.tutor ?? null,
           token
         };
         setUser(userWithToken);
@@ -115,9 +118,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('token', token);
 
       const userRes = await api.get('/auth/me');
+      const userData = userRes.data.data;
       const userWithToken: User = {
-        ...userRes.data.data,
-        especialidad: userRes.data.data.especialidad,
+        ...userData,
+        especialidad: userData.especialidad,
+        tutor: userData.tutor ?? null,
         token
       };
 
@@ -134,33 +139,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (userData: any) => {
-    try {
-      setLoading(true);
-      setError(null);
+  try {
+    setLoading(true);
+    setError(null);
 
-      const res = await api.post('/auth/register', userData);
-      const token = res.data.token;
+    const res = await api.post('/auth/register', userData);
+    const token = res.data.token;
 
-      localStorage.setItem('token', token);
+    localStorage.setItem('token', token);
 
-      const userRes = await api.get('/auth/me');
-      const userWithToken: User = {
-        ...userRes.data.data,
-        especialidad: userRes.data.data.especialidad,
-        token
-      };
+    const userRes = await api.get('/auth/me');
+    const apiUserData = userRes.data.data; // ← nuevo nombre
+    const userWithToken: User = {
+      ...apiUserData,
+      especialidad: apiUserData.especialidad,
+      tutor: apiUserData.tutor ?? null,
+      token
+    };
 
-      setUser(userWithToken);
-      setIsAuthenticated(true);
-      localStorage.setItem("user", JSON.stringify(userWithToken));
+    setUser(userWithToken);
+    setIsAuthenticated(true);
+    localStorage.setItem("user", JSON.stringify(userWithToken));
 
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al registrarse');
-    } finally {
-      setLoading(false);
-    }
-  };
+    navigate('/dashboard');
+  } catch (err: any) {
+    setError(err.response?.data?.error || 'Error al registrarse');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = () => {
     localStorage.removeItem('token');

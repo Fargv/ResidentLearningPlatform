@@ -2,16 +2,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Typography, Paper, Button, TextField,
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   IconButton, Chip, LinearProgress, Alert, Snackbar,
-  Autocomplete
+  Autocomplete, Tooltip, CircularProgress, Backdrop, Menu, MenuItem
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import { useTranslation } from 'react-i18next';
-import api from '../../api';
+import { useTranslation, Trans } from 'react-i18next';
+import api, {
+  updateUserPassword,
+  getUserResetToken,
+  clearResetNotifications,
+} from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
+import { FaseCirugia } from '../../types/FaseCirugia';
 
 const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -30,6 +35,9 @@ const TutorUsuarios: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editar, setEditar] = useState(false);
   const [selected, setSelected] = useState<any>(null);
+  const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [passwordValue, setPasswordValue] = useState('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -44,12 +52,16 @@ const TutorUsuarios: React.FC = () => {
     message: '',
     severity: 'success' as 'success' | 'error'
   });
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [anchorElInforme, setAnchorElInforme] = useState<null | HTMLElement>(null);
+  const [menuUsuario, setMenuUsuario] = useState<any>(null);
 
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedHospitals, setSelectedHospitals] = useState<string[]>([]);
   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
+  const [selectedFases, setSelectedFases] = useState<string[]>([]);
 
   const fetchUsuarios = useCallback(async () => {
     try {
@@ -65,7 +77,47 @@ const TutorUsuarios: React.FC = () => {
         const filtrados = res.data.data.filter(
           (u: any) => u._id !== user?._id && u.tipo === user?.tipo
         );
-        setUsuarios(filtrados);
+        const usuariosConProgreso = await Promise.all(
+          filtrados.map(async (u: any) => {
+            let fasesCirugia: FaseCirugia[] = [];
+            let faseActual: string | undefined;
+            if (["residente", "participante"].includes(u.rol)) {
+              try {
+                const progRes = await api.get(`/progreso/residente/${u._id}`);
+                const progresos = progRes.data.data;
+                fasesCirugia = progresos
+                  .filter(
+                    (p: any) =>
+                      p.estadoGeneral === "validado" &&
+                      p.actividades.some(
+                        (a: any) =>
+                          a.tipo === "cirugia" && a.estado === "validado",
+                      ),
+                  )
+                  .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+
+                const enProgreso = progresos.filter(
+                  (p: any) => p.estadoGeneral === "en progreso",
+                );
+                if (enProgreso.length > 0) {
+                  const numero = Math.max(
+                    ...enProgreso.map((p: any) => p.fase.numero),
+                  );
+                  faseActual = `${t('adminPhases.phase')} ${numero}`;
+                } else if (
+                  progresos.length > 0 &&
+                  progresos.every((p: any) => p.estadoGeneral === "validado")
+                ) {
+                  faseActual = "Programa Completado";
+                }
+              } catch {
+                fasesCirugia = [];
+              }
+            }
+            return { ...u, fasesCirugia, faseActual };
+          }),
+        );
+        setUsuarios(usuariosConProgreso);
       }
     } catch (err: any) {
       setError(err.response?.data?.error || t('tutorUsers.loadError'));
@@ -76,7 +128,12 @@ const TutorUsuarios: React.FC = () => {
 
   useEffect(() => {
     fetchUsuarios();
-  }, [fetchUsuarios]);
+  }, [fetchUsuarios, t]);
+
+  const handleCloseEditarDialog = (clearSelected = true) => {
+    setOpenDialog(false);
+    if (clearSelected) setSelected(null);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
@@ -96,7 +153,7 @@ const TutorUsuarios: React.FC = () => {
         setUsuarios([...usuarios, res.data.data]);
       }
 
-      setOpenDialog(false);
+      handleCloseEditarDialog();
       setSnackbar({
         open: true,
         message: editar ? t('tutorUsers.updated') : t('tutorUsers.invited'),
@@ -134,6 +191,129 @@ const TutorUsuarios: React.FC = () => {
     } finally {
       setProcesando(false);
     }
+  };
+
+  const handleOpenEliminarDialog = (usuario: any) => {
+    setSelected(usuario);
+    setOpenEliminarDialog(true);
+  };
+
+  const handleCloseEliminarDialog = () => {
+    setOpenEliminarDialog(false);
+    setSelected(null);
+  };
+
+  const handleConfirmEliminar = async () => {
+    if (!selected) return;
+    await handleDelete(selected._id);
+    handleCloseEliminarDialog();
+  };
+
+  const handleOpenPasswordDialog = (usuario: any) => {
+    setSelected(usuario);
+    setOpenPasswordDialog(true);
+  };
+
+  const handleClosePasswordDialog = () => {
+    setOpenPasswordDialog(false);
+    setPasswordValue('');
+    setSelected(null);
+  };
+
+  const handleSendResetEmail = async (usuario: any) => {
+    try {
+      const res = await getUserResetToken(usuario._id);
+      const resetToken = res.data.resetToken;
+      const frontendUrl =
+        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
+      const days = parseInt(
+        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
+        10,
+      );
+      const subject = encodeURIComponent(
+        t('adminUsers.resetEmail.subject', { app: t('common.appName') }),
+      );
+      const body = encodeURIComponent(
+        t('adminUsers.resetEmail.body', {
+          name: usuario.nombre,
+          app: t('common.appName'),
+          link: `${frontendUrl}/reset-password/${resetToken}`,
+          days,
+        }),
+      );
+      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+      await clearResetNotifications(usuario._id);
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t('common.error'),
+        severity: 'error',
+      });
+    }
+  };
+
+  const handleActualizarPassword = async () => {
+    if (!selected) return;
+    try {
+      setProcesando(true);
+      await updateUserPassword(selected._id, passwordValue);
+      handleClosePasswordDialog();
+      setSnackbar({
+        open: true,
+        message: t('adminUsers.passwordUpdated'),
+        severity: 'success'
+      });
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t('adminUsers.passwordError'),
+        severity: 'error'
+      });
+    } finally {
+      setProcesando(false);
+    }
+  };
+
+  const handleDownloadInforme = async (
+    progresoId: string,
+    fase: string,
+    nombreUsuario: string,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `informe-${fase}_${nombreUsuario}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t('tutorUsers.loadError'),
+        severity: 'error',
+      });
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
+  const handleOpenInformeMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    usuario: any,
+  ) => {
+    setAnchorElInforme(event.currentTarget);
+    setMenuUsuario(usuario);
+  };
+
+  const handleCloseInformeMenu = () => {
+    setAnchorElInforme(null);
+    setMenuUsuario(null);
   };
 
   const roleOptions = Array.from(
@@ -174,6 +354,13 @@ const TutorUsuarios: React.FC = () => {
         .filter((t): t is string => Boolean(t)),
     ),
   );
+  const faseOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.faseActual)
+        .filter((f): f is string => Boolean(f)),
+    ),
+  );
 
   const displayUsuarios = usuarios
     .filter((u) =>
@@ -196,6 +383,11 @@ const TutorUsuarios: React.FC = () => {
     )
     .filter((u) =>
       selectedTipos.length > 0 ? selectedTipos.includes(u.tipo) : true,
+    )
+    .filter((u) =>
+      selectedFases.length > 0
+        ? selectedFases.includes(u.faseActual ?? '')
+        : true,
     );
 
   if (loading) return <LinearProgress />;
@@ -259,6 +451,21 @@ const TutorUsuarios: React.FC = () => {
           }
           renderInput={(params) => (
             <TextField {...params} label={t('adminUsers.fields.type')} />
+          )}
+          sx={{ minWidth: 200 }}
+        />
+        <Autocomplete
+          multiple
+          options={faseOptions}
+          value={selectedFases}
+          onChange={(e, newValue) =>
+            setSelectedFases(newValue as string[])
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t('adminUsers.fields.phase', 'Fase')}
+            />
           )}
           sx={{ minWidth: 200 }}
         />
@@ -334,7 +541,9 @@ const TutorUsuarios: React.FC = () => {
                 <TableCell>{t('adminUsers.table.hospital')}</TableCell>
                 <TableCell>{t('adminUsers.table.specialty')}</TableCell>
                 <TableCell>{t('adminUsers.table.zone')}</TableCell>
+                <TableCell>{t('adminUsers.table.currentPhase', 'Fase Actual')}</TableCell>
                 <TableCell>{t('tutorUsers.table.status')}</TableCell>
+                <TableCell sx={{ width: 40 }} />
                 <TableCell align="right">{t('tutorUsers.table.actions')}</TableCell>
               </TableRow>
             </TableHead>
@@ -364,6 +573,7 @@ const TutorUsuarios: React.FC = () => {
                   <TableCell>{usuario.hospital?.nombre || '-'}</TableCell>
                   <TableCell>{usuario.especialidad || '-'}</TableCell>
                   <TableCell>{usuario.zona || '-'}</TableCell>
+                  <TableCell>{usuario.faseActual || '-'}</TableCell>
                   <TableCell>
                     <Chip
                       label={t(
@@ -375,23 +585,63 @@ const TutorUsuarios: React.FC = () => {
                       size="small"
                     />
                   </TableCell>
+                  <TableCell align="center" sx={{ width: 40 }}>
+                    {usuario.fasesCirugia?.length ? (
+                      <>
+                        <Tooltip
+                          title={t('tutorUsers.actions.downloadSurgeryReport', {
+                            phase: t('adminPhases.phase').toLowerCase(),
+                          })}
+                        >
+                          <IconButton onClick={(e) => handleOpenInformeMenu(e, usuario)}>
+                            <DownloadIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Menu
+                          anchorEl={anchorElInforme}
+                          open={
+                            Boolean(anchorElInforme) &&
+                            menuUsuario?._id === usuario._id
+                          }
+                          onClose={handleCloseInformeMenu}
+                        >
+                          {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                            <MenuItem
+                              key={fase.id}
+                              onClick={() => {
+                                handleDownloadInforme(
+                                  fase.id,
+                                  fase.fase,
+                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
+                                );
+                                handleCloseInformeMenu();
+                              }}
+                            >
+                              {t('tutorUsers.actions.downloadSurgeryReport', {
+                                phase: fase.fase,
+                              })}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </>
+                    ) : null}
+                  </TableCell>
                   <TableCell align="right">
-                    <IconButton onClick={() => {
-                      setEditar(true);
-                      setSelected(usuario);
-                      setFormData({
-                        email: usuario.email,
-                        nombre: usuario.nombre,
-                        apellidos: usuario.apellidos,
-                        rol: usuario.rol,
-                        hospital: usuario.hospital?._id || ''
-                      });
-                      setOpenDialog(true);
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        setEditar(true);
+                        setSelected(usuario);
+                        setFormData({
+                          email: usuario.email,
+                          nombre: usuario.nombre,
+                          apellidos: usuario.apellidos,
+                          rol: usuario.rol,
+                          hospital: usuario.hospital?._id || ''
+                        });
+                        setOpenDialog(true);
+                      }}
+                    >
                       <EditIcon />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => handleDelete(usuario._id)}>
-                      <DeleteIcon />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -401,7 +651,7 @@ const TutorUsuarios: React.FC = () => {
         </TableContainer>
       </Paper>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+      <Dialog open={openDialog} onClose={() => handleCloseEditarDialog()}>
         <DialogTitle>{t(editar ? 'tutorUsers.edit' : 'tutorUsers.invite')}</DialogTitle>
         <DialogContent>
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
@@ -422,14 +672,122 @@ const TutorUsuarios: React.FC = () => {
           </TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>{t('tutorUsers.dialog.cancel')}</Button>
+          <Button onClick={() => handleCloseEditarDialog()}>
+            {t('tutorUsers.dialog.cancel')}
+          </Button>
+          {editar && selected && (
+            <>
+              <Button
+                onClick={() => {
+                  handleOpenPasswordDialog(selected);
+                  handleCloseEditarDialog(false);
+                }}
+                color="secondary"
+                variant="outlined"
+              >
+                {t('adminUsers.actions.changePassword')}
+              </Button>
+              {(user?.rol === 'tutor' || user?.rol === 'csm') && (
+                <Button
+                  onClick={() => handleSendResetEmail(selected)}
+                  color="info"
+                  variant="outlined"
+                >
+                  {t('adminUsers.actions.sendResetLink')}
+                </Button>
+              )}
+              
+              <Button
+                color="error"
+                startIcon={<DeleteIcon />}
+                onClick={() => {
+                  handleOpenEliminarDialog(selected);
+                  handleCloseEditarDialog(false);
+                }}
+              >
+                {t('tutorUsers.buttons.delete')}
+              </Button>
+            </>
+          )}
           <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
-            {procesando ? t('tutorUsers.dialog.saving') : editar ? t('tutorUsers.dialog.save') : t('tutorUsers.dialog.invite')}
+            {procesando
+              ? t('tutorUsers.dialog.saving')
+              : editar
+              ? t('tutorUsers.dialog.save')
+              : t('tutorUsers.dialog.invite')}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+      <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
+        <DialogTitle>{t('adminUsers.password.title')}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            margin="dense"
+            id="password-update"
+            label={t('adminUsers.password.label')}
+            type="password"
+            value={passwordValue}
+            onChange={(e) => setPasswordValue(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePasswordDialog} color="primary">
+            {t('common.cancel')}
+          </Button>
+          <Button
+            onClick={handleActualizarPassword}
+            color="secondary"
+            variant="contained"
+            disabled={procesando || !passwordValue}
+          >
+            {procesando
+              ? t('adminUsers.password.updating')
+              : t('adminUsers.password.update')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openEliminarDialog} onClose={handleCloseEliminarDialog}>
+        <DialogTitle>{t('adminUsers.delete.title')}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Trans
+              i18nKey="adminUsers.delete.confirm"
+              values={{
+                name: `${selected?.nombre} ${selected?.apellidos}`,
+              }}
+              components={{ strong: <strong /> }}
+            />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEliminarDialog} color="primary">
+            {t('common.cancel')}
+          </Button>
+          <Button
+            onClick={handleConfirmEliminar}
+            color="error"
+            variant="contained"
+            disabled={procesando}
+          >
+            {procesando ? t('common.deleting') : t('common.delete')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Backdrop
+        open={downloadLoading}
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
         <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </Box>

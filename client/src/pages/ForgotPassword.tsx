@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Box, Container, Paper, Typography, TextField, Button, Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
+import { requestPasswordReset } from '../api';
 
 const ForgotPassword: React.FC = () => {
   const [userEmail, setUserEmail] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+  const [isError, setIsError] = useState(false);
   const { t } = useTranslation();
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const adminUrl =
@@ -18,6 +21,22 @@ const ForgotPassword: React.FC = () => {
       `El usuario ${userEmail || '[sin email]'} necesita reseteo de contraseña.\n\n` +
       `Enlace al dashboard de administración de usuarios: ${adminUrl}`
     )}`;
+
+  const handleRequest = async () => {
+    try {
+      await requestPasswordReset(userEmail);
+      setStatusMessage(t('forgotPassword.requestSent'));
+      setIsError(false);
+      window.location.href = mailtoLink;
+    } catch (e: any) {
+      if (e?.response?.status === 404) {
+        setStatusMessage(t('forgotPassword.emailNotFound'));
+      } else {
+        setStatusMessage(t('forgotPassword.error'));
+      }
+      setIsError(true);
+    }
+  };
 
   return (
     <Box
@@ -55,15 +74,14 @@ const ForgotPassword: React.FC = () => {
             value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            component={Link}
-            href={mailtoLink}
-            sx={{ mt: 2 }}
-          >
+          <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleRequest}>
             {t('forgotPassword.submit')}
           </Button>
+          {statusMessage && (
+            <Typography sx={{ mt: 2 }} color={isError ? 'error' : 'success.main'}>
+              {statusMessage}
+            </Typography>
+          )}
           <Box sx={{ mt: 2 }}>
             <Link component={RouterLink} to="/login" underline="hover">
               {t('forgotPassword.backToLogin')}

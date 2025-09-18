@@ -32,6 +32,8 @@ const sociedadesRoutes = require('./routes/sociedadesRoutes');
 const certificadoRoutes = require('./routes/certificadoRoutes');
 const accessCodeRoutes = require('./routes/accessCodeRoutes');
 const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
+const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
+const informesRoutes = require('./routes/informesRoutes');
 
 // Inicializar app
 const app = express();
@@ -88,6 +90,8 @@ app.use('/api/sociedades', sociedadesRoutes);
 app.use('/api/certificado', certificadoRoutes);
 app.use('/api/access-codes', accessCodeRoutes);
 app.use('/api/surgery-types', surgeryTypeRoutes);
+app.use('/api/informe-cirugias', informeCirugiasRoutes);
+app.use('/api/informes', informesRoutes);
 
 
 // Ruta test del servidor

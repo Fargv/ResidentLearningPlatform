@@ -30,6 +30,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
@@ -310,6 +311,35 @@ const ResidenteFases: React.FC = () => {
     }
   };
 
+  const handleDescargarInformeCirugias = async (
+    progresoId: string,
+    nombreFase: string,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
+      setSnackbarError(true);
+      setSnackbarOpen(true);
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
@@ -493,10 +523,29 @@ const ResidenteFases: React.FC = () => {
               )}
             </List>
           ) : (
-            <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary">
               {t('residentPhases.phaseLocked')}
-            </Typography>
+              </Typography>
           )}
+          {item.estadoGeneral === 'validado' &&
+            item.actividades.some((a: any) => a.tipo === 'cirugia') && (
+              <Box textAlign="center" mt={2}>
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    handleDescargarInformeCirugias(
+                      item._id,
+                      `${t('adminPhases.phase')} ${item.fase?.numero}`,
+                    )
+                  }
+                  disabled={downloadLoading}
+                >
+                  {t('residentProgress.downloadSurgeryReport', {
+                    phase: item.fase?.nombre,
+                  })}
+                </Button>
+              </Box>
+            )}
         </AccordionDetails>
       </Accordion>
     );
@@ -508,8 +557,10 @@ const ResidenteFases: React.FC = () => {
         <Box textAlign="center" mt={2}>
           <Button
             variant="contained"
+            color="secondary"
             onClick={handleDescargarCertificado}
             disabled={downloadLoading}
+            startIcon={<WorkspacePremiumIcon />}
           >
             {t('residentProgress.downloadCertificate')}
           </Button>

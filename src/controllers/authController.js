@@ -7,21 +7,30 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const AccessCode = require('../models/AccessCode');
 const Hospital = require('../models/Hospital');
+const Notificacion = require('../models/Notificacion');
 const ErrorResponse = require('../utils/errorResponse');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
+const { resolveTutor } = require('../utils/resolveTutor');
+
+const legacyRoles = {
+  formador: Role.TUTOR,
+  coordinador: Role.CSM,
+  instructor: Role.PROFESOR,
+  alumno: Role.PARTICIPANTE
+};
 
 const checkAccessCode = async (req, res, next) => {
   try {
     const { codigo } = req.params;
-    const data = await AccessCode.findOne({ codigo });
+    const data = await AccessCode.findOne({ codigo }).lean();
 
     if (!data) {
       return next(new ErrorResponse('Código de acceso inválido', 400));
     }
-
-    res.status(200).json({ success: true, data });
+    const role = legacyRoles[data.rol] || data.rol;
+    res.status(200).json({ success: true, data: { ...data, rol: role } });
   } catch (err) {
     next(err);
   }
@@ -39,6 +48,7 @@ const register = async (req, res, next) => {
       sociedad,
       consentimientoDatos,
       especialidad,
+      tutor,
       zona: zonaInput
     } = req.body;
 
@@ -47,7 +57,8 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Código de acceso inválido', 400));
     }
 
-    const { rol, tipo } = access;
+    const { rol: rawRol, tipo } = access;
+    const rol = legacyRoles[rawRol] || rawRol;
 
     let zona = zonaInput;
     if (hospital) {
@@ -64,6 +75,26 @@ const register = async (req, res, next) => {
 
     if (!consentimientoDatos) {
       return next(new ErrorResponse('Debe aceptar el tratamiento de datos personales', 400));
+    }
+
+    if (
+      tipo === 'Programa Residentes' &&
+      ![
+        Role.RESIDENTE,
+        Role.TUTOR,
+        Role.ADMINISTRADOR,
+        Role.CSM,
+        Role.PARTICIPANTE
+      ].includes(rol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
+    }
+
+    if (
+      tipo === 'Programa Sociedades' &&
+      ![Role.PARTICIPANTE, Role.PROFESOR, Role.ADMINISTRADOR].includes(rol)
+    ) {
+      return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
 
     if (
@@ -90,24 +121,42 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('El usuario ya está registrado', 400));
     }
 
-    const newUser = await User.create({
-      nombre,
-      apellidos,
-      email,
-      password,
-      rol,
-      tipo,
-      hospital: tipo === 'Programa Residentes' ? hospital : undefined,
-      sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
-      especialidad,
-      zona,
-      activo: true,
-      consentimientoDatos: true,
-      fechaRegistro: Date.now()
-    });
+    const resolvedTutor =
+      rol === Role.RESIDENTE ? await resolveTutor(tutor, hospital, especialidad) : null;
 
-    if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
-      await inicializarProgresoFormativo(newUser);
+    let newUser;
+    try {
+      newUser = await User.create({
+        nombre,
+        apellidos,
+        email,
+        password,
+        rol,
+        tipo,
+        hospital: tipo === 'Programa Residentes' ? hospital : undefined,
+        sociedad: tipo === 'Programa Sociedades' ? sociedad : undefined,
+        especialidad,
+        tutor: resolvedTutor,
+        zona,
+        activo: true,
+        consentimientoDatos: true,
+        fechaRegistro: Date.now()
+      });
+
+      if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
+        await inicializarProgresoFormativo(newUser);
+      }
+    } catch (err) {
+      if (newUser) {
+        await ProgresoResidente.deleteMany({ residente: newUser._id });
+        await User.deleteOne({ _id: newUser._id });
+      }
+      return next(
+        new ErrorResponse(
+          'No se pudo completar el registro. Ni el usuario ni el progreso fueron creados',
+          500
+        )
+      );
     }
 
     const jwtToken = generateToken(newUser);
@@ -124,6 +173,7 @@ const register = async (req, res, next) => {
         hospital: newUser.hospital,
         sociedad: newUser.sociedad,
         tipo: newUser.tipo,
+        tutor: newUser.tutor,
         zona: newUser.zona
       }
     });
@@ -173,7 +223,9 @@ const login = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).populate('hospital', 'nombre');
+    const user = await User.findById(req.user.id)
+      .populate('hospital', 'nombre')
+      .populate('tutor', 'nombre apellidos');
     res.status(200).json({ success: true, data: user });
   } catch (err) {
     next(err);
@@ -222,6 +274,59 @@ const updatePassword = async (req, res, next) => {
   }
 };
 
+const requestPasswordReset = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }).populate('hospital');
+
+    if (!user) {
+      return next(new ErrorResponse('No existe un usuario con ese email', 404));
+    }
+
+    const destinatarios = new Set();
+
+    if (user.tutor) {
+      destinatarios.add(user.tutor.toString());
+    }
+
+    let zona;
+    if (user.hospital) {
+      const hospital = user.hospital.zona ? user.hospital : await Hospital.findById(user.hospital);
+      zona = hospital?.zona;
+    }
+
+    if (zona) {
+      const csms = await User.find({ rol: Role.CSM, zona }).select('_id');
+      csms.forEach((u) => destinatarios.add(u._id.toString()));
+    }
+
+    const admins = await User.find({ rol: Role.ADMINISTRADOR }).select('_id');
+    admins.forEach((u) => destinatarios.add(u._id.toString()));
+
+    if (user.hospital) {
+      const tutoresAll = await User.find({
+        rol: { $in: [Role.TUTOR, Role.PROFESOR] },
+        hospital: user.hospital._id || user.hospital,
+        especialidad: 'ALL'
+      }).select('_id');
+      tutoresAll.forEach((u) => destinatarios.add(u._id.toString()));
+    }
+
+    const notificaciones = Array.from(destinatarios).map((id) => ({
+      usuario: id,
+      tipo: 'passwordReset',
+      mensaje: `${user.nombre} (${user.email}) ha solicitado un reseteo de contraseña.`,
+      entidadRelacionada: { tipo: 'usuario', id: user._id }
+    }));
+
+    await Notificacion.insertMany(notificaciones);
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -230,9 +335,8 @@ const forgotPassword = async (req, res, next) => {
       return next(new ErrorResponse('No existe un usuario con ese email', 404));
     }
 
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+    // Generar token y establecer expiración (por ejemplo, 1 día)
+    const resetToken = user.getResetPasswordToken(24 * 60 * 60 * 1000);
 
     await user.save({ validateBeforeSave: false });
 
@@ -244,7 +348,10 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
-    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.resettoken)
+      .digest('hex');
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }
@@ -266,6 +373,27 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
+const getResetPasswordUser = async (req, res, next) => {
+  try {
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return next(new ErrorResponse('Token inválido o expirado', 400));
+    }
+
+    res.status(200).json({ success: true, email: user.email });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email, rol: user.rol },
@@ -280,7 +408,9 @@ module.exports = {
   getMe,
   updateDetails,
   updatePassword,
+  requestPasswordReset,
   forgotPassword,
   resetPassword,
+  getResetPasswordUser,
   checkAccessCode
 };

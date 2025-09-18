@@ -201,6 +201,24 @@ plantilla `src/templates/certificado.html`.
 - Los certificados se guardan de forma temporal en `public/uploads` antes de
   enviarse al cliente.
 
+## Informe de cirugías
+
+La plataforma puede generar un informe en PDF con todas las cirugías registradas en una fase concreta.
+
+### Endpoint `/api/progreso/:id/fase/:faseId/informe-cirugias`
+
+- `GET /api/progreso/:id/fase/:faseId/informe-cirugias` genera el informe y lo envía como descarga.
+- Parámetros requeridos:
+  - `id`: identificador del residente o progreso.
+  - `faseId`: identificador de la fase a consultar.
+  - Cabecera `Authorization: Bearer <token>` con un token válido.
+- Respuesta: archivo PDF que incluye la lista de cirugías, nombre del cirujano y porcentaje de participación.
+- El fichero se crea temporalmente en `public/uploads` y se elimina tras ser enviado al cliente.
+
+### Interfaz de usuario
+
+En el panel de administración existe un botón **"Generar informe de cirugías"** en el detalle de cada fase. Al pulsarlo se llama al endpoint anterior y se descarga el PDF directamente en el navegador.
+
   ## Gestión de códigos de acceso
 
 Los códigos de acceso definen el rol y el tipo de programa que se asignan al

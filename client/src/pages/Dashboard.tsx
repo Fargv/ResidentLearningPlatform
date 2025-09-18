@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import {
   Box,
   CssBaseline,
@@ -28,13 +28,13 @@ import {
   People as PeopleIcon,
   School as SchoolIcon,
   Assignment as AssignmentIcon,
-  TrendingUp as TrendingUpIcon,
   Notifications as NotificationsIcon,
   ExitToApp as LogoutIcon,
   Person as PersonIcon,
   Settings as SettingsIcon,
   Brightness4 as Brightness4Icon,
-  Brightness7 as Brightness7Icon
+  Brightness7 as Brightness7Icon,
+  Description as DescriptionIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -49,7 +49,6 @@ import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
 import AdminFasesSoc from './dashboard/AdminFasesSoc';
 import AdminSociedades from './dashboard/AdminSociedades';
-import AdminProgresoUsuarios from './dashboard/AdminProgresoUsuarios';
 import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
 import Perfil from './dashboard/Perfil';
 import Notificaciones from './dashboard/Notificaciones';
@@ -59,6 +58,7 @@ import AdminAccessCodes from './dashboard/AdminAccessCodes';
 import AdminConfiguracion from './dashboard/AdminConfiguracion';
 import AdminCirugias from './dashboard/AdminCirugias';
 import LanguageSelector from '../components/LanguageSelector';
+import AdminInformes from './dashboard/AdminInformes';
 
 const drawerWidth = 240;
 
@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
     if (user?.rol === 'administrador') {
       items.push(
         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-        { text: t('actions.usersProgress'), icon: <TrendingUpIcon />, path: '/dashboard/progreso-usuarios', roles: ['administrador'] },
+        { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
     }
@@ -304,7 +304,10 @@ const Dashboard: React.FC = () => {
     <Route path="/fases-soc" element={<AdminFasesSoc />} />
   )}
   {user?.rol === 'administrador' && (
-    <Route path="/progreso-usuarios" element={<AdminProgresoUsuarios />} />
+    <Route path="/informes" element={<AdminInformes />} />
+  )}
+  {user?.rol === 'administrador' && (
+    <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
   )}
   {user?.rol === 'administrador' && (
     <Route path="/config" element={<AdminConfiguracion />} />

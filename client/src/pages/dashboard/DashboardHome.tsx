@@ -22,9 +22,10 @@ import {
   School as SchoolIcon,
   People as PeopleIcon,
   Settings as SettingsIcon,
+  Assessment as AssessmentIcon,
   Person as PersonIcon,
   Notifications as NotificationsIcon,
-  TrendingUp as TrendingUpIcon
+  WorkspacePremium as WorkspacePremiumIcon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -43,10 +44,23 @@ const DashboardHome: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
   const [phaseSummary, setPhaseSummary] = useState<
-    { name: string; percent: number }[]
- >([]);
+    {
+      name: string;
+      percent: number;
+      estadoGeneral: string;
+      progresoId: string;
+      faseNumero: number;
+      hasSurgery: boolean;
+    }[]
+  >([]);
   const [socPhaseSummary, setSocPhaseSummary] = useState<
-    { phase: number; percent: number }[]
+    {
+      phase: number;
+      percent: number;
+      estadoGeneral: string;
+      progresoId: string;
+      hasSurgery: boolean;
+    }[]
   >([]);
   const [progressLoading, setProgressLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
@@ -237,14 +251,27 @@ const DashboardHome: React.FC = () => {
         const data = res.data.data || [];
 
         if (isResidentes) {
-          const summary = data.map((p: any) => {
-            const total = p.actividades.length;
-            const validated = p.actividades.filter(
-              (a: any) => a.estado === "validado",
-            ).length;
-            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
-            return { name: p.fase.nombre, percent };
-          });
+          const summary = data
+            .filter((p: any) => p.faseModel === 'Fase')
+            .map((p: any) => {
+              const total = p.actividades.length;
+              const validated = p.actividades.filter(
+                (a: any) => a.estado === 'validado',
+              ).length;
+              const percent =
+                total > 0 ? Math.round((validated / total) * 100) : 0;
+              const hasSurgery = p.actividades.some(
+                (a: any) => a.tipo === 'cirugia',
+              );
+              return {
+                name: p.fase.nombre,
+                percent,
+                estadoGeneral: p.estadoGeneral,
+                progresoId: p._id,
+                faseNumero: p.fase.numero,
+                hasSurgery,
+              };
+            });
           setPhaseSummary(summary);
         }
 
@@ -253,15 +280,25 @@ const DashboardHome: React.FC = () => {
             .filter((p: any) => p.faseModel === 'FaseSoc')
             .sort(
               (a: any, b: any) =>
-                (a.fase?.orden ?? 0) - (b.fase?.orden ?? 0)
+                (a.fase?.orden ?? 0) - (b.fase?.orden ?? 0),
             );
           const socSummary = socFases.map((p: any) => {
             const total = p.actividades.length;
             const validated = p.actividades.filter(
-              (a: any) => a.estado === 'validado'
+              (a: any) => a.estado === 'validado',
             ).length;
-            const percent = total > 0 ? Math.round((validated / total) * 100) : 0;
-            return { phase: p.fase.orden, percent };
+            const percent =
+              total > 0 ? Math.round((validated / total) * 100) : 0;
+            const hasSurgery = p.actividades.some(
+              (a: any) => a.tipo === 'cirugia',
+            );
+            return {
+              phase: p.fase.orden,
+              percent,
+              estadoGeneral: p.estadoGeneral,
+              progresoId: p._id,
+              hasSurgery,
+            };
           });
           setSocPhaseSummary(socSummary);
           const allValidado =
@@ -297,6 +334,33 @@ const DashboardHome: React.FC = () => {
       link.remove();
     } catch (err: any) {
       setError(err.response?.data?.error || t('residentProgress.downloadError'));
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
+  const handleDescargarInformeCirugias = async (
+    progresoId: string,
+    nombreFase: string,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setError(t('residentProgress.downloadSurgeryReportError'));
     } finally {
       setDownloadLoading(false);
     }
@@ -351,9 +415,9 @@ const DashboardHome: React.FC = () => {
   if (user?.rol === "administrador") {
     actions.push(
       {
-        label: t('actions.usersProgress'),
-        path: "/dashboard/progreso-usuarios",
-        icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
+        label: t('actions.reports'),
+        path: "/dashboard/informes",
+        icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
       },
       {
         label: t('actions.settings'),
@@ -443,12 +507,11 @@ const DashboardHome: React.FC = () => {
           />
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {societyMilestones.map((m, idx) => {
-              const percent =
-                socPhaseSummary.find((s) => s.phase === m.phase)?.percent ?? 0;
+              const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
+              const percent = phaseData?.percent ?? 0;
               return (
-                <CardActionArea
+                <Box
                   key={m.label}
-                  onClick={() => handleOpenDialog(m)}
                   sx={{
                     flex: {
                       xs: "1 1 100%",
@@ -458,43 +521,69 @@ const DashboardHome: React.FC = () => {
                           : "1 1 calc(50% - 16px)",
                     },
                     minWidth: { xs: "250px", md: "250px" },
-                    "&:hover": {
-                      backgroundColor: "action.hover",
-                      transform: "scale(1.02)",
-                    },
-                    cursor: "pointer",
                   }}
                 >
-                  <Paper
-                    elevation={2}
+                  <CardActionArea
+                    onClick={() => handleOpenDialog(m)}
                     sx={{
-                      p: 2,
-                      borderLeft: `6px solid ${theme.palette.primary.main}`,
-                      background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
+                      "&:hover": {
+                        backgroundColor: "action.hover",
+                        transform: "scale(1.02)",
+                      },
+                      cursor: "pointer",
                     }}
                   >
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ color: 'text.secondary' }}
+                    <Paper
+                      elevation={2}
+                      sx={{
+                        p: 2,
+                        borderLeft: `6px solid ${theme.palette.primary.main}`,
+                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
+                      }}
                     >
-                      {m.label}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      sx={{ color: theme.palette.primary.main }}
-                    >
-                      {formatMonthYear(m.date || "") || "—"}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      fontWeight="bold"
-                      sx={{ color: theme.palette.primary.main }}
-                    >
-                      {percent}%
-                    </Typography>
-                  </Paper>
-                </CardActionArea>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        {m.label}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        sx={{ color: theme.palette.primary.main }}
+                      >
+                        {formatMonthYear(m.date || "") || "—"}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        fontWeight="bold"
+                        sx={{ color: theme.palette.primary.main }}
+                      >
+                        {percent}%
+                      </Typography>
+                    </Paper>
+                  </CardActionArea>
+                  {phaseData &&
+                    phaseData.estadoGeneral === 'validado' &&
+                    phaseData.hasSurgery && (
+                      <Box textAlign="center" mt={1}>
+                        <Button
+                          variant="contained"
+                          onClick={() =>
+                            handleDescargarInformeCirugias(
+                              phaseData.progresoId,
+                              `${t('adminPhases.phase')} ${phaseData.phase}`,
+                            )
+                          }
+                          disabled={downloadLoading}
+                        >
+                          {t('residentProgress.downloadSurgeryReport', {
+                            phase: m.label,
+                          })}
+                        </Button>
+                      </Box>
+                    )}
+                </Box>
               );
             })}
           </Box>
@@ -502,8 +591,10 @@ const DashboardHome: React.FC = () => {
             <Box textAlign="center" mt={2}>
               <Button
                 variant="contained"
+                color="secondary"
                 onClick={handleDescargarCertificado}
                 disabled={downloadLoading}
+                startIcon={<WorkspacePremiumIcon />}
               >
                 {t('residentProgress.downloadCertificate')}
               </Button>
@@ -524,25 +615,29 @@ const DashboardHome: React.FC = () => {
               </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               {phaseSummary.map((p, idx) => (
-                <CardActionArea
-                  key={p.name}
-                  onClick={() =>
-                    onFaseClick(
-                      { nombre: p.name, porcentaje: p.percent },
-                      idx,
-                    )
-                  }
+                <Box
+                  key={p.progresoId}
                   sx={{
                     flex: "1 1 calc(50% - 16px)",
                     minWidth: "250px",
-                    "&:hover": {
-                      backgroundColor: "action.hover",
-                      transform: "scale(1.02)",
-                    },
-                    cursor: "pointer",
                   }}
                 >
-                  <Paper
+                  <CardActionArea
+                    onClick={() =>
+                      onFaseClick(
+                        { nombre: p.name, porcentaje: p.percent },
+                        idx,
+                      )
+                    }
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "action.hover",
+                        transform: "scale(1.02)",
+                      },
+                      cursor: "pointer",
+                    }}
+                  >
+                    <Paper
                       elevation={2}
                       sx={{
                         p: 2,
@@ -564,15 +659,36 @@ const DashboardHome: React.FC = () => {
                         {p.percent}%
                       </Typography>
                     </Paper>
-                </CardActionArea>
+                  </CardActionArea>
+                  {p.estadoGeneral === 'validado' && p.hasSurgery && (
+                    <Box textAlign="center" mt={1}>
+                      <Button
+                        variant="contained"
+                        onClick={() =>
+                          handleDescargarInformeCirugias(
+                            p.progresoId,
+                            `${t('adminPhases.phase')} ${p.faseNumero}`,
+                          )
+                        }
+                        disabled={downloadLoading}
+                      >
+                        {t('residentProgress.downloadSurgeryReport', {
+                          phase: p.name,
+                        })}
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
               ))}
             </Box>
             {allValidado && (
               <Box textAlign="center" mt={2}>
                 <Button
                   variant="contained"
+                  color="secondary"
                   onClick={handleDescargarCertificado}
                   disabled={downloadLoading}
+                  startIcon={<WorkspacePremiumIcon />}
                 >
                   {t('residentProgress.downloadCertificate')}
                 </Button>

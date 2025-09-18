@@ -10,6 +10,19 @@ const ProgresoResidente = require('../models/ProgresoResidente');
 const Sociedades = require('../models/Sociedades');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
+const { resolveTutor } = require('../utils/resolveTutor');
+
+const RESET_PASSWORD_EXPIRE_DAYS = parseInt(
+  process.env.RESET_PASSWORD_EXPIRE_DAYS || '3',
+  10
+);
+
+const legacyRoles = {
+  formador: Role.TUTOR,
+  coordinador: Role.CSM,
+  instructor: Role.PROFESOR,
+  alumno: Role.PARTICIPANTE
+};
 
 
 
@@ -23,7 +36,10 @@ exports.getUsers = async (req, res, next) => {
     let users;
 
     if (req.user.rol === Role.ADMINISTRADOR) {
-      users = await User.find().populate('hospital').populate('sociedad');
+      users = await User.find()
+        .populate('hospital')
+        .populate('sociedad')
+        .populate('tutor', 'nombre apellidos especialidad');
     } else if (req.user.rol === Role.TUTOR) {
       const query = {
         hospital: req.user.hospital,
@@ -34,7 +50,8 @@ exports.getUsers = async (req, res, next) => {
       }
       users = await User.find(query)
         .populate('hospital')
-        .populate('sociedad');
+        .populate('sociedad')
+        .populate('tutor', 'nombre apellidos especialidad');
     } else if (req.user.rol === Role.CSM) {
       const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
       const ids = hospitales.map(h => h._id);
@@ -44,14 +61,16 @@ exports.getUsers = async (req, res, next) => {
         tipo: 'Programa Residentes'
       })
         .populate('hospital')
-        .populate('sociedad');
+        .populate('sociedad')
+        .populate('tutor', 'nombre apellidos especialidad');
     } else if (req.user.rol === Role.PROFESOR) {
       users = await User.find({
         sociedad: req.user.sociedad,
         rol: Role.PARTICIPANTE
       })
         .populate('hospital')
-        .populate('sociedad');
+        .populate('sociedad')
+        .populate('tutor', 'nombre apellidos especialidad');
     } else {
       return next(new ErrorResponse('No autorizado para ver usuarios', 403));
     }
@@ -82,7 +101,7 @@ exports.getUsers = async (req, res, next) => {
 // @access  Private/Admin
 exports.createUser = async (req, res, next) => {
   try {
-    const {
+    let {
       nombre,
       apellidos,
       email,
@@ -92,8 +111,11 @@ exports.createUser = async (req, res, next) => {
       hospital,
       sociedad,
       especialidad,
-      zona
+      zona,
+      tutor
     } = req.body;
+    rol = legacyRoles[rol] || rol;
+    req.body.rol = rol;
     const hospitalId = hospital || undefined;
     let especialidadVal;
     const tipoVal = rol === Role.ADMINISTRADOR ? undefined : tipo;
@@ -116,7 +138,13 @@ exports.createUser = async (req, res, next) => {
     // Verificar combinaciones válidas de rol y tipo de programa
     if (
       tipo === 'Programa Residentes' &&
-      ![Role.RESIDENTE, Role.TUTOR, Role.ADMINISTRADOR, Role.CSM].includes(rol)
+      ![
+        Role.RESIDENTE,
+        Role.TUTOR,
+        Role.ADMINISTRADOR,
+        Role.CSM,
+        Role.PARTICIPANTE
+      ].includes(rol)
     ) {
       return next(new ErrorResponse('Rol inválido para el programa', 400));
     }
@@ -184,25 +212,49 @@ exports.createUser = async (req, res, next) => {
       especialidadVal = undefined;
     }
 
-    const nuevoUsuario = await User.create({
-      nombre,
-      apellidos,
-      email,
-      password,
-      rol,
-      tipo: tipoVal,
-      hospital: hospitalId,
-      sociedad: sociedadId,
-      especialidad: especialidadVal,
-      zona: zonaVal,
-      activo: true,
-      consentimientoDatos: true,
-      fechaRegistro: Date.now()
-    });
+    const tutorId =
+      rol === Role.RESIDENTE
+        ? await resolveTutor(tutor || 'ALL', hospitalId, especialidadVal)
+        : null;
 
-    if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
-      await inicializarProgresoFormativo(nuevoUsuario);
+    let nuevoUsuario;
+    try {
+      nuevoUsuario = await User.create({
+        nombre,
+        apellidos,
+        email,
+        password,
+        rol,
+        tipo: tipoVal,
+        hospital: hospitalId,
+        sociedad: sociedadId,
+        especialidad: especialidadVal,
+        tutor: tutorId,
+        zona: zonaVal,
+        activo: true,
+        consentimientoDatos: true,
+        fechaRegistro: Date.now()
+      });
+
+      if (rol === Role.RESIDENTE || rol === Role.PARTICIPANTE) {
+        await inicializarProgresoFormativo(nuevoUsuario);
+      }
+    } catch (err) {
+      if (nuevoUsuario) {
+        await ProgresoResidente.deleteMany({ residente: nuevoUsuario._id });
+        await User.deleteOne({ _id: nuevoUsuario._id });
+      }
+      return next(
+        new ErrorResponse(
+          'No se pudo crear el usuario ni el progreso formativo',
+          500
+        )
+      );
     }
+
+    await nuevoUsuario.populate('hospital');
+    await nuevoUsuario.populate('sociedad');
+    await nuevoUsuario.populate('tutor', 'nombre apellidos especialidad');
 
     await createAuditLog({
       usuario: req.user._id,
@@ -226,7 +278,8 @@ exports.getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id)
       .populate('hospital')
-      .populate('sociedad');
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -247,7 +300,11 @@ exports.getUser = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
     // Eliminar campos que no deben ser actualizados por esta ruta
-    const { password, ...updateData } = req.body;
+    const { password, tutor: tutorInput, ...updateData } = req.body;
+    if (updateData.rol) {
+      updateData.rol = legacyRoles[updateData.rol] || updateData.rol;
+      req.body.rol = updateData.rol;
+    }
     const hospitalId = updateData.hospital || undefined;
     let zonaVal = updateData.zona || undefined;
     const currentUser = await User.findById(req.params.id);
@@ -359,12 +416,28 @@ exports.updateUser = async (req, res, next) => {
     updateData.sociedad = sociedadId;
     updateData.zona = zonaVal;
 
+    if (newRol === Role.RESIDENTE) {
+      let tutorVal;
+      if (tutorInput === '') {
+        tutorVal = null;            // desasignar explicitamente
+      } else if (tutorInput === undefined) {
+        const hId = hospitalId || currentUser.hospital;
+        tutorVal = await resolveTutor('ALL', hId, especialidadVal);
+      } else {
+        tutorVal = tutorInput;
+      }
+      updateData.tutor = tutorVal;
+    } else if (roleChanged) {
+      updateData.tutor = undefined;
+    }
+
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
     })
       .populate('hospital')
-      .populate('sociedad');
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -405,7 +478,9 @@ exports.updateUserStatus = async (req, res, next) => {
         new: true,
         runValidators: true
       }
-    ).populate('hospital');
+    )
+      .populate('hospital')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!user) {
       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
@@ -450,6 +525,38 @@ exports.updateUserPassword = async (req, res, next) => {
     });
 
     res.status(200).json({ success: true, data: {} });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Generar token de reseteo de contraseña para un usuario
+// @route   POST /api/users/:id/reset-password
+// @access  Private/Admin
+exports.generatePasswordResetToken = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return next(
+        new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
+      );
+    }
+
+    const resetToken = user.getResetPasswordToken();
+    user.resetPasswordExpire =
+      Date.now() + RESET_PASSWORD_EXPIRE_DAYS * 24 * 60 * 60 * 1000;
+
+    await user.save({ validateBeforeSave: false });
+
+    await createAuditLog({
+      usuario: req.user._id,
+      accion: 'generar_token_reset_password',
+      descripcion: `Token de reseteo generado para usuario: ${user.email}`,
+      ip: req.ip
+    });
+
+    res.status(200).json({ success: true, resetToken, email: user.email, name: user.nombre });
   } catch (err) {
     next(err);
   }
@@ -671,7 +778,9 @@ exports.cancelInvitation = async (req, res, next) => {
 // @access  Private/Admin,Tutor
 exports.getTutorResidentes = async (req, res, next) => {
   try {
-    const tutor = await User.findById(req.params.id).populate('hospital');
+    const tutor = await User.findById(req.params.id)
+      .populate('hospital')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!tutor) {
       return next(new ErrorResponse(`Tutor no encontrado con id ${req.params.id}`, 404));
@@ -695,7 +804,8 @@ exports.getTutorResidentes = async (req, res, next) => {
     }
     const residentes = await User.find(filtrosResidentes)
       .populate('hospital')
-      .populate('sociedad');
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,
@@ -712,7 +822,9 @@ exports.getTutorResidentes = async (req, res, next) => {
 // @access  Private/Admin,Residente
 exports.getResidenteTutores = async (req, res, next) => {
   try {
-    const residente = await User.findById(req.params.id).populate('hospital');
+    const residente = await User.findById(req.params.id)
+      .populate('hospital')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!residente) {
       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
@@ -736,7 +848,8 @@ exports.getResidenteTutores = async (req, res, next) => {
     }
     const tutores = await User.find(filtrosTutores)
       .populate('hospital')
-      .populate('sociedad');
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,
@@ -748,12 +861,38 @@ exports.getResidenteTutores = async (req, res, next) => {
   }
 };
 
+// @desc    Obtener tutores disponibles filtrados por hospital y especialidad
+// @route   GET /api/users/tutores
+// @access  Private/Admin|CSM|Tutor
+exports.getAvailableTutors = async (req, res, next) => {
+  try {
+    const { hospital, especialidad } = req.query;
+    if (!hospital || !especialidad) {
+      return next(new ErrorResponse('Hospital y especialidad requeridos', 400));
+    }
+    const query = { rol: Role.TUTOR, hospital };
+    if (especialidad !== 'ALL') {
+      query.$or = [{ especialidad }, { especialidad: 'ALL' }];
+    }
+    const tutores = await User.find(query).select('nombre apellidos especialidad');
+    res.status(200).json({
+      success: true,
+      count: tutores.length,
+      data: tutores,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Obtener participantes de un profesor
 // @route   GET /api/users/profesor/:id/participantes
 // @access  Private/Admin,Profesor
 exports.getProfesorParticipantes = async (req, res, next) => {
   try {
-    const profesor = await User.findById(req.params.id).populate('sociedad');
+    const profesor = await User.findById(req.params.id)
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     if (!profesor) {
       return next(
@@ -780,7 +919,9 @@ exports.getProfesorParticipantes = async (req, res, next) => {
       sociedad: profesor.sociedad,
       rol: Role.PARTICIPANTE,
       tipo: profesor.tipo,
-    }).populate('sociedad');
+    })
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,
@@ -819,7 +960,8 @@ exports.getUsersByHospital = async (req, res) => {
 
     const users = await User.find(query)
       .populate('hospital')
-      .populate('sociedad');
+      .populate('sociedad')
+      .populate('tutor', 'nombre apellidos especialidad');
 
     res.status(200).json({
       success: true,

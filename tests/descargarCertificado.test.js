@@ -11,7 +11,34 @@ describe('descargarCertificado', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {});
     jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('<html></html>');
+    jest.spyOn(fs, 'readFileSync').mockImplementation((filePath) => {
+      if (filePath.includes('certificado_sociedad.html')) {
+        return '<html>{{LOGOS}}{{CERT_BODY}}</html>';
+      }
+      if (filePath.includes('certificado_residente.html')) {
+        return '<html>{{CERT_BODY}}</html>';
+      }
+      if (filePath.includes('certificado.html')) {
+        return '<html>{{TUTOR_NAME}}{{TUTOR_ROLE_LINE}}</html>';
+      }
+      if (filePath.includes('firma-javier.png')) {
+        return Buffer.from('');
+      }
+      if (filePath.includes('locales')) {
+        return JSON.stringify({
+          certificate: {
+            title: '',
+            body: 'Responsable: Dr. Responsable',
+            bodySociedad: 'Responsable: Dr. Responsable en {{sociedad}}',
+            dateLine: '{{date}}',
+            footer: '',
+            tutorPrefix: '',
+            tutorPlaceholder: '',
+          },
+        });
+      }
+      return '';
+    });
     jest.spyOn(fs, 'unlink').mockImplementation((path, cb) => cb());
   });
 
@@ -20,7 +47,11 @@ describe('descargarCertificado', () => {
   });
 
   test('returns 400 when phases not validated', async () => {
-    jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1' }) });
+    const query = {
+      populate: jest.fn().mockReturnThis(),
+      then: (resolve) => Promise.resolve(resolve({ _id: 'u1' })),
+    };
+    jest.spyOn(User, 'findById').mockReturnValue(query);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ estadoGeneral: 'en progreso' }]) });
 
     const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
@@ -31,16 +62,74 @@ describe('descargarCertificado', () => {
   });
 
   test('sends pdf when validated', async () => {
-    jest.spyOn(User, 'findById').mockReturnValue({ populate: jest.fn().mockResolvedValue({ _id: 'u1', nombre: 'A', apellidos: 'B', tipo: 'Programa', hospital: { nombre: 'H' } }) });
+    const query = {
+      populate: jest.fn().mockReturnThis(),
+      then: (resolve) =>
+        Promise.resolve(
+          resolve({
+            _id: 'u1',
+            nombre: 'A',
+            apellidos: 'B',
+            rol: 'residente',
+            tipo: 'Programa',
+            hospital: { nombre: 'H' },
+          }),
+        ),
+    };
+    jest.spyOn(User, 'findById').mockReturnValue(query);
     jest.spyOn(ProgresoResidente, 'find').mockReturnValue({ sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]) });
 
-    const req = { params: { id: 'u1' }, user: { id: 'u1', rol: 'residente' } };
-    const res = { set: jest.fn(), download: jest.fn((path, name, cb) => cb()) };
+    const req = { params: { id: 'u1' }, query: {}, user: { id: 'u1', rol: 'residente' } };
+    const res = {
+      set: jest.fn(),
+      download: jest.fn((path, name, cb) => cb()),
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
 
     await descargarCertificado(req, res, jest.fn());
     expect(pdf.generatePdf).toHaveBeenCalled();
     expect(res.set).toHaveBeenCalledWith('Content-Type', 'application/pdf');
     expect(res.download).toHaveBeenCalled();
     expect(fs.unlink).toHaveBeenCalled();
+  });
+
+  test('sends pdf for society without signature or subtitle', async () => {
+    const user = {
+      _id: 'u1',
+      nombre: 'A',
+      apellidos: 'B',
+      rol: 'participante',
+      hospital: { nombre: 'H' },
+      sociedad: {
+        urlLogo: 'https://logo.com/logo.png',
+        responsablePrograma: 'Dr. Responsable',
+        titulo: 'Sociedad X',
+      },
+    };
+    const query = {
+      populate: jest.fn().mockReturnThis(),
+      then: (resolve) => Promise.resolve(resolve(user)),
+    };
+    jest.spyOn(User, 'findById').mockReturnValue(query);
+    jest.spyOn(ProgresoResidente, 'find').mockReturnValue({
+      sort: jest.fn().mockResolvedValue([{ _id: 'p1', estadoGeneral: 'validado' }]),
+    });
+
+    const req = { params: { id: 'u1' }, query: {}, user: { id: 'u1', rol: 'participante' } };
+    const res = {
+      set: jest.fn(),
+      download: jest.fn((path, name, cb) => cb()),
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await descargarCertificado(req, res, jest.fn());
+
+    expect(pdf.generatePdf).toHaveBeenCalled();
+    const html = pdf.generatePdf.mock.calls[0][0].content;
+    expect(html).not.toContain('SIGNATURE_LOGO');
+    expect(html).not.toContain('<h2>');
+    expect(html).toContain('Responsable: Dr. Responsable');
   });
 });

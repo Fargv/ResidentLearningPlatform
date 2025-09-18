@@ -51,4 +51,14 @@ Este archivo registra tareas realizadas o propuestas por agentes automáticos (c
 - 2025-08-15: Botón para alternar modo claro/oscuro en AppBar del Dashboard.
 - 2025-09-01: Botón "Crear fase" ahora usa `variant="contained"` y `color="primary"` en `AdminFases` y `AdminFasesSoc`.
 - 2025-09-01: Índices compuestos en `User` y validación de `tutor` solo para residentes.
+- 2025-09-03: Certificados usan `FRONTEND_URL` y footer con enlace dinámico.
+- 2025-09-04: Certificados de sociedades incluyen logo, responsable y texto específicos; eliminada firma.
+- 2025-09-03: Pruebas para ruta de informe de cirugías con Supertest.
+- 2025-09-05: Botones de eliminar y cambiar contraseña movidos al diálogo de edición en `AdminUsuarios`.
+- 2025-09-08: Eliminado test `AdminProgresoUsuarios` por comportamiento de redirección.
+- 2025-09-08: Endpoint `getResetPasswordUser`, ruta asociada y localización `resetPassword.for`.
+- 2025-09-08: `requestPasswordReset` añade `entidadRelacionada` del usuario; manejo de email inexistente en cliente y prueba.
+- 2025-09-08: Exportación de actividades de sociedades en CSV/XLSX y botón en `AdminInformes`.
+- 2025-09-08: `requestPasswordReset` añade `entidadRelacionada` del usuario; manejo de email inexistente en cliente y prueba.
+- 2025-09-09: Exportación de progreso de usuarios a CSV/XLSX con página `AdminInformes` y nueva ruta protegida.
 ⚠️ Este archivo no interfiere con el código ni el despliegue.

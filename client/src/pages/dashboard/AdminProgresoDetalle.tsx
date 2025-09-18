@@ -240,7 +240,7 @@ const AdminProgresoDetalle: React.FC = () => {
               })
             : t('adminProgressDetail.title')}
         </Typography>
-        <Button variant="contained" onClick={() => navigate('/dashboard/progreso-usuarios')}>
+        <Button variant="contained" onClick={() => navigate(-1)}>
           {t('adminProgressDetail.back')}
         </Button>
       </Box>

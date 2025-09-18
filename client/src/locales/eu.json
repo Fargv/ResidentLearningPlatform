@@ -20,7 +20,9 @@
     "notifications": "Jakinarazpenak",
     "profile": "Profila",
     "users": "Erabiltzaileak",
-    "logout": "Saioa itxi"
+    "logout": "Saioa itxi",
+    "reports": "Txostenak",
+    "download": "Deskargatu"
   },
   "adminConfig": {
     "title": "Konfigurazioa",
@@ -238,6 +240,7 @@
     }
   },
   "common": {
+    "appName": "Resident Learning Platform",
     "cancel": "Utzi",
     "create": "Sortu",
     "creating": "Sortzen...",
@@ -248,18 +251,21 @@
     "phase": "Fasea",
     "validate": "Balidatu",
     "reject": "Baztertu",
-    "processing": "Prozesatzen..."
+    "processing": "Prozesatzen...",
+    "none": "Bat ere ez"
   },
   "profile": {
     "title": "Nire profila",
     "personalData": "Datu pertsonalak",
     "changePassword": "Pasahitza aldatu",
+    "noTutor": "Ez dago prestatzaile esleituta",
     "fields": {
       "name": "Izena",
       "lastName": "Abizenak",
       "email": "Emaila",
       "hospital": "Ospitalea",
       "society": "Elkartea",
+      "tutor": "Prestatzailea",
       "currentPassword": "Oraingo pasahitza",
       "newPassword": "Pasahitz berria",
       "confirmPassword": "Pasahitza berretsi"
@@ -372,7 +378,9 @@
       "edit": "Editatu",
       "delete": "Ezabatu",
       "changePassword": "Pasahitza aldatu",
-      "createProgress": "Aurrerapena sortu"
+      "sendResetLink": "Berrezartze esteka bidali",
+      "createProgress": "Aurrerapena sortu",
+      "downloadSurgeryReport": "Deskargatu {{phase}} txostena"
     },
     "createSuccess": "Erabiltzailea ongi sortu da",
     "createError": "Errorea erabiltzailea sortzean",
@@ -384,6 +392,7 @@
     "passwordError": "Errorea pasahitza eguneratzean",
     "createProgressSuccess": "Aurrerapen formatiboa sortu da",
     "createProgressError": "Errorea aurrerapena sortzean",
+    
     "table": {
       "aria": "erabiltzaileen taula",
       "name": "Izena",
@@ -392,7 +401,9 @@
       "society": "Elkartea",
       "role": "Rola",
       "hospital": "Ospitalea",
+      "tutor": "Prestatzailea",
       "specialty": "Espezialitatea",
+      
       "zone": "Eremua",
       "actions": "Ekintzak"
     },
@@ -404,7 +415,9 @@
       "type": "Mota",
       "role": "Rola",
       "hospital": "Ospitalea",
+      "tutor": "Prestatzailea",
       "specialty": "Espezialitatea",
+      
       "society": "Elkartea",
       "zone": "Eremua"
     },
@@ -423,6 +436,10 @@
       "label": "Pasahitz berria",
       "updating": "Eguneratzen...",
       "update": "Eguneratu"
+    },
+    "resetEmail": {
+      "subject": "{{app}} pasahitza berrezarri",
+      "body": "Kaixo {{name}},\n\n{{app}} aplikazioan zure pasahitza berrezartzea eskatu duzu. Esteka honetan klik egin berria aukeratzeko:\n\n{{link}}\n\nEsteka hau pertsonala da, behin bakarrik balio du eta {{days}} egunetan iraungitzen da.\n\nAdministrador del entorno"
     },
     "_comment": "Administratzaileentzako erabiltzaileen kudeaketa",
     "buttons": {
@@ -608,7 +625,21 @@
     "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
     "emailLabel": "Zure emaila",
     "submit": "Bidali emaila administratzaileari",
-    "backToLogin": "Itzuli saioa hasteko"
+    "backToLogin": "Itzuli saioa hasteko",
+    "requestSent": "Eskaera bidalia.",
+    "error": "Errorea eskaera bidaltzean.",
+    "emailNotFound": "Ez dago helbide elektroniko horrekin erabiltzailearik. Sartu baliozko bat."
+  },
+  "resetPassword": {
+    "title": "Pasahitza berrezarri",
+    "for": "Berrezartzen pasahitza {{email}}-rentzat",
+    "newPassword": "Pasahitz berria",
+    "confirmPassword": "Pasahitz berria baieztatu",
+    "submit": "Pasahitza aldatu",
+    "success": "Pasahitza behar bezala aldatu da. Saio-hasierara birbideratzen...",
+    "error": "Pasahitza ezin izan da aldatu.",
+    "passwordMismatch": "Pasahitzak ez datoz bat.",
+    "backToLogin": "Itzuli saio-hasierara"
   },
   "login": {
     "title": "Da Vinci Akademia Programa",
@@ -680,7 +711,18 @@
       "viewed": "Ez dago ikusitako jakinarazpenik"
     },
     "errorLoad": "Errorea jakinarazpenak kargatzean",
-    "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean"
+    "errorMarkAsRead": "Errorea jakinarazpena irakurrita bezala markatzean",
+    "actions": {
+      "sendResetLink": "Esteka bidali",
+      "delete": "Ezabatu",
+      "markRead": "Irakurritako gisa markatu",
+      "markUnread": "Irakurri gabeko gisa markatu",
+      "selectAll": "Guztiak hautatu",
+      "deselectAll": "Guztiak desautatu"
+    },
+    "messages": {
+      "resetRequest": "Pasahitza berrezartzeko eskaera"
+    }
   },
   "codes": {
     "new": "Kode berria",
@@ -756,6 +798,9 @@
       "deleteSuccess": "Usuario eliminado",
       "deleteError": "Error al eliminar",
       "genericError": "Error"
+    },
+    "actions": {
+      "downloadSurgeryReport": "Deskargatu {{phase}} txostena"
     }
   },
   "progress": {
@@ -908,13 +953,21 @@
     "title": "Nire aurrerapena",
     "errorLoad": "Errorea aurrerapena kargatzean",
     "downloadError": "Errorea ziurtagiria deskargatzean",
-    "downloadCertificate": "Deskargatu ziurtagiria"
+    "downloadCertificate": "Certificado de Cumplimiento",
+    "downloadSurgeryReport": "Deskargatu {{phase}} txostena",
+    "downloadSurgeryReportError": "Errorea kirurgia txostena deskargatzean"
   },
   "certificate": {
     "title": "Osaketaren Ziurtagiria",
     "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
+    "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madril, {{date}}",
-    "footer": "Ziurtagiria automatikoki sortua Academic Program Da Vinci-k · www.abexsl.es"
+    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "tutorPrefix": "Egoiliarren programaren tutorea ",
+    "tutorTitle": "Egoiliarren programaren tutorea",
+    "tutorPlaceholder": "Programaren tutorea:",
+    "signatureLine": "________________________________________",
+    "responsableTitle": "Programaren prestakuntzaren arduraduna {{programa}}"
   },
   "emails": {
     "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
@@ -940,5 +993,8 @@
   "privacyPolicy": {
     "title": "Pribatutasun politika",
     "lastUpdated": "Azken eguneratzea: {{date}}"
+  },
+  "adminReports": {
+    "exportHospitals": "Ospitaleak"
   }
 }

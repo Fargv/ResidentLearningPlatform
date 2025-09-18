@@ -22,26 +22,41 @@ import {
   Alert,
   Snackbar,
   Autocomplete,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  Backdrop,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  VpnKey as VpnKeyIcon,
+  Download as DownloadIcon,
+  Assessment as AssessmentIcon,
 
    //Person as PersonIcon,
   //Email as EmailIcon
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
-import api, { createUser, updateUserPassword } from "../../api";
+import { useNavigate } from "react-router-dom";
+import api, {
+  createUser,
+  updateUserPassword,
+  getTutors,
+  getUserResetToken,
+  clearResetNotifications,
+} from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
 import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
 import { getRoleChipSx } from "../../utils/roleChipColors";
+import { FaseCirugia } from "../../types/FaseCirugia";
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const typeKey = (tipo?: string) =>
     tipo === "Programa Sociedades"
       ? "programaSociedades"
@@ -88,6 +103,7 @@ const AdminUsuarios: React.FC = () => {
     rol: "residente",
     hospital: "",
     especialidad: "",
+    tutor: "",
     tipo: "Programa Residentes",
     sociedad: "",
     zona: "",
@@ -98,6 +114,9 @@ const AdminUsuarios: React.FC = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [anchorElInforme, setAnchorElInforme] = useState<null | HTMLElement>(null);
+  const [menuUsuario, setMenuUsuario] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<
     "nombre" | "email" | "hospital" | "rol"
@@ -112,6 +131,8 @@ const AdminUsuarios: React.FC = () => {
   const [selectedZonas, setSelectedZonas] = useState<string[]>([]);
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
+  const [selectedFases, setSelectedFases] = useState<string[]>([]);
+  const [tutores, setTutores] = useState<any[]>([]);
 
   const roleOptions =
     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
@@ -123,7 +144,48 @@ const AdminUsuarios: React.FC = () => {
 
         const usuariosRes = await api.get("/users");
 
-        setUsuariosLista(usuariosRes.data.data); // <-- aquí es donde fallaba antes
+        const usuariosConProgreso = await Promise.all(
+          usuariosRes.data.data.map(async (u: any) => {
+            let fasesCirugia: FaseCirugia[] = [];
+            let faseActual: string | undefined;
+            if (["residente", "participante"].includes(u.rol)) {
+              try {
+                const progRes = await api.get(`/progreso/residente/${u._id}`);
+                const progresos = progRes.data.data;
+                fasesCirugia = progresos
+                  .filter(
+                    (p: any) =>
+                      p.estadoGeneral === "validado" &&
+                      p.actividades.some(
+                        (a: any) =>
+                          a.tipo === "cirugia" && a.estado === "validado",
+                      ),
+                  )
+                  .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+
+                const enProgreso = progresos.filter(
+                  (p: any) => p.estadoGeneral === "en progreso",
+                );
+                if (enProgreso.length > 0) {
+                  const numero = Math.max(
+                    ...enProgreso.map((p: any) => p.fase.numero),
+                  );
+                  faseActual = `${t("adminPhases.phase")} ${numero}`;
+                } else if (
+                  progresos.length > 0 &&
+                  progresos.every((p: any) => p.estadoGeneral === "validado")
+                ) {
+                  faseActual = "Programa Completado";
+                }
+              } catch {
+                fasesCirugia = [];
+              }
+            }
+            return { ...u, fasesCirugia, faseActual };
+          }),
+        );
+
+        setUsuariosLista(usuariosConProgreso);
 
         const hospitalesRes = await api.get("/hospitals");
 
@@ -143,6 +205,26 @@ const AdminUsuarios: React.FC = () => {
     fetchData();
   }, [t]);
 
+  useEffect(() => {
+    const fetchTutores = async () => {
+      if (
+        formData.rol === "residente" &&
+        formData.hospital &&
+        formData.especialidad
+      ) {
+        try {
+          const res = await getTutors(formData.hospital, formData.especialidad);
+          setTutores(res.data.data);
+        } catch {
+          setTutores([]);
+        }
+      } else {
+        setTutores([]);
+      }
+    };
+    fetchTutores();
+  }, [formData.rol, formData.hospital, formData.especialidad]);
+
 
   const handleOpenInvitarDialog = () => {
     setOpenInvitarDialog(true);
@@ -156,6 +238,7 @@ const AdminUsuarios: React.FC = () => {
       rol: "residente",
       hospital: hospitales.length > 0 ? hospitales[0]._id : "",
       especialidad: "",
+      tutor: "",
       tipo: "Programa Residentes",
       sociedad: sociedades.length > 0 ? sociedades[0]._id : "",
       zona: "",
@@ -181,6 +264,7 @@ const AdminUsuarios: React.FC = () => {
       rol: usuario.rol,
       hospital: usuario.hospital?._id || "",
       especialidad: usuario.especialidad || "",
+      tutor: usuario.tutor?._id || "",
       tipo: usuario.tipo || "",
       sociedad: usuario.sociedad?._id || "",
       zona: usuario.zona || "",
@@ -188,9 +272,9 @@ const AdminUsuarios: React.FC = () => {
     setOpenEditarDialog(true);
   };
 
-  const handleCloseEditarDialog = () => {
+  const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenEditarDialog(false);
-    setSelectedUsuario(null);
+    if (clearSelected) setSelectedUsuario(null);
   };
 
   const handleOpenEliminarDialog = (usuario: any) => {
@@ -214,6 +298,39 @@ const AdminUsuarios: React.FC = () => {
     setSelectedUsuario(null);
   };
 
+  const handleSendResetEmail = async (usuario: any) => {
+    try {
+      const res = await getUserResetToken(usuario._id);
+      const resetToken = res.data.resetToken;
+      const frontendUrl =
+        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
+      const days = parseInt(
+        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || "3",
+        10,
+      );
+      const subject = encodeURIComponent(
+        t("adminUsers.resetEmail.subject", { app: t("common.appName") }),
+      );
+      const body = encodeURIComponent(
+        t("adminUsers.resetEmail.body", {
+          name: usuario.nombre,
+          app: t("common.appName"),
+          link: `${frontendUrl}/reset-password/${resetToken}`,
+          days,
+        }),
+      );
+      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+      await clearResetNotifications(usuario._id);
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t("common.error"),
+        severity: "error",
+      });
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>,
   ) => {
@@ -234,6 +351,7 @@ const AdminUsuarios: React.FC = () => {
         updated.sociedad = "";
         updated.especialidad = "";
         updated.zona = "";
+        updated.tutor = "";
       } else {
         if (value === "csm") {
           updated.hospital = "";
@@ -249,10 +367,16 @@ const AdminUsuarios: React.FC = () => {
         } else if (value === "participante" || value === "profesor") {
           updated.tipo = "Programa Sociedades";
         }
+        if (value !== "residente") {
+          updated.tutor = "";
+        }
       }
     } else if (name === "hospital") {
       const selected = hospitales.find((h) => h._id === value);
       updated.zona = selected?.zona || "";
+      updated.tutor = "";
+    } else if (name === "especialidad") {
+      updated.tutor = "";
     }
     setFormData(updated);
   };
@@ -266,7 +390,7 @@ const AdminUsuarios: React.FC = () => {
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
       if (!payload.zona) delete payload.zona;
-      if (!payload.zona) delete payload.zona;
+      if (payload.tutor === undefined) delete payload.tutor;
       const res = await createUser(payload);
       setUsuariosLista([...usuarios, res.data.data]);
       handleCloseCrearDialog();
@@ -298,6 +422,7 @@ const AdminUsuarios: React.FC = () => {
       if (!payload.hospital) delete payload.hospital;
       if (!payload.especialidad) delete payload.especialidad;
       if (!payload.sociedad) delete payload.sociedad;
+      if (payload.tutor === undefined) delete payload.tutor;
 
       const res = await api.put(`/users/${selectedUsuario._id}`, payload);
 
@@ -405,6 +530,47 @@ const AdminUsuarios: React.FC = () => {
       setProcesando(false);
     }
   };
+
+  const handleDownloadInforme = async (
+    progresoId: string,
+    fase: string,
+    nombreUsuario: string,
+  ) => {
+    setDownloadLoading(true);
+    try {
+      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `informe-${fase}_${nombreUsuario}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || t("adminUsers.loadError"),
+        severity: "error",
+      });
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
+  const handleOpenInformeMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    usuario: any,
+  ) => {
+    setAnchorElInforme(event.currentTarget);
+    setMenuUsuario(usuario);
+  };
+
+  const handleCloseInformeMenu = () => {
+    setAnchorElInforme(null);
+    setMenuUsuario(null);
+  };
   const handleCloseSnackbar = () => {
     setSnackbar({
       ...snackbar,
@@ -446,6 +612,13 @@ const AdminUsuarios: React.FC = () => {
         .filter((e): e is string => Boolean(e)),
     ),
   );
+  const faseOptions = Array.from(
+    new Set(
+      usuarios
+        .map((u) => u.faseActual)
+        .filter((f): f is string => Boolean(f)),
+    ),
+  );
   const hospitalSociedadOptions = [
     ...hospitales.map((h) => ({ _id: h._id, nombre: h.nombre })),
     ...sociedades.map((s) => ({ _id: s._id, nombre: s.titulo })),
@@ -479,6 +652,11 @@ const AdminUsuarios: React.FC = () => {
     )
     .filter((u) =>
       selectedTipos.length > 0 ? selectedTipos.includes(u.tipo) : true,
+    )
+    .filter((u) =>
+      selectedFases.length > 0
+        ? selectedFases.includes(u.faseActual ?? "")
+        : true,
     )
     .sort((a, b) => {
       let aVal = "";
@@ -612,6 +790,19 @@ const AdminUsuarios: React.FC = () => {
           )}
           sx={{ minWidth: 200 }}
         />
+        <Autocomplete
+          multiple
+          options={faseOptions}
+          value={selectedFases}
+          onChange={(e, newValue) => setSelectedFases(newValue as string[])}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t("adminUsers.fields.phase", "Fase")}
+            />
+          )}
+          sx={{ minWidth: 200 }}
+        />
       </Box>
 
      {/* Tabla de usuarios */}
@@ -647,7 +838,10 @@ const AdminUsuarios: React.FC = () => {
                   {t("adminUsers.table.hospital")}
                 </TableCell>
                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
+                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
+                <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
+                <TableCell sx={{ width: 40 }}></TableCell>
                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
               </TableRow>
             </TableHead>
@@ -673,51 +867,102 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
                   <TableCell>{usuario.especialidad || "-"}</TableCell>
+                  <TableCell>
+                    {usuario.rol === "residente"
+                      ? usuario.tutor && typeof usuario.tutor === "object"
+                        ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
+                        : <Chip color="warning" label={t("adminUsers.noTutor")} />
+                      : "-"}
+                  </TableCell>
                   <TableCell>{usuario.zona || "-"}</TableCell>
+                  <TableCell>{usuario.faseActual || "-"}</TableCell>
+                  <TableCell align="center" sx={{ width: 40 }}>
+                    {usuario.fasesCirugia?.length ? (
+                      <>
+                        <Tooltip
+                          title={t('adminUsers.actions.downloadSurgeryReport', {
+                            phase: t('adminPhases.phase').toLowerCase(),
+                          })}
+                        >
+                          <IconButton
+                            onClick={(e) => handleOpenInformeMenu(e, usuario)}
+                            size="small"
+                          >
+                            <DownloadIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Menu
+                          anchorEl={anchorElInforme}
+                          open={Boolean(anchorElInforme) && menuUsuario?._id === usuario._id}
+                          onClose={handleCloseInformeMenu}
+                        >
+                          {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                            <MenuItem
+                              key={fase.id}
+                              onClick={() => {
+                                handleDownloadInforme(
+                                  fase.id,
+                                  fase.fase,
+                                  `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
+                                );
+                                handleCloseInformeMenu();
+                              }}
+                            >
+                              {t('adminUsers.actions.downloadSurgeryReport', {
+                                phase: fase.fase,
+                              })}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </>
+                    ) : null}
+                  </TableCell>
                   <TableCell align="right">
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => handleOpenEditarDialog(usuario)}
-                      size="small"
-                      startIcon={<EditIcon />}
-                      sx={{ mr: 1, minWidth: 150 }}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 2,
+                        flexWrap: 'wrap',
+                        '& > *': { minWidth: 150 },
+                      }}
                     >
-                      {t("adminUsers.actions.edit")}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleOpenEliminarDialog(usuario)}
-                      size="small"
-                      startIcon={<DeleteIcon />}
-                      sx={{ mr: 1, minWidth: 150 }}
-                    >
-                      {t("adminUsers.actions.delete")}
-                    </Button>
-                    {user?.rol === "administrador" && (
                       <Button
                         variant="outlined"
-                        color="secondary"
-                        onClick={() => handleOpenPasswordDialog(usuario)}
+                        color="primary"
+                        onClick={() => handleOpenEditarDialog(usuario)}
                         size="small"
-                        startIcon={<VpnKeyIcon />}
-                        sx={{ mr: 1, minWidth: 150 }}
+                        startIcon={<EditIcon />}
                       >
-                        {t("adminUsers.actions.changePassword")}
+                        {t("adminUsers.actions.edit")}
                       </Button>
-                    )}
-                    {['residente', 'participante'].includes(usuario.rol) &&
-                      !usuario.tieneProgreso && (
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleCrearProgreso(usuario._id)}
-                          size="small"
-                          sx={{ mr: 1, minWidth: 150 }}
-                        >
-                          {t("adminUsers.actions.createProgress")}
-                        </Button>
-                      )}
+                      {['residente', 'participante'].includes(usuario.rol) &&
+                        user?.rol === "administrador" &&
+                        usuario.tieneProgreso && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            color="secondary"
+                            startIcon={<AssessmentIcon />}
+                            onClick={() =>
+                              navigate(
+                                `/dashboard/progreso-usuario/${usuario._id}`,
+                              )
+                            }
+                          >
+                            {t('adminUserProgress.viewProgress')}
+                          </Button>
+                        )}
+                      {['residente', 'participante'].includes(usuario.rol) &&
+                        !usuario.tieneProgreso && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleCrearProgreso(usuario._id)}
+                            size="small"
+                          >
+                            {t("adminUsers.actions.createProgress")}
+                          </Button>
+                        )}
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}
@@ -915,6 +1160,30 @@ const AdminUsuarios: React.FC = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
+          {formData.rol === "residente" && (
+            <TextField
+              select
+              margin="dense"
+              id="tutor-create"
+              name="tutor"
+              label={t("adminUsers.fields.tutor")}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              variant="outlined"
+              value={formData.tutor}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              <option value="">{t("common.none")}</option>
+              {tutores.map((tutor) => (
+                <option key={tutor._id} value={tutor._id}>
+                  {tutor.nombre} {tutor.apellidos}
+                  {tutor.especialidad ? ` (${tutor.especialidad})` : ""}
+                </option>
+              ))}
+            </TextField>
+          )}
           {formData.rol !== "administrador" &&
             formData.rol !== "csm" &&
             formData.tipo === "Programa Sociedades" && (
@@ -988,7 +1257,7 @@ const AdminUsuarios: React.FC = () => {
       </Dialog>
 
       {/* Diálogo para editar usuario */}
-      <Dialog open={openEditarDialog} onClose={handleCloseEditarDialog}>
+      <Dialog open={openEditarDialog} onClose={() => handleCloseEditarDialog()}>
         <DialogTitle>{t("adminUsers.edit.title")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -1112,10 +1381,65 @@ const AdminUsuarios: React.FC = () => {
               <option value="ORL">ORL</option>
             </TextField>
           )}
+          {formData.rol === "residente" && (
+            <TextField
+              select
+              margin="dense"
+              id="tutor-edit"
+              name="tutor"
+              label={t("adminUsers.fields.tutor")}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              variant="outlined"
+              value={formData.tutor}
+              onChange={handleChange}
+              SelectProps={{ native: true }}
+              sx={{ mb: 2 }}
+            >
+              <option value="">{t("common.none")}</option>
+              {tutores.map((tutor) => (
+                <option key={tutor._id} value={tutor._id}>
+                  {tutor.nombre} {tutor.apellidos}
+                  {tutor.especialidad ? ` (${tutor.especialidad})` : ""}
+                </option>
+              ))}
+            </TextField>
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditarDialog} color="primary">
+          <Button onClick={() => handleCloseEditarDialog()} color="primary">
             {t("common.cancel")}
+          </Button>
+          {user?.rol === "administrador" && (
+            <Button
+              onClick={() => {
+                handleOpenPasswordDialog(selectedUsuario);
+                handleCloseEditarDialog(false);
+              }}
+              color="secondary"
+              variant="outlined"
+            >
+              {t("adminUsers.actions.changePassword")}
+            </Button>
+          )}
+          {user?.rol === "administrador" && (
+            <Button
+              onClick={() => handleSendResetEmail(selectedUsuario)}
+              color="info"
+              variant="outlined"
+            >
+              {t("adminUsers.actions.sendResetLink")}
+            </Button>
+          )}
+          <Button
+            onClick={() => {
+              handleOpenEliminarDialog(selectedUsuario);
+              handleCloseEditarDialog(false);
+            }}
+            color="error"
+            variant="outlined"
+          >
+            {t("adminUsers.delete.title")}
           </Button>
           <Button
             onClick={handleEditar}
@@ -1165,6 +1489,13 @@ const AdminUsuarios: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Backdrop
+        open={downloadLoading}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
 
       {/* Snackbar para notificaciones */}
       <Snackbar
