@@ -627,13 +627,22 @@
   },
   "forgotPassword": {
     "heading": "¿Olvidaste tu contraseña?",
-    "description": "Para resetear la contraseña póngase en contacto con el administrador del sistema.",
+    "description": "Puedes solicitar el restablecimiento automático o contactar manualmente con el administrador.",
+    "modeLabel": "¿Cómo quieres continuar?",
+    "manualOption": "Contactar manualmente con el administrador",
+    "automaticOption": "Solicitar restablecimiento automático",
     "emailLabel": "Tu email",
+    "manualSubmit": "Contactar con el administrador",
+    "automaticSubmit": "Enviar restablecimiento automático",
     "submit": "Enviar correo al administrador",
     "backToLogin": "Volver al inicio de sesión",
     "requestSent": "Solicitud enviada.",
+    "manualSuccess": "Solicitud registrada. Se abrirá tu cliente de correo.",
+    "manualError": "Error al preparar la solicitud manual.",
+    "automaticSuccess": "Si el correo existe, hemos enviado las instrucciones de restablecimiento.",
+    "automaticError": "No se pudo completar el restablecimiento automático.",
     "error": "Error al enviar la solicitud.",
-    "emailNotFound": "No existe un usuario con ese correo. Introduce uno válido."
+    "emailNotFound": "No existe un usuario con ese correo. Introduce un correo válido."
   },
   "resetPassword": {
     "title": "Restablecer contraseña",

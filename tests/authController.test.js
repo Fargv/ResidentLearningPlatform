@@ -1,8 +1,12 @@
+jest.mock('../src/utils/sendEmail');
+
 const { checkAccessCode, requestPasswordReset } = require('../src/controllers/authController');
 const AccessCode = require('../src/models/AccessCode');
 const User = require('../src/models/User');
 const Notificacion = require('../src/models/Notificacion');
 const ErrorResponse = require('../src/utils/errorResponse');
+const Hospital = require('../src/models/Hospital');
+const sendEmail = require('../src/utils/sendEmail');
 
 describe('checkAccessCode', () => {
   afterEach(() => {
@@ -39,8 +43,43 @@ describe('checkAccessCode', () => {
 });
 
 describe('requestPasswordReset', () => {
+  const originalFrontendUrl = process.env.FRONTEND_URL;
+
+  const createFindOneQuery = (result) => {
+    const promise = Promise.resolve(result);
+    promise.populate = jest.fn().mockReturnValue(Promise.resolve(result));
+    return promise;
+  };
+
+  const createUser = (overrides = {}) => {
+    const user = {
+      _id: 'user-id',
+      email: 'user@test.com',
+      nombre: 'Usuario',
+      tutor: null,
+      hospital: null,
+      resetPasswordToken: undefined,
+      resetPasswordExpire: undefined,
+      getResetPasswordToken: jest.fn().mockImplementation(() => {
+        user.resetPasswordToken = 'hashed-token';
+        user.resetPasswordExpire = new Date(Date.now() + 3600000);
+        return 'raw-token';
+      }),
+      save: jest.fn().mockResolvedValue(),
+      ...overrides
+    };
+    return user;
+  };
+
   afterEach(() => {
     jest.restoreAllMocks();
+    jest.clearAllMocks();
+    sendEmail.mockReset();
+    if (originalFrontendUrl === undefined) {
+      delete process.env.FRONTEND_URL;
+    } else {
+      process.env.FRONTEND_URL = originalFrontendUrl;
+    }
   });
 
   test('returns 404 and does not create notifications when email not found', async () => {
@@ -48,16 +87,77 @@ describe('requestPasswordReset', () => {
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     const next = jest.fn();
 
-    jest
-      .spyOn(User, 'findOne')
-      .mockReturnValue({ populate: jest.fn().mockResolvedValue(null) });
+    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(null));
     const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
+    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
 
     await requestPasswordReset(req, res, next);
 
     expect(User.findOne).toHaveBeenCalledWith({ email: 'missing@test.com' });
     expect(insertSpy).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
     expect(next.mock.calls[0][0].statusCode).toBe(404);
+  });
+
+  test('returns success when automatic mode sends email', async () => {
+    const user = createUser();
+    const req = { body: { email: user.email, mode: 'automatic' } };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const next = jest.fn();
+
+    process.env.FRONTEND_URL = 'https://frontend.example';
+
+    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(user));
+    jest
+      .spyOn(User, 'find')
+      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
+    jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
+    sendEmail.mockResolvedValue();
+
+    await requestPasswordReset(req, res, next);
+
+    expect(User.findOne).toHaveBeenCalledWith({ email: user.email });
+    expect(user.getResetPasswordToken).toHaveBeenCalled();
+    expect(user.save).toHaveBeenCalledWith({ validateBeforeSave: false });
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ email: user.email })
+    );
+    expect(Notificacion.insertMany).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ success: true });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  test('restores reset token fields when email sending fails', async () => {
+    const user = createUser({
+      resetPasswordToken: 'existing-token',
+      resetPasswordExpire: new Date(Date.now() + 1000)
+    });
+    const req = { body: { email: user.email, mode: 'automatic' } };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const next = jest.fn();
+
+    process.env.FRONTEND_URL = 'https://frontend.example';
+
+    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(user));
+    jest
+      .spyOn(User, 'find')
+      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
+    jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
+    sendEmail.mockRejectedValue(new Error('mailer failure'));
+
+    await requestPasswordReset(req, res, next);
+
+    expect(sendEmail).toHaveBeenCalled();
+    expect(user.save.mock.calls.length).toBeGreaterThanOrEqual(2);
+    expect(user.resetPasswordToken).toBeUndefined();
+    expect(user.resetPasswordExpire).toBeUndefined();
+    expect(Notificacion.insertMany).not.toHaveBeenCalled();
+    expect(res.status).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+    expect(next.mock.calls[0][0].statusCode).toBe(500);
   });
 });

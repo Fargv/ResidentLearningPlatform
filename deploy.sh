@@ -26,6 +26,14 @@ services:
         generateValue: true
       - key: JWT_EXPIRE
         value: 30d
+      - key: FRONTEND_URL
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        sync: false
 EOL
 
 # Crear archivo de configuración para Netlify
@@ -93,6 +101,10 @@ Este documento contiene las instrucciones para desplegar la plataforma de formac
    - MONGO_URI: (URI de MongoDB Atlas)
    - JWT_SECRET: (una cadena aleatoria segura)
    - JWT_EXPIRE: 30d
+   - FRONTEND_URL: URL pública del frontend (por ejemplo, https://tu-sitio.netlify.app)
+   - BREVO_API_KEY: clave API transaccional de Brevo
+   - BREVO_SENDER_EMAIL: remitente autenticado en Brevo (debe coincidir con el verificado)
+   - BREVO_SENDER_NAME: nombre que verán los destinatarios
 6. Desplegar el servicio
 
 ### 3. Frontend (Netlify)

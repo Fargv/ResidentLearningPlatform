@@ -612,16 +612,17 @@ exports.deleteUser = async (req, res, next) => {
 exports.inviteUser = async (req, res, next) => {
   try {
     const { email, rol, hospital, sociedad } = req.body;
+    const requester = req.user;
 
-    if (req.user.rol === Role.PROFESOR) {
+    if (requester?.rol === Role.PROFESOR) {
       if (rol !== Role.PARTICIPANTE) {
         return next(
           new ErrorResponse('Los profesores solo pueden invitar participantes', 403)
         );
       }
       if (
-        !req.user.sociedad ||
-        (sociedad && sociedad.toString() !== req.user.sociedad.toString())
+        !requester.sociedad ||
+        (sociedad && requester.sociedad && sociedad.toString() !== requester.sociedad.toString())
       ) {
         return next(
           new ErrorResponse(
@@ -672,10 +673,10 @@ exports.inviteUser = async (req, res, next) => {
       email,
       rol,
       hospital,
-      sociedad: sociedad || req.user.sociedad,
+      sociedad: sociedad || requester?.sociedad,
       token,
       fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
-      admin: req.user.id
+      admin: requester?.id
     });
 
     // Crear URL de registro
@@ -701,7 +702,7 @@ exports.inviteUser = async (req, res, next) => {
       
       // Crear registro de auditoría
       await createAuditLog({
-        usuario: req.user._id,
+        usuario: requester?._id,
         accion: 'invitar_usuario',
         descripcion: `Invitación enviada a: ${email} con rol: ${rol}`,
         ip: req.ip

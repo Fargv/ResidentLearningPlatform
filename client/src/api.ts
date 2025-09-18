@@ -50,4 +50,7 @@ export const clearResetNotifications = (userId: string) =>
 export const requestPasswordReset = (email: string) =>
   api.post('/auth/request-reset', { email });
 
+export const requestPasswordResetAutomatic = (email: string) =>
+  api.post('/auth/forgotpassword', { email });
+
 

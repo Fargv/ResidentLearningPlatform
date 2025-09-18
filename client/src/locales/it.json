@@ -231,13 +231,22 @@
   },
   "forgotPassword": {
     "heading": "Hai dimenticato la password?",
-    "description": "Per reimpostare la password, contatta l'amministratore del sistema.",
+    "description": "Puoi richiedere il reset automatico oppure contattare manualmente l'amministratore.",
+    "modeLabel": "Come vuoi procedere?",
+    "manualOption": "Contatta manualmente l'amministratore",
+    "automaticOption": "Richiedi il reset automatico",
     "emailLabel": "La tua email",
+    "manualSubmit": "Contatta l'amministratore",
+    "automaticSubmit": "Invia reset automatico",
     "submit": "Invia email all'amministratore",
     "backToLogin": "Torna al login",
     "requestSent": "Richiesta inviata.",
+    "manualSuccess": "Richiesta registrata. Il tuo client di posta si aprirà a breve.",
+    "manualError": "Si è verificato un errore durante la preparazione della richiesta manuale.",
+    "automaticSuccess": "Se l'email esiste, abbiamo inviato le istruzioni per il reset.",
+    "automaticError": "Impossibile completare il reset automatico.",
     "error": "Errore durante l'invio della richiesta.",
-    "emailNotFound": "Non esiste un utente con quella email. Inserisci un indirizzo valido."
+    "emailNotFound": "Non esiste alcun utente con questa email. Inseriscine una valida."
   },
   "resetPassword": {
     "title": "Reimposta password",

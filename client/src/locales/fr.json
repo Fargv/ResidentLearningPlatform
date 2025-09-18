@@ -152,14 +152,23 @@
     "errorUpdatePassword": "Erreur lors de la mise à jour du mot de passe"
   },
   "forgotPassword": {
-    "heading": "Mot de passe oublié ?",
-    "description": "Pour réinitialiser votre mot de passe, veuillez contacter l’administrateur du système.",
-    "emailLabel": "Votre email",
-    "submit": "Envoyer un email à l'administrateur",
+    "heading": "Vous avez oublié votre mot de passe ?",
+    "description": "Vous pouvez demander une réinitialisation automatique ou contacter l'administrateur manuellement.",
+    "modeLabel": "Comment souhaitez-vous procéder ?",
+    "manualOption": "Contacter l'administrateur manuellement",
+    "automaticOption": "Demander une réinitialisation automatique",
+    "emailLabel": "Votre e-mail",
+    "manualSubmit": "Contacter l'administrateur",
+    "automaticSubmit": "Envoyer la réinitialisation automatique",
+    "submit": "Envoyer un e-mail à l'administrateur",
     "backToLogin": "Retour à la connexion",
     "requestSent": "Demande envoyée.",
+    "manualSuccess": "Demande enregistrée. Votre client de messagerie va s'ouvrir.",
+    "manualError": "Une erreur est survenue lors de la préparation de la demande manuelle.",
+    "automaticSuccess": "Si l'e-mail existe, nous avons envoyé les instructions de réinitialisation.",
+    "automaticError": "La réinitialisation automatique n'a pas pu aboutir.",
     "error": "Erreur lors de l'envoi de la demande.",
-    "emailNotFound": "Aucun utilisateur avec cet e-mail n'existe. Veuillez en saisir un valide."
+    "emailNotFound": "Aucun utilisateur avec cet e-mail. Veuillez en saisir un valide."
   },
   "resetPassword": {
     "title": "Réinitialiser le mot de passe",

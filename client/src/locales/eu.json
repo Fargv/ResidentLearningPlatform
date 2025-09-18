@@ -621,14 +621,23 @@
     "errorUpdatePassword": "Errorea pasahitza eguneratzean"
   },
   "forgotPassword": {
-    "heading": "Pasahitza ahaztuta?",
-    "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
-    "emailLabel": "Zure emaila",
-    "submit": "Bidali emaila administratzaileari",
-    "backToLogin": "Itzuli saioa hasteko",
-    "requestSent": "Eskaera bidalia.",
+    "heading": "Zure pasahitza ahaztu duzu?",
+    "description": "Pasahitza automatikoki berrezartzea eska dezakezu edo administratzailearekin eskuz jarri zaitezke harremanetan.",
+    "modeLabel": "Nola jarraitu nahi duzu?",
+    "manualOption": "Administratzailearekin eskuz harremanetan jarri",
+    "automaticOption": "Berrezarpen automatikoa eskatu",
+    "emailLabel": "Zure helbide elektronikoa",
+    "manualSubmit": "Administratzailearekin harremanetan jarri",
+    "automaticSubmit": "Berrezarpen automatikoa bidali",
+    "submit": "Bidali mezua administratzaileari",
+    "backToLogin": "Itzuli saio-hasierara",
+    "requestSent": "Eskaera bidalita.",
+    "manualSuccess": "Eskaera erregistratu dugu. Zure posta-bezeroa laster irekiko da.",
+    "manualError": "Errorea gertatu da eskuzko eskaera prestatzean.",
+    "automaticSuccess": "Helbidea existitzen bada, berrezartzeko jarraibideak bidali dizkizugu.",
+    "automaticError": "Ezin izan da berrezarpen automatikoa burutu.",
     "error": "Errorea eskaera bidaltzean.",
-    "emailNotFound": "Ez dago helbide elektroniko horrekin erabiltzailearik. Sartu baliozko bat."
+    "emailNotFound": "Ez dago helbide horrekin erabiltzailerik. Sartu baliozko helbide bat."
   },
   "resetPassword": {
     "title": "Pasahitza berrezarri",

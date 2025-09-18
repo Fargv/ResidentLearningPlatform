@@ -125,13 +125,22 @@
   },
   "forgotPassword": {
     "heading": "Passwort vergessen?",
-    "description": "Um Ihr Passwort zurückzusetzen, wenden Sie sich bitte an den Systemadministrator.",
-    "emailLabel": "Ihre E-Mail",
+    "description": "Du kannst entweder eine automatische Zurücksetzung anfordern oder den Administrator manuell kontaktieren.",
+    "modeLabel": "Wie möchtest du fortfahren?",
+    "manualOption": "Administrator manuell kontaktieren",
+    "automaticOption": "Automatische Zurücksetzung anfordern",
+    "emailLabel": "Deine E-Mail",
+    "manualSubmit": "Administrator kontaktieren",
+    "automaticSubmit": "Automatischen Reset senden",
     "submit": "E-Mail an Administrator senden",
     "backToLogin": "Zurück zur Anmeldung",
     "requestSent": "Anfrage gesendet.",
+    "manualSuccess": "Anfrage erfasst. Dein E-Mail-Programm wird gleich geöffnet.",
+    "manualError": "Beim Vorbereiten der manuellen Anfrage ist ein Fehler aufgetreten.",
+    "automaticSuccess": "Falls die E-Mail existiert, haben wir Anweisungen zum Zurücksetzen gesendet.",
+    "automaticError": "Der automatische Reset konnte nicht abgeschlossen werden.",
     "error": "Fehler beim Senden der Anfrage.",
-    "emailNotFound": "Es existiert kein Benutzer mit dieser E-Mail. Bitte gib eine gültige ein."
+    "emailNotFound": "Es existiert kein Benutzer mit dieser E-Mail. Bitte gib eine gültige Adresse ein."
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",

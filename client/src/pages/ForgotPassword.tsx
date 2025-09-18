@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
-import { Box, Container, Paper, Typography, TextField, Button, Link } from '@mui/material';
+import {
+  Box,
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Link,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import { requestPasswordReset } from '../api';
+import { requestPasswordReset, requestPasswordResetAutomatic } from '../api';
 
 const ForgotPassword: React.FC = () => {
   const [userEmail, setUserEmail] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const [mode, setMode] = useState<'manual' | 'automatic'>('manual');
   const { t } = useTranslation();
   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
   const adminUrl =
@@ -22,19 +36,42 @@ const ForgotPassword: React.FC = () => {
       `Enlace al dashboard de administración de usuarios: ${adminUrl}`
     )}`;
 
-  const handleRequest = async () => {
+  const handleManual = async () => {
     try {
       await requestPasswordReset(userEmail);
-      setStatusMessage(t('forgotPassword.requestSent'));
+      setStatusMessage(t('forgotPassword.manualSuccess'));
       setIsError(false);
       window.location.href = mailtoLink;
     } catch (e: any) {
       if (e?.response?.status === 404) {
         setStatusMessage(t('forgotPassword.emailNotFound'));
       } else {
-        setStatusMessage(t('forgotPassword.error'));
+        setStatusMessage(t('forgotPassword.manualError'));
       }
       setIsError(true);
+    }
+  };
+
+  const handleAutomatic = async () => {
+    try {
+      await requestPasswordResetAutomatic(userEmail);
+      setStatusMessage(t('forgotPassword.automaticSuccess'));
+      setIsError(false);
+    } catch (e: any) {
+      if (e?.response?.status === 404) {
+        setStatusMessage(t('forgotPassword.emailNotFound'));
+      } else {
+        setStatusMessage(t('forgotPassword.automaticError'));
+      }
+      setIsError(true);
+    }
+  };
+
+  const handleRequest = async () => {
+    if (mode === 'manual') {
+      await handleManual();
+    } else {
+      await handleAutomatic();
     }
   };
 
@@ -74,8 +111,29 @@ const ForgotPassword: React.FC = () => {
             value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
           />
+          <FormControl component="fieldset" sx={{ mt: 2, width: '100%' }}>
+            <FormLabel component="legend">{t('forgotPassword.modeLabel')}</FormLabel>
+            <RadioGroup
+              row
+              value={mode}
+              onChange={(event) => setMode(event.target.value as 'manual' | 'automatic')}
+            >
+              <FormControlLabel
+                value="manual"
+                control={<Radio />}
+                label={t('forgotPassword.manualOption')}
+              />
+              <FormControlLabel
+                value="automatic"
+                control={<Radio />}
+                label={t('forgotPassword.automaticOption')}
+              />
+            </RadioGroup>
+          </FormControl>
           <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleRequest}>
-            {t('forgotPassword.submit')}
+            {mode === 'manual'
+              ? t('forgotPassword.manualSubmit')
+              : t('forgotPassword.automaticSubmit')}
           </Button>
           {statusMessage && (
             <Typography sx={{ mt: 2 }} color={isError ? 'error' : 'success.main'}>

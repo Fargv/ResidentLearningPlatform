@@ -1,703 +1,194 @@
-diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
-index 16180a42a5857fe098ebcec2eb324144a2d4d1b2..8bbdf3984fadb8ba2aa8b7752f0f056cc8f8e735 100644
---- a/client/src/locales/ca.json
-+++ b/client/src/locales/ca.json
-@@ -972,27 +972,30 @@
-       "noProgress": "No hi ha progrés formatiu disponible.",
-       "loadError": "Error en carregar el progrés"
-     },
-     "tooltip": {
-       "missingProgress": "Falta l’ID del progrés",
-       "noActivity": "No s'ha seleccionat cap activitat"
-     },
-     "labels": {
-       "comment": "Comentari",
-       "tutorComment": "Comentari del Tutor",
-       "rejectionReason": "Motiu del rebuig",
-       "completedDate": "Data completada",
-       "validatedDate": "Validat el",
-       "state": "Estat"
-     },
-     "states": {
-       "validated": "Validat",
-       "rejected": "Rebutjat",
-       "pending": "Pendent de validació",
-       "notCompleted": "No completada"
-     }
-   },
-   "privacyPolicy": {
-     "title": "Política de Privacitat",
-     "lastUpdated": "Última actualització: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Hospitals"
-   }
- }
-diff --git a/client/src/locales/de.json b/client/src/locales/de.json
-index 247c9df155ab3e89c7267a51f93928dfa1389c9c..1696ee3659d1643c2aabccd39d0e175b436d03a9 100644
---- a/client/src/locales/de.json
-+++ b/client/src/locales/de.json
-@@ -972,27 +972,30 @@
-       "validate": "Validieren",
-       "reject": "Ablehnen",
-       "cancel": "Abbrechen"
-     },
-     "states": {
-       "validated": "Validiert",
-       "rejected": "Abgelehnt"
-     },
-     "dialogs": {
-       "validateTitle": "Aktivität validieren",
-       "rejectTitle": "Aktivität ablehnen",
-       "validateConfirm": "Sie validieren die Aktivität {{activity}} für Bewohner {{resident}}.",
-       "rejectConfirm": "Sie lehnen die Aktivität {{activity}} für Bewohner {{resident}} ab.",
-       "commentsOptional": "Kommentare (optional)",
-       "digitalSignature": "Digitale Signatur",
-       "rejectReason": "Ablehnungsgrund",
-       "processing": "Verarbeite..."
-     },
-     "messages": {
-       "loadError": "Fehler beim Laden der Validierungen"
-     }
-   },
-   "privacyPolicy": {
-     "title": "Datenschutzerklärung",
-     "lastUpdated": "Zuletzt aktualisiert: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Krankenhäuser"
-   }
- }
-diff --git a/client/src/locales/en.json b/client/src/locales/en.json
-index bec6db046e032f6a13b14b9a9ecbc5d88eae382d..200caa95092079db175896a005b5a08764da466b 100644
---- a/client/src/locales/en.json
-+++ b/client/src/locales/en.json
-@@ -984,27 +984,30 @@
-   },
-   "emails": {
-     "inviteSubject": "Invitation to the Da Vinci Training Platform"
-   },
-   "debug": {
-     "tokenValid": "✅ Token valid and decoded",
-     "tokenInvalid": "❌ Token invalid or corrupt"
-   },
-   "status": {
-     "pendingValidation": "Pending validation",
-     "validado": "Validated",
-     "rechazado": "Rejected",
-     "completado": "Completed",
-     "pendiente": "Pending",
-     "noCompletada": "Not completed",
-     "enProgreso": "In progress",
-     "bloqueada": "Blocked",
-     "active": "Active",
-     "inactive": "Inactive",
-     "validated": "Validated",
-     "rejected": "Rejected"
-   },
-   "privacyPolicy": {
-     "title": "Privacy Policy",
-     "lastUpdated": "Last updated: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Hospitals"
-   }
- }
-diff --git a/client/src/locales/es.json b/client/src/locales/es.json
-index 96d116011712acc236c8d34a85bcb541d01e88bf..c642f33db3b34fde79d25b5734255f03ea9b92f3 100644
---- a/client/src/locales/es.json
-+++ b/client/src/locales/es.json
-@@ -976,27 +976,30 @@
-   },
-   "emails": {
-     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
-   },
-   "debug": {
-     "tokenValid": "✅ Token válido y decodificado",
-     "tokenInvalid": "❌ Token no válido o corrupto"
-   },
-   "status": {
-     "pendingValidation": "Pendiente de validación",
-     "validado": "Validado",
-     "rechazado": "Rechazado",
-     "completado": "Completado",
-     "pendiente": "Pendiente",
-     "noCompletada": "No completada",
-     "enProgreso": "En progreso",
-     "bloqueada": "Bloqueada",
-     "active": "Activo",
-     "inactive": "Inactivo",
-     "validated": "Validado",
-     "rejected": "Rechazado"
-   },
-   "privacyPolicy": {
-     "title": "Política de Privacidad",
-     "lastUpdated": "Última actualización: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Hospitales"
-   }
- }
-diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
-index 4f15017271668f98af23be48d0535e45cf256fcb..33e694dbb2025cc335bb8398942a68ae6ef5db37 100644
---- a/client/src/locales/eu.json
-+++ b/client/src/locales/eu.json
-@@ -971,27 +971,30 @@
-   },
-   "emails": {
-     "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
-   },
-   "debug": {
-     "tokenValid": "✅ Token baliozkoa eta deskodetua",
-     "tokenInvalid": "❌ Token baliogabea edo hondatuta"
-   },
-   "status": {
-     "pendingValidation": "Balidazioaren zain",
-     "validado": "Balidatuta",
-     "rechazado": "Baztertuta",
-     "completado": "Osatuta",
-     "pendiente": "Zain",
-     "noCompletada": "Osatu gabe",
-     "enProgreso": "Prozesuan",
-     "bloqueada": "Blokeatuta",
-     "active": "Aktibo",
-     "inactive": "Inaktibo",
-     "validated": "Balidatuta",
-     "rejected": "Baztertuta"
-   },
-   "privacyPolicy": {
-     "title": "Pribatutasun politika",
-     "lastUpdated": "Azken eguneratzea: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Ospitaleak"
-   }
- }
-diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
-index 161d9220437c176b4268cd432a0cd8148da398d9..24126d8f32e7ad6eb4e7499daabbb61a4834b3fe 100644
---- a/client/src/locales/fr.json
-+++ b/client/src/locales/fr.json
-@@ -987,27 +987,30 @@
-       "tutor": "Tutor"
-     },
-     "states": {
-       "active": "Actif",
-       "inactive": "Inactif"
-     },
-     "dialogs": {
-       "editTitle": "Modifier l'utilisateur",
-       "inviteTitle": "Inviter un utilisateur"
-     },
-     "messages": {
-       "loadError": "Erreur lors du chargement des utilisateurs",
-       "updateSuccess": "Utilisateur mis à jour",
-       "inviteSuccess": "Utilisateur invité",
-       "deleteSuccess": "Utilisateur supprimé",
-       "deleteError": "Erreur lors de la suppression",
-       "genericError": "Erreur"
-     },
-     "actions": {
-       "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
-     }
-   },
-   "privacyPolicy": {
-     "title": "Politique de confidentialité",
-     "lastUpdated": "Dernière mise à jour : {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Hôpitaux"
-   }
- }
-diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
-index 7f95ba47e64bea0c4fe2520ccfb7dd636b069609..caf3f266adf28ac03a624f5aee38b103f675d54c 100644
---- a/client/src/locales/gl.json
-+++ b/client/src/locales/gl.json
-@@ -976,27 +976,30 @@
-       "noProgress": "Non hai progreso formativo dispoñible.",
-       "loadError": "Erro ao cargar o progreso"
-     },
-     "tooltip": {
-       "missingProgress": "Falta o ID do progreso",
-       "noActivity": "Non se seleccionou ningunha actividade"
-     },
-     "labels": {
-       "comment": "Comentario",
-       "tutorComment": "Comentario do Tutor",
-       "rejectionReason": "Motivo do rexeitamento",
-       "completedDate": "Data completada",
-       "validatedDate": "Validado o",
-       "state": "Estado"
-     },
-     "states": {
-       "validated": "Validado",
-       "rejected": "Rexeitado",
-       "pending": "Pendente de validación",
-       "notCompleted": "Non completada"
-     }
-   },
-   "privacyPolicy": {
-     "title": "Política de privacidade",
-     "lastUpdated": "Última actualización: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Hospitais"
-   }
- }
-diff --git a/client/src/locales/it.json b/client/src/locales/it.json
-index 3e2b88bb488ea526c00b21471501512fa9d3d974..8cf405a4a3117749a8ea202b58b621ff3607314e 100644
---- a/client/src/locales/it.json
-+++ b/client/src/locales/it.json
-@@ -972,27 +972,30 @@
-       "noProgress": "Nessun progresso formativo disponibile.",
-       "loadError": "Errore nel caricamento del progresso"
-     },
-     "tooltip": {
-       "missingProgress": "ID del progresso mancante",
-       "noActivity": "Nessuna attività selezionata"
-     },
-     "labels": {
-       "comment": "Commento",
-       "tutorComment": "Commento del Tutor",
-       "rejectionReason": "Motivo del rifiuto",
-       "completedDate": "Completata il",
-       "validatedDate": "Validata il",
-       "state": "Stato"
-     },
-     "states": {
-       "validated": "Validata",
-       "rejected": "Respinta",
-       "pending": "In attesa di validazione",
-       "notCompleted": "Non completata"
-     }
-   },
-   "privacyPolicy": {
-     "title": "Informativa sulla privacy",
-     "lastUpdated": "Ultimo aggiornamento: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Ospedali"
-   }
- }
-diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
-index ab591b6bc65f7bb91947f7b3ed05058384c9e44f..03f77330741c3081991fbae9ce16261af3bae34c 100644
---- a/client/src/locales/pt.json
-+++ b/client/src/locales/pt.json
-@@ -986,27 +986,30 @@
-       "loadError": "Erro ao carregar as validações"
-     }
-   },
-   "certificate": {
-     "title": "Certificado de Cumprimento",
-     "body": "Certifica-se que <strong>{{name}}</strong> completou satisfatoriamente a fase formativa designada do Academic Program em tecnologias do robô Da Vinci®. <br /><br />Este curso faz parte do plano formativo em tecnologia robótica em colaboração com o hospital <strong>{{hospital}}</strong> e sob a supervisão do seu tutor designado.",
-     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
-     "dateLine": "Madrid, {{date}}",
-     "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
-     "tutorPrefix": "Tutor do programa de residentes do ",
-     "tutorTitle": "Tutor do programa de residentes",
-     "tutorPlaceholder": "Tutor do programa:",
-     "signatureLine": "________________________________________",
-     "responsableTitle": "Responsável pela formação do programa {{programa}}"
-   },
-   "emails": {
-     "inviteSubject": "Convite para a Plataforma de Formação Da Vinci"
-   },
-   "debug": {
-     "tokenValid": "✅ Token válido e decodificado",
-     "tokenInvalid": "❌ Token inválido ou corrompido"
-   },
-   "privacyPolicy": {
-     "title": "Política de privacidade",
-     "lastUpdated": "Última atualização: {{date}}"
-+  },
-+  "adminReports": {
-+    "exportHospitals": "Hospitais"
-   }
- }
-diff --git a/client/src/pages/dashboard/AdminInformes.tsx b/client/src/pages/dashboard/AdminInformes.tsx
-index b0a707dd73792258a3c4a5faa8c3ea53d7b89ed6..ac73ddfbb2ffd75c01927bdff1fb1a4a933f4bb9 100644
---- a/client/src/pages/dashboard/AdminInformes.tsx
-+++ b/client/src/pages/dashboard/AdminInformes.tsx
-@@ -66,86 +66,120 @@ const AdminInformes: React.FC = () => {
-           ? disposition.split("filename=")[1].replace(/"/g, "")
-           : `ActividadesResidentes_${Date.now()}.xlsx`;
+diff --git a/tests/authController.test.js b/tests/authController.test.js
+index d194b106eae9c3c7a403b5dce40127bdf3d81e66..d5bf44ae8586c8d9e45245fac611e42fb42530b0 100644
+--- a/tests/authController.test.js
++++ b/tests/authController.test.js
+@@ -1,63 +1,163 @@
+-const { checkAccessCode, requestPasswordReset } = require('../src/controllers/authController');
++jest.mock('../src/utils/sendEmail');
++
++const { checkAccessCode, requestPasswordReset } = require('../src/controllers/authController');
+ const AccessCode = require('../src/models/AccessCode');
+-const User = require('../src/models/User');
+-const Notificacion = require('../src/models/Notificacion');
++const User = require('../src/models/User');
++const Notificacion = require('../src/models/Notificacion');
+ const ErrorResponse = require('../src/utils/errorResponse');
++const Hospital = require('../src/models/Hospital');
++const sendEmail = require('../src/utils/sendEmail');
  
-       const blob = new Blob([res.data], {
-         type:
-           res.headers["content-type"] ||
-           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-       });
-       const url = window.URL.createObjectURL(blob);
+ describe('checkAccessCode', () => {
+   afterEach(() => {
+     jest.restoreAllMocks();
+   });
  
-       const link = document.createElement("a");
-       link.href = url;
-       link.setAttribute("download", fileName);
-       document.body.appendChild(link);
-       link.click();
-       link.remove();
-       window.URL.revokeObjectURL(url);
-     } catch (err) {
-       console.error("Error exportando actividades residentes", err);
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
+   test('returns rol and tipo for valid code', async () => {
+     const access = { rol: 'residente', tipo: 'Programa Residentes' };
+     const req = { params: { codigo: 'ABCD' } };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
  
-   // Exportar progreso usuarios
--  const handleExportProgresoUsuarios = async (format: "csv" | "xlsx") => {
-+  const handleExportProgresoUsuarios = async (format: "csv" | "xlsx") => {
-     setDownloadLoading(true);
-     try {
-       const res = await api.get(`/informes/progreso-usuarios`, {
--        params: { formato: format },
-+        params: { formato: format },
-         responseType: "blob",
-       });
-       const blob = new Blob([res.data], {
-         type:
--          format === "csv"
-+          format === "csv"
-             ? "text/csv"
-             : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-       });
-       const url = window.URL.createObjectURL(blob);
-       const link = document.createElement("a");
-       link.href = url;
--      link.setAttribute("download", `ProgresoUsuarios.${format}`);
-+      link.setAttribute("download", `ProgresoUsuarios.${format}`);
-       document.body.appendChild(link);
-       link.click();
-       link.parentNode?.removeChild(link);
-     } catch (err) {
--      console.error(
--        "Error al descargar informe de progreso usuarios",
--        err,
--      );
-+      console.error(
-+        "Error al descargar informe de progreso usuarios",
-+        err,
-+      );
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
+     jest
+       .spyOn(AccessCode, 'findOne')
+       .mockReturnValue({ lean: jest.fn().mockResolvedValue(access) });
  
--  const reports = [
--    {
--      title: t(
--        "adminReports.exportSocietyActivities",
--        "Actividades sociedades",
--      ),
-+  const handleExportHospitales = async (format: "csv" | "xlsx") => {
-+    setDownloadLoading(true);
-+    try {
-+      const res = await api.get(`/informes/hospitales`, {
-+        params: { format },
-+        responseType: "blob",
-+      });
-+      const blob = new Blob([res.data], {
-+        type:
-+          format === "csv"
-+            ? "text/csv"
-+            : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-+      });
-+      const url = window.URL.createObjectURL(blob);
-+      const link = document.createElement("a");
-+      link.href = url;
-+      link.setAttribute("download", `Hospitales.${format}`);
-+      document.body.appendChild(link);
-+      link.click();
-+      link.parentNode?.removeChild(link);
-+    } catch (err) {
-+      console.error(err);
-+    } finally {
-+      setDownloadLoading(false);
-+    }
+     await checkAccessCode(req, res, jest.fn());
+ 
+     expect(AccessCode.findOne).toHaveBeenCalledWith({ codigo: 'ABCD' });
+     expect(res.status).toHaveBeenCalledWith(200);
+     expect(res.json).toHaveBeenCalledWith({ success: true, data: access });
+   });
+ 
+   test('passes error when code not found', async () => {
+     const req = { params: { codigo: 'BAD' } };
+     const next = jest.fn();
+     jest
+       .spyOn(AccessCode, 'findOne')
+       .mockReturnValue({ lean: jest.fn().mockResolvedValue(null) });
+ 
+     await checkAccessCode(req, {}, next);
+ 
+     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+   });
+ });
+ 
+-describe('requestPasswordReset', () => {
+-  afterEach(() => {
+-    jest.restoreAllMocks();
+-  });
+-
+-  test('returns 404 and does not create notifications when email not found', async () => {
+-    const req = { body: { email: 'missing@test.com' } };
+-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+-    const next = jest.fn();
+-
+-    jest
+-      .spyOn(User, 'findOne')
+-      .mockReturnValue({ populate: jest.fn().mockResolvedValue(null) });
+-    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
+-
+-    await requestPasswordReset(req, res, next);
+-
+-    expect(User.findOne).toHaveBeenCalledWith({ email: 'missing@test.com' });
+-    expect(insertSpy).not.toHaveBeenCalled();
+-    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+-    expect(next.mock.calls[0][0].statusCode).toBe(404);
+-  });
+-});
++describe('requestPasswordReset', () => {
++  const originalFrontendUrl = process.env.FRONTEND_URL;
++
++  const createFindOneQuery = (result) => {
++    const promise = Promise.resolve(result);
++    promise.populate = jest.fn().mockReturnValue(Promise.resolve(result));
++    return promise;
 +  };
 +
-+  const reports = [
-+    {
-+      title: t("adminReports.exportHospitals", "Hospitales"),
-+      formats: [
-+        { label: "CSV", handler: () => handleExportHospitales("csv") },
-+        { label: "XLSX", handler: () => handleExportHospitales("xlsx") },
-+      ],
-+    },
-+    {
-+      title: t(
-+        "adminReports.exportSocietyActivities",
-+        "Actividades sociedades",
-+      ),
-       formats: [
-         { label: "CSV", handler: () => handleExport("csv") },
-         { label: "XLSX", handler: () => handleExport("xlsx") },
-       ],
-     },
-     {
-       title: t(
-         "adminReports.exportResidentsActivities",
-         "Actividades residentes",
-       ),
-       formats: [
-         { label: "XLSX", handler: handleExportActividadesResidentes },
-       ],
-     },
-     {
-       title: t(
-         "adminReports.exportUserProgress",
-         "Progreso de usuarios",
-       ),
-       formats: [
-         { label: "CSV", handler: () => handleExportProgresoUsuarios("csv") },
-         { label: "XLSX", handler: () => handleExportProgresoUsuarios("xlsx") },
-       ],
-     },
-   ];
-diff --git a/src/controllers/informesController.js b/src/controllers/informesController.js
-index fe8056c13ff3bacd0c1e3465880e0d037c8c9a98..6b5272d8ac01ce713ecc38c47e476dc479fa35cf 100644
---- a/src/controllers/informesController.js
-+++ b/src/controllers/informesController.js
-@@ -1,35 +1,36 @@
- // src/controllers/informesController.js
- const path = require('path');
- const fs = require('fs');
- const ExcelJS = require('exceljs');
- const { Parser } = require('@json2csv/plainjs');
- 
- const User = require('../models/User');
- const Fase = require('../models/Fase');
- const FaseSoc = require('../models/FaseSoc');
- const ProgresoResidente = require('../models/ProgresoResidente');
-+const Hospital = require('../models/Hospital');
- 
- /**
-  * Exporta usuarios en CSV o XLSX.
-  * GET /informes/usuarios?format=csv|xlsx
-  */
- const exportarUsuarios = async (req, res, next) => {
-   try {
-     const usuarios = await User.find().lean();
- 
-     // Campos dinámicos según el primer documento (si lo hay)
-     const fields = usuarios.length > 0 ? Object.keys(usuarios[0]) : [];
- 
-     // Filas para Excel (normalizando fechas y objetos)
-     const rows = usuarios.map((usuario) =>
-       fields.map((field) => {
-         const value = usuario[field];
-         if (value instanceof Date) return value.toISOString();
-         if (typeof value === 'object' && value !== null) {
-           return JSON.stringify(value);
-         }
-         return value;
-       }),
-     );
- 
-     const uploadDir = path.join(__dirname, '../../public/uploads');
-diff --git a/src/controllers/informesController.js b/src/controllers/informesController.js
-index fe8056c13ff3bacd0c1e3465880e0d037c8c9a98..6b5272d8ac01ce713ecc38c47e476dc479fa35cf 100644
---- a/src/controllers/informesController.js
-+++ b/src/controllers/informesController.js
-@@ -63,50 +64,119 @@ const exportarUsuarios = async (req, res, next) => {
- 
-       fileName = `Usuarios_${timestamp}.xlsx`;
-       filePath = path.join(uploadDir, fileName);
-       await workbook.xlsx.writeFile(filePath);
- 
-       res.set(
-         'Content-Type',
-         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-       );
-     }
- 
-     res.download(filePath, fileName, (err) => {
-       // Limpieza del temporal, ocurra o no error de envío
-       fs.unlink(filePath, (unlinkErr) => {
-         if (unlinkErr) {
-           console.error('Error eliminando informe temporal', unlinkErr);
-         }
-       });
-       if (err) next(err);
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
-+/**
-+ * Exporta hospitales en CSV o XLSX.
-+ * GET /informes/hospitales?format=csv|xlsx
-+ */
-+const exportarHospitales = async (req, res, next) => {
-+  try {
-+    const hospitales = await Hospital.find().lean();
-+
-+    const fields = hospitales.length > 0 ? Object.keys(hospitales[0]) : [];
-+
-+    const rows = hospitales.map((hospital) =>
-+      fields.map((field) => {
-+        const value = hospital[field];
-+        if (value instanceof Date) return value.toISOString();
-+        if (typeof value === 'object' && value !== null) {
-+          return JSON.stringify(value);
-+        }
-+        return value;
++  const createUser = (overrides = {}) => {
++    const user = {
++      _id: 'user-id',
++      email: 'user@test.com',
++      nombre: 'Usuario',
++      tutor: null,
++      hospital: null,
++      resetPasswordToken: undefined,
++      resetPasswordExpire: undefined,
++      getResetPasswordToken: jest.fn().mockImplementation(() => {
++        user.resetPasswordToken = 'hashed-token';
++        user.resetPasswordExpire = new Date(Date.now() + 3600000);
++        return 'raw-token';
 +      }),
-+    );
++      save: jest.fn().mockResolvedValue(),
++      ...overrides
++    };
++    return user;
++  };
 +
-+    const uploadDir = path.join(__dirname, '../../public/uploads');
-+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-+
-+    const now = new Date();
-+    const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
-+
-+    const format = req.query.format === 'csv' ? 'csv' : 'xlsx';
-+    const fileName = `Hospitales_${timestamp}.${format}`;
-+    const filePath = path.join(uploadDir, fileName);
-+
-+    if (format === 'csv') {
-+      const parser = new Parser({ fields });
-+      const csv = parser.parse(hospitales);
-+      fs.writeFileSync(filePath, csv);
-+      res.set('Content-Type', 'text/csv');
++  afterEach(() => {
++    jest.restoreAllMocks();
++    jest.clearAllMocks();
++    sendEmail.mockReset();
++    if (originalFrontendUrl === undefined) {
++      delete process.env.FRONTEND_URL;
 +    } else {
-+      const workbook = new ExcelJS.Workbook();
-+      const worksheet = workbook.addWorksheet('Hospitales');
-+
-+      worksheet.addTable({
-+        name: 'Hospitales',
-+        ref: 'A1',
-+        headerRow: true,
-+        style: { theme: 'TableStyleMedium2', showRowStripes: true },
-+        columns: fields.map((f) => ({ name: f })),
-+        rows,
-+      });
-+
-+      await workbook.xlsx.writeFile(filePath);
-+      res.set(
-+        'Content-Type',
-+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-+      );
++      process.env.FRONTEND_URL = originalFrontendUrl;
 +    }
++  });
 +
-+    res.download(filePath, fileName, (err) => {
-+      fs.unlink(filePath, (unlinkErr) => {
-+        if (unlinkErr) {
-+          console.error('Error eliminando informe temporal', unlinkErr);
-+        }
-+      });
-+      if (err) next(err);
++  test('returns 404 and does not create notifications when email not found', async () => {
++    const req = { body: { email: 'missing@test.com' } };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++    const next = jest.fn();
++
++    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(null));
++    const insertSpy = jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
++    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
++
++    await requestPasswordReset(req, res, next);
++
++    expect(User.findOne).toHaveBeenCalledWith({ email: 'missing@test.com' });
++    expect(insertSpy).not.toHaveBeenCalled();
++    expect(sendEmail).not.toHaveBeenCalled();
++    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
++    expect(next.mock.calls[0][0].statusCode).toBe(404);
++  });
++
++  test('returns success when automatic mode sends email', async () => {
++    const user = createUser();
++    const req = { body: { email: user.email, mode: 'automatic' } };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++    const next = jest.fn();
++
++    process.env.FRONTEND_URL = 'https://frontend.example';
++
++    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(user));
++    jest
++      .spyOn(User, 'find')
++      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) });
++    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
++    jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
++    sendEmail.mockResolvedValue();
++
++    await requestPasswordReset(req, res, next);
++
++    expect(User.findOne).toHaveBeenCalledWith({ email: user.email });
++    expect(user.getResetPasswordToken).toHaveBeenCalled();
++    expect(user.save).toHaveBeenCalledWith({ validateBeforeSave: false });
++    expect(sendEmail).toHaveBeenCalledWith(
++      expect.objectContaining({ email: user.email })
++    );
++    expect(Notificacion.insertMany).not.toHaveBeenCalled();
++    expect(res.status).toHaveBeenCalledWith(200);
++    expect(res.json).toHaveBeenCalledWith({ success: true });
++    expect(next).not.toHaveBeenCalled();
++  });
++
++  test('restores reset token fields when email sending fails', async () => {
++    const user = createUser({
++      resetPasswordToken: 'existing-token',
++      resetPasswordExpire: new Date(Date.now() + 1000)
 +    });
-+  } catch (err) {
-+    next(err);
-+  }
-+};
++    const req = { body: { email: user.email, mode: 'automatic' } };
++    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++    const next = jest.fn();
 +
- /**
-  * Exporta listado de Actividades por Fase (para residentes) en XLSX.
-  * GET /informes/actividades-residentes
-  */
- const exportarActividadesResidentes = async (req, res, next) => {
-   try {
-     // Cargamos todas las fases con sus actividades
-     const fases = await Fase.find().populate('actividades').lean();
- 
-     // Construimos filas: [Fase, Actividad]
-     const rows = [];
-     (fases || []).forEach((fase) => {
-       const faseLabel = `${fase.numero} - ${fase.nombre}`;
-       const acts = Array.isArray(fase.actividades) ? fase.actividades : [];
-       if (acts.length === 0) {
-         // Si una fase no tiene actividades, aún así registramos la fase con celda vacía de actividad
-         rows.push([faseLabel, '']);
-       } else {
-         acts.forEach((act) => {
-           rows.push([faseLabel, act?.nombre ?? '']);
-         });
-       }
-     });
- 
-     const workbook = new ExcelJS.Workbook();
-diff --git a/src/controllers/informesController.js b/src/controllers/informesController.js
-index fe8056c13ff3bacd0c1e3465880e0d037c8c9a98..6b5272d8ac01ce713ecc38c47e476dc479fa35cf 100644
---- a/src/controllers/informesController.js
-+++ b/src/controllers/informesController.js
-@@ -344,29 +414,30 @@ const exportarProgresoUsuarios = async (req, res, next) => {
-       const worksheet = workbook.addWorksheet('Progreso');
-       worksheet.columns = headers;
-       rows.forEach((r) => worksheet.addRow(r));
-       await workbook.xlsx.writeFile(filePath);
-     }
- 
-     res.set(
-       'Content-Type',
-       formato === 'csv'
-         ? 'text/csv'
-         : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-     );
-     res.download(filePath, fileName, (err) => {
-       fs.unlink(filePath, (unlinkErr) => {
-         if (unlinkErr) console.error('Error eliminando informe temporal', unlinkErr);
-       });
-       if (err) next(err);
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- module.exports = {
-   exportarUsuarios,
-+  exportarHospitales,
-   exportarActividadesResidentes,
-   exportarActividadesSociedades,
-   exportarProgresoUsuarios,
- };
-diff --git a/src/routes/informesRoutes.js b/src/routes/informesRoutes.js
-index 6888f690ce5821af4f9f0fbe9d59a8f2f4116adc..c5d403925731dfa09a188a5bb98879ba0f88d4ab 100644
---- a/src/routes/informesRoutes.js
-+++ b/src/routes/informesRoutes.js
-@@ -1,40 +1,44 @@
- // src/routes/informesRoutes.js
- const express = require('express');
- const router = express.Router();
- const { protect, authorize } = require('../middleware/auth');
- const {
-   exportarUsuarios,
-+  exportarHospitales,
-   exportarActividadesResidentes,
-   exportarActividadesSociedades,
-   exportarProgresoUsuarios,
- } = require('../controllers/informesController');
- const { Role } = require('../utils/roles');
- 
- // Protege todas las rutas de este router
- router.use(protect);
- 
- // /api/informes/usuarios?format=csv|xlsx
- router.get('/usuarios', authorize('administrador'), exportarUsuarios);
- 
-+// /api/informes/hospitales?format=csv|xlsx
-+router.get('/hospitales', authorize('administrador'), exportarHospitales);
++    process.env.FRONTEND_URL = 'https://frontend.example';
 +
- // /api/informes/actividades-residentes  (XLSX)
- router.get(
-   '/actividades-residentes',
-   authorize('administrador'),
-   exportarActividadesResidentes
- );
- 
- // /api/informes/actividades-sociedades  (CSV o XLSX)
- router.get(
-   '/actividades-sociedades',
-   authorize('administrador'),
-   exportarActividadesSociedades
- );
- 
- // /api/informes/progreso-usuarios  (CSV o XLSX)
- router.get(
-   '/progreso-usuarios',
-   authorize(Role.ADMINISTRADOR),
-   exportarProgresoUsuarios
- );
- 
- module.exports = router;
++    jest.spyOn(User, 'findOne').mockReturnValue(createFindOneQuery(user));
++    jest
++      .spyOn(User, 'find')
++      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) });
++    jest.spyOn(Hospital, 'findById').mockResolvedValue(null);
++    jest.spyOn(Notificacion, 'insertMany').mockResolvedValue();
++    sendEmail.mockRejectedValue(new Error('mailer failure'));
++
++    await requestPasswordReset(req, res, next);
++
++    expect(sendEmail).toHaveBeenCalled();
++    expect(user.save.mock.calls.length).toBeGreaterThanOrEqual(2);
++    expect(user.resetPasswordToken).toBeUndefined();
++    expect(user.resetPasswordExpire).toBeUndefined();
++    expect(Notificacion.insertMany).not.toHaveBeenCalled();
++    expect(res.status).not.toHaveBeenCalled();
++    expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
++    expect(next.mock.calls[0][0].statusCode).toBe(500);
++  });
++});

@@ -6,6 +6,11 @@ module.exports = {
   mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/davinci-platform',
   jwtSecret: process.env.JWT_SECRET || 'davinci-platform-secret-key',
   jwtExpire: process.env.JWT_EXPIRE || '30d',
+  frontendUrl:
+    process.env.FRONTEND_URL ||
+    process.env.CLIENT_ORIGIN ||
+    process.env.CLIENT_URL ||
+    'http://localhost:5173',
   
   // Configuración para integración con SharePoint
   sharepoint: {
@@ -27,5 +32,11 @@ module.exports = {
     password: process.env.EMAIL_PASSWORD,
     from: process.env.EMAIL_FROM || 'no-reply@abexsl.es'
   },
-  resendApiKey: process.env.RESEND_API_KEY
+  brevo: {
+    apiKey: process.env.BREVO_API_KEY,
+    senderEmail: process.env.BREVO_SENDER_EMAIL,
+    senderName: process.env.BREVO_SENDER_NAME
+  },
+  resendApiKey: process.env.RESEND_API_KEY,
+  brevoApiKey: process.env.BREVO_API_KEY
 };
