@@ -39,3 +39,4 @@ client/.env.production.local
 # Importante: sí versionamos ejemplos
 !.env.example
 !client/.env.example
+client/.env.local.backup
