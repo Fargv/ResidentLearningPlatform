@@ -14,7 +14,6 @@ const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
 const { resolveTutor } = require('../utils/resolveTutor');
-const sendEmail = require('../utils/sendEmail');
 
 const legacyRoles = {
   formador: Role.TUTOR,
