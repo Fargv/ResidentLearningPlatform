@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const User = require('../models/User');
 const Hospital = require('../models/Hospital');
 const Invitacion = require('../models/Invitacion');
+const AccessCode = require('../models/AccessCode');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
@@ -11,6 +12,7 @@ const Sociedades = require('../models/Sociedades');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
 const { resolveTutor } = require('../utils/resolveTutor');
+const config = require('../config/config');
 
 const RESET_PASSWORD_EXPIRE_DAYS = parseInt(
   process.env.RESET_PASSWORD_EXPIRE_DAYS || '3',
@@ -611,7 +613,7 @@ exports.deleteUser = async (req, res, next) => {
 // @access  Private/Admin
 exports.inviteUser = async (req, res, next) => {
   try {
-    const { email, rol, hospital, sociedad } = req.body;
+    const { email, rol, hospital, sociedad, tipo } = req.body;
     const requester = req.user;
 
     if (requester?.rol === Role.PROFESOR) {
@@ -665,6 +667,24 @@ exports.inviteUser = async (req, res, next) => {
       }
     }
 
+    const programType =
+      tipo ||
+      requester?.tipo ||
+      ([Role.PARTICIPANTE, Role.PROFESOR].includes(rol)
+        ? 'Programa Sociedades'
+        : 'Programa Residentes');
+
+    const accessCode = await AccessCode.findOne({ rol, tipo: programType });
+
+    if (!accessCode) {
+      return next(
+        new ErrorResponse(
+          `Falta configurar el código de acceso para el rol ${rol}`,
+          400
+        )
+      );
+    }
+
     // Generar token
     const token = crypto.randomBytes(20).toString('hex');
 
@@ -679,25 +699,53 @@ exports.inviteUser = async (req, res, next) => {
       admin: requester?.id
     });
 
-    // Crear URL de registro
-    const registerUrl = `${req.protocol}://${req.get('host')}/register/${token}`;
+    // Crear URL de registro basada en la configuración del frontend
+    const baseFrontendUrl = config.frontendUrl || 'http://localhost:5173';
+    const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
+      ? baseFrontendUrl.slice(0, -1)
+      : baseFrontendUrl;
+    const registerUrl = `${normalizedBaseUrl}/register/${token}`;
 
     // Preparar mensaje de email
-    const message = `
-      Ha sido invitado a unirse a la plataforma de formación en tecnologías del robot da Vinci.
-      
-      Por favor, utilice el siguiente enlace para completar su registro:
-      
-      ${registerUrl}
-      
-      Este enlace expirará en 7 días.
-    `;
+    const roleLabel = rol ? rol.toUpperCase() : '';
+    const messageLines = [
+      '📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:',
+      '',
+      `🔹 Rol: ${roleLabel}`,
+      `🔐 Código de acceso: ${accessCode.codigo}`,
+      '',
+      '📝 Regístrate en el siguiente enlace:',
+      registerUrl,
+      '',
+      'Si tienes cualquier duda, no dudes en consultarnos.',
+      '',
+      'Un saludo,',
+      'Equipo de Formación Da Vinci',
+      'ABEX Excelencia Robótica',
+      '',
+      'Este enlace expirará en 7 días.'
+    ];
+
+    const message = messageLines.join('\n');
+    const html = `
+      <p>📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:</p>
+      <p><strong>🔹 Rol:</strong> ${roleLabel}<br />
+      <strong>🔐 Código de acceso:</strong> ${accessCode.codigo}</p>
+      <p>📝 Regístrate en el siguiente enlace:<br />
+      <a href="${registerUrl}" target="_blank" rel="noopener noreferrer">${registerUrl}</a></p>
+      <p>Si tienes cualquier duda, no dudes en consultarnos.</p>
+      <p>Un saludo,<br />
+      Equipo de Formación Da Vinci<br />
+      ABEX Excelencia Robótica</p>
+      <p>Este enlace expirará en 7 días.</p>
+    `.trim();
 
     try {
       await sendEmail({
         email: invitacion.email,
         subject: 'Invitación a la plataforma de formación da Vinci',
-        message
+        message,
+        html
       });
       
       // Crear registro de auditoría

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box, Typography, Paper, Button, TextField,
   Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
@@ -21,6 +21,15 @@ import { FaseCirugia } from '../../types/FaseCirugia';
 const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const defaultProgramType = useMemo(() => {
+    if (user?.tipo) {
+      return user.tipo;
+    }
+    if (user?.rol === 'profesor') {
+      return 'Programa Sociedades';
+    }
+    return 'Programa Residentes';
+  }, [user?.tipo, user?.rol]);
   const typeKey = (tipo?: string) =>
     tipo === 'Programa Sociedades'
       ? 'programaSociedades'
@@ -44,7 +53,8 @@ const TutorUsuarios: React.FC = () => {
     nombre: '',
     apellidos: '',
     rol: user?.rol === 'profesor' ? 'participante' : 'residente',
-    hospital: user?.hospital?._id || ''
+    hospital: user?.hospital?._id || '',
+    tipo: defaultProgramType
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -408,7 +418,8 @@ const TutorUsuarios: React.FC = () => {
               nombre: '',
               apellidos: '',
               rol: user?.rol === 'profesor' ? 'participante' : 'residente',
-              hospital: user?.hospital?._id || ''
+              hospital: user?.hospital?._id || '',
+              tipo: defaultProgramType
             });
             setOpenDialog(true);
           }}
@@ -636,7 +647,8 @@ const TutorUsuarios: React.FC = () => {
                           nombre: usuario.nombre,
                           apellidos: usuario.apellidos,
                           rol: usuario.rol,
-                          hospital: usuario.hospital?._id || ''
+                          hospital: usuario.hospital?._id || '',
+                          tipo: usuario.tipo || defaultProgramType
                         });
                         setOpenDialog(true);
                       }}
