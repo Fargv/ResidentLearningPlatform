@@ -88,7 +88,10 @@ const AdminUsuarios: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuariosLista] = useState<any[]>([]);
   const [hospitales, setHospitales] = useState<any[]>([]);
-  const [sociedades, setSociedades] = useState<any[]>([]);
+  const [sociedades, setSociedades] = useState<{
+    _id: string;
+    nombre: string;
+  }[]>([]);
   const [openInvitarDialog, setOpenInvitarDialog] = useState(false);
   const [openCrearDialog, setOpenCrearDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
@@ -192,8 +195,18 @@ const AdminUsuarios: React.FC = () => {
         setHospitales(hospitalesRes.data.data);
 
         const sociedadesRes = await api.get("/sociedades");
+        const sociedadesData =
+          (sociedadesRes.data && sociedadesRes.data.data) ||
+          sociedadesRes.data ||
+          [];
+        const sociedadesActivas = Array.isArray(sociedadesData)
+          ? sociedadesData.filter((s: any) => s.status === "ACTIVO")
+          : [];
         setSociedades(
-          sociedadesRes.data.filter((s: any) => s.status === "ACTIVO"),
+          sociedadesActivas.map((s: any) => ({
+            _id: s._id,
+            nombre: s.nombre ?? s.titulo ?? "",
+          })),
         );
       } catch (err: any) {
         setError(err.response?.data?.error || t("adminUsers.loadError"));
@@ -621,7 +634,7 @@ const AdminUsuarios: React.FC = () => {
   );
   const hospitalSociedadOptions = [
     ...hospitales.map((h) => ({ _id: h._id, nombre: h.nombre })),
-    ...sociedades.map((s) => ({ _id: s._id, nombre: s.titulo })),
+    ...sociedades.map((s) => ({ _id: s._id, nombre: s.nombre })),
   ];
 
   const displayUsuarios = usuarios
@@ -669,8 +682,16 @@ const AdminUsuarios: React.FC = () => {
           bVal = (b as any)[sortField] || "";
           break;
         case "hospital":
-          aVal = a.hospital?.nombre || a.sociedad?.titulo || "";
-          bVal = b.hospital?.nombre || b.sociedad?.titulo || "";
+          aVal =
+            a.hospital?.nombre ||
+            a.sociedad?.nombre ||
+            a.sociedad?.titulo ||
+            "";
+          bVal =
+            b.hospital?.nombre ||
+            b.sociedad?.nombre ||
+            b.sociedad?.titulo ||
+            "";
           break;
         default:
           break;
@@ -857,7 +878,11 @@ const AdminUsuarios: React.FC = () => {
                       ? t(`types.${typeKey(usuario.tipo)}`)
                       : "-"}
                   </TableCell>
-                  <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
+                  <TableCell>
+                    {usuario.sociedad?.nombre ||
+                      usuario.sociedad?.titulo ||
+                      "-"}
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={t(`roles.${usuario.rol}`)}
@@ -1204,7 +1229,7 @@ const AdminUsuarios: React.FC = () => {
               >
                 {sociedades.map((s) => (
                   <option key={s._id} value={s._id}>
-                    {s.titulo}
+                    {s.nombre}
                   </option>
                 ))}
               </TextField>

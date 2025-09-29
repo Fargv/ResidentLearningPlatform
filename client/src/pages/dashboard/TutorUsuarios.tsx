@@ -1,15 +1,41 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Box, Typography, Paper, Button, TextField,
-  Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  IconButton, Chip, LinearProgress, Alert, Snackbar,
-  Autocomplete, Tooltip, CircularProgress, Backdrop, Menu, MenuItem
+  Alert,
+  Autocomplete,
+  Backdrop,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation, Trans } from 'react-i18next';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import api, {
   updateUserPassword,
   getUserResetToken,
@@ -145,9 +171,14 @@ const TutorUsuarios: React.FC = () => {
     if (clearSelected) setSelected(null);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name as string]: value });
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>,
+  ) => {
+    const { name, value } = e.target as { name?: string; value: unknown };
+    if (!name) return;
+    setFormData({ ...formData, [name]: value as string });
   };
 
   const handleSubmit = async () => {
@@ -669,19 +700,21 @@ const TutorUsuarios: React.FC = () => {
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.name')} name="nombre" value={formData.nombre} onChange={handleChange} />
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.surname')} name="apellidos" value={formData.apellidos} onChange={handleChange} />
-          <TextField
-            select
-            fullWidth
-            margin="dense"
-            label={t('tutorUsers.form.role')}
-            name="rol"
-            value={formData.rol}
-            onChange={handleChange}
-            slotProps={{ select: { native: true } }}
-          >
-            <option value="residente">{t('roles.residente')}</option>
-            <option value="tutor">{t('roles.tutor')}</option>
-          </TextField>
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="tutor-usuarios-role-label">
+              {t('tutorUsers.form.role')}
+            </InputLabel>
+            <Select
+              labelId="tutor-usuarios-role-label"
+              label={t('tutorUsers.form.role')}
+              name="rol"
+              value={formData.rol}
+              onChange={handleChange}
+            >
+              <MenuItem value="residente">{t('roles.residente')}</MenuItem>
+              <MenuItem value="tutor">{t('roles.tutor')}</MenuItem>
+            </Select>
+          </FormControl>
           {user?.rol === 'csm' && (
             <Autocomplete
               options={hospitalOptions}

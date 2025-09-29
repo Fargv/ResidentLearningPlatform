@@ -8,10 +8,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from '@mui/material';
 import type { DialogProps } from '@mui/material/Dialog';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import api from '../api';
 import Role from '../types/roles';
 
@@ -37,6 +42,21 @@ interface AccessCode {
 
 const roles = Object.values(Role) as Role[];
 const isRole = (v: string): v is Role => (roles as string[]).includes(v);
+
+const legacyRoleMap: Record<string, Role> = {
+  formador: Role.TUTOR,
+  coordinador: Role.CSM,
+  instructor: Role.PROFESOR,
+  alumno: Role.PARTICIPANTE,
+};
+
+const normalizeRoleValue = (value: string): Role | undefined => {
+  if (isRole(value)) {
+    return value;
+  }
+
+  return legacyRoleMap[value];
+};
 
 const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
   open,
@@ -70,19 +90,33 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
   }, [open]);
 
   useEffect(() => {
-    if (role) {
-      const found = accessCodes.find((c) => c.rol === role) || null;
-      setSelectedCode(found);
-      setEmails(['']);
-      if (![Role.RESIDENTE, Role.TUTOR].includes(role)) {
-        setSelectedHospital('');
-      }
-      if (![Role.PARTICIPANTE, Role.PROFESOR].includes(role)) {
-        setSelectedSociety('');
-      }
-      setFeedback(null);
-    } else {
+    if (!role) {
       setSelectedCode(null);
+      setFeedback(null);
+      return;
+    }
+
+    const found =
+      accessCodes.find((c) => normalizeRoleValue(c.rol) === role) || null;
+
+    setSelectedCode(found);
+    setEmails(['']);
+
+    if (![Role.RESIDENTE, Role.TUTOR].includes(role)) {
+      setSelectedHospital('');
+    }
+
+    if (![Role.PARTICIPANTE, Role.PROFESOR].includes(role)) {
+      setSelectedSociety('');
+    }
+
+    if (!found) {
+      setFeedback({
+        type: 'error',
+        message: 'No hay código configurado para este rol.',
+      });
+    } else {
+      setFeedback(null);
     }
   }, [role, accessCodes]);
 
@@ -128,10 +162,18 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
     const requiresSociety =
       role === Role.PARTICIPANTE || role === Role.PROFESOR;
 
-    if (!role || !selectedCode) {
+    if (!role) {
       setFeedback({
         type: 'error',
-        message: 'Selecciona un rol válido con código de acceso configurado.',
+        message: 'Selecciona un rol válido.',
+      });
+      return;
+    }
+
+    if (!selectedCode) {
+      setFeedback({
+        type: 'error',
+        message: 'No hay código configurado para este rol.',
       });
       return;
     }
@@ -248,29 +290,32 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
           Todos los usuarios deben tener el mismo rol. Al cambiar el rol se
           reinicia la lista de correos.
         </DialogContentText>
-        <TextField
-          select
-          margin="dense"
-          label="Rol"
+        <FormControl
           fullWidth
-          SelectProps={{ native: true }}
-          value={role}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const v = e.target.value;
-            setRole(isRole(v) ? v : '');
-          }}
-          disabled={submitting}
+          margin="dense"
           sx={{ mt: 2 }}
+          disabled={submitting}
         >
-          <option value="" disabled>
-            Selecciona un rol
-          </option>
-          {roles.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </TextField>
+          <InputLabel id="invite-users-role-label">Rol</InputLabel>
+          <Select
+            labelId="invite-users-role-label"
+            label="Rol"
+            value={role}
+            onChange={(event: SelectChangeEvent<string>) => {
+              const v = event.target.value;
+              setRole(isRole(v) ? v : '');
+            }}
+          >
+            <MenuItem value="" disabled>
+              Selecciona un rol
+            </MenuItem>
+            {roles.map((r) => (
+              <MenuItem key={r} value={r}>
+                {r}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         {role && (
           <Box sx={{ mt: 2 }}>
             <Typography>
@@ -282,52 +327,58 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
           </Box>
         )}
         {requiresHospitalSelection && (
-          <TextField
-            select
-            margin="dense"
-            label="Hospital"
+          <FormControl
             fullWidth
-            SelectProps={{ native: true }}
-            value={selectedHospital}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSelectedHospital(e.target.value)
-            }
-            disabled={submitting || hospitals.length === 0}
+            margin="dense"
             sx={{ mt: 2 }}
+            disabled={submitting || hospitals.length === 0}
           >
-            <option value="" disabled>
-              Selecciona un hospital
-            </option>
-            {hospitals.map((hospital) => (
-              <option key={hospital._id} value={hospital._id}>
-                {hospital.nombre}
-              </option>
-            ))}
-          </TextField>
+            <InputLabel id="invite-users-hospital-label">Hospital</InputLabel>
+            <Select
+              labelId="invite-users-hospital-label"
+              label="Hospital"
+              value={selectedHospital}
+              onChange={(event: SelectChangeEvent<string>) =>
+                setSelectedHospital(event.target.value)
+              }
+            >
+              <MenuItem value="" disabled>
+                Selecciona un hospital
+              </MenuItem>
+              {hospitals.map((hospital) => (
+                <MenuItem key={hospital._id} value={hospital._id}>
+                  {hospital.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
         {requiresSocietySelection && (
-          <TextField
-            select
-            margin="dense"
-            label="Sociedad"
+          <FormControl
             fullWidth
-            SelectProps={{ native: true }}
-            value={selectedSociety}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSelectedSociety(e.target.value)
-            }
-            disabled={submitting || societies.length === 0}
+            margin="dense"
             sx={{ mt: 2 }}
+            disabled={submitting || societies.length === 0}
           >
-            <option value="" disabled>
-              Selecciona una sociedad
-            </option>
-            {societies.map((society) => (
-              <option key={society._id} value={society._id}>
-                {society.nombre}
-              </option>
-            ))}
-          </TextField>
+            <InputLabel id="invite-users-society-label">Sociedad</InputLabel>
+            <Select
+              labelId="invite-users-society-label"
+              label="Sociedad"
+              value={selectedSociety}
+              onChange={(event: SelectChangeEvent<string>) =>
+                setSelectedSociety(event.target.value)
+              }
+            >
+              <MenuItem value="" disabled>
+                Selecciona una sociedad
+              </MenuItem>
+              {societies.map((society) => (
+                <MenuItem key={society._id} value={society._id}>
+                  {society.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
         <Box sx={{ mt: 2 }}>
           {emails.map((email, idx) => (
@@ -357,24 +408,23 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-  <Button onClick={closeDialog} disabled={submitting}>
-    Cancelar
-  </Button>
-  <Button
-    variant="contained"
-    onClick={handleSend}
-    disabled={
-      submitting ||
-      !role ||
-      !selectedCode ||
-      emails.every((email) => !email.trim()) ||
-      (requiresHospitalSelection && !selectedHospital) ||
-      (requiresSocietySelection && !selectedSociety)
-    }
-  >
-    {submitting ? 'Enviando…' : 'Enviar invitación'}
-  </Button>
-</DialogActions>
+        <Button onClick={closeDialog} disabled={submitting}>
+          Cancelar
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleSend}
+          disabled={
+            submitting ||
+            !role ||
+            emails.every((email) => !email.trim()) ||
+            (requiresHospitalSelection && !selectedHospital) ||
+            (requiresSocietySelection && !selectedSociety)
+          }
+        >
+          {submitting ? 'Enviando…' : 'Enviar invitación'}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

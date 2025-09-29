@@ -1,102 +1,289 @@
-diff --git a/tests/inviteUser.test.js b/tests/inviteUser.test.js
-index 86d57827668ce75869dd307fdba866bd83aa9b0e..554f5ca20a63feb7fae69bbcc24028f8b2c74ee7 100644
---- a/tests/inviteUser.test.js
-+++ b/tests/inviteUser.test.js
-@@ -24,51 +24,53 @@ describe('inviteUser', () => {
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
-     const accessCode = { codigo: 'ABC123', rol: 'residente', tipo: 'Programa Residentes' };
-     const accessSpy = jest.spyOn(AccessCode, 'findOne').mockResolvedValue(accessCode);
-     const created = { _id: 'i1', email: 'new@test.com' };
-     jest.spyOn(Invitacion, 'create').mockResolvedValue(created);
-     sendEmail.mockResolvedValue();
+diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
+index b09e839037aab89c2bbdb37e847ae43eba53c8aa..b4fe01ae87ad97ca38679217bb09000a40091c90 100644
+--- a/client/src/components/InviteUsersMail.tsx
++++ b/client/src/components/InviteUsersMail.tsx
+@@ -16,147 +16,184 @@ import api from '../api';
+ import Role from '../types/roles';
  
-     const req = {
-       body: {
-         email: 'new@test.com',
-         rol: 'residente',
-         hospital: 'h1',
-         tipo: 'Programa Residentes'
-       },
-       protocol: 'http',
-       get: () => 'localhost',
-       user: { _id: 'admin', id: 'admin' },
-       ip: '::1'
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ type ProgramType = 'Programa Residentes' | 'Programa Sociedades';
  
-     await inviteUser(req, res, jest.fn());
+ interface BasicEntity {
+   _id: string;
+   nombre: string;
+ }
  
--    expect(Invitacion.create).toHaveBeenCalled();
-+    expect(Invitacion.create).toHaveBeenCalledWith(
-+      expect.objectContaining({ tipo: 'Programa Residentes' })
-+    );
-     expect(accessSpy).toHaveBeenCalledWith({ rol: 'residente', tipo: 'Programa Residentes' });
-     expect(sendEmail).toHaveBeenCalled();
-     expect(sendEmail).toHaveBeenCalledWith(
-       expect.objectContaining({
-         message: expect.stringContaining('Código de acceso: ABC123'),
-         html: expect.stringContaining('ABC123')
-       })
-     );
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });
-   });
+ interface InviteUsersMailProps {
+   open: boolean;
+   onClose: () => void;
+   hospitals: BasicEntity[];
+   societies: BasicEntity[];
+ }
  
-   test('retorna error si el email existe', async () => {
-     jest.spyOn(User, 'findOne').mockResolvedValue({ _id: 'u1' });
-     const next = jest.fn();
+ interface AccessCode {
+   codigo: string;
+   rol: Role;
+   tipo: ProgramType;
+ }
  
-     await inviteUser({ body: { email: 'taken@test.com' } }, {}, next);
+ const roles = Object.values(Role) as Role[];
+ const isRole = (v: string): v is Role => (roles as string[]).includes(v);
  
-     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
-   });
+-const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
+-  open,
+-  onClose,
+-  hospitals,
+-  societies,
+-}) => {
++const legacyRoleMap: Record<string, Role> = {
++  formador: Role.TUTOR,
++  coordinador: Role.CSM,
++  instructor: Role.PROFESOR,
++  alumno: Role.PARTICIPANTE,
++};
++
++const normalizeRoleValue = (value: string): Role | undefined => {
++  if (isRole(value)) {
++    return value;
++  }
++
++  return legacyRoleMap[value];
++};
++
++const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
++  open,
++  onClose,
++  hospitals,
++  societies,
++}) => {
+   const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
+   const [role, setRole] = useState<Role | ''>('');
+   const [selectedCode, setSelectedCode] = useState<AccessCode | null>(null);
+   const [emails, setEmails] = useState<string[]>(['']);
+   const [selectedHospital, setSelectedHospital] = useState('');
+   const [selectedSociety, setSelectedSociety] = useState('');
+   const [feedback, setFeedback] = useState<
+     { type: 'success' | 'error'; message: string } | null
+   >(null);
+   const [submitting, setSubmitting] = useState(false);
  
-   test('retorna error si no hay código configurado', async () => {
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
-diff --git a/tests/inviteUserCsm.test.js b/tests/inviteUserCsm.test.js
-index 65a5c900b0513786da3c2628513b3c81fbf13eda..73890668fa8da8d8c4fadde2c1fcfbd9a02a2ef3 100644
---- a/tests/inviteUserCsm.test.js
-+++ b/tests/inviteUserCsm.test.js
-@@ -25,37 +25,37 @@ describe('inviteUser csm', () => {
-     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
-     const accessSpy = jest
-       .spyOn(AccessCode, 'findOne')
-       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
-     const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm' };
-     jest.spyOn(Invitacion, 'create').mockResolvedValue(created);
-     sendEmail.mockResolvedValue();
+   useEffect(() => {
+     if (open) {
+       api
+         .get('/access-codes')
+         .then((res) => {
+           const data = res.data.data || res.data;
+           setAccessCodes(data);
+         })
+         .catch(() => {
+           setAccessCodes([]);
+         });
+     }
+   }, [open]);
  
-     const req = {
-       body: {
-         email: 'coord@test.com',
-         rol: 'csm',
-         hospital: 'h1',
-         tipo: 'Programa Residentes'
-       },
-       protocol: 'http',
-       get: () => 'localhost',
-       user: { _id: 'admin', id: 'admin' },
-       ip: '::1'
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+   useEffect(() => {
+-    if (role) {
+-      const found = accessCodes.find((c) => c.rol === role) || null;
+-      setSelectedCode(found);
+-      setEmails(['']);
+-      if (![Role.RESIDENTE, Role.TUTOR].includes(role)) {
+-        setSelectedHospital('');
+-      }
+-      if (![Role.PARTICIPANTE, Role.PROFESOR].includes(role)) {
+-        setSelectedSociety('');
+-      }
+-      setFeedback(null);
+-    } else {
+-      setSelectedCode(null);
+-    }
+-  }, [role, accessCodes]);
++    if (!role) {
++      setSelectedCode(null);
++      setFeedback(null);
++      return;
++    }
++
++    const found =
++      accessCodes.find((c) => normalizeRoleValue(c.rol) === role) || null;
++
++    setSelectedCode(found);
++    setEmails(['']);
++
++    if (![Role.RESIDENTE, Role.TUTOR].includes(role)) {
++      setSelectedHospital('');
++    }
++
++    if (![Role.PARTICIPANTE, Role.PROFESOR].includes(role)) {
++      setSelectedSociety('');
++    }
++
++    if (!found) {
++      setFeedback({
++        type: 'error',
++        message: 'No hay código configurado para este rol.',
++      });
++    } else {
++      setFeedback(null);
++    }
++  }, [role, accessCodes]);
  
-     await inviteUser(req, res, jest.fn());
+   const handleEmailChange = (index: number, value: string) => {
+     const updated = [...emails];
+     updated[index] = value;
+     setEmails(updated);
+   };
  
-     expect(Invitacion.create).toHaveBeenCalledWith(
--      expect.objectContaining({ rol: 'csm' })
-+      expect.objectContaining({ rol: 'csm', tipo: 'Programa Residentes' })
-     );
-     expect(accessSpy).toHaveBeenCalledWith({ rol: 'csm', tipo: 'Programa Residentes' });
-     expect(sendEmail).toHaveBeenCalledWith(
-       expect.objectContaining({
-         message: expect.stringContaining('Código de acceso: CSM123')
-       })
-     );
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });
-   });
- });
+   const handleAddEmail = () => {
+     if (submitting) return;
+     setEmails((prev) => [...prev, '']);
+   };
+ 
+   const resetForm = () => {
+     setRole('');
+     setSelectedCode(null);
+     setEmails(['']);
+     setSelectedHospital('');
+     setSelectedSociety('');
+     setFeedback(null);
+   };
+ 
+   const closeDialog = () => {
+     resetForm();
+     onClose();
+   };
+ 
+   const handleDialogClose: DialogProps['onClose'] = () => {
+     if (submitting) return;
+     closeDialog();
+   };
+ 
+   const isValidEmail = (email: string) =>
+     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+ 
+   const handleSend = async () => {
+     const trimmed = emails.map((email) => email.trim());
+     const filled = trimmed.filter((email) => email.length > 0);
+     const validEmails = filled.filter(isValidEmail);
+     const requiresHospital =
+       role === Role.RESIDENTE || role === Role.TUTOR;
+     const requiresSociety =
+       role === Role.PARTICIPANTE || role === Role.PROFESOR;
+ 
+-    if (!role || !selectedCode) {
+-      setFeedback({
+-        type: 'error',
+-        message: 'Selecciona un rol válido con código de acceso configurado.',
+-      });
+-      return;
+-    }
++    if (!role) {
++      setFeedback({
++        type: 'error',
++        message: 'Selecciona un rol válido.',
++      });
++      return;
++    }
++
++    if (!selectedCode) {
++      setFeedback({
++        type: 'error',
++        message: 'No hay código configurado para este rol.',
++      });
++      return;
++    }
+ 
+     if (filled.length === 0) {
+       setFeedback({
+         type: 'error',
+         message: 'Introduce al menos un correo electrónico.',
+       });
+       return;
+     }
+ 
+     if (validEmails.length !== filled.length) {
+       setFeedback({
+         type: 'error',
+         message: 'Revisa que todos los correos electrónicos sean válidos.',
+       });
+       return;
+     }
+ 
+     if (requiresHospital && !selectedHospital) {
+       setFeedback({
+         type: 'error',
+         message: 'Selecciona un hospital para este rol.',
+       });
+       return;
+     }
+ 
+diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
+index b09e839037aab89c2bbdb37e847ae43eba53c8aa..b4fe01ae87ad97ca38679217bb09000a40091c90 100644
+--- a/client/src/components/InviteUsersMail.tsx
++++ b/client/src/components/InviteUsersMail.tsx
+@@ -334,49 +371,48 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
+             <TextField
+               key={idx}
+               label={`Email ${idx + 1}`}
+               type="email"
+               fullWidth
+               value={email}
+               onChange={(e) => handleEmailChange(idx, e.target.value)}
+               disabled={submitting}
+               sx={{ mb: 2 }}
+             />
+           ))}
+           <Button
+             variant="outlined"
+             onClick={handleAddEmail}
+             disabled={submitting}
+           >
+             Añadir
+           </Button>
+         </Box>
+         {feedback && (
+           <Alert severity={feedback.type} sx={{ mt: 2 }}>
+             {feedback.message}
+           </Alert>
+         )}
+       </DialogContent>
+-      <DialogActions>
+-  <Button onClick={closeDialog} disabled={submitting}>
+-    Cancelar
+-  </Button>
+-  <Button
+-    variant="contained"
+-    onClick={handleSend}
+-    disabled={
+-      submitting ||
+-      !role ||
+-      !selectedCode ||
+-      emails.every((email) => !email.trim()) ||
+-      (requiresHospitalSelection && !selectedHospital) ||
+-      (requiresSocietySelection && !selectedSociety)
+-    }
+-  >
+-    {submitting ? 'Enviando…' : 'Enviar invitación'}
+-  </Button>
+-</DialogActions>
++      <DialogActions>
++        <Button onClick={closeDialog} disabled={submitting}>
++          Cancelar
++        </Button>
++        <Button
++          variant="contained"
++          onClick={handleSend}
++          disabled={
++            submitting ||
++            !role ||
++            emails.every((email) => !email.trim()) ||
++            (requiresHospitalSelection && !selectedHospital) ||
++            (requiresSocietySelection && !selectedSociety)
++          }
++        >
++          {submitting ? 'Enviando…' : 'Enviar invitación'}
++        </Button>
++      </DialogActions>
+     </Dialog>
+   );
+ };
+ 
+ export default InviteUsersMail;
