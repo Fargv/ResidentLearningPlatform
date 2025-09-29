@@ -17,6 +17,7 @@ import ResidenteRoute from './components/routing/ResidenteRoute';
 // Páginas públicas
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RegisterInvite from './pages/RegisterInvite';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
@@ -81,6 +82,7 @@ function App() {
             {/* Rutas públicas */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register/:token" element={<RegisterInvite />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/politica-privacidad" element={<PrivacyPolicy />} />

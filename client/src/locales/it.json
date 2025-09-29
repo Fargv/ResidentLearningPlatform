@@ -197,6 +197,15 @@
     "consentSuffix": " e sono conforme al GDPR.",
     "registerButton": "Registrati"
   },
+  "registerInvite": {
+    "title": "Completa la tua registrazione",
+    "loading": "Validazione dell'invito in corso...",
+    "invalid": "Questo invito non esiste o è già stato utilizzato.",
+    "expired": "Questo invito è scaduto. Richiedine uno nuovo al tuo amministratore.",
+    "error": "Non siamo riusciti a convalidare il tuo invito.",
+    "ctaLogin": "Vai al login",
+    "prefilledNotice": "Abbiamo precompilato i dati dell'invito per {{email}}. Controlla le informazioni e completa la registrazione."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Annulla",

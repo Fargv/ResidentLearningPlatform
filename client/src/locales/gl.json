@@ -269,6 +269,15 @@
     "consentSuffix": " e cumpro coa LOPD.",
     "registerButton": "Rexistrarse"
   },
+  "registerInvite": {
+    "title": "Completa o teu rexistro",
+    "loading": "Validando a invitación...",
+    "invalid": "A invitación non existe ou xa foi utilizada.",
+    "expired": "Esta invitación caducou. Solicita unha nova ao teu administrador.",
+    "error": "Non puidemos validar a túa invitación.",
+    "ctaLogin": "Ir ao inicio de sesión",
+    "prefilledNotice": "Preenchemos os datos da invitación para {{email}}. Revisa a información e completa o rexistro."
+  },
   "society": {
     "convocatoria": {
       "label": "Convocatoria",

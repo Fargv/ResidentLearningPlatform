@@ -180,6 +180,15 @@
     "consentSuffix": " and comply with the LOPD.",
     "registerButton": "Register"
   },
+  "registerInvite": {
+    "title": "Complete your registration",
+    "loading": "Validating invitation...",
+    "invalid": "This invitation does not exist or has already been used.",
+    "expired": "This invitation has expired. Please request a new one from your administrator.",
+    "error": "We couldn't validate your invitation.",
+    "ctaLogin": "Go to sign in",
+    "prefilledNotice": "We've prefilled the invitation details for {{email}}. Review the information and finish your registration."
+  },
   "society": {
     "convocatoria": {
       "label": "Call",

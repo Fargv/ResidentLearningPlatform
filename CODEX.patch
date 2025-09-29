@@ -1,245 +1,102 @@
-diff --git a/client/package-lock.json b/client/package-lock.json
-index 8bffb0c7d506efc4e9152433a57106b0c9d9ae5b..bfc1751295cb0ebb86e3315b0a0b5ce204e1334d 100644
---- a/client/package-lock.json
-+++ b/client/package-lock.json
-@@ -9,56 +9,55 @@
-       "version": "0.1.0",
-       "dependencies": {
-         "@emotion/react": "^11.14.0",
-         "@emotion/styled": "^11.14.0",
-         "@mui/icons-material": "^7.0.1",
-         "@mui/material": "^7.0.1",
-         "@types/react-router-dom": "^5.3.3",
-         "ajv": "^8.17.1",
-         "ajv-keywords": "^5.1.0",
-         "axios": "^1.8.4",
-         "i18next": "^23.10.1",
-         "i18next-browser-languagedetector": "^8.0.2",
-         "jwt-decode": "^4.0.0",
-         "react": "^19.1.0",
-         "react-dom": "^19.1.0",
-         "react-i18next": "^15.0.0",
-         "react-router-dom": "^7.4.1",
-         "react-scripts": "5.0.1",
-         "recharts": "^3.1.0",
-         "web-vitals": "^2.1.4"
+diff --git a/tests/inviteUser.test.js b/tests/inviteUser.test.js
+index 86d57827668ce75869dd307fdba866bd83aa9b0e..554f5ca20a63feb7fae69bbcc24028f8b2c74ee7 100644
+--- a/tests/inviteUser.test.js
++++ b/tests/inviteUser.test.js
+@@ -24,51 +24,53 @@ describe('inviteUser', () => {
+     jest.spyOn(User, 'findOne').mockResolvedValue(null);
+     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
+     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
+     const accessCode = { codigo: 'ABC123', rol: 'residente', tipo: 'Programa Residentes' };
+     const accessSpy = jest.spyOn(AccessCode, 'findOne').mockResolvedValue(accessCode);
+     const created = { _id: 'i1', email: 'new@test.com' };
+     jest.spyOn(Invitacion, 'create').mockResolvedValue(created);
+     sendEmail.mockResolvedValue();
+ 
+     const req = {
+       body: {
+         email: 'new@test.com',
+         rol: 'residente',
+         hospital: 'h1',
+         tipo: 'Programa Residentes'
        },
-       "devDependencies": {
-         "@testing-library/dom": "^10.4.0",
-         "@testing-library/jest-dom": "^6.6.3",
-         "@testing-library/react": "^16.3.0",
--        "@testing-library/user-event": "^13.5.0",
-+        "@testing-library/user-event": "^14.5.2",
-         "@types/jest": "^27.5.2",
-         "@types/node": "^16.18.126",
-         "@types/react": "^19.0.12",
-         "@types/react-dom": "^19.0.4",
--        "@types/testing-library__user-event": "^4.1.1",
-         "typescript": "^4.9.5"
+       protocol: 'http',
+       get: () => 'localhost',
+       user: { _id: 'admin', id: 'admin' },
+       ip: '::1'
+     };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await inviteUser(req, res, jest.fn());
+ 
+-    expect(Invitacion.create).toHaveBeenCalled();
++    expect(Invitacion.create).toHaveBeenCalledWith(
++      expect.objectContaining({ tipo: 'Programa Residentes' })
++    );
+     expect(accessSpy).toHaveBeenCalledWith({ rol: 'residente', tipo: 'Programa Residentes' });
+     expect(sendEmail).toHaveBeenCalled();
+     expect(sendEmail).toHaveBeenCalledWith(
+       expect.objectContaining({
+         message: expect.stringContaining('Código de acceso: ABC123'),
+         html: expect.stringContaining('ABC123')
+       })
+     );
+     expect(res.status).toHaveBeenCalledWith(200);
+     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });
+   });
+ 
+   test('retorna error si el email existe', async () => {
+     jest.spyOn(User, 'findOne').mockResolvedValue({ _id: 'u1' });
+     const next = jest.fn();
+ 
+     await inviteUser({ body: { email: 'taken@test.com' } }, {}, next);
+ 
+     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
+   });
+ 
+   test('retorna error si no hay código configurado', async () => {
+     jest.spyOn(User, 'findOne').mockResolvedValue(null);
+     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
+     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
+diff --git a/tests/inviteUserCsm.test.js b/tests/inviteUserCsm.test.js
+index 65a5c900b0513786da3c2628513b3c81fbf13eda..73890668fa8da8d8c4fadde2c1fcfbd9a02a2ef3 100644
+--- a/tests/inviteUserCsm.test.js
++++ b/tests/inviteUserCsm.test.js
+@@ -25,37 +25,37 @@ describe('inviteUser csm', () => {
+     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
+     const accessSpy = jest
+       .spyOn(AccessCode, 'findOne')
+       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
+     const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm' };
+     jest.spyOn(Invitacion, 'create').mockResolvedValue(created);
+     sendEmail.mockResolvedValue();
+ 
+     const req = {
+       body: {
+         email: 'coord@test.com',
+         rol: 'csm',
+         hospital: 'h1',
+         tipo: 'Programa Residentes'
        },
-       "engines": {
-         "node": ">=20.0.0"
-       }
-     },
-     "node_modules/@adobe/css-tools": {
-       "version": "4.4.3",
-       "resolved": "https://registry.npmjs.org/@adobe/css-tools/-/css-tools-4.4.3.tgz",
-       "integrity": "sha512-VQKMkwriZbaOgVCby1UDY/LDk5fIjhQicCvVPFqfe+69fWaPWydbWJ3wRt59/YzIwda1I81loas3oCoHxnqvdA==",
-       "dev": true,
-       "license": "MIT"
-     },
-     "node_modules/@alloc/quick-lru": {
-       "version": "5.2.0",
-       "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
-       "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=10"
-       },
-       "funding": {
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-diff --git a/client/package-lock.json b/client/package-lock.json
-index 8bffb0c7d506efc4e9152433a57106b0c9d9ae5b..bfc1751295cb0ebb86e3315b0a0b5ce204e1334d 100644
---- a/client/package-lock.json
-+++ b/client/package-lock.json
-@@ -3998,52 +3997,52 @@
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@babel/runtime": "^7.12.5"
-       },
-       "engines": {
-         "node": ">=18"
-       },
-       "peerDependencies": {
-         "@testing-library/dom": "^10.0.0",
-         "@types/react": "^18.0.0 || ^19.0.0",
-         "@types/react-dom": "^18.0.0 || ^19.0.0",
-         "react": "^18.0.0 || ^19.0.0",
-         "react-dom": "^18.0.0 || ^19.0.0"
-       },
-       "peerDependenciesMeta": {
-         "@types/react": {
-           "optional": true
-         },
-         "@types/react-dom": {
-           "optional": true
-         }
-       }
-     },
-     "node_modules/@testing-library/user-event": {
--      "version": "13.5.0",
--      "resolved": "https://registry.npmjs.org/@testing-library/user-event/-/user-event-13.5.0.tgz",
-+      "version": "14.5.2",
-+      "resolved": "https://registry.npmjs.org/@testing-library/user-event/-/user-event-14.5.2.tgz",
-       "integrity": "sha512-5Kwtbo3Y/NowpkbRuSepbyMFkZmHgD+vPzYB/RJ4oxt5Gj/avFFBYjhw27cqSVPVw/3a67NK1PbiIr9k4Gwmdg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@babel/runtime": "^7.12.5"
-       },
-       "engines": {
-         "node": ">=10",
-         "npm": ">=6"
-       },
-       "peerDependencies": {
-         "@testing-library/dom": ">=7.21.4"
-       }
-     },
-     "node_modules/@tootallnate/once": {
-       "version": "1.1.2",
-       "resolved": "https://registry.npmjs.org/@tootallnate/once/-/once-1.1.2.tgz",
-       "integrity": "sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==",
-       "license": "MIT",
-       "engines": {
-         "node": ">= 6"
-       }
-     },
-     "node_modules/@trysound/sax": {
-       "version": "0.2.0",
-diff --git a/client/package-lock.json b/client/package-lock.json
-index 8bffb0c7d506efc4e9152433a57106b0c9d9ae5b..bfc1751295cb0ebb86e3315b0a0b5ce204e1334d 100644
---- a/client/package-lock.json
-+++ b/client/package-lock.json
-@@ -4498,57 +4497,50 @@
-       "version": "1.15.8",
-       "resolved": "https://registry.npmjs.org/@types/serve-static/-/serve-static-1.15.8.tgz",
-       "integrity": "sha512-roei0UY3LhpOJvjbIP6ZZFngyLKl5dskOtDhxY5THRSpO+ZI+nzJ+m5yUMzGrp89YRa7lvknKkMYjqQFGwA7Sg==",
-       "license": "MIT",
-       "dependencies": {
-         "@types/http-errors": "*",
-         "@types/node": "*",
-         "@types/send": "*"
-       }
-     },
-     "node_modules/@types/sockjs": {
-       "version": "0.3.36",
-       "resolved": "https://registry.npmjs.org/@types/sockjs/-/sockjs-0.3.36.tgz",
-       "integrity": "sha512-MK9V6NzAS1+Ud7JV9lJLFqW85VbC9dq3LmwZCuBe4wBDgKC0Kj/jd8Xl+nSviU+Qc3+m7umHHyHg//2KSa0a0Q==",
-       "license": "MIT",
-       "dependencies": {
-         "@types/node": "*"
-       }
-     },
-     "node_modules/@types/stack-utils": {
-       "version": "2.0.3",
-       "resolved": "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.3.tgz",
-       "integrity": "sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==",
-       "license": "MIT"
-     },
--    "node_modules/@types/testing-library__user-event": {
--      "version": "4.1.1",
--      "resolved": "https://registry.npmjs.org/@types/testing-library__user-event/-/testing-library__user-event-4.1.1.tgz",
--      "integrity": "sha512-CIpTxvHwoLEe88deUttZ724SE28hX/x3zAdJIQLoltnngl//akeEKFB5DeNqBOWu7ZCEHFiTqRBMKuswXJqYqg==",
--      "dev": true,
--      "license": "MIT"
--    },
-     "node_modules/@types/trusted-types": {
-       "version": "2.0.7",
-       "resolved": "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz",
-       "integrity": "sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==",
-       "license": "MIT"
-     },
-     "node_modules/@types/use-sync-external-store": {
-       "version": "0.0.6",
-       "resolved": "https://registry.npmjs.org/@types/use-sync-external-store/-/use-sync-external-store-0.0.6.tgz",
-       "integrity": "sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==",
-       "license": "MIT"
-     },
-     "node_modules/@types/ws": {
-       "version": "8.18.1",
-       "resolved": "https://registry.npmjs.org/@types/ws/-/ws-8.18.1.tgz",
-       "integrity": "sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==",
-       "license": "MIT",
-       "dependencies": {
-         "@types/node": "*"
-       }
-     },
-     "node_modules/@types/yargs": {
-       "version": "16.0.9",
-       "resolved": "https://registry.npmjs.org/@types/yargs/-/yargs-16.0.9.tgz",
-       "integrity": "sha512-tHhzvkFXZQeTECenFoRljLBYPZJ7jAVxqqtEI0qTLOmuultnFp4I9yKE17vTuhf7BkhCu7I4XuemPgikDVuYqA==",
-diff --git a/client/package.json b/client/package.json
-index a64f8b64b1081b216565f9f3b20cc3cb5d87fb43..7bc353c75475f73ad4e3ddf7473361abe17e3fa9 100644
---- a/client/package.json
-+++ b/client/package.json
-@@ -4,56 +4,55 @@
-   "private": true,
-   "dependencies": {
-     "@emotion/react": "^11.14.0",
-     "@emotion/styled": "^11.14.0",
-     "@mui/icons-material": "^7.0.1",
-     "@mui/material": "^7.0.1",
-     "@types/react-router-dom": "^5.3.3",
-     "ajv": "^8.17.1",
-     "ajv-keywords": "^5.1.0",
-     "axios": "^1.8.4",
-     "i18next": "^23.10.1",
-     "i18next-browser-languagedetector": "^8.0.2",
-     "jwt-decode": "^4.0.0",
-     "react": "^19.1.0",
-     "react-dom": "^19.1.0",
-     "react-i18next": "^15.0.0",
-     "react-router-dom": "^7.4.1",
-     "react-scripts": "5.0.1",
-     "recharts": "^3.1.0",
-     "web-vitals": "^2.1.4"
-   },
-   "devDependencies": {
-     "@testing-library/dom": "^10.4.0",
-     "@testing-library/jest-dom": "^6.6.3",
-     "@testing-library/react": "^16.3.0",
--    "@testing-library/user-event": "^13.5.0",
-+    "@testing-library/user-event": "^14.5.2",
-     "@types/jest": "^27.5.2",
-     "@types/node": "^16.18.126",
-     "@types/react": "^19.0.12",
-     "@types/react-dom": "^19.0.4",
--    "@types/testing-library__user-event": "^4.1.1",
-     "typescript": "^4.9.5"
-   },
-   "scripts": {
-     "start": "react-scripts start",
-     "build": "react-scripts build",
-     "test": "react-scripts test",
-     "eject": "react-scripts eject"
-   },
-   "eslintConfig": {
-     "extends": [
-       "react-app",
-       "react-app/jest"
-     ]
-   },
-   "browserslist": {
-     "production": [
-       ">0.2%",
-       "not dead",
-       "not op_mini all"
-     ],
-     "development": [
-       "last 1 chrome version",
-       "last 1 firefox version",
-       "last 1 safari version"
-     ]
+       protocol: 'http',
+       get: () => 'localhost',
+       user: { _id: 'admin', id: 'admin' },
+       ip: '::1'
+     };
+     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+ 
+     await inviteUser(req, res, jest.fn());
+ 
+     expect(Invitacion.create).toHaveBeenCalledWith(
+-      expect.objectContaining({ rol: 'csm' })
++      expect.objectContaining({ rol: 'csm', tipo: 'Programa Residentes' })
+     );
+     expect(accessSpy).toHaveBeenCalledWith({ rol: 'csm', tipo: 'Programa Residentes' });
+     expect(sendEmail).toHaveBeenCalledWith(
+       expect.objectContaining({
+         message: expect.stringContaining('Código de acceso: CSM123')
+       })
+     );
+     expect(res.status).toHaveBeenCalledWith(200);
+     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });
+   });
+ });

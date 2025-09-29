@@ -20,8 +20,11 @@ const {
   getAvailableTutors,
   getProfesorParticipantes,
   getUsersByHospital,
-  deleteUser
+  deleteUser,
+  getInvitationByTokenPublic
 } = require('../controllers/userController');
+
+router.route('/public/invitations/:token').get(getInvitationByTokenPublic);
 
 // Todas las rutas requieren autenticación
 router.use(protect);

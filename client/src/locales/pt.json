@@ -93,6 +93,15 @@
     "consentSuffix": " e estou em conformidade com a LOPD.",
     "registerButton": "Registrar"
   },
+  "registerInvite": {
+    "title": "Conclua o seu registro",
+    "loading": "Validando convite...",
+    "invalid": "Este convite não existe ou já foi utilizado.",
+    "expired": "Este convite expirou. Solicite um novo ao seu administrador.",
+    "error": "Não foi possível validar o seu convite.",
+    "ctaLogin": "Ir para o login",
+    "prefilledNotice": "Pré-preenchemos os dados do convite para {{email}}. Revise as informações e finalize o registro."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Cancelar",

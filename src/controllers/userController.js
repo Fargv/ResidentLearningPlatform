@@ -642,18 +642,17 @@ exports.inviteUser = async (req, res, next) => {
     // Verificar si el email ya está registrado
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return next(new ErrorResponse('El email ya está registrado', 400));
+      console.info(
+        `[inviteUser] El email ${email} pertenece a un usuario existente (${existingUser._id}). Se generará una nueva invitación.`
+      );
     }
 
     // Verificar si ya existe una invitación pendiente para este email
-    const existingInvitation = await Invitacion.findOne({ 
-      email, 
-      estado: 'pendiente' 
+    const existingInvitation = await Invitacion.findOne({
+      email,
+      estado: 'pendiente'
     });
-    
-    if (existingInvitation) {
-      return next(new ErrorResponse('Ya existe una invitación pendiente para este email', 400));
-    }
+    const wasExistingInvitation = Boolean(existingInvitation);
 
     // Verificar hospital si el rol es residente o formador
     if ((rol === Role.RESIDENTE || rol === Role.TUTOR) && !hospital) {
@@ -709,16 +708,46 @@ exports.inviteUser = async (req, res, next) => {
 
     // Generar token
     const token = crypto.randomBytes(20).toString('hex');
+    const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
+    const fechaEnvio = new Date();
 
-    // Crear invitación
-    const invitacion = await Invitacion.create({
+    const resolvedSociedad = sociedad || requester?.sociedad;
+    const invitationUpdate = {
       email,
       rol,
       hospital,
       sociedad: sociedad || requester?.sociedad,
+      tipo: programType,
       token,
-      fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
-      admin: requester?.id
+      fechaExpiracion,
+      fechaEnvio,
+      estado: 'pendiente',
+      admin: requester?._id || requester?.id
+    };
+
+    if (hospital) {
+      invitationUpdate.hospital = hospital;
+    }
+
+    if (resolvedSociedad) {
+      invitationUpdate.sociedad = resolvedSociedad;
+    }
+
+    const updateQuery = existingInvitation ? { _id: existingInvitation._id } : { email };
+    const updateDoc = { $set: invitationUpdate };
+
+    if (!hospital && existingInvitation?.hospital) {
+      updateDoc.$unset = { ...(updateDoc.$unset || {}), hospital: '' };
+    }
+
+    if (!resolvedSociedad && existingInvitation?.sociedad) {
+      updateDoc.$unset = { ...(updateDoc.$unset || {}), sociedad: '' };
+    }
+
+    const invitacion = await Invitacion.findOneAndUpdate(updateQuery, updateDoc, {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
     });
 
     // Crear URL de registro basada en la configuración del frontend
@@ -786,10 +815,64 @@ exports.inviteUser = async (req, res, next) => {
       console.log(err);
       
       // Eliminar la invitación si no se pudo enviar el email
-      await Invitacion.findByIdAndRemove(invitacion._id);
-      
+      if (!wasExistingInvitation) {
+        await Invitacion.findByIdAndRemove(invitacion._id);
+      }
+
       return next(new ErrorResponse('No se pudo enviar el email de invitación', 500));
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Obtener una invitación pública por token
+// @route   GET /api/users/public/invitations/:token
+// @access  Public
+exports.getInvitationByTokenPublic = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+
+    const invitation = await Invitacion.findOne({ token, estado: 'pendiente' })
+      .populate([
+        { path: 'hospital', select: 'nombre zona' },
+        { path: 'sociedad', select: 'titulo status' }
+      ])
+      .exec();
+
+    if (!invitation) {
+      return next(new ErrorResponse('Invitación no encontrada', 404));
+    }
+
+    if (invitation.haExpirado()) {
+      if (invitation.estado !== 'expirada' && typeof invitation.marcarComoExpirada === 'function') {
+        await invitation.marcarComoExpirada();
+      }
+      return next(new ErrorResponse('Invitación expirada', 410));
+    }
+
+    const accessCode = await AccessCode.findOne({ rol: invitation.rol, tipo: invitation.tipo });
+
+    if (!accessCode) {
+      return next(new ErrorResponse('Invitación no válida', 400));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        email: invitation.email,
+        rol: invitation.rol,
+        tipo: invitation.tipo,
+        codigoAcceso: accessCode.codigo,
+        hospital: invitation.hospital
+          ? { _id: invitation.hospital._id, nombre: invitation.hospital.nombre }
+          : undefined,
+        sociedad: invitation.sociedad
+          ? { _id: invitation.sociedad._id, titulo: invitation.sociedad.titulo }
+          : undefined,
+        zona: invitation.hospital?.zona
+      }
+    });
   } catch (err) {
     next(err);
   }

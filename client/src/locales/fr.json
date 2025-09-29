@@ -119,6 +119,15 @@
     "consentSuffix": " et je suis conforme au RGPD.",
     "registerButton": "S'inscrire"
   },
+  "registerInvite": {
+    "title": "Finalisez votre inscription",
+    "loading": "Validation de l'invitation...",
+    "invalid": "Cette invitation n'existe pas ou a déjà été utilisée.",
+    "expired": "Cette invitation a expiré. Demandez-en une nouvelle à votre administrateur.",
+    "error": "Nous n'avons pas pu valider votre invitation.",
+    "ctaLogin": "Aller à la connexion",
+    "prefilledNotice": "Nous avons pré-rempli les données de l'invitation pour {{email}}. Vérifiez les informations et finalisez votre inscription."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Annuler",

@@ -91,6 +91,15 @@
     "consentSuffix": " i compleixo amb la LOPD.",
     "registerButton": "Registrar-se"
   },
+  "registerInvite": {
+    "title": "Completa el teu registre",
+    "loading": "Validant la invitació...",
+    "invalid": "La invitació no existeix o ja s'ha utilitzat.",
+    "expired": "Aquesta invitació ha caducat. Sol·licita'n una de nova al teu administrador.",
+    "error": "No hem pogut validar la teva invitació.",
+    "ctaLogin": "Anar a l'inici de sessió",
+    "prefilledNotice": "Hem preomplert les dades de la invitació per a {{email}}. Revisa la informació i completa el registre."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Cancel·lar",

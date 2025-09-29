@@ -177,6 +177,15 @@
     "consentSuffix": " eta DBEO betetzen dut.",
     "registerButton": "Erregistratu"
   },
+  "registerInvite": {
+    "title": "Osatu zure erregistroa",
+    "loading": "Gonbidapena balioztatzen...",
+    "invalid": "Gonbidapen hau ez dago edo dagoeneko erabili da.",
+    "expired": "Gonbidapen hau iraungi da. Eskatu beste bat zure administratzaileari.",
+    "error": "Ezin izan dugu zure gonbidapena balioztatu.",
+    "ctaLogin": "Joan saioa hasteko orrira",
+    "prefilledNotice": "Gonbidapenaren datuak {{email}} helbiderako bete ditugu. Berrikusi informazioa eta amaitu erregistroa."
+  },
   "society": {
     "convocatoria": {
       "label": "Convocatoria",
