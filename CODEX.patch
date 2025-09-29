@@ -1,62 +1,227 @@
-diff --git a/tests/inviteUserCsm.test.js b/tests/inviteUserCsm.test.js
-index ee37b5c889d47ff704704532d4d337916dafe754..de491cc8d701ccc716612befff4d0cf189758998 100644
---- a/tests/inviteUserCsm.test.js
-+++ b/tests/inviteUserCsm.test.js
-@@ -1,41 +1,56 @@
- const { inviteUser } = require('../src/controllers/userController');
- const User = require('../src/models/User');
- const Invitacion = require('../src/models/Invitacion');
- const Hospital = require('../src/models/Hospital');
-+const AccessCode = require('../src/models/AccessCode');
- const sendEmail = require('../src/utils/sendEmail');
- const { createAuditLog } = require('../src/utils/auditLog');
+diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
+index 8ed3ac988dc8df5329a5c22646f5e3e9c320bfc4..addb25217db6d0a6c1fae8a90e3d87430762f926 100644
+--- a/client/src/pages/dashboard/TutorUsuarios.tsx
++++ b/client/src/pages/dashboard/TutorUsuarios.tsx
+@@ -660,50 +660,73 @@ const TutorUsuarios: React.FC = () => {
+               ))}
+             </TableBody>
+           </Table>
+         </TableContainer>
+       </Paper>
  
- jest.mock('../src/utils/sendEmail');
- jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
+       <Dialog open={openDialog} onClose={() => handleCloseEditarDialog()}>
+         <DialogTitle>{t(editar ? 'tutorUsers.edit' : 'tutorUsers.invite')}</DialogTitle>
+         <DialogContent>
+           <TextField fullWidth margin="dense" label={t('tutorUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
+           <TextField fullWidth margin="dense" label={t('tutorUsers.form.name')} name="nombre" value={formData.nombre} onChange={handleChange} />
+           <TextField fullWidth margin="dense" label={t('tutorUsers.form.surname')} name="apellidos" value={formData.apellidos} onChange={handleChange} />
+           <TextField
+             select
+             fullWidth
+             margin="dense"
+             label={t('tutorUsers.form.role')}
+             name="rol"
+             value={formData.rol}
+             onChange={handleChange}
+             slotProps={{ select: { native: true } }}
+           >
+             <option value="residente">{t('roles.residente')}</option>
+             <option value="tutor">{t('roles.tutor')}</option>
+           </TextField>
++          {user?.rol === 'csm' && (
++            <Autocomplete
++              options={hospitalOptions}
++              getOptionLabel={(option) => option?.nombre ?? ''}
++              value={
++                hospitalOptions.find((h) => h._id === formData.hospital) || null
++              }
++              onChange={(_, newValue) =>
++                setFormData((prev) => ({
++                  ...prev,
++                  hospital: newValue?._id || '',
++                }))
++              }
++              renderInput={(params) => (
++                <TextField
++                  {...params}
++                  fullWidth
++                  margin="dense"
++                  label={t('adminUsers.fields.hospital')}
++                />
++              )}
++            />
++          )}
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={() => handleCloseEditarDialog()}>
+             {t('tutorUsers.dialog.cancel')}
+           </Button>
+           {editar && selected && (
+             <>
+               <Button
+                 onClick={() => {
+                   handleOpenPasswordDialog(selected);
+                   handleCloseEditarDialog(false);
+                 }}
+                 color="secondary"
+                 variant="outlined"
+               >
+                 {t('adminUsers.actions.changePassword')}
+               </Button>
+               {(user?.rol === 'tutor' || user?.rol === 'csm') && (
+                 <Button
+                   onClick={() => handleSendResetEmail(selected)}
+                   color="info"
+                   variant="outlined"
+                 >
+                   {t('adminUsers.actions.sendResetLink')}
+                 </Button>
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index bacaa4ebc542f73322882bd1c9d613537d2ecf70..6b87455513dd9a3d6e07d023e7c7a843c5994561 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -638,60 +638,82 @@ exports.inviteUser = async (req, res, next) => {
+     if ((rol === Role.PARTICIPANTE || rol === Role.PROFESOR) && !sociedad) {
+       return next(new ErrorResponse('Se requiere una sociedad para este rol', 400));
+     }
  
- describe('inviteUser csm', () => {
-   afterEach(() => {
-     jest.restoreAllMocks();
-   });
+     // Verificar si el email ya está registrado
+     const existingUser = await User.findOne({ email });
+     if (existingUser) {
+       return next(new ErrorResponse('El email ya está registrado', 400));
+     }
  
-   test('crea invitación para csm', async () => {
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
-+    const accessSpy = jest
-+      .spyOn(AccessCode, 'findOne')
-+      .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
-     const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm' };
-     jest.spyOn(Invitacion, 'create').mockResolvedValue(created);
-     sendEmail.mockResolvedValue();
+     // Verificar si ya existe una invitación pendiente para este email
+     const existingInvitation = await Invitacion.findOne({ 
+       email, 
+       estado: 'pendiente' 
+     });
+     
+     if (existingInvitation) {
+       return next(new ErrorResponse('Ya existe una invitación pendiente para este email', 400));
+     }
  
-     const req = {
--      body: { email: 'coord@test.com', rol: 'csm', hospital: 'h1' },
-+      body: {
-+        email: 'coord@test.com',
-+        rol: 'csm',
-+        hospital: 'h1',
-+        tipo: 'Programa Residentes'
-+      },
-       protocol: 'http',
-       get: () => 'localhost',
-       user: { _id: 'admin', id: 'admin' },
-       ip: '::1'
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+     // Verificar hospital si el rol es residente o formador
+     if ((rol === Role.RESIDENTE || rol === Role.TUTOR) && !hospital) {
+       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
+     }
  
-     await inviteUser(req, res, jest.fn());
++    let hospitalDoc;
+     if (hospital) {
+-      const hospitalExists = await Hospital.findById(hospital);
+-      if (!hospitalExists) {
++      hospitalDoc = await Hospital.findById(hospital);
++      if (!hospitalDoc) {
+         return next(new ErrorResponse('Hospital no encontrado', 404));
+       }
+     }
  
-     expect(Invitacion.create).toHaveBeenCalledWith(
-       expect.objectContaining({ rol: 'csm' })
-     );
-+    expect(accessSpy).toHaveBeenCalledWith({ rol: 'csm', tipo: 'Programa Residentes' });
-+    expect(sendEmail).toHaveBeenCalledWith(
-+      expect.objectContaining({
-+        message: expect.stringContaining('Código de acceso: CSM123')
-+      })
-+    );
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });
-   });
- });
+-    const programType =
+-      tipo ||
+-      requester?.tipo ||
++    if (requester?.rol === Role.CSM) {
++      const rolesPermitidos = [Role.RESIDENTE, Role.TUTOR];
++      if (!rolesPermitidos.includes(rol)) {
++        return next(
++          new ErrorResponse('No autorizado para invitar usuarios con este rol', 403)
++        );
++      }
++
++      if (!hospitalDoc) {
++        return next(
++          new ErrorResponse('Se requiere un hospital válido de tu zona para invitar', 403)
++        );
++      }
++
++      if (hospitalDoc.zona !== requester.zona) {
++        return next(
++          new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
++        );
++      }
++    }
++
++    const programType =
++      tipo ||
++      requester?.tipo ||
+       ([Role.PARTICIPANTE, Role.PROFESOR].includes(rol)
+         ? 'Programa Sociedades'
+         : 'Programa Residentes');
+ 
+     const accessCode = await AccessCode.findOne({ rol, tipo: programType });
+ 
+     if (!accessCode) {
+       return next(
+         new ErrorResponse(
+           `Falta configurar el código de acceso para el rol ${rol}`,
+           400
+         )
+       );
+     }
+ 
+     // Generar token
+     const token = crypto.randomBytes(20).toString('hex');
+ 
+     // Crear invitación
+     const invitacion = await Invitacion.create({
+       email,
+       rol,
+       hospital,
+       sociedad: sociedad || requester?.sociedad,
+       token,
+diff --git a/src/routes/userRoutes.js b/src/routes/userRoutes.js
+index 35843a71a070cb8f2ecc5722fcb33c6217433cc7..3fb3ea9f86e6db85804f0e6971ba66e3023b2db9 100644
+--- a/src/routes/userRoutes.js
++++ b/src/routes/userRoutes.js
+@@ -14,51 +14,51 @@ const {
+   generatePasswordResetToken,
+   inviteUser,
+   getInvitations,
+   cancelInvitation,
+   getTutorResidentes,
+   getResidenteTutores,
+   getAvailableTutors,
+   getProfesorParticipantes,
+   getUsersByHospital,
+   deleteUser
+ } = require('../controllers/userController');
+ 
+ // Todas las rutas requieren autenticación
+ router.use(protect);
+ 
+ // Rutas solo para administradores, tutores y CSM
+ router.get('/hospital/:hospitalId', authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getUsersByHospital);
+ router.get('/tutores', authorize(Role.ADMINISTRADOR, Role.CSM, Role.TUTOR), getAvailableTutors);
+ 
+ // Rutas para administradores, tutores, CSM y profesores
+ router.route('/')
+   .get(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM, Role.PROFESOR), getUsers)
+   .post(authorize(Role.ADMINISTRADOR), createUser);
+ 
+ router.route('/invite')
+-  .post(authorize(Role.ADMINISTRADOR, Role.PROFESOR), inviteUser);
++  .post(authorize(Role.ADMINISTRADOR, Role.PROFESOR, Role.CSM), inviteUser);
+ 
+ router.route('/invitations')
+   .get(authorize(Role.ADMINISTRADOR), getInvitations);
+ 
+ router.route('/invitations/:id')
+   .delete(authorize(Role.ADMINISTRADOR), cancelInvitation);
+ 
+ // Rutas para administradores, tutores y CSM
+ router.route('/tutor/:id/residentes')
+   .get(authorize(Role.ADMINISTRADOR, Role.TUTOR, Role.CSM), getTutorResidentes);
+ 
+ // Rutas para administradores y profesores
+ router.route('/profesor/:id/participantes')
+   .get(authorize(Role.ADMINISTRADOR, Role.PROFESOR), getProfesorParticipantes);
+ 
+ // Rutas para todos los roles
+ router.route('/residente/:id/tutores')
+   .get(getResidenteTutores);
+ 
+ router.route('/:id')
+   .get(authorize(Role.ADMINISTRADOR), getUser)
+   .put(authorize(Role.ADMINISTRADOR, Role.PROFESOR), updateUser)
+   .delete(authorize(Role.ADMINISTRADOR, Role.PROFESOR), deleteUser);
+ 
+ router.route('/:id/password')

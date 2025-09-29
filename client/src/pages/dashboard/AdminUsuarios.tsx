@@ -976,6 +976,8 @@ const AdminUsuarios: React.FC = () => {
       <InviteUsersMail
         open={openInvitarDialog}
         onClose={handleCloseInvitarDialog}
+        hospitals={hospitales}
+        societies={sociedades}
       />
 
       {/* Diálogo para actualizar contraseña */}

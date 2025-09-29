@@ -660,10 +660,32 @@ exports.inviteUser = async (req, res, next) => {
       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
     }
 
+    let hospitalDoc;
     if (hospital) {
-      const hospitalExists = await Hospital.findById(hospital);
-      if (!hospitalExists) {
+      hospitalDoc = await Hospital.findById(hospital);
+      if (!hospitalDoc) {
         return next(new ErrorResponse('Hospital no encontrado', 404));
+      }
+    }
+
+    if (requester?.rol === Role.CSM) {
+      const rolesPermitidos = [Role.RESIDENTE, Role.TUTOR];
+      if (!rolesPermitidos.includes(rol)) {
+        return next(
+          new ErrorResponse('No autorizado para invitar usuarios con este rol', 403)
+        );
+      }
+
+      if (!hospitalDoc) {
+        return next(
+          new ErrorResponse('Se requiere un hospital válido de tu zona para invitar', 403)
+        );
+      }
+
+      if (hospitalDoc.zona !== requester.zona) {
+        return next(
+          new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
+        );
       }
     }
 

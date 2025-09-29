@@ -682,6 +682,29 @@ const TutorUsuarios: React.FC = () => {
             <option value="residente">{t('roles.residente')}</option>
             <option value="tutor">{t('roles.tutor')}</option>
           </TextField>
+          {user?.rol === 'csm' && (
+            <Autocomplete
+              options={hospitalOptions}
+              getOptionLabel={(option) => option?.nombre ?? ''}
+              value={
+                hospitalOptions.find((h) => h._id === formData.hospital) || null
+              }
+              onChange={(_, newValue) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  hospital: newValue?._id || '',
+                }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  margin="dense"
+                  label={t('adminUsers.fields.hospital')}
+                />
+              )}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleCloseEditarDialog()}>

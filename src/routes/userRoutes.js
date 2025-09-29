@@ -36,7 +36,7 @@ router.route('/')
   .post(authorize(Role.ADMINISTRADOR), createUser);
 
 router.route('/invite')
-  .post(authorize(Role.ADMINISTRADOR, Role.PROFESOR), inviteUser);
+  .post(authorize(Role.ADMINISTRADOR, Role.PROFESOR, Role.CSM), inviteUser);
 
 router.route('/invitations')
   .get(authorize(Role.ADMINISTRADOR), getInvitations);
