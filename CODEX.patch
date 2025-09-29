@@ -1,5 +1,5 @@
 diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
-index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e5635eee638 100644
+index f2f49d58a6b667466a239a8a0c9d46939c7a8950..7bb08943a688280443017224110610c87dae32cb 100644
 --- a/client/src/components/InviteUsersMail.tsx
 +++ b/client/src/components/InviteUsersMail.tsx
 @@ -1,38 +1,39 @@
@@ -17,7 +17,7 @@ index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e56
    TextField,
    Typography,
  } from '@mui/material';
-+import type { DialogCloseReason } from '@mui/material';
++import type { DialogProps } from '@mui/material/Dialog';
  import api from '../api';
  import Role from '../types/roles';
  
@@ -44,10 +44,10 @@ index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e56
  const roles = Object.values(Role) as Role[];
  const isRole = (v: string): v is Role => (roles as string[]).includes(v);
 diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
-index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e5635eee638 100644
+index f2f49d58a6b667466a239a8a0c9d46939c7a8950..7bb08943a688280443017224110610c87dae32cb 100644
 --- a/client/src/components/InviteUsersMail.tsx
 +++ b/client/src/components/InviteUsersMail.tsx
-@@ -88,57 +89,57 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
+@@ -88,57 +89,54 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
    const handleEmailChange = (index: number, value: string) => {
      const updated = [...emails];
      updated[index] = value;
@@ -80,10 +80,7 @@ index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e56
 -    if (submitting) return;
 -    closeDialog();
 -  };
-+  const handleDialogClose = (
-+    _event: React.SyntheticEvent,
-+    _reason: DialogCloseReason,
-+  ) => {
++  const handleDialogClose: DialogProps['onClose'] = () => {
 +    if (submitting) return;
 +    closeDialog();
 +  };
@@ -112,62 +109,3 @@ index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e56
        setFeedback({
          type: 'error',
          message: 'Introduce al menos un correo electrónico.',
-diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
-index f2f49d58a6b667466a239a8a0c9d46939c7a8950..0f56c36a2f1cfcbe9bfbfe83e6732e5635eee638 100644
---- a/client/src/components/InviteUsersMail.tsx
-+++ b/client/src/components/InviteUsersMail.tsx
-@@ -337,48 +338,51 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
-               key={idx}
-               label={`Email ${idx + 1}`}
-               type="email"
-               fullWidth
-               value={email}
-               onChange={(e) => handleEmailChange(idx, e.target.value)}
-               disabled={submitting}
-               sx={{ mb: 2 }}
-             />
-           ))}
-           <Button
-             variant="outlined"
-             onClick={handleAddEmail}
-             disabled={submitting}
-           >
-             Añadir
-           </Button>
-         </Box>
-         {feedback && (
-           <Alert severity={feedback.type} sx={{ mt: 2 }}>
-             {feedback.message}
-           </Alert>
-         )}
-       </DialogContent>
-       <DialogActions>
--        <Button onClick={() => handleDialogClose()} disabled={submitting}>
--          Cancelar
--        </Button>
-+        <Button
-+          onClick={(event) => handleDialogClose(event, 'escapeKeyDown')}
-+          disabled={submitting}
-+        >
-+          Cancelar
-+        </Button>
-         <Button
-           variant="contained"
-           onClick={handleSend}
-           disabled={
-             submitting ||
-             !role ||
-             !selectedCode ||
-             emails.every((email) => !email.trim()) ||
-             (requiresHospitalSelection && !selectedHospital) ||
-             (requiresSocietySelection && !selectedSociety)
-           }
-         >
-           {submitting ? 'Enviando…' : 'Enviar invitación'}
-         </Button>
-       </DialogActions>
-     </Dialog>
-   );
- };
- 
- export default InviteUsersMail;

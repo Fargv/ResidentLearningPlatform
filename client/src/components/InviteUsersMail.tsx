@@ -11,6 +11,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import type { DialogProps } from '@mui/material/Dialog';
 import api from '../api';
 import Role from '../types/roles';
 
@@ -110,10 +111,7 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
     onClose();
   };
 
-  const handleDialogClose = (
-    _event?: React.SyntheticEvent,
-    _reason?: 'backdropClick' | 'escapeKeyDown',
-  ) => {
+  const handleDialogClose: DialogProps['onClose'] = () => {
     if (submitting) return;
     closeDialog();
   };
@@ -359,24 +357,24 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleDialogClose()} disabled={submitting}>
-          Cancelar
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleSend}
-          disabled={
-            submitting ||
-            !role ||
-            !selectedCode ||
-            emails.every((email) => !email.trim()) ||
-            (requiresHospitalSelection && !selectedHospital) ||
-            (requiresSocietySelection && !selectedSociety)
-          }
-        >
-          {submitting ? 'Enviando…' : 'Enviar invitación'}
-        </Button>
-      </DialogActions>
+  <Button onClick={closeDialog} disabled={submitting}>
+    Cancelar
+  </Button>
+  <Button
+    variant="contained"
+    onClick={handleSend}
+    disabled={
+      submitting ||
+      !role ||
+      !selectedCode ||
+      emails.every((email) => !email.trim()) ||
+      (requiresHospitalSelection && !selectedHospital) ||
+      (requiresSocietySelection && !selectedSociety)
+    }
+  >
+    {submitting ? 'Enviando…' : 'Enviar invitación'}
+  </Button>
+</DialogActions>
     </Dialog>
   );
 };
