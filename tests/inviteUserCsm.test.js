@@ -26,12 +26,14 @@ describe('inviteUser csm', () => {
   test('crea invitación para csm', async () => {
     jest.spyOn(User, 'findOne').mockResolvedValue(null);
     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'CANARIAS' });
     const accessSpy = jest
       .spyOn(AccessCode, 'findOne')
       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
-    const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm' };
-    jest.spyOn(Invitacion, 'findOneAndUpdate').mockResolvedValue(created);
+    const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm', zona: 'CANARIAS' };
+    const updateSpy = jest
+      .spyOn(Invitacion, 'findOneAndUpdate')
+      .mockResolvedValue(created);
     sendEmail.mockResolvedValue();
 
     const req = {
@@ -39,7 +41,8 @@ describe('inviteUser csm', () => {
         email: 'coord@test.com',
         rol: 'csm',
         hospital: 'h1',
-        tipo: 'Programa Residentes'
+        tipo: 'Programa Residentes',
+        zona: 'canarias'
       },
       protocol: 'http',
       get: () => 'localhost',
@@ -50,8 +53,16 @@ describe('inviteUser csm', () => {
 
     await inviteUser(req, res, jest.fn());
 
-    expect(Invitacion.create).toHaveBeenCalledWith(
-      expect.objectContaining({ rol: 'csm', tipo: 'Programa Residentes' })
+    expect(updateSpy).toHaveBeenCalledWith(
+      { email: 'coord@test.com' },
+      expect.objectContaining({
+        $set: expect.objectContaining({
+          rol: 'csm',
+          tipo: 'Programa Residentes',
+          zona: 'CANARIAS'
+        })
+      }),
+      expect.objectContaining({ upsert: true })
     );
     expect(accessSpy).toHaveBeenCalledWith({ rol: 'csm', tipo: 'Programa Residentes' });
     expect(sendEmail).toHaveBeenCalledWith(
@@ -69,7 +80,8 @@ describe('inviteUser csm', () => {
       _id: 'csm-inv',
       email: 'coord@test.com',
       estado: 'pendiente',
-      hospital: 'h1'
+      hospital: 'h1',
+      zona: 'CANARIAS'
     };
     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(existingInvitation);
     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'norte' });
@@ -87,7 +99,8 @@ describe('inviteUser csm', () => {
         email: 'coord@test.com',
         rol: 'csm',
         hospital: 'h1',
-        tipo: 'Programa Residentes'
+        tipo: 'Programa Residentes',
+        zona: 'CANARIAS'
       },
       user: { _id: 'admin', id: 'admin' },
       ip: '::1'
@@ -98,7 +111,9 @@ describe('inviteUser csm', () => {
 
     expect(updateSpy).toHaveBeenCalledWith(
       { _id: existingInvitation._id },
-      expect.objectContaining({ $set: expect.objectContaining({ email: 'coord@test.com' }) }),
+      expect.objectContaining({
+        $set: expect.objectContaining({ email: 'coord@test.com', zona: 'CANARIAS' })
+      }),
       expect.objectContaining({ upsert: true })
     );
     expect(sendEmail).toHaveBeenCalled();
@@ -110,11 +125,11 @@ describe('inviteUser csm', () => {
     const logSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
     jest.spyOn(User, 'findOne').mockResolvedValue({ _id: 'existing-user' });
     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'norte' });
+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
     jest
       .spyOn(AccessCode, 'findOne')
       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
-    const updated = { _id: 'csm-inv-new', email: 'coord@test.com', rol: 'csm' };
+    const updated = { _id: 'csm-inv-new', email: 'coord@test.com', rol: 'csm', zona: 'NORTE' };
     jest.spyOn(Invitacion, 'findOneAndUpdate').mockResolvedValue(updated);
     sendEmail.mockResolvedValue();
 
@@ -123,7 +138,8 @@ describe('inviteUser csm', () => {
         email: 'coord@test.com',
         rol: 'csm',
         hospital: 'h1',
-        tipo: 'Programa Residentes'
+        tipo: 'Programa Residentes',
+        zona: 'NORTE'
       },
       user: { _id: 'admin', id: 'admin' },
       ip: '::1'
@@ -138,5 +154,31 @@ describe('inviteUser csm', () => {
     expect(res.json).toHaveBeenCalledWith({ success: true, data: updated });
 
     logSpy.mockRestore();
+  });
+
+  test('rechaza invitación de csm sin zona', async () => {
+    jest.spyOn(User, 'findOne').mockResolvedValue(null);
+    jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
+    jest
+      .spyOn(AccessCode, 'findOne')
+      .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
+
+    const req = {
+      body: {
+        email: 'coord@test.com',
+        rol: 'csm',
+        hospital: 'h1',
+        tipo: 'Programa Residentes'
+      },
+      user: { _id: 'admin', id: 'admin' },
+      ip: '::1'
+    };
+    const next = jest.fn();
+
+    await inviteUser(req, {}, next);
+
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 400 }));
+    expect(next.mock.calls[0][0].message).toContain('Se requiere una zona');
   });
 });

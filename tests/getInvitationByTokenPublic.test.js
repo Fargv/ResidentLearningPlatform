@@ -51,6 +51,37 @@ describe('getInvitationByTokenPublic', () => {
     });
   });
 
+  test('usa la zona de la invitación cuando no hay hospital', async () => {
+    const invitation = {
+      email: 'coord@test.com',
+      rol: 'csm',
+      tipo: 'Programa Residentes',
+      estado: 'pendiente',
+      haExpirado: jest.fn().mockReturnValue(false),
+      hospital: null,
+      sociedad: null,
+      zona: 'CANARIAS'
+    };
+
+    const execMock = jest.fn().mockResolvedValue(invitation);
+    const populateMock = jest.fn().mockReturnValue({ exec: execMock });
+    jest.spyOn(Invitacion, 'findOne').mockReturnValue({ populate: populateMock });
+    jest
+      .spyOn(AccessCode, 'findOne')
+      .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
+
+    const req = { params: { token: 'token-zone' } };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    await getInvitationByTokenPublic(req, res, jest.fn());
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      data: expect.objectContaining({ zona: 'CANARIAS' })
+    });
+  });
+
   test('lanza error cuando la invitación no existe', async () => {
     const execMock = jest.fn().mockResolvedValue(null);
     const populateMock = jest.fn().mockReturnValue({ exec: execMock });

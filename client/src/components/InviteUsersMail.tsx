@@ -50,6 +50,16 @@ const legacyRoleMap: Record<string, Role> = {
   alumno: Role.PARTICIPANTE,
 };
 
+const zoneOptions = [
+  'NORDESTE',
+  'NORTE',
+  'CENTRO',
+  'ANDALUCÍA',
+  'PORTUGAL',
+  'LEVANTE',
+  'CANARIAS',
+];
+
 const normalizeRoleValue = (value: string): Role | undefined => {
   if (isRole(value)) {
     return value;
@@ -70,6 +80,7 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
   const [emails, setEmails] = useState<string[]>(['']);
   const [selectedHospital, setSelectedHospital] = useState('');
   const [selectedSociety, setSelectedSociety] = useState('');
+  const [selectedZone, setSelectedZone] = useState('');
   const [feedback, setFeedback] = useState<
     { type: 'success' | 'error'; message: string } | null
   >(null);
@@ -110,6 +121,10 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
       setSelectedSociety('');
     }
 
+    if (role !== Role.CSM) {
+      setSelectedZone('');
+    }
+
     if (!found) {
       setFeedback({
         type: 'error',
@@ -137,6 +152,7 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
     setEmails(['']);
     setSelectedHospital('');
     setSelectedSociety('');
+    setSelectedZone('');
     setFeedback(null);
   };
 
@@ -161,6 +177,7 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
       role === Role.RESIDENTE || role === Role.TUTOR;
     const requiresSociety =
       role === Role.PARTICIPANTE || role === Role.PROFESOR;
+    const requiresZone = role === Role.CSM;
 
     if (!role) {
       setFeedback({
@@ -210,6 +227,14 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
       return;
     }
 
+    if (requiresZone && !selectedZone) {
+      setFeedback({
+        type: 'error',
+        message: 'Selecciona una zona para este rol.',
+      });
+      return;
+    }
+
     setSubmitting(true);
     setFeedback(null);
 
@@ -225,6 +250,10 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
 
       if (requiresSociety) {
         payloadBase.sociedad = selectedSociety;
+      }
+
+      if (requiresZone) {
+        payloadBase.zona = selectedZone;
       }
 
       const results = await Promise.allSettled(
@@ -281,6 +310,7 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
     role === Role.RESIDENTE || role === Role.TUTOR;
   const requiresSocietySelection =
     role === Role.PARTICIPANTE || role === Role.PROFESOR;
+  const requiresZoneSelection = role === Role.CSM;
 
   return (
     <Dialog open={open} onClose={handleDialogClose} fullWidth maxWidth="sm">
@@ -353,6 +383,33 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
             </Select>
           </FormControl>
         )}
+        {requiresZoneSelection && (
+          <FormControl
+            fullWidth
+            margin="dense"
+            sx={{ mt: 2 }}
+            disabled={submitting}
+          >
+            <InputLabel id="invite-users-zone-label">Zona</InputLabel>
+            <Select
+              labelId="invite-users-zone-label"
+              label="Zona"
+              value={selectedZone}
+              onChange={(event: SelectChangeEvent<string>) =>
+                setSelectedZone(event.target.value)
+              }
+            >
+              <MenuItem value="" disabled>
+                Selecciona una zona
+              </MenuItem>
+              {zoneOptions.map((zone) => (
+                <MenuItem key={zone} value={zone}>
+                  {zone}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
         {requiresSocietySelection && (
           <FormControl
             fullWidth
@@ -419,7 +476,8 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
             !role ||
             emails.every((email) => !email.trim()) ||
             (requiresHospitalSelection && !selectedHospital) ||
-            (requiresSocietySelection && !selectedSociety)
+            (requiresSocietySelection && !selectedSociety) ||
+            (requiresZoneSelection && !selectedZone)
           }
         >
           {submitting ? 'Enviando…' : 'Enviar invitación'}

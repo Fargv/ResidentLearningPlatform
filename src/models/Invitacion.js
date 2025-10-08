@@ -21,6 +21,12 @@ const invitacionSchema = new mongoose.Schema({
       return this.rol === Role.RESIDENTE || this.rol === Role.TUTOR;
     }
   },
+  zona: {
+    type: String,
+    required: function() {
+      return this.rol === Role.CSM;
+    }
+  },
   sociedad: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Sociedades'

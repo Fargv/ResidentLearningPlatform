@@ -613,7 +613,7 @@ exports.deleteUser = async (req, res, next) => {
 // @access  Private/Admin
 exports.inviteUser = async (req, res, next) => {
   try {
-    const { email, rol, hospital, sociedad, tipo } = req.body;
+    const { email, rol, hospital, sociedad, tipo, zona } = req.body;
     const requester = req.user;
 
     if (requester?.rol === Role.PROFESOR) {
@@ -654,6 +654,12 @@ exports.inviteUser = async (req, res, next) => {
     });
     const wasExistingInvitation = Boolean(existingInvitation);
 
+    const zonaVal = typeof zona === 'string' ? zona.trim().toUpperCase() : undefined;
+
+    if (rol === Role.CSM && !zonaVal) {
+      return next(new ErrorResponse('Se requiere una zona para este rol', 400));
+    }
+
     // Verificar hospital si el rol es residente o formador
     if ((rol === Role.RESIDENTE || rol === Role.TUTOR) && !hospital) {
       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
@@ -681,7 +687,10 @@ exports.inviteUser = async (req, res, next) => {
         );
       }
 
-      if (hospitalDoc.zona !== requester.zona) {
+      const hospitalZona = typeof hospitalDoc.zona === 'string' ? hospitalDoc.zona.toUpperCase() : hospitalDoc.zona;
+      const requesterZona = typeof requester.zona === 'string' ? requester.zona.toUpperCase() : requester.zona;
+
+      if (hospitalZona !== requesterZona) {
         return next(
           new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
         );
@@ -715,7 +724,6 @@ exports.inviteUser = async (req, res, next) => {
     const invitationUpdate = {
       email,
       rol,
-      hospital,
       sociedad: sociedad || requester?.sociedad,
       tipo: programType,
       token,
@@ -733,6 +741,10 @@ exports.inviteUser = async (req, res, next) => {
       invitationUpdate.sociedad = resolvedSociedad;
     }
 
+    if (zonaVal) {
+      invitationUpdate.zona = zonaVal;
+    }
+
     const updateQuery = existingInvitation ? { _id: existingInvitation._id } : { email };
     const updateDoc = { $set: invitationUpdate };
 
@@ -742,6 +754,10 @@ exports.inviteUser = async (req, res, next) => {
 
     if (!resolvedSociedad && existingInvitation?.sociedad) {
       updateDoc.$unset = { ...(updateDoc.$unset || {}), sociedad: '' };
+    }
+
+    if (!zonaVal && existingInvitation?.zona) {
+      updateDoc.$unset = { ...(updateDoc.$unset || {}), zona: '' };
     }
 
     const invitacion = await Invitacion.findOneAndUpdate(updateQuery, updateDoc, {
@@ -870,7 +886,7 @@ exports.getInvitationByTokenPublic = async (req, res, next) => {
         sociedad: invitation.sociedad
           ? { _id: invitation.sociedad._id, titulo: invitation.sociedad.titulo }
           : undefined,
-        zona: invitation.hospital?.zona
+        zona: invitation.zona || invitation.hospital?.zona
       }
     });
   } catch (err) {

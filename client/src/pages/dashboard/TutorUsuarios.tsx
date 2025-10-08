@@ -66,6 +66,7 @@ const TutorUsuarios: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [procesando, setProcesando] = useState(false);
+  const [availableHospitals, setAvailableHospitals] = useState<any[]>([]);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editar, setEditar] = useState(false);
@@ -165,6 +166,33 @@ const TutorUsuarios: React.FC = () => {
   useEffect(() => {
     fetchUsuarios();
   }, [fetchUsuarios, t]);
+
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      if (user?.rol !== 'csm' || !user?.zona) {
+        setAvailableHospitals([]);
+        return;
+      }
+
+      try {
+        const response = await api.get('/hospitals');
+        const data = response.data?.data ?? response.data ?? [];
+        const normalizedZona = user.zona.toUpperCase();
+        const filtered = Array.isArray(data)
+          ? data.filter(
+              (hospital: any) =>
+                typeof hospital?.zona === 'string' &&
+                hospital.zona.toUpperCase() === normalizedZona,
+            )
+          : [];
+        setAvailableHospitals(filtered);
+      } catch {
+        setAvailableHospitals([]);
+      }
+    };
+
+    fetchHospitals();
+  }, [user?.rol, user?.zona]);
 
   const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenDialog(false);
@@ -360,13 +388,20 @@ const TutorUsuarios: React.FC = () => {
   const roleOptions = Array.from(
     new Set(usuarios.map((u) => u.rol).filter((r): r is string => Boolean(r))),
   );
-  const hospitalOptions = Array.from(
-    new Map(
-      usuarios
-        .filter((u) => u.hospital)
-        .map((u) => [u.hospital._id, u.hospital]),
-    ).values(),
-  );
+  const hospitalOptions = useMemo(() => {
+    const pairs: [string, any][] = [];
+    availableHospitals.forEach((hospital) => {
+      if (hospital?._id) {
+        pairs.push([hospital._id, hospital]);
+      }
+    });
+    usuarios
+      .filter((u) => u.hospital)
+      .forEach((u) => {
+        pairs.push([u.hospital._id, u.hospital]);
+      });
+    return Array.from(new Map(pairs).values());
+  }, [availableHospitals, usuarios]);
   const societyOptions = Array.from(
     new Map(
       usuarios
