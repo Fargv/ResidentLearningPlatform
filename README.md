@@ -6,7 +6,7 @@ Este proyecto implementa una plataforma web completa para llevar el seguimiento 
 
 - Sistema de autenticación con diferentes roles (residentes, participantes, tutores, profesores, CSM y administradores)
  - Seguimiento del progreso de los residentes y participantes a través de las diferentes fases del programa
- - Validación de actividades por parte de los tutores e profesores
+ - Validación de actividades por parte de los tutores y profesores
 ## Estructura del proyecto
 
 ```
@@ -55,7 +55,7 @@ davinci-platform/
 ## Instalación y ejecución
 
 ### Requisitos previos
-- Node.js (v18 o superior)
+- Node.js (v20 o superior)
 - MongoDB (local o Atlas)
 
 ### Instalación

@@ -1,1436 +1,233 @@
-diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
-index 84a7204246f1c9b04b907917e5c5dabbf343d3a6..141de077267128733235e8ed24b79b608e9a58c2 100644
---- a/client/src/components/InviteUsersMail.tsx
-+++ b/client/src/components/InviteUsersMail.tsx
-@@ -21,365 +21,422 @@ import api from '../api';
- import Role from '../types/roles';
+diff --git a/README.md b/README.md
+index 61d919c9bbc32b8bb034ef269423cd54897243e1..9efb3d59b1ff2d9cf8dbce1bd6a5aef8b3497ea9 100644
+--- a/README.md
++++ b/README.md
+@@ -1,83 +1,83 @@
+ # Plataforma de Formación en Tecnologías del Robot da Vinci
  
- type ProgramType = 'Programa Residentes' | 'Programa Sociedades';
+ Este proyecto implementa una plataforma web completa para llevar el seguimiento del programa de formación en tecnologías del robot da Vinci para residentes de hospitales.
  
- interface BasicEntity {
-   _id: string;
-   nombre: string;
- }
+ ## Características principales
  
- interface InviteUsersMailProps {
-   open: boolean;
-   onClose: () => void;
-   hospitals: BasicEntity[];
-   societies: BasicEntity[];
- }
+ - Sistema de autenticación con diferentes roles (residentes, participantes, tutores, profesores, CSM y administradores)
+  - Seguimiento del progreso de los residentes y participantes a través de las diferentes fases del programa
+- - Validación de actividades por parte de los tutores e profesores
++ - Validación de actividades por parte de los tutores y profesores
+ ## Estructura del proyecto
  
- interface AccessCode {
-   codigo: string;
-   rol: Role;
-   tipo: ProgramType;
- }
+ ```
+ davinci-platform/
+ ├── src/                    # Backend (Node.js, Express, MongoDB)
+ │   ├── config/             # Configuración del servidor
+ │   ├── controllers/        # Controladores de la API
+ │   ├── middleware/         # Middleware (autenticación, errores)
+ │   ├── models/             # Modelos de datos
+ │   ├── routes/             # Rutas de la API
+ │   ├── utils/              # Utilidades
+ │   └── server.js           # Punto de entrada del servidor
+ ├── client/                 # Frontend (React, TypeScript, Material-UI)
+ │   ├── public/             # Archivos estáticos
+ │   ├── src/                # Código fuente
+ │   │   ├── components/     # Componentes reutilizables
+ │   │   ├── context/        # Contextos de React (autenticación)
+ │   │   ├── pages/          # Páginas de la aplicación
+ │   │   ├── App.tsx         # Componente principal
+ │   │   └── index.tsx       # Punto de entrada
+ │   └── package.json        # Dependencias del frontend
+ ├── test.sh                 # Script para pruebas
+ ├── dev.sh                  # Script para desarrollo
+ ├── deploy.sh               # Script para despliegue
+ ├── DEPLOY.md               # Instrucciones de despliegue
+ ├── MANUAL_USUARIO.md       # Manual de usuario
+ └── package.json            # Dependencias del backend
+ ```
  
- const roles = Object.values(Role) as Role[];
- const isRole = (v: string): v is Role => (roles as string[]).includes(v);
+ ## Tecnologías utilizadas
  
--const legacyRoleMap: Record<string, Role> = {
--  formador: Role.TUTOR,
--  coordinador: Role.CSM,
--  instructor: Role.PROFESOR,
--  alumno: Role.PARTICIPANTE,
--};
--
--const normalizeRoleValue = (value: string): Role | undefined => {
--  if (isRole(value)) {
--    return value;
--  }
--
-+const legacyRoleMap: Record<string, Role> = {
-+  formador: Role.TUTOR,
-+  coordinador: Role.CSM,
-+  instructor: Role.PROFESOR,
-+  alumno: Role.PARTICIPANTE,
-+};
-+
-+const zoneOptions = [
-+  'NORDESTE',
-+  'NORTE',
-+  'CENTRO',
-+  'ANDALUCÍA',
-+  'PORTUGAL',
-+  'LEVANTE',
-+  'CANARIAS',
-+];
-+
-+const normalizeRoleValue = (value: string): Role | undefined => {
-+  if (isRole(value)) {
-+    return value;
-+  }
-+
-   return legacyRoleMap[value];
- };
+ ### Backend
+ - Node.js
+ - Express
+ - MongoDB
+ - JWT para autenticación
+ - Bcrypt para encriptación de contraseñas
  
- const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
-   open,
-   onClose,
-   hospitals,
-   societies,
- }) => {
-   const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
-   const [role, setRole] = useState<Role | ''>('');
-   const [selectedCode, setSelectedCode] = useState<AccessCode | null>(null);
-   const [emails, setEmails] = useState<string[]>(['']);
-   const [selectedHospital, setSelectedHospital] = useState('');
--  const [selectedSociety, setSelectedSociety] = useState('');
--  const [feedback, setFeedback] = useState<
--    { type: 'success' | 'error'; message: string } | null
--  >(null);
--  const [submitting, setSubmitting] = useState(false);
--
-+  const [selectedSociety, setSelectedSociety] = useState('');
-+  const [selectedZone, setSelectedZone] = useState('');
-+  const [feedback, setFeedback] = useState<
-+    { type: 'success' | 'error'; message: string } | null
-+  >(null);
-+  const [submitting, setSubmitting] = useState(false);
-+
-   useEffect(() => {
-     if (open) {
-       api
-         .get('/access-codes')
-         .then((res) => {
-           const data = res.data.data || res.data;
-           setAccessCodes(data);
-         })
-         .catch(() => {
-           setAccessCodes([]);
-         });
-     }
-   }, [open]);
+ ### Frontend
+ - React
+ - TypeScript
+ - Material-UI
+ - React Router
+ - Axios para peticiones HTTP
  
-   useEffect(() => {
-     if (!role) {
-       setSelectedCode(null);
-       setFeedback(null);
-       return;
-     }
+ ## Instalación y ejecución
  
-     const found =
-       accessCodes.find((c) => normalizeRoleValue(c.rol) === role) || null;
+ ### Requisitos previos
+-- Node.js (v18 o superior)
++- Node.js (v20 o superior)
+ - MongoDB (local o Atlas)
  
-     setSelectedCode(found);
-     setEmails(['']);
+ ### Instalación
+ 1. Clonar el repositorio
+ 2. Instalar dependencias del backend: `npm install`
+ 3. Instalar dependencias del frontend: `cd client && npm install`
+ 4. Copiar `.env.example` a `.env` y completar los valores requeridos:
+    - `MONGO_URI` con la cadena de conexión a tu base de datos.
+    - `CLIENT_ORIGIN` y `FRONTEND_URL` con la URL desde la que se servirá el
+      frontend (por ejemplo, `http://localhost:5173` en desarrollo).
+    - `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` y `BREVO_SENDER_NAME` siguiendo la
+      guía de la sección [Configuración de Brevo](#configuración-de-brevo-envío-de-correos).
  
-     if (![Role.RESIDENTE, Role.TUTOR].includes(role)) {
-       setSelectedHospital('');
-     }
+ ### Ejecución en desarrollo
+ ```bash
+ ./dev.sh
+ ```
+ El script determina automáticamente la ruta del proyecto por lo que puede ejecutarse desde cualquier directorio.
  
--    if (![Role.PARTICIPANTE, Role.PROFESOR].includes(role)) {
--      setSelectedSociety('');
--    }
--
--    if (!found) {
--      setFeedback({
--        type: 'error',
--        message: 'No hay código configurado para este rol.',
-+    if (![Role.PARTICIPANTE, Role.PROFESOR].includes(role)) {
-+      setSelectedSociety('');
-+    }
-+
-+    if (role !== Role.CSM) {
-+      setSelectedZone('');
-+    }
-+
-+    if (!found) {
-+      setFeedback({
-+        type: 'error',
-+        message: 'No hay código configurado para este rol.',
-       });
+ ### Pruebas
+ ```bash
+ ./test.sh
+ ```
+ Al igual que `dev.sh`, este script se puede ejecutar desde cualquier ubicación ya que calcula la raíz del repositorio.
+ 
+diff --git a/src/server.js b/src/server.js
+index bdc69084501c1166058454d668b9ecd750844b6f..983fc40716d85501675255979857fcb1d9ff9850 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -21,56 +21,57 @@ const authRoutes = require('./routes/authRoutes');
+ const userRoutes = require('./routes/userRoutes');
+ const hospitalRoutes = require('./routes/hospitalRoutes');
+ const faseRoutes = require('./routes/faseRoutes');
+ const actividadRoutes = require('./routes/actividadRoutes');
+ const faseSocRoutes = require('./routes/faseSocRoutes');
+ const actividadSocRoutes = require('./routes/actividadSocRoutes');
+ const progresoRoutes = require('./routes/progresoRoutes');
+ const adjuntoRoutes = require('./routes/adjuntoRoutes');
+ const notificacionRoutes = require('./routes/notificacionRoutes');
+ const adminRoutes = require('./routes/adminRoutes');
+ const sociedadesRoutes = require('./routes/sociedadesRoutes');
+ const certificadoRoutes = require('./routes/certificadoRoutes');
+ const accessCodeRoutes = require('./routes/accessCodeRoutes');
+ const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
+ const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
+ const informesRoutes = require('./routes/informesRoutes');
+ 
+ // Inicializar app
+ const app = express();
+ 
+ // Middlewares esenciales
+ app.use(express.json());
+ app.use(cookieParser());
+ app.use(helmet());
+ const clientOrigin = process.env.CLIENT_ORIGIN || 'https://residentlearningplatform.netlify.app';
+-const allowedOrigins = [
++const allowedOrigins = Array.from(new Set([
+   'http://localhost:3000',
+   'http://localhost:5173',
+   'https://residentlearningplatform.netlify.app',
+   'https://academicprogramdavinci.netlify.app',
+-];
++  clientOrigin,
++]));
+ 
+ const corsOptions = {
+   origin: function (origin, callback) {
+     if (!origin || allowedOrigins.includes(origin)) {
+       callback(null, true);
      } else {
-       setFeedback(null);
+       console.warn(`🛑 CORS bloqueado para origen: ${origin}`);
+       callback(new Error(`CORS bloqueado: ${origin} no está en la lista de permitidos`));
      }
-   }, [role, accessCodes]);
- 
-   const handleEmailChange = (index: number, value: string) => {
-     const updated = [...emails];
-     updated[index] = value;
-     setEmails(updated);
-   };
- 
-   const handleAddEmail = () => {
-     if (submitting) return;
-     setEmails((prev) => [...prev, '']);
-   };
- 
-   const resetForm = () => {
--    setRole('');
--    setSelectedCode(null);
--    setEmails(['']);
--    setSelectedHospital('');
--    setSelectedSociety('');
--    setFeedback(null);
--  };
-+    setRole('');
-+    setSelectedCode(null);
-+    setEmails(['']);
-+    setSelectedHospital('');
-+    setSelectedSociety('');
-+    setSelectedZone('');
-+    setFeedback(null);
-+  };
- 
-   const closeDialog = () => {
-     resetForm();
-     onClose();
-   };
- 
-   const handleDialogClose: DialogProps['onClose'] = () => {
-     if (submitting) return;
-     closeDialog();
-   };
- 
-   const isValidEmail = (email: string) =>
-     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
- 
-   const handleSend = async () => {
-     const trimmed = emails.map((email) => email.trim());
-     const filled = trimmed.filter((email) => email.length > 0);
-     const validEmails = filled.filter(isValidEmail);
--    const requiresHospital =
--      role === Role.RESIDENTE || role === Role.TUTOR;
--    const requiresSociety =
--      role === Role.PARTICIPANTE || role === Role.PROFESOR;
-+    const requiresHospital =
-+      role === Role.RESIDENTE || role === Role.TUTOR;
-+    const requiresSociety =
-+      role === Role.PARTICIPANTE || role === Role.PROFESOR;
-+    const requiresZone = role === Role.CSM;
- 
-     if (!role) {
-       setFeedback({
-         type: 'error',
-         message: 'Selecciona un rol válido.',
-       });
-       return;
-     }
- 
-     if (!selectedCode) {
-       setFeedback({
-         type: 'error',
-         message: 'No hay código configurado para este rol.',
-       });
-       return;
-     }
- 
-     if (filled.length === 0) {
-       setFeedback({
-         type: 'error',
-         message: 'Introduce al menos un correo electrónico.',
-       });
-       return;
-     }
- 
-     if (validEmails.length !== filled.length) {
-       setFeedback({
-         type: 'error',
-         message: 'Revisa que todos los correos electrónicos sean válidos.',
-       });
-       return;
-     }
- 
-     if (requiresHospital && !selectedHospital) {
-       setFeedback({
-         type: 'error',
-         message: 'Selecciona un hospital para este rol.',
-       });
-       return;
-     }
- 
--    if (requiresSociety && !selectedSociety) {
--      setFeedback({
--        type: 'error',
--        message: 'Selecciona una sociedad para este rol.',
--      });
--      return;
--    }
--
--    setSubmitting(true);
--    setFeedback(null);
--
--    try {
-+    if (requiresSociety && !selectedSociety) {
-+      setFeedback({
-+        type: 'error',
-+        message: 'Selecciona una sociedad para este rol.',
-+      });
-+      return;
-+    }
-+
-+    if (requiresZone && !selectedZone) {
-+      setFeedback({
-+        type: 'error',
-+        message: 'Selecciona una zona para este rol.',
-+      });
-+      return;
-+    }
-+
-+    setSubmitting(true);
-+    setFeedback(null);
-+
-+    try {
-       const payloadBase: Record<string, string> = {
-         rol: role,
-         tipo: selectedCode.tipo,
-       };
- 
-       if (requiresHospital) {
-         payloadBase.hospital = selectedHospital;
-       }
- 
--      if (requiresSociety) {
--        payloadBase.sociedad = selectedSociety;
--      }
--
--      const results = await Promise.allSettled(
--        validEmails.map((email) =>
--          api.post('/users/invite', {
--            ...payloadBase,
-+      if (requiresSociety) {
-+        payloadBase.sociedad = selectedSociety;
-+      }
-+
-+      if (requiresZone) {
-+        payloadBase.zona = selectedZone;
-+      }
-+
-+      const results = await Promise.allSettled(
-+        validEmails.map((email) =>
-+          api.post('/users/invite', {
-+            ...payloadBase,
-             email,
-           }),
-         ),
-       );
- 
-       const failures = results.filter(
-         (result): result is PromiseRejectedResult => result.status === 'rejected',
-       );
- 
-       if (failures.length > 0) {
-         const firstError = failures[0].reason as any;
-         const errorMessage =
-           firstError?.response?.data?.error ||
-           firstError?.message ||
-           'No se pudieron enviar algunas invitaciones.';
-         const successCount = results.length - failures.length;
-         const message =
-           successCount > 0
-             ? `Se enviaron ${successCount} invitaciones, pero otras fallaron: ${errorMessage}`
-             : errorMessage;
- 
-         setFeedback({ type: 'error', message });
-         return;
-       }
- 
-       setFeedback({
-         type: 'success',
-         message:
-           validEmails.length === 1
-             ? 'Invitación enviada correctamente.'
-             : 'Invitaciones enviadas correctamente.',
-       });
- 
-       await new Promise((resolve) => setTimeout(resolve, 1500));
-       closeDialog();
-     } catch (err: any) {
-       const message =
-         err?.response?.data?.error ||
-         err?.message ||
-         'No se pudo enviar la invitación.';
-       setFeedback({ type: 'error', message });
-     } finally {
-       setSubmitting(false);
-     }
-   };
- 
--  const requiresHospitalSelection =
--    role === Role.RESIDENTE || role === Role.TUTOR;
--  const requiresSocietySelection =
--    role === Role.PARTICIPANTE || role === Role.PROFESOR;
-+  const requiresHospitalSelection =
-+    role === Role.RESIDENTE || role === Role.TUTOR;
-+  const requiresSocietySelection =
-+    role === Role.PARTICIPANTE || role === Role.PROFESOR;
-+  const requiresZoneSelection = role === Role.CSM;
- 
-   return (
-     <Dialog open={open} onClose={handleDialogClose} fullWidth maxWidth="sm">
-       <DialogTitle>Invitar Usuarios</DialogTitle>
-       <DialogContent>
-         <DialogContentText>
-           Todos los usuarios deben tener el mismo rol. Al cambiar el rol se
-           reinicia la lista de correos.
-         </DialogContentText>
-         <FormControl
-           fullWidth
-           margin="dense"
-           sx={{ mt: 2 }}
-           disabled={submitting}
-         >
-           <InputLabel id="invite-users-role-label">Rol</InputLabel>
-           <Select
-             labelId="invite-users-role-label"
-             label="Rol"
-             value={role}
-             onChange={(event: SelectChangeEvent<string>) => {
-               const v = event.target.value;
-               setRole(isRole(v) ? v : '');
-             }}
-           >
-             <MenuItem value="" disabled>
-               Selecciona un rol
-             </MenuItem>
-             {roles.map((r) => (
-               <MenuItem key={r} value={r}>
-                 {r}
-               </MenuItem>
-             ))}
-           </Select>
-         </FormControl>
-         {role && (
-           <Box sx={{ mt: 2 }}>
-             <Typography>
-               Código de acceso: {selectedCode?.codigo || '—'}
-             </Typography>
-             <Typography variant="body2" color="text.secondary">
-               Programa: {selectedCode?.tipo || '—'}
-             </Typography>
-           </Box>
-         )}
--        {requiresHospitalSelection && (
--          <FormControl
--            fullWidth
--            margin="dense"
--            sx={{ mt: 2 }}
--            disabled={submitting || hospitals.length === 0}
--          >
--            <InputLabel id="invite-users-hospital-label">Hospital</InputLabel>
--            <Select
--              labelId="invite-users-hospital-label"
--              label="Hospital"
--              value={selectedHospital}
--              onChange={(event: SelectChangeEvent<string>) =>
--                setSelectedHospital(event.target.value)
--              }
--            >
--              <MenuItem value="" disabled>
--                Selecciona un hospital
--              </MenuItem>
--              {hospitals.map((hospital) => (
--                <MenuItem key={hospital._id} value={hospital._id}>
--                  {hospital.nombre}
--                </MenuItem>
--              ))}
--            </Select>
--          </FormControl>
--        )}
--        {requiresSocietySelection && (
--          <FormControl
--            fullWidth
--            margin="dense"
--            sx={{ mt: 2 }}
-+        {requiresHospitalSelection && (
-+          <FormControl
-+            fullWidth
-+            margin="dense"
-+            sx={{ mt: 2 }}
-+            disabled={submitting || hospitals.length === 0}
-+          >
-+            <InputLabel id="invite-users-hospital-label">Hospital</InputLabel>
-+            <Select
-+              labelId="invite-users-hospital-label"
-+              label="Hospital"
-+              value={selectedHospital}
-+              onChange={(event: SelectChangeEvent<string>) =>
-+                setSelectedHospital(event.target.value)
-+              }
-+            >
-+              <MenuItem value="" disabled>
-+                Selecciona un hospital
-+              </MenuItem>
-+              {hospitals.map((hospital) => (
-+                <MenuItem key={hospital._id} value={hospital._id}>
-+                  {hospital.nombre}
-+                </MenuItem>
-+              ))}
-+            </Select>
-+          </FormControl>
-+        )}
-+        {requiresZoneSelection && (
-+          <FormControl
-+            fullWidth
-+            margin="dense"
-+            sx={{ mt: 2 }}
-+            disabled={submitting}
-+          >
-+            <InputLabel id="invite-users-zone-label">Zona</InputLabel>
-+            <Select
-+              labelId="invite-users-zone-label"
-+              label="Zona"
-+              value={selectedZone}
-+              onChange={(event: SelectChangeEvent<string>) =>
-+                setSelectedZone(event.target.value)
-+              }
-+            >
-+              <MenuItem value="" disabled>
-+                Selecciona una zona
-+              </MenuItem>
-+              {zoneOptions.map((zone) => (
-+                <MenuItem key={zone} value={zone}>
-+                  {zone}
-+                </MenuItem>
-+              ))}
-+            </Select>
-+          </FormControl>
-+        )}
-+        {requiresSocietySelection && (
-+          <FormControl
-+            fullWidth
-+            margin="dense"
-+            sx={{ mt: 2 }}
-             disabled={submitting || societies.length === 0}
-           >
-             <InputLabel id="invite-users-society-label">Sociedad</InputLabel>
-             <Select
-               labelId="invite-users-society-label"
-               label="Sociedad"
-               value={selectedSociety}
-               onChange={(event: SelectChangeEvent<string>) =>
-                 setSelectedSociety(event.target.value)
-               }
-             >
-               <MenuItem value="" disabled>
-                 Selecciona una sociedad
-               </MenuItem>
-               {societies.map((society) => (
-                 <MenuItem key={society._id} value={society._id}>
-                   {society.nombre}
-                 </MenuItem>
-               ))}
-             </Select>
-           </FormControl>
-         )}
-         <Box sx={{ mt: 2 }}>
-           {emails.map((email, idx) => (
-             <TextField
-diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
-index 84a7204246f1c9b04b907917e5c5dabbf343d3a6..141de077267128733235e8ed24b79b608e9a58c2 100644
---- a/client/src/components/InviteUsersMail.tsx
-+++ b/client/src/components/InviteUsersMail.tsx
-@@ -391,42 +448,43 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
-               onChange={(e) => handleEmailChange(idx, e.target.value)}
-               disabled={submitting}
-               sx={{ mb: 2 }}
-             />
-           ))}
-           <Button
-             variant="outlined"
-             onClick={handleAddEmail}
-             disabled={submitting}
-           >
-             Añadir
-           </Button>
-         </Box>
-         {feedback && (
-           <Alert severity={feedback.type} sx={{ mt: 2 }}>
-             {feedback.message}
-           </Alert>
-         )}
-       </DialogContent>
-       <DialogActions>
-         <Button onClick={closeDialog} disabled={submitting}>
-           Cancelar
-         </Button>
-         <Button
-           variant="contained"
--          onClick={handleSend}
--          disabled={
--            submitting ||
--            !role ||
--            emails.every((email) => !email.trim()) ||
--            (requiresHospitalSelection && !selectedHospital) ||
--            (requiresSocietySelection && !selectedSociety)
--          }
--        >
--          {submitting ? 'Enviando…' : 'Enviar invitación'}
--        </Button>
-+          onClick={handleSend}
-+          disabled={
-+            submitting ||
-+            !role ||
-+            emails.every((email) => !email.trim()) ||
-+            (requiresHospitalSelection && !selectedHospital) ||
-+            (requiresSocietySelection && !selectedSociety) ||
-+            (requiresZoneSelection && !selectedZone)
-+          }
-+        >
-+          {submitting ? 'Enviando…' : 'Enviar invitación'}
-+        </Button>
-       </DialogActions>
-     </Dialog>
-   );
+   },
+   credentials: true,
  };
  
- export default InviteUsersMail;
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index c60203f3cca7c254c3630ce7dc60dffb207f5fcc..283c52e7e3d1f3ecd6978d2a7b445ef83d0b45f2 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -44,50 +44,51 @@ import api, {
- import { getRoleChipSx } from '../../utils/roleChipColors';
- import { FaseCirugia } from '../../types/FaseCirugia';
+ app.use(cors(corsOptions));
+ app.options('*', cors(corsOptions)); // Preflight para todos los endpoints
+ app.use(fileupload());
  
- const TutorUsuarios: React.FC = () => {
-   const { user } = useAuth();
-   const { t } = useTranslation();
-   const defaultProgramType = useMemo(() => {
-     if (user?.tipo) {
-       return user.tipo;
-     }
-     if (user?.rol === 'profesor') {
-       return 'Programa Sociedades';
-     }
-     return 'Programa Residentes';
-   }, [user?.tipo, user?.rol]);
-   const typeKey = (tipo?: string) =>
-     tipo === 'Programa Sociedades'
-       ? 'programaSociedades'
-       : tipo === 'Programa Residentes'
-       ? 'programaResidentes'
-       : '';
-   const [usuarios, setUsuarios] = useState<any[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [procesando, setProcesando] = useState(false);
-+  const [availableHospitals, setAvailableHospitals] = useState<any[]>([]);
+ // Middleware de desarrollo
+ if (process.env.NODE_ENV === 'development') {
+   app.use(morgan('dev'));
+ }
  
-   const [openDialog, setOpenDialog] = useState(false);
-   const [editar, setEditar] = useState(false);
-   const [selected, setSelected] = useState<any>(null);
-   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
-   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
-   const [passwordValue, setPasswordValue] = useState('');
+ // Directorio público
+ app.use(express.static(path.join(__dirname, '../public')));
  
-   const [formData, setFormData] = useState({
-     email: '',
-     nombre: '',
-     apellidos: '',
-     rol: user?.rol === 'profesor' ? 'participante' : 'residente',
-     hospital: user?.hospital?._id || '',
-     tipo: defaultProgramType
-   });
- 
-   const [snackbar, setSnackbar] = useState({
-     open: false,
-     message: '',
-     severity: 'success' as 'success' | 'error'
-   });
-   const [downloadLoading, setDownloadLoading] = useState(false);
-   const [anchorElInforme, setAnchorElInforme] = useState<null | HTMLElement>(null);
-   const [menuUsuario, setMenuUsuario] = useState<any>(null);
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index c60203f3cca7c254c3630ce7dc60dffb207f5fcc..283c52e7e3d1f3ecd6978d2a7b445ef83d0b45f2 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -144,50 +145,77 @@ const TutorUsuarios: React.FC = () => {
-                   progresos.length > 0 &&
-                   progresos.every((p: any) => p.estadoGeneral === "validado")
-                 ) {
-                   faseActual = "Programa Completado";
-                 }
-               } catch {
-                 fasesCirugia = [];
-               }
-             }
-             return { ...u, fasesCirugia, faseActual };
-           }),
-         );
-         setUsuarios(usuariosConProgreso);
-       }
-     } catch (err: any) {
-       setError(err.response?.data?.error || t('tutorUsers.loadError'));
-     } finally {
-       setLoading(false);
-     }
-   }, [user?._id, user?.hospital?._id, user?.rol, user?.tipo, t]);
- 
-   useEffect(() => {
-     fetchUsuarios();
-   }, [fetchUsuarios, t]);
- 
-+  useEffect(() => {
-+    const fetchHospitals = async () => {
-+      if (user?.rol !== 'csm' || !user?.zona) {
-+        setAvailableHospitals([]);
-+        return;
-+      }
-+
-+      try {
-+        const response = await api.get('/hospitals');
-+        const data = response.data?.data ?? response.data ?? [];
-+        const normalizedZona = user.zona.toUpperCase();
-+        const filtered = Array.isArray(data)
-+          ? data.filter(
-+              (hospital: any) =>
-+                typeof hospital?.zona === 'string' &&
-+                hospital.zona.toUpperCase() === normalizedZona,
-+            )
-+          : [];
-+        setAvailableHospitals(filtered);
-+      } catch {
-+        setAvailableHospitals([]);
-+      }
-+    };
-+
-+    fetchHospitals();
-+  }, [user?.rol, user?.zona]);
-+
-   const handleCloseEditarDialog = (clearSelected = true) => {
-     setOpenDialog(false);
-     if (clearSelected) setSelected(null);
-   };
- 
-   const handleChange = (
-     e:
-       | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-       | SelectChangeEvent<string>,
-   ) => {
-     const { name, value } = e.target as { name?: string; value: unknown };
-     if (!name) return;
-     setFormData({ ...formData, [name]: value as string });
-   };
- 
-   const handleSubmit = async () => {
-     try {
-       setProcesando(true);
-       
- 
-       if (editar && selected) {
-         const res = await api.put(`/users/${selected._id}`, formData);
-         setUsuarios(usuarios.map(u => u._id === selected._id ? res.data.data : u));
-       } else {
-         const res = await api.post('/users/invite', formData);
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index c60203f3cca7c254c3630ce7dc60dffb207f5fcc..283c52e7e3d1f3ecd6978d2a7b445ef83d0b45f2 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -338,57 +366,64 @@ const TutorUsuarios: React.FC = () => {
-         open: true,
-         message: err.response?.data?.error || t('tutorUsers.loadError'),
-         severity: 'error',
-       });
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
- 
-   const handleOpenInformeMenu = (
-     event: React.MouseEvent<HTMLButtonElement>,
-     usuario: any,
-   ) => {
-     setAnchorElInforme(event.currentTarget);
-     setMenuUsuario(usuario);
-   };
- 
-   const handleCloseInformeMenu = () => {
-     setAnchorElInforme(null);
-     setMenuUsuario(null);
-   };
- 
-   const roleOptions = Array.from(
-     new Set(usuarios.map((u) => u.rol).filter((r): r is string => Boolean(r))),
-   );
--  const hospitalOptions = Array.from(
--    new Map(
--      usuarios
--        .filter((u) => u.hospital)
--        .map((u) => [u.hospital._id, u.hospital]),
--    ).values(),
--  );
-+  const hospitalOptions = useMemo(() => {
-+    const pairs: [string, any][] = [];
-+    availableHospitals.forEach((hospital) => {
-+      if (hospital?._id) {
-+        pairs.push([hospital._id, hospital]);
-+      }
-+    });
-+    usuarios
-+      .filter((u) => u.hospital)
-+      .forEach((u) => {
-+        pairs.push([u.hospital._id, u.hospital]);
-+      });
-+    return Array.from(new Map(pairs).values());
-+  }, [availableHospitals, usuarios]);
-   const societyOptions = Array.from(
-     new Map(
-       usuarios
-         .filter((u) => u.sociedad)
-         .map((u) => [u.sociedad._id, u.sociedad]),
-     ).values(),
-   );
-   const especialidadOptions = Array.from(
-     new Set(
-       usuarios
-         .map((u) => u.especialidad)
-         .filter((e): e is string => Boolean(e)),
-     ),
-   );
-   const zonaOptions = Array.from(
-     new Set(
-       usuarios
-         .map((u) => u.zona)
-         .filter((z): z is string => Boolean(z)),
-     ),
-   );
-   const tipoOptions = Array.from(
-     new Set(
-       usuarios
-         .map((u) => u.tipo)
-diff --git a/src/controllers/userController.js b/src/controllers/userController.js
-index 9a8c511172ad5b4c9a21df3a1622557aed7baf9b..3e4949c5e4a03bf971ea3576e5491df39402b75a 100644
---- a/src/controllers/userController.js
-+++ b/src/controllers/userController.js
-@@ -591,181 +591,197 @@ exports.deleteUser = async (req, res, next) => {
- 
-     await user.remove();
- 
-     await createAuditLog({
-       usuario: req.user._id,
-       accion: 'eliminar_usuario',
-       descripcion: `Usuario eliminado: ${user.email}`,
-       ip: req.ip
-     });
- 
-     res.status(200).json({
-       success: true,
-       data: {}
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- 
- // @desc    Invitar a un nuevo usuario
- // @route   POST /api/users/invite
- // @access  Private/Admin
- exports.inviteUser = async (req, res, next) => {
-   try {
--    const { email, rol, hospital, sociedad, tipo } = req.body;
-+    const { email, rol, hospital, sociedad, tipo, zona } = req.body;
-     const requester = req.user;
- 
-     if (requester?.rol === Role.PROFESOR) {
-       if (rol !== Role.PARTICIPANTE) {
-         return next(
-           new ErrorResponse('Los profesores solo pueden invitar participantes', 403)
-         );
-       }
-       if (
-         !requester.sociedad ||
-         (sociedad && requester.sociedad && sociedad.toString() !== requester.sociedad.toString())
-       ) {
-         return next(
-           new ErrorResponse(
-             'No autorizado para invitar participantes de otra sociedad',
-             403
-           )
-         );
-       }
-     }
- 
-     if ((rol === Role.PARTICIPANTE || rol === Role.PROFESOR) && !sociedad) {
-       return next(new ErrorResponse('Se requiere una sociedad para este rol', 400));
-     }
- 
-     // Verificar si el email ya está registrado
-     const existingUser = await User.findOne({ email });
-     if (existingUser) {
-       console.info(
-         `[inviteUser] El email ${email} pertenece a un usuario existente (${existingUser._id}). Se generará una nueva invitación.`
-       );
-     }
- 
-     // Verificar si ya existe una invitación pendiente para este email
-     const existingInvitation = await Invitacion.findOne({
-       email,
-       estado: 'pendiente'
-     });
-     const wasExistingInvitation = Boolean(existingInvitation);
- 
-+    const zonaVal = typeof zona === 'string' ? zona.trim().toUpperCase() : undefined;
-+
-+    if (rol === Role.CSM && !zonaVal) {
-+      return next(new ErrorResponse('Se requiere una zona para este rol', 400));
-+    }
-+
-     // Verificar hospital si el rol es residente o formador
-     if ((rol === Role.RESIDENTE || rol === Role.TUTOR) && !hospital) {
-       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
-     }
- 
-     let hospitalDoc;
-     if (hospital) {
-       hospitalDoc = await Hospital.findById(hospital);
-       if (!hospitalDoc) {
-         return next(new ErrorResponse('Hospital no encontrado', 404));
-       }
-     }
- 
-     if (requester?.rol === Role.CSM) {
-       const rolesPermitidos = [Role.RESIDENTE, Role.TUTOR];
-       if (!rolesPermitidos.includes(rol)) {
-         return next(
-           new ErrorResponse('No autorizado para invitar usuarios con este rol', 403)
-         );
-       }
- 
-       if (!hospitalDoc) {
-         return next(
-           new ErrorResponse('Se requiere un hospital válido de tu zona para invitar', 403)
-         );
-       }
- 
--      if (hospitalDoc.zona !== requester.zona) {
-+      const hospitalZona = typeof hospitalDoc.zona === 'string' ? hospitalDoc.zona.toUpperCase() : hospitalDoc.zona;
-+      const requesterZona = typeof requester.zona === 'string' ? requester.zona.toUpperCase() : requester.zona;
-+
-+      if (hospitalZona !== requesterZona) {
-         return next(
-           new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
-         );
-       }
-     }
- 
-     const programType =
-       tipo ||
-       requester?.tipo ||
-       ([Role.PARTICIPANTE, Role.PROFESOR].includes(rol)
-         ? 'Programa Sociedades'
-         : 'Programa Residentes');
- 
-     const accessCode = await AccessCode.findOne({ rol, tipo: programType });
- 
-     if (!accessCode) {
-       return next(
-         new ErrorResponse(
-           `Falta configurar el código de acceso para el rol ${rol}`,
-           400
-         )
-       );
-     }
- 
-     // Generar token
-     const token = crypto.randomBytes(20).toString('hex');
-     const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
-     const fechaEnvio = new Date();
- 
-     const resolvedSociedad = sociedad || requester?.sociedad;
-     const invitationUpdate = {
-       email,
-       rol,
--      hospital,
-       sociedad: sociedad || requester?.sociedad,
-       tipo: programType,
-       token,
-       fechaExpiracion,
-       fechaEnvio,
-       estado: 'pendiente',
-       admin: requester?._id || requester?.id
+diff --git a/tests/updatePhaseStatus.test.js b/tests/updatePhaseStatus.test.js
+index 2741b0a6ddf7c9977039d2cfd21458941760d513..94538d12039b62dc203661fce006d69cc10f900a 100644
+--- a/tests/updatePhaseStatus.test.js
++++ b/tests/updatePhaseStatus.test.js
+@@ -12,50 +12,74 @@ describe('updatePhaseStatus', () => {
+     const progreso = {
+       actividades: [ { estado: 'validado' }, { estado: 'validado' } ],
+       estadoGeneral: 'en progreso',
+       residente: { _id: 'res1' },
+       fase: { _id: 'fase1', orden: 1 },
+       save: jest.fn(),
+       populate: jest.fn().mockResolvedValue()
      };
  
-     if (hospital) {
-       invitationUpdate.hospital = hospital;
-     }
+     const nextFase = { _id: 'fase2', orden: 2 };
+     const nextProgreso = {
+       estadoGeneral: 'bloqueada',
+       save: jest.fn()
+     };
  
-     if (resolvedSociedad) {
-       invitationUpdate.sociedad = resolvedSociedad;
-     }
+     jest.spyOn(Fase, 'findOne').mockResolvedValue(nextFase);
+     jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(nextProgreso);
  
-+    if (zonaVal) {
-+      invitationUpdate.zona = zonaVal;
-+    }
-+
-     const updateQuery = existingInvitation ? { _id: existingInvitation._id } : { email };
-     const updateDoc = { $set: invitationUpdate };
+     await updatePhaseStatus(progreso);
  
-     if (!hospital && existingInvitation?.hospital) {
-       updateDoc.$unset = { ...(updateDoc.$unset || {}), hospital: '' };
-     }
- 
-     if (!resolvedSociedad && existingInvitation?.sociedad) {
-       updateDoc.$unset = { ...(updateDoc.$unset || {}), sociedad: '' };
-     }
- 
-+    if (!zonaVal && existingInvitation?.zona) {
-+      updateDoc.$unset = { ...(updateDoc.$unset || {}), zona: '' };
-+    }
-+
-     const invitacion = await Invitacion.findOneAndUpdate(updateQuery, updateDoc, {
-       new: true,
-       upsert: true,
-       setDefaultsOnInsert: true
-     });
- 
-     // Crear URL de registro basada en la configuración del frontend
-     const baseFrontendUrl = config.frontendUrl || 'http://localhost:5173';
-     const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
-       ? baseFrontendUrl.slice(0, -1)
-       : baseFrontendUrl;
-     const registerUrl = `${normalizedBaseUrl}/register/${token}`;
- 
-     // Preparar mensaje de email
-     const roleLabel = rol ? rol.toUpperCase() : '';
-     const messageLines = [
-       '📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:',
-       '',
-       `🔹 Rol: ${roleLabel}`,
-       `🔐 Código de acceso: ${accessCode.codigo}`,
-       '',
-       '📝 Regístrate en el siguiente enlace:',
-       registerUrl,
-       '',
-       'Si tienes cualquier duda, no dudes en consultarnos.',
-diff --git a/src/controllers/userController.js b/src/controllers/userController.js
-index 9a8c511172ad5b4c9a21df3a1622557aed7baf9b..3e4949c5e4a03bf971ea3576e5491df39402b75a 100644
---- a/src/controllers/userController.js
-+++ b/src/controllers/userController.js
-@@ -848,51 +864,51 @@ exports.getInvitationByTokenPublic = async (req, res, next) => {
-       if (invitation.estado !== 'expirada' && typeof invitation.marcarComoExpirada === 'function') {
-         await invitation.marcarComoExpirada();
-       }
-       return next(new ErrorResponse('Invitación expirada', 410));
-     }
- 
-     const accessCode = await AccessCode.findOne({ rol: invitation.rol, tipo: invitation.tipo });
- 
-     if (!accessCode) {
-       return next(new ErrorResponse('Invitación no válida', 400));
-     }
- 
-     res.status(200).json({
-       success: true,
-       data: {
-         email: invitation.email,
-         rol: invitation.rol,
-         tipo: invitation.tipo,
-         codigoAcceso: accessCode.codigo,
-         hospital: invitation.hospital
-           ? { _id: invitation.hospital._id, nombre: invitation.hospital.nombre }
-           : undefined,
-         sociedad: invitation.sociedad
-           ? { _id: invitation.sociedad._id, titulo: invitation.sociedad.titulo }
-           : undefined,
--        zona: invitation.hospital?.zona
-+        zona: invitation.zona || invitation.hospital?.zona
-       }
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Obtener ALL las invitaciones
- // @route   GET /api/users/invitations
- // @access  Private/Admin
- exports.getInvitations = async (req, res, next) => {
-   try {
-     const invitations = await Invitacion.find()
-       .populate('hospital')
-       .populate('admin');
- 
-     res.status(200).json({
-       success: true,
-       count: invitations.length,
-       data: invitations
-     });
-   } catch (err) {
-     next(err);
-   }
- };
-diff --git a/src/models/Invitacion.js b/src/models/Invitacion.js
-index b1f5d5072bc61b41959bed24c028528507a96011..ba89eed7963673db9cedeed3352645714d1e6b53 100644
---- a/src/models/Invitacion.js
-+++ b/src/models/Invitacion.js
-@@ -1,52 +1,58 @@
- const mongoose = require('mongoose');
- const { Role } = require('../utils/roles');
- 
- const programTypes = ['Programa Residentes', 'Programa Sociedades'];
- 
- const invitacionSchema = new mongoose.Schema({
-   email: {
-     type: String,
-     required: [true, 'Por favor proporcione un email'],
-     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Por favor proporcione un email válido']
-   },
-   rol: {
-     type: String,
-     enum: Object.values(Role),
-     required: [true, 'Por favor especifique un rol']
-   },
-   hospital: {
-     type: mongoose.Schema.Types.ObjectId,
-     ref: 'Hospital',
-     required: function() {
-       return this.rol === Role.RESIDENTE || this.rol === Role.TUTOR;
-     }
-   },
--  sociedad: {
--    type: mongoose.Schema.Types.ObjectId,
--    ref: 'Sociedades'
--  },
-+  zona: {
-+    type: String,
-+    required: function() {
-+      return this.rol === Role.CSM;
-+    }
-+  },
-+  sociedad: {
-+    type: mongoose.Schema.Types.ObjectId,
-+    ref: 'Sociedades'
-+  },
-   token: {
-     type: String,
-     required: true
-   },
-   fechaEnvio: {
-     type: Date,
-     default: Date.now
-   },
-   fechaExpiracion: {
-     type: Date,
-     required: true
-   },
-   estado: {
-     type: String,
-     enum: ['pendiente', 'aceptada', 'expirada'],
-     default: 'pendiente'
-   },
-   tipo: {
-     type: String,
-     enum: programTypes,
-     default: 'Programa Residentes'
-   },
-   admin: {
-     type: mongoose.Schema.Types.ObjectId,
-     ref: 'User',
-diff --git a/tests/getInvitationByTokenPublic.test.js b/tests/getInvitationByTokenPublic.test.js
-index afbb18b578f04f6d3b4b8aab901e3e0ad77f92e1..1acd6d79d59e545a0f196b2b1c7d9afd5822fb20 100644
---- a/tests/getInvitationByTokenPublic.test.js
-+++ b/tests/getInvitationByTokenPublic.test.js
-@@ -29,50 +29,81 @@ describe('getInvitationByTokenPublic', () => {
-     const req = { params: { token: 'token123' } };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
- 
-     await getInvitationByTokenPublic(req, res, jest.fn());
- 
-     expect(Invitacion.findOne).toHaveBeenCalledWith({ token: 'token123', estado: 'pendiente' });
-     expect(populateMock).toHaveBeenCalledWith([
-       { path: 'hospital', select: 'nombre zona' },
-       { path: 'sociedad', select: 'titulo status' }
-     ]);
-     expect(accessSpy).toHaveBeenCalledWith({ rol: 'residente', tipo: 'Programa Residentes' });
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({
-       success: true,
-       data: expect.objectContaining({
-         email: 'user@test.com',
-         rol: 'residente',
-         tipo: 'Programa Residentes',
-         codigoAcceso: 'ABC123',
-         hospital: { _id: 'h1', nombre: 'Hospital 1' },
-         zona: 'NORTE'
-       })
-     });
+     expect(progreso.estadoGeneral).toBe('validado');
+     expect(progreso.save).toHaveBeenCalled();
+     expect(nextProgreso.estadoGeneral).toBe('en progreso');
+     expect(nextProgreso.save).toHaveBeenCalled();
    });
- 
-+  test('usa la zona de la invitación cuando no hay hospital', async () => {
-+    const invitation = {
-+      email: 'coord@test.com',
-+      rol: 'csm',
-+      tipo: 'Programa Residentes',
-+      estado: 'pendiente',
-+      haExpirado: jest.fn().mockReturnValue(false),
-+      hospital: null,
-+      sociedad: null,
-+      zona: 'CANARIAS'
++
++  test('does not update when there are activities pending validation', async () => {
++    const progreso = {
++      actividades: [
++        { estado: 'validado' },
++        { estado: 'pendiente' }
++      ],
++      estadoGeneral: 'en progreso',
++      residente: { _id: 'res1', email: 'residente@example.com' },
++      fase: { _id: 'fase1', orden: 1, nombre: 'Fase 1' },
++      save: jest.fn(),
++      populate: jest.fn().mockResolvedValue()
 +    };
 +
-+    const execMock = jest.fn().mockResolvedValue(invitation);
-+    const populateMock = jest.fn().mockReturnValue({ exec: execMock });
-+    jest.spyOn(Invitacion, 'findOne').mockReturnValue({ populate: populateMock });
-+    jest
-+      .spyOn(AccessCode, 'findOne')
-+      .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
++    const faseSpy = jest.spyOn(Fase, 'findOne').mockResolvedValue(null);
++    const progresoSpy = jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(null);
 +
-+    const req = { params: { token: 'token-zone' } };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
++    await updatePhaseStatus(progreso);
 +
-+    await getInvitationByTokenPublic(req, res, jest.fn());
-+
-+    expect(res.status).toHaveBeenCalledWith(200);
-+    expect(res.json).toHaveBeenCalledWith({
-+      success: true,
-+      data: expect.objectContaining({ zona: 'CANARIAS' })
-+    });
++    expect(progreso.save).not.toHaveBeenCalled();
++    expect(faseSpy).not.toHaveBeenCalled();
++    expect(progresoSpy).not.toHaveBeenCalled();
 +  });
 +
-   test('lanza error cuando la invitación no existe', async () => {
-     const execMock = jest.fn().mockResolvedValue(null);
-     const populateMock = jest.fn().mockReturnValue({ exec: execMock });
-     jest.spyOn(Invitacion, 'findOne').mockReturnValue({ populate: populateMock });
- 
-     const req = { params: { token: 'missing' } };
-     const next = jest.fn();
- 
-     await getInvitationByTokenPublic(req, {}, next);
- 
-     expect(next).toHaveBeenCalledWith(expect.any(ErrorResponse));
-     expect(next.mock.calls[0][0]).toMatchObject({ statusCode: 404 });
-   });
- 
-   test('marca como expirada y devuelve error cuando la invitación está caducada', async () => {
-     const invitation = {
-       email: 'user@test.com',
-       rol: 'residente',
-       tipo: 'Programa Residentes',
-       estado: 'pendiente',
-       haExpirado: jest.fn().mockReturnValue(true),
-       marcarComoExpirada: jest.fn().mockResolvedValue(),
-       hospital: null,
-       sociedad: null
+   test('uses FaseSoc when progreso.faseModel es FaseSoc', async () => {
+     const progreso = {
+       actividades: [{ estado: 'validado' }, { estado: 'validado' }],
+       estadoGeneral: 'en progreso',
+       residente: { _id: 'res1' },
+       faseModel: 'FaseSoc',
+       fase: { _id: 'soc1', orden: 1 },
+       save: jest.fn(),
+       populate: jest.fn().mockResolvedValue()
      };
-diff --git a/tests/inviteUserCsm.test.js b/tests/inviteUserCsm.test.js
-index 362d885102d8e293641621da659756a9db989fca..86341509733977a3ed599e316b7f0b78fd56d96e 100644
---- a/tests/inviteUserCsm.test.js
-+++ b/tests/inviteUserCsm.test.js
-@@ -3,140 +3,182 @@ jest.mock('../src/config/config', () => ({
- }));
  
- const { inviteUser } = require('../src/controllers/userController');
- const User = require('../src/models/User');
- const Invitacion = require('../src/models/Invitacion');
- const Hospital = require('../src/models/Hospital');
- const AccessCode = require('../src/models/AccessCode');
- const sendEmail = require('../src/utils/sendEmail');
- const { createAuditLog } = require('../src/utils/auditLog');
- 
- jest.mock('../src/utils/sendEmail');
- jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
- 
- describe('inviteUser csm', () => {
-   beforeEach(() => {
-     jest.spyOn(console, 'warn').mockImplementation(() => {});
-   });
- 
-   afterEach(() => {
-     jest.restoreAllMocks();
-     jest.clearAllMocks();
-   });
- 
-   test('crea invitación para csm', async () => {
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
--    jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
--    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1' });
-+    jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'CANARIAS' });
-     const accessSpy = jest
-       .spyOn(AccessCode, 'findOne')
-       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
--    const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm' };
--    jest.spyOn(Invitacion, 'findOneAndUpdate').mockResolvedValue(created);
-+    const created = { _id: 'i1', email: 'coord@test.com', rol: 'csm', zona: 'CANARIAS' };
-+    const updateSpy = jest
-+      .spyOn(Invitacion, 'findOneAndUpdate')
-+      .mockResolvedValue(created);
-     sendEmail.mockResolvedValue();
- 
-     const req = {
-       body: {
-         email: 'coord@test.com',
-         rol: 'csm',
-         hospital: 'h1',
--        tipo: 'Programa Residentes'
-+        tipo: 'Programa Residentes',
-+        zona: 'canarias'
-       },
-       protocol: 'http',
-       get: () => 'localhost',
-       user: { _id: 'admin', id: 'admin' },
-       ip: '::1'
+     const nextFase = { _id: 'soc2', orden: 2 };
+     const nextProgreso = {
+       estadoGeneral: 'bloqueada',
+       save: jest.fn()
      };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
  
-     await inviteUser(req, res, jest.fn());
+     const faseSpy = jest.spyOn(Fase, 'findOne');
+     const faseSocSpy = jest.spyOn(FaseSoc, 'findOne').mockResolvedValue(nextFase);
+     const progresoSpy = jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(nextProgreso);
  
--    expect(Invitacion.create).toHaveBeenCalledWith(
--      expect.objectContaining({ rol: 'csm', tipo: 'Programa Residentes' })
--    );
-+    expect(updateSpy).toHaveBeenCalledWith(
-+      { email: 'coord@test.com' },
-+      expect.objectContaining({
-+        $set: expect.objectContaining({
-+          rol: 'csm',
-+          tipo: 'Programa Residentes',
-+          zona: 'CANARIAS'
-+        })
-+      }),
-+      expect.objectContaining({ upsert: true })
-+    );
-     expect(accessSpy).toHaveBeenCalledWith({ rol: 'csm', tipo: 'Programa Residentes' });
-     expect(sendEmail).toHaveBeenCalledWith(
-       expect.objectContaining({
-         message: expect.stringContaining('Código de acceso: CSM123')
-       })
-     );
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: created });
-   });
+     await updatePhaseStatus(progreso);
  
-   test('permite reenvío de invitación pendiente para csm', async () => {
-     jest.spyOn(User, 'findOne').mockResolvedValue(null);
--    const existingInvitation = {
--      _id: 'csm-inv',
--      email: 'coord@test.com',
--      estado: 'pendiente',
--      hospital: 'h1'
--    };
-+    const existingInvitation = {
-+      _id: 'csm-inv',
-+      email: 'coord@test.com',
-+      estado: 'pendiente',
-+      hospital: 'h1',
-+      zona: 'CANARIAS'
-+    };
-     jest.spyOn(Invitacion, 'findOne').mockResolvedValue(existingInvitation);
-     jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'norte' });
-     jest
-       .spyOn(AccessCode, 'findOne')
-       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
-     const updated = { _id: 'csm-inv', email: 'coord@test.com', rol: 'csm' };
-     const updateSpy = jest
-       .spyOn(Invitacion, 'findOneAndUpdate')
-       .mockResolvedValue(updated);
-     sendEmail.mockResolvedValue();
- 
-     const req = {
-       body: {
-         email: 'coord@test.com',
-         rol: 'csm',
-         hospital: 'h1',
--        tipo: 'Programa Residentes'
-+        tipo: 'Programa Residentes',
-+        zona: 'CANARIAS'
-       },
-       user: { _id: 'admin', id: 'admin' },
-       ip: '::1'
-     };
-     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
- 
-     await inviteUser(req, res, jest.fn());
- 
-     expect(updateSpy).toHaveBeenCalledWith(
-       { _id: existingInvitation._id },
--      expect.objectContaining({ $set: expect.objectContaining({ email: 'coord@test.com' }) }),
--      expect.objectContaining({ upsert: true })
--    );
-+      expect.objectContaining({
-+        $set: expect.objectContaining({ email: 'coord@test.com', zona: 'CANARIAS' })
-+      }),
-+      expect.objectContaining({ upsert: true })
-+    );
-     expect(sendEmail).toHaveBeenCalled();
-     expect(res.status).toHaveBeenCalledWith(200);
-     expect(res.json).toHaveBeenCalledWith({ success: true, data: updated });
-   });
- 
--  test('registra log y reenvía cuando el correo ya tiene usuario', async () => {
--    const logSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
--    jest.spyOn(User, 'findOne').mockResolvedValue({ _id: 'existing-user' });
--    jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
--    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'norte' });
-+  test('registra log y reenvía cuando el correo ya tiene usuario', async () => {
-+    const logSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
-+    jest.spyOn(User, 'findOne').mockResolvedValue({ _id: 'existing-user' });
-+    jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-     jest
-       .spyOn(AccessCode, 'findOne')
-       .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
--    const updated = { _id: 'csm-inv-new', email: 'coord@test.com', rol: 'csm' };
-+    const updated = { _id: 'csm-inv-new', email: 'coord@test.com', rol: 'csm', zona: 'NORTE' };
-     jest.spyOn(Invitacion, 'findOneAndUpdate').mockResolvedValue(updated);
-     sendEmail.mockResolvedValue();
- 
-     const req = {
-       body: {
-         email: 'coord@test.com',
-         rol: 'csm',
-         hospital: 'h1',
--        tipo: 'Programa Residentes'
--      },
--      user: { _id: 'admin', id: 'admin' },
--      ip: '::1'
--    };
--    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
--
--    await inviteUser(req, res, jest.fn());
--
--    expect(logSpy).toHaveBeenCalled();
--    expect(sendEmail).toHaveBeenCalled();
--    expect(res.status).toHaveBeenCalledWith(200);
--    expect(res.json).toHaveBeenCalledWith({ success: true, data: updated });
--
--    logSpy.mockRestore();
--  });
--});
-+        tipo: 'Programa Residentes',
-+        zona: 'NORTE'
-+      },
-+      user: { _id: 'admin', id: 'admin' },
-+      ip: '::1'
-+    };
-+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
-+
-+    await inviteUser(req, res, jest.fn());
-+
-+    expect(logSpy).toHaveBeenCalled();
-+    expect(sendEmail).toHaveBeenCalled();
-+    expect(res.status).toHaveBeenCalledWith(200);
-+    expect(res.json).toHaveBeenCalledWith({ success: true, data: updated });
-+
-+    logSpy.mockRestore();
-+  });
-+
-+  test('rechaza invitación de csm sin zona', async () => {
-+    jest.spyOn(User, 'findOne').mockResolvedValue(null);
-+    jest.spyOn(Invitacion, 'findOne').mockResolvedValue(null);
-+    jest.spyOn(Hospital, 'findById').mockResolvedValue({ _id: 'h1', zona: 'NORTE' });
-+    jest
-+      .spyOn(AccessCode, 'findOne')
-+      .mockResolvedValue({ codigo: 'CSM123', rol: 'csm', tipo: 'Programa Residentes' });
-+
-+    const req = {
-+      body: {
-+        email: 'coord@test.com',
-+        rol: 'csm',
-+        hospital: 'h1',
-+        tipo: 'Programa Residentes'
-+      },
-+      user: { _id: 'admin', id: 'admin' },
-+      ip: '::1'
-+    };
-+    const next = jest.fn();
-+
-+    await inviteUser(req, {}, next);
-+
-+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 400 }));
-+    expect(next.mock.calls[0][0].message).toContain('Se requiere una zona');
-+  });
-+});
+     expect(faseSocSpy).toHaveBeenCalled();
+     expect(faseSpy).not.toHaveBeenCalled();

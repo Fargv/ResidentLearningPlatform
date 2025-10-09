@@ -43,12 +43,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 const clientOrigin = process.env.CLIENT_ORIGIN || 'https://residentlearningplatform.netlify.app';
-const allowedOrigins = [
+const allowedOrigins = Array.from(new Set([
   'http://localhost:3000',
   'http://localhost:5173',
   'https://residentlearningplatform.netlify.app',
   'https://academicprogramdavinci.netlify.app',
-];
+  clientOrigin,
+]));
 
 const corsOptions = {
   origin: function (origin, callback) {
