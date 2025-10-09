@@ -22,7 +22,8 @@ import {
   Autocomplete,
   MenuItem,
   Paper,
-  Stack
+  Stack,
+  Switch
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -31,7 +32,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
@@ -80,6 +81,8 @@ const ResidenteFases: React.FC = () => {
   const [porcentaje, setPorcentaje] = useState<number>(0);
   const [esCirugia, setEsCirugia] = useState(false);
   const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
+  const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
+  const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -184,9 +187,10 @@ const ResidenteFases: React.FC = () => {
     loadSociedad();
   }, [user]);
 
-  const handleOpenDialog = (progresoId: string, index: number) => {
+  const handleOpenDialog = (progresoId: string, index: number, toggleKey?: string) => {
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
+    setActiveToggleKey(toggleKey ?? null);
     const progreso = progresos.find(p => p._id === progresoId);
     const actividad = progreso?.actividades?.[index];
     const esCirugia = actividad?.tipo === 'cirugia';
@@ -203,6 +207,11 @@ const ResidenteFases: React.FC = () => {
     setPorcentaje(0);
 
     setDialogOpen(true);
+  };
+
+  const handleToggleComplete = (progresoId: string, index: number, toggleKey: string) => {
+    setCompletionToggles(prev => ({ ...prev, [toggleKey]: true }));
+    handleOpenDialog(progresoId, index, toggleKey);
   };
 
   const botonConfirmarHabilitado =
@@ -236,6 +245,10 @@ const ResidenteFases: React.FC = () => {
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
+    if (activeToggleKey) {
+      setCompletionToggles(prev => ({ ...prev, [activeToggleKey]: false }));
+      setActiveToggleKey(null);
+    }
     setCirugia(null);
     setOtraCirugia('');
     setNombreCirujano('');
@@ -445,6 +458,7 @@ const ResidenteFases: React.FC = () => {
                 display="grid"
                 gap={2}
                 gridTemplateColumns={{ xs: '1fr', lg: '1fr 1fr' }}
+                alignItems="stretch"
               >
                 {item.actividades.map((act: any, idx: number) => {
                   const statusData = (() => {
@@ -482,76 +496,81 @@ const ResidenteFases: React.FC = () => {
                     }
                   })();
 
-                  const details: Array<{
-                    label: string;
-                    value: React.ReactNode;
-                    fullWidth?: boolean;
-                    color?: string;
-                  }> = [];
+                  const showCompleteButton =
+                    (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
+                    item.estadoGeneral !== 'bloqueada';
 
-                  details.push({
-                    label: t('residentPhases.completedOn'),
-                    value: act.fecha ? formatDayMonthYear(act.fecha) : '—'
-                  });
+                  const toggleKey = `${item._id}-${idx}`;
 
-                  if (act.comentariosResidente) {
-                    details.push({
-                      label: t('residentPhases.comment'),
-                      value: act.comentariosResidente,
-                      fullWidth: true
-                    });
-                  }
+                  const statusDate =
+                    act.estado === 'validado'
+                      ? act.fechaValidacion
+                      : act.estado === 'completado'
+                      ? act.fecha
+                      : null;
 
-                  if (act.tipo === 'cirugia' && act.estado !== 'pendiente') {
+                  const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
+
+                  const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
+
+                  if (act.tipo === 'cirugia') {
                     if (act.cirugia?.name || act.otraCirugia) {
-                      details.push({
+                      surgeryDetails.push({
                         label: getLabelFromTranslation('residentPhases.surgeryType', { type: placeholderToken }),
                         value: act.cirugia?.name || act.otraCirugia
                       });
                     }
 
                     if (act.nombreCirujano) {
-                      details.push({
+                      surgeryDetails.push({
                         label: getLabelFromTranslation('residentPhases.surgeonName', { name: placeholderToken }),
                         value: act.nombreCirujano
                       });
                     }
 
                     if (typeof act.porcentajeParticipacion === 'number') {
-                      details.push({
+                      surgeryDetails.push({
                         label: getLabelFromTranslation('residentPhases.participation', { percent: placeholderToken }),
                         value: `${act.porcentajeParticipacion}%`
                       });
                     }
                   }
 
-                  if (act.comentariosTutor) {
-                    details.push({
-                      label: t('residentPhases.tutorComment'),
-                      value: act.comentariosTutor,
-                      fullWidth: true
-                    });
-                  }
-
-                  if (act.estado === 'rechazado' && act.comentariosRechazo) {
-                    details.push({
-                      label: t('residentPhases.rejectionReason'),
-                      value: act.comentariosRechazo,
-                      fullWidth: true,
-                      color: 'error.main'
-                    });
-                  }
-
-                  if (act.fechaValidacion) {
-                    details.push({
-                      label: t('residentPhases.validatedOn'),
-                      value: formatDayMonthYear(act.fechaValidacion)
-                    });
-                  }
-
-                  const showCompleteButton =
-                    (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
-                    item.estadoGeneral !== 'bloqueada';
+                  const renderCommentSection = (
+                    label: string,
+                    value: React.ReactNode,
+                    options?: { color?: string; borderColor?: string }
+                  ) => (
+                    <Box key={label} sx={{ mt: 2 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                        sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+                      >
+                        {label}
+                      </Typography>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          mt: 0.75,
+                          p: 1.5,
+                          borderRadius: 2,
+                          backgroundColor:
+                            theme.palette.mode === 'light'
+                              ? theme.palette.common.white
+                              : theme.palette.grey[800],
+                          border: `1px solid ${
+                            options?.borderColor || theme.palette.divider
+                          }`
+                        }}
+                      >
+                        <Typography variant="body2" color={options?.color || 'text.primary'}>
+                          {value}
+                        </Typography>
+                      </Paper>
+                    </Box>
+                  );
 
                   return (
                     <Paper
@@ -571,7 +590,10 @@ const ResidenteFases: React.FC = () => {
                         boxShadow:
                           theme.palette.mode === 'light'
                             ? '0 4px 10px rgba(15, 23, 42, 0.08)'
-                            : '0 4px 12px rgba(15, 23, 42, 0.35)'
+                            : '0 4px 12px rgba(15, 23, 42, 0.35)',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
                       }}
                     >
                       <Stack
@@ -606,90 +628,112 @@ const ResidenteFases: React.FC = () => {
                             {act.nombre || t('residentPhases.unnamedActivity')}
                           </Typography>
                         </Stack>
-                        <Chip
-                          size="small"
-                          label={statusData.label}
-                          color={statusData.color}
-                          icon={statusData.icon}
-                          sx={{
-                            fontWeight: 600,
-                            alignSelf: { xs: 'flex-start', sm: 'center' }
-                          }}
-                        />
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                          gap={0.5}
+                        >
+                          <Chip
+                            size="small"
+                            label={statusData.label}
+                            color={statusData.color}
+                            icon={statusData.icon}
+                            sx={{
+                              fontWeight: 600,
+                              alignSelf: { xs: 'flex-start', sm: 'flex-end' }
+                            }}
+                          />
+                          {formattedStatusDate && (
+                            <Typography variant="caption" color="text.secondary">
+                              {formattedStatusDate}
+                            </Typography>
+                          )}
+                        </Box>
                       </Stack>
 
-                      {details.length > 0 && (
-                            <Box
-                              sx={{
-                                mt: 1,
-                                display: 'grid',
-                                gap: 2,
-                                gridTemplateColumns: {
-                                  xs: '1fr',
-                                  sm: 'repeat(2, 1fr)',
-                                  md: 'repeat(3, 1fr)',
-                                },
-                              }}
-                            >
-                              {details.map((detail, detailIdx) => (
-                                <Box
-                                  key={detailIdx}
-                                  sx={{ gridColumn: detail.fullWidth ? '1 / -1' : 'auto' }}
+                      <Box sx={{ mt: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                        {act.comentariosResidente &&
+                          renderCommentSection(t('residentPhases.comment'), act.comentariosResidente)}
+
+                        {surgeryDetails.length > 0 && (
+                          <Box
+                            sx={{
+                              mt: act.comentariosResidente ? 2 : 1,
+                              display: 'grid',
+                              gap: 2,
+                              gridTemplateColumns: {
+                                xs: '1fr',
+                                sm: `repeat(${Math.min(surgeryDetails.length, 3)}, 1fr)`
+                              }
+                            }}
+                          >
+                            {surgeryDetails.map((detail, detailIdx) => (
+                              <Box key={`${detail.label}-${detailIdx}`}>
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight={600}
+                                  sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
                                 >
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    fontWeight={600}
-                                    sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-                                  >
-                                    {detail.label}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color={detail.color ? detail.color : 'text.primary'}
-                                    sx={{ mt: 0.5 }}
-                                  >
-                                    {detail.value}
-                                  </Typography>
-                                </Box>
-                              ))}
-                            </Box>
-                          )}
+                                  {detail.label}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                                  {detail.value}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                        )}
+
+                        {act.comentariosTutor &&
+                          renderCommentSection(t('residentPhases.tutorComment'), act.comentariosTutor)}
+
+                        {act.estado === 'rechazado' && act.comentariosRechazo &&
+                          renderCommentSection(t('residentPhases.rejectionReason'), act.comentariosRechazo, {
+                            color: theme.palette.error.main,
+                            borderColor: theme.palette.error.light
+                          })}
+                      </Box>
 
                       {showCompleteButton && (
                         <Box
                           display="flex"
-                          justifyContent={{ xs: 'stretch', sm: 'flex-end' }}
-                          mt={2}
+                          justifyContent={{ xs: 'center', sm: 'flex-end' }}
+                          mt={3}
                         >
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => handleOpenDialog(item._id, idx)}
+                          <Box
                             sx={{
-                              borderRadius: 2,
-                              textTransform: 'none',
-                              fontWeight: 600,
-                              px: 2.5,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 1,
+                              px: 1.5,
                               py: 0.75,
-                              boxShadow: 'none',
-                              backgroundColor:
-                                theme.palette.mode === 'light'
-                                  ? theme.palette.primary.main
-                                  : theme.palette.primary.light,
-                              color: theme.palette.primary.contrastText,
-                              '&:hover': {
-                                boxShadow: 'none',
-                                backgroundColor:
-                                  theme.palette.mode === 'light'
-                                    ? theme.palette.primary.dark
-                                    : theme.palette.primary.main,
-                              },
-                              width: { xs: '100%', sm: 'auto' }
+                              borderRadius: 999,
+                              border: `1px solid ${theme.palette.primary.main}`,
+                              backgroundColor: alpha(
+                                theme.palette.primary.main,
+                                theme.palette.mode === 'light' ? 0.1 : 0.2
+                              ),
+                              color: theme.palette.primary.main
                             }}
                           >
-                            {t('residentPhases.markAsCompleted')}
-                          </Button>
+                            <Switch
+                              color="primary"
+                              checked={completionToggles[toggleKey] || false}
+                              onChange={(_, checked) => {
+                                if (checked) {
+                                  handleToggleComplete(item._id, idx, toggleKey);
+                                }
+                              }}
+                              inputProps={{
+                                'aria-label': t('residentPhases.markAsCompleted') as string
+                              }}
+                            />
+                            <Typography variant="body2" fontWeight={600}>
+                              {t('residentPhases.markAsCompleted')}
+                            </Typography>
+                          </Box>
                         </Box>
                       )}
                     </Paper>
