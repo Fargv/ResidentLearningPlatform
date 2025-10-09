@@ -3,9 +3,6 @@ import {
   Box,
   Typography,
   Alert,
-  List,
-  ListItem,
-  ListItemText,
   Chip,
   Skeleton,
   LinearProgress,
@@ -23,7 +20,10 @@ import {
   CircularProgress,
   Backdrop,
   Autocomplete,
-  MenuItem
+  MenuItem,
+  Grid,
+  Paper,
+  Stack
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -31,15 +31,32 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import { useTheme } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { useTranslation } from 'react-i18next';
 
+const formatActivityType = (type?: string): string => {
+  if (!type) return '';
+  return type.charAt(0).toUpperCase() + type.slice(1);
+};
+
 const ResidenteFases: React.FC = () => {
+  const theme = useTheme();
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
+  const placeholderToken = '___';
+
+  const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
+    const raw = t(key as any, params);
+    return raw
+      .replace(new RegExp(`${placeholderToken}`, 'g'), '')
+      .replace(/[:：]\s*$/, '')
+      .replace(/[%％]\s*$/, '')
+      .trim();
+  };
   const [progresos, setProgresos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -423,109 +440,236 @@ const ResidenteFases: React.FC = () => {
           })()}
 
           {item.estadoGeneral !== 'bloqueada' ? (
-            <List>
-              {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
-                item.actividades.map((act: any, idx: number) => (
-                  <ListItem key={idx}>
-                  {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
-                  {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
-                  {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
-                  {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
-                  <ListItemText
-                    primary={act.nombre || t('residentPhases.unnamedActivity')}
-                    secondary={
-                      <>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('residentPhases.activityType', { type: act.tipo })}
-                        </Typography>
-                        {act.comentariosResidente && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.comment')}: {act.comentariosResidente}
-                          </Typography>
-                        )}
-                        {act.fecha && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
-                          </Typography>
-                        )}
-                        {act.tipo === 'cirugia' && act.estado !== 'pendiente' && (
-                          <>
-                            {(act.cirugia?.name || act.otraCirugia) && (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('residentPhases.surgeryType', {
-                                  type: act.cirugia?.name || act.otraCirugia
-                                })}
-                              </Typography>
-                            )}
-                            {act.nombreCirujano && (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('residentPhases.surgeonName', {
-                                  name: act.nombreCirujano
-                                })}
-                              </Typography>
-                            )}
-                            {typeof act.porcentajeParticipacion === 'number' && (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('residentPhases.participation', {
-                                  percent: act.porcentajeParticipacion
-                                })}
-                              </Typography>
-                            )}
-                          </>
-                        )}
-                        {act.comentariosTutor && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.tutorComment')}: {act.comentariosTutor}
-                          </Typography>
-                        )}
-                        {act.estado === 'rechazado' && act.comentariosRechazo && (
-                          <Typography variant="body2" color="error">
-                            {t('residentPhases.rejectionReason')}: {act.comentariosRechazo}
-                          </Typography>
-                        )}
-                        {act.fechaValidacion && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.validatedOn')}: {formatDayMonthYear(act.fechaValidacion)}
-                          </Typography>
-                        )}
-                        <Typography variant="body2" color="text.secondary">
-                          {t('residentPhases.status')}: {
-                            act.estado === 'validado'
-                              ? t('status.validado')
-                              : act.estado === 'rechazado'
-                              ? t('status.rechazado')
-                              : act.estado === 'completado'
-                              ? t('status.pendingValidation')
-                              : t('status.noCompletada')
-                          }
-                        </Typography>
-                      </>
+            Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+              <Box
+                display="grid"
+                gap={2}
+                gridTemplateColumns={{ xs: '1fr', lg: '1fr 1fr' }}
+              >
+                {item.actividades.map((act: any, idx: number) => {
+                  const statusData = (() => {
+                    switch (act.estado) {
+                      case 'validado':
+                        return {
+                          label: t('status.validado'),
+                          color: 'success' as const,
+                          icon: <VerifiedIcon fontSize="small" />
+                        };
+                      case 'rechazado':
+                        return {
+                          label: t('status.rechazado'),
+                          color: 'error' as const,
+                          icon: <CancelIcon fontSize="small" />
+                        };
+                      case 'completado':
+                        return {
+                          label: t('status.pendingValidation'),
+                          color: 'warning' as const,
+                          icon: <CheckCircleOutlineIcon fontSize="small" />
+                        };
+                      case 'pendiente':
+                        return {
+                          label: t('status.pendiente'),
+                          color: 'info' as const,
+                          icon: <HourglassEmptyIcon fontSize="small" />
+                        };
+                      default:
+                        return {
+                          label: t('status.noCompletada'),
+                          color: 'default' as const,
+                          icon: undefined
+                        };
                     }
-                  />
-                  {((!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada') && (
-                    <Button
-                      size="small"
+                  })();
+
+                  const details: Array<{
+                    label: string;
+                    value: React.ReactNode;
+                    fullWidth?: boolean;
+                    color?: string;
+                  }> = [];
+
+                  details.push({
+                    label: t('residentPhases.status'),
+                    value: statusData.label
+                  });
+
+                  if (act.comentariosResidente) {
+                    details.push({
+                      label: t('residentPhases.comment'),
+                      value: act.comentariosResidente,
+                      fullWidth: true
+                    });
+                  }
+
+                  if (act.fecha) {
+                    details.push({
+                      label: t('residentPhases.completedOn'),
+                      value: formatDayMonthYear(act.fecha)
+                    });
+                  }
+
+                  if (act.tipo === 'cirugia' && act.estado !== 'pendiente') {
+                    if (act.cirugia?.name || act.otraCirugia) {
+                      details.push({
+                        label: getLabelFromTranslation('residentPhases.surgeryType', { type: placeholderToken }),
+                        value: act.cirugia?.name || act.otraCirugia
+                      });
+                    }
+
+                    if (act.nombreCirujano) {
+                      details.push({
+                        label: getLabelFromTranslation('residentPhases.surgeonName', { name: placeholderToken }),
+                        value: act.nombreCirujano
+                      });
+                    }
+
+                    if (typeof act.porcentajeParticipacion === 'number') {
+                      details.push({
+                        label: getLabelFromTranslation('residentPhases.participation', { percent: placeholderToken }),
+                        value: `${act.porcentajeParticipacion}%`
+                      });
+                    }
+                  }
+
+                  if (act.comentariosTutor) {
+                    details.push({
+                      label: t('residentPhases.tutorComment'),
+                      value: act.comentariosTutor,
+                      fullWidth: true
+                    });
+                  }
+
+                  if (act.estado === 'rechazado' && act.comentariosRechazo) {
+                    details.push({
+                      label: t('residentPhases.rejectionReason'),
+                      value: act.comentariosRechazo,
+                      fullWidth: true,
+                      color: 'error.main'
+                    });
+                  }
+
+                  if (act.fechaValidacion) {
+                    details.push({
+                      label: t('residentPhases.validatedOn'),
+                      value: formatDayMonthYear(act.fechaValidacion)
+                    });
+                  }
+
+                  const showCompleteButton =
+                    (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
+                    item.estadoGeneral !== 'bloqueada';
+
+                  return (
+                    <Paper
+                      key={act._id || idx}
                       variant="outlined"
-                      onClick={() => {
-                        handleOpenDialog(item._id, idx);
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor:
+                          theme.palette.mode === 'light'
+                            ? theme.palette.grey[50]
+                            : theme.palette.grey[900],
+                        borderColor:
+                          theme.palette.mode === 'light'
+                            ? theme.palette.grey[200]
+                            : theme.palette.grey[700],
+                        boxShadow:
+                          theme.palette.mode === 'light'
+                            ? '0 4px 10px rgba(15, 23, 42, 0.08)'
+                            : '0 4px 12px rgba(15, 23, 42, 0.35)'
                       }}
-                      sx={{ ml: 2 }}
                     >
-                      {t('residentPhases.markAsCompleted')}
-                    </Button>
-                  )}
-                  </ListItem>
-                ))
-              ) : (
-                <ListItem>
-                  <ListItemText primary={t('residentPhases.noActivities')} />
-                </ListItem>
-              )}
-            </List>
-          ) : (
+                      <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        justifyContent="space-between"
+                        alignItems={{ xs: 'flex-start', sm: 'center' }}
+                        spacing={1.5}
+                      >
+                        <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+                          {act.nombre || t('residentPhases.unnamedActivity')}
+                        </Typography>
+                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                          {formatActivityType(act.tipo) && (
+                            <Chip
+                              size="small"
+                              label={formatActivityType(act.tipo)}
+                              variant="outlined"
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor:
+                                  theme.palette.mode === 'light'
+                                    ? theme.palette.grey[100]
+                                    : theme.palette.grey[800],
+                                color: theme.palette.text.primary
+                              }}
+                            />
+                          )}
+                          <Chip
+                            size="small"
+                            label={statusData.label}
+                            color={statusData.color}
+                            icon={statusData.icon}
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </Stack>
+                      </Stack>
+
+                      {details.length > 0 && (
+                        <Grid container spacing={2} sx={{ mt: 1 }}>
+                          {details.map((detail, detailIdx) => (
+                            <Grid
+                              item
+                              xs={12}
+                              sm={detail.fullWidth ? 12 : 6}
+                              md={detail.fullWidth ? 12 : 4}
+                              key={detailIdx}
+                            >
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                fontWeight={600}
+                                sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+                              >
+                                {detail.label}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color={detail.color ? detail.color : 'text.primary'}
+                                sx={{ mt: 0.5 }}
+                              >
+                                {detail.value}
+                              </Typography>
+                            </Grid>
+                          ))}
+                        </Grid>
+                      )}
+
+                      {showCompleteButton && (
+                        <Box display="flex" justifyContent="flex-end" mt={2}>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => handleOpenDialog(item._id, idx)}
+                          >
+                            {t('residentPhases.markAsCompleted')}
+                          </Button>
+                        </Box>
+                      )}
+                    </Paper>
+                  );
+                })}
+              </Box>
+            ) : (
               <Typography variant="body2" color="text.secondary">
-              {t('residentPhases.phaseLocked')}
+                {t('residentPhases.noActivities')}
               </Typography>
+            )
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              {t('residentPhases.phaseLocked')}
+            </Typography>
           )}
           {item.estadoGeneral === 'validado' &&
             item.actividades.some((a: any) => a.tipo === 'cirugia') && (

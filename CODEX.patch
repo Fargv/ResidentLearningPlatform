@@ -1,233 +1,1166 @@
-diff --git a/README.md b/README.md
-index 61d919c9bbc32b8bb034ef269423cd54897243e1..9efb3d59b1ff2d9cf8dbce1bd6a5aef8b3497ea9 100644
---- a/README.md
-+++ b/README.md
-@@ -1,83 +1,83 @@
- # Plataforma de Formación en Tecnologías del Robot da Vinci
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index fd94c6b0ccc13edb16d470f3e4879450b17d60ee..396c5f30616a969f8044fd43270a9b2889888c0e 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -1,90 +1,107 @@
+ import React, { useEffect, useState } from 'react';
+ import {
+   Box,
+   Typography,
+   Alert,
+-  List,
+-  ListItem,
+-  ListItemText,
+   Chip,
+   Skeleton,
+   LinearProgress,
+   Accordion,
+   AccordionSummary,
+   AccordionDetails,
+   Button,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogActions,
+   TextField,
+   Snackbar,
+   Tooltip,
+   CircularProgress,
+-  Backdrop,
+-  Autocomplete,
+-  MenuItem
++  Backdrop,
++  Autocomplete,
++  MenuItem,
++  Grid,
++  Paper,
++  Stack
+ } from '@mui/material';
+ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+ import VerifiedIcon from '@mui/icons-material/Verified';
+ import CancelIcon from '@mui/icons-material/Cancel';
+-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
++import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
++import { useTheme } from '@mui/material/styles';
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ import { Sociedad } from '../../types/Sociedad';
+ import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
+ import { useTranslation } from 'react-i18next';
  
- Este proyecto implementa una plataforma web completa para llevar el seguimiento del programa de formación en tecnologías del robot da Vinci para residentes de hospitales.
- 
- ## Características principales
- 
- - Sistema de autenticación con diferentes roles (residentes, participantes, tutores, profesores, CSM y administradores)
-  - Seguimiento del progreso de los residentes y participantes a través de las diferentes fases del programa
-- - Validación de actividades por parte de los tutores e profesores
-+ - Validación de actividades por parte de los tutores y profesores
- ## Estructura del proyecto
- 
- ```
- davinci-platform/
- ├── src/                    # Backend (Node.js, Express, MongoDB)
- │   ├── config/             # Configuración del servidor
- │   ├── controllers/        # Controladores de la API
- │   ├── middleware/         # Middleware (autenticación, errores)
- │   ├── models/             # Modelos de datos
- │   ├── routes/             # Rutas de la API
- │   ├── utils/              # Utilidades
- │   └── server.js           # Punto de entrada del servidor
- ├── client/                 # Frontend (React, TypeScript, Material-UI)
- │   ├── public/             # Archivos estáticos
- │   ├── src/                # Código fuente
- │   │   ├── components/     # Componentes reutilizables
- │   │   ├── context/        # Contextos de React (autenticación)
- │   │   ├── pages/          # Páginas de la aplicación
- │   │   ├── App.tsx         # Componente principal
- │   │   └── index.tsx       # Punto de entrada
- │   └── package.json        # Dependencias del frontend
- ├── test.sh                 # Script para pruebas
- ├── dev.sh                  # Script para desarrollo
- ├── deploy.sh               # Script para despliegue
- ├── DEPLOY.md               # Instrucciones de despliegue
- ├── MANUAL_USUARIO.md       # Manual de usuario
- └── package.json            # Dependencias del backend
- ```
- 
- ## Tecnologías utilizadas
- 
- ### Backend
- - Node.js
- - Express
- - MongoDB
- - JWT para autenticación
- - Bcrypt para encriptación de contraseñas
- 
- ### Frontend
- - React
- - TypeScript
- - Material-UI
- - React Router
- - Axios para peticiones HTTP
- 
- ## Instalación y ejecución
- 
- ### Requisitos previos
--- Node.js (v18 o superior)
-+- Node.js (v20 o superior)
- - MongoDB (local o Atlas)
- 
- ### Instalación
- 1. Clonar el repositorio
- 2. Instalar dependencias del backend: `npm install`
- 3. Instalar dependencias del frontend: `cd client && npm install`
- 4. Copiar `.env.example` a `.env` y completar los valores requeridos:
-    - `MONGO_URI` con la cadena de conexión a tu base de datos.
-    - `CLIENT_ORIGIN` y `FRONTEND_URL` con la URL desde la que se servirá el
-      frontend (por ejemplo, `http://localhost:5173` en desarrollo).
-    - `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` y `BREVO_SENDER_NAME` siguiendo la
-      guía de la sección [Configuración de Brevo](#configuración-de-brevo-envío-de-correos).
- 
- ### Ejecución en desarrollo
- ```bash
- ./dev.sh
- ```
- El script determina automáticamente la ruta del proyecto por lo que puede ejecutarse desde cualquier directorio.
- 
- ### Pruebas
- ```bash
- ./test.sh
- ```
- Al igual que `dev.sh`, este script se puede ejecutar desde cualquier ubicación ya que calcula la raíz del repositorio.
- 
-diff --git a/src/server.js b/src/server.js
-index bdc69084501c1166058454d668b9ecd750844b6f..983fc40716d85501675255979857fcb1d9ff9850 100644
---- a/src/server.js
-+++ b/src/server.js
-@@ -21,56 +21,57 @@ const authRoutes = require('./routes/authRoutes');
- const userRoutes = require('./routes/userRoutes');
- const hospitalRoutes = require('./routes/hospitalRoutes');
- const faseRoutes = require('./routes/faseRoutes');
- const actividadRoutes = require('./routes/actividadRoutes');
- const faseSocRoutes = require('./routes/faseSocRoutes');
- const actividadSocRoutes = require('./routes/actividadSocRoutes');
- const progresoRoutes = require('./routes/progresoRoutes');
- const adjuntoRoutes = require('./routes/adjuntoRoutes');
- const notificacionRoutes = require('./routes/notificacionRoutes');
- const adminRoutes = require('./routes/adminRoutes');
- const sociedadesRoutes = require('./routes/sociedadesRoutes');
- const certificadoRoutes = require('./routes/certificadoRoutes');
- const accessCodeRoutes = require('./routes/accessCodeRoutes');
- const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
- const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
- const informesRoutes = require('./routes/informesRoutes');
- 
- // Inicializar app
- const app = express();
- 
- // Middlewares esenciales
- app.use(express.json());
- app.use(cookieParser());
- app.use(helmet());
- const clientOrigin = process.env.CLIENT_ORIGIN || 'https://residentlearningplatform.netlify.app';
--const allowedOrigins = [
-+const allowedOrigins = Array.from(new Set([
-   'http://localhost:3000',
-   'http://localhost:5173',
-   'https://residentlearningplatform.netlify.app',
-   'https://academicprogramdavinci.netlify.app',
--];
-+  clientOrigin,
-+]));
- 
- const corsOptions = {
-   origin: function (origin, callback) {
-     if (!origin || allowedOrigins.includes(origin)) {
-       callback(null, true);
-     } else {
-       console.warn(`🛑 CORS bloqueado para origen: ${origin}`);
-       callback(new Error(`CORS bloqueado: ${origin} no está en la lista de permitidos`));
-     }
-   },
-   credentials: true,
- };
- 
- app.use(cors(corsOptions));
- app.options('*', cors(corsOptions)); // Preflight para todos los endpoints
- app.use(fileupload());
- 
- // Middleware de desarrollo
- if (process.env.NODE_ENV === 'development') {
-   app.use(morgan('dev'));
- }
- 
- // Directorio público
- app.use(express.static(path.join(__dirname, '../public')));
- 
-diff --git a/tests/updatePhaseStatus.test.js b/tests/updatePhaseStatus.test.js
-index 2741b0a6ddf7c9977039d2cfd21458941760d513..94538d12039b62dc203661fce006d69cc10f900a 100644
---- a/tests/updatePhaseStatus.test.js
-+++ b/tests/updatePhaseStatus.test.js
-@@ -12,50 +12,74 @@ describe('updatePhaseStatus', () => {
-     const progreso = {
-       actividades: [ { estado: 'validado' }, { estado: 'validado' } ],
-       estadoGeneral: 'en progreso',
-       residente: { _id: 'res1' },
-       fase: { _id: 'fase1', orden: 1 },
-       save: jest.fn(),
-       populate: jest.fn().mockResolvedValue()
-     };
- 
-     const nextFase = { _id: 'fase2', orden: 2 };
-     const nextProgreso = {
-       estadoGeneral: 'bloqueada',
-       save: jest.fn()
-     };
- 
-     jest.spyOn(Fase, 'findOne').mockResolvedValue(nextFase);
-     jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(nextProgreso);
- 
-     await updatePhaseStatus(progreso);
- 
-     expect(progreso.estadoGeneral).toBe('validado');
-     expect(progreso.save).toHaveBeenCalled();
-     expect(nextProgreso.estadoGeneral).toBe('en progreso');
-     expect(nextProgreso.save).toHaveBeenCalled();
-   });
++const formatActivityType = (type?: string): string => {
++  if (!type) return '';
++  return type.charAt(0).toUpperCase() + type.slice(1);
++};
 +
-+  test('does not update when there are activities pending validation', async () => {
-+    const progreso = {
-+      actividades: [
-+        { estado: 'validado' },
-+        { estado: 'pendiente' }
-+      ],
-+      estadoGeneral: 'en progreso',
-+      residente: { _id: 'res1', email: 'residente@example.com' },
-+      fase: { _id: 'fase1', orden: 1, nombre: 'Fase 1' },
-+      save: jest.fn(),
-+      populate: jest.fn().mockResolvedValue()
+ const ResidenteFases: React.FC = () => {
++  const theme = useTheme();
+   const { user } = useAuth();
+   const { t, i18n } = useTranslation();
++  const placeholderToken = '___';
++
++  const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
++    const raw = t(key as any, params);
++    return raw
++      .replace(new RegExp(`${placeholderToken}`, 'g'), '')
++      .replace(/[:：]\s*$/, '')
++      .replace(/[%％]\s*$/, '')
++      .trim();
++  };
+   const [progresos, setProgresos] = useState<any[]>([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+   const [comentario, setComentario] = useState('');
+   const [fecha, setFecha] = useState('');
+   const [archivo, setArchivo] = useState<File | null>(null);
+   const [archivoError, setArchivoError] = useState(false);
+   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
+   const [snackbarMsg, setSnackbarMsg] = useState('');
+   const [snackbarError, setSnackbarError] = useState(false);
+   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+   const [downloadLoading, setDownloadLoading] = useState(false);
+-  const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+-  const [cirugia, setCirugia] = useState<any | null>(null);
+-  const [otraCirugia, setOtraCirugia] = useState('');
+-  const [nombreCirujano, setNombreCirujano] = useState('');
+-  const [porcentaje, setPorcentaje] = useState<number>(0);
+-  const [esCirugia, setEsCirugia] = useState(false);
+-  const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
++  const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
++  const [cirugia, setCirugia] = useState<any | null>(null);
++  const [otraCirugia, setOtraCirugia] = useState('');
++  const [nombreCirujano, setNombreCirujano] = useState('');
++  const [porcentaje, setPorcentaje] = useState<number>(0);
++  const [esCirugia, setEsCirugia] = useState(false);
++  const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
+ 
+   const dateFieldMap: Record<number, keyof Sociedad> = {
+     1: 'fechaModulosOnline',
+     2: 'fechaSimulacion',
+     3: 'fechaAtividadesFirstAssistant',
+     4: 'fechaModuloOnlineStepByStep',
+     5: 'fechaHandOn'
+   };
+ 
+ 
+   const getSociedadDateObj = (fase: number): Date | null => {
+     if (!sociedadInfo) return null;
+     const field = dateFieldMap[fase];
+     const value = field ? (sociedadInfo as any)[field] : null;
+     return value ? new Date(value) : null;
+   };
+ 
+   const getSociedadDate = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatMonthYear(date.toISOString()) : '';
+   };
+ 
+   const getSociedadDateShort = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatDayMonthYear(date.toISOString()) : '';
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index fd94c6b0ccc13edb16d470f3e4879450b17d60ee..396c5f30616a969f8044fd43270a9b2889888c0e 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -112,256 +129,256 @@ const ResidenteFases: React.FC = () => {
+ 
+ 
+   useEffect(() => {
+     if (!user || !user._id || (user.rol !== 'residente' && user.rol !== 'participante')) return;
+   
+     const fetchProgresos = async () => {
+       try {
+         setLoading(true);
+         const response = await api.get(`/progreso/residente/${user._id}`);
+         const data = response.data.data || [];
+   
+       // (debug) Aquí se listaban los progresos recibidos
+ 
+         setProgresos(data);
+       } catch (err: any) {
+         console.error('Error cargando progreso:', err);
+         setError(err.response?.data?.error || t('residentPhases.errorLoad'));
+       } finally {
+         setLoading(false);
+       }
+     };
+   
+     fetchProgresos();
+   }, [user, t]);
+ 
+-  useEffect(() => {
+-    const fetchSurgeryTypes = async () => {
+-      try {
+-        const res = await api.get('/surgery-types');
+-        const data = res.data.data || res.data;
+-        setSurgeryTypes(data);
+-      } catch (err) {
+-        console.error('Error cargando tipos de cirugía', err);
+-      }
+-    };
+-    fetchSurgeryTypes();
+-  }, []);
+-
++  useEffect(() => {
++    const fetchSurgeryTypes = async () => {
++      try {
++        const res = await api.get('/surgery-types');
++        const data = res.data.data || res.data;
++        setSurgeryTypes(data);
++      } catch (err) {
++        console.error('Error cargando tipos de cirugía', err);
++      }
 +    };
++    fetchSurgeryTypes();
++  }, []);
 +
-+    const faseSpy = jest.spyOn(Fase, 'findOne').mockResolvedValue(null);
-+    const progresoSpy = jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(null);
-+
-+    await updatePhaseStatus(progreso);
-+
-+    expect(progreso.save).not.toHaveBeenCalled();
-+    expect(faseSpy).not.toHaveBeenCalled();
-+    expect(progresoSpy).not.toHaveBeenCalled();
-+  });
-+
-   test('uses FaseSoc when progreso.faseModel es FaseSoc', async () => {
-     const progreso = {
-       actividades: [{ estado: 'validado' }, { estado: 'validado' }],
-       estadoGeneral: 'en progreso',
-       residente: { _id: 'res1' },
-       faseModel: 'FaseSoc',
-       fase: { _id: 'soc1', orden: 1 },
-       save: jest.fn(),
-       populate: jest.fn().mockResolvedValue()
+   useEffect(() => {
+     const loadSociedad = async () => {
+       if (user?.tipo !== 'Programa Sociedades') {
+         setSociedadInfo(null);
+         return;
+       }
+       const sociedadId = (user as any)?.sociedad?._id || (user as any)?.sociedad;
+       if (!sociedadId) return;
+       try {
+         const res = await api.get(`/sociedades/${sociedadId}`);
+         const data = res.data.data || res.data;
+         setSociedadInfo(data);
+       } catch (err) {
+         console.error('Error cargando sociedad', err);
+       }
      };
  
-     const nextFase = { _id: 'soc2', orden: 2 };
-     const nextProgreso = {
-       estadoGeneral: 'bloqueada',
-       save: jest.fn()
-     };
+     loadSociedad();
+   }, [user]);
  
-     const faseSpy = jest.spyOn(Fase, 'findOne');
-     const faseSocSpy = jest.spyOn(FaseSoc, 'findOne').mockResolvedValue(nextFase);
-     const progresoSpy = jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(nextProgreso);
+   const handleOpenDialog = (progresoId: string, index: number) => {
+     setSelectedProgresoId(progresoId);
+     setSelectedActividadIndex(index);
+-    const progreso = progresos.find(p => p._id === progresoId);
+-    const actividad = progreso?.actividades?.[index];
+-    const esCirugia = actividad?.tipo === 'cirugia';
+-    setEsCirugia(esCirugia);
++    const progreso = progresos.find(p => p._id === progresoId);
++    const actividad = progreso?.actividades?.[index];
++    const esCirugia = actividad?.tipo === 'cirugia';
++    setEsCirugia(esCirugia);
+     setComentario('');
+     setFecha(new Date().toISOString().split('T')[0]);
+     setArchivo(null);
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+-    setCirugia(null);
+-    setOtraCirugia('');
+-    setOtraCirugiaSeleccionada(false);
+-    setNombreCirujano('');
+-    setPorcentaje(0);
+-
++    setCirugia(null);
++    setOtraCirugia('');
++    setOtraCirugiaSeleccionada(false);
++    setNombreCirujano('');
++    setPorcentaje(0);
++
+     setDialogOpen(true);
+   };
  
-     await updatePhaseStatus(progreso);
+   const botonConfirmarHabilitado =
+     Boolean(selectedProgresoId) &&
+     selectedActividadIndex !== null &&
+     Boolean(fecha) &&
+-    !archivoError &&
+-    (!esCirugia ||
+-      ((cirugia || otraCirugia.trim()) &&
+-        nombreCirujano.trim() !== '' &&
+-        porcentaje > 0));
++    !archivoError &&
++    (!esCirugia ||
++      ((cirugia || otraCirugia.trim()) &&
++        nombreCirujano.trim() !== '' &&
++        porcentaje > 0));
  
-     expect(faseSocSpy).toHaveBeenCalled();
-     expect(faseSpy).not.toHaveBeenCalled();
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     if (e.target.files && e.target.files[0]) {
+       const file = e.target.files[0];
+       if (file.size > 5 * 1024 * 1024) {
+         setArchivo(null);
+         setArchivoError(true);
+         setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
+       } else {
+         setArchivo(file);
+         setArchivoError(false);
+         setArchivoErrorMsg('');
+       }
+     } else {
+       setArchivo(null);
+       setArchivoError(false);
+       setArchivoErrorMsg('');
+     }
+   };
+ 
+-  const handleCloseDialog = () => {
+-    setDialogOpen(false);
+-    setCirugia(null);
+-    setOtraCirugia('');
+-    setNombreCirujano('');
+-    setPorcentaje(0);
+-    setEsCirugia(false);
+-    setOtraCirugiaSeleccionada(false);
+-  };
+-
++  const handleCloseDialog = () => {
++    setDialogOpen(false);
++    setCirugia(null);
++    setOtraCirugia('');
++    setNombreCirujano('');
++    setPorcentaje(0);
++    setEsCirugia(false);
++    setOtraCirugiaSeleccionada(false);
++  };
++
+ 
+ 
+   const handleCompletarActividad = async () => {
+     
+     if (!selectedProgresoId || selectedActividadIndex === null) {
+       setSnackbarError(true);
+       setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
+       setSnackbarOpen(true);
+       return;
+     }
+ 
+    try {
+       const form = new FormData();
+       form.append('fechaRealizacion', fecha);
+       form.append('comentariosResidente', comentario);
+-
+-      const progreso = progresos.find(p => p._id === selectedProgresoId);
+-      const actividad = progreso?.actividades?.[selectedActividadIndex!];
+-      const esCirugia = actividad?.tipo === 'cirugia';
+-
+-      if (esCirugia) {
+-        if (cirugia) {
+-          form.append('cirugia', cirugia._id);
+-        } else if (otraCirugia) {
+-          form.append('otraCirugia', otraCirugia);
+-        }
+-        if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+-        form.append('porcentajeParticipacion', String(porcentaje));
+-      }
+-
++
++      const progreso = progresos.find(p => p._id === selectedProgresoId);
++      const actividad = progreso?.actividades?.[selectedActividadIndex!];
++      const esCirugia = actividad?.tipo === 'cirugia';
++
++      if (esCirugia) {
++        if (cirugia) {
++          form.append('cirugia', cirugia._id);
++        } else if (otraCirugia) {
++          form.append('otraCirugia', otraCirugia);
++        }
++        if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
++        form.append('porcentajeParticipacion', String(porcentaje));
++      }
++
+       if (archivo) form.append('adjunto', archivo);
+ 
+       const { data } = await api.put(
+         `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
+         form,
+         { headers: { 'Content-Type': 'multipart/form-data' } }
+       );
+ 
+       if (!data?.success) {
+         setSnackbarError(true);
+         setSnackbarMsg(t('residentPhases.activityFail'));
+         setSnackbarOpen(true);
+         return;
+       }
+ 
+       setProgresos(prev =>
+         prev.map((prog) =>
+           prog._id === selectedProgresoId ? data.data : prog
+         )
+       );
+ 
+       setSnackbarError(false);
+       setSnackbarMsg(t('residentPhases.activitySuccess'));
+       setSnackbarOpen(true);
+     } catch (err) {
+       console.error('Error actualizando actividad:', err);
+       setSnackbarError(true);
+       setSnackbarMsg(t('residentPhases.activitySaveError'));
+       setSnackbarOpen(true);
+     } finally {
+-      handleCloseDialog();
++      handleCloseDialog();
+       setArchivo(null);
+     }
+   };
+ 
+   const handleDescargarCertificado = async () => {
+     if (!user?._id) return;
+     setDownloadLoading(true);
+     try {
+       const res = await api.get(`/certificado/${user._id}?lang=${i18n.language}`, { responseType: 'blob' });
+       const url = window.URL.createObjectURL(new Blob([res.data]));
+       const link = document.createElement('a');
+       link.href = url;
+       link.setAttribute('download', 'certificado.pdf');
+       document.body.appendChild(link);
+       link.click();
+       link.remove();
+     } catch (err: any) {
+       setError(err.response?.data?.error || t('residentProgress.downloadError'));
+     } finally {
+       setDownloadLoading(false);
+     }
+   };
+ 
+-  const handleDescargarInformeCirugias = async (
+-    progresoId: string,
+-    nombreFase: string,
+-  ) => {
+-    setDownloadLoading(true);
+-    try {
+-      const res = await api.get(`/informe-cirugias/${progresoId}`, {
+-        responseType: 'blob',
+-      });
+-      const url = window.URL.createObjectURL(new Blob([res.data]));
+-      const link = document.createElement('a');
+-      const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
+-      link.href = url;
+-      link.setAttribute(
+-        'download',
+-        `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
+-      );
+-      document.body.appendChild(link);
+-      link.click();
+-      link.remove();
+-    } catch (err: any) {
+-      setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
+-      setSnackbarError(true);
+-      setSnackbarOpen(true);
+-    } finally {
+-      setDownloadLoading(false);
+-    }
+-  };
+-
++  const handleDescargarInformeCirugias = async (
++    progresoId: string,
++    nombreFase: string,
++  ) => {
++    setDownloadLoading(true);
++    try {
++      const res = await api.get(`/informe-cirugias/${progresoId}`, {
++        responseType: 'blob',
++      });
++      const url = window.URL.createObjectURL(new Blob([res.data]));
++      const link = document.createElement('a');
++      const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
++      link.href = url;
++      link.setAttribute(
++        'download',
++        `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
++      );
++      document.body.appendChild(link);
++      link.click();
++      link.remove();
++    } catch (err: any) {
++      setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
++      setSnackbarError(true);
++      setSnackbarOpen(true);
++    } finally {
++      setDownloadLoading(false);
++    }
++  };
++
+   const handleCloseSnackbar = () => {
+     setSnackbarOpen(false);
+   };
+ 
+   if (loading) {
+     return (
+       <Box>
+         <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
+         {[...Array(3)].map((_, i) => (
+           <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
+         ))}
+       </Box>
+     );
+   }
+ 
+   if (error) return <Alert severity="error">{error}</Alert>;
+ 
+   const allValidado = progresos
+     .filter(p => p.faseModel === 'Fase')
+     .every(p => p.estadoGeneral === 'validado');
+ 
+   return (
+     <Box>
+       <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
+       
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index fd94c6b0ccc13edb16d470f3e4879450b17d60ee..396c5f30616a969f8044fd43270a9b2889888c0e 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -401,351 +418,478 @@ const ResidenteFases: React.FC = () => {
+               <Typography sx={{ ml: 2, color: getDateColor(item.fase.numero, item.estadoGeneral) }}>
+                 {t('residentPhases.deadline')}: {getSociedadDateShort(item.fase.numero)}
+               </Typography>
+             )}
+           </Box>
+ 
+           {(() => {
+             const total = item.actividades.length;
+             const validadas = item.actividades.filter((a: any) => a.estado === 'validado').length;
+             const porcentaje = total ? Math.round((validadas / total) * 100) : 0;
+             return (
+               <>
+                 <LinearProgress
+                   variant="determinate"
+                   value={porcentaje}
+                   sx={{ height: 8, borderRadius: 5, mb: 1 }}
+                 />
+                 <Typography variant="body2" sx={{ mb: 2 }}>
+                   {t('residentPhases.validatedProgress', { percent: porcentaje })}
+                 </Typography>
+               </>
+             );
+           })()}
+ 
+           {item.estadoGeneral !== 'bloqueada' ? (
+-            <List>
+-              {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+-                item.actividades.map((act: any, idx: number) => (
+-                  <ListItem key={idx}>
+-                  {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
+-                  {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
+-                  {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
+-                  {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
+-                  <ListItemText
+-                    primary={act.nombre || t('residentPhases.unnamedActivity')}
+-                    secondary={
+-                      <>
+-                        <Typography variant="body2" color="text.secondary">
+-                          {t('residentPhases.activityType', { type: act.tipo })}
+-                        </Typography>
+-                        {act.comentariosResidente && (
+-                          <Typography variant="body2" color="text.secondary">
+-                            {t('residentPhases.comment')}: {act.comentariosResidente}
+-                          </Typography>
+-                        )}
+-                        {act.fecha && (
+-                          <Typography variant="body2" color="text.secondary">
+-                            {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
+-                          </Typography>
+-                        )}
+-                        {act.tipo === 'cirugia' && act.estado !== 'pendiente' && (
+-                          <>
+-                            {(act.cirugia?.name || act.otraCirugia) && (
+-                              <Typography variant="body2" color="text.secondary">
+-                                {t('residentPhases.surgeryType', {
+-                                  type: act.cirugia?.name || act.otraCirugia
+-                                })}
+-                              </Typography>
+-                            )}
+-                            {act.nombreCirujano && (
+-                              <Typography variant="body2" color="text.secondary">
+-                                {t('residentPhases.surgeonName', {
+-                                  name: act.nombreCirujano
+-                                })}
+-                              </Typography>
+-                            )}
+-                            {typeof act.porcentajeParticipacion === 'number' && (
+-                              <Typography variant="body2" color="text.secondary">
+-                                {t('residentPhases.participation', {
+-                                  percent: act.porcentajeParticipacion
+-                                })}
+-                              </Typography>
+-                            )}
+-                          </>
+-                        )}
+-                        {act.comentariosTutor && (
+-                          <Typography variant="body2" color="text.secondary">
+-                            {t('residentPhases.tutorComment')}: {act.comentariosTutor}
+-                          </Typography>
+-                        )}
+-                        {act.estado === 'rechazado' && act.comentariosRechazo && (
+-                          <Typography variant="body2" color="error">
+-                            {t('residentPhases.rejectionReason')}: {act.comentariosRechazo}
+-                          </Typography>
+-                        )}
+-                        {act.fechaValidacion && (
+-                          <Typography variant="body2" color="text.secondary">
+-                            {t('residentPhases.validatedOn')}: {formatDayMonthYear(act.fechaValidacion)}
+-                          </Typography>
+-                        )}
+-                        <Typography variant="body2" color="text.secondary">
+-                          {t('residentPhases.status')}: {
+-                            act.estado === 'validado'
+-                              ? t('status.validado')
+-                              : act.estado === 'rechazado'
+-                              ? t('status.rechazado')
+-                              : act.estado === 'completado'
+-                              ? t('status.pendingValidation')
+-                              : t('status.noCompletada')
+-                          }
+-                        </Typography>
+-                      </>
++            Array.isArray(item.actividades) && item.actividades.length > 0 ? (
++              <Box
++                display="grid"
++                gap={2}
++                gridTemplateColumns={{ xs: '1fr', lg: '1fr 1fr' }}
++              >
++                {item.actividades.map((act: any, idx: number) => {
++                  const statusData = (() => {
++                    switch (act.estado) {
++                      case 'validado':
++                        return {
++                          label: t('status.validado'),
++                          color: 'success' as const,
++                          icon: <VerifiedIcon fontSize="small" />
++                        };
++                      case 'rechazado':
++                        return {
++                          label: t('status.rechazado'),
++                          color: 'error' as const,
++                          icon: <CancelIcon fontSize="small" />
++                        };
++                      case 'completado':
++                        return {
++                          label: t('status.pendingValidation'),
++                          color: 'warning' as const,
++                          icon: <CheckCircleOutlineIcon fontSize="small" />
++                        };
++                      case 'pendiente':
++                        return {
++                          label: t('status.pendiente'),
++                          color: 'info' as const,
++                          icon: <HourglassEmptyIcon fontSize="small" />
++                        };
++                      default:
++                        return {
++                          label: t('status.noCompletada'),
++                          color: 'default' as const,
++                          icon: undefined
++                        };
+                     }
+-                  />
+-                  {((!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada') && (
+-                    <Button
+-                      size="small"
++                  })();
++
++                  const details: Array<{
++                    label: string;
++                    value: React.ReactNode;
++                    fullWidth?: boolean;
++                    color?: string;
++                  }> = [];
++
++                  details.push({
++                    label: t('residentPhases.status'),
++                    value: statusData.label
++                  });
++
++                  if (act.comentariosResidente) {
++                    details.push({
++                      label: t('residentPhases.comment'),
++                      value: act.comentariosResidente,
++                      fullWidth: true
++                    });
++                  }
++
++                  if (act.fecha) {
++                    details.push({
++                      label: t('residentPhases.completedOn'),
++                      value: formatDayMonthYear(act.fecha)
++                    });
++                  }
++
++                  if (act.tipo === 'cirugia' && act.estado !== 'pendiente') {
++                    if (act.cirugia?.name || act.otraCirugia) {
++                      details.push({
++                        label: getLabelFromTranslation('residentPhases.surgeryType', { type: placeholderToken }),
++                        value: act.cirugia?.name || act.otraCirugia
++                      });
++                    }
++
++                    if (act.nombreCirujano) {
++                      details.push({
++                        label: getLabelFromTranslation('residentPhases.surgeonName', { name: placeholderToken }),
++                        value: act.nombreCirujano
++                      });
++                    }
++
++                    if (typeof act.porcentajeParticipacion === 'number') {
++                      details.push({
++                        label: getLabelFromTranslation('residentPhases.participation', { percent: placeholderToken }),
++                        value: `${act.porcentajeParticipacion}%`
++                      });
++                    }
++                  }
++
++                  if (act.comentariosTutor) {
++                    details.push({
++                      label: t('residentPhases.tutorComment'),
++                      value: act.comentariosTutor,
++                      fullWidth: true
++                    });
++                  }
++
++                  if (act.estado === 'rechazado' && act.comentariosRechazo) {
++                    details.push({
++                      label: t('residentPhases.rejectionReason'),
++                      value: act.comentariosRechazo,
++                      fullWidth: true,
++                      color: 'error.main'
++                    });
++                  }
++
++                  if (act.fechaValidacion) {
++                    details.push({
++                      label: t('residentPhases.validatedOn'),
++                      value: formatDayMonthYear(act.fechaValidacion)
++                    });
++                  }
++
++                  const showCompleteButton =
++                    (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
++                    item.estadoGeneral !== 'bloqueada';
++
++                  return (
++                    <Paper
++                      key={act._id || idx}
+                       variant="outlined"
+-                      onClick={() => {
+-                        handleOpenDialog(item._id, idx);
++                      sx={{
++                        p: 2,
++                        borderRadius: 2,
++                        backgroundColor:
++                          theme.palette.mode === 'light'
++                            ? theme.palette.grey[50]
++                            : theme.palette.grey[900],
++                        borderColor:
++                          theme.palette.mode === 'light'
++                            ? theme.palette.grey[200]
++                            : theme.palette.grey[700],
++                        boxShadow:
++                          theme.palette.mode === 'light'
++                            ? '0 4px 10px rgba(15, 23, 42, 0.08)'
++                            : '0 4px 12px rgba(15, 23, 42, 0.35)'
+                       }}
+-                      sx={{ ml: 2 }}
+                     >
+-                      {t('residentPhases.markAsCompleted')}
+-                    </Button>
+-                  )}
+-                  </ListItem>
+-                ))
+-              ) : (
+-                <ListItem>
+-                  <ListItemText primary={t('residentPhases.noActivities')} />
+-                </ListItem>
+-              )}
+-            </List>
++                      <Stack
++                        direction={{ xs: 'column', sm: 'row' }}
++                        justifyContent="space-between"
++                        alignItems={{ xs: 'flex-start', sm: 'center' }}
++                        spacing={1.5}
++                      >
++                        <Typography variant="subtitle1" fontWeight={600} color="text.primary">
++                          {act.nombre || t('residentPhases.unnamedActivity')}
++                        </Typography>
++                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
++                          {formatActivityType(act.tipo) && (
++                            <Chip
++                              size="small"
++                              label={formatActivityType(act.tipo)}
++                              variant="outlined"
++                              sx={{
++                                fontWeight: 600,
++                                backgroundColor:
++                                  theme.palette.mode === 'light'
++                                    ? theme.palette.grey[100]
++                                    : theme.palette.grey[800],
++                                color: theme.palette.text.primary
++                              }}
++                            />
++                          )}
++                          <Chip
++                            size="small"
++                            label={statusData.label}
++                            color={statusData.color}
++                            icon={statusData.icon}
++                            sx={{ fontWeight: 600 }}
++                          />
++                        </Stack>
++                      </Stack>
++
++                      {details.length > 0 && (
++                        <Grid container spacing={2} sx={{ mt: 1 }}>
++                          {details.map((detail, detailIdx) => (
++                            <Grid
++                              item
++                              xs={12}
++                              sm={detail.fullWidth ? 12 : 6}
++                              md={detail.fullWidth ? 12 : 4}
++                              key={detailIdx}
++                            >
++                              <Typography
++                                variant="caption"
++                                color="text.secondary"
++                                fontWeight={600}
++                                sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
++                              >
++                                {detail.label}
++                              </Typography>
++                              <Typography
++                                variant="body2"
++                                color={detail.color ? detail.color : 'text.primary'}
++                                sx={{ mt: 0.5 }}
++                              >
++                                {detail.value}
++                              </Typography>
++                            </Grid>
++                          ))}
++                        </Grid>
++                      )}
++
++                      {showCompleteButton && (
++                        <Box display="flex" justifyContent="flex-end" mt={2}>
++                          <Button
++                            size="small"
++                            variant="outlined"
++                            onClick={() => handleOpenDialog(item._id, idx)}
++                          >
++                            {t('residentPhases.markAsCompleted')}
++                          </Button>
++                        </Box>
++                      )}
++                    </Paper>
++                  );
++                })}
++              </Box>
++            ) : (
++              <Typography variant="body2" color="text.secondary">
++                {t('residentPhases.noActivities')}
++              </Typography>
++            )
+           ) : (
+-              <Typography variant="body2" color="text.secondary">
++            <Typography variant="body2" color="text.secondary">
+               {t('residentPhases.phaseLocked')}
+-              </Typography>
++            </Typography>
+           )}
+-          {item.estadoGeneral === 'validado' &&
+-            item.actividades.some((a: any) => a.tipo === 'cirugia') && (
+-              <Box textAlign="center" mt={2}>
+-                <Button
+-                  variant="contained"
+-                  onClick={() =>
+-                    handleDescargarInformeCirugias(
+-                      item._id,
+-                      `${t('adminPhases.phase')} ${item.fase?.numero}`,
+-                    )
+-                  }
+-                  disabled={downloadLoading}
+-                >
+-                  {t('residentProgress.downloadSurgeryReport', {
+-                    phase: item.fase?.nombre,
+-                  })}
+-                </Button>
+-              </Box>
+-            )}
++          {item.estadoGeneral === 'validado' &&
++            item.actividades.some((a: any) => a.tipo === 'cirugia') && (
++              <Box textAlign="center" mt={2}>
++                <Button
++                  variant="contained"
++                  onClick={() =>
++                    handleDescargarInformeCirugias(
++                      item._id,
++                      `${t('adminPhases.phase')} ${item.fase?.numero}`,
++                    )
++                  }
++                  disabled={downloadLoading}
++                >
++                  {t('residentProgress.downloadSurgeryReport', {
++                    phase: item.fase?.nombre,
++                  })}
++                </Button>
++              </Box>
++            )}
+         </AccordionDetails>
+       </Accordion>
+     );
+   })
+ ) : (
+   <Alert severity="info">{t('residentPhases.noProgress')}</Alert>
+ )}
+       {allValidado && (
+         <Box textAlign="center" mt={2}>
+           <Button
+             variant="contained"
+-            color="secondary"
++            color="secondary"
+             onClick={handleDescargarCertificado}
+             disabled={downloadLoading}
+-            startIcon={<WorkspacePremiumIcon />}
++            startIcon={<WorkspacePremiumIcon />}
+           >
+             {t('residentProgress.downloadCertificate')}
+           </Button>
+         </Box>
+       )}
+ 
+       <Backdrop
+         open={downloadLoading}
+         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+       >
+         <CircularProgress color="inherit" />
+       </Backdrop>
+ 
+ 
+ 
+ 
+-      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
++      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+         <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
+         <DialogContent>
+           <TextField
+             label={t('residentPhases.dialog.date')}
+             type="date"
+             value={fecha}
+             onChange={(e) => setFecha(e.target.value)}
+             fullWidth
+             margin="normal"
+             InputLabelProps={{ shrink: true }}
+           />
+           <TextField
+             label={t('residentPhases.dialog.comment')}
+             value={comentario}
+             onChange={(e) => setComentario(e.target.value)}
+             fullWidth
+             multiline
+             rows={3}
+             margin="normal"
+           />
+-          {esCirugia && (
+-            <>
+-              <Autocomplete
+-                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+-                isOptionEqualToValue={(opt, val) => opt._id === val._id}
+-                getOptionLabel={(option: any) =>
+-                  typeof option === 'string' ? option : option.name
+-                }
+-                value={cirugia}
+-                inputValue={
+-                  otraCirugiaSeleccionada
+-                    ? otraCirugia
+-                    : cirugia?.name || ''
+-                }
+-                onChange={(_, value) => {
+-                  if (typeof value === 'string') {
+-                    if (otraCirugiaSeleccionada) {
+-                      setOtraCirugia(value);
+-                    }
+-                  } else if (!value) {
+-                    setCirugia(null);
+-                    setOtraCirugiaSeleccionada(false);
+-                  } else if ((value as any)?._id === 'other') {
+-                    setCirugia(null);
+-                    setOtraCirugia('');
+-                    setOtraCirugiaSeleccionada(true);
+-                  } else {
+-                    setCirugia(value);
+-                    setOtraCirugiaSeleccionada(false);
+-                  }
+-                }}
+-                onInputChange={(_, newValue) => {
+-                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
+-                }}
+-                renderInput={(params) => (
+-                  <TextField
+-                    {...params}
+-                    label={t('residentPhases.dialog.surgery')}
+-                    margin="normal"
+-                    error={esCirugia && !(cirugia || otraCirugia.trim())}
+-                    helperText={
+-                      esCirugia && !(cirugia || otraCirugia.trim())
+-                        ? t('residentPhases.dialog.surgeryRequired')
+-                        : otraCirugiaSeleccionada
+-                        ? t('residentPhases.dialog.otherSurgeryTooltip')
+-                        : ''
+-                    }
+-                  />
+-                )}
+-                fullWidth
+-                freeSolo={otraCirugiaSeleccionada}
+-              />
+-              <TextField
+-                label={t('residentPhases.dialog.surgeonName')}
+-                value={nombreCirujano}
+-                onChange={(e) => setNombreCirujano(e.target.value)}
+-                fullWidth
+-                margin="normal"
+-                error={esCirugia && !nombreCirujano.trim()}
+-                helperText={
+-                  esCirugia && !nombreCirujano.trim()
+-                    ? t('residentPhases.dialog.surgeonNameRequired')
+-                    : ''
+-                }
+-              />
+-              <TextField
+-                select
+-                label={t('residentPhases.dialog.participation')}
+-                value={porcentaje}
+-                onChange={(e) => setPorcentaje(Number(e.target.value))}
+-                fullWidth
+-                margin="normal"
+-                error={esCirugia && porcentaje === 0}
+-                helperText={
+-                  esCirugia && porcentaje === 0
+-                    ? t('residentPhases.dialog.participationRequired')
+-                    : ''
+-                }
+-              >
+-                {[0, 25, 50, 75, 100].map((val) => (
+-                  <MenuItem key={val} value={val}>
+-                    {val}%
+-                  </MenuItem>
+-                ))}
+-              </TextField>
+-            </>
+-          )}
++          {esCirugia && (
++            <>
++              <Autocomplete
++                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
++                isOptionEqualToValue={(opt, val) => opt._id === val._id}
++                getOptionLabel={(option: any) =>
++                  typeof option === 'string' ? option : option.name
++                }
++                value={cirugia}
++                inputValue={
++                  otraCirugiaSeleccionada
++                    ? otraCirugia
++                    : cirugia?.name || ''
++                }
++                onChange={(_, value) => {
++                  if (typeof value === 'string') {
++                    if (otraCirugiaSeleccionada) {
++                      setOtraCirugia(value);
++                    }
++                  } else if (!value) {
++                    setCirugia(null);
++                    setOtraCirugiaSeleccionada(false);
++                  } else if ((value as any)?._id === 'other') {
++                    setCirugia(null);
++                    setOtraCirugia('');
++                    setOtraCirugiaSeleccionada(true);
++                  } else {
++                    setCirugia(value);
++                    setOtraCirugiaSeleccionada(false);
++                  }
++                }}
++                onInputChange={(_, newValue) => {
++                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
++                }}
++                renderInput={(params) => (
++                  <TextField
++                    {...params}
++                    label={t('residentPhases.dialog.surgery')}
++                    margin="normal"
++                    error={esCirugia && !(cirugia || otraCirugia.trim())}
++                    helperText={
++                      esCirugia && !(cirugia || otraCirugia.trim())
++                        ? t('residentPhases.dialog.surgeryRequired')
++                        : otraCirugiaSeleccionada
++                        ? t('residentPhases.dialog.otherSurgeryTooltip')
++                        : ''
++                    }
++                  />
++                )}
++                fullWidth
++                freeSolo={otraCirugiaSeleccionada}
++              />
++              <TextField
++                label={t('residentPhases.dialog.surgeonName')}
++                value={nombreCirujano}
++                onChange={(e) => setNombreCirujano(e.target.value)}
++                fullWidth
++                margin="normal"
++                error={esCirugia && !nombreCirujano.trim()}
++                helperText={
++                  esCirugia && !nombreCirujano.trim()
++                    ? t('residentPhases.dialog.surgeonNameRequired')
++                    : ''
++                }
++              />
++              <TextField
++                select
++                label={t('residentPhases.dialog.participation')}
++                value={porcentaje}
++                onChange={(e) => setPorcentaje(Number(e.target.value))}
++                fullWidth
++                margin="normal"
++                error={esCirugia && porcentaje === 0}
++                helperText={
++                  esCirugia && porcentaje === 0
++                    ? t('residentPhases.dialog.participationRequired')
++                    : ''
++                }
++              >
++                {[0, 25, 50, 75, 100].map((val) => (
++                  <MenuItem key={val} value={val}>
++                    {val}%
++                  </MenuItem>
++                ))}
++              </TextField>
++            </>
++          )}
+           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+             {t('residentPhases.dialog.selectFile')}
+             <input
+               type="file"
+               hidden
+               accept="application/pdf,image/png,image/jpeg"
+               onChange={handleFileChange}
+             />
+           </Button>
+ 
+           {archivo && !archivoError && (
+             <Typography variant="body2" sx={{ mt: 1 }}>
+               {archivo.name} – {(archivo.size / (1024 * 1024)).toFixed(1)} MB
+             </Typography>
+           )}
+           {archivoError && (
+             <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+               {archivoErrorMsg}
+             </Typography>
+           )}
+         </DialogContent>
+         <DialogActions>
+-          <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
++          <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
+           <Tooltip
+             title={
+               archivoError
+                 ? archivoErrorMsg
+                 : !selectedProgresoId
+                 ? t('residentPhases.dialog.missingProgressId')
+                 : selectedActividadIndex === null
+                 ? t('residentPhases.dialog.noActivitySelected')
+                 : !fecha
+                 ? t('residentPhases.dialog.selectDate')
+-                : esCirugia && !(cirugia || otraCirugia.trim())
+-                ? t('residentPhases.dialog.surgeryRequired')
+-                : esCirugia && !nombreCirujano.trim()
+-                ? t('residentPhases.dialog.surgeonNameRequired')
+-                : esCirugia && porcentaje === 0
+-                ? t('residentPhases.dialog.participationRequired')
++                : esCirugia && !(cirugia || otraCirugia.trim())
++                ? t('residentPhases.dialog.surgeryRequired')
++                : esCirugia && !nombreCirujano.trim()
++                ? t('residentPhases.dialog.surgeonNameRequired')
++                : esCirugia && porcentaje === 0
++                ? t('residentPhases.dialog.participationRequired')
+                 : t('residentPhases.dialog.optionalFileHint')
+             }
+             arrow
+             disableHoverListener={botonConfirmarHabilitado}
+           >
+             <span>
+               <Button
+                 onClick={handleCompletarActividad}
+                 variant="contained"
+                 disabled={!botonConfirmarHabilitado}
+               >
+                 {t('residentPhases.dialog.confirm')}
+               </Button>
+             </span>
+           </Tooltip>
+         </DialogActions>
+ 
+       </Dialog>
+ 
+       <Snackbar
+         open={snackbarOpen}
+         autoHideDuration={4000}
+         onClose={handleCloseSnackbar}
+         message={snackbarMsg}
+         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
