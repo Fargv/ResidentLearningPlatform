@@ -21,10 +21,10 @@ import {
   Backdrop,
   Autocomplete,
   MenuItem,
-  Grid,
   Paper,
   Stack
 } from '@mui/material';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -617,34 +617,39 @@ const ResidenteFases: React.FC = () => {
                       </Stack>
 
                       {details.length > 0 && (
-                        <Grid container spacing={2} sx={{ mt: 1 }}>
-                          {details.map((detail, detailIdx) => (
-                            <Grid
-                              item
-                              xs={12}
-                              sm={detail.fullWidth ? 12 : 6}
-                              md={detail.fullWidth ? 12 : 4}
-                              key={detailIdx}
+                            <Box
+                              sx={{
+                                mt: 1,
+                                display: 'grid',
+                                gap: 2,
+                                gridTemplateColumns: {
+                                  xs: '1fr',
+                                  sm: 'repeat(2, 1fr)',
+                                  md: 'repeat(3, 1fr)',
+                                },
+                              }}
                             >
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                fontWeight={600}
-                                sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-                              >
-                                {detail.label}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color={detail.color ? detail.color : 'text.primary'}
-                                sx={{ mt: 0.5 }}
-                              >
-                                {detail.value}
-                              </Typography>
-                            </Grid>
-                          ))}
-                        </Grid>
-                      )}
+                              {details.map((detail, detailIdx) => (
+                                <Box key={detailIdx}>
+                                  <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    fontWeight={600}
+                                    sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+                                  >
+                                    {detail.label}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color={detail.color ? detail.color : 'text.primary'}
+                                    sx={{ mt: 0.5 }}
+                                  >
+                                    {detail.value}
+                                  </Typography>
+                                </Box>
+                              ))}
+                            </Box>
+                          )}
 
                       {showCompleteButton && (
                         <Box display="flex" justifyContent="flex-end" mt={2}>
