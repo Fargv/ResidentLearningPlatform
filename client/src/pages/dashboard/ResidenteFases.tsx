@@ -490,8 +490,8 @@ const ResidenteFases: React.FC = () => {
                   }> = [];
 
                   details.push({
-                    label: t('residentPhases.status'),
-                    value: statusData.label
+                    label: t('residentPhases.completedOn'),
+                    value: act.fecha ? formatDayMonthYear(act.fecha) : '—'
                   });
 
                   if (act.comentariosResidente) {
@@ -499,13 +499,6 @@ const ResidenteFases: React.FC = () => {
                       label: t('residentPhases.comment'),
                       value: act.comentariosResidente,
                       fullWidth: true
-                    });
-                  }
-
-                  if (act.fecha) {
-                    details.push({
-                      label: t('residentPhases.completedOn'),
-                      value: formatDayMonthYear(act.fecha)
                     });
                   }
 
@@ -587,10 +580,13 @@ const ResidenteFases: React.FC = () => {
                         alignItems={{ xs: 'flex-start', sm: 'center' }}
                         spacing={1.5}
                       >
-                        <Typography variant="subtitle1" fontWeight={600} color="text.primary">
-                          {act.nombre || t('residentPhases.unnamedActivity')}
-                        </Typography>
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          alignItems="center"
+                          flexWrap="wrap"
+                          useFlexGap
+                        >
                           {formatActivityType(act.tipo) && (
                             <Chip
                               size="small"
@@ -606,14 +602,20 @@ const ResidenteFases: React.FC = () => {
                               }}
                             />
                           )}
-                          <Chip
-                            size="small"
-                            label={statusData.label}
-                            color={statusData.color}
-                            icon={statusData.icon}
-                            sx={{ fontWeight: 600 }}
-                          />
+                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+                            {act.nombre || t('residentPhases.unnamedActivity')}
+                          </Typography>
                         </Stack>
+                        <Chip
+                          size="small"
+                          label={statusData.label}
+                          color={statusData.color}
+                          icon={statusData.icon}
+                          sx={{
+                            fontWeight: 600,
+                            alignSelf: { xs: 'flex-start', sm: 'center' }
+                          }}
+                        />
                       </Stack>
 
                       {details.length > 0 && (
@@ -630,7 +632,10 @@ const ResidenteFases: React.FC = () => {
                               }}
                             >
                               {details.map((detail, detailIdx) => (
-                                <Box key={detailIdx}>
+                                <Box
+                                  key={detailIdx}
+                                  sx={{ gridColumn: detail.fullWidth ? '1 / -1' : 'auto' }}
+                                >
                                   <Typography
                                     variant="caption"
                                     color="text.secondary"
@@ -652,11 +657,36 @@ const ResidenteFases: React.FC = () => {
                           )}
 
                       {showCompleteButton && (
-                        <Box display="flex" justifyContent="flex-end" mt={2}>
+                        <Box
+                          display="flex"
+                          justifyContent={{ xs: 'stretch', sm: 'flex-end' }}
+                          mt={2}
+                        >
                           <Button
                             size="small"
-                            variant="outlined"
+                            variant="contained"
                             onClick={() => handleOpenDialog(item._id, idx)}
+                            sx={{
+                              borderRadius: 2,
+                              textTransform: 'none',
+                              fontWeight: 600,
+                              px: 2.5,
+                              py: 0.75,
+                              boxShadow: 'none',
+                              backgroundColor:
+                                theme.palette.mode === 'light'
+                                  ? theme.palette.primary.main
+                                  : theme.palette.primary.light,
+                              color: theme.palette.primary.contrastText,
+                              '&:hover': {
+                                boxShadow: 'none',
+                                backgroundColor:
+                                  theme.palette.mode === 'light'
+                                    ? theme.palette.primary.dark
+                                    : theme.palette.primary.main,
+                              },
+                              width: { xs: '100%', sm: 'auto' }
+                            }}
                           >
                             {t('residentPhases.markAsCompleted')}
                           </Button>
