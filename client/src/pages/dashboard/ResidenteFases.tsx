@@ -23,7 +23,8 @@ import {
   MenuItem,
   Paper,
   Stack,
-  Switch
+  Switch,
+  FormControlLabel
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -32,12 +33,43 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import { useTheme, alpha } from '@mui/material/styles';
+import { useTheme, alpha, styled } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { useTranslation } from 'react-i18next';
+
+const CompletionSwitch = styled(Switch)(({ theme }) => ({
+  padding: theme.spacing(0.75),
+  '& .MuiSwitch-switchBase': {
+    padding: 2,
+    '&.Mui-checked': {
+      transform: 'translateX(18px)',
+      color: theme.palette.common.white,
+      '& + .MuiSwitch-track': {
+        backgroundColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.primary.main
+            : alpha(theme.palette.primary.light, 0.45),
+        opacity: 1
+      }
+    }
+  },
+  '& .MuiSwitch-thumb': {
+    width: 18,
+    height: 18,
+    boxShadow: 'none'
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 999,
+    backgroundColor:
+      theme.palette.mode === 'light'
+        ? alpha(theme.palette.text.primary, 0.15)
+        : alpha(theme.palette.common.white, 0.25),
+    opacity: 1
+  }
+}));
 
 const formatActivityType = (type?: string): string => {
   if (!type) return '';
@@ -459,6 +491,7 @@ const ResidenteFases: React.FC = () => {
                 gap={2}
                 gridTemplateColumns={{ xs: '1fr', lg: '1fr 1fr' }}
                 alignItems="stretch"
+                sx={{ gridAutoRows: '1fr' }}
               >
                 {item.actividades.map((act: any, idx: number) => {
                   const statusData = (() => {
@@ -502,11 +535,14 @@ const ResidenteFases: React.FC = () => {
 
                   const toggleKey = `${item._id}-${idx}`;
 
+                  const completionDate = act.fecha || act.fechaRealizacion;
+                  const validationDate = act.fechaValidacion || act.validadoEl;
+
                   const statusDate =
                     act.estado === 'validado'
-                      ? act.fechaValidacion
+                      ? validationDate
                       : act.estado === 'completado'
-                      ? act.fecha
+                      ? completionDate
                       : null;
 
                   const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
@@ -541,7 +577,7 @@ const ResidenteFases: React.FC = () => {
                     value: React.ReactNode,
                     options?: { color?: string; borderColor?: string }
                   ) => (
-                    <Box key={label} sx={{ mt: 2 }}>
+                    <Box key={label} sx={{ mt: 2, width: '100%' }}>
                       <Typography
                         variant="caption"
                         color="text.secondary"
@@ -581,11 +617,11 @@ const ResidenteFases: React.FC = () => {
                         borderRadius: 2,
                         backgroundColor:
                           theme.palette.mode === 'light'
-                            ? theme.palette.grey[50]
+                            ? theme.palette.grey[100]
                             : theme.palette.grey[900],
                         borderColor:
                           theme.palette.mode === 'light'
-                            ? theme.palette.grey[200]
+                            ? theme.palette.grey[300]
                             : theme.palette.grey[700],
                         boxShadow:
                           theme.palette.mode === 'light'
@@ -702,38 +738,37 @@ const ResidenteFases: React.FC = () => {
                           justifyContent={{ xs: 'center', sm: 'flex-end' }}
                           mt={3}
                         >
-                          <Box
+                          <FormControlLabel
+                            control={
+                              <CompletionSwitch
+                                checked={completionToggles[toggleKey] || false}
+                                onChange={(_, checked) => {
+                                  if (checked) {
+                                    handleToggleComplete(item._id, idx, toggleKey);
+                                  }
+                                }}
+                                inputProps={{
+                                  'aria-label': t('residentPhases.markAsCompleted') as string
+                                }}
+                              />
+                            }
+                            label={
+                              <Typography variant="body2" fontWeight={600}>
+                                {t('residentPhases.markAsCompleted')}
+                              </Typography>
+                            }
                             sx={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
+                              mx: 0,
                               gap: 1,
-                              px: 1.5,
-                              py: 0.75,
-                              borderRadius: 999,
-                              border: `1px solid ${theme.palette.primary.main}`,
-                              backgroundColor: alpha(
-                                theme.palette.primary.main,
-                                theme.palette.mode === 'light' ? 0.1 : 0.2
-                              ),
-                              color: theme.palette.primary.main
+                              alignSelf: 'flex-end',
+                              '& .MuiFormControlLabel-label': {
+                                color:
+                                  theme.palette.mode === 'light'
+                                    ? theme.palette.primary.main
+                                    : theme.palette.primary.light
+                              }
                             }}
-                          >
-                            <Switch
-                              color="primary"
-                              checked={completionToggles[toggleKey] || false}
-                              onChange={(_, checked) => {
-                                if (checked) {
-                                  handleToggleComplete(item._id, idx, toggleKey);
-                                }
-                              }}
-                              inputProps={{
-                                'aria-label': t('residentPhases.markAsCompleted') as string
-                              }}
-                            />
-                            <Typography variant="body2" fontWeight={600}>
-                              {t('residentPhases.markAsCompleted')}
-                            </Typography>
-                          </Box>
+                          />
                         </Box>
                       )}
                     </Paper>
