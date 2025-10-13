@@ -23,9 +23,9 @@ import {
   MenuItem,
   Paper,
   Stack,
-  Switch,
   FormControlLabel
 } from '@mui/material';
+import Switch, { SwitchProps } from '@mui/material/Switch';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -40,26 +40,53 @@ import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { useTranslation } from 'react-i18next';
 
-const CompletionSwitch = styled(Switch)(({ theme }) => ({
-  padding: theme.spacing(0.75),
+const CompletionSwitch = styled((props: SwitchProps) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 48,
+  height: 28,
+  padding: 0,
+  display: 'flex',
+  alignItems: 'center',
   '& .MuiSwitch-switchBase': {
-    padding: 2,
+    padding: 0,
+    margin: 2,
+    transitionDuration: '200ms',
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
+      border: `1px solid ${theme.palette.primary.main}`
+    },
     '&.Mui-checked': {
-      transform: 'translateX(18px)',
+      transform: 'translateX(20px)',
       color: theme.palette.common.white,
+      '& .MuiSwitch-thumb': {
+        boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
+      },
       '& + .MuiSwitch-track': {
         backgroundColor:
           theme.palette.mode === 'light'
             ? theme.palette.primary.main
-            : alpha(theme.palette.primary.light, 0.45),
+            : alpha(theme.palette.primary.light, 0.55),
+        borderColor: 'transparent',
         opacity: 1
       }
     }
   },
   '& .MuiSwitch-thumb': {
-    width: 18,
-    height: 18,
-    boxShadow: 'none'
+    width: 24,
+    height: 24,
+    boxSizing: 'border-box',
+    borderRadius: '50%',
+    backgroundColor: theme.palette.common.white,
+    boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`,
+    position: 'relative',
+    '&:before': {
+      content: "''",
+      position: 'absolute',
+      inset: 0,
+      borderRadius: '50%',
+      border: `1px solid ${alpha(theme.palette.common.black, 0.08)}`
+    }
   },
   '& .MuiSwitch-track': {
     borderRadius: 999,
@@ -67,7 +94,9 @@ const CompletionSwitch = styled(Switch)(({ theme }) => ({
       theme.palette.mode === 'light'
         ? alpha(theme.palette.text.primary, 0.15)
         : alpha(theme.palette.common.white, 0.25),
-    opacity: 1
+    border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
+    opacity: 1,
+    boxSizing: 'border-box'
   }
 }));
 
@@ -759,8 +788,12 @@ const ResidenteFases: React.FC = () => {
                             }
                             sx={{
                               mx: 0,
-                              gap: 1,
+                              gap: 1.5,
                               alignSelf: 'flex-end',
+                              alignItems: 'center',
+                              '& .MuiSwitch-root': {
+                                display: 'flex'
+                              },
                               '& .MuiFormControlLabel-label': {
                                 color:
                                   theme.palette.mode === 'light'
