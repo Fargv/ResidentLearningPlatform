@@ -1,285 +1,364 @@
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index ec6d27105aca99cbf4acaa54600475c6f08fd518..9394e26aecfeae5a2d8f5e95359e435af16c69f4 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -1,97 +1,126 @@
- import React, { useEffect, useState } from 'react';
--import {
--  Box,
--  Typography,
--  Alert,
--  Chip,
--  Skeleton,
--  LinearProgress,
--  Accordion,
--  AccordionSummary,
--  AccordionDetails,
--  Button,
--  Dialog,
--  DialogTitle,
--  DialogContent,
--  DialogActions,
--  TextField,
--  Snackbar,
--  Tooltip,
--  CircularProgress,
--  Backdrop,
--  Autocomplete,
--  MenuItem,
--  Paper,
--  Stack,
--  Switch,
--  FormControlLabel
--} from '@mui/material';
-+import {
-+  Box,
-+  Typography,
-+  Alert,
-+  Chip,
-+  Skeleton,
-+  LinearProgress,
-+  Accordion,
-+  AccordionSummary,
-+  AccordionDetails,
-+  Button,
-+  Dialog,
-+  DialogTitle,
-+  DialogContent,
-+  DialogActions,
-+  TextField,
-+  Snackbar,
-+  Tooltip,
-+  CircularProgress,
-+  Backdrop,
-+  Autocomplete,
-+  MenuItem,
-+  Paper,
-+  Stack,
-+  FormControlLabel
-+} from '@mui/material';
-+import Switch, { SwitchProps } from '@mui/material/Switch';
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index 015615293e9d94b88e75d5b590dfdef4c3e9cc5d..964a55fc51ab31d5449086f8ac708027643e4284 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -27,50 +27,92 @@ const updatePhaseStatus = async (progreso) => {
+   }
  
- import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
- import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
- import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
- import VerifiedIcon from '@mui/icons-material/Verified';
- import CancelIcon from '@mui/icons-material/Cancel';
- import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
- import { useTheme, alpha, styled } from '@mui/material/styles';
- import api from '../../api';
- import { useAuth } from '../../context/AuthContext';
- import { Sociedad } from '../../types/Sociedad';
- import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
- import { useTranslation } from 'react-i18next';
+   const ModeloFase = mongoose.model(progreso.faseModel || 'Fase');
+   const nextFase = await ModeloFase.findOne({ orden: progreso.fase.orden + 1 });
+   if (!nextFase) {
+     logger.info(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
+     return;
+   }
  
--const CompletionSwitch = styled(Switch)(({ theme }) => ({
--  padding: theme.spacing(0.75),
--  '& .MuiSwitch-switchBase': {
--    padding: 2,
--    '&.Mui-checked': {
--      transform: 'translateX(18px)',
--      color: theme.palette.common.white,
--      '& + .MuiSwitch-track': {
--        backgroundColor:
--          theme.palette.mode === 'light'
--            ? theme.palette.primary.main
--            : alpha(theme.palette.primary.light, 0.45),
--        opacity: 1
--      }
--    }
--  },
--  '& .MuiSwitch-thumb': {
--    width: 18,
--    height: 18,
--    boxShadow: 'none'
--  },
--  '& .MuiSwitch-track': {
--    borderRadius: 999,
--    backgroundColor:
--      theme.palette.mode === 'light'
--        ? alpha(theme.palette.text.primary, 0.15)
--        : alpha(theme.palette.common.white, 0.25),
--    opacity: 1
--  }
--}));
-+const CompletionSwitch = styled((props: SwitchProps) => (
-+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-+))(({ theme }) => ({
-+  width: 48,
-+  height: 28,
-+  padding: 0,
-+  display: 'flex',
-+  alignItems: 'center',
-+  '& .MuiSwitch-switchBase': {
-+    padding: 0,
-+    margin: 2,
-+    transitionDuration: '200ms',
-+    '&.Mui-focusVisible .MuiSwitch-thumb': {
-+      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
-+      border: `1px solid ${theme.palette.primary.main}`
-+    },
-+    '&.Mui-checked': {
-+      transform: 'translateX(20px)',
-+      color: theme.palette.common.white,
-+      '& .MuiSwitch-thumb': {
-+        boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
-+      },
-+      '& + .MuiSwitch-track': {
-+        backgroundColor:
-+          theme.palette.mode === 'light'
-+            ? theme.palette.primary.main
-+            : alpha(theme.palette.primary.light, 0.55),
-+        borderColor: 'transparent',
-+        opacity: 1
-+      }
-+    }
-+  },
-+  '& .MuiSwitch-thumb': {
-+    width: 24,
-+    height: 24,
-+    boxSizing: 'border-box',
-+    borderRadius: '50%',
-+    backgroundColor: theme.palette.common.white,
-+    boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`,
-+    position: 'relative',
-+    '&:before': {
-+      content: "''",
-+      position: 'absolute',
-+      inset: 0,
-+      borderRadius: '50%',
-+      border: `1px solid ${alpha(theme.palette.common.black, 0.08)}`
-+    }
-+  },
-+  '& .MuiSwitch-track': {
-+    borderRadius: 999,
-+    backgroundColor:
-+      theme.palette.mode === 'light'
-+        ? alpha(theme.palette.text.primary, 0.15)
-+        : alpha(theme.palette.common.white, 0.25),
-+    border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
-+    opacity: 1,
-+    boxSizing: 'border-box'
-+  }
-+}));
+   const nextProgreso = await ProgresoResidente.findOne({
+     residente: progreso.residente._id,
+     fase: nextFase._id
+   });
  
- const formatActivityType = (type?: string): string => {
-   if (!type) return '';
-   return type.charAt(0).toUpperCase() + type.slice(1);
+   if (nextProgreso && nextProgreso.estadoGeneral === 'bloqueada') {
+     nextProgreso.estadoGeneral = 'en progreso';
+     await nextProgreso.save();
+     logger.info(`🚀 Fase "${nextFase.nombre}" DESBLOQUEADA para ${progreso.residente.email}`);
+   } else {
+     logger.info(`ℹ️ Fase "${nextFase.nombre}" ya estaba desbloqueada o no encontrada`);
+   }
  };
  
- const ResidenteFases: React.FC = () => {
-   const theme = useTheme();
-   const { user } = useAuth();
-   const { t, i18n } = useTranslation();
-   const placeholderToken = '___';
  
-   const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
-     const raw = t(key as any, params);
-     return raw
-       .replace(new RegExp(`${placeholderToken}`, 'g'), '')
-       .replace(/[:：]\s*$/, '')
-       .replace(/[%％]\s*$/, '')
-       .trim();
-   };
-   const [progresos, setProgresos] = useState<any[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [dialogOpen, setDialogOpen] = useState(false);
-   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
-@@ -716,77 +745,81 @@ const ResidenteFases: React.FC = () => {
-                                 </Typography>
-                                 <Typography variant="body2" sx={{ mt: 0.5 }}>
-                                   {detail.value}
-                                 </Typography>
-                               </Box>
-                             ))}
-                           </Box>
-                         )}
  
-                         {act.comentariosTutor &&
-                           renderCommentSection(t('residentPhases.tutorComment'), act.comentariosTutor)}
++
++const formatProgresoParaResidente = (progresoDoc) => {
++  const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
++  const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
++    if (typeof adj.actividadIndex !== 'number') return acc;
++    const key = adj.actividadIndex;
++    if (!acc[key]) acc[key] = [];
++    acc[key].push({
++      _id: adj._id.toString(),
++      nombreArchivo: adj.nombreArchivo,
++      mimeType: adj.mimeType,
++      fechaSubida: adj.fechaSubida
++    });
++    return acc;
++  }, {});
++
++  return {
++    _id: plain._id.toString(),
++    fase: plain.fase,
++    faseModel: plain.faseModel,
++    estadoGeneral: plain.estadoGeneral,
++    actividades: (plain.actividades || []).map((act, index) => ({
++      nombre: act.nombre,
++      tipo: act.tipo,
++      completada: act.estado === 'validado',
++      comentariosResidente: act.comentariosResidente || '',
++      comentariosTutor: act.comentariosTutor || '',
++      fecha: act.fechaRealizacion,
++      fechaValidacion: act.fechaValidacion,
++      comentariosRechazo: act.comentariosRechazo || '',
++      fechaRechazo: act.fechaRechazo,
++      estado: act.estado,
++      porcentajeParticipacion: act.porcentajeParticipacion,
++      cirugia: act.cirugia,
++      otraCirugia: act.otraCirugia,
++      nombreCirujano: act.nombreCirujano,
++      adjuntos: adjuntosPorIndice[index] || []
++    }))
++  };
++};
++
++
+ const inicializarProgresoFormativo = async (req, res, next) => {
+   try {
+   const user = await User.findById(req.params.id);
+   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
+     return res.status(404).json({ success: false, error: 'Residente no válido' });
+   }
  
-                         {act.estado === 'rechazado' && act.comentariosRechazo &&
-                           renderCommentSection(t('residentPhases.rejectionReason'), act.comentariosRechazo, {
-                             color: theme.palette.error.main,
-                             borderColor: theme.palette.error.light
-                           })}
-                       </Box>
+      if (req.body.tipo) user.tipo = req.body.tipo;
+     const count = await inicializarProgresoFormativoDB(user);
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
+   }
+ };
  
-                       {showCompleteButton && (
-                         <Box
-                           display="flex"
-                           justifyContent={{ xs: 'center', sm: 'flex-end' }}
-                           mt={3}
-                         >
--                          <FormControlLabel
--                            control={
--                              <CompletionSwitch
--                                checked={completionToggles[toggleKey] || false}
--                                onChange={(_, checked) => {
-+                          <FormControlLabel
-+                            control={
-+                              <CompletionSwitch
-+                                checked={completionToggles[toggleKey] || false}
-+                                onChange={(_, checked) => {
-                                   if (checked) {
-                                     handleToggleComplete(item._id, idx, toggleKey);
-                                   }
-                                 }}
-                                 inputProps={{
-                                   'aria-label': t('residentPhases.markAsCompleted') as string
-                                 }}
-                               />
-                             }
-                             label={
-                               <Typography variant="body2" fontWeight={600}>
-                                 {t('residentPhases.markAsCompleted')}
-                               </Typography>
--                            }
--                            sx={{
--                              mx: 0,
--                              gap: 1,
--                              alignSelf: 'flex-end',
--                              '& .MuiFormControlLabel-label': {
--                                color:
--                                  theme.palette.mode === 'light'
--                                    ? theme.palette.primary.main
-+                            }
-+                            sx={{
-+                              mx: 0,
-+                              gap: 1.5,
-+                              alignSelf: 'flex-end',
-+                              alignItems: 'center',
-+                              '& .MuiSwitch-root': {
-+                                display: 'flex'
-+                              },
-+                              '& .MuiFormControlLabel-label': {
-+                                color:
-+                                  theme.palette.mode === 'light'
-+                                    ? theme.palette.primary.main
-                                     : theme.palette.primary.light
-                               }
-                             }}
-                           />
-                         </Box>
-                       )}
-                     </Paper>
-                   );
-                 })}
-               </Box>
-             ) : (
-               <Typography variant="body2" color="text.secondary">
-                 {t('residentPhases.noActivities')}
-               </Typography>
-             )
-           ) : (
-             <Typography variant="body2" color="text.secondary">
-               {t('residentPhases.phaseLocked')}
-             </Typography>
-           )}
-           {item.estadoGeneral === 'validado' &&
-             item.actividades.some((a: any) => a.tipo === 'cirugia') && (
-               <Box textAlign="center" mt={2}>
-                 <Button
-                   variant="contained"
-                   
+ 
+ 
+ 
+ 
+ // @desc    Obtener todos los registros de progreso
+ // @route   GET /api/progreso
+ // @access  Private/Admin
+ const getAllProgreso = async (req, res, next) => {
+   try {
+     // Solo administrador puede acceder a todos los progresos
+@@ -123,125 +165,135 @@ const getProgresoResidente = async (req, res, next) => {
+   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.user.id !== req.params.id) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
+   }
+ 
+ 
+     if (
+       req.user.rol === 'tutor' &&
+       (req.user.hospital.toString() !== residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== residente.especialidad))
+     ) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+     }
+     if (req.user.rol === 'csm' && req.user.zona !== residente.hospital.zona) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
+     }
+ 
+     if (req.user.rol === 'profesor' && (!residente.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString())) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
+     }
+ 
+     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
+       .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia');
+ 
++    await ProgresoResidente.populate(progresoPorFase, {
++      path: 'adjuntos',
++      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
++    });
++
+     // Ordenar las fases por su campo 'orden'
+     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
+-      const resultado = progresoPorFase.map(item => {
+-        return {
+-          _id: item._id.toString(),
+-          fase: item.fase,
+-          faseModel: item.faseModel,
+-          estadoGeneral: item.estadoGeneral,
+-          actividades: item.actividades.map(act => ({
+-            nombre: act.nombre,
+-            tipo: act.tipo,
+-            completada: act.estado === 'validado',
+-            comentariosResidente: act.comentariosResidente || '',
+-            comentariosTutor: act.comentariosTutor || '',
+-            fecha: act.fechaRealizacion,
+-            fechaValidacion: act.fechaValidacion,
+-            comentariosRechazo: act.comentariosRechazo || '',
+-            fechaRechazo: act.fechaRechazo,
+-            estado: act.estado,
+-            porcentajeParticipacion: act.porcentajeParticipacion,
+-            cirugia: act.cirugia,
+-            otraCirugia: act.otraCirugia,
+-            nombreCirujano: act.nombreCirujano
+-          }))
+-        };
+-      });
++    const resultado = progresoPorFase.map(formatProgresoParaResidente);
+       
+ 
+     res.status(200).json({
+       success: true,
+       count: resultado.length,
+       data: resultado
+     });
+   } catch (err) {
+     console.error("Error en getProgresoResidente:", err);
+     next(err);
+   }
+ 
+ };
+ 
+ 
+ const getProgresoResidentePorFase = async (req, res, next) => {
+   try {
+     const residente = await User.findById(req.params.id).populate('hospital');
+ 
+     if (!residente) {
+       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
+     }
+ 
+   if (residente.rol !== 'residente' && residente.rol !== 'participante') {
+       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
+   }
+ 
+   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.user.id !== req.params.id) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
+   }
+ 
+     if (
+       req.user.rol === 'tutor' &&
+       (req.user.hospital.toString() !== residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== residente.especialidad))
+     ) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+     }
+     if (req.user.rol === 'csm' && req.user.zona !== residente.hospital.zona) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
+     }
+ 
+     const progreso = await ProgresoResidente.find({ residente: req.params.id })
+-     .populate('fase')
++      .populate('fase')
+       .populate('actividades.actividad')
+-      .populate('actividades.cirugia')
+-      .lean();
++      .populate('actividades.cirugia');
+ 
+-    const filtered = progreso.filter(p => p.residente);
++    await ProgresoResidente.populate(progreso, {
++      path: 'adjuntos',
++      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
++    });
++
++    const resultado = progreso.map(item => {
++      const plain = item.toObject({ virtuals: true });
++      const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
++        if (typeof adj.actividadIndex !== 'number') return acc;
++        const key = adj.actividadIndex;
++        if (!acc[key]) acc[key] = [];
++        acc[key].push({
++          _id: adj._id.toString(),
++          nombreArchivo: adj.nombreArchivo,
++          mimeType: adj.mimeType,
++          fechaSubida: adj.fechaSubida
++        });
++        return acc;
++      }, {});
++
++      return {
++        ...plain,
++        actividades: plain.actividades.map((act, index) => ({
++          ...act,
++          adjuntos: adjuntosPorIndice[index] || []
++        }))
++      };
++    });
++
++    const filtered = resultado.filter(p => p.residente);
+ 
+     res.status(200).json({
+       success: true,
+       count: filtered.length,
+       data: filtered
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ 
+ // @desc    Registrar nuevo progreso
+ // @route   POST /api/progreso
+ // @access  Private
+ 
+ 
+ 
+ 
+ const registrarProgreso = async (req, res, next) => {
+   try {
+     // Si el usuario es residente, solo puede registrar su propio progreso
+   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.body.residente !== req.user.id) {
+       return next(new ErrorResponse('No autorizado para registrar progreso de otro residente', 403));
+   }
+@@ -630,96 +682,101 @@ const marcarActividadCompletada = async (req, res, next) => {
+       }
+       if (![0, 25, 50, 75, 100].includes(porcentaje)) {
+         return next(new ErrorResponse('Porcentaje de participación inválido', 400));
+       }
+       actividadExistente.cirugia = cirugia;
+       actividadExistente.otraCirugia = otraCirugia;
+       actividadExistente.nombreCirujano = nombreCirujano;
+       actividadExistente.porcentajeParticipacion = porcentaje;
+     }
+ 
+     actividadExistente.estado = 'completado';
+     actividadExistente.completada = true;
+     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+     actividadExistente.comentariosResidente = comentariosResidente;
+ 
+     // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
+     if (req.files && req.files.adjunto) {
+       const file = req.files.adjunto;
+       const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
+       if (!allowed.includes(file.mimetype)) {
+         return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+       }
+       if (file.size > 5 * 1024 * 1024) {
+         return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+       }
++      await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
+       await Adjunto.create({
+         progreso: id,
+         usuario: req.user._id,
+         actividadIndex: Number(index),
+         nombreArchivo: file.name,
+         mimeType: file.mimetype,
+         datos: file.data,
+         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+       });
+     }
+ 
+     await progreso.save();
+ 
+     if (
+       estadoPrevio === 'pendiente' &&
+       actividadExistente.actividad &&
+       actividadExistente.actividad.requiereValidacion
+     ) {
+       const responsables = [
+         progreso.residente.tutor,
+         progreso.residente.profesor
+       ]
+         .filter(Boolean)
+         .map(id => id.toString());
+ 
+       const destinatarios = [...new Set(responsables)];
+ 
+       const mensaje = `El residente ${progreso.residente.nombre} ${progreso.residente.apellidos} ha completado la actividad "${actividadExistente.actividad.nombre}" y requiere validación.`;
+ 
+       for (const usuario of destinatarios) {
+         await Notificacion.create({
+           usuario,
+           tipo: 'validacion',
+           mensaje,
+           enlace: '/dashboard/validaciones',
+           entidadRelacionada: {
+             tipo: 'progreso',
+             id: progreso._id
+           }
+         });
+       }
+     }
+ 
+     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
++    await progreso.populate({
++      path: 'adjuntos',
++      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
++    });
+ 
+-    res.status(200).json({ success: true, data: progreso });
++    res.status(200).json({ success: true, data: formatProgresoParaResidente(progreso) });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // GET /api/progreso/tutor/pendientes
+ // @access Private/Tutor|Profesor
+ const getProgresosPendientesDelHospital = async (req, res, next) => {
+   try {
+     if (req.user.rol !== 'tutor' && req.user.rol !== 'profesor' && req.user.rol !== 'csm') {
+       return res.status(403).json({ success: false, error: 'No autorizado' });
+     }
+ 
+     const pendientes = await ProgresoResidente.find({
+       estado: { $in: ['pendiente', 'validado', 'rechazado'] }
+     })
+     .populate({
+       path: 'residente',
+       select: 'nombre apellidos hospital sociedad especialidad',
+       match: req.user.rol === 'profesor'
+         ? { sociedad: req.user.sociedad }
+         : req.user.rol === 'tutor'
+         ? {
+             hospital: req.user.hospital,
+             ...(req.user.especialidad !== 'ALL'

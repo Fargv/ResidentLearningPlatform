@@ -937,6 +937,7 @@
     "activitySaveError": "Erro ao gardar a actividade.",
     "activitySuccess": "✅ Actividade rexistrada con éxito",
     "noActivitySelectedError": "Erro interno: Non se seleccionou ningunha actividade.",
+    "downloadAttachmentError": "Erro ao descargar o ficheiro adxunto.",
     "noTitle": "Sen título",
     "phaseTitle": "Fase {{number}}: {{name}}",
     "deadline": "Data límite",
@@ -945,6 +946,7 @@
     "phaseLocked": "Fase bloqueada",
     "noProgress": "Non hai progreso formativo dispoñible.",
     "markAsCompleted": "Marcar como completada",
+    "editActivity": "Editar actividade",
     "unnamedActivity": "Actividade sen nome",
     "comment": "Comentario",
     "tutorComment": "Comentario do Tutor",
@@ -955,6 +957,8 @@
     "surgeryType": "Tipo de cirurxía: {{type}}",
     "surgeonName": "Nome do cirurxián: {{name}}",
     "participation": "Porcentaxe de participación: {{percent}}%",
+    "downloadAttachment": "Descargar ficheiro",
+    "pendingAttachment": "Ficheiro adxunto enviado",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividade como completada",
@@ -977,6 +981,9 @@
       "surgeonNameRequired": "Introduce o nome do cirurxián",
       "participationRequired": "Selecciona unha porcentaxe de participación",
       "title": "Marcar actividade como completada",
+      "editTitle": "Editar actividade enviada",
+      "currentFile": "Ficheiro actual: {{file}}",
+      "replaceFileHint": "Podes seleccionar un novo ficheiro para substituílo.",
       "date": "Data de realización"
     },
     "messages": {

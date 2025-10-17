@@ -49,6 +49,48 @@ const updatePhaseStatus = async (progreso) => {
 
 
 
+
+const formatProgresoParaResidente = (progresoDoc) => {
+  const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
+  const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+    if (typeof adj.actividadIndex !== 'number') return acc;
+    const key = adj.actividadIndex;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push({
+      _id: adj._id.toString(),
+      nombreArchivo: adj.nombreArchivo,
+      mimeType: adj.mimeType,
+      fechaSubida: adj.fechaSubida
+    });
+    return acc;
+  }, {});
+
+  return {
+    _id: plain._id.toString(),
+    fase: plain.fase,
+    faseModel: plain.faseModel,
+    estadoGeneral: plain.estadoGeneral,
+    actividades: (plain.actividades || []).map((act, index) => ({
+      nombre: act.nombre,
+      tipo: act.tipo,
+      completada: act.estado === 'validado',
+      comentariosResidente: act.comentariosResidente || '',
+      comentariosTutor: act.comentariosTutor || '',
+      fecha: act.fechaRealizacion,
+      fechaValidacion: act.fechaValidacion,
+      comentariosRechazo: act.comentariosRechazo || '',
+      fechaRechazo: act.fechaRechazo,
+      estado: act.estado,
+      porcentajeParticipacion: act.porcentajeParticipacion,
+      cirugia: act.cirugia,
+      otraCirugia: act.otraCirugia,
+      nombreCirujano: act.nombreCirujano,
+      adjuntos: adjuntosPorIndice[index] || []
+    }))
+  };
+};
+
+
 const inicializarProgresoFormativo = async (req, res, next) => {
   try {
   const user = await User.findById(req.params.id);
@@ -145,32 +187,14 @@ const getProgresoResidente = async (req, res, next) => {
       .populate('actividades.actividad')
       .populate('actividades.cirugia');
 
+    await ProgresoResidente.populate(progresoPorFase, {
+      path: 'adjuntos',
+      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+    });
+
     // Ordenar las fases por su campo 'orden'
     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
-      const resultado = progresoPorFase.map(item => {
-        return {
-          _id: item._id.toString(),
-          fase: item.fase,
-          faseModel: item.faseModel,
-          estadoGeneral: item.estadoGeneral,
-          actividades: item.actividades.map(act => ({
-            nombre: act.nombre,
-            tipo: act.tipo,
-            completada: act.estado === 'validado',
-            comentariosResidente: act.comentariosResidente || '',
-            comentariosTutor: act.comentariosTutor || '',
-            fecha: act.fechaRealizacion,
-            fechaValidacion: act.fechaValidacion,
-            comentariosRechazo: act.comentariosRechazo || '',
-            fechaRechazo: act.fechaRechazo,
-            estado: act.estado,
-            porcentajeParticipacion: act.porcentajeParticipacion,
-            cirugia: act.cirugia,
-            otraCirugia: act.otraCirugia,
-            nombreCirujano: act.nombreCirujano
-          }))
-        };
-      });
+    const resultado = progresoPorFase.map(formatProgresoParaResidente);
       
 
     res.status(200).json({
@@ -214,12 +238,40 @@ const getProgresoResidentePorFase = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
-     .populate('fase')
+      .populate('fase')
       .populate('actividades.actividad')
-      .populate('actividades.cirugia')
-      .lean();
+      .populate('actividades.cirugia');
 
-    const filtered = progreso.filter(p => p.residente);
+    await ProgresoResidente.populate(progreso, {
+      path: 'adjuntos',
+      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+    });
+
+    const resultado = progreso.map(item => {
+      const plain = item.toObject({ virtuals: true });
+      const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+        if (typeof adj.actividadIndex !== 'number') return acc;
+        const key = adj.actividadIndex;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push({
+          _id: adj._id.toString(),
+          nombreArchivo: adj.nombreArchivo,
+          mimeType: adj.mimeType,
+          fechaSubida: adj.fechaSubida
+        });
+        return acc;
+      }, {});
+
+      return {
+        ...plain,
+        actividades: plain.actividades.map((act, index) => ({
+          ...act,
+          adjuntos: adjuntosPorIndice[index] || []
+        }))
+      };
+    });
+
+    const filtered = resultado.filter(p => p.residente);
 
     res.status(200).json({
       success: true,
@@ -652,6 +704,7 @@ const marcarActividadCompletada = async (req, res, next) => {
       if (file.size > 5 * 1024 * 1024) {
         return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
       }
+      await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
       await Adjunto.create({
         progreso: id,
         usuario: req.user._id,
@@ -696,8 +749,12 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
+    await progreso.populate({
+      path: 'adjuntos',
+      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+    });
 
-    res.status(200).json({ success: true, data: progreso });
+    res.status(200).json({ success: true, data: formatProgresoParaResidente(progreso) });
   } catch (err) {
     next(err);
   }
