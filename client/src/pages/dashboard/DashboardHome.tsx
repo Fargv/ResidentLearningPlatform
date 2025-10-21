@@ -40,6 +40,10 @@ const DashboardHome: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const theme = useTheme();
+  const progressFillColor =
+    theme.palette.mode === "dark"
+      ? theme.palette.primary.dark
+      : theme.palette.primary.light;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
@@ -530,7 +534,7 @@ const DashboardHome: React.FC = () => {
                       sx={{
                         p: 2,
                         borderLeft: `6px solid ${theme.palette.primary.main}`,
-                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
+                        background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
                       }}
                     >
                       <Typography
@@ -549,7 +553,12 @@ const DashboardHome: React.FC = () => {
                       <Typography
                         variant="body2"
                         fontWeight="bold"
-                        sx={{ color: theme.palette.primary.main }}
+                        sx={{
+                          color:
+                            theme.palette.mode === "dark"
+                              ? theme.palette.common.white
+                              : theme.palette.primary.main,
+                        }}
                       >
                         {percent}%
                       </Typography>
@@ -634,7 +643,7 @@ const DashboardHome: React.FC = () => {
                       sx={{
                         p: 2,
                         borderLeft: `6px solid ${theme.palette.primary.main}`,
-                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
+                        background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
                       }}
                     >
                       <Typography variant="subtitle2" color="text.secondary">
@@ -644,7 +653,10 @@ const DashboardHome: React.FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         sx={{
-                          color: "text.secondary",
+                          color:
+                            theme.palette.mode === "dark"
+                              ? theme.palette.common.white
+                              : "text.secondary",
                           textShadow: 'none',
                         }}
                       >

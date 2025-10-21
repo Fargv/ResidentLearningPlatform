@@ -1,233 +1,204 @@
-diff --git a/client/src/App.tsx b/client/src/App.tsx
-index b5c529d71aea8dcf06754520924b43a8beb55b44..f3eacafa2c0b27e67aa96e49170bf336edbdff1b 100644
---- a/client/src/App.tsx
-+++ b/client/src/App.tsx
-@@ -1,54 +1,52 @@
- import React, { useEffect } from 'react';
- import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
- // Theme handled via ColorModeProvider
- //import { Box } from '@mui/material';
- //import { useTranslation } from 'react-i18next';
- //import LanguageSelector from './components/LanguageSelector';
- 
- // Contexto de autenticación
- import { AuthProvider } from './context/AuthContext';
- 
- // Componentes de enrutamiento
- import PrivateRoute from './components/routing/PrivateRoute';
- import AdminRoute from './components/routing/AdminRoute';
- import TutorRoute from './components/routing/TutorRoute';
--import ResidenteRoute from './components/routing/ResidenteRoute';
- 
- // Páginas públicas
- import Login from './pages/Login';
- import Register from './pages/Register';
- import RegisterInvite from './pages/RegisterInvite';
- import ForgotPassword from './pages/ForgotPassword';
- import ResetPassword from './pages/ResetPassword';
- import NotFound from './pages/NotFound';
- import PrivacyPolicy from './pages/PrivacyPolicy';
- 
- // Páginas del dashboard
- import Dashboard from './pages/Dashboard';
- import DashboardHome from './pages/dashboard/DashboardHome';
--import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
- import TutorValidaciones from './pages/dashboard/TutorValidaciones';
- import Usuarios from './pages/dashboard/Usuarios';
- import AdminHospitales from './pages/dashboard/AdminHospitales';
- import AdminFases from './pages/dashboard/AdminFases';
- import Perfil from './pages/dashboard/Perfil';
- import Notificaciones from './pages/dashboard/Notificaciones';
- import AdminSociedades from "./pages/dashboard/AdminSociedades";
- import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
- import AdminInformes from './pages/dashboard/AdminInformes';
- 
- 
- declare global {
-   interface Window {
-     REACT_APP_ENV?: string;
-   }
- }
- 
- function App() {
-   useEffect(() => {
-     console.log("REACT_APP_API_URL cargada:", process.env.REACT_APP_API_URL);
-   }, []);
- 
-   const env = process.env.REACT_APP_ENV || window.REACT_APP_ENV;
-   const isDev = env === 'dev';
- 
-@@ -77,55 +75,50 @@ function App() {
- 
- 
-       <Router>
-         <AuthProvider>
-           <Routes>
-             {/* Rutas públicas */}
-             <Route path="/login" element={<Login />} />
-             <Route path="/register" element={<Register />} />
-             <Route path="/register/:token" element={<RegisterInvite />} />
-             <Route path="/forgot-password" element={<ForgotPassword />} />
-             <Route path="/reset-password/:token" element={<ResetPassword />} />
-             <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
- 
-             {/* Ruta raíz redirige a dashboard o login */}
-             <Route path="/" element={<Navigate to="/dashboard" replace />} />
- 
-             <Route path="/dashboard/*" element={
-               <PrivateRoute>
-                 <Dashboard />
-               </PrivateRoute>
-             }>
- 
-               <Route index element={<DashboardHome />} />
- 
-               {/* Rutas para residentes */}
--              <Route path="progreso" element={
--                <ResidenteRoute>
--                  <ResidenteProgreso />
--                </ResidenteRoute>
--              } />
- 
- 
-               {/* Rutas para tutores */}
-               <Route path="validaciones" element={
-                 <TutorRoute>
-                   <TutorValidaciones />
-                 </TutorRoute>
-               } />
-               {/* Rutas para tutores y administradores */}
-               <Route path="usuarios" element={
-                 <TutorRoute>
-                   <Usuarios />
-                 </TutorRoute>
-               } />
- 
-               {/* Rutas solo para administradores */}
-               <Route path="hospitales" element={
-                 <AdminRoute>
-                   <AdminHospitales />
-                 </AdminRoute>
-               } />
-               <Route path="fases" element={
-                 <AdminRoute>
-                   <AdminFases />
-                 </AdminRoute>
-diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 53eb5ab81974f1430e245f18f4cbc986def5736d..3404099280e3dc3aaac05132ed7e42768b3213c7 100644
---- a/client/src/pages/Dashboard.tsx
-+++ b/client/src/pages/Dashboard.tsx
-@@ -287,46 +287,50 @@ const Dashboard: React.FC = () => {
-       >
-         <Toolbar />
-         <Routes>
-   <Route path="/" element={<DashboardHome />} />
-   <Route path="/validaciones" element={<TutorValidaciones />} />
-   <Route path="/usuarios" element={<Usuarios />} />
-   <Route path="/hospitals" element={<AdminHospitales />} />
-   {user?.rol === 'administrador' && (
-     <Route path="/fases" element={<AdminFases />} />
-   )}
-   {user?.rol === 'administrador' && (
-     <Route path="/access-codes" element={<AdminAccessCodes />} />
-   )}
-   {user?.rol === 'administrador' && (
-     <Route path="/cirugias" element={<AdminCirugias />} />
-   )}
-   {user?.rol === 'administrador' && (
-     <Route path="/fases-soc" element={<AdminFasesSoc />} />
-   )}
-   {user?.rol === 'administrador' && (
-     <Route path="/informes" element={<AdminInformes />} />
-   )}
-   {user?.rol === 'administrador' && (
-     <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
-   )}
-+  <Route
-+    path="/dashboard/progreso"
-+    element={<Navigate to="/dashboard" replace />}
-+  />
-   {user?.rol === 'administrador' && (
-     <Route path="/config" element={<AdminConfiguracion />} />
-   )}
-   {user?.rol === 'administrador' && (
-     <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
-   )}
-   <Route path="/sociedades" element={<AdminSociedades />} />
-   {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
-     <Route path="/fases" element={<ResidenteFases />} />
-   ) : null}
-   <Route path="/perfil" element={<Perfil />} />
-   <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
-   {isDev && <Route path="/debug" element={<DebugDashboard />} />}
- </Routes>
- 
-       </Box>
-     </Box>
-   );
- };
- 
- export default Dashboard;
 diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index 7c9e58b809dde1bccd4d13ec70cd5d0823f805b0..a76ea39a86586b73b5813628d82281b5267b50af 100644
+index a76ea39a86586b73b5813628d82281b5267b50af..aa3906c70628cd98b0f68443bcab777edb6ef73f 100644
 --- a/client/src/pages/dashboard/DashboardHome.tsx
 +++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -354,58 +354,50 @@ const DashboardHome: React.FC = () => {
-       link.href = url;
-       link.setAttribute(
-         'download',
-         `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
-       );
-       document.body.appendChild(link);
-       link.click();
-       link.remove();
-     } catch (err: any) {
-       setError(t('residentProgress.downloadSurgeryReportError'));
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
+@@ -18,50 +18,54 @@ import {
+   useTheme,
+ } from "@mui/material";
+ import {
+   Assignment as AssignmentIcon,
+   School as SchoolIcon,
+   People as PeopleIcon,
+   Settings as SettingsIcon,
+   Assessment as AssessmentIcon,
+   Person as PersonIcon,
+   Notifications as NotificationsIcon,
+   WorkspacePremium as WorkspacePremiumIcon
+ } from "@mui/icons-material";
+ import { useNavigate } from "react-router-dom";
+ import { useAuth } from "../../context/AuthContext";
+ import api from "../../api";
+ import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
+ import { Sociedad } from "../../types/Sociedad";
+ import { useTranslation } from 'react-i18next';
+ import type { Fase } from "../../components/ProgressPorFase";
  
-   const navigate = useNavigate();
  
-   type Action = {
-     label: string;
-     path: string;
-     icon: React.ReactNode;
-   };
- 
-   const actions: Action[] = [];
- 
--  if (user?.rol === "residente" || user?.rol === "participante") {
--    actions.push({
--      label: t('actions.myProgress'),
--      path: "/dashboard/progreso",
--      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
--    });
--  }
--
-   if (
-     user?.rol === "residente" ||
-     user?.rol === "participante" ||
-     user?.rol === "profesor"
-   ) {
-     actions.push({
-       label: t('actions.trainingPhases'),
-       path: "/dashboard/fases",
-       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-     });
-   }
- 
-   if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
-     actions.push({
-       label: t('actions.validations'),
-       path: "/dashboard/validaciones",
-       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
-     });
-   }
- 
-   if (user?.rol === "tutor" || user?.rol === "csm") {
-     actions.push({
-       label: t('actions.myUsers'),
-       path: "/dashboard/usuarios",
-       icon: <PeopleIcon sx={{ fontSize: 40 }} />,
+ const DashboardHome: React.FC = () => {
+   const { t, i18n } = useTranslation();
+   const { user } = useAuth();
+   const theme = useTheme();
++  const progressFillColor =
++    theme.palette.mode === "dark"
++      ? theme.palette.primary.dark
++      : theme.palette.primary.light;
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+   const [phaseSummary, setPhaseSummary] = useState<
+     {
+       name: string;
+       percent: number;
+       estadoGeneral: string;
+       progresoId: string;
+       faseNumero: number;
+       hasSurgery: boolean;
+     }[]
+   >([]);
+   const [socPhaseSummary, setSocPhaseSummary] = useState<
+     {
+       phase: number;
+       percent: number;
+       estadoGeneral: string;
+       progresoId: string;
+       hasSurgery: boolean;
+     }[]
+   >([]);
+   const [progressLoading, setProgressLoading] = useState(false);
+   const [downloadLoading, setDownloadLoading] = useState(false);
+   const [socAllValidado, setSocAllValidado] = useState(false);
+@@ -508,70 +512,75 @@ const DashboardHome: React.FC = () => {
+                     flex: {
+                       xs: "1 1 100%",
+                       md:
+                         idx === 0
+                           ? "1 1 100%"
+                           : "1 1 calc(50% - 16px)",
+                     },
+                     minWidth: { xs: "250px", md: "250px" },
+                   }}
+                 >
+                   <CardActionArea
+                     onClick={() => handleOpenDialog(m)}
+                     sx={{
+                       "&:hover": {
+                         backgroundColor: "action.hover",
+                         transform: "scale(1.02)",
+                       },
+                       cursor: "pointer",
+                     }}
+                   >
+                     <Paper
+                       elevation={2}
+                       sx={{
+                         p: 2,
+                         borderLeft: `6px solid ${theme.palette.primary.main}`,
+-                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
++                        background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
+                       }}
+                     >
+                       <Typography
+                         variant="subtitle2"
+                         sx={{ color: 'text.secondary' }}
+                       >
+                         {m.label}
+                       </Typography>
+                       <Typography
+                         variant="body1"
+                         fontWeight="bold"
+                         sx={{ color: theme.palette.primary.main }}
+                       >
+                         {formatMonthYear(m.date || "") || "—"}
+                       </Typography>
+                       <Typography
+                         variant="body2"
+                         fontWeight="bold"
+-                        sx={{ color: theme.palette.primary.main }}
++                        sx={{
++                          color:
++                            theme.palette.mode === "dark"
++                              ? theme.palette.common.white
++                              : theme.palette.primary.main,
++                        }}
+                       >
+                         {percent}%
+                       </Typography>
+                     </Paper>
+                   </CardActionArea>
+                   {phaseData &&
+                     phaseData.estadoGeneral === 'validado' &&
+                     phaseData.hasSurgery && (
+                       <Box textAlign="center" mt={1}>
+                         <Button
+                           variant="contained"
+                           onClick={() =>
+                             handleDescargarInformeCirugias(
+                               phaseData.progresoId,
+                               `${t('adminPhases.phase')} ${phaseData.phase}`,
+                             )
+                           }
+                           disabled={downloadLoading}
+                         >
+                           {t('residentProgress.downloadSurgeryReport', {
+                             phase: m.label,
+                           })}
+                         </Button>
+                       </Box>
+                     )}
+@@ -612,61 +621,64 @@ const DashboardHome: React.FC = () => {
+                   sx={{
+                     flex: "1 1 calc(50% - 16px)",
+                     minWidth: "250px",
+                   }}
+                 >
+                   <CardActionArea
+                     onClick={() =>
+                       onFaseClick(
+                         { nombre: p.name, porcentaje: p.percent },
+                         idx,
+                       )
+                     }
+                     sx={{
+                       "&:hover": {
+                         backgroundColor: "action.hover",
+                         transform: "scale(1.02)",
+                       },
+                       cursor: "pointer",
+                     }}
+                   >
+                     <Paper
+                       elevation={2}
+                       sx={{
+                         p: 2,
+                         borderLeft: `6px solid ${theme.palette.primary.main}`,
+-                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
++                        background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
+                       }}
+                     >
+                       <Typography variant="subtitle2" color="text.secondary">
+                         {p.name}
+                       </Typography>
+                       <Typography
+                         variant="body1"
+                         fontWeight="bold"
+                         sx={{
+-                          color: "text.secondary",
++                          color:
++                            theme.palette.mode === "dark"
++                              ? theme.palette.common.white
++                              : "text.secondary",
+                           textShadow: 'none',
+                         }}
+                       >
+                         {p.percent}%
+                       </Typography>
+                     </Paper>
+                   </CardActionArea>
+                   {p.estadoGeneral === 'validado' && p.hasSurgery && (
+                     <Box textAlign="center" mt={1}>
+                       <Button
+                         variant="contained"
+                         onClick={() =>
+                           handleDescargarInformeCirugias(
+                             p.progresoId,
+                             `${t('adminPhases.phase')} ${p.faseNumero}`,
+                           )
+                         }
+                         disabled={downloadLoading}
+                       >
+                         {t('residentProgress.downloadSurgeryReport', {
+                           phase: p.name,
+                         })}
+                       </Button>
+                     </Box>
+                   )}
