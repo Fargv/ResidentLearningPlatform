@@ -60,5 +60,5 @@ test('info palette updates with mode', () => {
 
   fireEvent.click(screen.getByText('toggle'));
 
-  expect(screen.getByTestId('info')).toHaveTextContent('#90caf9-#000');
+  expect(screen.getByTestId('info')).toHaveTextContent('#90caf9-#0b1929');
 });

@@ -1,93 +1,263 @@
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index 26d353d7d1a0b0680190288fc3adb94984920242..77fa71cfa35c036075d3ae7de2fc25e9bb30bdb9 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -255,84 +255,83 @@ const ResidenteFases: React.FC = () => {
-     loadSociedad();
-   }, [user]);
+diff --git a/client/src/components/PhaseProgressChart.tsx b/client/src/components/PhaseProgressChart.tsx
+index e354aa68c0de4486fb8799b7eadb58ba08fc2071..ff8412845cb1af9b29ca332a627452b0096b0987 100644
+--- a/client/src/components/PhaseProgressChart.tsx
++++ b/client/src/components/PhaseProgressChart.tsx
+@@ -1,53 +1,60 @@
+ import React from 'react';
+ import { Box, Typography } from '@mui/material';
++import { useTheme } from '@mui/material/styles';
+ import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
  
-   const handleOpenDialog = (
-     progresoId: string,
-     index: number,
-     toggleKey?: string,
-     mode: 'complete' | 'edit' = 'complete'
-   ) => {
-     setDialogMode(mode);
-     setSelectedProgresoId(progresoId);
-     setSelectedActividadIndex(index);
-     setActiveToggleKey(mode === 'complete' ? toggleKey ?? null : null);
+ interface PhaseProgressChartProps {
+   phaseName: string;
+   pendiente: number;
+   completado: number;
+   rechazado: number;
+   validado: number;
+ }
  
-     const progreso = progresos.find(p => p._id === progresoId);
-     const actividad = progreso?.actividades?.[index];
-     const esCirugiaActividad = actividad?.tipo === 'cirugia';
-     setEsCirugia(!!esCirugiaActividad);
+-const COLORS = ['#ff9800', '#2196f3', '#f44336', '#4caf50'];
+-
+ const PhaseProgressChart: React.FC<PhaseProgressChartProps> = ({
+   phaseName,
+   pendiente,
+   completado,
+   rechazado,
+   validado,
+ }) => {
++  const theme = useTheme();
++  const colors = [
++    theme.palette.warning.main,
++    theme.palette.info.main,
++    theme.palette.error.main,
++    theme.palette.success.main,
++  ];
++
+   const data = [
+     { name: 'Pendiente', value: pendiente },
+     { name: 'Completado', value: completado },
+     { name: 'Rechazado', value: rechazado },
+     { name: 'Validado', value: validado },
+   ];
  
-     const fechaBase = actividad?.fecha || actividad?.fechaRealizacion;
-     const fechaInicial = fechaBase
-       ? new Date(fechaBase).toISOString().split('T')[0]
-       : new Date().toISOString().split('T')[0];
-     setFecha(fechaInicial);
+   return (
+     <Box textAlign="center">
+       <Typography variant="subtitle1" gutterBottom>{phaseName}</Typography>
+       <PieChart width={250} height={250}>
+         <Pie
+           data={data}
+           dataKey="value"
+           nameKey="name"
+           cx="50%"
+           cy="50%"
+           outerRadius={80}
+           label
+         >
+           {data.map((_, index) => (
+-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
++            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+           ))}
+         </Pie>
+         <Tooltip />
+         <Legend verticalAlign="bottom" height={36} />
+       </PieChart>
+     </Box>
+   );
+ };
  
--    setComentario(mode === 'edit' ? actividad?.comentariosResidente || '' : '');
--    setArchivo(null);
--    setArchivoError(false);
--    setArchivoErrorMsg('');
-+    setComentario(mode === 'edit' ? actividad?.comentariosResidente || '' : '');
-+    setArchivoError(false);
-+    setArchivoErrorMsg('');
+ export default PhaseProgressChart;
+diff --git a/client/src/context/ColorModeContext.test.tsx b/client/src/context/ColorModeContext.test.tsx
+index 23efe1d807751981f248d33ebe6668a4e93359b0..2bce3ad601ee53b8ae01ab3b8b16385e8d49925d 100644
+--- a/client/src/context/ColorModeContext.test.tsx
++++ b/client/src/context/ColorModeContext.test.tsx
+@@ -38,27 +38,27 @@ test('default mode is light', () => {
+ test('toggleColorMode switches mode and persists choice', () => {
+   render(
+     <ColorModeProvider>
+       <TestComponent />
+     </ColorModeProvider>
+   );
  
-     if (mode === 'edit' && esCirugiaActividad) {
-       if (actividad?.cirugia) {
-         setCirugia(actividad.cirugia);
-         setOtraCirugia('');
-         setOtraCirugiaSeleccionada(false);
-       } else if (actividad?.otraCirugia) {
-         setCirugia(null);
-         setOtraCirugia(actividad.otraCirugia);
-         setOtraCirugiaSeleccionada(true);
-       } else {
-         setCirugia(null);
-         setOtraCirugia('');
-         setOtraCirugiaSeleccionada(false);
-       }
-       setNombreCirujano(actividad?.nombreCirujano || '');
-       setPorcentaje(
-         typeof actividad?.porcentajeParticipacion === 'number'
-           ? actividad.porcentajeParticipacion
-           : 0
-       );
-     } else {
-       setCirugia(null);
-       setOtraCirugia('');
-       setOtraCirugiaSeleccionada(false);
-       setNombreCirujano('');
-       setPorcentaje(0);
-     }
+   fireEvent.click(screen.getByText('toggle'));
  
--    setArchivos([]);
-+    setArchivos([]);
-     setAdjuntosEliminados([]);
-     setArchivoError(false);
-     setArchivoErrorMsg('');
-     setAdjuntosExistentes(mode === 'edit' ? actividad?.adjuntos || [] : []);
+   expect(screen.getByTestId('mode')).toHaveTextContent('dark');
+   expect(localStorage.getItem('colorMode')).toBe('dark');
+ });
  
-     setDialogOpen(true);
-   };
+ test('info palette updates with mode', () => {
+   render(
+     <ColorModeProvider>
+       <TestComponent />
+       <ThemeConsumer />
+     </ColorModeProvider>
+   );
  
-   const handleToggleComplete = (progresoId: string, index: number, toggleKey: string) => {
-     setCompletionToggles(prev => ({ ...prev, [toggleKey]: true }));
-     handleOpenDialog(progresoId, index, toggleKey);
-   };
+   expect(screen.getByTestId('info')).toHaveTextContent('#1976d2-#fff');
  
-   const handleEditActividad = (progresoId: string, index: number) => {
-     handleOpenDialog(progresoId, index, undefined, 'edit');
-   };
+   fireEvent.click(screen.getByText('toggle'));
  
-   const botonConfirmarHabilitado =
-     Boolean(selectedProgresoId) &&
-     selectedActividadIndex !== null &&
-     Boolean(fecha) &&
-     !archivoError &&
-     (!esCirugia ||
-       ((cirugia || otraCirugia.trim()) &&
-         nombreCirujano.trim() !== '' &&
+-  expect(screen.getByTestId('info')).toHaveTextContent('#90caf9-#000');
+-});
++  expect(screen.getByTestId('info')).toHaveTextContent('#90caf9-#0b1929');
++});
+diff --git a/client/src/context/ColorModeContext.tsx b/client/src/context/ColorModeContext.tsx
+index 8b9f1c4657daee94a67beccc6651ced98d076034..0ccd40bc2c29b72e11cd5fac4ec8e548e5a312ce 100644
+--- a/client/src/context/ColorModeContext.tsx
++++ b/client/src/context/ColorModeContext.tsx
+@@ -10,71 +10,139 @@ import CssBaseline from '@mui/material/CssBaseline';
+ import type { PaletteMode } from '@mui/material';
+ 
+ type ColorModeContextType = {
+   mode: PaletteMode;
+   toggleColorMode: () => void;
+ };
+ 
+ const ColorModeContext = createContext<ColorModeContextType | undefined>(undefined);
+ 
+ const getInitialMode = (): PaletteMode => {
+   try {
+     if (typeof window === 'undefined') return 'light';
+     const saved = window.localStorage.getItem('colorMode') as PaletteMode | null;
+     if (saved === 'light' || saved === 'dark') return saved;
+     const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+     return prefersDark ? 'dark' : 'light';
+   } catch {
+     return 'light';
+   }
+ };
+ 
+ const getTheme = (mode: PaletteMode) =>
+   createTheme({
+     palette: {
+       mode,
+-      primary: {
+-        main: '#1E5B94',
+-        light: '#4c7fb3',
+-        dark: '#153e67',
+-      },
+-      secondary: {
+-        main: '#6AB023',
+-        light: '#8cc94f',
+-        dark: '#4a7b18',
+-      },
++      primary:
++        mode === 'light'
++          ? {
++              main: '#1E5B94',
++              light: '#4c7fb3',
++              dark: '#153e67',
++              contrastText: '#ffffff',
++            }
++          : {
++              main: '#90caf9',
++              light: '#c3fdff',
++              dark: '#5d99c6',
++              contrastText: '#0b1929',
++            },
++      secondary:
++        mode === 'light'
++          ? {
++              main: '#6AB023',
++              light: '#8cc94f',
++              dark: '#4a7b18',
++              contrastText: '#ffffff',
++            }
++          : {
++              main: '#a5d6a7',
++              light: '#d7ffd9',
++              dark: '#75a478',
++              contrastText: '#08240f',
++            },
+       background: {
+         default: mode === 'light' ? '#f5f5f5' : '#121212',
+         paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
+       },
+-      error: { main: '#d32f2f' },
+-      warning: { main: '#ff9800' },
+-      info: {
+-        main: mode === 'light' ? '#1976d2' : '#90caf9',
+-        contrastText: mode === 'light' ? '#fff' : '#000',
+-      },
+-      success: { main: '#4caf50' },
++      error:
++        mode === 'light'
++          ? {
++              main: '#d32f2f',
++              light: '#ef5350',
++              dark: '#9a0007',
++              contrastText: '#ffffff',
++            }
++          : {
++              main: '#ef9a9a',
++              light: '#ffcdd2',
++              dark: '#c62828',
++              contrastText: '#3a0000',
++            },
++      warning:
++        mode === 'light'
++          ? {
++              main: '#ff9800',
++              light: '#ffb74d',
++              dark: '#c66900',
++              contrastText: '#1b0b00',
++            }
++          : {
++              main: '#ffcc80',
++              light: '#ffe0b2',
++              dark: '#ffa726',
++              contrastText: '#2f1600',
++            },
++      info:
++        mode === 'light'
++          ? {
++              main: '#1976d2',
++              light: '#63a4ff',
++              dark: '#004ba0',
++              contrastText: '#ffffff',
++            }
++          : {
++              main: '#90caf9',
++              light: '#c3fdff',
++              dark: '#5d99c6',
++              contrastText: '#0b1929',
++            },
++      success:
++        mode === 'light'
++          ? {
++              main: '#4caf50',
++              light: '#81c784',
++              dark: '#357a38',
++              contrastText: '#ffffff',
++            }
++          : {
++              main: '#a5d6a7',
++              light: '#d7ffd9',
++              dark: '#75a478',
++              contrastText: '#08240f',
++            },
++      divider: mode === 'light' ? '#e0e0e0' : '#2d2d2d',
+     },
+     typography: {
+       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+       h1: { fontWeight: 500 },
+       h2: { fontWeight: 500 },
+       h3: { fontWeight: 500 },
+       h4: { fontWeight: 500 },
+       h5: { fontWeight: 500 },
+       h6: { fontWeight: 500 },
+     },
+     shape: { borderRadius: 8 },
+     components: {
+       MuiButton: {
+         styleOverrides: {
+           root: {
+             textTransform: 'none',
+             fontWeight: 500,
+           },
+         },
+       },
+       MuiCard: {
+         styleOverrides: {
+           root: {
+             borderRadius: 8,
+             boxShadow:

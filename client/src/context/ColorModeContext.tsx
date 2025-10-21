@@ -32,27 +32,95 @@ const getTheme = (mode: PaletteMode) =>
   createTheme({
     palette: {
       mode,
-      primary: {
-        main: '#1E5B94',
-        light: '#4c7fb3',
-        dark: '#153e67',
-      },
-      secondary: {
-        main: '#6AB023',
-        light: '#8cc94f',
-        dark: '#4a7b18',
-      },
+      primary:
+        mode === 'light'
+          ? {
+              main: '#1E5B94',
+              light: '#4c7fb3',
+              dark: '#153e67',
+              contrastText: '#ffffff',
+            }
+          : {
+              main: '#90caf9',
+              light: '#c3fdff',
+              dark: '#5d99c6',
+              contrastText: '#0b1929',
+            },
+      secondary:
+        mode === 'light'
+          ? {
+              main: '#6AB023',
+              light: '#8cc94f',
+              dark: '#4a7b18',
+              contrastText: '#ffffff',
+            }
+          : {
+              main: '#a5d6a7',
+              light: '#d7ffd9',
+              dark: '#75a478',
+              contrastText: '#08240f',
+            },
       background: {
         default: mode === 'light' ? '#f5f5f5' : '#121212',
         paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
       },
-      error: { main: '#d32f2f' },
-      warning: { main: '#ff9800' },
-      info: {
-        main: mode === 'light' ? '#1976d2' : '#90caf9',
-        contrastText: mode === 'light' ? '#fff' : '#000',
-      },
-      success: { main: '#4caf50' },
+      error:
+        mode === 'light'
+          ? {
+              main: '#d32f2f',
+              light: '#ef5350',
+              dark: '#9a0007',
+              contrastText: '#ffffff',
+            }
+          : {
+              main: '#ef9a9a',
+              light: '#ffcdd2',
+              dark: '#c62828',
+              contrastText: '#3a0000',
+            },
+      warning:
+        mode === 'light'
+          ? {
+              main: '#ff9800',
+              light: '#ffb74d',
+              dark: '#c66900',
+              contrastText: '#1b0b00',
+            }
+          : {
+              main: '#ffcc80',
+              light: '#ffe0b2',
+              dark: '#ffa726',
+              contrastText: '#2f1600',
+            },
+      info:
+        mode === 'light'
+          ? {
+              main: '#1976d2',
+              light: '#63a4ff',
+              dark: '#004ba0',
+              contrastText: '#ffffff',
+            }
+          : {
+              main: '#90caf9',
+              light: '#c3fdff',
+              dark: '#5d99c6',
+              contrastText: '#0b1929',
+            },
+      success:
+        mode === 'light'
+          ? {
+              main: '#4caf50',
+              light: '#81c784',
+              dark: '#357a38',
+              contrastText: '#ffffff',
+            }
+          : {
+              main: '#a5d6a7',
+              light: '#d7ffd9',
+              dark: '#75a478',
+              contrastText: '#08240f',
+            },
+      divider: mode === 'light' ? '#e0e0e0' : '#2d2d2d',
     },
     typography: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
