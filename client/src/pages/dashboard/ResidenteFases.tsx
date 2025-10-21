@@ -278,7 +278,6 @@ const ResidenteFases: React.FC = () => {
     setFecha(fechaInicial);
 
     setComentario(mode === 'edit' ? actividad?.comentariosResidente || '' : '');
-    setArchivo(null);
     setArchivoError(false);
     setArchivoErrorMsg('');
 
