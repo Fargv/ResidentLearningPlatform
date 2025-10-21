@@ -909,14 +909,41 @@ const getValidacionesPendientes = async (req, res, next) => {
       return true;
     });
 
+    const progresoIds = filtrados.map(p => p._id);
+    const adjuntosPorActividad = new Map();
+
+    if (progresoIds.length) {
+      const adjuntos = await Adjunto.find({
+        progreso: { $in: progresoIds },
+        actividadIndex: { $ne: null }
+      })
+        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
+        .lean();
+
+      adjuntos.forEach(adjunto => {
+        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
+        if (!adjuntosPorActividad.has(key)) {
+          adjuntosPorActividad.set(key, []);
+        }
+        adjuntosPorActividad.get(key).push({
+          _id: adjunto._id,
+          nombreArchivo: adjunto.nombreArchivo,
+          mimeType: adjunto.mimeType,
+          fechaSubida: adjunto.fechaSubida
+        });
+      });
+
+      for (const lista of adjuntosPorActividad.values()) {
+        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
+      }
+    }
+
     for (const progreso of filtrados) {
 
       for (let index = 0; index < progreso.actividades.length; index++) {
         const actividad = progreso.actividades[index];
-        const existeAdjunto = await Adjunto.exists({
-          progreso: progreso._id,
-          actividadIndex: index
-        });
+        const key = `${progreso._id.toString()}-${index}`;
+        const adjuntos = adjuntosPorActividad.get(key) || [];
 
         const item = {
           _id: `${progreso._id}-${index}`,
@@ -929,7 +956,8 @@ const getValidacionesPendientes = async (req, res, next) => {
             actividad.fechaRealizacion || progreso.fechaRegistro,
           estado: actividad.estado,
           comentariosRechazo: actividad.comentariosRechazo || '',
-          tieneAdjunto: !!existeAdjunto
+          tieneAdjunto: adjuntos.length > 0,
+          adjuntos
         };
 
         if (actividad.estado === 'completado') pendientes.push(item);
@@ -973,15 +1001,42 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
     const validadas = [];
     const rechazadas = [];
 
+    const progresoIds = progresos.map(p => p._id);
+    const adjuntosPorActividad = new Map();
+
+    if (progresoIds.length) {
+      const adjuntos = await Adjunto.find({
+        progreso: { $in: progresoIds },
+        actividadIndex: { $ne: null }
+      })
+        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
+        .lean();
+
+      adjuntos.forEach(adjunto => {
+        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
+        if (!adjuntosPorActividad.has(key)) {
+          adjuntosPorActividad.set(key, []);
+        }
+        adjuntosPorActividad.get(key).push({
+          _id: adjunto._id,
+          nombreArchivo: adjunto.nombreArchivo,
+          mimeType: adjunto.mimeType,
+          fechaSubida: adjunto.fechaSubida
+        });
+      });
+
+      for (const lista of adjuntosPorActividad.values()) {
+        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
+      }
+    }
+
     for (const progreso of progresos) {
       if (!progreso.residente) continue;
 
       for (let index = 0; index < progreso.actividades.length; index++) {
         const actividad = progreso.actividades[index];
-        const existeAdjunto = await Adjunto.exists({
-          progreso: progreso._id,
-          actividadIndex: index
-        });
+        const key = `${progreso._id.toString()}-${index}`;
+        const adjuntos = adjuntosPorActividad.get(key) || [];
 
         const item = {
           _id: `${progreso._id}-${index}`,
@@ -994,7 +1049,8 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
             actividad.fechaRealizacion || progreso.fechaRegistro,
           estado: actividad.estado,
           comentariosRechazo: actividad.comentariosRechazo || '',
-          tieneAdjunto: !!existeAdjunto
+          tieneAdjunto: adjuntos.length > 0,
+          adjuntos
         };
 
         if (actividad.estado === 'completado') pendientes.push(item);
@@ -1116,6 +1172,8 @@ const rechazarActividad = async (req, res, next) => {
       tipo: 'rechazo',
       mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
     });
+
+    await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
 
     res.status(200).json({ success: true, data: progreso });
   } catch (err) {

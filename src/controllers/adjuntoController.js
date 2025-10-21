@@ -202,7 +202,17 @@ exports.subirAdjuntoActividad = async (req, res, next) => {
 exports.getAdjuntoActividad = async (req, res, next) => {
   try {
     const { progresoId, index } = req.params;
-    const adjunto = await Adjunto.findOne({ progreso: progresoId, actividadIndex: Number(index) });
+    const { adjuntoId } = req.query;
+    const filtro = {
+      progreso: progresoId,
+      actividadIndex: Number(index)
+    };
+
+    if (adjuntoId) {
+      filtro._id = adjuntoId;
+    }
+
+    const adjunto = await Adjunto.findOne(filtro);
     if (!adjunto) return next(new ErrorResponse('Adjunto no encontrado', 404));
 
     const progreso = await ProgresoResidente.findById(progresoId).populate('residente');

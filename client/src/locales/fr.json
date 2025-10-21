@@ -735,7 +735,8 @@
       "processing": "Traitement en cours..."
     },
     "messages": {
-      "loadError": "Erreur lors du chargement des validations"
+      "loadError": "Erreur lors du chargement des validations",
+      "noAttachments": "Aucune pièce jointe disponible"
     }
   },
   "residentProgress": {

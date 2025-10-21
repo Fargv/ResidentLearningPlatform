@@ -703,7 +703,8 @@
       "processing": "Processant..."
     },
     "messages": {
-      "loadError": "Error en carregar les validacions"
+      "loadError": "Error en carregar les validacions",
+      "noAttachments": "No hi ha adjunts disponibles"
     }
   },
   "auth": {

@@ -867,7 +867,8 @@
       "processing": "Procesando..."
     },
     "messages": {
-      "loadError": "Erro ao cargar as validacións"
+      "loadError": "Erro ao cargar as validacións",
+      "noAttachments": "Non hai anexos dispoñibles"
     }
   },
   "emails": {

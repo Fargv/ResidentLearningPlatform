@@ -998,7 +998,8 @@
       "processing": "Processando..."
     },
     "messages": {
-      "loadError": "Erro ao carregar as validações"
+      "loadError": "Erro ao carregar as validações",
+      "noAttachments": "Nenhum anexo disponível"
     }
   },
   "certificate": {

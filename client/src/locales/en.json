@@ -893,7 +893,8 @@
       "processing": "Processing..."
     },
     "messages": {
-      "loadError": "Error loading validations"
+      "loadError": "Error loading validations",
+      "noAttachments": "No attachments available"
     }
   },
   "residentPhases": {

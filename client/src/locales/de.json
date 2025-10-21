@@ -994,7 +994,8 @@
       "processing": "Verarbeite..."
     },
     "messages": {
-      "loadError": "Fehler beim Laden der Validierungen"
+      "loadError": "Fehler beim Laden der Validierungen",
+      "noAttachments": "Keine Anhänge verfügbar"
     }
   },
   "privacyPolicy": {

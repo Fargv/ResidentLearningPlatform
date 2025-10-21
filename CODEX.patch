@@ -1,204 +1,327 @@
-diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index a76ea39a86586b73b5813628d82281b5267b50af..aa3906c70628cd98b0f68443bcab777edb6ef73f 100644
---- a/client/src/pages/dashboard/DashboardHome.tsx
-+++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -18,50 +18,54 @@ import {
-   useTheme,
- } from "@mui/material";
- import {
-   Assignment as AssignmentIcon,
-   School as SchoolIcon,
-   People as PeopleIcon,
-   Settings as SettingsIcon,
-   Assessment as AssessmentIcon,
-   Person as PersonIcon,
-   Notifications as NotificationsIcon,
-   WorkspacePremium as WorkspacePremiumIcon
- } from "@mui/icons-material";
- import { useNavigate } from "react-router-dom";
- import { useAuth } from "../../context/AuthContext";
- import api from "../../api";
- import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
- import { Sociedad } from "../../types/Sociedad";
- import { useTranslation } from 'react-i18next';
- import type { Fase } from "../../components/ProgressPorFase";
+diff --git a/src/controllers/adjuntoController.js b/src/controllers/adjuntoController.js
+index 7e74c434deae52cb314c011ef3ee05a23a0868e7..8201c9ba9029422679eb599b1bcd1fe667904902 100644
+--- a/src/controllers/adjuntoController.js
++++ b/src/controllers/adjuntoController.js
+@@ -180,51 +180,61 @@ exports.subirAdjuntoActividad = async (req, res, next) => {
+       return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+     }
+ 
+     const adjunto = await Adjunto.create({
+       progreso: progresoId,
+       usuario: req.user._id,
+       actividadIndex: Number(index),
+       nombreArchivo: file.name,
+       mimeType: file.mimetype,
+       datos: file.data,
+       tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+     });
+ 
+     res.status(201).json({ success: true, data: adjunto._id });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Obtener adjunto de una actividad
+ // @route   GET /api/adjuntos/actividad/:progresoId/:index
+ // @access  Private
+ exports.getAdjuntoActividad = async (req, res, next) => {
+   try {
+     const { progresoId, index } = req.params;
+-    const adjunto = await Adjunto.findOne({ progreso: progresoId, actividadIndex: Number(index) });
++    const { adjuntoId } = req.query;
++    const filtro = {
++      progreso: progresoId,
++      actividadIndex: Number(index)
++    };
++
++    if (adjuntoId) {
++      filtro._id = adjuntoId;
++    }
++
++    const adjunto = await Adjunto.findOne(filtro);
+     if (!adjunto) return next(new ErrorResponse('Adjunto no encontrado', 404));
+ 
+     const progreso = await ProgresoResidente.findById(progresoId).populate('residente');
+     if (!progreso) return next(new ErrorResponse('Progreso no encontrado', 404));
+ 
+     if (
+       req.user.rol !== 'administrador' &&
+       req.user.id !== progreso.residente._id.toString() &&
+       (req.user.rol !== 'tutor' ||
+         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
+       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
+       (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
+     ) {
+       return next(new ErrorResponse('No autorizado', 403));
+     }
+ 
+     res.set('Content-Type', adjunto.mimeType);
+     return res.send(adjunto.datos);
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Eliminar un adjunto
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index e2b8beb54fcf5a8409a9fb3b122e5e02e595a3c6..f9c90dc18d46450327815a386493f57e5cd18f0a 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -887,136 +887,192 @@ const getValidacionesPendientes = async (req, res, next) => {
+           : req.user.rol === 'tutor'
+           ? {
+               hospital: req.user.hospital,
+               ...(req.user.especialidad !== 'ALL'
+                 ? { especialidad: req.user.especialidad }
+                 : {})
+             }
+           : {},
+         select: 'nombre apellidos hospital sociedad especialidad',
+         populate: { path: 'hospital', select: 'zona' }
+       })
+       .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia');
+ 
+     const pendientes = [];
+     const validadas = [];
+     const rechazadas = [];
+ 
+     const filtrados = progresos.filter(p => {
+       if (!p.residente) return false;
+       if (req.user.rol === 'csm') return p.residente.hospital && p.residente.hospital.zona === req.user.zona;
+       return true;
+     });
+ 
++    const progresoIds = filtrados.map(p => p._id);
++    const adjuntosPorActividad = new Map();
++
++    if (progresoIds.length) {
++      const adjuntos = await Adjunto.find({
++        progreso: { $in: progresoIds },
++        actividadIndex: { $ne: null }
++      })
++        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
++        .lean();
++
++      adjuntos.forEach(adjunto => {
++        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
++        if (!adjuntosPorActividad.has(key)) {
++          adjuntosPorActividad.set(key, []);
++        }
++        adjuntosPorActividad.get(key).push({
++          _id: adjunto._id,
++          nombreArchivo: adjunto.nombreArchivo,
++          mimeType: adjunto.mimeType,
++          fechaSubida: adjunto.fechaSubida
++        });
++      });
++
++      for (const lista of adjuntosPorActividad.values()) {
++        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
++      }
++    }
++
+     for (const progreso of filtrados) {
+ 
+       for (let index = 0; index < progreso.actividades.length; index++) {
+         const actividad = progreso.actividades[index];
+-        const existeAdjunto = await Adjunto.exists({
+-          progreso: progreso._id,
+-          actividadIndex: index
+-        });
++        const key = `${progreso._id.toString()}-${index}`;
++        const adjuntos = adjuntosPorActividad.get(key) || [];
+ 
+         const item = {
+           _id: `${progreso._id}-${index}`,
+           progresoId: progreso._id,
+           index,
+           actividad,
+           residente: progreso.residente,
+           fase: progreso.fase,
+           fechaCreacion:
+             actividad.fechaRealizacion || progreso.fechaRegistro,
+           estado: actividad.estado,
+           comentariosRechazo: actividad.comentariosRechazo || '',
+-          tieneAdjunto: !!existeAdjunto
++          tieneAdjunto: adjuntos.length > 0,
++          adjuntos
+         };
+ 
+         if (actividad.estado === 'completado') pendientes.push(item);
+         if (actividad.estado === 'validado') validadas.push(item);
+         if (actividad.estado === 'rechazado') rechazadas.push(item);
+       }
+     }
+ 
+     res.status(200).json({
+       success: true,
+       data: {
+         pendientes,
+         validadas,
+         rechazadas
+       }
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc Obtener lista de validaciones pendientes sin filtros
+ // @route GET /api/progreso/admin/validaciones/pendientes
+ // @access Private/Admin
+ const getValidacionesPendientesAdmin = async (req, res, next) => {
+   try {
+     if (req.user.rol !== 'administrador') {
+       return res.status(403).json({ success: false, error: 'No autorizado' });
+     }
+ 
+     const progresos = await ProgresoResidente.find()
+       .populate({
+         path: 'residente',
+         select: 'nombre apellidos tipo hospital sociedad'
+       })
+       .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia');
+ 
+     const pendientes = [];
+     const validadas = [];
+     const rechazadas = [];
+ 
++    const progresoIds = progresos.map(p => p._id);
++    const adjuntosPorActividad = new Map();
++
++    if (progresoIds.length) {
++      const adjuntos = await Adjunto.find({
++        progreso: { $in: progresoIds },
++        actividadIndex: { $ne: null }
++      })
++        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
++        .lean();
++
++      adjuntos.forEach(adjunto => {
++        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
++        if (!adjuntosPorActividad.has(key)) {
++          adjuntosPorActividad.set(key, []);
++        }
++        adjuntosPorActividad.get(key).push({
++          _id: adjunto._id,
++          nombreArchivo: adjunto.nombreArchivo,
++          mimeType: adjunto.mimeType,
++          fechaSubida: adjunto.fechaSubida
++        });
++      });
++
++      for (const lista of adjuntosPorActividad.values()) {
++        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
++      }
++    }
++
+     for (const progreso of progresos) {
+       if (!progreso.residente) continue;
+ 
+       for (let index = 0; index < progreso.actividades.length; index++) {
+         const actividad = progreso.actividades[index];
+-        const existeAdjunto = await Adjunto.exists({
+-          progreso: progreso._id,
+-          actividadIndex: index
+-        });
++        const key = `${progreso._id.toString()}-${index}`;
++        const adjuntos = adjuntosPorActividad.get(key) || [];
+ 
+         const item = {
+           _id: `${progreso._id}-${index}`,
+           progresoId: progreso._id,
+           index,
+           actividad,
+           residente: progreso.residente,
+           fase: progreso.fase,
+           fechaCreacion:
+             actividad.fechaRealizacion || progreso.fechaRegistro,
+           estado: actividad.estado,
+           comentariosRechazo: actividad.comentariosRechazo || '',
+-          tieneAdjunto: !!existeAdjunto
++          tieneAdjunto: adjuntos.length > 0,
++          adjuntos
+         };
+ 
+         if (actividad.estado === 'completado') pendientes.push(item);
+         if (actividad.estado === 'validado') validadas.push(item);
+         if (actividad.estado === 'rechazado') rechazadas.push(item);
+       }
+     }
+ 
+     res.status(200).json({
+       success: true,
+       data: {
+         pendientes,
+         validadas,
+         rechazadas
+       }
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+   const validarActividad = async (req, res, next) => {
+   try {
+     const { id, index } = req.params;
+     const { comentarios, firmaDigital } = req.body;
+@@ -1095,50 +1151,52 @@ const rechazarActividad = async (req, res, next) => {
+     }
+ 
+     actividad.estado = 'rechazado';
+     actividad.comentariosRechazo = comentarios;
+     actividad.fechaRechazo = new Date();
+ 
+     await progreso.save();
+     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
+     
+     const destinatarios = [progreso.residente.tutor, progreso.residente.profesor].filter(Boolean);
+     await Notificacion.updateMany(
+       {
+         usuario: { $in: destinatarios },
+         'entidadRelacionada.tipo': 'progreso',
+         'entidadRelacionada.id': progreso._id
+       },
+       { leida: true }
+     );
+     
+     await Notificacion.create({
+       usuario: progreso.residente._id,
+       tipo: 'rechazo',
+       mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
+     });
+ 
++    await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
++
+     res.status(200).json({ success: true, data: progreso });
+   } catch (err) {
+     next(err);
+   }
+ };
  
  
- const DashboardHome: React.FC = () => {
-   const { t, i18n } = useTranslation();
-   const { user } = useAuth();
-   const theme = useTheme();
-+  const progressFillColor =
-+    theme.palette.mode === "dark"
-+      ? theme.palette.primary.dark
-+      : theme.palette.primary.light;
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
-   const [phaseSummary, setPhaseSummary] = useState<
-     {
-       name: string;
-       percent: number;
-       estadoGeneral: string;
-       progresoId: string;
-       faseNumero: number;
-       hasSurgery: boolean;
-     }[]
-   >([]);
-   const [socPhaseSummary, setSocPhaseSummary] = useState<
-     {
-       phase: number;
-       percent: number;
-       estadoGeneral: string;
-       progresoId: string;
-       hasSurgery: boolean;
-     }[]
-   >([]);
-   const [progressLoading, setProgressLoading] = useState(false);
-   const [downloadLoading, setDownloadLoading] = useState(false);
-   const [socAllValidado, setSocAllValidado] = useState(false);
-@@ -508,70 +512,75 @@ const DashboardHome: React.FC = () => {
-                     flex: {
-                       xs: "1 1 100%",
-                       md:
-                         idx === 0
-                           ? "1 1 100%"
-                           : "1 1 calc(50% - 16px)",
-                     },
-                     minWidth: { xs: "250px", md: "250px" },
-                   }}
-                 >
-                   <CardActionArea
-                     onClick={() => handleOpenDialog(m)}
-                     sx={{
-                       "&:hover": {
-                         backgroundColor: "action.hover",
-                         transform: "scale(1.02)",
-                       },
-                       cursor: "pointer",
-                     }}
-                   >
-                     <Paper
-                       elevation={2}
-                       sx={{
-                         p: 2,
-                         borderLeft: `6px solid ${theme.palette.primary.main}`,
--                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
-+                        background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
-                       }}
-                     >
-                       <Typography
-                         variant="subtitle2"
-                         sx={{ color: 'text.secondary' }}
-                       >
-                         {m.label}
-                       </Typography>
-                       <Typography
-                         variant="body1"
-                         fontWeight="bold"
-                         sx={{ color: theme.palette.primary.main }}
-                       >
-                         {formatMonthYear(m.date || "") || "—"}
-                       </Typography>
-                       <Typography
-                         variant="body2"
-                         fontWeight="bold"
--                        sx={{ color: theme.palette.primary.main }}
-+                        sx={{
-+                          color:
-+                            theme.palette.mode === "dark"
-+                              ? theme.palette.common.white
-+                              : theme.palette.primary.main,
-+                        }}
-                       >
-                         {percent}%
-                       </Typography>
-                     </Paper>
-                   </CardActionArea>
-                   {phaseData &&
-                     phaseData.estadoGeneral === 'validado' &&
-                     phaseData.hasSurgery && (
-                       <Box textAlign="center" mt={1}>
-                         <Button
-                           variant="contained"
-                           onClick={() =>
-                             handleDescargarInformeCirugias(
-                               phaseData.progresoId,
-                               `${t('adminPhases.phase')} ${phaseData.phase}`,
-                             )
-                           }
-                           disabled={downloadLoading}
-                         >
-                           {t('residentProgress.downloadSurgeryReport', {
-                             phase: m.label,
-                           })}
-                         </Button>
-                       </Box>
-                     )}
-@@ -612,61 +621,64 @@ const DashboardHome: React.FC = () => {
-                   sx={{
-                     flex: "1 1 calc(50% - 16px)",
-                     minWidth: "250px",
-                   }}
-                 >
-                   <CardActionArea
-                     onClick={() =>
-                       onFaseClick(
-                         { nombre: p.name, porcentaje: p.percent },
-                         idx,
-                       )
-                     }
-                     sx={{
-                       "&:hover": {
-                         backgroundColor: "action.hover",
-                         transform: "scale(1.02)",
-                       },
-                       cursor: "pointer",
-                     }}
-                   >
-                     <Paper
-                       elevation={2}
-                       sx={{
-                         p: 2,
-                         borderLeft: `6px solid ${theme.palette.primary.main}`,
--                        background: `linear-gradient(90deg, ${theme.palette.primary.light} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
-+                        background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
-                       }}
-                     >
-                       <Typography variant="subtitle2" color="text.secondary">
-                         {p.name}
-                       </Typography>
-                       <Typography
-                         variant="body1"
-                         fontWeight="bold"
-                         sx={{
--                          color: "text.secondary",
-+                          color:
-+                            theme.palette.mode === "dark"
-+                              ? theme.palette.common.white
-+                              : "text.secondary",
-                           textShadow: 'none',
-                         }}
-                       >
-                         {p.percent}%
-                       </Typography>
-                     </Paper>
-                   </CardActionArea>
-                   {p.estadoGeneral === 'validado' && p.hasSurgery && (
-                     <Box textAlign="center" mt={1}>
-                       <Button
-                         variant="contained"
-                         onClick={() =>
-                           handleDescargarInformeCirugias(
-                             p.progresoId,
-                             `${t('adminPhases.phase')} ${p.faseNumero}`,
-                           )
-                         }
-                         disabled={downloadLoading}
-                       >
-                         {t('residentProgress.downloadSurgeryReport', {
-                           phase: p.name,
-                         })}
-                       </Button>
-                     </Box>
-                   )}
+ 
+ const crearProgresoParaUsuario = async (req, res, next) => {
+   try {
+     const { id } = req.params;
+ 
+   const usuario = await User.findById(id);
+   if (!usuario || (usuario.rol !== 'residente' && usuario.rol !== 'participante')) {
+       return res.status(400).json({ success: false, error: 'Usuario no válido o no es residente' });
+   }
+ 
+     const yaTiene = await ProgresoResidente.findOne({ residente: id });
+     if (yaTiene) {
+       return res.status(400).json({ success: false, error: 'Ya tiene progreso formativo' });
+     }
+ 
+     if (req.body.tipo) usuario.tipo = req.body.tipo;
+     await inicializarProgresoFormativoDB(usuario);
+     res.status(200).json({ success: true, message: 'Progreso formativo creado' });

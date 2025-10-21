@@ -922,7 +922,8 @@
       "processing": "Elaborazione..."
     },
     "messages": {
-      "loadError": "Errore nel caricamento delle validazioni"
+      "loadError": "Errore nel caricamento delle validazioni",
+      "noAttachments": "Nessun allegato disponibile"
     }
   },
   "residentPhases": {

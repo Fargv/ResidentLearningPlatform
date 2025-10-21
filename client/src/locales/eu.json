@@ -880,7 +880,8 @@
       "processing": "Prozesatzen..."
     },
     "messages": {
-      "loadError": "Errorea balidazioak kargatzean"
+      "loadError": "Errorea balidazioak kargatzean",
+      "noAttachments": "Ez dago eranskinik erabilgarri"
     }
   },
   "residentPhases": {

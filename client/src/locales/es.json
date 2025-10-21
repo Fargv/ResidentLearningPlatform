@@ -885,7 +885,8 @@
       "processing": "Procesando..."
     },
     "messages": {
-      "loadError": "Error al cargar las validaciones"
+      "loadError": "Error al cargar las validaciones",
+      "noAttachments": "No hay adjuntos disponibles"
     }
   },
   "residentPhases": {
