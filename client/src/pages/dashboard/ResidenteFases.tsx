@@ -563,9 +563,10 @@ const ResidenteFases: React.FC = () => {
 
   if (error) return <Alert severity="error">{error}</Alert>;
 
-  const allValidado = progresos
-    .filter(p => p.faseModel === 'Fase')
-    .every(p => p.estadoGeneral === 'validado');
+  const residentPhases = progresos.filter((p) => p.faseModel === 'Fase');
+  const allValidado =
+    residentPhases.length > 0 &&
+    residentPhases.every((p) => p.estadoGeneral === 'validado');
 
   return (
     <Box>
