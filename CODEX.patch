@@ -1,71 +1,178 @@
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index b716d075210c8b47e216e2b05f1cee05b81900d1..7e6d2778a5194d9e67a4e9ff288f13e3a4c1e05a 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -541,53 +541,54 @@ const ResidenteFases: React.FC = () => {
-       setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
-       setSnackbarError(true);
-       setSnackbarOpen(true);
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
+diff --git a/client/src/App.tsx b/client/src/App.tsx
+index b5c529d71aea8dcf06754520924b43a8beb55b44..f3eacafa2c0b27e67aa96e49170bf336edbdff1b 100644
+--- a/client/src/App.tsx
++++ b/client/src/App.tsx
+@@ -1,54 +1,52 @@
+ import React, { useEffect } from 'react';
+ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+ // Theme handled via ColorModeProvider
+ //import { Box } from '@mui/material';
+ //import { useTranslation } from 'react-i18next';
+ //import LanguageSelector from './components/LanguageSelector';
  
-   const handleCloseSnackbar = () => {
-     setSnackbarOpen(false);
-   };
+ // Contexto de autenticación
+ import { AuthProvider } from './context/AuthContext';
  
-   if (loading) {
-     return (
-       <Box>
-         <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
-         {[...Array(3)].map((_, i) => (
-           <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
-         ))}
-       </Box>
-     );
+ // Componentes de enrutamiento
+ import PrivateRoute from './components/routing/PrivateRoute';
+ import AdminRoute from './components/routing/AdminRoute';
+ import TutorRoute from './components/routing/TutorRoute';
+-import ResidenteRoute from './components/routing/ResidenteRoute';
+ 
+ // Páginas públicas
+ import Login from './pages/Login';
+ import Register from './pages/Register';
+ import RegisterInvite from './pages/RegisterInvite';
+ import ForgotPassword from './pages/ForgotPassword';
+ import ResetPassword from './pages/ResetPassword';
+ import NotFound from './pages/NotFound';
+ import PrivacyPolicy from './pages/PrivacyPolicy';
+ 
+ // Páginas del dashboard
+ import Dashboard from './pages/Dashboard';
+ import DashboardHome from './pages/dashboard/DashboardHome';
+-import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
+ import TutorValidaciones from './pages/dashboard/TutorValidaciones';
+ import Usuarios from './pages/dashboard/Usuarios';
+ import AdminHospitales from './pages/dashboard/AdminHospitales';
+ import AdminFases from './pages/dashboard/AdminFases';
+ import Perfil from './pages/dashboard/Perfil';
+ import Notificaciones from './pages/dashboard/Notificaciones';
+ import AdminSociedades from "./pages/dashboard/AdminSociedades";
+ import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
+ import AdminInformes from './pages/dashboard/AdminInformes';
+ 
+ 
+ declare global {
+   interface Window {
+     REACT_APP_ENV?: string;
    }
+ }
  
-   if (error) return <Alert severity="error">{error}</Alert>;
+ function App() {
+   useEffect(() => {
+     console.log("REACT_APP_API_URL cargada:", process.env.REACT_APP_API_URL);
+   }, []);
  
--  const allValidado = progresos
--    .filter(p => p.faseModel === 'Fase')
--    .every(p => p.estadoGeneral === 'validado');
-+  const residentPhases = progresos.filter((p) => p.faseModel === 'Fase');
-+  const allValidado =
-+    residentPhases.length > 0 &&
-+    residentPhases.every((p) => p.estadoGeneral === 'validado');
+   const env = process.env.REACT_APP_ENV || window.REACT_APP_ENV;
+   const isDev = env === 'dev';
  
-   return (
-     <Box>
-       <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
-       
-       {Array.isArray(progresos) && progresos.length > 0 ? (
-   progresos.map((item, index) => {
+@@ -77,55 +75,50 @@ function App() {
  
-     return (
-       <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
-         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-           <Typography variant="h6">
-             {t('residentPhases.phaseTitle', {
-               number: item.fase?.numero || '—',
-               name: item.fase?.nombre || t('residentPhases.noTitle')
-             })}
-           </Typography>
-           {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
-             <Typography
-               sx={{ ml: 'auto', color: getDateColor(item.fase.numero, item.estadoGeneral) }}
-             >
-               {getSociedadDate(item.fase.numero)}
-             </Typography>
-           )}
-         </AccordionSummary>
-diff --git a/client/src/pages/dashboard/ResidenteProgreso.tsx b/client/src/pages/dashboard/ResidenteProgreso.tsx
-index b7c7c14c4b7f41cd75c7963c57b52b6e8c25d434..c948765d78845e7ffb0d8bcd33957d438115c197 100644
---- a/client/src/pages/dashboard/ResidenteProgreso.tsx
-+++ b/client/src/pages/dashboard/ResidenteProgreso.tsx
-@@ -79,71 +79,73 @@ const ResidenteProgreso: React.FC = () => {
-       const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
+ 
+       <Router>
+         <AuthProvider>
+           <Routes>
+             {/* Rutas públicas */}
+             <Route path="/login" element={<Login />} />
+             <Route path="/register" element={<Register />} />
+             <Route path="/register/:token" element={<RegisterInvite />} />
+             <Route path="/forgot-password" element={<ForgotPassword />} />
+             <Route path="/reset-password/:token" element={<ResetPassword />} />
+             <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
+ 
+             {/* Ruta raíz redirige a dashboard o login */}
+             <Route path="/" element={<Navigate to="/dashboard" replace />} />
+ 
+             <Route path="/dashboard/*" element={
+               <PrivateRoute>
+                 <Dashboard />
+               </PrivateRoute>
+             }>
+ 
+               <Route index element={<DashboardHome />} />
+ 
+               {/* Rutas para residentes */}
+-              <Route path="progreso" element={
+-                <ResidenteRoute>
+-                  <ResidenteProgreso />
+-                </ResidenteRoute>
+-              } />
+ 
+ 
+               {/* Rutas para tutores */}
+               <Route path="validaciones" element={
+                 <TutorRoute>
+                   <TutorValidaciones />
+                 </TutorRoute>
+               } />
+               {/* Rutas para tutores y administradores */}
+               <Route path="usuarios" element={
+                 <TutorRoute>
+                   <Usuarios />
+                 </TutorRoute>
+               } />
+ 
+               {/* Rutas solo para administradores */}
+               <Route path="hospitales" element={
+                 <AdminRoute>
+                   <AdminHospitales />
+                 </AdminRoute>
+               } />
+               <Route path="fases" element={
+                 <AdminRoute>
+                   <AdminFases />
+                 </AdminRoute>
+diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
+index 53eb5ab81974f1430e245f18f4cbc986def5736d..3404099280e3dc3aaac05132ed7e42768b3213c7 100644
+--- a/client/src/pages/Dashboard.tsx
++++ b/client/src/pages/Dashboard.tsx
+@@ -287,46 +287,50 @@ const Dashboard: React.FC = () => {
+       >
+         <Toolbar />
+         <Routes>
+   <Route path="/" element={<DashboardHome />} />
+   <Route path="/validaciones" element={<TutorValidaciones />} />
+   <Route path="/usuarios" element={<Usuarios />} />
+   <Route path="/hospitals" element={<AdminHospitales />} />
+   {user?.rol === 'administrador' && (
+     <Route path="/fases" element={<AdminFases />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/access-codes" element={<AdminAccessCodes />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/cirugias" element={<AdminCirugias />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/fases-soc" element={<AdminFasesSoc />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/informes" element={<AdminInformes />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
+   )}
++  <Route
++    path="/dashboard/progreso"
++    element={<Navigate to="/dashboard" replace />}
++  />
+   {user?.rol === 'administrador' && (
+     <Route path="/config" element={<AdminConfiguracion />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
+   )}
+   <Route path="/sociedades" element={<AdminSociedades />} />
+   {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
+     <Route path="/fases" element={<ResidenteFases />} />
+   ) : null}
+   <Route path="/perfil" element={<Perfil />} />
+   <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
+   {isDev && <Route path="/debug" element={<DebugDashboard />} />}
+ </Routes>
+ 
+       </Box>
+     </Box>
+   );
+ };
+ 
+ export default Dashboard;
+diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
+index 7c9e58b809dde1bccd4d13ec70cd5d0823f805b0..a76ea39a86586b73b5813628d82281b5267b50af 100644
+--- a/client/src/pages/dashboard/DashboardHome.tsx
++++ b/client/src/pages/dashboard/DashboardHome.tsx
+@@ -354,58 +354,50 @@ const DashboardHome: React.FC = () => {
        link.href = url;
        link.setAttribute(
          'download',
@@ -81,63 +188,46 @@ index b7c7c14c4b7f41cd75c7963c57b52b6e8c25d434..c948765d78845e7ffb0d8bcd33957d43
      }
    };
  
-   if (loading) {
-     return (
-       <Box display="flex" justifyContent="center" mt={2}>
-         <CircularProgress />
-       </Box>
-     );
-   }
-   if (error) return <Alert severity="error">{error}</Alert>;
+   const navigate = useNavigate();
  
--  const filteredProgresos = progresos.filter(p => p.faseModel === 'Fase');
-+  const filteredProgresos = progresos.filter((p) => p.faseModel === 'Fase');
-   const phaseStats = filteredProgresos.map(p => {
-     const counts = { pendiente: 0, completado: 0, rechazado: 0, validado: 0 };
-     p.actividades.forEach(a => {
-       if (a.estado === 'pendiente') counts.pendiente += 1;
-       if (a.estado === 'completado') counts.completado += 1;
-       if (a.estado === 'rechazado') counts.rechazado += 1;
-       if (a.estado === 'validado') counts.validado += 1;
+   type Action = {
+     label: string;
+     path: string;
+     icon: React.ReactNode;
+   };
+ 
+   const actions: Action[] = [];
+ 
+-  if (user?.rol === "residente" || user?.rol === "participante") {
+-    actions.push({
+-      label: t('actions.myProgress'),
+-      path: "/dashboard/progreso",
+-      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+-    });
+-  }
+-
+   if (
+     user?.rol === "residente" ||
+     user?.rol === "participante" ||
+     user?.rol === "profesor"
+   ) {
+     actions.push({
+       label: t('actions.trainingPhases'),
+       path: "/dashboard/fases",
+       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
      });
-     const hasSurgery = p.actividades.some(a => a.tipo === 'cirugia');
-     return {
-       progresoId: p._id,
-       faseNombre: p.fase.nombre,
-       faseNumero: p.fase.numero,
-       estadoGeneral: p.estadoGeneral,
-       counts,
-       hasSurgery,
-     };
-   });
+   }
  
--  const allValidado = filteredProgresos.every(p => p.estadoGeneral === 'validado');
-+  const allValidado =
-+    filteredProgresos.length > 0 &&
-+    filteredProgresos.every((p) => p.estadoGeneral === 'validado');
+   if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
+     actions.push({
+       label: t('actions.validations'),
+       path: "/dashboard/validaciones",
+       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+     });
+   }
  
-   return (
-     <Box>
-       <Typography variant="h4" component="h1" gutterBottom>
-         {t('residentProgress.title')}
-       </Typography>
-       <Box display="flex" flexWrap="wrap" gap={2}>
-         {phaseStats.map(p => (
-           <Paper key={p.progresoId} sx={{ p: 2 }}>
-             <PhaseProgressChart
-               phaseName={p.faseNombre}
-               pendiente={p.counts.pendiente}
-               completado={p.counts.completado}
-               rechazado={p.counts.rechazado}
-               validado={p.counts.validado}
-             />
-             {p.estadoGeneral === 'validado' && p.hasSurgery && (
-               <Box textAlign="center" mt={2}>
-                 <Button
-                   variant="contained"
-                   onClick={() =>
-                     handleDescargarInformeCirugias(
-                       p.progresoId,
-                       `${t('adminPhases.phase')} ${p.faseNumero}`,
-                     )
-
+   if (user?.rol === "tutor" || user?.rol === "csm") {
+     actions.push({
+       label: t('actions.myUsers'),
+       path: "/dashboard/usuarios",
+       icon: <PeopleIcon sx={{ fontSize: 40 }} />,

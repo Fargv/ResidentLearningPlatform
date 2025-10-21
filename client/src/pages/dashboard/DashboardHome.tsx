@@ -376,14 +376,6 @@ const DashboardHome: React.FC = () => {
 
   const actions: Action[] = [];
 
-  if (user?.rol === "residente" || user?.rol === "participante") {
-    actions.push({
-      label: t('actions.myProgress'),
-      path: "/dashboard/progreso",
-      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-    });
-  }
-
   if (
     user?.rol === "residente" ||
     user?.rol === "participante" ||

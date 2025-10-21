@@ -12,7 +12,6 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
 import TutorRoute from './components/routing/TutorRoute';
-import ResidenteRoute from './components/routing/ResidenteRoute';
 
 // Páginas públicas
 import Login from './pages/Login';
@@ -26,7 +25,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 // Páginas del dashboard
 import Dashboard from './pages/Dashboard';
 import DashboardHome from './pages/dashboard/DashboardHome';
-import ResidenteProgreso from './pages/dashboard/ResidenteProgreso';
 import TutorValidaciones from './pages/dashboard/TutorValidaciones';
 import Usuarios from './pages/dashboard/Usuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
@@ -99,11 +97,6 @@ function App() {
               <Route index element={<DashboardHome />} />
 
               {/* Rutas para residentes */}
-              <Route path="progreso" element={
-                <ResidenteRoute>
-                  <ResidenteProgreso />
-                </ResidenteRoute>
-              } />
 
 
               {/* Rutas para tutores */}
