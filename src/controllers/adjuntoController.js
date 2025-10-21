@@ -315,8 +315,28 @@ exports.descargarAdjunto = async (req, res, next) => {
       return next(new ErrorResponse('No autorizado para descargar este adjunto', 403));
     }
 
+    // Descargar desde almacenamiento en base de datos si existe contenido binario
+    if (adjunto.datos && adjunto.datos.length) {
+      await createAuditLog({
+        usuario: req.user._id,
+        accion: 'descargar_adjunto',
+        descripcion: `Adjunto descargado: ${adjunto.nombreArchivo}`,
+        ip: req.ip
+      });
+
+      res.setHeader('Content-Type', adjunto.mimeType || 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${adjunto.nombreArchivo}"`);
+      res.setHeader('Content-Length', adjunto.datos.length);
+
+      return res.send(adjunto.datos);
+    }
+
+    if (!adjunto.rutaArchivo) {
+      return next(new ErrorResponse('Archivo no disponible', 404));
+    }
+
     const filePath = path.join(__dirname, '../../public', adjunto.rutaArchivo);
-    
+
     if (!fs.existsSync(filePath)) {
       return next(new ErrorResponse('Archivo no encontrado', 404));
     }
