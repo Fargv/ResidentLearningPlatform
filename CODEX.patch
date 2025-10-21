@@ -1,143 +1,183 @@
-diff --git a/src/controllers/adjuntoController.js b/src/controllers/adjuntoController.js
-index e085ba6d734462f37bcf324335ba64f8bb59360e..d6e130f479974452c1fc119a58f2c16319bad548 100644
---- a/src/controllers/adjuntoController.js
-+++ b/src/controllers/adjuntoController.js
-@@ -293,44 +293,64 @@ exports.descargarAdjunto = async (req, res, next) => {
- 
-     if (!adjunto) {
-       return next(new ErrorResponse(`Adjunto no encontrado con id ${req.params.id}`, 404));
-     }
- 
-     const progreso = await ProgresoResidente.findById(adjunto.progreso)
-       .populate({ path: 'residente', populate: { path: 'hospital' } });
- 
-     if (!progreso) {
-       return next(new ErrorResponse('Progreso asociado no encontrado', 404));
-     }
- 
-     // Verificar permisos: solo el propio residente, tutores de su hospital o administradores
-     if (
-       req.user.rol !== 'administrador' &&
-       req.user.id !== progreso.residente._id.toString() &&
-       (req.user.rol !== 'tutor' ||
-         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
-         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
-       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-       (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
-     ) {
-       return next(new ErrorResponse('No autorizado para descargar este adjunto', 403));
-     }
- 
-+    // Descargar desde almacenamiento en base de datos si existe contenido binario
-+    if (adjunto.datos && adjunto.datos.length) {
-+      await createAuditLog({
-+        usuario: req.user._id,
-+        accion: 'descargar_adjunto',
-+        descripcion: `Adjunto descargado: ${adjunto.nombreArchivo}`,
-+        ip: req.ip
-+      });
-+
-+      res.setHeader('Content-Type', adjunto.mimeType || 'application/octet-stream');
-+      res.setHeader('Content-Disposition', `attachment; filename="${adjunto.nombreArchivo}"`);
-+      res.setHeader('Content-Length', adjunto.datos.length);
-+
-+      return res.send(adjunto.datos);
-+    }
-+
-+    if (!adjunto.rutaArchivo) {
-+      return next(new ErrorResponse('Archivo no disponible', 404));
-+    }
-+
-     const filePath = path.join(__dirname, '../../public', adjunto.rutaArchivo);
--    
-+
-     if (!fs.existsSync(filePath)) {
-       return next(new ErrorResponse('Archivo no encontrado', 404));
-     }
- 
-     // Crear registro de auditoría
-     await createAuditLog({
-       usuario: req.user._id,
-       accion: 'descargar_adjunto',
-       descripcion: `Adjunto descargado: ${adjunto.nombreArchivo}`,
-       ip: req.ip
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index f8ebbf4c60d97a2c540c8ab47a3afcd56b9f18bd..1cfb9fb5f7e91d68b3cd3f02b8c260cb8d372a3b 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -634,108 +634,162 @@ const getEstadisticasResidente = async (req, res, next) => {
+       const total = item.actividades.length;
+       const completadas = item.actividades.filter(act => act.estado === 'validado').length;
+       return {
+         fase: item.fase,
+         total,
+         completadas,
+         porcentaje: total ? Math.round((completadas / total) * 100) : 0
+       };
      });
  
-     res.download(filePath, adjunto.nombreArchivo);
+     res.status(200).json({
+       success: true,
+       data: estadisticas
+     });
    } catch (err) {
+     console.error("Error en getEstadisticasResidente:", err);
      next(err);
    }
  };
-diff --git a/src/server.js b/src/server.js
-index 52e263e01ade0dcd7b8acbd4992131dda741c13b..6c003f4957bb47b2028d7fa4f9966ffdbb48387f 100644
---- a/src/server.js
-+++ b/src/server.js
-@@ -20,58 +20,64 @@ connectDB();
- const authRoutes = require('./routes/authRoutes');
- const userRoutes = require('./routes/userRoutes');
- const hospitalRoutes = require('./routes/hospitalRoutes');
- const faseRoutes = require('./routes/faseRoutes');
- const actividadRoutes = require('./routes/actividadRoutes');
- const faseSocRoutes = require('./routes/faseSocRoutes');
- const actividadSocRoutes = require('./routes/actividadSocRoutes');
- const progresoRoutes = require('./routes/progresoRoutes');
- const adjuntoRoutes = require('./routes/adjuntoRoutes');
- const notificacionRoutes = require('./routes/notificacionRoutes');
- const adminRoutes = require('./routes/adminRoutes');
- const sociedadesRoutes = require('./routes/sociedadesRoutes');
- const certificadoRoutes = require('./routes/certificadoRoutes');
- const accessCodeRoutes = require('./routes/accessCodeRoutes');
- const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
- const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
- const informesRoutes = require('./routes/informesRoutes');
+ // PUT /api/progreso/:id/actividad/:index
+ const marcarActividadCompletada = async (req, res, next) => {
+   try {
+     const { id, index } = req.params;
+     const { fechaRealizacion, comentariosResidente, cirugia, otraCirugia, nombreCirujano, porcentajeParticipacion } = req.body;
  
- // Inicializar app
- const app = express();
- 
- // Middlewares esenciales
- app.use(express.json());
- app.use(cookieParser());
- app.use(helmet());
--const clientOrigin = process.env.CLIENT_ORIGIN || 'https://residentlearningplatform.netlify.app';
--const allowedOrigins = Array.from(new Set([
-+const envOrigins = process.env.CLIENT_ORIGIN
-+  ? process.env.CLIENT_ORIGIN
-+      .split(',')
-+      .map(origin => origin.trim())
-+      .filter(Boolean)
-+  : [];
-+
-+const allowedOrigins = Array.from(new Set([
-   'http://localhost:3000',
-   'http://localhost:5173',
-   'https://residentlearningplatform.netlify.app',
-   'https://academicprogramdavinci.netlify.app',
--  clientOrigin,
--]));
-+  ...envOrigins,
-+]));
- 
- const corsOptions = {
-   origin: function (origin, callback) {
-     if (!origin || allowedOrigins.includes(origin)) {
-       callback(null, true);
-     } else {
-       console.warn(`🛑 CORS bloqueado para origen: ${origin}`);
-       callback(new Error(`CORS bloqueado: ${origin} no está en la lista de permitidos`));
+-    const progreso = await ProgresoResidente.findById(id).populate([
+-      'residente',
+-      'actividades.actividad'
+-    ]);
++    const progreso = await ProgresoResidente.findById(id).populate([
++      'residente',
++      'actividades.actividad'
++    ]);
+     if (!progreso || !progreso.actividades || !progreso.actividades[index]) {
+       return next(new ErrorResponse('Progreso o actividad no válida', 404));
      }
-   },
-   credentials: true,
- };
  
- app.use(cors(corsOptions));
- app.options('*', cors(corsOptions)); // Preflight para todos los endpoints
- app.use(fileupload());
+     const actividadOriginal = progreso.actividades[index];
+     if (!actividadOriginal || !actividadOriginal.actividad) {
+       return next(new ErrorResponse('La actividad está incompleta o mal formada', 400));
+     }
  
- // Middleware de desarrollo
- if (process.env.NODE_ENV === 'development') {
-   app.use(morgan('dev'));
- }
+     const actividadExistente = progreso.actividades[index];
+-    const estadoPrevio = actividadExistente.estado;
++    const estadoPrevio = actividadExistente.estado;
++    const actividadIndex = Number(index);
++
++    const existingAdjuntos = await Adjunto.find({ progreso: id, actividadIndex });
++
++    let adjuntosAEliminar = [];
++    if (req.body.adjuntosAEliminar) {
++      try {
++        const raw = req.body.adjuntosAEliminar;
++        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
++        if (Array.isArray(parsed)) {
++          adjuntosAEliminar = parsed.filter(item => typeof item === 'string');
++        } else if (typeof parsed === 'string') {
++          adjuntosAEliminar = [parsed];
++        } else {
++          return next(new ErrorResponse('Formato de adjuntos a eliminar no válido', 400));
++        }
++      } catch (err) {
++        return next(new ErrorResponse('Formato de adjuntos a eliminar no válido', 400));
++      }
++    }
  
- // Directorio público
- app.use(express.static(path.join(__dirname, '../public')));
+     if (actividadOriginal.tipo === 'cirugia') {
+       const porcentaje = Number(porcentajeParticipacion);
+       if (!nombreCirujano) {
+         return next(new ErrorResponse('Nombre del cirujano es requerido', 400));
+       }
+       if (!cirugia && !otraCirugia) {
+         return next(new ErrorResponse('Debe especificar la cirugía', 400));
+       }
+       if (![0, 25, 50, 75, 100].includes(porcentaje)) {
+         return next(new ErrorResponse('Porcentaje de participación inválido', 400));
+       }
+       actividadExistente.cirugia = cirugia;
+       actividadExistente.otraCirugia = otraCirugia;
+       actividadExistente.nombreCirujano = nombreCirujano;
+       actividadExistente.porcentajeParticipacion = porcentaje;
+     }
  
+     actividadExistente.estado = 'completado';
+     actividadExistente.completada = true;
+     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
+     actividadExistente.comentariosResidente = comentariosResidente;
+ 
+-    // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
+-    if (req.files && req.files.adjunto) {
+-      const file = req.files.adjunto;
+-      const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
+-      if (!allowed.includes(file.mimetype)) {
+-        return next(new ErrorResponse('Tipo de archivo no permitido', 400));
++    const allowedMimeTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/heic', 'image/heif'];
++    const MAX_FILES = 5;
++
++    const filesFromRequest = [];
++    if (req.files) {
++      const posiblesCampos = ['adjunto', 'adjuntos'];
++      for (const campo of posiblesCampos) {
++        const value = req.files[campo];
++        if (!value) continue;
++        if (Array.isArray(value)) {
++          filesFromRequest.push(...value);
++        } else {
++          filesFromRequest.push(value);
++        }
++      }
++    }
++
++    for (const file of filesFromRequest) {
++      if (!allowedMimeTypes.includes(file.mimetype)) {
++        return next(new ErrorResponse(`Tipo de archivo no permitido: ${file.name}`, 400));
+       }
+       if (file.size > 5 * 1024 * 1024) {
+-        return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
++        return next(new ErrorResponse(`El archivo ${file.name} supera el límite de 5MB`, 400));
+       }
+-      await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
+-      await Adjunto.create({
++    }
++
++    const existingMap = new Map(existingAdjuntos.map(adj => [adj._id.toString(), adj]));
++    const idsParaEliminar = adjuntosAEliminar.filter(idEliminar => existingMap.has(idEliminar));
++    const restantes = existingAdjuntos.filter(adj => !idsParaEliminar.includes(adj._id.toString()));
++
++    if (restantes.length + filesFromRequest.length > MAX_FILES) {
++      return next(new ErrorResponse('Solo se permiten hasta 5 archivos adjuntos por actividad', 400));
++    }
++
++    if (idsParaEliminar.length > 0) {
++      await Adjunto.deleteMany({
++        _id: { $in: idsParaEliminar },
++        progreso: id,
++        actividadIndex
++      });
++    }
++
++    if (filesFromRequest.length > 0) {
++      const adjuntosParaCrear = filesFromRequest.map(file => ({
+         progreso: id,
+         usuario: req.user._id,
+-        actividadIndex: Number(index),
++        actividadIndex,
+         nombreArchivo: file.name,
+         mimeType: file.mimetype,
+         datos: file.data,
+         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+-      });
++      }));
++
++      await Adjunto.insertMany(adjuntosParaCrear);
+     }
+ 
+     await progreso.save();
+ 
+     if (
+       estadoPrevio === 'pendiente' &&
+       actividadExistente.actividad &&
+       actividadExistente.actividad.requiereValidacion
+     ) {
+       const responsables = [
+         progreso.residente.tutor,
+         progreso.residente.profesor
+       ]
+         .filter(Boolean)
+         .map(id => id.toString());
+ 
+       const destinatarios = [...new Set(responsables)];
+ 
+       const mensaje = `El residente ${progreso.residente.nombre} ${progreso.residente.apellidos} ha completado la actividad "${actividadExistente.actividad.nombre}" y requiere validación.`;
+ 
+       for (const usuario of destinatarios) {
+         await Notificacion.create({
+           usuario,
+           tipo: 'validacion',
+           mensaje,

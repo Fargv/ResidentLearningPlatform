@@ -23,7 +23,8 @@ import {
   MenuItem,
   Paper,
   Stack,
-  FormControlLabel
+  FormControlLabel,
+  IconButton
 } from '@mui/material';
 import Switch, { SwitchProps } from '@mui/material/Switch';
 
@@ -34,6 +35,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import DownloadIcon from '@mui/icons-material/Download';
+import CloseIcon from '@mui/icons-material/Close';
 import { useTheme, alpha, styled } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
@@ -128,7 +130,7 @@ const ResidenteFases: React.FC = () => {
   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
   const [comentario, setComentario] = useState('');
   const [fecha, setFecha] = useState('');
-  const [archivo, setArchivo] = useState<File | null>(null);
+  const [archivos, setArchivos] = useState<File[]>([]);
   const [archivoError, setArchivoError] = useState(false);
   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -146,7 +148,8 @@ const ResidenteFases: React.FC = () => {
   const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
   const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
   const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
-  const [adjuntoExistente, setAdjuntoExistente] = useState<any | null>(null);
+  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
+  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
@@ -307,7 +310,11 @@ const ResidenteFases: React.FC = () => {
       setPorcentaje(0);
     }
 
-    setAdjuntoExistente(mode === 'edit' ? actividad?.adjuntos?.[0] || null : null);
+    setArchivos([]);
+    setAdjuntosEliminados([]);
+    setArchivoError(false);
+    setArchivoErrorMsg('');
+    setAdjuntosExistentes(mode === 'edit' ? actividad?.adjuntos || [] : []);
 
     setDialogOpen(true);
   };
@@ -332,24 +339,53 @@ const ResidenteFases: React.FC = () => {
         porcentaje > 0));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        setArchivo(null);
-        setArchivoError(true);
-        setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
-      } else {
-        setArchivo(file);
-        setAdjuntoExistente(null);
-        setArchivoError(false);
-        setArchivoErrorMsg('');
-      }
-    } else {
-      setArchivo(null);
-      setArchivoError(false);
-      setArchivoErrorMsg('');
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    const MAX_FILES = 5;
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    const existentesVisibles = adjuntosExistentes.filter(
+      adj => !adjuntosEliminados.includes(adj._id)
+    );
+    const remainingSlots = MAX_FILES - (existentesVisibles.length + archivos.length);
+
+    if (remainingSlots <= 0) {
+      setArchivoError(true);
+      setArchivoErrorMsg(t('residentPhases.dialog.maxFilesReached'));
+      e.target.value = '';
+      return;
     }
+
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    const invalidFile = filesToAdd.find(file => file.size > MAX_FILE_SIZE);
+    if (invalidFile) {
+      setArchivoError(true);
+      setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
+      e.target.value = '';
+      return;
+    }
+
+    if (filesToAdd.length === 0) {
+      e.target.value = '';
+      return;
+    }
+
+    setArchivos(prev => [...prev, ...filesToAdd]);
+    setArchivoError(false);
+    setArchivoErrorMsg('');
+    e.target.value = '';
   };
+
+  const handleRemoveNuevoArchivo = (index: number) => {
+    setArchivos(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveAdjuntoExistente = (id: string) => {
+    setAdjuntosEliminados(prev => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const adjuntosExistentesVisibles = adjuntosExistentes.filter(
+    adj => !adjuntosEliminados.includes(adj._id)
+  );
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -363,8 +399,12 @@ const ResidenteFases: React.FC = () => {
     setPorcentaje(0);
     setEsCirugia(false);
     setOtraCirugiaSeleccionada(false);
-    setAdjuntoExistente(null);
+    setArchivos([]);
+    setAdjuntosExistentes([]);
+    setAdjuntosEliminados([]);
     setDialogMode('complete');
+    setArchivoError(false);
+    setArchivoErrorMsg('');
   };
 
 
@@ -397,7 +437,13 @@ const ResidenteFases: React.FC = () => {
         form.append('porcentajeParticipacion', String(porcentaje));
       }
 
-      if (archivo) form.append('adjunto', archivo);
+      if (adjuntosEliminados.length > 0) {
+        form.append('adjuntosAEliminar', JSON.stringify(adjuntosEliminados));
+      }
+
+      archivos.forEach(file => {
+        form.append('adjunto', file);
+      });
 
       const { data } = await api.put(
         `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
@@ -428,7 +474,7 @@ const ResidenteFases: React.FC = () => {
       setSnackbarOpen(true);
     } finally {
       handleCloseDialog();
-      setArchivo(null);
+      setArchivos([]);
     }
   };
 
@@ -1109,52 +1155,111 @@ const ResidenteFases: React.FC = () => {
             <input
               type="file"
               hidden
-              accept="application/pdf,image/png,image/jpeg"
+              multiple
+              accept="application/pdf,image/*"
               onChange={handleFileChange}
             />
           </Button>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+            {t('residentPhases.dialog.optionalFileHint', { max: 5 })}
+          </Typography>
 
-          {!archivo && adjuntoExistente && (
-            <Box sx={{ mt: 1 }}>
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={1}
-                alignItems={{ xs: 'flex-start', sm: 'center' }}
-              >
-                <Typography variant="body2">
-                  {t('residentPhases.dialog.currentFile', {
-                    file: adjuntoExistente.nombreArchivo
-                  })}
-                </Typography>
-                <Button
-                  variant="text"
-                  size="small"
-                  startIcon={
-                    attachmentDownloading === adjuntoExistente._id ? (
-                      <CircularProgress size={16} color="inherit" />
-                    ) : (
-                      <DownloadIcon fontSize="small" />
-                    )
-                  }
-                  onClick={() =>
-                    handleDownloadAdjunto(adjuntoExistente._id, adjuntoExistente.nombreArchivo)
-                  }
-                  disabled={attachmentDownloading === adjuntoExistente._id}
-                >
-                  {t('residentPhases.downloadAttachment')}
-                </Button>
-              </Stack>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                {t('residentPhases.dialog.replaceFileHint')}
+          {adjuntosExistentes.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" fontWeight={600}>
+                {t('residentPhases.dialog.currentFiles')}
               </Typography>
+              <Stack spacing={1} sx={{ mt: 1 }}>
+                {adjuntosExistentesVisibles.map(adjunto => (
+                  <Paper
+                    key={adjunto._id}
+                    elevation={0}
+                    sx={{
+                      p: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      borderRadius: 1.5,
+                      border: `1px solid ${theme.palette.divider}`
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      {adjunto.nombreArchivo}
+                    </Typography>
+                    <Tooltip title={t('residentPhases.downloadAttachment')}>
+                      <span>
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            handleDownloadAdjunto(adjunto._id, adjunto.nombreArchivo)
+                          }
+                          disabled={attachmentDownloading === adjunto._id}
+                        >
+                          {attachmentDownloading === adjunto._id ? (
+                            <CircularProgress size={18} color="inherit" />
+                          ) : (
+                            <DownloadIcon fontSize="small" />
+                          )}
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                    <Tooltip title={t('residentPhases.dialog.removeAttachment')}>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleRemoveAdjuntoExistente(adjunto._id)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Paper>
+                ))}
+                {adjuntosExistentesVisibles.length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    {t('residentPhases.dialog.allMarkedForRemoval')}
+                  </Typography>
+                )}
+              </Stack>
             </Box>
           )}
 
-          {archivo && !archivoError && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {archivo.name} – {(archivo.size / (1024 * 1024)).toFixed(1)} MB
-            </Typography>
+          {archivos.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" fontWeight={600}>
+                {t('residentPhases.dialog.newAttachments')}
+              </Typography>
+              <Stack spacing={1} sx={{ mt: 1 }}>
+                {archivos.map((file, index) => (
+                  <Paper
+                    key={`${file.name}-${file.size}-${index}`}
+                    elevation={0}
+                    sx={{
+                      p: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      borderRadius: 1.5,
+                      border: `1px solid ${theme.palette.divider}`
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      {file.name} – {(file.size / (1024 * 1024)).toFixed(1)} MB
+                    </Typography>
+                    <Tooltip title={t('residentPhases.dialog.removeAttachment')}>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleRemoveNuevoArchivo(index)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Paper>
+                ))}
+              </Stack>
+            </Box>
           )}
+
           {archivoError && (
             <Typography variant="body2" color="error" sx={{ mt: 1 }}>
               {archivoErrorMsg}
@@ -1179,7 +1284,7 @@ const ResidenteFases: React.FC = () => {
                 ? t('residentPhases.dialog.surgeonNameRequired')
                 : esCirugia && porcentaje === 0
                 ? t('residentPhases.dialog.participationRequired')
-                : t('residentPhases.dialog.optionalFileHint')
+                : t('residentPhases.dialog.optionalFileHint', { max: 5 })
             }
             arrow
             disableHoverListener={botonConfirmarHabilitado}

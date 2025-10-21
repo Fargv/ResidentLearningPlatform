@@ -671,6 +671,26 @@ const marcarActividadCompletada = async (req, res, next) => {
 
     const actividadExistente = progreso.actividades[index];
     const estadoPrevio = actividadExistente.estado;
+    const actividadIndex = Number(index);
+
+    const existingAdjuntos = await Adjunto.find({ progreso: id, actividadIndex });
+
+    let adjuntosAEliminar = [];
+    if (req.body.adjuntosAEliminar) {
+      try {
+        const raw = req.body.adjuntosAEliminar;
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed)) {
+          adjuntosAEliminar = parsed.filter(item => typeof item === 'string');
+        } else if (typeof parsed === 'string') {
+          adjuntosAEliminar = [parsed];
+        } else {
+          return next(new ErrorResponse('Formato de adjuntos a eliminar no válido', 400));
+        }
+      } catch (err) {
+        return next(new ErrorResponse('Formato de adjuntos a eliminar no válido', 400));
+      }
+    }
 
     if (actividadOriginal.tipo === 'cirugia') {
       const porcentaje = Number(porcentajeParticipacion);
@@ -694,26 +714,60 @@ const marcarActividadCompletada = async (req, res, next) => {
     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
     actividadExistente.comentariosResidente = comentariosResidente;
 
-    // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
-    if (req.files && req.files.adjunto) {
-      const file = req.files.adjunto;
-      const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
-      if (!allowed.includes(file.mimetype)) {
-        return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+    const allowedMimeTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/heic', 'image/heif'];
+    const MAX_FILES = 5;
+
+    const filesFromRequest = [];
+    if (req.files) {
+      const posiblesCampos = ['adjunto', 'adjuntos'];
+      for (const campo of posiblesCampos) {
+        const value = req.files[campo];
+        if (!value) continue;
+        if (Array.isArray(value)) {
+          filesFromRequest.push(...value);
+        } else {
+          filesFromRequest.push(value);
+        }
+      }
+    }
+
+    for (const file of filesFromRequest) {
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        return next(new ErrorResponse(`Tipo de archivo no permitido: ${file.name}`, 400));
       }
       if (file.size > 5 * 1024 * 1024) {
-        return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+        return next(new ErrorResponse(`El archivo ${file.name} supera el límite de 5MB`, 400));
       }
-      await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
-      await Adjunto.create({
+    }
+
+    const existingMap = new Map(existingAdjuntos.map(adj => [adj._id.toString(), adj]));
+    const idsParaEliminar = adjuntosAEliminar.filter(idEliminar => existingMap.has(idEliminar));
+    const restantes = existingAdjuntos.filter(adj => !idsParaEliminar.includes(adj._id.toString()));
+
+    if (restantes.length + filesFromRequest.length > MAX_FILES) {
+      return next(new ErrorResponse('Solo se permiten hasta 5 archivos adjuntos por actividad', 400));
+    }
+
+    if (idsParaEliminar.length > 0) {
+      await Adjunto.deleteMany({
+        _id: { $in: idsParaEliminar },
+        progreso: id,
+        actividadIndex
+      });
+    }
+
+    if (filesFromRequest.length > 0) {
+      const adjuntosParaCrear = filesFromRequest.map(file => ({
         progreso: id,
         usuario: req.user._id,
-        actividadIndex: Number(index),
+        actividadIndex,
         nombreArchivo: file.name,
         mimeType: file.mimetype,
         datos: file.data,
         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
-      });
+      }));
+
+      await Adjunto.insertMany(adjuntosParaCrear);
     }
 
     await progreso.save();
