@@ -551,14 +551,72 @@ exports.generatePasswordResetToken = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
+    const baseFrontendUrl = config.frontendUrl || 'https://residentlearningplatform.netlify.app';
+    const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
+      ? baseFrontendUrl.slice(0, -1)
+      : baseFrontendUrl;
+    const resetUrl = `${normalizedBaseUrl}/reset-password/${resetToken}`;
+
+    const fullName = [user.nombre, user.apellidos]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    const recipientName = fullName || user.email;
+    const appName = process.env.APP_NAME || 'Resident Learning Platform';
+
+    const days = RESET_PASSWORD_EXPIRE_DAYS;
+    const pluralizedDays = days === 1 ? 'día' : 'días';
+    const textMessage = [
+      `Hola ${recipientName},`,
+      '',
+      `Has solicitado restablecer tu contraseña en ${appName}.`,
+      'Para continuar, utiliza el siguiente enlace:',
+      resetUrl,
+      '',
+      `Este enlace caduca en ${days} ${pluralizedDays}.`,
+      '',
+      'Si no solicitaste este cambio, puedes ignorar este mensaje.'
+    ].join('\n');
+
+    const htmlMessage = `
+      <p>Hola ${recipientName},</p>
+      <p>Has solicitado restablecer tu contraseña en <strong>${appName}</strong>.</p>
+      <p>Para continuar, utiliza el siguiente enlace:</p>
+      <p><a href="${resetUrl}" target="_blank" rel="noopener noreferrer">${resetUrl}</a></p>
+      <p>Este enlace caduca en ${days} ${pluralizedDays}.</p>
+      <p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
+    `.trim();
+
+    try {
+      await sendEmail({
+        to: [{ email: user.email, name: recipientName }],
+        subject: `Restablecer contraseña de ${appName}`,
+        message: textMessage,
+        html: htmlMessage
+      });
+    } catch (emailError) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return next(
+        new ErrorResponse('No se pudo enviar el email de restablecimiento', 500)
+      );
+    }
+
     await createAuditLog({
       usuario: req.user._id,
-      accion: 'generar_token_reset_password',
-      descripcion: `Token de reseteo generado para usuario: ${user.email}`,
+      accion: 'enviar_reset_password',
+      descripcion: `Enlace de reseteo enviado a: ${user.email}`,
       ip: req.ip
     });
 
-    res.status(200).json({ success: true, resetToken, email: user.email, name: user.nombre });
+    res.status(200).json({
+      success: true,
+      email: user.email,
+      name: recipientName,
+      expiresInDays: days
+    });
   } catch (err) {
     next(err);
   }

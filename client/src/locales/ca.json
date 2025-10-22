@@ -532,7 +532,10 @@
     },
     "resetEmail": {
       "subject": "Restablir la contrasenya de {{app}}",
-      "body": "Hola {{name}},\n\nHas sol·licitat restablir la teva contrasenya a {{app}}. Fes clic en l'enllaç següent per triar-ne una de nova:\n\n{{link}}\n\nAquest enllaç és personal, només és vàlid una vegada i caduca en {{days}} dies.\n\nAdministrador del entorno"
+      "body": "Hola {{name}},\n\nHas sol·licitat restablir la teva contrasenya a {{app}}. Fes clic en l'enllaç següent per triar-ne una de nova:\n\n{{link}}\n\nAquest enllaç és personal, només és vàlid una vegada i caduca en {{days}} dies.\n\nAdministrador del entorno",
+      "confirm": "Vols enviar l'enllaç de restabliment a {{email}}?",
+      "sent": "Enllaç de restabliment enviat a {{email}}",
+      "unknownEmail": "aquest usuari"
     },
     "_comment": "Gestió d'usuaris per a administradors",
     "buttons": {

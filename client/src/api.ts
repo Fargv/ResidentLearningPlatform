@@ -41,7 +41,7 @@ export const updateUserPassword = (id: string, newPassword: string) =>
 export const getTutors = (hospital: string, especialidad: string) =>
   api.get('/users/tutores', { params: { hospital, especialidad } });
 
-export const getUserResetToken = (id: string) =>
+export const sendResetPasswordEmail = (id: string) =>
   api.post(`/users/${id}/reset-password`);
 
 export const clearResetNotifications = (userId: string) =>

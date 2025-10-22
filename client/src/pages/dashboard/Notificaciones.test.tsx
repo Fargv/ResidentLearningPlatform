@@ -7,7 +7,7 @@ import Notificaciones from './Notificaciones';
 jest.mock('../../api', () => ({
   getNotificaciones: jest.fn(),
   marcarNotificacionLeida: jest.fn(),
-  getUserResetToken: jest.fn(),
+  sendResetPasswordEmail: jest.fn(),
   clearResetNotifications: jest.fn(),
   eliminarNotificacion: jest.fn(),
 }));
@@ -66,7 +66,7 @@ test('marca la notificación como leída al abrirla', async () => {
   fireEvent.click(rowText.closest('tr')!);
 
   await waitFor(() => {
-    expect(mockedMarcar).toHaveBeenCalledWith('1');
+    expect(mockedMarcar).toHaveBeenCalledWith('1', true);
     expect(mockedNavigate).toHaveBeenCalledWith('/foo');
   });
   await waitFor(() => expect(screen.queryByText('Test1')).not.toBeInTheDocument());
@@ -87,8 +87,8 @@ test('marca múltiples notificaciones con la barra de herramientas', async () =>
   fireEvent.click(screen.getByLabelText('mark-read'));
 
   await waitFor(() => {
-    expect(mockedMarcar).toHaveBeenCalledWith('1');
-    expect(mockedMarcar).toHaveBeenCalledWith('2');
+    expect(mockedMarcar).toHaveBeenCalledWith('1', true);
+    expect(mockedMarcar).toHaveBeenCalledWith('2', true);
   });
 });
 

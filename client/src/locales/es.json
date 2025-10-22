@@ -454,7 +454,10 @@
     },
     "resetEmail": {
       "subject": "Restablecer contraseña de {{app}}",
-      "body": "Hola {{name}},\n\nHas solicitado restablecer tu contraseña en {{app}}. Haz clic en el siguiente enlace para elegir una nueva:\n\n{{link}}\n\nEste enlace es personal, válido solo una vez y caduca en {{days}} días.\n\nAdministrador del entorno"
+      "body": "Hola {{name}},\n\nHas solicitado restablecer tu contraseña en {{app}}. Haz clic en el siguiente enlace para elegir una nueva:\n\n{{link}}\n\nEste enlace es personal, válido solo una vez y caduca en {{days}} días.\n\nAdministrador del entorno",
+      "confirm": "¿Quieres enviar el enlace de restablecimiento a {{email}}?",
+      "sent": "Enlace de restablecimiento enviado a {{email}}",
+      "unknownEmail": "este usuario"
     },
     "_comment": "Gestión de usuarios para administradores",
     "buttons": {

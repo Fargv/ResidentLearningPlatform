@@ -555,7 +555,10 @@
     },
     "resetEmail": {
       "subject": "Réinitialiser le mot de passe de {{app}}",
-      "body": "Bonjour {{name}},\n\nVous avez demandé à réinitialiser votre mot de passe pour {{app}}. Cliquez sur le lien ci-dessous pour en choisir un nouveau :\n\n{{link}}\n\nCe lien est personnel, valable une seule fois et expire dans {{days}} jours.\n\nAdministrador del entorno"
+      "body": "Bonjour {{name}},\n\nVous avez demandé à réinitialiser votre mot de passe pour {{app}}. Cliquez sur le lien ci-dessous pour en choisir un nouveau :\n\n{{link}}\n\nCe lien est personnel, valable une seule fois et expire dans {{days}} jours.\n\nAdministrador del entorno",
+      "confirm": "Voulez-vous envoyer le lien de réinitialisation à {{email}} ?",
+      "sent": "Lien de réinitialisation envoyé à {{email}}",
+      "unknownEmail": "cet utilisateur"
     },
     "_comment": "Gestion des utilisateurs pour les administrateurs",
     "buttons": {

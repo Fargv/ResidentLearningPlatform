@@ -526,7 +526,10 @@
     },
     "resetEmail": {
       "subject": "Restablecer contrasinal de {{app}}",
-      "body": "Ola {{name}},\n\nSolicitaches restablecer o teu contrasinal en {{app}}. Preme na seguinte ligazón para escoller un novo:\n\n{{link}}\n\nEsta ligazón é persoal, só é válida unha vez e caduca en {{days}} días.\n\nAdministrador del entorno"
+      "body": "Ola {{name}},\n\nSolicitaches restablecer o teu contrasinal en {{app}}. Preme na seguinte ligazón para escoller un novo:\n\n{{link}}\n\nEsta ligazón é persoal, só é válida unha vez e caduca en {{days}} días.\n\nAdministrador del entorno",
+      "confirm": "Queres enviar a ligazón de restablecemento a {{email}}?",
+      "sent": "Ligazón de restablecemento enviada a {{email}}",
+      "unknownEmail": "este usuario"
     },
     "_comment": "Xestión de usuarios para administradores",
     "buttons": {

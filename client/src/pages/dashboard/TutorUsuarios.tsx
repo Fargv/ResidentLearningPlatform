@@ -45,7 +45,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import type { SxProps, Theme } from '@mui/material/styles';
 import api, {
   updateUserPassword,
-  getUserResetToken,
+  sendResetPasswordEmail,
   clearResetNotifications,
 } from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
@@ -350,29 +350,28 @@ const TutorUsuarios: React.FC = () => {
   };
 
   const handleSendResetEmail = async (usuario: any) => {
+    if (!usuario?.email) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      t('adminUsers.resetEmail.confirm', { email: usuario.email }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
-      const res = await getUserResetToken(usuario._id);
-      const resetToken = res.data.resetToken;
-      const frontendUrl =
-        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
-      const days = parseInt(
-        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
-        10,
-      );
-      const subject = encodeURIComponent(
-        t('adminUsers.resetEmail.subject', { app: t('common.appName') }),
-      );
-      const body = encodeURIComponent(
-        t('adminUsers.resetEmail.body', {
-          name: usuario.nombre,
-          app: t('common.appName'),
-          link: `${frontendUrl}/reset-password/${resetToken}`,
-          days,
-        }),
-      );
-      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
+      const res = await sendResetPasswordEmail(usuario._id);
+      const targetEmail = res.data?.email || usuario.email;
+
       await clearResetNotifications(usuario._id);
+      setSnackbar({
+        open: true,
+        message: t('adminUsers.resetEmail.sent', { email: targetEmail }),
+        severity: 'success',
+      });
     } catch (err: any) {
       setSnackbar({
         open: true,

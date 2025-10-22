@@ -700,7 +700,10 @@
     },
     "resetEmail": {
       "subject": "Passwort für {{app}} zurücksetzen",
-      "body": "Hallo {{name}},\n\nDu hast beantragt, dein Passwort für {{app}} zurückzusetzen. Klicke auf den folgenden Link, um ein neues zu wählen:\n\n{{link}}\n\nDieser Link ist persönlich, gilt nur einmal und läuft in {{days}} Tagen ab.\n\nAdministrador del entorno"
+      "body": "Hallo {{name}},\n\nDu hast beantragt, dein Passwort für {{app}} zurückzusetzen. Klicke auf den folgenden Link, um ein neues zu wählen:\n\n{{link}}\n\nDieser Link ist persönlich, gilt nur einmal und läuft in {{days}} Tagen ab.\n\nAdministrador del entorno",
+      "confirm": "Möchten Sie den Zurücksetzungslink an {{email}} senden?",
+      "sent": "Zurücksetzungslink an {{email}} gesendet",
+      "unknownEmail": "diesen Benutzer"
     },
     "_comment": "Benutzerverwaltung",
     "buttons": {

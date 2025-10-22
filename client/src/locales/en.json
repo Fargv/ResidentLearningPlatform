@@ -457,7 +457,10 @@
     },
     "resetEmail": {
       "subject": "Reset your {{app}} password",
-      "body": "Hello {{name}},\n\nYou requested to reset your password for {{app}}. Click the link below to choose a new one:\n\n{{link}}\n\nThis link is personal, valid only once and expires in {{days}} days.\n\nAdministrador del entorno"
+      "body": "Hello {{name}},\n\nYou requested to reset your password for {{app}}. Click the link below to choose a new one:\n\n{{link}}\n\nThis link is personal, valid only once and expires in {{days}} days.\n\nAdministrador del entorno",
+      "confirm": "Do you want to send the reset link to {{email}}?",
+      "sent": "Reset link sent to {{email}}",
+      "unknownEmail": "this user"
     },
     "_comment": "Admin user management",
     "buttons": {

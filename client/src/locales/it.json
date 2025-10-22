@@ -700,7 +700,10 @@
     },
     "resetEmail": {
       "subject": "Reimposta la password di {{app}}",
-      "body": "Ciao {{name}},\n\nHai richiesto di reimpostare la tua password per {{app}}. Clicca sul link seguente per sceglierne una nuova:\n\n{{link}}\n\nQuesto link è personale, valido una sola volta e scade in {{days}} giorni.\n\nAdministrador del entorno"
+      "body": "Ciao {{name}},\n\nHai richiesto di reimpostare la tua password per {{app}}. Clicca sul link seguente per sceglierne una nuova:\n\n{{link}}\n\nQuesto link è personale, valido una sola volta e scade in {{days}} giorni.\n\nAdministrador del entorno",
+      "confirm": "Vuoi inviare il link di reimpostazione a {{email}}?",
+      "sent": "Link di reimpostazione inviato a {{email}}",
+      "unknownEmail": "questo utente"
     },
     "_comment": "Gestione utenti per amministratori",
     "buttons": {

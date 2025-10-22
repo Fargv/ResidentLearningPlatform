@@ -634,7 +634,10 @@
     },
     "resetEmail": {
       "subject": "Redefinir a senha de {{app}}",
-      "body": "Olá {{name}},\n\nVocê solicitou redefinir sua senha no {{app}}. Clique no link abaixo para escolher uma nova:\n\n{{link}}\n\nEste link é pessoal, válido apenas uma vez e expira em {{days}} dias.\n\nAdministrador del entorno"
+      "body": "Olá {{name}},\n\nVocê solicitou redefinir sua senha no {{app}}. Clique no link abaixo para escolher uma nova:\n\n{{link}}\n\nEste link é pessoal, válido apenas uma vez e expira em {{days}} dias.\n\nAdministrador del entorno",
+      "confirm": "Deseja enviar o link de redefinição para {{email}}?",
+      "sent": "Link de redefinição enviado para {{email}}",
+      "unknownEmail": "este usuário"
     },
     "_comment": "Gestão de usuários para administradores",
     "buttons": {
