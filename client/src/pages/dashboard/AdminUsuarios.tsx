@@ -62,8 +62,9 @@ const DIALOG_ACTIONS_SX: SxProps<Theme> = {
 };
 
 const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
-  minWidth: { xs: "100%", sm: 220 },
-  height: 44,
+  minWidth: { xs: "100%", sm: 180 },
+  height: 40,
+  fontSize: "0.9rem",
   mt: { xs: 1, sm: 0 },
   fontWeight: 600,
   flexBasis: { xs: "100%", sm: "auto" },
@@ -74,12 +75,16 @@ const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
+  width: "100%",
+  gap: 1,
 };
 
 const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
-  width: 180,
-  height: 44,
-  mt: 1.5,
+  width: { xs: "100%", sm: 150 },
+  maxWidth: "100%",
+  height: 38,
+  fontSize: "0.85rem",
+  mt: 0,
   fontWeight: 600,
 };
 
@@ -104,8 +109,8 @@ const getEditActionButtonStyles = (theme: Theme) => {
 };
 
 const getProgressActionButtonStyles = (theme: Theme) => {
-  const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
-  const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
+  const baseBg = theme.palette.mode === "light" ? "#EC407A" : "#F06292";
+  const hoverBg = theme.palette.mode === "light" ? "#D81B60" : "#EC407A";
 
   return {
     backgroundColor: baseBg,
