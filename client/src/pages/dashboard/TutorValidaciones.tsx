@@ -78,6 +78,7 @@ const TutorValidaciones: React.FC = () => {
   const [firmaDigital, setFirmaDigital] = useState('');
   const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
   const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
+  const attachmentButtonStyles = { minWidth: 160, height: 36 };
 
   const formatFase = (fase: any) =>
     fase
@@ -605,6 +606,7 @@ const handleRechazar = async () => {
                         adjunto._id
                       )
                     }
+                    sx={attachmentButtonStyles}
                   >
                     {t('tutorValidations.buttons.viewAttachment')}
                   </Button>
@@ -615,6 +617,7 @@ const handleRechazar = async () => {
                     onClick={() =>
                       handleDescargarAdjunto(adjunto, adjuntosSeleccionados.progresoId, adjuntosSeleccionados.index)
                     }
+                    sx={attachmentButtonStyles}
                   >
                     {t('common.download')}
                   </Button>

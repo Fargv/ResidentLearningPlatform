@@ -1,327 +1,158 @@
-diff --git a/src/controllers/adjuntoController.js b/src/controllers/adjuntoController.js
-index 7e74c434deae52cb314c011ef3ee05a23a0868e7..8201c9ba9029422679eb599b1bcd1fe667904902 100644
---- a/src/controllers/adjuntoController.js
-+++ b/src/controllers/adjuntoController.js
-@@ -180,51 +180,61 @@ exports.subirAdjuntoActividad = async (req, res, next) => {
-       return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
-     }
+diff --git a/client/src/pages/dashboard/TutorValidaciones.tsx b/client/src/pages/dashboard/TutorValidaciones.tsx
+index 4db543ea2f52d7d2175bae922c328b72d3255236..346503337c1afe85e5be8c0920a4224eaaaf8acb 100644
+--- a/client/src/pages/dashboard/TutorValidaciones.tsx
++++ b/client/src/pages/dashboard/TutorValidaciones.tsx
+@@ -54,52 +54,53 @@ function TabPanel(props: TabPanelProps) {
+     >
+       {value === index && (
+         <Box sx={{ p: 2 }}>
+           {children}
+         </Box>
+       )}
+     </div>
+   );
+ }
  
-     const adjunto = await Adjunto.create({
-       progreso: progresoId,
-       usuario: req.user._id,
-       actividadIndex: Number(index),
-       nombreArchivo: file.name,
-       mimeType: file.mimetype,
-       datos: file.data,
-       tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
-     });
+ const TutorValidaciones: React.FC = () => {
+   const { t } = useTranslation();
+   const { user } = useAuth();
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [pendientes, setPendientes] = useState<any[]>([]);
+   const [validadas, setValidadas] = useState<any[]>([]);
+   const [rechazadas, setRechazadas] = useState<any[]>([]);
+   const [tabValue, setTabValue] = useState(0);
+   const [openValidarDialog, setOpenValidarDialog] = useState(false);
+   const [openRechazarDialog, setOpenRechazarDialog] = useState(false);
+   const [selectedProgreso, setSelectedProgreso] = useState<any>(null);
+   const [comentarios, setComentarios] = useState('');
+   const [procesando, setProcesando] = useState(false);
+   const [firmaDigital, setFirmaDigital] = useState('');
+-  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
+-  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
++  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
++  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
++  const attachmentButtonStyles = { minWidth: 160, height: 36 };
  
-     res.status(201).json({ success: true, data: adjunto._id });
-   } catch (err) {
-     next(err);
-   }
+   const formatFase = (fase: any) =>
+     fase
+       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
+       : t('tutorValidations.table.noPhase');
+ 
+   const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
+     if (cirugia?.name) return cirugia.name;
+     return otraCirugia || '-';
+   };
+ 
+   const fetchValidaciones = useCallback(async () => {
+     try {
+       setLoading(true);
+ 
+       const respuesta = await api.get(
+         '/progreso/tutor/validaciones/pendientes'
+       );
+ 
+       const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
+       setPendientes(pendientes || []);
+       setValidadas(validadas || []);
+       setRechazadas(rechazadas || []);
+     } catch (err: any) {
+       setError(err.response?.data?.error || t('tutorValidations.errorLoad'));
+@@ -571,69 +572,71 @@ const handleRechazar = async () => {
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       <Dialog open={openAdjuntosDialog} onClose={handleCloseAdjuntosDialog} fullWidth maxWidth="sm">
+         <DialogTitle>{t('tutorValidations.buttons.viewAttachment')}</DialogTitle>
+         <DialogContent>
+           {adjuntosSeleccionados?.adjuntos?.length ? (
+             adjuntosSeleccionados.adjuntos.map((adjunto: any) => (
+               <Box
+                 key={adjunto._id}
+                 sx={{
+                   display: 'flex',
+                   alignItems: 'center',
+                   justifyContent: 'space-between',
+                   mb: 2,
+                   gap: 2
+                 }}
+               >
+                 <Box>
+                   <Typography variant="subtitle1">{adjunto.nombreArchivo}</Typography>
+                   <Typography variant="body2" color="text.secondary">
+                     {adjunto.fechaSubida ? formatDayMonthYear(adjunto.fechaSubida) : ''}
+                   </Typography>
+                 </Box>
+-                <Box sx={{ display: 'flex', gap: 1 }}>
+-                  <Button
+-                    variant="outlined"
+-                    size="small"
+-                    startIcon={<OpenInNewIcon />}
+-                    onClick={() =>
+-                      handleVerAdjunto(
+-                        adjuntosSeleccionados.progresoId,
+-                        adjuntosSeleccionados.index,
+-                        adjunto._id
+-                      )
+-                    }
+-                  >
+-                    {t('tutorValidations.buttons.viewAttachment')}
+-                  </Button>
+-                  <Button
+-                    variant="contained"
+-                    size="small"
+-                    startIcon={<DownloadIcon />}
+-                    onClick={() =>
+-                      handleDescargarAdjunto(adjunto, adjuntosSeleccionados.progresoId, adjuntosSeleccionados.index)
+-                    }
+-                  >
+-                    {t('common.download')}
+-                  </Button>
+-                </Box>
++                <Box sx={{ display: 'flex', gap: 1 }}>
++                  <Button
++                    variant="outlined"
++                    size="small"
++                    startIcon={<OpenInNewIcon />}
++                    onClick={() =>
++                      handleVerAdjunto(
++                        adjuntosSeleccionados.progresoId,
++                        adjuntosSeleccionados.index,
++                        adjunto._id
++                      )
++                    }
++                    sx={attachmentButtonStyles}
++                  >
++                    {t('tutorValidations.buttons.viewAttachment')}
++                  </Button>
++                  <Button
++                    variant="contained"
++                    size="small"
++                    startIcon={<DownloadIcon />}
++                    onClick={() =>
++                      handleDescargarAdjunto(adjunto, adjuntosSeleccionados.progresoId, adjuntosSeleccionados.index)
++                    }
++                    sx={attachmentButtonStyles}
++                  >
++                    {t('common.download')}
++                  </Button>
++                </Box>
+               </Box>
+             ))
+           ) : (
+             <DialogContentText>
+               {t('tutorValidations.messages.noAttachments')}
+             </DialogContentText>
+           )}
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseAdjuntosDialog}>{t('tutorValidations.buttons.cancel')}</Button>
+         </DialogActions>
+       </Dialog>
+     </Box>
+   );
  };
  
- // @desc    Obtener adjunto de una actividad
- // @route   GET /api/adjuntos/actividad/:progresoId/:index
- // @access  Private
- exports.getAdjuntoActividad = async (req, res, next) => {
-   try {
-     const { progresoId, index } = req.params;
--    const adjunto = await Adjunto.findOne({ progreso: progresoId, actividadIndex: Number(index) });
-+    const { adjuntoId } = req.query;
-+    const filtro = {
-+      progreso: progresoId,
-+      actividadIndex: Number(index)
-+    };
-+
-+    if (adjuntoId) {
-+      filtro._id = adjuntoId;
-+    }
-+
-+    const adjunto = await Adjunto.findOne(filtro);
-     if (!adjunto) return next(new ErrorResponse('Adjunto no encontrado', 404));
+ export default TutorValidaciones;
  
-     const progreso = await ProgresoResidente.findById(progresoId).populate('residente');
-     if (!progreso) return next(new ErrorResponse('Progreso no encontrado', 404));
- 
-     if (
-       req.user.rol !== 'administrador' &&
-       req.user.id !== progreso.residente._id.toString() &&
-       (req.user.rol !== 'tutor' ||
-         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
-         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
-       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-       (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
-     ) {
-       return next(new ErrorResponse('No autorizado', 403));
-     }
- 
-     res.set('Content-Type', adjunto.mimeType);
-     return res.send(adjunto.datos);
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Eliminar un adjunto
-diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
-index e2b8beb54fcf5a8409a9fb3b122e5e02e595a3c6..f9c90dc18d46450327815a386493f57e5cd18f0a 100644
---- a/src/controllers/progresoController.js
-+++ b/src/controllers/progresoController.js
-@@ -887,136 +887,192 @@ const getValidacionesPendientes = async (req, res, next) => {
-           : req.user.rol === 'tutor'
-           ? {
-               hospital: req.user.hospital,
-               ...(req.user.especialidad !== 'ALL'
-                 ? { especialidad: req.user.especialidad }
-                 : {})
-             }
-           : {},
-         select: 'nombre apellidos hospital sociedad especialidad',
-         populate: { path: 'hospital', select: 'zona' }
-       })
-       .populate('fase')
-       .populate('actividades.actividad')
-       .populate('actividades.cirugia');
- 
-     const pendientes = [];
-     const validadas = [];
-     const rechazadas = [];
- 
-     const filtrados = progresos.filter(p => {
-       if (!p.residente) return false;
-       if (req.user.rol === 'csm') return p.residente.hospital && p.residente.hospital.zona === req.user.zona;
-       return true;
-     });
- 
-+    const progresoIds = filtrados.map(p => p._id);
-+    const adjuntosPorActividad = new Map();
-+
-+    if (progresoIds.length) {
-+      const adjuntos = await Adjunto.find({
-+        progreso: { $in: progresoIds },
-+        actividadIndex: { $ne: null }
-+      })
-+        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
-+        .lean();
-+
-+      adjuntos.forEach(adjunto => {
-+        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
-+        if (!adjuntosPorActividad.has(key)) {
-+          adjuntosPorActividad.set(key, []);
-+        }
-+        adjuntosPorActividad.get(key).push({
-+          _id: adjunto._id,
-+          nombreArchivo: adjunto.nombreArchivo,
-+          mimeType: adjunto.mimeType,
-+          fechaSubida: adjunto.fechaSubida
-+        });
-+      });
-+
-+      for (const lista of adjuntosPorActividad.values()) {
-+        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
-+      }
-+    }
-+
-     for (const progreso of filtrados) {
- 
-       for (let index = 0; index < progreso.actividades.length; index++) {
-         const actividad = progreso.actividades[index];
--        const existeAdjunto = await Adjunto.exists({
--          progreso: progreso._id,
--          actividadIndex: index
--        });
-+        const key = `${progreso._id.toString()}-${index}`;
-+        const adjuntos = adjuntosPorActividad.get(key) || [];
- 
-         const item = {
-           _id: `${progreso._id}-${index}`,
-           progresoId: progreso._id,
-           index,
-           actividad,
-           residente: progreso.residente,
-           fase: progreso.fase,
-           fechaCreacion:
-             actividad.fechaRealizacion || progreso.fechaRegistro,
-           estado: actividad.estado,
-           comentariosRechazo: actividad.comentariosRechazo || '',
--          tieneAdjunto: !!existeAdjunto
-+          tieneAdjunto: adjuntos.length > 0,
-+          adjuntos
-         };
- 
-         if (actividad.estado === 'completado') pendientes.push(item);
-         if (actividad.estado === 'validado') validadas.push(item);
-         if (actividad.estado === 'rechazado') rechazadas.push(item);
-       }
-     }
- 
-     res.status(200).json({
-       success: true,
-       data: {
-         pendientes,
-         validadas,
-         rechazadas
-       }
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc Obtener lista de validaciones pendientes sin filtros
- // @route GET /api/progreso/admin/validaciones/pendientes
- // @access Private/Admin
- const getValidacionesPendientesAdmin = async (req, res, next) => {
-   try {
-     if (req.user.rol !== 'administrador') {
-       return res.status(403).json({ success: false, error: 'No autorizado' });
-     }
- 
-     const progresos = await ProgresoResidente.find()
-       .populate({
-         path: 'residente',
-         select: 'nombre apellidos tipo hospital sociedad'
-       })
-       .populate('fase')
-       .populate('actividades.actividad')
-       .populate('actividades.cirugia');
- 
-     const pendientes = [];
-     const validadas = [];
-     const rechazadas = [];
- 
-+    const progresoIds = progresos.map(p => p._id);
-+    const adjuntosPorActividad = new Map();
-+
-+    if (progresoIds.length) {
-+      const adjuntos = await Adjunto.find({
-+        progreso: { $in: progresoIds },
-+        actividadIndex: { $ne: null }
-+      })
-+        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
-+        .lean();
-+
-+      adjuntos.forEach(adjunto => {
-+        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
-+        if (!adjuntosPorActividad.has(key)) {
-+          adjuntosPorActividad.set(key, []);
-+        }
-+        adjuntosPorActividad.get(key).push({
-+          _id: adjunto._id,
-+          nombreArchivo: adjunto.nombreArchivo,
-+          mimeType: adjunto.mimeType,
-+          fechaSubida: adjunto.fechaSubida
-+        });
-+      });
-+
-+      for (const lista of adjuntosPorActividad.values()) {
-+        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
-+      }
-+    }
-+
-     for (const progreso of progresos) {
-       if (!progreso.residente) continue;
- 
-       for (let index = 0; index < progreso.actividades.length; index++) {
-         const actividad = progreso.actividades[index];
--        const existeAdjunto = await Adjunto.exists({
--          progreso: progreso._id,
--          actividadIndex: index
--        });
-+        const key = `${progreso._id.toString()}-${index}`;
-+        const adjuntos = adjuntosPorActividad.get(key) || [];
- 
-         const item = {
-           _id: `${progreso._id}-${index}`,
-           progresoId: progreso._id,
-           index,
-           actividad,
-           residente: progreso.residente,
-           fase: progreso.fase,
-           fechaCreacion:
-             actividad.fechaRealizacion || progreso.fechaRegistro,
-           estado: actividad.estado,
-           comentariosRechazo: actividad.comentariosRechazo || '',
--          tieneAdjunto: !!existeAdjunto
-+          tieneAdjunto: adjuntos.length > 0,
-+          adjuntos
-         };
- 
-         if (actividad.estado === 'completado') pendientes.push(item);
-         if (actividad.estado === 'validado') validadas.push(item);
-         if (actividad.estado === 'rechazado') rechazadas.push(item);
-       }
-     }
- 
-     res.status(200).json({
-       success: true,
-       data: {
-         pendientes,
-         validadas,
-         rechazadas
-       }
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
-   const validarActividad = async (req, res, next) => {
-   try {
-     const { id, index } = req.params;
-     const { comentarios, firmaDigital } = req.body;
-@@ -1095,50 +1151,52 @@ const rechazarActividad = async (req, res, next) => {
-     }
- 
-     actividad.estado = 'rechazado';
-     actividad.comentariosRechazo = comentarios;
-     actividad.fechaRechazo = new Date();
- 
-     await progreso.save();
-     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
-     
-     const destinatarios = [progreso.residente.tutor, progreso.residente.profesor].filter(Boolean);
-     await Notificacion.updateMany(
-       {
-         usuario: { $in: destinatarios },
-         'entidadRelacionada.tipo': 'progreso',
-         'entidadRelacionada.id': progreso._id
-       },
-       { leida: true }
-     );
-     
-     await Notificacion.create({
-       usuario: progreso.residente._id,
-       tipo: 'rechazo',
-       mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
-     });
- 
-+    await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
-+
-     res.status(200).json({ success: true, data: progreso });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- 
- 
- const crearProgresoParaUsuario = async (req, res, next) => {
-   try {
-     const { id } = req.params;
- 
-   const usuario = await User.findById(id);
-   if (!usuario || (usuario.rol !== 'residente' && usuario.rol !== 'participante')) {
-       return res.status(400).json({ success: false, error: 'Usuario no válido o no es residente' });
-   }
- 
-     const yaTiene = await ProgresoResidente.findOne({ residente: id });
-     if (yaTiene) {
-       return res.status(400).json({ success: false, error: 'Ya tiene progreso formativo' });
-     }
- 
-     if (req.body.tipo) usuario.tipo = req.body.tipo;
-     await inicializarProgresoFormativoDB(usuario);
-     res.status(200).json({ success: true, message: 'Progreso formativo creado' });
