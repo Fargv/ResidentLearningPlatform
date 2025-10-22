@@ -58,7 +58,7 @@ import { FaseCirugia } from "../../types/FaseCirugia";
 const DIALOG_ACTIONS_SX: SxProps<Theme> = {
   flexWrap: "wrap",
   gap: 1,
-  justifyContent: "flex-end",
+  justifyContent: "center",
 };
 
 const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
@@ -67,6 +67,34 @@ const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
   mt: { xs: 1, sm: 0 },
   fontWeight: 600,
   flexBasis: { xs: "100%", sm: "auto" },
+};
+
+const getPasswordButtonStyles = (theme: Theme) => {
+  const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
+  const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    "&:hover": {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const PASSWORD_ACTION_ROLES = [
+  "administrador",
+  "tutor",
+  "profesor",
+  "csm",
+  "instructor",
+];
+
+const CENTERED_DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  justifyContent: "center",
+  gap: 1,
+  flexWrap: "wrap",
 };
 
 const AdminUsuarios: React.FC = () => {
@@ -1052,13 +1080,21 @@ const AdminUsuarios: React.FC = () => {
             sx={{ mb: 2 }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePasswordDialog}>{t("common.cancel")}</Button>
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleClosePasswordDialog()}
+            sx={{ minWidth: 140 }}
+          >
+            {t("common.cancel")}
+          </Button>
           <Button
             onClick={handleActualizarPassword}
             variant="contained"
-            color="secondary"
             disabled={procesando || !passwordValue}
+            sx={(theme) => ({
+              minWidth: 180,
+              ...getPasswordButtonStyles(theme),
+            })}
           >
             {procesando
               ? t("adminUsers.password.updating")
@@ -1287,8 +1323,10 @@ const AdminUsuarios: React.FC = () => {
             </TextField>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCrearDialog}>{t("common.cancel")}</Button>
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button onClick={handleCloseCrearDialog} sx={{ minWidth: 140 }}>
+            {t("common.cancel")}
+          </Button>
           <Button
             onClick={handleCrear}
             variant="contained"
@@ -1489,13 +1527,15 @@ const AdminUsuarios: React.FC = () => {
           >
             {t("common.cancel")}
           </Button>
-          {user?.rol === "administrador" && (
+          {PASSWORD_ACTION_ROLES.includes(user?.rol ?? "") && (
             <>
               <Button
                 onClick={(event) => handleOpenPasswordMenu(event)}
-                color="secondary"
                 variant="contained"
-                sx={ACTION_BUTTON_BASE_SX}
+                sx={[
+                  ACTION_BUTTON_BASE_SX,
+                  (theme) => getPasswordButtonStyles(theme),
+                ]}
                 endIcon={<ArrowDropDownIcon />}
                 aria-controls={
                   isPasswordMenuOpen ? "password-actions-menu" : undefined
@@ -1618,8 +1658,8 @@ const AdminUsuarios: React.FC = () => {
             />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEliminarDialog} color="primary">
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button onClick={handleCloseEliminarDialog} sx={{ minWidth: 140 }}>
             {t("common.cancel")}
           </Button>
           <Button

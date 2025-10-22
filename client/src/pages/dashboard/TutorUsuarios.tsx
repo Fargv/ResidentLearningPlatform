@@ -32,7 +32,13 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Download as DownloadIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+} from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation, Trans } from 'react-i18next';
 import type { SelectChangeEvent } from '@mui/material/Select';
@@ -48,7 +54,7 @@ import { FaseCirugia } from '../../types/FaseCirugia';
 const DIALOG_ACTIONS_SX: SxProps<Theme> = {
   flexWrap: 'wrap',
   gap: 1,
-  justifyContent: 'flex-end',
+  justifyContent: 'center',
 };
 
 const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
@@ -57,6 +63,34 @@ const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
   mt: { xs: 1, sm: 0 },
   fontWeight: 600,
   flexBasis: { xs: '100%', sm: 'auto' },
+};
+
+const getPasswordButtonStyles = (theme: Theme) => {
+  const baseBg = theme.palette.mode === 'light' ? '#7E57C2' : '#9575CD';
+  const hoverBg = theme.palette.mode === 'light' ? '#673AB7' : '#7E57C2';
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    '&:hover': {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const PASSWORD_ACTION_ROLES = [
+  'administrador',
+  'tutor',
+  'profesor',
+  'csm',
+  'instructor',
+];
+
+const CENTERED_DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  justifyContent: 'center',
+  gap: 1,
+  flexWrap: 'wrap',
 };
 
 const TutorUsuarios: React.FC = () => {
@@ -88,6 +122,8 @@ const TutorUsuarios: React.FC = () => {
   const [selected, setSelected] = useState<any>(null);
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [passwordMenuAnchorEl, setPasswordMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const isPasswordMenuOpen = Boolean(passwordMenuAnchorEl);
   const [passwordValue, setPasswordValue] = useState('');
 
   const [formData, setFormData] = useState({
@@ -114,6 +150,14 @@ const TutorUsuarios: React.FC = () => {
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
   const [selectedFases, setSelectedFases] = useState<string[]>([]);
+
+  const handleOpenPasswordMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setPasswordMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePasswordMenu = () => {
+    setPasswordMenuAnchorEl(null);
+  };
 
   const fetchUsuarios = useCallback(async () => {
     try {
@@ -211,6 +255,7 @@ const TutorUsuarios: React.FC = () => {
 
   const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenDialog(false);
+    handleClosePasswordMenu();
     if (clearSelected) setSelected(null);
   };
 
@@ -814,26 +859,71 @@ const TutorUsuarios: React.FC = () => {
           </Button>
           {editar && selected && (
             <>
-              <Button
-                onClick={() => {
-                  handleOpenPasswordDialog(selected);
-                  handleCloseEditarDialog(false);
-                }}
-                color="secondary"
-                variant="contained"
-                sx={ACTION_BUTTON_BASE_SX}
-              >
-                {t('adminUsers.actions.changePassword')}
-              </Button>
-              {(user?.rol === 'tutor' || user?.rol === 'csm') && (
-                <Button
-                  onClick={() => handleSendResetEmail(selected)}
-                  color="info"
-                  variant="contained"
-                  sx={ACTION_BUTTON_BASE_SX}
-                >
-                  {t('adminUsers.actions.sendResetLink')}
-                </Button>
+              {PASSWORD_ACTION_ROLES.includes(user?.rol ?? '') && (
+                <>
+                  <Button
+                    onClick={(event) => handleOpenPasswordMenu(event)}
+                    variant="contained"
+                    sx={[
+                      ACTION_BUTTON_BASE_SX,
+                      (theme) => getPasswordButtonStyles(theme),
+                    ]}
+                    endIcon={<ArrowDropDownIcon />}
+                    aria-controls={
+                      isPasswordMenuOpen ? 'password-actions-menu' : undefined
+                    }
+                    aria-haspopup="true"
+                    aria-expanded={isPasswordMenuOpen ? 'true' : undefined}
+                  >
+                    {t('adminUsers.actions.changePassword')}
+                  </Button>
+                  <Menu
+                    id="password-actions-menu"
+                    anchorEl={passwordMenuAnchorEl}
+                    open={isPasswordMenuOpen}
+                    onClose={handleClosePasswordMenu}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        if (!selected) {
+                          handleClosePasswordMenu();
+                          return;
+                        }
+                        handleClosePasswordMenu();
+                        handleOpenPasswordDialog(selected);
+                        handleCloseEditarDialog(false);
+                      }}
+                    >
+                      {t('adminUsers.actions.changePassword')}
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        if (!selected) {
+                          handleClosePasswordMenu();
+                          return;
+                        }
+                        handleClosePasswordMenu();
+                        void handleSendResetEmail(selected);
+                      }}
+                      sx={(theme) => ({
+                        color: theme.palette.warning.main,
+                        '&:hover': {
+                          backgroundColor:
+                            theme.palette.mode === 'light'
+                              ? theme.palette.warning.light
+                              : theme.palette.warning.dark,
+                          color: theme.palette.getContrastText(
+                            theme.palette.mode === 'light'
+                              ? theme.palette.warning.light
+                              : theme.palette.warning.dark,
+                          ),
+                        },
+                      })}
+                    >
+                      {t('adminUsers.actions.sendResetLink')}
+                    </MenuItem>
+                  </Menu>
+                </>
               )}
 
               <Button
@@ -879,15 +969,21 @@ const TutorUsuarios: React.FC = () => {
             onChange={(e) => setPasswordValue(e.target.value)}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePasswordDialog} color="primary">
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleClosePasswordDialog()}
+            sx={{ minWidth: 140 }}
+          >
             {t('common.cancel')}
           </Button>
           <Button
             onClick={handleActualizarPassword}
-            color="secondary"
             variant="contained"
             disabled={procesando || !passwordValue}
+            sx={(theme) => ({
+              minWidth: 180,
+              ...getPasswordButtonStyles(theme),
+            })}
           >
             {procesando
               ? t('adminUsers.password.updating')
@@ -909,8 +1005,8 @@ const TutorUsuarios: React.FC = () => {
             />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEliminarDialog} color="primary">
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button onClick={handleCloseEliminarDialog} sx={{ minWidth: 140 }}>
             {t('common.cancel')}
           </Button>
           <Button
