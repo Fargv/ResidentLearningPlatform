@@ -29,6 +29,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import {
   Add as AddIcon,
   Edit as EditIcon,
@@ -52,6 +53,20 @@ import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
 import { getRoleChipSx } from "../../utils/roleChipColors";
 import { FaseCirugia } from "../../types/FaseCirugia";
+
+const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  flexWrap: "wrap",
+  gap: 1,
+  justifyContent: "flex-end",
+};
+
+const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+  minWidth: { xs: "100%", sm: 220 },
+  height: 44,
+  mt: { xs: 1, sm: 0 },
+  fontWeight: 600,
+  flexBasis: { xs: "100%", sm: "auto" },
+};
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -1433,8 +1448,27 @@ const AdminUsuarios: React.FC = () => {
             </TextField>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleCloseEditarDialog()} color="primary">
+        <DialogActions sx={DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleCloseEditarDialog()}
+            variant="contained"
+            sx={[
+              ACTION_BUTTON_BASE_SX,
+              (theme) => ({
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? theme.palette.grey[200]
+                    : theme.palette.grey[700],
+                color: theme.palette.text.primary,
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? theme.palette.grey[300]
+                      : theme.palette.grey[600],
+                },
+              }),
+            ]}
+          >
             {t("common.cancel")}
           </Button>
           {user?.rol === "administrador" && (
@@ -1444,7 +1478,8 @@ const AdminUsuarios: React.FC = () => {
                 handleCloseEditarDialog(false);
               }}
               color="secondary"
-              variant="outlined"
+              variant="contained"
+              sx={ACTION_BUTTON_BASE_SX}
             >
               {t("adminUsers.actions.changePassword")}
             </Button>
@@ -1453,7 +1488,8 @@ const AdminUsuarios: React.FC = () => {
             <Button
               onClick={() => handleSendResetEmail(selectedUsuario)}
               color="info"
-              variant="outlined"
+              variant="contained"
+              sx={ACTION_BUTTON_BASE_SX}
             >
               {t("adminUsers.actions.sendResetLink")}
             </Button>
@@ -1464,7 +1500,8 @@ const AdminUsuarios: React.FC = () => {
               handleCloseEditarDialog(false);
             }}
             color="error"
-            variant="outlined"
+            variant="contained"
+            sx={ACTION_BUTTON_BASE_SX}
           >
             {t("adminUsers.delete.title")}
           </Button>
@@ -1472,6 +1509,7 @@ const AdminUsuarios: React.FC = () => {
             onClick={handleEditar}
             color="primary"
             variant="contained"
+            sx={ACTION_BUTTON_BASE_SX}
             disabled={
               procesando ||
               !formData.nombre ||

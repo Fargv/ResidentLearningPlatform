@@ -36,6 +36,7 @@ import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as Dow
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation, Trans } from 'react-i18next';
 import type { SelectChangeEvent } from '@mui/material/Select';
+import type { SxProps, Theme } from '@mui/material/styles';
 import api, {
   updateUserPassword,
   getUserResetToken,
@@ -43,6 +44,20 @@ import api, {
 } from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
 import { FaseCirugia } from '../../types/FaseCirugia';
+
+const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  flexWrap: 'wrap',
+  gap: 1,
+  justifyContent: 'flex-end',
+};
+
+const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+  minWidth: { xs: '100%', sm: 220 },
+  height: 44,
+  mt: { xs: 1, sm: 0 },
+  fontWeight: 600,
+  flexBasis: { xs: '100%', sm: 'auto' },
+};
 
 const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -774,8 +789,27 @@ const TutorUsuarios: React.FC = () => {
             />
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleCloseEditarDialog()}>
+        <DialogActions sx={DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleCloseEditarDialog()}
+            variant="contained"
+            sx={[
+              ACTION_BUTTON_BASE_SX,
+              (theme) => ({
+                backgroundColor:
+                  theme.palette.mode === 'light'
+                    ? theme.palette.grey[200]
+                    : theme.palette.grey[700],
+                color: theme.palette.text.primary,
+                '&:hover': {
+                  backgroundColor:
+                    theme.palette.mode === 'light'
+                      ? theme.palette.grey[300]
+                      : theme.palette.grey[600],
+                },
+              }),
+            ]}
+          >
             {t('tutorUsers.dialog.cancel')}
           </Button>
           {editar && selected && (
@@ -786,7 +820,8 @@ const TutorUsuarios: React.FC = () => {
                   handleCloseEditarDialog(false);
                 }}
                 color="secondary"
-                variant="outlined"
+                variant="contained"
+                sx={ACTION_BUTTON_BASE_SX}
               >
                 {t('adminUsers.actions.changePassword')}
               </Button>
@@ -794,14 +829,17 @@ const TutorUsuarios: React.FC = () => {
                 <Button
                   onClick={() => handleSendResetEmail(selected)}
                   color="info"
-                  variant="outlined"
+                  variant="contained"
+                  sx={ACTION_BUTTON_BASE_SX}
                 >
                   {t('adminUsers.actions.sendResetLink')}
                 </Button>
               )}
-              
+
               <Button
                 color="error"
+                variant="contained"
+                sx={ACTION_BUTTON_BASE_SX}
                 startIcon={<DeleteIcon />}
                 onClick={() => {
                   handleOpenEliminarDialog(selected);
@@ -812,7 +850,13 @@ const TutorUsuarios: React.FC = () => {
               </Button>
             </>
           )}
-          <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            sx={ACTION_BUTTON_BASE_SX}
+            disabled={procesando}
+          >
             {procesando
               ? t('tutorUsers.dialog.saving')
               : editar

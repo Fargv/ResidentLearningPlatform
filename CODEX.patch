@@ -1,367 +1,524 @@
-diff --git a/client/src/pages/dashboard/TutorValidaciones.tsx b/client/src/pages/dashboard/TutorValidaciones.tsx
-index f199958f58addecfd4ac21dece10cf0d703fa19d..dfb53c2a24e0dd94c224b76bcfe3208ee51d7cc8 100644
---- a/client/src/pages/dashboard/TutorValidaciones.tsx
-+++ b/client/src/pages/dashboard/TutorValidaciones.tsx
-@@ -1,106 +1,121 @@
- import React, { useState, useEffect, useCallback } from 'react';
- import { useTranslation } from 'react-i18next';
- import {
-   Box,
-   Typography,
-   Paper,
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index 445ebee017303f848ea3da87cb48d7cc609068b3..1b9cd13e78db04992bac9853b1e1faf2840db7eb 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -371,51 +371,51 @@
+     "fields": {
+       "titulo": "Título",
+       "status": "Estado",
+       "fechaConvocatoria": "Fecha de convocatoria",
+       "fechaPresentacion": "Fecha de presentación",
+       "fechaModulosOnline": "Módulos online",
+       "fechaSimulacion": "Simulación",
+       "fechaAtividadesFirstAssistant": "First Assistant",
+       "fechaModuloOnlineStepByStep": "Step By Step",
+       "fechaHandOn": "Hand On",
+       "urlLogo": "URL del logo",
+       "responsablePrograma": "Responsable del programa"
+     }
+   },
+   "adminUsers": {
+     "titleAll": "Gestión de Todos los Usuarios",
+     "titleHospital": "Usuarios de Tu Hospital",
+     "searchPlaceholder": "Buscar por nombre o email",
+     "loadError": "Error al cargar los datos",
+     "actions": {
+       "create": "Crear Usuario",
+       "invite": "Invitar Usuario",
+       "edit": "Editar",
+       "delete": "Eliminar",
+       "changePassword": "Cambiar contraseña",
+-      "sendResetLink": "Enviar enlace de reseteo",
++      "sendResetLink": "Enviar reseteo de Contraseña",
+       "createProgress": "Crear progreso",
+       "downloadSurgeryReport": "Descargar informe de {{phase}}"
+     },
+     "createSuccess": "Usuario creado correctamente",
+     "createError": "Error al crear el usuario",
+     "updateSuccess": "Usuario actualizado correctamente",
+     "updateError": "Error al actualizar el usuario",
+     "deleteSuccess": "Usuario eliminado correctamente",
+     "deleteError": "Error al eliminar el usuario",
+     "passwordUpdated": "Contraseña actualizada",
+     "passwordError": "Error al actualizar la contraseña",
+     "createProgressSuccess": "Progreso formativo creado con éxito",
+     "createProgressError": "Error al crear el progreso",
+     "noTutor": "Residente sin tutor asignado",
+     "table": {
+       "aria": "tabla de usuarios",
+       "name": "Nombre",
+       "email": "Email",
+       "type": "Tipo",
+       "society": "Sociedad",
+       "role": "Rol",
+       "hospital": "Hospital",
+       "tutor": "Tutor",
+       "specialty": "Especialidad",
+       
+diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
+index 11d3847bd1b0a10553d73f7273d46de4eb33694d..0a11537c0c8d8d81e1d09cdb18c60a23fff1521a 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.tsx
+@@ -7,74 +7,89 @@ import {
    Button,
-   Chip,
-   LinearProgress,
-   Alert,
+   TextField,
    Dialog,
    DialogTitle,
    DialogContent,
    DialogContentText,
    DialogActions,
-   TextField,
-   Tab,
-   Tabs,
    Table,
    TableBody,
    TableCell,
    TableContainer,
    TableHead,
-   TableRow
- } from '@mui/material';
-+import { Theme } from '@mui/material/styles';
+   TableRow,
+   Chip,
+   LinearProgress,
+   Alert,
+   Snackbar,
+   Autocomplete,
+   IconButton,
+   Tooltip,
+   CircularProgress,
+   Backdrop,
+   Menu,
+   MenuItem,
+ } from "@mui/material";
++import type { SxProps, Theme } from "@mui/material/styles";
  import {
-   CheckCircle as CheckCircleIcon,
-   //Pending as PendingIcon,
-   Error as ErrorIcon,
-   //School as SchoolIcon,
-   OpenInNew as OpenInNewIcon,
-   Download as DownloadIcon
- } from '@mui/icons-material';
- import { useAuth } from '../../context/AuthContext';
- import api from '../../api';
- import { formatDayMonthYear } from '../../utils/date';
+   Add as AddIcon,
+   Edit as EditIcon,
+   Download as DownloadIcon,
+   Assessment as AssessmentIcon,
  
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
+    //Person as PersonIcon,
+   //Email as EmailIcon
+ } from "@mui/icons-material";
+ import { useAuth } from "../../context/AuthContext";
+ import { useNavigate } from "react-router-dom";
+ import api, {
+   createUser,
+   updateUserPassword,
+   getTutors,
+   getUserResetToken,
+   clearResetNotifications,
+ } from "../../api";
+ import InviteUsersMail from "../../components/InviteUsersMail";
+ import BackButton from "../../components/BackButton";
+ import { useTranslation, Trans } from "react-i18next";
+ import { getRoleChipSx } from "../../utils/roleChipColors";
+ import { FaseCirugia } from "../../types/FaseCirugia";
  
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`validaciones-tabpanel-${index}`}
-       aria-labelledby={`validaciones-tab-${index}`}
-       {...other}
-     >
-       {value === index && (
-         <Box sx={{ p: 2 }}>
-           {children}
-         </Box>
-       )}
-     </div>
-   );
- }
- 
-+const getTableHeadStyles = (theme: Theme) => {
-+  const backgroundColor =
-+    theme.palette.mode === 'dark' ? theme.palette.primary.dark : theme.palette.primary.light;
-+
-+  return {
-+    backgroundColor,
-+    '& .MuiTableCell-root': {
-+      color: theme.palette.getContrastText(backgroundColor),
-+      fontWeight: 600
-+    }
-+  };
++const DIALOG_ACTIONS_SX: SxProps<Theme> = {
++  flexWrap: "wrap",
++  gap: 1,
++  justifyContent: "flex-end",
 +};
 +
- const TutorValidaciones: React.FC = () => {
-   const { t } = useTranslation();
++const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
++  minWidth: { xs: "100%", sm: 220 },
++  height: 44,
++  mt: { xs: 1, sm: 0 },
++  fontWeight: 600,
++  flexBasis: { xs: "100%", sm: "auto" },
++};
++
+ const AdminUsuarios: React.FC = () => {
    const { user } = useAuth();
+   const { t } = useTranslation();
+   const navigate = useNavigate();
+   const typeKey = (tipo?: string) =>
+     tipo === "Programa Sociedades"
+       ? "programaSociedades"
+       : tipo === "Programa Residentes"
+       ? "programaResidentes"
+       : "";
+   const rolesResidentes = [
+     "residente",
+     "tutor",
+     "csm",
+     "administrador",
+   ];
+   const rolesSociedades = [
+     "participante",
+     "profesor",
+     "csm",
+     "administrador",
+   ];
+   const zonaOptions = [
+     "NORDESTE",
+     "NORTE",
+@@ -1411,89 +1426,112 @@ const AdminUsuarios: React.FC = () => {
+           {formData.rol === "residente" && (
+             <TextField
+               select
+               margin="dense"
+               id="tutor-edit"
+               name="tutor"
+               label={t("adminUsers.fields.tutor")}
+               InputLabelProps={{ shrink: true }}
+               fullWidth
+               variant="outlined"
+               value={formData.tutor}
+               onChange={handleChange}
+               SelectProps={{ native: true }}
+               sx={{ mb: 2 }}
+             >
+               <option value="">{t("common.none")}</option>
+               {tutores.map((tutor) => (
+                 <option key={tutor._id} value={tutor._id}>
+                   {tutor.nombre} {tutor.apellidos}
+                   {tutor.especialidad ? ` (${tutor.especialidad})` : ""}
+                 </option>
+               ))}
+             </TextField>
+           )}
+         </DialogContent>
+-        <DialogActions>
+-          <Button onClick={() => handleCloseEditarDialog()} color="primary">
++        <DialogActions sx={DIALOG_ACTIONS_SX}>
++          <Button
++            onClick={() => handleCloseEditarDialog()}
++            variant="contained"
++            sx={[
++              ACTION_BUTTON_BASE_SX,
++              (theme) => ({
++                backgroundColor:
++                  theme.palette.mode === "light"
++                    ? theme.palette.grey[200]
++                    : theme.palette.grey[700],
++                color: theme.palette.text.primary,
++                "&:hover": {
++                  backgroundColor:
++                    theme.palette.mode === "light"
++                      ? theme.palette.grey[300]
++                      : theme.palette.grey[600],
++                },
++              }),
++            ]}
++          >
+             {t("common.cancel")}
+           </Button>
+           {user?.rol === "administrador" && (
+             <Button
+               onClick={() => {
+                 handleOpenPasswordDialog(selectedUsuario);
+                 handleCloseEditarDialog(false);
+               }}
+               color="secondary"
+-              variant="outlined"
++              variant="contained"
++              sx={ACTION_BUTTON_BASE_SX}
+             >
+               {t("adminUsers.actions.changePassword")}
+             </Button>
+           )}
+-          {user?.rol === "administrador" && (
+-            <Button
+-              onClick={() => handleSendResetEmail(selectedUsuario)}
+-              color="info"
+-              variant="outlined"
+-            >
+-              {t("adminUsers.actions.sendResetLink")}
+-            </Button>
+-          )}
++          {user?.rol === "administrador" && (
++            <Button
++              onClick={() => handleSendResetEmail(selectedUsuario)}
++              color="info"
++              variant="contained"
++              sx={ACTION_BUTTON_BASE_SX}
++            >
++              {t("adminUsers.actions.sendResetLink")}
++            </Button>
++          )}
+           <Button
+             onClick={() => {
+               handleOpenEliminarDialog(selectedUsuario);
+               handleCloseEditarDialog(false);
+             }}
+             color="error"
+-            variant="outlined"
++            variant="contained"
++            sx={ACTION_BUTTON_BASE_SX}
+           >
+             {t("adminUsers.delete.title")}
+           </Button>
+           <Button
+             onClick={handleEditar}
+             color="primary"
+             variant="contained"
++            sx={ACTION_BUTTON_BASE_SX}
+             disabled={
+               procesando ||
+               !formData.nombre ||
+               !formData.apellidos ||
+               ((formData.rol === "residente" || formData.rol === "tutor") &&
+                 !formData.hospital) ||
+               ((formData.rol === "residente" || formData.rol === "tutor") &&
+                 !formData.especialidad) ||
+               (formData.rol === "csm" && !formData.zona)
+             }
+           >
+             {procesando ? t("common.saving") : t("common.saveChanges")}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       {/* Diálogo para eliminar usuario */}
+       <Dialog open={openEliminarDialog} onClose={handleCloseEliminarDialog}>
+         <DialogTitle>{t("adminUsers.delete.title")}</DialogTitle>
+         <DialogContent>
+           <DialogContentText>
+             <Trans
+               i18nKey="adminUsers.delete.confirm"
+               values={{
+                 name: `${selectedUsuario?.nombre} ${selectedUsuario?.apellidos}`,
+diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
+index 55cff6816e5c60a51d842da1f346f2e9da695f74..dc88f67c4d1f6e6dd3b3035d4e30d082b3bfd7cd 100644
+--- a/client/src/pages/dashboard/TutorUsuarios.tsx
++++ b/client/src/pages/dashboard/TutorUsuarios.tsx
+@@ -1,71 +1,86 @@
+ 
+ import React, { useState, useEffect, useCallback, useMemo } from 'react';
+ import {
+-  Alert,
+-  Autocomplete,
+-  Backdrop,
+-  Box,
+-  Button,
+-  Chip,
+-  CircularProgress,
+-  Dialog,
+-  DialogActions,
+-  DialogContent,
+-  DialogContentText,
+-  DialogTitle,
+-  FormControl,
+-  IconButton,
+-  InputLabel,
+-  LinearProgress,
+-  Menu,
+-  MenuItem,
+-  Paper,
+-  Select,
+-  Snackbar,
+-  Table,
+-  TableBody,
+-  TableCell,
+-  TableContainer,
+-  TableHead,
+-  TableRow,
+-  TextField,
+-  Tooltip,
+-  Typography,
++  Alert,
++  Autocomplete,
++  Backdrop,
++  Box,
++  Button,
++  Chip,
++  CircularProgress,
++  Dialog,
++  DialogActions,
++  DialogContent,
++  DialogContentText,
++  DialogTitle,
++  FormControl,
++  IconButton,
++  InputLabel,
++  LinearProgress,
++  Menu,
++  MenuItem,
++  Paper,
++  Select,
++  Snackbar,
++  Table,
++  TableBody,
++  TableCell,
++  TableContainer,
++  TableHead,
++  TableRow,
++  TextField,
++  Tooltip,
++  Typography,
+ } from '@mui/material';
+ import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
+ import { useAuth } from '../../context/AuthContext';
+ import { useTranslation, Trans } from 'react-i18next';
+-import type { SelectChangeEvent } from '@mui/material/Select';
++import type { SelectChangeEvent } from '@mui/material/Select';
++import type { SxProps, Theme } from '@mui/material/styles';
+ import api, {
+   updateUserPassword,
+   getUserResetToken,
+   clearResetNotifications,
+ } from '../../api';
+ import { getRoleChipSx } from '../../utils/roleChipColors';
+ import { FaseCirugia } from '../../types/FaseCirugia';
+ 
++const DIALOG_ACTIONS_SX: SxProps<Theme> = {
++  flexWrap: 'wrap',
++  gap: 1,
++  justifyContent: 'flex-end',
++};
++
++const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
++  minWidth: { xs: '100%', sm: 220 },
++  height: 44,
++  mt: { xs: 1, sm: 0 },
++  fontWeight: 600,
++  flexBasis: { xs: '100%', sm: 'auto' },
++};
++
+ const TutorUsuarios: React.FC = () => {
+   const { user } = useAuth();
+   const { t } = useTranslation();
+   const defaultProgramType = useMemo(() => {
+     if (user?.tipo) {
+       return user.tipo;
+     }
+     if (user?.rol === 'profesor') {
+       return 'Programa Sociedades';
+     }
+     return 'Programa Residentes';
+   }, [user?.tipo, user?.rol]);
+   const typeKey = (tipo?: string) =>
+     tipo === 'Programa Sociedades'
+       ? 'programaSociedades'
+       : tipo === 'Programa Residentes'
+       ? 'programaResidentes'
+       : '';
+   const [usuarios, setUsuarios] = useState<any[]>([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
-   const [pendientes, setPendientes] = useState<any[]>([]);
-   const [validadas, setValidadas] = useState<any[]>([]);
-   const [rechazadas, setRechazadas] = useState<any[]>([]);
-   const [tabValue, setTabValue] = useState(0);
-   const [openValidarDialog, setOpenValidarDialog] = useState(false);
-   const [openRechazarDialog, setOpenRechazarDialog] = useState(false);
-   const [selectedProgreso, setSelectedProgreso] = useState<any>(null);
-   const [comentarios, setComentarios] = useState('');
    const [procesando, setProcesando] = useState(false);
-   const [firmaDigital, setFirmaDigital] = useState('');
-   const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
--  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
--  const attachmentButtonStyles = { minWidth: 160, height: 36 };
-+  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
-+  const attachmentButtonStyles = { minWidth: 160, height: 36 };
-+  const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
+   const [availableHospitals, setAvailableHospitals] = useState<any[]>([]);
  
-   const formatFase = (fase: any) =>
-     fase
-       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
-       : t('tutorValidations.table.noPhase');
- 
-   const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
-     if (cirugia?.name) return cirugia.name;
-     return otraCirugia || '-';
-   };
- 
-   const fetchValidaciones = useCallback(async () => {
-     try {
-       setLoading(true);
- 
-       const respuesta = await api.get(
-         '/progreso/tutor/validaciones/pendientes'
-       );
- 
-       const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
-       setPendientes(pendientes || []);
-       setValidadas(validadas || []);
-       setRechazadas(rechazadas || []);
-     } catch (err: any) {
-       setError(err.response?.data?.error || t('tutorValidations.errorLoad'));
-@@ -275,194 +290,198 @@ const handleRechazar = async () => {
-               id="validaciones-tab-0"
-               aria-controls="validaciones-tabpanel-0"
+   const [openDialog, setOpenDialog] = useState(false);
+@@ -752,89 +767,118 @@ const TutorUsuarios: React.FC = () => {
+           </FormControl>
+           {user?.rol === 'csm' && (
+             <Autocomplete
+               options={hospitalOptions}
+               getOptionLabel={(option) => option?.nombre ?? ''}
+               value={
+                 hospitalOptions.find((h) => h._id === formData.hospital) || null
+               }
+               onChange={(_, newValue) =>
+                 setFormData((prev) => ({
+                   ...prev,
+                   hospital: newValue?._id || '',
+                 }))
+               }
+               renderInput={(params) => (
+                 <TextField
+                   {...params}
+                   fullWidth
+                   margin="dense"
+                   label={t('adminUsers.fields.hospital')}
+                 />
+               )}
              />
-             <Tab
-               label={`${t('tutorValidations.tabs.validated')} (${validadas.length})`}
-               id="validaciones-tab-1"
-               aria-controls="validaciones-tabpanel-1"
-             />
-             <Tab
-               label={`${t('tutorValidations.tabs.rejected')} (${rechazadas.length})`}
-               id="validaciones-tab-2"
-               aria-controls="validaciones-tabpanel-2"
-             />
-           </Tabs>
-         </Box>
- 
-         {/* Panel de Pendientes */}
-         <TabPanel value={tabValue} index={0}>
-           {pendientes.length === 0 ? (
-             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-               {t('tutorValidations.empty.pending')}
-             </Typography>
-           ) : (
-             <TableContainer component={Paper}>
-               <Table size="small">
--                <TableHead>
-+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
-                   <TableRow>
-                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
-                     <TableCell align="right">{t('tutorValidations.table.actions')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {pendientes.map((progreso) => (
-                     <TableRow key={progreso._id}>
-                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
-                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
-                       </TableCell>
-                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
-                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.actividad?.tipo === 'cirugia'
-                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
-                           : '-'}
-                       </TableCell>
-                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
-                       <TableCell align="right">
--                        {progreso.adjuntos?.length > 0 && (
-+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-+                          {progreso.adjuntos?.length > 0 && (
-+                            <Button
-+                              variant="contained"
-+                              color="primary"
-+                              size="small"
-+                              onClick={() => handleOpenAdjuntosDialog(progreso)}
-+                              sx={actionButtonStyles}
-+                            >
-+                              {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
-+                            </Button>
-+                          )}
-+                          <Button
-+                            variant="contained"
-+                            color="success"
-+                            size="small"
-+                            startIcon={<CheckCircleIcon />}
-+                            onClick={() =>
-+                              handleOpenValidarDialog({
-+                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
-+                                index: progreso.index,
-+                                ...progreso
-+                              })
-+                            }
-+                            sx={actionButtonStyles}
-+                          >
-+                            {t('tutorValidations.buttons.validate')}
-+                          </Button>
-                           <Button
--                            variant="outlined"
-+                            variant="contained"
-+                            color="error"
-                             size="small"
--                            sx={{ mr: 1 }}
--                            onClick={() => handleOpenAdjuntosDialog(progreso)}
-+                            startIcon={<ErrorIcon />}
-+                            onClick={() =>
-+                              handleOpenRechazarDialog({
-+                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
-+                                index: progreso.index,
-+                                ...progreso
-+                              })
-+                            }
-+                            sx={actionButtonStyles}
-                           >
--                            {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
-+                            {t('tutorValidations.buttons.reject')}
-                           </Button>
--                        )}
--                        <Button
--                          variant="contained"
--                          color="success"
--                          size="small"
--                          startIcon={<CheckCircleIcon />}
--                          sx={{ mr: 1 }}
--                          onClick={() =>
--                            handleOpenValidarDialog({
--                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
--                              index: progreso.index,
--                              ...progreso
--                            })
--                          }
--                        >
--                          {t('tutorValidations.buttons.validate')}
--                        </Button>
--                        <Button
--                          variant="contained"
--                          color="error"
--                          size="small"
--                          startIcon={<ErrorIcon />}
--                          onClick={() =>
--                            handleOpenRechazarDialog({
--                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
--                              index: progreso.index,
--                              ...progreso
--                            })
--                          }
--                        >
--                          {t('tutorValidations.buttons.reject')}
--                        </Button>
-+                        </Box>
-                       </TableCell>
-                     </TableRow>
-                   ))}
-                 </TableBody>
-               </Table>
-             </TableContainer>
            )}
-         </TabPanel>
-         
-         {/* Panel de Validadas */}
-         <TabPanel value={tabValue} index={1}>
-           {validadas.length === 0 ? (
-             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-               {t('tutorValidations.empty.validated')}
-             </Typography>
-           ) : (
-             <TableContainer component={Paper}>
-               <Table size="small">
--                <TableHead>
-+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
-                   <TableRow>
-                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
-                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {validadas.map(progreso => (
-                     <TableRow key={progreso._id}>
-                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
-                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
-                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
-                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
-                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.actividad?.tipo === 'cirugia'
-                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
-                           : '-'}
-                       </TableCell>
-                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
-                       <TableCell align="right">
-                         <Chip icon={<CheckCircleIcon />} label={t('tutorValidations.states.validated')} color="success" size="small" variant="outlined" />
-                       </TableCell>
-                     </TableRow>
-                   ))}
-                 </TableBody>
-               </Table>
-             </TableContainer>
+         </DialogContent>
+-        <DialogActions>
+-          <Button onClick={() => handleCloseEditarDialog()}>
++        <DialogActions sx={DIALOG_ACTIONS_SX}>
++          <Button
++            onClick={() => handleCloseEditarDialog()}
++            variant="contained"
++            sx={[
++              ACTION_BUTTON_BASE_SX,
++              (theme) => ({
++                backgroundColor:
++                  theme.palette.mode === 'light'
++                    ? theme.palette.grey[200]
++                    : theme.palette.grey[700],
++                color: theme.palette.text.primary,
++                '&:hover': {
++                  backgroundColor:
++                    theme.palette.mode === 'light'
++                      ? theme.palette.grey[300]
++                      : theme.palette.grey[600],
++                },
++              }),
++            ]}
++          >
+             {t('tutorUsers.dialog.cancel')}
+           </Button>
+           {editar && selected && (
+             <>
+               <Button
+                 onClick={() => {
+                   handleOpenPasswordDialog(selected);
+                   handleCloseEditarDialog(false);
+                 }}
+                 color="secondary"
+-                variant="outlined"
++                variant="contained"
++                sx={ACTION_BUTTON_BASE_SX}
+               >
+                 {t('adminUsers.actions.changePassword')}
+               </Button>
+               {(user?.rol === 'tutor' || user?.rol === 'csm') && (
+                 <Button
+                   onClick={() => handleSendResetEmail(selected)}
+                   color="info"
+-                  variant="outlined"
++                  variant="contained"
++                  sx={ACTION_BUTTON_BASE_SX}
+                 >
+                   {t('adminUsers.actions.sendResetLink')}
+                 </Button>
+               )}
+-              
++
+               <Button
+                 color="error"
++                variant="contained"
++                sx={ACTION_BUTTON_BASE_SX}
+                 startIcon={<DeleteIcon />}
+                 onClick={() => {
+                   handleOpenEliminarDialog(selected);
+                   handleCloseEditarDialog(false);
+                 }}
+               >
+                 {t('tutorUsers.buttons.delete')}
+               </Button>
+             </>
            )}
-         </TabPanel>
+-          <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
++          <Button
++            onClick={handleSubmit}
++            color="primary"
++            variant="contained"
++            sx={ACTION_BUTTON_BASE_SX}
++            disabled={procesando}
++          >
+             {procesando
+               ? t('tutorUsers.dialog.saving')
+               : editar
+               ? t('tutorUsers.dialog.save')
+               : t('tutorUsers.dialog.invite')}
+           </Button>
+         </DialogActions>
+       </Dialog>
  
-         
-         {/* Panel de Rechazadas */}
-         <TabPanel value={tabValue} index={2}>
-           {rechazadas.length === 0 ? (
-             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-               {t('tutorValidations.empty.rejected')}
-             </Typography>
-           ) : (
-             <TableContainer component={Paper}>
-               <Table size="small">
--                <TableHead>
-+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
-                   <TableRow>
-                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.reason')}</TableCell>
-                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {rechazadas.map(progreso => (
-                     <TableRow key={progreso._id}>
-                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
-                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
-                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
-                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
-                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.actividad?.tipo === 'cirugia'
+       <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
+         <DialogTitle>{t('adminUsers.password.title')}</DialogTitle>
+         <DialogContent>
+           <TextField
+             fullWidth
+             margin="dense"
+             id="password-update"
+             label={t('adminUsers.password.label')}
+             type="password"
+             value={passwordValue}
+             onChange={(e) => setPasswordValue(e.target.value)}
+           />
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleClosePasswordDialog} color="primary">
+             {t('common.cancel')}

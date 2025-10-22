@@ -393,7 +393,7 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Cambiar contraseña",
-      "sendResetLink": "Enviar enlace de reseteo",
+      "sendResetLink": "Enviar reseteo de Contraseña",
       "createProgress": "Crear progreso",
       "downloadSurgeryReport": "Descargar informe de {{phase}}"
     },
