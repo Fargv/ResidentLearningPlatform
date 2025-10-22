@@ -860,7 +860,7 @@
       "rejected": "No rejected validations"
     },
     "actions": {
-      "viewAttachment": "View attachment"
+      "viewAttachment": "Attachments"
     },
     "dialog": {
       "validateTitle": "Validate Activity",
@@ -874,7 +874,7 @@
     "errorLoad": "Error loading validations",
     "_comment": "Validations managed by Tutors",
     "buttons": {
-      "viewAttachment": "View attachment",
+      "viewAttachment": "Attachments",
       "validate": "Validate",
       "reject": "Reject",
       "cancel": "Cancel"

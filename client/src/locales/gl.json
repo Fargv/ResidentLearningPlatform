@@ -834,7 +834,7 @@
       "rejected": "Non hai validacións rexeitadas"
     },
     "actions": {
-      "viewAttachment": "Ver adxunto"
+      "viewAttachment": "Adxuntos"
     },
     "dialog": {
       "validateTitle": "Validar actividade",
@@ -848,7 +848,7 @@
     "errorLoad": "Erro ao cargar as validacións",
     "_comment": "Validacións xestionadas por Tutores",
     "buttons": {
-      "viewAttachment": "Ver adxunto",
+      "viewAttachment": "Adxuntos",
       "validate": "Validar",
       "reject": "Rexectar",
       "cancel": "Cancelar"

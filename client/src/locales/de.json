@@ -961,7 +961,7 @@
       "rejected": "Keine abgelehnten Validierungen"
     },
     "actions": {
-      "viewAttachment": "Anhang anzeigen"
+      "viewAttachment": "Anhänge"
     },
     "dialog": {
       "validateTitle": "Aktivität validieren",
@@ -975,7 +975,7 @@
     "errorLoad": "Fehler beim Laden der Validierungen",
     "_comment": "Von Tutorn verwaltete Validierungen",
     "buttons": {
-      "viewAttachment": "Anhang anzeigen",
+      "viewAttachment": "Anhänge",
       "validate": "Validieren",
       "reject": "Ablehnen",
       "cancel": "Abbrechen"

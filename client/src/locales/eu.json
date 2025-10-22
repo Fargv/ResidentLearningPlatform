@@ -847,7 +847,7 @@
       "rejected": "Ez dago baztertutako baliozkotzerik"
     },
     "actions": {
-      "viewAttachment": "Eranskina ikusi"
+      "viewAttachment": "Eranskinak"
     },
     "dialog": {
       "validateTitle": "Jarduera balioztatu",
@@ -861,7 +861,7 @@
     "errorLoad": "Errorea balidazioak kargatzean",
     "_comment": "Balidazioak prestakuntza-emilek kudeatuta",
     "buttons": {
-      "viewAttachment": "Eranskina ikusi",
+      "viewAttachment": "Eranskinak",
       "validate": "Balidatu",
       "reject": "Baztertu",
       "cancel": "Utzi"

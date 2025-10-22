@@ -889,7 +889,7 @@
       "rejected": "Nessuna validazione respinta"
     },
     "actions": {
-      "viewAttachment": "Vedi allegato"
+      "viewAttachment": "Allegati"
     },
     "dialog": {
       "validateTitle": "Convalida attività",
@@ -903,7 +903,7 @@
     "errorLoad": "Errore nel caricamento delle validazioni",
     "_comment": "Validazioni gestite dai formatori",
     "buttons": {
-      "viewAttachment": "Vedi allegato",
+      "viewAttachment": "Allegati",
       "validate": "Convalida",
       "reject": "Rifiuta",
       "cancel": "Annulla"

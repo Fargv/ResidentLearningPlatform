@@ -1,8 +1,62 @@
 diff --git a/client/src/pages/dashboard/TutorValidaciones.tsx b/client/src/pages/dashboard/TutorValidaciones.tsx
-index 4db543ea2f52d7d2175bae922c328b72d3255236..346503337c1afe85e5be8c0920a4224eaaaf8acb 100644
+index f199958f58addecfd4ac21dece10cf0d703fa19d..dfb53c2a24e0dd94c224b76bcfe3208ee51d7cc8 100644
 --- a/client/src/pages/dashboard/TutorValidaciones.tsx
 +++ b/client/src/pages/dashboard/TutorValidaciones.tsx
-@@ -54,52 +54,53 @@ function TabPanel(props: TabPanelProps) {
+@@ -1,106 +1,121 @@
+ import React, { useState, useEffect, useCallback } from 'react';
+ import { useTranslation } from 'react-i18next';
+ import {
+   Box,
+   Typography,
+   Paper,
+   Button,
+   Chip,
+   LinearProgress,
+   Alert,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogContentText,
+   DialogActions,
+   TextField,
+   Tab,
+   Tabs,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow
+ } from '@mui/material';
++import { Theme } from '@mui/material/styles';
+ import {
+   CheckCircle as CheckCircleIcon,
+   //Pending as PendingIcon,
+   Error as ErrorIcon,
+   //School as SchoolIcon,
+   OpenInNew as OpenInNewIcon,
+   Download as DownloadIcon
+ } from '@mui/icons-material';
+ import { useAuth } from '../../context/AuthContext';
+ import api from '../../api';
+ import { formatDayMonthYear } from '../../utils/date';
+ 
+ interface TabPanelProps {
+   children?: React.ReactNode;
+   index: number;
+   value: number;
+ }
+ 
+ function TabPanel(props: TabPanelProps) {
+   const { children, value, index, ...other } = props;
+ 
+   return (
+     <div
+       role="tabpanel"
+       hidden={value !== index}
+       id={`validaciones-tabpanel-${index}`}
+       aria-labelledby={`validaciones-tab-${index}`}
+       {...other}
      >
        {value === index && (
          <Box sx={{ p: 2 }}>
@@ -13,6 +67,19 @@ index 4db543ea2f52d7d2175bae922c328b72d3255236..346503337c1afe85e5be8c0920a4224e
    );
  }
  
++const getTableHeadStyles = (theme: Theme) => {
++  const backgroundColor =
++    theme.palette.mode === 'dark' ? theme.palette.primary.dark : theme.palette.primary.light;
++
++  return {
++    backgroundColor,
++    '& .MuiTableCell-root': {
++      color: theme.palette.getContrastText(backgroundColor),
++      fontWeight: 600
++    }
++  };
++};
++
  const TutorValidaciones: React.FC = () => {
    const { t } = useTranslation();
    const { user } = useAuth();
@@ -28,11 +95,12 @@ index 4db543ea2f52d7d2175bae922c328b72d3255236..346503337c1afe85e5be8c0920a4224e
    const [comentarios, setComentarios] = useState('');
    const [procesando, setProcesando] = useState(false);
    const [firmaDigital, setFirmaDigital] = useState('');
--  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
+   const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
 -  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
-+  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
+-  const attachmentButtonStyles = { minWidth: 160, height: 36 };
 +  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
 +  const attachmentButtonStyles = { minWidth: 160, height: 36 };
++  const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
  
    const formatFase = (fase: any) =>
      fase
@@ -58,101 +126,242 @@ index 4db543ea2f52d7d2175bae922c328b72d3255236..346503337c1afe85e5be8c0920a4224e
        setRechazadas(rechazadas || []);
      } catch (err: any) {
        setError(err.response?.data?.error || t('tutorValidations.errorLoad'));
-@@ -571,69 +572,71 @@ const handleRechazar = async () => {
-           </Button>
-         </DialogActions>
-       </Dialog>
+@@ -275,194 +290,198 @@ const handleRechazar = async () => {
+               id="validaciones-tab-0"
+               aria-controls="validaciones-tabpanel-0"
+             />
+             <Tab
+               label={`${t('tutorValidations.tabs.validated')} (${validadas.length})`}
+               id="validaciones-tab-1"
+               aria-controls="validaciones-tabpanel-1"
+             />
+             <Tab
+               label={`${t('tutorValidations.tabs.rejected')} (${rechazadas.length})`}
+               id="validaciones-tab-2"
+               aria-controls="validaciones-tabpanel-2"
+             />
+           </Tabs>
+         </Box>
  
-       <Dialog open={openAdjuntosDialog} onClose={handleCloseAdjuntosDialog} fullWidth maxWidth="sm">
-         <DialogTitle>{t('tutorValidations.buttons.viewAttachment')}</DialogTitle>
-         <DialogContent>
-           {adjuntosSeleccionados?.adjuntos?.length ? (
-             adjuntosSeleccionados.adjuntos.map((adjunto: any) => (
-               <Box
-                 key={adjunto._id}
-                 sx={{
-                   display: 'flex',
-                   alignItems: 'center',
-                   justifyContent: 'space-between',
-                   mb: 2,
-                   gap: 2
-                 }}
-               >
-                 <Box>
-                   <Typography variant="subtitle1">{adjunto.nombreArchivo}</Typography>
-                   <Typography variant="body2" color="text.secondary">
-                     {adjunto.fechaSubida ? formatDayMonthYear(adjunto.fechaSubida) : ''}
-                   </Typography>
-                 </Box>
--                <Box sx={{ display: 'flex', gap: 1 }}>
--                  <Button
--                    variant="outlined"
--                    size="small"
--                    startIcon={<OpenInNewIcon />}
--                    onClick={() =>
--                      handleVerAdjunto(
--                        adjuntosSeleccionados.progresoId,
--                        adjuntosSeleccionados.index,
--                        adjunto._id
--                      )
--                    }
--                  >
--                    {t('tutorValidations.buttons.viewAttachment')}
--                  </Button>
--                  <Button
--                    variant="contained"
--                    size="small"
--                    startIcon={<DownloadIcon />}
--                    onClick={() =>
--                      handleDescargarAdjunto(adjunto, adjuntosSeleccionados.progresoId, adjuntosSeleccionados.index)
--                    }
--                  >
--                    {t('common.download')}
--                  </Button>
--                </Box>
-+                <Box sx={{ display: 'flex', gap: 1 }}>
-+                  <Button
-+                    variant="outlined"
-+                    size="small"
-+                    startIcon={<OpenInNewIcon />}
-+                    onClick={() =>
-+                      handleVerAdjunto(
-+                        adjuntosSeleccionados.progresoId,
-+                        adjuntosSeleccionados.index,
-+                        adjunto._id
-+                      )
-+                    }
-+                    sx={attachmentButtonStyles}
-+                  >
-+                    {t('tutorValidations.buttons.viewAttachment')}
-+                  </Button>
-+                  <Button
-+                    variant="contained"
-+                    size="small"
-+                    startIcon={<DownloadIcon />}
-+                    onClick={() =>
-+                      handleDescargarAdjunto(adjunto, adjuntosSeleccionados.progresoId, adjuntosSeleccionados.index)
-+                    }
-+                    sx={attachmentButtonStyles}
-+                  >
-+                    {t('common.download')}
-+                  </Button>
-+                </Box>
-               </Box>
-             ))
+         {/* Panel de Pendientes */}
+         <TabPanel value={tabValue} index={0}>
+           {pendientes.length === 0 ? (
+             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+               {t('tutorValidations.empty.pending')}
+             </Typography>
            ) : (
-             <DialogContentText>
-               {t('tutorValidations.messages.noAttachments')}
-             </DialogContentText>
+             <TableContainer component={Paper}>
+               <Table size="small">
+-                <TableHead>
++                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
+                   <TableRow>
+                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
+                     <TableCell align="right">{t('tutorValidations.table.actions')}</TableCell>
+                   </TableRow>
+                 </TableHead>
+                 <TableBody>
+                   {pendientes.map((progreso) => (
+                     <TableRow key={progreso._id}>
+                       <TableCell>{formatFase(progreso.fase)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
+                       </TableCell>
+                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
+                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.actividad?.tipo === 'cirugia'
+                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                           : '-'}
+                       </TableCell>
+                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
+                       <TableCell align="right">
+-                        {progreso.adjuntos?.length > 0 && (
++                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
++                          {progreso.adjuntos?.length > 0 && (
++                            <Button
++                              variant="contained"
++                              color="primary"
++                              size="small"
++                              onClick={() => handleOpenAdjuntosDialog(progreso)}
++                              sx={actionButtonStyles}
++                            >
++                              {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
++                            </Button>
++                          )}
++                          <Button
++                            variant="contained"
++                            color="success"
++                            size="small"
++                            startIcon={<CheckCircleIcon />}
++                            onClick={() =>
++                              handleOpenValidarDialog({
++                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
++                                index: progreso.index,
++                                ...progreso
++                              })
++                            }
++                            sx={actionButtonStyles}
++                          >
++                            {t('tutorValidations.buttons.validate')}
++                          </Button>
+                           <Button
+-                            variant="outlined"
++                            variant="contained"
++                            color="error"
+                             size="small"
+-                            sx={{ mr: 1 }}
+-                            onClick={() => handleOpenAdjuntosDialog(progreso)}
++                            startIcon={<ErrorIcon />}
++                            onClick={() =>
++                              handleOpenRechazarDialog({
++                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
++                                index: progreso.index,
++                                ...progreso
++                              })
++                            }
++                            sx={actionButtonStyles}
+                           >
+-                            {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
++                            {t('tutorValidations.buttons.reject')}
+                           </Button>
+-                        )}
+-                        <Button
+-                          variant="contained"
+-                          color="success"
+-                          size="small"
+-                          startIcon={<CheckCircleIcon />}
+-                          sx={{ mr: 1 }}
+-                          onClick={() =>
+-                            handleOpenValidarDialog({
+-                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
+-                              index: progreso.index,
+-                              ...progreso
+-                            })
+-                          }
+-                        >
+-                          {t('tutorValidations.buttons.validate')}
+-                        </Button>
+-                        <Button
+-                          variant="contained"
+-                          color="error"
+-                          size="small"
+-                          startIcon={<ErrorIcon />}
+-                          onClick={() =>
+-                            handleOpenRechazarDialog({
+-                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
+-                              index: progreso.index,
+-                              ...progreso
+-                            })
+-                          }
+-                        >
+-                          {t('tutorValidations.buttons.reject')}
+-                        </Button>
++                        </Box>
+                       </TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
+               </Table>
+             </TableContainer>
            )}
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseAdjuntosDialog}>{t('tutorValidations.buttons.cancel')}</Button>
-         </DialogActions>
-       </Dialog>
-     </Box>
-   );
- };
+         </TabPanel>
+         
+         {/* Panel de Validadas */}
+         <TabPanel value={tabValue} index={1}>
+           {validadas.length === 0 ? (
+             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+               {t('tutorValidations.empty.validated')}
+             </Typography>
+           ) : (
+             <TableContainer component={Paper}>
+               <Table size="small">
+-                <TableHead>
++                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
+                   <TableRow>
+                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
+                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
+                   </TableRow>
+                 </TableHead>
+                 <TableBody>
+                   {validadas.map(progreso => (
+                     <TableRow key={progreso._id}>
+                       <TableCell>{formatFase(progreso.fase)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
+                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
+                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.actividad?.tipo === 'cirugia'
+                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                           : '-'}
+                       </TableCell>
+                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
+                       <TableCell align="right">
+                         <Chip icon={<CheckCircleIcon />} label={t('tutorValidations.states.validated')} color="success" size="small" variant="outlined" />
+                       </TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
+               </Table>
+             </TableContainer>
+           )}
+         </TabPanel>
  
- export default TutorValidaciones;
- 
+         
+         {/* Panel de Rechazadas */}
+         <TabPanel value={tabValue} index={2}>
+           {rechazadas.length === 0 ? (
+             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+               {t('tutorValidations.empty.rejected')}
+             </Typography>
+           ) : (
+             <TableContainer component={Paper}>
+               <Table size="small">
+-                <TableHead>
++                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
+                   <TableRow>
+                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.reason')}</TableCell>
+                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
+                   </TableRow>
+                 </TableHead>
+                 <TableBody>
+                   {rechazadas.map(progreso => (
+                     <TableRow key={progreso._id}>
+                       <TableCell>{formatFase(progreso.fase)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
+                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
+                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.actividad?.tipo === 'cirugia'

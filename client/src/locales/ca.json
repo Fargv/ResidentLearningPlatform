@@ -670,7 +670,7 @@
       "rejected": "No hi ha validacions rebutjades"
     },
     "actions": {
-      "viewAttachment": "Veure adjunt"
+      "viewAttachment": "Adjunts"
     },
     "dialog": {
       "validateTitle": "Validar Activitat",
@@ -684,7 +684,7 @@
     "errorLoad": "Error en carregar les validacions",
     "_comment": "Validacions gestionades per Tutors",
     "buttons": {
-      "viewAttachment": "Veure adjunt",
+      "viewAttachment": "Adjunts",
       "validate": "Validar",
       "reject": "Rebutjar",
       "cancel": "Cancel·lar"

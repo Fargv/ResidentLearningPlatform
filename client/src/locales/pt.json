@@ -965,7 +965,7 @@
       "rejected": "Não há validações rejeitadas"
     },
     "actions": {
-      "viewAttachment": "Ver anexo"
+      "viewAttachment": "Anexos"
     },
     "dialog": {
       "validateTitle": "Validar Atividade",
@@ -979,7 +979,7 @@
     "errorLoad": "Erro ao carregar as validações",
     "_comment": "Validações gerenciadas por Tutores",
     "buttons": {
-      "viewAttachment": "Ver anexo",
+      "viewAttachment": "Anexos",
       "validate": "Validar",
       "reject": "Rejeitar",
       "cancel": "Cancelar"

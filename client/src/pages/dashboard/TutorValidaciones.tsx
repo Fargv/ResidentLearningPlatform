@@ -23,6 +23,7 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
+import { Theme } from '@mui/material/styles';
 import {
   CheckCircle as CheckCircleIcon,
   //Pending as PendingIcon,
@@ -61,6 +62,19 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+const getTableHeadStyles = (theme: Theme) => {
+  const backgroundColor =
+    theme.palette.mode === 'dark' ? theme.palette.primary.dark : theme.palette.primary.light;
+
+  return {
+    backgroundColor,
+    '& .MuiTableCell-root': {
+      color: theme.palette.getContrastText(backgroundColor),
+      fontWeight: 600
+    }
+  };
+};
+
 const TutorValidaciones: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -79,6 +93,7 @@ const TutorValidaciones: React.FC = () => {
   const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
   const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
   const attachmentButtonStyles = { minWidth: 160, height: 36 };
+  const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
 
   const formatFase = (fase: any) =>
     fase
@@ -297,7 +312,7 @@ const handleRechazar = async () => {
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
                   <TableRow>
                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
@@ -330,47 +345,51 @@ const handleRechazar = async () => {
                       </TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
-                        {progreso.adjuntos?.length > 0 && (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          {progreso.adjuntos?.length > 0 && (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                              onClick={() => handleOpenAdjuntosDialog(progreso)}
+                              sx={actionButtonStyles}
+                            >
+                              {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
+                            </Button>
+                          )}
                           <Button
-                            variant="outlined"
+                            variant="contained"
+                            color="success"
                             size="small"
-                            sx={{ mr: 1 }}
-                            onClick={() => handleOpenAdjuntosDialog(progreso)}
+                            startIcon={<CheckCircleIcon />}
+                            onClick={() =>
+                              handleOpenValidarDialog({
+                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
+                                index: progreso.index,
+                                ...progreso
+                              })
+                            }
+                            sx={actionButtonStyles}
                           >
-                            {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
+                            {t('tutorValidations.buttons.validate')}
                           </Button>
-                        )}
-                        <Button
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          startIcon={<CheckCircleIcon />}
-                          sx={{ mr: 1 }}
-                          onClick={() =>
-                            handleOpenValidarDialog({
-                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
-                              index: progreso.index,
-                              ...progreso
-                            })
-                          }
-                        >
-                          {t('tutorValidations.buttons.validate')}
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          size="small"
-                          startIcon={<ErrorIcon />}
-                          onClick={() =>
-                            handleOpenRechazarDialog({
-                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
-                              index: progreso.index,
-                              ...progreso
-                            })
-                          }
-                        >
-                          {t('tutorValidations.buttons.reject')}
-                        </Button>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            size="small"
+                            startIcon={<ErrorIcon />}
+                            onClick={() =>
+                              handleOpenRechazarDialog({
+                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
+                                index: progreso.index,
+                                ...progreso
+                              })
+                            }
+                            sx={actionButtonStyles}
+                          >
+                            {t('tutorValidations.buttons.reject')}
+                          </Button>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -389,7 +408,7 @@ const handleRechazar = async () => {
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
                   <TableRow>
                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
@@ -440,7 +459,7 @@ const handleRechazar = async () => {
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
                   <TableRow>
                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>

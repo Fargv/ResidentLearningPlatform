@@ -702,7 +702,7 @@
       "rejected": "Aucune validation rejetée"
     },
     "actions": {
-      "viewAttachment": "Voir la pièce jointe"
+      "viewAttachment": "Pièces jointes"
     },
     "dialog": {
       "validateTitle": "Valider l'activité",
@@ -716,7 +716,7 @@
     "errorLoad": "Erreur lors du chargement des validations",
     "_comment": "Validations gérées par les Tutors",
     "buttons": {
-      "viewAttachment": "Voir la pièce jointe",
+      "viewAttachment": "Pièces jointes",
       "validate": "Valider",
       "reject": "Rejeter",
       "cancel": "Annuler"
