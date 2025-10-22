@@ -35,6 +35,7 @@ import {
   Edit as EditIcon,
   Download as DownloadIcon,
   Assessment as AssessmentIcon,
+  ArrowDropDown as ArrowDropDownIcon,
 
    //Person as PersonIcon,
   //Email as EmailIcon
@@ -151,6 +152,9 @@ const AdminUsuarios: React.FC = () => {
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
   const [selectedFases, setSelectedFases] = useState<string[]>([]);
   const [tutores, setTutores] = useState<any[]>([]);
+  const [passwordMenuAnchorEl, setPasswordMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const isPasswordMenuOpen = Boolean(passwordMenuAnchorEl);
 
   const roleOptions =
     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
@@ -302,7 +306,18 @@ const AdminUsuarios: React.FC = () => {
 
   const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenEditarDialog(false);
+    setPasswordMenuAnchorEl(null);
     if (clearSelected) setSelectedUsuario(null);
+  };
+
+  const handleOpenPasswordMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setPasswordMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePasswordMenu = () => {
+    setPasswordMenuAnchorEl(null);
   };
 
   const handleOpenEliminarDialog = (usuario: any) => {
@@ -1451,7 +1466,8 @@ const AdminUsuarios: React.FC = () => {
         <DialogActions sx={DIALOG_ACTIONS_SX}>
           <Button
             onClick={() => handleCloseEditarDialog()}
-            variant="contained"
+            variant="outlined"
+            color="inherit"
             sx={[
               ACTION_BUTTON_BASE_SX,
               (theme) => ({
@@ -1459,12 +1475,14 @@ const AdminUsuarios: React.FC = () => {
                   theme.palette.mode === "light"
                     ? theme.palette.grey[200]
                     : theme.palette.grey[700],
-                color: theme.palette.text.primary,
+                color: theme.palette.error.main,
+                borderColor: theme.palette.error.main,
                 "&:hover": {
                   backgroundColor:
                     theme.palette.mode === "light"
                       ? theme.palette.grey[300]
                       : theme.palette.grey[600],
+                  borderColor: theme.palette.error.main,
                 },
               }),
             ]}
@@ -1472,27 +1490,68 @@ const AdminUsuarios: React.FC = () => {
             {t("common.cancel")}
           </Button>
           {user?.rol === "administrador" && (
-            <Button
-              onClick={() => {
-                handleOpenPasswordDialog(selectedUsuario);
-                handleCloseEditarDialog(false);
-              }}
-              color="secondary"
-              variant="contained"
-              sx={ACTION_BUTTON_BASE_SX}
-            >
-              {t("adminUsers.actions.changePassword")}
-            </Button>
-          )}
-          {user?.rol === "administrador" && (
-            <Button
-              onClick={() => handleSendResetEmail(selectedUsuario)}
-              color="info"
-              variant="contained"
-              sx={ACTION_BUTTON_BASE_SX}
-            >
-              {t("adminUsers.actions.sendResetLink")}
-            </Button>
+            <>
+              <Button
+                onClick={(event) => handleOpenPasswordMenu(event)}
+                color="secondary"
+                variant="contained"
+                sx={ACTION_BUTTON_BASE_SX}
+                endIcon={<ArrowDropDownIcon />}
+                aria-controls={
+                  isPasswordMenuOpen ? "password-actions-menu" : undefined
+                }
+                aria-haspopup="true"
+                aria-expanded={isPasswordMenuOpen ? "true" : undefined}
+              >
+                {t("adminUsers.actions.changePassword")}
+              </Button>
+              <Menu
+                id="password-actions-menu"
+                anchorEl={passwordMenuAnchorEl}
+                open={isPasswordMenuOpen}
+                onClose={handleClosePasswordMenu}
+              >
+                <MenuItem
+                  onClick={() => {
+                    if (!selectedUsuario) {
+                      handleClosePasswordMenu();
+                      return;
+                    }
+                    handleClosePasswordMenu();
+                    handleOpenPasswordDialog(selectedUsuario);
+                    handleCloseEditarDialog(false);
+                  }}
+                >
+                  {t("adminUsers.actions.changePassword")}
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    if (!selectedUsuario) {
+                      handleClosePasswordMenu();
+                      return;
+                    }
+                    handleClosePasswordMenu();
+                    handleSendResetEmail(selectedUsuario);
+                  }}
+                  sx={(theme) => ({
+                    color: theme.palette.warning.main,
+                    "&:hover": {
+                      backgroundColor:
+                        theme.palette.mode === "light"
+                          ? theme.palette.warning.light
+                          : theme.palette.warning.dark,
+                      color: theme.palette.getContrastText(
+                        theme.palette.mode === "light"
+                          ? theme.palette.warning.light
+                          : theme.palette.warning.dark,
+                      ),
+                    },
+                  })}
+                >
+                  {t("adminUsers.actions.sendResetLink")}
+                </MenuItem>
+              </Menu>
+            </>
           )}
           <Button
             onClick={() => {
@@ -1507,9 +1566,28 @@ const AdminUsuarios: React.FC = () => {
           </Button>
           <Button
             onClick={handleEditar}
-            color="primary"
             variant="contained"
-            sx={ACTION_BUTTON_BASE_SX}
+            sx={[
+              ACTION_BUTTON_BASE_SX,
+              (theme) => {
+                const baseBg =
+                  theme.palette.mode === "light"
+                    ? theme.palette.success.main
+                    : theme.palette.success.dark;
+                const hoverBg =
+                  theme.palette.mode === "light"
+                    ? theme.palette.success.dark
+                    : theme.palette.success.main;
+                return {
+                  backgroundColor: baseBg,
+                  color: theme.palette.getContrastText(baseBg),
+                  "&:hover": {
+                    backgroundColor: hoverBg,
+                    color: theme.palette.getContrastText(hoverBg),
+                  },
+                };
+              },
+            ]}
             disabled={
               procesando ||
               !formData.nombre ||
