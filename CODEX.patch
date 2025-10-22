@@ -1,17 +1,8 @@
 diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index 9088a1880fe64e7e20263c2946c4085d78605342..f6ec93c3946db07c874f663ac517fb468f675033 100644
+index 406ed4c8b4e60f53d3c8cd09ae011d30a8b63ccb..c62647fd8abc41cdd9128044a1e1dbc8f8b916df 100644
 --- a/client/src/pages/dashboard/AdminUsuarios.tsx
 +++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -39,99 +39,104 @@ import {
- 
-    //Person as PersonIcon,
-   //Email as EmailIcon
- } from "@mui/icons-material";
- import { useAuth } from "../../context/AuthContext";
- import { useNavigate } from "react-router-dom";
- import api, {
-   createUser,
-   updateUserPassword,
+@@ -48,67 +48,67 @@ import api, {
    getTutors,
    sendResetPasswordEmail,
    clearResetNotifications,
@@ -28,33 +19,30 @@ index 9088a1880fe64e7e20263c2946c4085d78605342..f6ec93c3946db07c874f663ac517fb46
    justifyContent: "center",
  };
  
--const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
--  minWidth: { xs: "100%", sm: 220 },
--  height: 44,
--  mt: { xs: 1, sm: 0 },
--  fontWeight: 600,
--  flexBasis: { xs: "100%", sm: "auto" },
--};
--
+ const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+   minWidth: { xs: "100%", sm: 180 },
+   height: 40,
+   fontSize: "0.9rem",
+   mt: { xs: 1, sm: 0 },
+   fontWeight: 600,
+   flexBasis: { xs: "100%", sm: "auto" },
+ };
+ 
 -const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
 -  display: "flex",
 -  flexDirection: "column",
 -  alignItems: "center",
 -  justifyContent: "center",
+-  width: "100%",
+-  gap: 1,
 -};
-+const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
-+  minWidth: { xs: "100%", sm: 180 },
-+  height: 40,
-+  fontSize: "0.9rem",
-+  mt: { xs: 1, sm: 0 },
-+  fontWeight: 600,
-+  flexBasis: { xs: "100%", sm: "auto" },
-+};
- 
+-
 -const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
--  width: 180,
--  height: 44,
--  mt: 1.5,
+-  width: { xs: "100%", sm: 150 },
+-  maxWidth: "100%",
+-  height: 38,
+-  fontSize: "0.85rem",
+-  mt: 0,
 -  fontWeight: 600,
 -};
 +const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
@@ -63,14 +51,14 @@ index 9088a1880fe64e7e20263c2946c4085d78605342..f6ec93c3946db07c874f663ac517fb46
 +  alignItems: "center",
 +  justifyContent: "center",
 +  width: "100%",
-+  gap: 1,
++  gap: 0.75,
 +};
 +
 +const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
-+  width: { xs: "100%", sm: 150 },
++  width: { xs: "100%", sm: 140 },
 +  maxWidth: "100%",
-+  height: 38,
-+  fontSize: "0.85rem",
++  height: 36,
++  fontSize: "0.8rem",
 +  mt: 0,
 +  fontWeight: 600,
 +};
@@ -95,42 +83,153 @@ index 9088a1880fe64e7e20263c2946c4085d78605342..f6ec93c3946db07c874f663ac517fb46
    };
  };
  
--const getProgressActionButtonStyles = (theme: Theme) => {
--  const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
--  const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
--
--  return {
--    backgroundColor: baseBg,
--    color: theme.palette.getContrastText(baseBg),
-+const getProgressActionButtonStyles = (theme: Theme) => {
-+  const baseBg = theme.palette.mode === "light" ? "#EC407A" : "#F06292";
-+  const hoverBg = theme.palette.mode === "light" ? "#D81B60" : "#EC407A";
+ const getProgressActionButtonStyles = (theme: Theme) => {
+   const baseBg = theme.palette.mode === "light" ? "#EC407A" : "#F06292";
+   const hoverBg = theme.palette.mode === "light" ? "#D81B60" : "#EC407A";
+ 
+@@ -919,112 +919,142 @@ const AdminUsuarios: React.FC = () => {
+           renderInput={(params) => (
+             <TextField {...params} label={t("adminUsers.fields.type")} />
+           )}
+           sx={{ minWidth: 200 }}
+         />
+         <Autocomplete
+           multiple
+           options={faseOptions}
+           value={selectedFases}
+           onChange={(e, newValue) => setSelectedFases(newValue as string[])}
+           renderInput={(params) => (
+             <TextField
+               {...params}
+               label={t("adminUsers.fields.phase", "Fase")}
+             />
+           )}
+           sx={{ minWidth: 200 }}
+         />
+       </Box>
+ 
+      {/* Tabla de usuarios */}
+       <Paper sx={{ width: "100%", overflow: "hidden" }}>
+         <TableContainer>
+           <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
+             <TableHead>
+-              <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
++              <TableRow
++                sx={(theme) => {
++                  const backgroundColor =
++                    theme.palette.mode === "light"
++                      ? theme.palette.primary.light
++                      : theme.palette.primary.dark;
++                  const textColor = theme.palette.getContrastText(backgroundColor);
 +
-+  return {
-+    backgroundColor: baseBg,
-+    color: theme.palette.getContrastText(baseBg),
-     "&:hover": {
-       backgroundColor: hoverBg,
-       color: theme.palette.getContrastText(hoverBg),
-     },
-   };
- };
- 
- const getPasswordButtonStyles = (theme: Theme) => {
-   const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
-   const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
- 
-   return {
-     backgroundColor: baseBg,
-     color: theme.palette.getContrastText(baseBg),
-     "&:hover": {
-       backgroundColor: hoverBg,
-       color: theme.palette.getContrastText(hoverBg),
-     },
-   };
- };
- 
- const PASSWORD_ACTION_ROLES = [
-   "administrador",
-   "tutor",
-   "profesor",
++                  return {
++                    backgroundColor,
++                    "& .MuiTableCell-root": {
++                      backgroundColor,
++                      color: textColor,
++                      fontWeight: 600,
++                    },
++                  };
++                }}
++              >
+                 <TableCell
+                   onClick={() => handleSort("nombre")}
+                   sx={{ cursor: "pointer" }}
+                 >
+                   {t("adminUsers.table.name")}
+                 </TableCell>
+                 <TableCell
+                   onClick={() => handleSort("email")}
+                   sx={{ cursor: "pointer" }}
+                 >
+                   {t("adminUsers.table.email")}
+                 </TableCell>
+                 <TableCell>{t("adminUsers.table.type")}</TableCell>
+                 <TableCell>{t("adminUsers.table.society")}</TableCell>
+                 <TableCell
+                   onClick={() => handleSort("rol")}
+                   sx={{ cursor: "pointer" }}
+                 >
+                   {t("adminUsers.table.role")}
+                 </TableCell>
+                 <TableCell
+                   onClick={() => handleSort("hospital")}
+                   sx={{ cursor: "pointer" }}
+                 >
+                   {t("adminUsers.table.hospital")}
+                 </TableCell>
+                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
+-                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
++                <TableCell
++                  sx={{
++                    width: { xs: 160, md: 200 },
++                    maxWidth: { xs: 160, md: 220 },
++                  }}
++                >
++                  {t("adminUsers.table.tutor")}
++                </TableCell>
+                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
+                 <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
+                 <TableCell sx={{ width: 40 }}></TableCell>
+                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
+               </TableRow>
+             </TableHead>
+             <TableBody>
+               {displayUsuarios.map((usuario) => (
+                 <TableRow key={usuario._id} hover>
+                   <TableCell>
+                     {usuario.nombre} {usuario.apellidos}
+                   </TableCell>
+                   <TableCell>{usuario.email}</TableCell>
+                   <TableCell>
+                     {usuario.tipo
+                       ? t(`types.${typeKey(usuario.tipo)}`)
+                       : "-"}
+                   </TableCell>
+                   <TableCell>
+                     {usuario.sociedad?.nombre ||
+                       usuario.sociedad?.titulo ||
+                       "-"}
+                   </TableCell>
+                   <TableCell>
+                     <Chip
+                       label={t(`roles.${usuario.rol}`)}
+                       size="small"
+                       sx={getRoleChipSx(usuario.rol)}
+                     />
+                   </TableCell>
+                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
+                   <TableCell>{usuario.especialidad || "-"}</TableCell>
+-                  <TableCell>
++                  <TableCell
++                    sx={{
++                      width: { xs: 160, md: 200 },
++                      maxWidth: { xs: 160, md: 220 },
++                      whiteSpace: "normal",
++                    }}
++                  >
+                     {usuario.rol === "residente"
+                       ? usuario.tutor && typeof usuario.tutor === "object"
+                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
+                         : <Chip color="warning" label={t("adminUsers.noTutor")} />
+                       : "-"}
+                   </TableCell>
+                   <TableCell>{usuario.zona || "-"}</TableCell>
+                   <TableCell>{usuario.faseActual || "-"}</TableCell>
+                   <TableCell align="center" sx={{ width: 40 }}>
+                     {usuario.fasesCirugia?.length ? (
+                       <>
+                         <Tooltip
+                           title={t('adminUsers.actions.downloadSurgeryReport', {
+                             phase: t('adminPhases.phase').toLowerCase(),
+                           })}
+                         >
+                           <IconButton
+                             onClick={(e) => handleOpenInformeMenu(e, usuario)}
+                             size="small"
+                           >
+                             <DownloadIcon />
+                           </IconButton>
+                         </Tooltip>
+                         <Menu
+                           anchorEl={anchorElInforme}

@@ -76,14 +76,14 @@ const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
   alignItems: "center",
   justifyContent: "center",
   width: "100%",
-  gap: 1,
+  gap: 0.75,
 };
 
 const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
-  width: { xs: "100%", sm: 150 },
+  width: { xs: "100%", sm: 140 },
   maxWidth: "100%",
-  height: 38,
-  fontSize: "0.85rem",
+  height: 36,
+  fontSize: "0.8rem",
   mt: 0,
   fontWeight: 600,
 };
@@ -941,7 +941,24 @@ const AdminUsuarios: React.FC = () => {
         <TableContainer>
           <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
             <TableHead>
-              <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
+              <TableRow
+                sx={(theme) => {
+                  const backgroundColor =
+                    theme.palette.mode === "light"
+                      ? theme.palette.primary.light
+                      : theme.palette.primary.dark;
+                  const textColor = theme.palette.getContrastText(backgroundColor);
+
+                  return {
+                    backgroundColor,
+                    "& .MuiTableCell-root": {
+                      backgroundColor,
+                      color: textColor,
+                      fontWeight: 600,
+                    },
+                  };
+                }}
+              >
                 <TableCell
                   onClick={() => handleSort("nombre")}
                   sx={{ cursor: "pointer" }}
@@ -969,7 +986,14 @@ const AdminUsuarios: React.FC = () => {
                   {t("adminUsers.table.hospital")}
                 </TableCell>
                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
-                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
+                <TableCell
+                  sx={{
+                    width: { xs: 160, md: 200 },
+                    maxWidth: { xs: 160, md: 220 },
+                  }}
+                >
+                  {t("adminUsers.table.tutor")}
+                </TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
                 <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
                 <TableCell sx={{ width: 40 }}></TableCell>
@@ -1002,7 +1026,13 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
                   <TableCell>{usuario.especialidad || "-"}</TableCell>
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      width: { xs: 160, md: 200 },
+                      maxWidth: { xs: 160, md: 220 },
+                      whiteSpace: "normal",
+                    }}
+                  >
                     {usuario.rol === "residente"
                       ? usuario.tutor && typeof usuario.tutor === "object"
                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
