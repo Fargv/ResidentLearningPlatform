@@ -69,6 +69,54 @@ const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
   flexBasis: { xs: "100%", sm: "auto" },
 };
 
+const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
+  width: 180,
+  height: 44,
+  mt: 1.5,
+  fontWeight: 600,
+};
+
+const getEditActionButtonStyles = (theme: Theme) => {
+  const baseBg =
+    theme.palette.mode === "light"
+      ? theme.palette.primary.main
+      : theme.palette.primary.dark;
+  const hoverBg =
+    theme.palette.mode === "light"
+      ? theme.palette.primary.dark
+      : theme.palette.primary.main;
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    "&:hover": {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const getProgressActionButtonStyles = (theme: Theme) => {
+  const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
+  const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    "&:hover": {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
 const getPasswordButtonStyles = (theme: Theme) => {
   const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
   const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
@@ -1000,20 +1048,15 @@ const AdminUsuarios: React.FC = () => {
                     ) : null}
                   </TableCell>
                   <TableCell align="right">
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 2,
-                        flexWrap: 'wrap',
-                        '& > *': { minWidth: 150 },
-                      }}
-                    >
+                    <Box sx={TABLE_ACTIONS_CONTAINER_SX}>
                       <Button
-                        variant="outlined"
-                        color="primary"
+                        variant="contained"
                         onClick={() => handleOpenEditarDialog(usuario)}
-                        size="small"
                         startIcon={<EditIcon />}
+                        sx={[
+                          TABLE_ACTION_BUTTON_SX,
+                          (theme) => getEditActionButtonStyles(theme),
+                        ]}
                       >
                         {t("adminUsers.actions.edit")}
                       </Button>
@@ -1021,15 +1064,17 @@ const AdminUsuarios: React.FC = () => {
                         user?.rol === "administrador" &&
                         usuario.tieneProgreso && (
                           <Button
-                            variant="outlined"
-                            size="small"
-                            color="secondary"
+                            variant="contained"
                             startIcon={<AssessmentIcon />}
                             onClick={() =>
                               navigate(
                                 `/dashboard/progreso-usuario/${usuario._id}`,
                               )
                             }
+                            sx={[
+                              TABLE_ACTION_BUTTON_SX,
+                              (theme) => getProgressActionButtonStyles(theme),
+                            ]}
                           >
                             {t('adminUserProgress.viewProgress')}
                           </Button>
@@ -1039,7 +1084,7 @@ const AdminUsuarios: React.FC = () => {
                           <Button
                             variant="outlined"
                             onClick={() => handleCrearProgreso(usuario._id)}
-                            size="small"
+                            sx={TABLE_ACTION_BUTTON_SX}
                           >
                             {t("adminUsers.actions.createProgress")}
                           </Button>

@@ -1,21 +1,8 @@
 diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index d26e6983fb664ccf99a260f4dd466bc6de0c623c..5d924a8e832bbfd4505fef55d9cafe5f01d57072 100644
+index f6734d1ee7a627e8ffdefdaa83088968d6cf2377..fae2ecbb738f84ef5ae4df89ae67d5f1c51ee475 100644
 --- a/client/src/pages/dashboard/AdminUsuarios.tsx
 +++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -20,57 +20,57 @@ import {
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Autocomplete,
-   IconButton,
-   Tooltip,
-   CircularProgress,
-   Backdrop,
-   Menu,
-   MenuItem,
- } from "@mui/material";
- import type { SxProps, Theme } from "@mui/material/styles";
+@@ -33,63 +33,111 @@ import type { SxProps, Theme } from "@mui/material/styles";
  import {
    Add as AddIcon,
    Edit as EditIcon,
@@ -28,885 +15,255 @@ index d26e6983fb664ccf99a260f4dd466bc6de0c623c..5d924a8e832bbfd4505fef55d9cafe5f
  } from "@mui/icons-material";
  import { useAuth } from "../../context/AuthContext";
  import { useNavigate } from "react-router-dom";
--import api, {
--  createUser,
--  updateUserPassword,
--  getTutors,
--  getUserResetToken,
--  clearResetNotifications,
--} from "../../api";
-+import api, {
-+  createUser,
-+  updateUserPassword,
-+  getTutors,
-+  sendResetPasswordEmail,
-+  clearResetNotifications,
-+} from "../../api";
+ import api, {
+   createUser,
+   updateUserPassword,
+   getTutors,
+   sendResetPasswordEmail,
+   clearResetNotifications,
+ } from "../../api";
  import InviteUsersMail from "../../components/InviteUsersMail";
  import BackButton from "../../components/BackButton";
  import { useTranslation, Trans } from "react-i18next";
  import { getRoleChipSx } from "../../utils/roleChipColors";
  import { FaseCirugia } from "../../types/FaseCirugia";
  
- const DIALOG_ACTIONS_SX: SxProps<Theme> = {
-   flexWrap: "wrap",
-   gap: 1,
-   justifyContent: "center",
- };
- 
- const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
-   minWidth: { xs: "100%", sm: 220 },
-   height: 44,
-   mt: { xs: 1, sm: 0 },
-   fontWeight: 600,
-   flexBasis: { xs: "100%", sm: "auto" },
- };
+-const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+-  flexWrap: "wrap",
+-  gap: 1,
+-  justifyContent: "center",
+-};
+-
+-const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+-  minWidth: { xs: "100%", sm: 220 },
+-  height: 44,
+-  mt: { xs: 1, sm: 0 },
+-  fontWeight: 600,
+-  flexBasis: { xs: "100%", sm: "auto" },
+-};
++const DIALOG_ACTIONS_SX: SxProps<Theme> = {
++  flexWrap: "wrap",
++  gap: 1,
++  justifyContent: "center",
++};
++
++const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
++  minWidth: { xs: "100%", sm: 220 },
++  height: 44,
++  mt: { xs: 1, sm: 0 },
++  fontWeight: 600,
++  flexBasis: { xs: "100%", sm: "auto" },
++};
++
++const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
++  display: "flex",
++  flexDirection: "column",
++  alignItems: "center",
++  justifyContent: "center",
++};
++
++const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
++  width: 180,
++  height: 44,
++  mt: 1.5,
++  fontWeight: 600,
++};
++
++const getEditActionButtonStyles = (theme: Theme) => {
++  const baseBg =
++    theme.palette.mode === "light"
++      ? theme.palette.primary.main
++      : theme.palette.primary.dark;
++  const hoverBg =
++    theme.palette.mode === "light"
++      ? theme.palette.primary.dark
++      : theme.palette.primary.main;
++
++  return {
++    backgroundColor: baseBg,
++    color: theme.palette.getContrastText(baseBg),
++    "&:hover": {
++      backgroundColor: hoverBg,
++      color: theme.palette.getContrastText(hoverBg),
++    },
++  };
++};
++
++const getProgressActionButtonStyles = (theme: Theme) => {
++  const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
++  const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
++
++  return {
++    backgroundColor: baseBg,
++    color: theme.palette.getContrastText(baseBg),
++    "&:hover": {
++      backgroundColor: hoverBg,
++      color: theme.palette.getContrastText(hoverBg),
++    },
++  };
++};
  
  const getPasswordButtonStyles = (theme: Theme) => {
    const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
    const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
  
    return {
-@@ -347,82 +347,81 @@ const AdminUsuarios: React.FC = () => {
-   const handleClosePasswordMenu = () => {
-     setPasswordMenuAnchorEl(null);
-   };
- 
-   const handleOpenEliminarDialog = (usuario: any) => {
-     setSelectedUsuario(usuario);
-     setOpenEliminarDialog(true);
-   };
- 
-   const handleCloseEliminarDialog = () => {
-     setOpenEliminarDialog(false);
-     setSelectedUsuario(null);
-   };
- 
-   const handleOpenPasswordDialog = (usuario: any) => {
-     setSelectedUsuario(usuario);
-     setPasswordValue("");
-     setOpenPasswordDialog(true);
-   };
- 
-   const handleClosePasswordDialog = () => {
-     setOpenPasswordDialog(false);
-     setSelectedUsuario(null);
-   };
- 
--  const handleSendResetEmail = async (usuario: any) => {
--    try {
--      const res = await getUserResetToken(usuario._id);
--      const resetToken = res.data.resetToken;
--      const frontendUrl =
--        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
--      const days = parseInt(
--        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || "3",
--        10,
--      );
--      const subject = encodeURIComponent(
--        t("adminUsers.resetEmail.subject", { app: t("common.appName") }),
--      );
--      const body = encodeURIComponent(
--        t("adminUsers.resetEmail.body", {
--          name: usuario.nombre,
--          app: t("common.appName"),
--          link: `${frontendUrl}/reset-password/${resetToken}`,
--          days,
--        }),
--      );
--      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
--      window.location.href = mailtoLink;
--      await clearResetNotifications(usuario._id);
--    } catch (err: any) {
--      setSnackbar({
--        open: true,
--        message: err.response?.data?.error || t("common.error"),
--        severity: "error",
--      });
--    }
--  };
-+  const handleSendResetEmail = async (usuario: any) => {
-+    if (!usuario?.email) {
-+      return;
-+    }
-+
-+    const confirmed = window.confirm(
-+      t("adminUsers.resetEmail.confirm", { email: usuario.email }),
-+    );
-+
-+    if (!confirmed) {
-+      return;
-+    }
-+
-+    try {
-+      const res = await sendResetPasswordEmail(usuario._id);
-+      const targetEmail = res.data?.email || usuario.email;
-+
-+      await clearResetNotifications(usuario._id);
-+      setSnackbar({
-+        open: true,
-+        message: t("adminUsers.resetEmail.sent", { email: targetEmail }),
-+        severity: "success",
-+      });
-+    } catch (err: any) {
-+      setSnackbar({
-+        open: true,
-+        message: err.response?.data?.error || t("common.error"),
-+        severity: "error",
-+      });
-+    }
-+  };
- 
-   const handleChange = (
-     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>,
-   ) => {
-     const { name, value } = e.target;
-     const updated = { ...formData, [name as string]: value };
-     if (name === "tipo") {
-       if (value === "Programa Residentes") {
-         updated.sociedad = "";
-         updated.rol = "residente";
-       } else if (value === "Programa Sociedades") {
-         updated.rol = "participante";
-         updated.sociedad = sociedades[0]?._id || "";
-       }
-     } else if (name === "rol") {
-       if (value === "administrador") {
-         updated.tipo = "";
-         updated.hospital = "";
-         updated.sociedad = "";
-         updated.especialidad = "";
-         updated.zona = "";
-         updated.tutor = "";
-       } else {
-         if (value === "csm") {
-           updated.hospital = "";
-diff --git a/client/src/pages/dashboard/Notificaciones.test.tsx b/client/src/pages/dashboard/Notificaciones.test.tsx
-index 0b38cf8e9e92c789def5ee9a1460c92cfb68c5b4..9e58069616a3503fb85b441d2e99812680f96318 100644
---- a/client/src/pages/dashboard/Notificaciones.test.tsx
-+++ b/client/src/pages/dashboard/Notificaciones.test.tsx
-@@ -1,37 +1,37 @@
- import React from 'react';
- import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
- import { I18nextProvider } from 'react-i18next';
- import i18n from '../../i18n';
- import Notificaciones from './Notificaciones';
- 
- jest.mock('../../api', () => ({
-   getNotificaciones: jest.fn(),
-   marcarNotificacionLeida: jest.fn(),
--  getUserResetToken: jest.fn(),
--  clearResetNotifications: jest.fn(),
--  eliminarNotificacion: jest.fn(),
-+  sendResetPasswordEmail: jest.fn(),
-+  clearResetNotifications: jest.fn(),
-+  eliminarNotificacion: jest.fn(),
- }));
- 
- let mockedNavigate: jest.Mock;
- jest.mock('react-router-dom', () => ({
-   useNavigate: () => {
-     mockedNavigate = jest.fn();
-     return mockedNavigate;
-   },
- }));
- 
- import { getNotificaciones, marcarNotificacionLeida, eliminarNotificacion } from '../../api';
- 
- const mockedGet = getNotificaciones as jest.Mock;
- const mockedMarcar = marcarNotificacionLeida as jest.Mock;
- const mockedEliminar = eliminarNotificacion as jest.Mock;
- 
- beforeEach(() => {
-   i18n.changeLanguage('es');
-   mockedGet.mockResolvedValue({
-     data: {
-       data: [
-         {
-           _id: '1',
-           mensaje: 'Test1',
-           fechaCreacion: new Date().toISOString(),
-@@ -44,74 +44,74 @@ beforeEach(() => {
-           fechaCreacion: new Date().toISOString(),
-           leida: false,
-         }
-       ],
-     },
-   });
-   mockedMarcar.mockResolvedValue({});
-   mockedEliminar.mockResolvedValue({});
- });
- 
- afterEach(() => {
-   jest.clearAllMocks();
- });
- 
- test('marca la notificación como leída al abrirla', async () => {
-   render(
-     <I18nextProvider i18n={i18n}>
-       <Notificaciones />
-     </I18nextProvider>
-   );
- 
-   const rowText = await screen.findByText('Test1');
-   fireEvent.click(rowText.closest('tr')!);
- 
-   await waitFor(() => {
--    expect(mockedMarcar).toHaveBeenCalledWith('1');
-+    expect(mockedMarcar).toHaveBeenCalledWith('1', true);
-     expect(mockedNavigate).toHaveBeenCalledWith('/foo');
-   });
-   await waitFor(() => expect(screen.queryByText('Test1')).not.toBeInTheDocument());
- });
- 
- test('marca múltiples notificaciones con la barra de herramientas', async () => {
-   render(
-     <I18nextProvider i18n={i18n}>
-       <Notificaciones />
-     </I18nextProvider>
-   );
- 
-   const row1 = await screen.findByText('Test1');
-   const row2 = await screen.findByText('Test2');
-   fireEvent.click(within(row1.closest('tr')!).getByRole('checkbox'));
-   fireEvent.click(within(row2.closest('tr')!).getByRole('checkbox'));
- 
--  fireEvent.click(screen.getByLabelText('mark-read'));
--
--  await waitFor(() => {
--    expect(mockedMarcar).toHaveBeenCalledWith('1');
--    expect(mockedMarcar).toHaveBeenCalledWith('2');
--  });
-+  fireEvent.click(screen.getByLabelText('mark-read'));
-+
-+  await waitFor(() => {
-+    expect(mockedMarcar).toHaveBeenCalledWith('1', true);
-+    expect(mockedMarcar).toHaveBeenCalledWith('2', true);
-+  });
- });
- 
- test('elimina múltiples notificaciones con la barra de herramientas', async () => {
-   render(
-     <I18nextProvider i18n={i18n}>
-       <Notificaciones />
-     </I18nextProvider>
-   );
- 
-   const row1 = await screen.findByText('Test1');
-   const row2 = await screen.findByText('Test2');
-   fireEvent.click(within(row1.closest('tr')!).getByRole('checkbox'));
-   fireEvent.click(within(row2.closest('tr')!).getByRole('checkbox'));
- 
-   fireEvent.click(screen.getByLabelText('delete'));
- 
-   await waitFor(() => {
-     expect(mockedEliminar).toHaveBeenCalledWith('1');
-     expect(mockedEliminar).toHaveBeenCalledWith('2');
-   });
- });
- 
- test('muestra nombre y email en notificaciones de reseteo de contraseña', async () => {
-   const mensaje = 'User (user@test.com) ha solicitado un reseteo de contraseña.';
-   mockedGet.mockResolvedValueOnce({
-diff --git a/client/src/pages/dashboard/Notificaciones.tsx b/client/src/pages/dashboard/Notificaciones.tsx
-index 1416d24e1809e6cebd1ee25bb9aa73a92db6cf28..20f69ffac9587c8c8568ef18deae42468dae4d50 100644
---- a/client/src/pages/dashboard/Notificaciones.tsx
-+++ b/client/src/pages/dashboard/Notificaciones.tsx
-@@ -3,57 +3,57 @@ import { useNavigate } from 'react-router-dom';
- import { useTranslation } from 'react-i18next';
- import {
-   Box,
-   Typography,
-   IconButton,
-   Button,
-   CircularProgress,
-   Alert,
-   Chip,
-   Tab,
-   Tabs,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   Paper,
-   Checkbox,
-   Toolbar
- } from '@mui/material';
- import DeleteIcon from '@mui/icons-material/Delete';
- import DoneIcon from '@mui/icons-material/Done';
- import DoneAllIcon from '@mui/icons-material/DoneAll';
- import UndoIcon from '@mui/icons-material/Undo';
--import {
--  getNotificaciones,
--  marcarNotificacionLeida,
--  getUserResetToken,
--  clearResetNotifications,
--  eliminarNotificacion
--} from '../../api';
-+import {
-+  getNotificaciones,
-+  marcarNotificacionLeida,
-+  sendResetPasswordEmail,
-+  clearResetNotifications,
-+  eliminarNotificacion
-+} from '../../api';
- 
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
- 
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`notificaciones-tabpanel-${index}`}
-       aria-labelledby={`notificaciones-tab-${index}`}
-       {...other}
-     >
-       {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
-     </div>
-   );
- }
- 
- interface Notificacion {
-   _id: string;
-   mensaje: string;
-@@ -116,92 +116,89 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
-   };
- 
-   const clearSelection = () => setSelectedIds([]);
- 
-   const areAllSelected = (list: Notificacion[]) =>
-     list.length > 0 && list.every((n) => selectedIds.includes(n._id));
-   const isIndeterminate = (list: Notificacion[]) =>
-     list.some((n) => selectedIds.includes(n._id)) && !areAllSelected(list);
- 
-   // ---------- Acciones item a item ----------
-   const handleMarcarLeida = async (id: string) => {
-     try {
-       await marcarNotificacionLeida(id, true); // ✅ ahora con booleano
-       setPendientes((prev) => {
-         const notif = prev.find((n) => n._id === id);
-         if (!notif) return prev;
-         setVistas((v) => [{ ...notif, leida: true }, ...v]);
-         return prev.filter((n) => n._id !== id);
-       });
-       onChange?.();
-     } catch (err: any) {
-       console.error('Error marcando notificación como leída', err);
-     }
-   };
- 
--  const handleSendResetLink = async (n: Notificacion) => {
--    if (!n.entidadRelacionada?.id) return;
--    try {
--      const res = await getUserResetToken(n.entidadRelacionada.id);
--      const data = res.data.data || res.data;
--      const { resetToken, email, name } = data;
--      const frontendUrl =
--        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
--      const days = parseInt(
--        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
--        10
--      );
--      const subject = encodeURIComponent(
--        t('adminUsers.resetEmail.subject', { app: t('common.appName') })
--      );
--      const body = encodeURIComponent(
--        t('adminUsers.resetEmail.body', {
--          name,
--          app: t('common.appName'),
--          link: `${frontendUrl}/reset-password/${resetToken}`,
--          days
--        })
--      );
--      const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
--      window.location.href = mailtoLink;
--
--      await clearResetNotifications(n.entidadRelacionada.id);
--
--      setPendientes((prev) =>
--        prev.filter(
--          (p) =>
--            !(
--              p.tipo === 'passwordReset' &&
--              p.entidadRelacionada?.id === n.entidadRelacionada?.id
--            )
--        )
--      );
--      onChange?.();
--    } catch (err) {
--      console.error('Error sending reset link', err);
--    }
--  };
-+  const handleSendResetLink = async (n: Notificacion) => {
-+    if (!n.entidadRelacionada?.id) return;
-+
-+    const emailMatch = n.mensaje?.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-+    const guessedEmail = emailMatch ? emailMatch[0] : null;
-+    const confirmTarget = guessedEmail || t('adminUsers.resetEmail.unknownEmail');
-+
-+    const confirmed = window.confirm(
-+      t('adminUsers.resetEmail.confirm', { email: confirmTarget })
-+    );
-+
-+    if (!confirmed) {
-+      return;
-+    }
-+
-+    try {
-+      const res = await sendResetPasswordEmail(n.entidadRelacionada.id);
-+      const data = res.data?.data || res.data;
-+      const targetEmail = data?.email || guessedEmail || confirmTarget;
-+
-+      await clearResetNotifications(n.entidadRelacionada.id);
-+
-+      setPendientes((prev) =>
-+        prev.filter(
-+          (p) =>
-+            !(
-+              p.tipo === 'passwordReset' &&
-+              p.entidadRelacionada?.id === n.entidadRelacionada?.id
-+            )
-+        )
-+      );
-+      onChange?.();
-+
-+      window.alert(t('adminUsers.resetEmail.sent', { email: targetEmail }));
-+    } catch (err) {
-+      console.error('Error sending reset link', err);
-+      window.alert(t('common.error'));
-+    }
-+  };
- 
-   // ---------- Acciones masivas por pestaña ----------
-   const handleMarkSelectedPendientes = async () => {
-     const ids = getSelectedIn(pendientes);
-     if (ids.length === 0) return;
- 
-     try {
-       await Promise.all(ids.map((id) => marcarNotificacionLeida(id, true))); // ✅ booleano
-       setPendientes((prev) => prev.filter((n) => !ids.includes(n._id)));
-       setVistas((v) => {
-         const moved = ids
-           .map((id) => pendientes.find((n) => n._id === id))
-           .filter((n): n is Notificacion => Boolean(n))
-           .map((n) => ({ ...n, leida: true }));
-         return [...moved, ...v];
-       });
-       setSelectedIds((prev) => prev.filter((id) => !ids.includes(id)));
-       onChange?.();
-     } catch (err) {
-       console.error('Error marcando notificaciones como leídas', err);
-     }
-   };
- 
-   const handleDeleteSelectedPendientes = async () => {
-     const ids = getSelectedIn(pendientes);
-diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
-index f2f65fafcae0abecc6b6d68d75b07699c2ea0c50..bb5ceafa162d12c9d886f583b65ce9d552577f9b 100644
---- a/client/src/pages/dashboard/TutorUsuarios.tsx
-+++ b/client/src/pages/dashboard/TutorUsuarios.tsx
-@@ -23,51 +23,51 @@ import {
-   Select,
-   Snackbar,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   TextField,
-   Tooltip,
-   Typography,
- } from '@mui/material';
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Delete as DeleteIcon,
-   Download as DownloadIcon,
-   ArrowDropDown as ArrowDropDownIcon,
- } from '@mui/icons-material';
- import { useAuth } from '../../context/AuthContext';
- import { useTranslation, Trans } from 'react-i18next';
- import type { SelectChangeEvent } from '@mui/material/Select';
- import type { SxProps, Theme } from '@mui/material/styles';
- import api, {
-   updateUserPassword,
--  getUserResetToken,
-+  sendResetPasswordEmail,
-   clearResetNotifications,
- } from '../../api';
- import { getRoleChipSx } from '../../utils/roleChipColors';
- import { FaseCirugia } from '../../types/FaseCirugia';
- 
- const DIALOG_ACTIONS_SX: SxProps<Theme> = {
-   flexWrap: 'wrap',
-   gap: 1,
-   justifyContent: 'center',
- };
- 
- const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
-   minWidth: { xs: '100%', sm: 220 },
-   height: 44,
-   mt: { xs: 1, sm: 0 },
-   fontWeight: 600,
-   flexBasis: { xs: '100%', sm: 'auto' },
- };
- 
- const getPasswordButtonStyles = (theme: Theme) => {
-   const baseBg = theme.palette.mode === 'light' ? '#7E57C2' : '#9575CD';
-   const hoverBg = theme.palette.mode === 'light' ? '#673AB7' : '#7E57C2';
- 
-   return {
      backgroundColor: baseBg,
-@@ -328,73 +328,72 @@ const TutorUsuarios: React.FC = () => {
+     color: theme.palette.getContrastText(baseBg),
+     "&:hover": {
+       backgroundColor: hoverBg,
+       color: theme.palette.getContrastText(hoverBg),
+     },
    };
- 
-   const handleCloseEliminarDialog = () => {
-     setOpenEliminarDialog(false);
-     setSelected(null);
-   };
- 
-   const handleConfirmEliminar = async () => {
-     if (!selected) return;
-     await handleDelete(selected._id);
-     handleCloseEliminarDialog();
-   };
- 
-   const handleOpenPasswordDialog = (usuario: any) => {
-     setSelected(usuario);
-     setOpenPasswordDialog(true);
-   };
- 
-   const handleClosePasswordDialog = () => {
-     setOpenPasswordDialog(false);
-     setPasswordValue('');
-     setSelected(null);
-   };
- 
-   const handleSendResetEmail = async (usuario: any) => {
-+    if (!usuario?.email) {
-+      return;
-+    }
-+
-+    const confirmed = window.confirm(
-+      t('adminUsers.resetEmail.confirm', { email: usuario.email }),
-+    );
-+
-+    if (!confirmed) {
-+      return;
-+    }
-+
-     try {
--      const res = await getUserResetToken(usuario._id);
--      const resetToken = res.data.resetToken;
--      const frontendUrl =
--        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
--      const days = parseInt(
--        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
--        10,
--      );
--      const subject = encodeURIComponent(
--        t('adminUsers.resetEmail.subject', { app: t('common.appName') }),
--      );
--      const body = encodeURIComponent(
--        t('adminUsers.resetEmail.body', {
--          name: usuario.nombre,
--          app: t('common.appName'),
--          link: `${frontendUrl}/reset-password/${resetToken}`,
--          days,
--        }),
--      );
--      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
--      window.location.href = mailtoLink;
-+      const res = await sendResetPasswordEmail(usuario._id);
-+      const targetEmail = res.data?.email || usuario.email;
-+
-       await clearResetNotifications(usuario._id);
-+      setSnackbar({
-+        open: true,
-+        message: t('adminUsers.resetEmail.sent', { email: targetEmail }),
-+        severity: 'success',
-+      });
-     } catch (err: any) {
-       setSnackbar({
-         open: true,
-         message: err.response?.data?.error || t('common.error'),
-         severity: 'error',
-       });
-     }
-   };
- 
-   const handleActualizarPassword = async () => {
-     if (!selected) return;
-     try {
-       setProcesando(true);
-       await updateUserPassword(selected._id, passwordValue);
-       handleClosePasswordDialog();
-       setSnackbar({
-         open: true,
-         message: t('adminUsers.passwordUpdated'),
-         severity: 'success'
-       });
-     } catch (err: any) {
-       setSnackbar({
-         open: true,
-         message: err.response?.data?.error || t('adminUsers.passwordError'),
-         severity: 'error'
-diff --git a/src/controllers/userController.js b/src/controllers/userController.js
-index 46a6e0d521f9bb41d898bbea7670943d0ae484f6..1a015f66f99b8f73ae5457c9645ec99961e072b6 100644
---- a/src/controllers/userController.js
-+++ b/src/controllers/userController.js
-@@ -529,58 +529,116 @@ exports.updateUserPassword = async (req, res, next) => {
-     res.status(200).json({ success: true, data: {} });
-   } catch (err) {
-     next(err);
-   }
  };
  
- // @desc    Generar token de reseteo de contraseña para un usuario
- // @route   POST /api/users/:id/reset-password
- // @access  Private/Admin
- exports.generatePasswordResetToken = async (req, res, next) => {
-   try {
-     const user = await User.findById(req.params.id);
+ const PASSWORD_ACTION_ROLES = [
+   "administrador",
+   "tutor",
+   "profesor",
+   "csm",
+   "instructor",
+ ];
  
-     if (!user) {
-       return next(
-         new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404)
-       );
-     }
+ const CENTERED_DIALOG_ACTIONS_SX: SxProps<Theme> = {
+   justifyContent: "center",
+@@ -977,96 +1025,93 @@ const AdminUsuarios: React.FC = () => {
+                           anchorEl={anchorElInforme}
+                           open={Boolean(anchorElInforme) && menuUsuario?._id === usuario._id}
+                           onClose={handleCloseInformeMenu}
+                         >
+                           {menuUsuario?.fasesCirugia?.map((fase: FaseCirugia) => (
+                             <MenuItem
+                               key={fase.id}
+                               onClick={() => {
+                                 handleDownloadInforme(
+                                   fase.id,
+                                   fase.fase,
+                                   `${menuUsuario.nombre} ${menuUsuario.apellidos}`,
+                                 );
+                                 handleCloseInformeMenu();
+                               }}
+                             >
+                               {t('adminUsers.actions.downloadSurgeryReport', {
+                                 phase: fase.fase,
+                               })}
+                             </MenuItem>
+                           ))}
+                         </Menu>
+                       </>
+                     ) : null}
+                   </TableCell>
+-                  <TableCell align="right">
+-                    <Box
+-                      sx={{
+-                        display: 'flex',
+-                        gap: 2,
+-                        flexWrap: 'wrap',
+-                        '& > *': { minWidth: 150 },
+-                      }}
+-                    >
+-                      <Button
+-                        variant="outlined"
+-                        color="primary"
+-                        onClick={() => handleOpenEditarDialog(usuario)}
+-                        size="small"
+-                        startIcon={<EditIcon />}
+-                      >
+-                        {t("adminUsers.actions.edit")}
+-                      </Button>
+-                      {['residente', 'participante'].includes(usuario.rol) &&
+-                        user?.rol === "administrador" &&
+-                        usuario.tieneProgreso && (
+-                          <Button
+-                            variant="outlined"
+-                            size="small"
+-                            color="secondary"
+-                            startIcon={<AssessmentIcon />}
+-                            onClick={() =>
+-                              navigate(
+-                                `/dashboard/progreso-usuario/${usuario._id}`,
+-                              )
+-                            }
+-                          >
+-                            {t('adminUserProgress.viewProgress')}
+-                          </Button>
+-                        )}
+-                      {['residente', 'participante'].includes(usuario.rol) &&
+-                        !usuario.tieneProgreso && (
+-                          <Button
+-                            variant="outlined"
+-                            onClick={() => handleCrearProgreso(usuario._id)}
+-                            size="small"
+-                          >
+-                            {t("adminUsers.actions.createProgress")}
+-                          </Button>
+-                        )}
+-                    </Box>
++                  <TableCell align="right">
++                    <Box sx={TABLE_ACTIONS_CONTAINER_SX}>
++                      <Button
++                        variant="contained"
++                        onClick={() => handleOpenEditarDialog(usuario)}
++                        startIcon={<EditIcon />}
++                        sx={[
++                          TABLE_ACTION_BUTTON_SX,
++                          (theme) => getEditActionButtonStyles(theme),
++                        ]}
++                      >
++                        {t("adminUsers.actions.edit")}
++                      </Button>
++                      {['residente', 'participante'].includes(usuario.rol) &&
++                        user?.rol === "administrador" &&
++                        usuario.tieneProgreso && (
++                          <Button
++                            variant="contained"
++                            startIcon={<AssessmentIcon />}
++                            onClick={() =>
++                              navigate(
++                                `/dashboard/progreso-usuario/${usuario._id}`,
++                              )
++                            }
++                            sx={[
++                              TABLE_ACTION_BUTTON_SX,
++                              (theme) => getProgressActionButtonStyles(theme),
++                            ]}
++                          >
++                            {t('adminUserProgress.viewProgress')}
++                          </Button>
++                        )}
++                      {['residente', 'participante'].includes(usuario.rol) &&
++                        !usuario.tieneProgreso && (
++                          <Button
++                            variant="outlined"
++                            onClick={() => handleCrearProgreso(usuario._id)}
++                            sx={TABLE_ACTION_BUTTON_SX}
++                          >
++                            {t("adminUsers.actions.createProgress")}
++                          </Button>
++                        )}
++                    </Box>
+                   </TableCell>
+                 </TableRow>
+               ))}
+             </TableBody>
+           </Table>
+         </TableContainer>
+       </Paper>
  
-     const resetToken = user.getResetPasswordToken();
-     user.resetPasswordExpire =
-       Date.now() + RESET_PASSWORD_EXPIRE_DAYS * 24 * 60 * 60 * 1000;
  
-     await user.save({ validateBeforeSave: false });
+       {/* Diálogo para invitar usuario */}
+       <InviteUsersMail
+         open={openInvitarDialog}
+         onClose={handleCloseInvitarDialog}
+         hospitals={hospitales}
+         societies={sociedades}
+       />
  
-+    const baseFrontendUrl = config.frontendUrl || 'https://residentlearningplatform.netlify.app';
-+    const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
-+      ? baseFrontendUrl.slice(0, -1)
-+      : baseFrontendUrl;
-+    const resetUrl = `${normalizedBaseUrl}/reset-password/${resetToken}`;
-+
-+    const fullName = [user.nombre, user.apellidos]
-+      .filter(Boolean)
-+      .join(' ')
-+      .trim();
-+    const recipientName = fullName || user.email;
-+    const appName = process.env.APP_NAME || 'Resident Learning Platform';
-+
-+    const days = RESET_PASSWORD_EXPIRE_DAYS;
-+    const pluralizedDays = days === 1 ? 'día' : 'días';
-+    const textMessage = [
-+      `Hola ${recipientName},`,
-+      '',
-+      `Has solicitado restablecer tu contraseña en ${appName}.`,
-+      'Para continuar, utiliza el siguiente enlace:',
-+      resetUrl,
-+      '',
-+      `Este enlace caduca en ${days} ${pluralizedDays}.`,
-+      '',
-+      'Si no solicitaste este cambio, puedes ignorar este mensaje.'
-+    ].join('\n');
-+
-+    const htmlMessage = `
-+      <p>Hola ${recipientName},</p>
-+      <p>Has solicitado restablecer tu contraseña en <strong>${appName}</strong>.</p>
-+      <p>Para continuar, utiliza el siguiente enlace:</p>
-+      <p><a href="${resetUrl}" target="_blank" rel="noopener noreferrer">${resetUrl}</a></p>
-+      <p>Este enlace caduca en ${days} ${pluralizedDays}.</p>
-+      <p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
-+    `.trim();
-+
-+    try {
-+      await sendEmail({
-+        to: [{ email: user.email, name: recipientName }],
-+        subject: `Restablecer contraseña de ${appName}`,
-+        message: textMessage,
-+        html: htmlMessage
-+      });
-+    } catch (emailError) {
-+      user.resetPasswordToken = undefined;
-+      user.resetPasswordExpire = undefined;
-+      await user.save({ validateBeforeSave: false });
-+
-+      return next(
-+        new ErrorResponse('No se pudo enviar el email de restablecimiento', 500)
-+      );
-+    }
-+
-     await createAuditLog({
-       usuario: req.user._id,
--      accion: 'generar_token_reset_password',
--      descripcion: `Token de reseteo generado para usuario: ${user.email}`,
-+      accion: 'enviar_reset_password',
-+      descripcion: `Enlace de reseteo enviado a: ${user.email}`,
-       ip: req.ip
-     });
- 
--    res.status(200).json({ success: true, resetToken, email: user.email, name: user.nombre });
-+    res.status(200).json({
-+      success: true,
-+      email: user.email,
-+      name: recipientName,
-+      expiresInDays: days
-+    });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- // @desc    Eliminar un usuario y su progreso
- // @route   DELETE /api/users/:id
- // @access  Private/Admin
- exports.deleteUser = async (req, res, next) => {
-   try {
-     const user = await User.findById(req.params.id);
- 
-     if (!user) {
-       return next(new ErrorResponse(`Usuario no encontrado con id ${req.params.id}`, 404));
-     }
- 
-     if (req.user.rol === Role.PROFESOR) {
-       if (
-         user.rol !== Role.PARTICIPANTE ||
-         !user.sociedad ||
-         user.sociedad.toString() !== req.user.sociedad.toString()
-       ) {
-         return next(
-           new ErrorResponse('No autorizado para eliminar este usuario', 403)
-         );
-diff --git a/tests/generatePasswordResetToken.test.js b/tests/generatePasswordResetToken.test.js
-index 3c3a785b208c8e080c5420362f1d1fc6a30cc379..92030aa090e77d8beabe376f6a30416edf930bec 100644
---- a/tests/generatePasswordResetToken.test.js
-+++ b/tests/generatePasswordResetToken.test.js
-@@ -1,72 +1,115 @@
- jest.mock('supertest');
- const request = require('supertest');
- const express = require('express');
- 
- let mockCurrentRole;
- 
- jest.mock('../src/middleware/auth', () => ({
-   protect: (req, res, next) => {
-     req.user = { _id: 'user', rol: mockCurrentRole };
-     next();
-   },
-   authorize: (...roles) => (req, res, next) => {
-     if (roles.includes(req.user.rol)) return next();
-     return res.status(403).json({ success: false });
-   }
- }));
- 
- jest.mock('../src/utils/auditLog', () => ({ createAuditLog: jest.fn() }));
-+jest.mock('../src/utils/sendEmail');
- 
- jest.mock('../src/models/User');
- const User = require('../src/models/User');
-+const sendEmail = require('../src/utils/sendEmail');
- 
- const userRoutes = require('../src/routes/userRoutes');
- 
- const app = express();
- app.use(express.json());
- app.use('/api/users', userRoutes);
-+app.use((err, req, res, next) => {
-+  res.status(err.statusCode || 500).json({
-+    success: false,
-+    error: err.message || 'Server Error'
-+  });
-+});
- 
- const mockUser = (email, nombre) => ({
-   _id: 'u1',
-   email,
-   nombre,
-   getResetPasswordToken: jest.fn(() => 'token123'),
-   save: jest.fn().mockResolvedValue()
- });
- 
-+const expectedExpireDays = parseInt(process.env.RESET_PASSWORD_EXPIRE_DAYS || '3', 10);
-+
- describe('POST /api/users/:id/reset-password', () => {
-+  beforeEach(() => {
-+    sendEmail.mockResolvedValue({});
-+  });
-+
-   afterEach(() => {
-     jest.clearAllMocks();
-   });
- 
--  test('tutor recibe token y metadatos', async () => {
-+  test('tutor recibe confirmación de envío', async () => {
-     mockCurrentRole = 'tutor';
-     User.findById.mockResolvedValue(mockUser('tutor@test.com', 'Tutor'));
- 
-     const res = await request(app).post('/api/users/u1/reset-password').send({});
- 
-     expect(res.status).toBe(200);
-     expect(res.body).toEqual({
-       success: true,
--      resetToken: 'token123',
-       email: 'tutor@test.com',
--      name: 'Tutor'
-+      name: 'Tutor',
-+      expiresInDays: expectedExpireDays
-     });
-+    expect(sendEmail).toHaveBeenCalledWith(
-+      expect.objectContaining({
-+        to: [{ email: 'tutor@test.com', name: 'Tutor' }],
-+        subject: expect.stringContaining('Restablecer contraseña')
-+      })
-+    );
-   });
- 
--  test('csm recibe token y metadatos', async () => {
-+  test('csm recibe confirmación de envío', async () => {
-     mockCurrentRole = 'csm';
-     User.findById.mockResolvedValue(mockUser('csm@test.com', 'Csm'));
- 
-     const res = await request(app).post('/api/users/u1/reset-password').send({});
- 
-     expect(res.status).toBe(200);
-     expect(res.body).toEqual({
-       success: true,
--      resetToken: 'token123',
-       email: 'csm@test.com',
--      name: 'Csm'
-+      name: 'Csm',
-+      expiresInDays: expectedExpireDays
-     });
-+    expect(sendEmail).toHaveBeenCalledWith(
-+      expect.objectContaining({
-+        to: [{ email: 'csm@test.com', name: 'Csm' }]
-+      })
-+    );
-+  });
-+
-+  test('devuelve error si no se puede enviar el email', async () => {
-+    mockCurrentRole = 'administrador';
-+    const user = mockUser('admin@test.com', 'Admin');
-+    User.findById.mockResolvedValue(user);
-+    sendEmail.mockRejectedValue(new Error('smtp-error'));
-+
-+    const res = await request(app).post('/api/users/u1/reset-password').send({});
-+
-+    expect(res.status).toBe(500);
-+    expect(res.body).toEqual({
-+      success: false,
-+      error: 'No se pudo enviar el email de restablecimiento'
-+    });
-+
-+    expect(user.resetPasswordToken).toBeUndefined();
-+    expect(user.resetPasswordExpire).toBeUndefined();
-   });
- });
- 
+       {/* Diálogo para actualizar contraseña */}
+       <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
+         <DialogTitle>{t("adminUsers.password.title")}</DialogTitle>
+         <DialogContent>
+           <TextField
+             autoFocus
+             margin="dense"
+             id="password-update"

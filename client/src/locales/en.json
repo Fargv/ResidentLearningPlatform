@@ -576,7 +576,7 @@
       "role": "Role",
       "actions": "Actions"
     },
-    "viewProgress": "View Progress"
+    "viewProgress": "Progress"
   },
   "adminProgressDetail": {
     "loadError": "Error loading progress",

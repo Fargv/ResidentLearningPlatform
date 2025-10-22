@@ -458,7 +458,7 @@
       "role": "Rol",
       "actions": "Accions"
     },
-    "viewProgress": "Veure progrés"
+    "viewProgress": "Progrés"
   },
   "adminUsers": {
     "titleAll": "Gestió de tots els usuaris",

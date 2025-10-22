@@ -818,7 +818,7 @@
       "role": "Ruolo",
       "actions": "Azioni"
     },
-    "viewProgress": "Vedi progresso"
+    "viewProgress": "Progresso"
   },
   "adminProgressDetail": {
     "loadError": "Errore nel caricamento del progresso",

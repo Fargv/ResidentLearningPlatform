@@ -567,7 +567,7 @@
       "role": "Rola",
       "actions": "Ekintzak"
     },
-    "viewProgress": "Aurrerapena ikusi"
+    "viewProgress": "Aurrerapena"
   },
   "adminProgressDetail": {
     "loadError": "Errorea aurrerapena kargatzean",

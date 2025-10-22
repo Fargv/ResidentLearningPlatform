@@ -753,7 +753,7 @@
       "role": "Função",
       "actions": "Ações"
     },
-    "viewProgress": "Ver Progresso"
+    "viewProgress": "Progresso"
   },
   "adminProgressDetail": {
     "loadError": "Erro ao carregar o progresso",
