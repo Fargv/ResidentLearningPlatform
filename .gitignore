@@ -1,5 +1,38 @@
-# Ignorar directorios y archivos de dependencias
+# --- Node ---
 node_modules/
-# Log files
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+coverage/
+
+# --- OS / editores ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Logs ---
+logs/
 *.log
-backend.log
+
+# --- ENV (ignorar siempre secretos) ---
+.env
+.env.*
+*.env
+*.env.*
+*.local
+*.local.*
+*.backup
+*.secret
+
+client/.env
+client/.env.*
+client/*.local
+client/*.local.*
+client/*.backup
+
+# Importante: sí versionamos solo los ejemplos
+!.env.example
+!client/.env.example

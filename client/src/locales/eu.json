@@ -177,6 +177,15 @@
     "consentSuffix": " eta DBEO betetzen dut.",
     "registerButton": "Erregistratu"
   },
+  "registerInvite": {
+    "title": "Osatu zure erregistroa",
+    "loading": "Gonbidapena balioztatzen...",
+    "invalid": "Gonbidapen hau ez dago edo dagoeneko erabili da.",
+    "expired": "Gonbidapen hau iraungi da. Eskatu beste bat zure administratzaileari.",
+    "error": "Ezin izan dugu zure gonbidapena balioztatu.",
+    "ctaLogin": "Joan saioa hasteko orrira",
+    "prefilledNotice": "Gonbidapenaren datuak {{email}} helbiderako bete ditugu. Berrikusi informazioa eta amaitu erregistroa."
+  },
   "society": {
     "convocatoria": {
       "label": "Convocatoria",
@@ -249,6 +258,7 @@
     "delete": "Ezabatu",
     "deleting": "Ezabatzen...",
     "phase": "Fasea",
+    "download": "Deskargatu",
     "validate": "Balidatu",
     "reject": "Baztertu",
     "processing": "Prozesatzen...",
@@ -439,7 +449,10 @@
     },
     "resetEmail": {
       "subject": "{{app}} pasahitza berrezarri",
-      "body": "Kaixo {{name}},\n\n{{app}} aplikazioan zure pasahitza berrezartzea eskatu duzu. Esteka honetan klik egin berria aukeratzeko:\n\n{{link}}\n\nEsteka hau pertsonala da, behin bakarrik balio du eta {{days}} egunetan iraungitzen da.\n\nAdministrador del entorno"
+      "body": "Kaixo {{name}},\n\n{{app}} aplikazioan zure pasahitza berrezartzea eskatu duzu. Esteka honetan klik egin berria aukeratzeko:\n\n{{link}}\n\nEsteka hau pertsonala da, behin bakarrik balio du eta {{days}} egunetan iraungitzen da.\n\nAdministrador del entorno",
+      "confirm": "Berrezartzeko esteka {{email}} helbidera bidali nahi duzu?",
+      "sent": "Berrezartzeko esteka {{email}} helbidera bidali da",
+      "unknownEmail": "erabiltzaile hau"
     },
     "_comment": "Administratzaileentzako erabiltzaileen kudeaketa",
     "buttons": {
@@ -554,7 +567,7 @@
       "role": "Rola",
       "actions": "Ekintzak"
     },
-    "viewProgress": "Aurrerapena ikusi"
+    "viewProgress": "Aurrerapena"
   },
   "adminProgressDetail": {
     "loadError": "Errorea aurrerapena kargatzean",
@@ -621,14 +634,14 @@
     "errorUpdatePassword": "Errorea pasahitza eguneratzean"
   },
   "forgotPassword": {
-    "heading": "Pasahitza ahaztuta?",
-    "description": "Pasahitza berrezartzeko, jarri harremanetan sistemaren administratzailearekin.",
-    "emailLabel": "Zure emaila",
-    "submit": "Bidali emaila administratzaileari",
-    "backToLogin": "Itzuli saioa hasteko",
-    "requestSent": "Eskaera bidalia.",
-    "error": "Errorea eskaera bidaltzean.",
-    "emailNotFound": "Ez dago helbide elektroniko horrekin erabiltzailearik. Sartu baliozko bat."
+    "heading": "Zure pasahitza ahaztu duzu?",
+    "description": "Sartu zure posta elektronikoa eta pasahitza berrezartzeko jarraibide automatikoak bidaliko dizkizugu.",
+    "emailLabel": "Zure helbide elektronikoa",
+    "submit": "Berrezarpen automatikoa bidali",
+    "backToLogin": "Itzuli saio-hasierara",
+    "success": "Helbidea existitzen bada, berrezartzeko jarraibideak bidali dizkizugu.",
+    "error": "Ezin izan da berrezarpen automatikoa burutu.",
+    "emailNotFound": "Ez dago helbide horrekin erabiltzailerik. Sartu baliozko helbide bat."
   },
   "resetPassword": {
     "title": "Pasahitza berrezarri",
@@ -651,7 +664,7 @@
     "noAccount": "Ez duzu konturik?",
     "registerHere": "Erregistratu hemen",
     "copyright": "© {{year}} Abex Robotikako Bikaintasuna",
-    "poweredBy": "FARGV garatua",
+    "poweredBy": "FARGVYY garatua",
     "logoAlt": "Abex Robotikako Bikaintasuna"
   },
   "dashboard": {
@@ -837,7 +850,7 @@
       "rejected": "Ez dago baztertutako baliozkotzerik"
     },
     "actions": {
-      "viewAttachment": "Eranskina ikusi"
+      "viewAttachment": "Eranskinak"
     },
     "dialog": {
       "validateTitle": "Jarduera balioztatu",
@@ -851,7 +864,7 @@
     "errorLoad": "Errorea balidazioak kargatzean",
     "_comment": "Balidazioak prestakuntza-emilek kudeatuta",
     "buttons": {
-      "viewAttachment": "Eranskina ikusi",
+      "viewAttachment": "Eranskinak",
       "validate": "Balidatu",
       "reject": "Baztertu",
       "cancel": "Utzi"
@@ -871,7 +884,8 @@
       "processing": "Prozesatzen..."
     },
     "messages": {
-      "loadError": "Errorea balidazioak kargatzean"
+      "loadError": "Errorea balidazioak kargatzean",
+      "noAttachments": "Ez dago eranskinik erabilgarri"
     }
   },
   "residentPhases": {
@@ -909,18 +923,24 @@
       "otherSurgeryTooltip": "Idatzi kirurgiaren izena",
       "surgeonName": "Zirujauaren izena",
       "participation": "Parte-hartze ehunekoa",
-      "selectFile": "Hautatu fitxategia",
+      "selectFile": "Select files",
       "cancel": "Utzi",
       "confirm": "Baieztatu",
       "missingProgressId": "Falta da aurrerapenaren IDa",
       "noActivitySelected": "Ez da jarduerarik hautatu",
       "selectDate": "Hautatu osatze data bat",
-      "optionalFileHint": "Erantsi fitxategi aukerazkoa (geh. 5MB)",
+      "optionalFileHint": "You can attach up to {{max}} files (max 5MB each)",
+      "maxFilesReached": "You reached the limit of 5 attachments for this activity.",
       "fileTooLarge": "Fitxategia 5MB baino handiagoa da.",
       "surgeryRequired": "Aukeratu edo idatzi prozedura bat",
       "surgeonNameRequired": "Idatzi zirujauaren izena",
       "participationRequired": "Aukeratu parte-hartzearen ehunekoa",
       "title": "Markatu jarduera osatutzat",
+      "editTitle": "Edit activity",
+      "currentFiles": "Current attachments",
+      "newAttachments": "New files selected",
+      "removeAttachment": "Remove attachment",
+      "allMarkedForRemoval": "All existing attachments will be removed.",
       "date": "Osatze data"
     },
     "_comment": "Fases y actividades para residentes",

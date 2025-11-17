@@ -179,6 +179,15 @@
     "consentSuffix": " y cumplo con la LOPD.",
     "registerButton": "Registrarse"
   },
+  "registerInvite": {
+    "title": "Completa tu registro",
+    "loading": "Validando invitación...",
+    "invalid": "La invitación no existe o ya ha sido utilizada.",
+    "expired": "Esta invitación ha expirado. Solicita una nueva a tu administrador.",
+    "error": "No hemos podido validar tu invitación.",
+    "ctaLogin": "Ir al inicio de sesión",
+    "prefilledNotice": "Hemos precargado los datos de la invitación para {{email}}. Revisa la información y completa tu registro."
+  },
   "society": {
     "convocatoria": {
       "label": "Convocatoria",
@@ -251,6 +260,7 @@
     "delete": "Eliminar",
     "deleting": "Eliminando...",
     "phase": "Fase",
+    "download": "Descargar",
     "validate": "Validar",
     "reject": "Rechazar",
     "processing": "Procesando...",
@@ -383,7 +393,7 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Cambiar contraseña",
-      "sendResetLink": "Enviar enlace de reseteo",
+      "sendResetLink": "Enviar reseteo de Contraseña",
       "createProgress": "Crear progreso",
       "downloadSurgeryReport": "Descargar informe de {{phase}}"
     },
@@ -444,7 +454,10 @@
     },
     "resetEmail": {
       "subject": "Restablecer contraseña de {{app}}",
-      "body": "Hola {{name}},\n\nHas solicitado restablecer tu contraseña en {{app}}. Haz clic en el siguiente enlace para elegir una nueva:\n\n{{link}}\n\nEste enlace es personal, válido solo una vez y caduca en {{days}} días.\n\nAdministrador del entorno"
+      "body": "Hola {{name}},\n\nHas solicitado restablecer tu contraseña en {{app}}. Haz clic en el siguiente enlace para elegir una nueva:\n\n{{link}}\n\nEste enlace es personal, válido solo una vez y caduca en {{days}} días.\n\nAdministrador del entorno",
+      "confirm": "¿Quieres enviar el enlace de restablecimiento a {{email}}?",
+      "sent": "Enlace de restablecimiento enviado a {{email}}",
+      "unknownEmail": "este usuario"
     },
     "_comment": "Gestión de usuarios para administradores",
     "buttons": {
@@ -559,7 +572,7 @@
       "role": "Rol",
       "actions": "Acciones"
     },
-    "viewProgress": "Ver Progreso"
+    "viewProgress": "Progreso"
   },
   "adminProgressDetail": {
     "loadError": "Error al cargar el progreso",
@@ -627,13 +640,13 @@
   },
   "forgotPassword": {
     "heading": "¿Olvidaste tu contraseña?",
-    "description": "Para resetear la contraseña póngase en contacto con el administrador del sistema.",
+    "description": "Introduce tu email y te enviaremos instrucciones para restablecer tu contraseña de forma automática.",
     "emailLabel": "Tu email",
-    "submit": "Enviar correo al administrador",
+    "submit": "Enviar restablecimiento automático",
     "backToLogin": "Volver al inicio de sesión",
-    "requestSent": "Solicitud enviada.",
-    "error": "Error al enviar la solicitud.",
-    "emailNotFound": "No existe un usuario con ese correo. Introduce uno válido."
+    "success": "Si el correo existe, hemos enviado las instrucciones de restablecimiento.",
+    "error": "No se pudo completar el restablecimiento automático.",
+    "emailNotFound": "No existe un usuario con ese correo. Introduce un correo válido."
   },
   "resetPassword": {
     "title": "Restablecer contraseña",
@@ -842,7 +855,7 @@
       "rejected": "No hay validaciones rechazadas"
     },
     "actions": {
-      "viewAttachment": "Ver adjunto"
+      "viewAttachment": "Adjuntos"
     },
     "dialog": {
       "validateTitle": "Validar Actividad",
@@ -856,7 +869,7 @@
     "errorLoad": "Error al cargar las validaciones",
     "_comment": "Validaciones gestionadas por Tutores",
     "buttons": {
-      "viewAttachment": "Ver adjunto",
+      "viewAttachment": "Adjuntos",
       "validate": "Validar",
       "reject": "Rechazar",
       "cancel": "Cancelar"
@@ -876,7 +889,8 @@
       "processing": "Procesando..."
     },
     "messages": {
-      "loadError": "Error al cargar las validaciones"
+      "loadError": "Error al cargar las validaciones",
+      "noAttachments": "No hay adjuntos disponibles"
     }
   },
   "residentPhases": {
@@ -886,6 +900,7 @@
     "activitySaveError": "Error al guardar la actividad.",
     "activitySuccess": "✅ Actividad registrada con éxito",
     "noActivitySelectedError": "Error interno: No se ha seleccionado ninguna actividad.",
+    "downloadAttachmentError": "Error al descargar el archivo adjunto.",
     "noTitle": "Sin título",
     "phaseTitle": "Fase {{number}}: {{name}}",
     "deadline": "Fecha límite",
@@ -894,6 +909,7 @@
     "phaseLocked": "Fase bloqueada",
     "noProgress": "No hay progreso formativo disponible.",
     "markAsCompleted": "Marcar como completada",
+    "editActivity": "Editar actividad",
     "unnamedActivity": "Actividad sin nombre",
     "comment": "Comentario",
     "tutorComment": "Comentario Tutor",
@@ -904,6 +920,8 @@
     "surgeryType": "Tipo de cirugía: {{type}}",
     "surgeonName": "Nombre del cirujano: {{name}}",
     "participation": "Porcentaje de participación: {{percent}}%",
+    "downloadAttachment": "Descargar archivo",
+    "pendingAttachment": "Archivo adjunto enviado",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividad como completada",
@@ -914,18 +932,24 @@
       "otherSurgeryTooltip": "Escriba el nombre del procedimiento",
       "surgeonName": "Nombre del cirujano",
       "participation": "Porcentaje de participación",
-      "selectFile": "Seleccionar archivo",
+      "selectFile": "Seleccionar archivos",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta el ID del progreso",
       "noActivitySelected": "No se ha seleccionado ninguna actividad",
       "selectDate": "Selecciona una fecha de realización",
-      "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+      "optionalFileHint": "Puedes adjuntar hasta {{max}} archivos (máx. 5MB cada uno)",
+      "maxFilesReached": "Has alcanzado el límite de 5 archivos para esta actividad.",
       "fileTooLarge": "El archivo supera el tamaño máximo de 5MB.",
       "surgeryRequired": "Selecciona o escribe un procedimiento",
       "surgeonNameRequired": "Ingresa el nombre del cirujano",
       "participationRequired": "Selecciona un porcentaje de participación",
       "title": "Marcar actividad como completada",
+      "editTitle": "Editar actividad enviada",
+      "currentFiles": "Archivos actuales",
+      "newAttachments": "Nuevos archivos seleccionados",
+      "removeAttachment": "Eliminar archivo",
+      "allMarkedForRemoval": "Has marcado todos los archivos existentes para eliminarse.",
       "date": "Fecha de realización"
     },
     "_comment": "Fases y actividades para residentes",

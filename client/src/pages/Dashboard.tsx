@@ -309,6 +309,10 @@ const Dashboard: React.FC = () => {
   {user?.rol === 'administrador' && (
     <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
   )}
+  <Route
+    path="/dashboard/progreso"
+    element={<Navigate to="/dashboard" replace />}
+  />
   {user?.rol === 'administrador' && (
     <Route path="/config" element={<AdminConfiguracion />} />
   )}

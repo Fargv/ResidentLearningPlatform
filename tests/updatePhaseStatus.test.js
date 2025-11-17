@@ -34,6 +34,30 @@ describe('updatePhaseStatus', () => {
     expect(nextProgreso.estadoGeneral).toBe('en progreso');
     expect(nextProgreso.save).toHaveBeenCalled();
   });
+
+  test('does not update when there are activities pending validation', async () => {
+    const progreso = {
+      actividades: [
+        { estado: 'validado' },
+        { estado: 'pendiente' }
+      ],
+      estadoGeneral: 'en progreso',
+      residente: { _id: 'res1', email: 'residente@example.com' },
+      fase: { _id: 'fase1', orden: 1, nombre: 'Fase 1' },
+      save: jest.fn(),
+      populate: jest.fn().mockResolvedValue()
+    };
+
+    const faseSpy = jest.spyOn(Fase, 'findOne').mockResolvedValue(null);
+    const progresoSpy = jest.spyOn(ProgresoResidente, 'findOne').mockResolvedValue(null);
+
+    await updatePhaseStatus(progreso);
+
+    expect(progreso.save).not.toHaveBeenCalled();
+    expect(faseSpy).not.toHaveBeenCalled();
+    expect(progresoSpy).not.toHaveBeenCalled();
+  });
+
   test('uses FaseSoc when progreso.faseModel es FaseSoc', async () => {
     const progreso = {
       actividades: [{ estado: 'validado' }, { estado: 'validado' }],

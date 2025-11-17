@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const User = require('../models/User');
 const Hospital = require('../models/Hospital');
 const Invitacion = require('../models/Invitacion');
+const AccessCode = require('../models/AccessCode');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const { createAuditLog } = require('../utils/auditLog');
@@ -11,6 +12,7 @@ const Sociedades = require('../models/Sociedades');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
 const { resolveTutor } = require('../utils/resolveTutor');
+const config = require('../config/config');
 
 const RESET_PASSWORD_EXPIRE_DAYS = parseInt(
   process.env.RESET_PASSWORD_EXPIRE_DAYS || '3',
@@ -549,14 +551,72 @@ exports.generatePasswordResetToken = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
+    const baseFrontendUrl = config.frontendUrl || 'https://residentlearningplatform.netlify.app';
+    const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
+      ? baseFrontendUrl.slice(0, -1)
+      : baseFrontendUrl;
+    const resetUrl = `${normalizedBaseUrl}/reset-password/${resetToken}`;
+
+    const fullName = [user.nombre, user.apellidos]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    const recipientName = fullName || user.email;
+    const appName = process.env.APP_NAME || 'Resident Learning Platform';
+
+    const days = RESET_PASSWORD_EXPIRE_DAYS;
+    const pluralizedDays = days === 1 ? 'día' : 'días';
+    const textMessage = [
+      `Hola ${recipientName},`,
+      '',
+      `Has solicitado restablecer tu contraseña en ${appName}.`,
+      'Para continuar, utiliza el siguiente enlace:',
+      resetUrl,
+      '',
+      `Este enlace caduca en ${days} ${pluralizedDays}.`,
+      '',
+      'Si no solicitaste este cambio, puedes ignorar este mensaje.'
+    ].join('\n');
+
+    const htmlMessage = `
+      <p>Hola ${recipientName},</p>
+      <p>Has solicitado restablecer tu contraseña en <strong>${appName}</strong>.</p>
+      <p>Para continuar, utiliza el siguiente enlace:</p>
+      <p><a href="${resetUrl}" target="_blank" rel="noopener noreferrer">${resetUrl}</a></p>
+      <p>Este enlace caduca en ${days} ${pluralizedDays}.</p>
+      <p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
+    `.trim();
+
+    try {
+      await sendEmail({
+        to: [{ email: user.email, name: recipientName }],
+        subject: `Restablecer contraseña de ${appName}`,
+        message: textMessage,
+        html: htmlMessage
+      });
+    } catch (emailError) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return next(
+        new ErrorResponse('No se pudo enviar el email de restablecimiento', 500)
+      );
+    }
+
     await createAuditLog({
       usuario: req.user._id,
-      accion: 'generar_token_reset_password',
-      descripcion: `Token de reseteo generado para usuario: ${user.email}`,
+      accion: 'enviar_reset_password',
+      descripcion: `Enlace de reseteo enviado a: ${user.email}`,
       ip: req.ip
     });
 
-    res.status(200).json({ success: true, resetToken, email: user.email, name: user.nombre });
+    res.status(200).json({
+      success: true,
+      email: user.email,
+      name: recipientName,
+      expiresInDays: days
+    });
   } catch (err) {
     next(err);
   }
@@ -611,17 +671,18 @@ exports.deleteUser = async (req, res, next) => {
 // @access  Private/Admin
 exports.inviteUser = async (req, res, next) => {
   try {
-    const { email, rol, hospital, sociedad } = req.body;
+    const { email, rol, hospital, sociedad, tipo, zona } = req.body;
+    const requester = req.user;
 
-    if (req.user.rol === Role.PROFESOR) {
+    if (requester?.rol === Role.PROFESOR) {
       if (rol !== Role.PARTICIPANTE) {
         return next(
           new ErrorResponse('Los profesores solo pueden invitar participantes', 403)
         );
       }
       if (
-        !req.user.sociedad ||
-        (sociedad && sociedad.toString() !== req.user.sociedad.toString())
+        !requester.sociedad ||
+        (sociedad && requester.sociedad && sociedad.toString() !== requester.sociedad.toString())
       ) {
         return next(
           new ErrorResponse(
@@ -639,17 +700,22 @@ exports.inviteUser = async (req, res, next) => {
     // Verificar si el email ya está registrado
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return next(new ErrorResponse('El email ya está registrado', 400));
+      console.info(
+        `[inviteUser] El email ${email} pertenece a un usuario existente (${existingUser._id}). Se generará una nueva invitación.`
+      );
     }
 
     // Verificar si ya existe una invitación pendiente para este email
-    const existingInvitation = await Invitacion.findOne({ 
-      email, 
-      estado: 'pendiente' 
+    const existingInvitation = await Invitacion.findOne({
+      email,
+      estado: 'pendiente'
     });
-    
-    if (existingInvitation) {
-      return next(new ErrorResponse('Ya existe una invitación pendiente para este email', 400));
+    const wasExistingInvitation = Boolean(existingInvitation);
+
+    const zonaVal = typeof zona === 'string' ? zona.trim().toUpperCase() : undefined;
+
+    if (rol === Role.CSM && !zonaVal) {
+      return next(new ErrorResponse('Se requiere una zona para este rol', 400));
     }
 
     // Verificar hospital si el rol es residente o formador
@@ -657,51 +723,159 @@ exports.inviteUser = async (req, res, next) => {
       return next(new ErrorResponse('Se requiere un hospital para este rol', 400));
     }
 
+    let hospitalDoc;
     if (hospital) {
-      const hospitalExists = await Hospital.findById(hospital);
-      if (!hospitalExists) {
+      hospitalDoc = await Hospital.findById(hospital);
+      if (!hospitalDoc) {
         return next(new ErrorResponse('Hospital no encontrado', 404));
       }
     }
 
+    if (requester?.rol === Role.CSM) {
+      const rolesPermitidos = [Role.RESIDENTE, Role.TUTOR];
+      if (!rolesPermitidos.includes(rol)) {
+        return next(
+          new ErrorResponse('No autorizado para invitar usuarios con este rol', 403)
+        );
+      }
+
+      if (!hospitalDoc) {
+        return next(
+          new ErrorResponse('Se requiere un hospital válido de tu zona para invitar', 403)
+        );
+      }
+
+      const hospitalZona = typeof hospitalDoc.zona === 'string' ? hospitalDoc.zona.toUpperCase() : hospitalDoc.zona;
+      const requesterZona = typeof requester.zona === 'string' ? requester.zona.toUpperCase() : requester.zona;
+
+      if (hospitalZona !== requesterZona) {
+        return next(
+          new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
+        );
+      }
+    }
+
+    const programType =
+      tipo ||
+      requester?.tipo ||
+      ([Role.PARTICIPANTE, Role.PROFESOR].includes(rol)
+        ? 'Programa Sociedades'
+        : 'Programa Residentes');
+
+    const accessCode = await AccessCode.findOne({ rol, tipo: programType });
+
+    if (!accessCode) {
+      return next(
+        new ErrorResponse(
+          `Falta configurar el código de acceso para el rol ${rol}`,
+          400
+        )
+      );
+    }
+
     // Generar token
     const token = crypto.randomBytes(20).toString('hex');
+    const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
+    const fechaEnvio = new Date();
 
-    // Crear invitación
-    const invitacion = await Invitacion.create({
+    const resolvedSociedad = sociedad || requester?.sociedad;
+    const invitationUpdate = {
       email,
       rol,
-      hospital,
-      sociedad: sociedad || req.user.sociedad,
+      sociedad: sociedad || requester?.sociedad,
+      tipo: programType,
       token,
-      fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
-      admin: req.user.id
+      fechaExpiracion,
+      fechaEnvio,
+      estado: 'pendiente',
+      admin: requester?._id || requester?.id
+    };
+
+    if (hospital) {
+      invitationUpdate.hospital = hospital;
+    }
+
+    if (resolvedSociedad) {
+      invitationUpdate.sociedad = resolvedSociedad;
+    }
+
+    if (zonaVal) {
+      invitationUpdate.zona = zonaVal;
+    }
+
+    const updateQuery = existingInvitation ? { _id: existingInvitation._id } : { email };
+    const updateDoc = { $set: invitationUpdate };
+
+    if (!hospital && existingInvitation?.hospital) {
+      updateDoc.$unset = { ...(updateDoc.$unset || {}), hospital: '' };
+    }
+
+    if (!resolvedSociedad && existingInvitation?.sociedad) {
+      updateDoc.$unset = { ...(updateDoc.$unset || {}), sociedad: '' };
+    }
+
+    if (!zonaVal && existingInvitation?.zona) {
+      updateDoc.$unset = { ...(updateDoc.$unset || {}), zona: '' };
+    }
+
+    const invitacion = await Invitacion.findOneAndUpdate(updateQuery, updateDoc, {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
     });
 
-    // Crear URL de registro
-    const registerUrl = `${req.protocol}://${req.get('host')}/register/${token}`;
+    // Crear URL de registro basada en la configuración del frontend
+    const baseFrontendUrl = config.frontendUrl || 'http://localhost:5173';
+    const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
+      ? baseFrontendUrl.slice(0, -1)
+      : baseFrontendUrl;
+    const registerUrl = `${normalizedBaseUrl}/register/${token}`;
 
     // Preparar mensaje de email
-    const message = `
-      Ha sido invitado a unirse a la plataforma de formación en tecnologías del robot da Vinci.
-      
-      Por favor, utilice el siguiente enlace para completar su registro:
-      
-      ${registerUrl}
-      
-      Este enlace expirará en 7 días.
-    `;
+    const roleLabel = rol ? rol.toUpperCase() : '';
+    const messageLines = [
+      '📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:',
+      '',
+      `🔹 Rol: ${roleLabel}`,
+      `🔐 Código de acceso: ${accessCode.codigo}`,
+      '',
+      '📝 Regístrate en el siguiente enlace:',
+      registerUrl,
+      '',
+      'Si tienes cualquier duda, no dudes en consultarnos.',
+      '',
+      'Un saludo,',
+      'Equipo de Formación Da Vinci',
+      'ABEX Excelencia Robótica',
+      '',
+      'Este enlace expirará en 7 días.'
+    ];
+
+    const message = messageLines.join('\n');
+    const html = `
+      <p>📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:</p>
+      <p><strong>🔹 Rol:</strong> ${roleLabel}<br />
+      <strong>🔐 Código de acceso:</strong> ${accessCode.codigo}</p>
+      <p>📝 Regístrate en el siguiente enlace:<br />
+      <a href="${registerUrl}" target="_blank" rel="noopener noreferrer">${registerUrl}</a></p>
+      <p>Si tienes cualquier duda, no dudes en consultarnos.</p>
+      <p>Un saludo,<br />
+      Equipo de Formación Da Vinci<br />
+      ABEX Excelencia Robótica</p>
+      <p>Este enlace expirará en 7 días.</p>
+    `.trim();
 
     try {
       await sendEmail({
         email: invitacion.email,
         subject: 'Invitación a la plataforma de formación da Vinci',
-        message
+        message,
+        html
       });
       
       // Crear registro de auditoría
       await createAuditLog({
-        usuario: req.user._id,
+        usuario: requester?._id,
         accion: 'invitar_usuario',
         descripcion: `Invitación enviada a: ${email} con rol: ${rol}`,
         ip: req.ip
@@ -715,10 +889,64 @@ exports.inviteUser = async (req, res, next) => {
       console.log(err);
       
       // Eliminar la invitación si no se pudo enviar el email
-      await Invitacion.findByIdAndRemove(invitacion._id);
-      
+      if (!wasExistingInvitation) {
+        await Invitacion.findByIdAndRemove(invitacion._id);
+      }
+
       return next(new ErrorResponse('No se pudo enviar el email de invitación', 500));
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Obtener una invitación pública por token
+// @route   GET /api/users/public/invitations/:token
+// @access  Public
+exports.getInvitationByTokenPublic = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+
+    const invitation = await Invitacion.findOne({ token, estado: 'pendiente' })
+      .populate([
+        { path: 'hospital', select: 'nombre zona' },
+        { path: 'sociedad', select: 'titulo status' }
+      ])
+      .exec();
+
+    if (!invitation) {
+      return next(new ErrorResponse('Invitación no encontrada', 404));
+    }
+
+    if (invitation.haExpirado()) {
+      if (invitation.estado !== 'expirada' && typeof invitation.marcarComoExpirada === 'function') {
+        await invitation.marcarComoExpirada();
+      }
+      return next(new ErrorResponse('Invitación expirada', 410));
+    }
+
+    const accessCode = await AccessCode.findOne({ rol: invitation.rol, tipo: invitation.tipo });
+
+    if (!accessCode) {
+      return next(new ErrorResponse('Invitación no válida', 400));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        email: invitation.email,
+        rol: invitation.rol,
+        tipo: invitation.tipo,
+        codigoAcceso: accessCode.codigo,
+        hospital: invitation.hospital
+          ? { _id: invitation.hospital._id, nombre: invitation.hospital.nombre }
+          : undefined,
+        sociedad: invitation.sociedad
+          ? { _id: invitation.sociedad._id, titulo: invitation.sociedad.titulo }
+          : undefined,
+        zona: invitation.zona || invitation.hospital?.zona
+      }
+    });
   } catch (err) {
     next(err);
   }

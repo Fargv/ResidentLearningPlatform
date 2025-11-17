@@ -91,6 +91,15 @@
     "consentSuffix": " i compleixo amb la LOPD.",
     "registerButton": "Registrar-se"
   },
+  "registerInvite": {
+    "title": "Completa el teu registre",
+    "loading": "Validant la invitació...",
+    "invalid": "La invitació no existeix o ja s'ha utilitzat.",
+    "expired": "Aquesta invitació ha caducat. Sol·licita'n una de nova al teu administrador.",
+    "error": "No hem pogut validar la teva invitació.",
+    "ctaLogin": "Anar a l'inici de sessió",
+    "prefilledNotice": "Hem preomplert les dades de la invitació per a {{email}}. Revisa la informació i completa el registre."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Cancel·lar",
@@ -101,6 +110,7 @@
     "delete": "Eliminar",
     "deleting": "Eliminant...",
     "phase": "Fase",
+    "download": "Descarregar",
     "validate": "Validar",
     "reject": "Rebutjar",
     "processing": "Processant...",
@@ -448,7 +458,7 @@
       "role": "Rol",
       "actions": "Accions"
     },
-    "viewProgress": "Veure progrés"
+    "viewProgress": "Progrés"
   },
   "adminUsers": {
     "titleAll": "Gestió de tots els usuaris",
@@ -522,7 +532,10 @@
     },
     "resetEmail": {
       "subject": "Restablir la contrasenya de {{app}}",
-      "body": "Hola {{name}},\n\nHas sol·licitat restablir la teva contrasenya a {{app}}. Fes clic en l'enllaç següent per triar-ne una de nova:\n\n{{link}}\n\nAquest enllaç és personal, només és vàlid una vegada i caduca en {{days}} dies.\n\nAdministrador del entorno"
+      "body": "Hola {{name}},\n\nHas sol·licitat restablir la teva contrasenya a {{app}}. Fes clic en l'enllaç següent per triar-ne una de nova:\n\n{{link}}\n\nAquest enllaç és personal, només és vàlid una vegada i caduca en {{days}} dies.\n\nAdministrador del entorno",
+      "confirm": "Vols enviar l'enllaç de restabliment a {{email}}?",
+      "sent": "Enllaç de restabliment enviat a {{email}}",
+      "unknownEmail": "aquest usuari"
     },
     "_comment": "Gestió d'usuaris per a administradors",
     "buttons": {
@@ -660,7 +673,7 @@
       "rejected": "No hi ha validacions rebutjades"
     },
     "actions": {
-      "viewAttachment": "Veure adjunt"
+      "viewAttachment": "Adjunts"
     },
     "dialog": {
       "validateTitle": "Validar Activitat",
@@ -674,7 +687,7 @@
     "errorLoad": "Error en carregar les validacions",
     "_comment": "Validacions gestionades per Tutors",
     "buttons": {
-      "viewAttachment": "Veure adjunt",
+      "viewAttachment": "Adjunts",
       "validate": "Validar",
       "reject": "Rebutjar",
       "cancel": "Cancel·lar"
@@ -694,7 +707,8 @@
       "processing": "Processant..."
     },
     "messages": {
-      "loadError": "Error en carregar les validacions"
+      "loadError": "Error en carregar les validacions",
+      "noAttachments": "No hi ha adjunts disponibles"
     }
   },
   "auth": {
@@ -716,12 +730,12 @@
   },
   "forgotPassword": {
     "heading": "Has oblidat la contrasenya?",
-    "description": "Per restablir la contrasenya posa't en contacte amb l'administrador del sistema.",
+    "description": "Introdueix el teu correu i t'enviarem instruccions automàtiques per restablir la contrasenya.",
     "emailLabel": "El teu correu",
-    "submit": "Enviar correu a l'administrador",
-    "backToLogin": "Tornar a iniciar sessió",
-    "requestSent": "Sol·licitud enviada.",
-    "error": "Error en enviar la sol·licitud.",
+    "submit": "Enviar restabliment automàtic",
+    "backToLogin": "Tornar a l'inici de sessió",
+    "success": "Si el correu existeix, t'hem enviat les instruccions de restabliment.",
+    "error": "No s'ha pogut completar el restabliment automàtic.",
     "emailNotFound": "No existeix cap usuari amb aquest correu. Introdueix-ne un de vàlid."
   },
   "resetPassword": {
@@ -952,18 +966,24 @@
       "otherSurgeryTooltip": "Escriu el nom de la cirurgia",
       "surgeonName": "Nom del cirurgià",
       "participation": "Percentatge de participació",
-      "selectFile": "Seleccionar fitxer",
+      "selectFile": "Seleccionar fitxers",
       "cancel": "Cancel·lar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta l’ID del progrés",
       "noActivitySelected": "No s'ha seleccionat cap activitat",
       "selectDate": "Selecciona una data de realització",
-      "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+      "optionalFileHint": "Pots adjuntar fins a {{max}} fitxers (màx. 5MB cadascun)",
+      "maxFilesReached": "Has assolit el límit de 5 fitxers per a aquesta activitat.",
       "fileTooLarge": "El fitxer supera la mida màxima de 5MB.",
       "surgeryRequired": "Selecciona o escriu un procediment",
       "surgeonNameRequired": "Introdueix el nom del cirurgià",
       "participationRequired": "Selecciona un percentatge de participació",
       "title": "Marcar activitat com a completada",
+      "editTitle": "Editar activitat enviada",
+      "currentFiles": "Fitxers actuals",
+      "newAttachments": "Nous fitxers seleccionats",
+      "removeAttachment": "Eliminar fitxer",
+      "allMarkedForRemoval": "Has marcat tots els fitxers existents per eliminar.",
       "date": "Data de realització"
     },
     "messages": {

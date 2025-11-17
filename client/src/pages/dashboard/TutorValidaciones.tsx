@@ -23,11 +23,14 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
+import { Theme } from '@mui/material/styles';
 import {
   CheckCircle as CheckCircleIcon,
   //Pending as PendingIcon,
-  Error as ErrorIcon
-  //School as SchoolIcon
+  Error as ErrorIcon,
+  //School as SchoolIcon,
+  OpenInNew as OpenInNewIcon,
+  Download as DownloadIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
@@ -59,6 +62,19 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+const getTableHeadStyles = (theme: Theme) => {
+  const backgroundColor =
+    theme.palette.mode === 'dark' ? theme.palette.primary.dark : theme.palette.primary.light;
+
+  return {
+    backgroundColor,
+    '& .MuiTableCell-root': {
+      color: theme.palette.getContrastText(backgroundColor),
+      fontWeight: 600
+    }
+  };
+};
+
 const TutorValidaciones: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -74,6 +90,10 @@ const TutorValidaciones: React.FC = () => {
   const [comentarios, setComentarios] = useState('');
   const [procesando, setProcesando] = useState(false);
   const [firmaDigital, setFirmaDigital] = useState('');
+  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
+  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
+  const attachmentButtonStyles = { minWidth: 160, height: 36 };
+  const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
 
   const formatFase = (fase: any) =>
     fase
@@ -121,13 +141,56 @@ useEffect(() => {
     setOpenValidarDialog(true);
   };
 
-  const handleVerAdjunto = async (progresoId: string, index: number) => {
+  const handleOpenAdjuntosDialog = (progreso: any) => {
+    setAdjuntosSeleccionados({
+      progresoId: progreso.progresoId || progreso._id.split('-')[0],
+      index: progreso.index,
+      adjuntos: progreso.adjuntos || []
+    });
+    setOpenAdjuntosDialog(true);
+  };
+
+  const handleCloseAdjuntosDialog = () => {
+    setOpenAdjuntosDialog(false);
+    setAdjuntosSeleccionados(null);
+  };
+
+  const handleVerAdjunto = async (progresoId: string, index: number, adjuntoId: string) => {
     try {
-      const res = await api.get(`/adjuntos/actividad/${progresoId}/${index}`, { responseType: 'blob' });
-      const url = URL.createObjectURL(res.data);
-      window.open(url, '_blank');
+      const res = await api.get(
+        `/adjuntos/actividad/${progresoId}/${index}`,
+        {
+          params: { adjuntoId },
+          responseType: 'blob'
+        }
+      );
+      const blobUrl = URL.createObjectURL(res.data);
+      window.open(blobUrl, '_blank');
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
     } catch (e) {
       console.error('Error obteniendo adjunto', e);
+    }
+  };
+
+  const handleDescargarAdjunto = async (adjunto: { _id: string; nombreArchivo: string }, progresoId: string, index: number) => {
+    try {
+      const res = await api.get(`/adjuntos/${adjunto._id}/download`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(res.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', adjunto.nombreArchivo || 'adjunto');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Error descargando adjunto', e);
+      // Como fallback, intentar abrirlo si la descarga falla
+      try {
+        await handleVerAdjunto(progresoId, index, adjunto._id);
+      } catch (innerError) {
+        console.error('Error mostrando adjunto tras fallo de descarga', innerError);
+      }
     }
   };
 
@@ -249,7 +312,7 @@ const handleRechazar = async () => {
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
                   <TableRow>
                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
@@ -282,52 +345,51 @@ const handleRechazar = async () => {
                       </TableCell>
                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
                       <TableCell align="right">
-                        {progreso.tieneAdjunto && (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          {progreso.adjuntos?.length > 0 && (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                              onClick={() => handleOpenAdjuntosDialog(progreso)}
+                              sx={actionButtonStyles}
+                            >
+                              {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
+                            </Button>
+                          )}
                           <Button
-                            variant="outlined"
+                            variant="contained"
+                            color="success"
                             size="small"
-                            sx={{ mr: 1 }}
+                            startIcon={<CheckCircleIcon />}
                             onClick={() =>
-                              handleVerAdjunto(
-                                progreso.progresoId || progreso._id.split('-')[0],
-                                progreso.index
-                              )
+                              handleOpenValidarDialog({
+                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
+                                index: progreso.index,
+                                ...progreso
+                              })
                             }
+                            sx={actionButtonStyles}
                           >
-                            {t('tutorValidations.buttons.viewAttachment')}
+                            {t('tutorValidations.buttons.validate')}
                           </Button>
-                        )}
-                        <Button
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          startIcon={<CheckCircleIcon />}
-                          sx={{ mr: 1 }}
-                          onClick={() =>
-                            handleOpenValidarDialog({
-                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
-                              index: progreso.index,
-                              ...progreso
-                            })
-                          }
-                        >
-                          {t('tutorValidations.buttons.validate')}
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          size="small"
-                          startIcon={<ErrorIcon />}
-                          onClick={() =>
-                            handleOpenRechazarDialog({
-                              progresoId: progreso.progresoId || progreso._id.split('-')[0],
-                              index: progreso.index,
-                              ...progreso
-                            })
-                          }
-                        >
-                          {t('tutorValidations.buttons.reject')}
-                        </Button>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            size="small"
+                            startIcon={<ErrorIcon />}
+                            onClick={() =>
+                              handleOpenRechazarDialog({
+                                progresoId: progreso.progresoId || progreso._id.split('-')[0],
+                                index: progreso.index,
+                                ...progreso
+                              })
+                            }
+                            sx={actionButtonStyles}
+                          >
+                            {t('tutorValidations.buttons.reject')}
+                          </Button>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -346,7 +408,7 @@ const handleRechazar = async () => {
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
                   <TableRow>
                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
@@ -397,7 +459,7 @@ const handleRechazar = async () => {
           ) : (
             <TableContainer component={Paper}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={(theme) => getTableHeadStyles(theme)}>
                   <TableRow>
                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
@@ -527,6 +589,68 @@ const handleRechazar = async () => {
           >
             {procesando ? t('common.processing') : t('tutorValidations.buttons.reject')}
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openAdjuntosDialog} onClose={handleCloseAdjuntosDialog} fullWidth maxWidth="sm">
+        <DialogTitle>{t('tutorValidations.buttons.viewAttachment')}</DialogTitle>
+        <DialogContent>
+          {adjuntosSeleccionados?.adjuntos?.length ? (
+            adjuntosSeleccionados.adjuntos.map((adjunto: any) => (
+              <Box
+                key={adjunto._id}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  mb: 2,
+                  gap: 2
+                }}
+              >
+                <Box>
+                  <Typography variant="subtitle1">{adjunto.nombreArchivo}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {adjunto.fechaSubida ? formatDayMonthYear(adjunto.fechaSubida) : ''}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<OpenInNewIcon />}
+                    onClick={() =>
+                      handleVerAdjunto(
+                        adjuntosSeleccionados.progresoId,
+                        adjuntosSeleccionados.index,
+                        adjunto._id
+                      )
+                    }
+                    sx={attachmentButtonStyles}
+                  >
+                    {t('tutorValidations.buttons.viewAttachment')}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    startIcon={<DownloadIcon />}
+                    onClick={() =>
+                      handleDescargarAdjunto(adjunto, adjuntosSeleccionados.progresoId, adjuntosSeleccionados.index)
+                    }
+                    sx={attachmentButtonStyles}
+                  >
+                    {t('common.download')}
+                  </Button>
+                </Box>
+              </Box>
+            ))
+          ) : (
+            <DialogContentText>
+              {t('tutorValidations.messages.noAttachments')}
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAdjuntosDialog}>{t('tutorValidations.buttons.cancel')}</Button>
         </DialogActions>
       </Dialog>
     </Box>

@@ -29,11 +29,13 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Download as DownloadIcon,
   Assessment as AssessmentIcon,
+  ArrowDropDown as ArrowDropDownIcon,
 
    //Person as PersonIcon,
   //Email as EmailIcon
@@ -44,7 +46,7 @@ import api, {
   createUser,
   updateUserPassword,
   getTutors,
-  getUserResetToken,
+  sendResetPasswordEmail,
   clearResetNotifications,
 } from "../../api";
 import InviteUsersMail from "../../components/InviteUsersMail";
@@ -52,6 +54,101 @@ import BackButton from "../../components/BackButton";
 import { useTranslation, Trans } from "react-i18next";
 import { getRoleChipSx } from "../../utils/roleChipColors";
 import { FaseCirugia } from "../../types/FaseCirugia";
+
+const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  flexWrap: "wrap",
+  gap: 1,
+  justifyContent: "center",
+};
+
+const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+  minWidth: { xs: "100%", sm: 180 },
+  height: 40,
+  fontSize: "0.9rem",
+  mt: { xs: 1, sm: 0 },
+  fontWeight: 600,
+  flexBasis: { xs: "100%", sm: "auto" },
+};
+
+const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+  gap: 0.75,
+};
+
+const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
+  width: { xs: "100%", sm: 140 },
+  maxWidth: "100%",
+  height: 36,
+  fontSize: "0.8rem",
+  mt: 0,
+  fontWeight: 600,
+};
+
+const getEditActionButtonStyles = (theme: Theme) => {
+  const baseBg =
+    theme.palette.mode === "light"
+      ? theme.palette.primary.main
+      : theme.palette.primary.dark;
+  const hoverBg =
+    theme.palette.mode === "light"
+      ? theme.palette.primary.dark
+      : theme.palette.primary.main;
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    "&:hover": {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const getProgressActionButtonStyles = (theme: Theme) => {
+  const baseBg = theme.palette.mode === "light" ? "#EC407A" : "#F06292";
+  const hoverBg = theme.palette.mode === "light" ? "#D81B60" : "#EC407A";
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    "&:hover": {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const getPasswordButtonStyles = (theme: Theme) => {
+  const baseBg = theme.palette.mode === "light" ? "#7E57C2" : "#9575CD";
+  const hoverBg = theme.palette.mode === "light" ? "#673AB7" : "#7E57C2";
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    "&:hover": {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const PASSWORD_ACTION_ROLES = [
+  "administrador",
+  "tutor",
+  "profesor",
+  "csm",
+  "instructor",
+];
+
+const CENTERED_DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  justifyContent: "center",
+  gap: 1,
+  flexWrap: "wrap",
+};
 
 const AdminUsuarios: React.FC = () => {
   const { user } = useAuth();
@@ -88,7 +185,10 @@ const AdminUsuarios: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuariosLista] = useState<any[]>([]);
   const [hospitales, setHospitales] = useState<any[]>([]);
-  const [sociedades, setSociedades] = useState<any[]>([]);
+  const [sociedades, setSociedades] = useState<{
+    _id: string;
+    nombre: string;
+  }[]>([]);
   const [openInvitarDialog, setOpenInvitarDialog] = useState(false);
   const [openCrearDialog, setOpenCrearDialog] = useState(false);
   const [openEditarDialog, setOpenEditarDialog] = useState(false);
@@ -133,6 +233,9 @@ const AdminUsuarios: React.FC = () => {
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
   const [selectedFases, setSelectedFases] = useState<string[]>([]);
   const [tutores, setTutores] = useState<any[]>([]);
+  const [passwordMenuAnchorEl, setPasswordMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const isPasswordMenuOpen = Boolean(passwordMenuAnchorEl);
 
   const roleOptions =
     formData.tipo === "Programa Sociedades" ? rolesSociedades : rolesResidentes;
@@ -192,8 +295,18 @@ const AdminUsuarios: React.FC = () => {
         setHospitales(hospitalesRes.data.data);
 
         const sociedadesRes = await api.get("/sociedades");
+        const sociedadesData =
+          (sociedadesRes.data && sociedadesRes.data.data) ||
+          sociedadesRes.data ||
+          [];
+        const sociedadesActivas = Array.isArray(sociedadesData)
+          ? sociedadesData.filter((s: any) => s.status === "ACTIVO")
+          : [];
         setSociedades(
-          sociedadesRes.data.filter((s: any) => s.status === "ACTIVO"),
+          sociedadesActivas.map((s: any) => ({
+            _id: s._id,
+            nombre: s.nombre ?? s.titulo ?? "",
+          })),
         );
       } catch (err: any) {
         setError(err.response?.data?.error || t("adminUsers.loadError"));
@@ -274,7 +387,18 @@ const AdminUsuarios: React.FC = () => {
 
   const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenEditarDialog(false);
+    setPasswordMenuAnchorEl(null);
     if (clearSelected) setSelectedUsuario(null);
+  };
+
+  const handleOpenPasswordMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setPasswordMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePasswordMenu = () => {
+    setPasswordMenuAnchorEl(null);
   };
 
   const handleOpenEliminarDialog = (usuario: any) => {
@@ -299,29 +423,28 @@ const AdminUsuarios: React.FC = () => {
   };
 
   const handleSendResetEmail = async (usuario: any) => {
+    if (!usuario?.email) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      t("adminUsers.resetEmail.confirm", { email: usuario.email }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
-      const res = await getUserResetToken(usuario._id);
-      const resetToken = res.data.resetToken;
-      const frontendUrl =
-        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
-      const days = parseInt(
-        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || "3",
-        10,
-      );
-      const subject = encodeURIComponent(
-        t("adminUsers.resetEmail.subject", { app: t("common.appName") }),
-      );
-      const body = encodeURIComponent(
-        t("adminUsers.resetEmail.body", {
-          name: usuario.nombre,
-          app: t("common.appName"),
-          link: `${frontendUrl}/reset-password/${resetToken}`,
-          days,
-        }),
-      );
-      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
+      const res = await sendResetPasswordEmail(usuario._id);
+      const targetEmail = res.data?.email || usuario.email;
+
       await clearResetNotifications(usuario._id);
+      setSnackbar({
+        open: true,
+        message: t("adminUsers.resetEmail.sent", { email: targetEmail }),
+        severity: "success",
+      });
     } catch (err: any) {
       setSnackbar({
         open: true,
@@ -621,7 +744,7 @@ const AdminUsuarios: React.FC = () => {
   );
   const hospitalSociedadOptions = [
     ...hospitales.map((h) => ({ _id: h._id, nombre: h.nombre })),
-    ...sociedades.map((s) => ({ _id: s._id, nombre: s.titulo })),
+    ...sociedades.map((s) => ({ _id: s._id, nombre: s.nombre })),
   ];
 
   const displayUsuarios = usuarios
@@ -669,8 +792,16 @@ const AdminUsuarios: React.FC = () => {
           bVal = (b as any)[sortField] || "";
           break;
         case "hospital":
-          aVal = a.hospital?.nombre || a.sociedad?.titulo || "";
-          bVal = b.hospital?.nombre || b.sociedad?.titulo || "";
+          aVal =
+            a.hospital?.nombre ||
+            a.sociedad?.nombre ||
+            a.sociedad?.titulo ||
+            "";
+          bVal =
+            b.hospital?.nombre ||
+            b.sociedad?.nombre ||
+            b.sociedad?.titulo ||
+            "";
           break;
         default:
           break;
@@ -810,7 +941,24 @@ const AdminUsuarios: React.FC = () => {
         <TableContainer>
           <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
             <TableHead>
-              <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
+              <TableRow
+                sx={(theme) => {
+                  const backgroundColor =
+                    theme.palette.mode === "light"
+                      ? theme.palette.primary.light
+                      : theme.palette.primary.dark;
+                  const textColor = theme.palette.getContrastText(backgroundColor);
+
+                  return {
+                    backgroundColor,
+                    "& .MuiTableCell-root": {
+                      backgroundColor,
+                      color: textColor,
+                      fontWeight: 600,
+                    },
+                  };
+                }}
+              >
                 <TableCell
                   onClick={() => handleSort("nombre")}
                   sx={{ cursor: "pointer" }}
@@ -838,7 +986,14 @@ const AdminUsuarios: React.FC = () => {
                   {t("adminUsers.table.hospital")}
                 </TableCell>
                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
-                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
+                <TableCell
+                  sx={{
+                    width: { xs: 160, md: 200 },
+                    maxWidth: { xs: 160, md: 220 },
+                  }}
+                >
+                  {t("adminUsers.table.tutor")}
+                </TableCell>
                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
                 <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
                 <TableCell sx={{ width: 40 }}></TableCell>
@@ -857,7 +1012,11 @@ const AdminUsuarios: React.FC = () => {
                       ? t(`types.${typeKey(usuario.tipo)}`)
                       : "-"}
                   </TableCell>
-                  <TableCell>{usuario.sociedad?.titulo || "-"}</TableCell>
+                  <TableCell>
+                    {usuario.sociedad?.nombre ||
+                      usuario.sociedad?.titulo ||
+                      "-"}
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={t(`roles.${usuario.rol}`)}
@@ -867,7 +1026,13 @@ const AdminUsuarios: React.FC = () => {
                   </TableCell>
                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
                   <TableCell>{usuario.especialidad || "-"}</TableCell>
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      width: { xs: 160, md: 200 },
+                      maxWidth: { xs: 160, md: 220 },
+                      whiteSpace: "normal",
+                    }}
+                  >
                     {usuario.rol === "residente"
                       ? usuario.tutor && typeof usuario.tutor === "object"
                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
@@ -918,20 +1083,15 @@ const AdminUsuarios: React.FC = () => {
                     ) : null}
                   </TableCell>
                   <TableCell align="right">
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 2,
-                        flexWrap: 'wrap',
-                        '& > *': { minWidth: 150 },
-                      }}
-                    >
+                    <Box sx={TABLE_ACTIONS_CONTAINER_SX}>
                       <Button
-                        variant="outlined"
-                        color="primary"
+                        variant="contained"
                         onClick={() => handleOpenEditarDialog(usuario)}
-                        size="small"
                         startIcon={<EditIcon />}
+                        sx={[
+                          TABLE_ACTION_BUTTON_SX,
+                          (theme) => getEditActionButtonStyles(theme),
+                        ]}
                       >
                         {t("adminUsers.actions.edit")}
                       </Button>
@@ -939,15 +1099,17 @@ const AdminUsuarios: React.FC = () => {
                         user?.rol === "administrador" &&
                         usuario.tieneProgreso && (
                           <Button
-                            variant="outlined"
-                            size="small"
-                            color="secondary"
+                            variant="contained"
                             startIcon={<AssessmentIcon />}
                             onClick={() =>
                               navigate(
                                 `/dashboard/progreso-usuario/${usuario._id}`,
                               )
                             }
+                            sx={[
+                              TABLE_ACTION_BUTTON_SX,
+                              (theme) => getProgressActionButtonStyles(theme),
+                            ]}
                           >
                             {t('adminUserProgress.viewProgress')}
                           </Button>
@@ -957,7 +1119,7 @@ const AdminUsuarios: React.FC = () => {
                           <Button
                             variant="outlined"
                             onClick={() => handleCrearProgreso(usuario._id)}
-                            size="small"
+                            sx={TABLE_ACTION_BUTTON_SX}
                           >
                             {t("adminUsers.actions.createProgress")}
                           </Button>
@@ -976,6 +1138,8 @@ const AdminUsuarios: React.FC = () => {
       <InviteUsersMail
         open={openInvitarDialog}
         onClose={handleCloseInvitarDialog}
+        hospitals={hospitales}
+        societies={sociedades}
       />
 
       {/* Diálogo para actualizar contraseña */}
@@ -995,13 +1159,21 @@ const AdminUsuarios: React.FC = () => {
             sx={{ mb: 2 }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePasswordDialog}>{t("common.cancel")}</Button>
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleClosePasswordDialog()}
+            sx={{ minWidth: 140 }}
+          >
+            {t("common.cancel")}
+          </Button>
           <Button
             onClick={handleActualizarPassword}
             variant="contained"
-            color="secondary"
             disabled={procesando || !passwordValue}
+            sx={(theme) => ({
+              minWidth: 180,
+              ...getPasswordButtonStyles(theme),
+            })}
           >
             {procesando
               ? t("adminUsers.password.updating")
@@ -1202,7 +1374,7 @@ const AdminUsuarios: React.FC = () => {
               >
                 {sociedades.map((s) => (
                   <option key={s._id} value={s._id}>
-                    {s.titulo}
+                    {s.nombre}
                   </option>
                 ))}
               </TextField>
@@ -1230,8 +1402,10 @@ const AdminUsuarios: React.FC = () => {
             </TextField>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCrearDialog}>{t("common.cancel")}</Button>
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button onClick={handleCloseCrearDialog} sx={{ minWidth: 140 }}>
+            {t("common.cancel")}
+          </Button>
           <Button
             onClick={handleCrear}
             variant="contained"
@@ -1406,30 +1580,97 @@ const AdminUsuarios: React.FC = () => {
             </TextField>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleCloseEditarDialog()} color="primary">
+        <DialogActions sx={DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleCloseEditarDialog()}
+            variant="outlined"
+            color="inherit"
+            sx={[
+              ACTION_BUTTON_BASE_SX,
+              (theme) => ({
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? theme.palette.grey[200]
+                    : theme.palette.grey[700],
+                color: theme.palette.error.main,
+                borderColor: theme.palette.error.main,
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? theme.palette.grey[300]
+                      : theme.palette.grey[600],
+                  borderColor: theme.palette.error.main,
+                },
+              }),
+            ]}
+          >
             {t("common.cancel")}
           </Button>
-          {user?.rol === "administrador" && (
-            <Button
-              onClick={() => {
-                handleOpenPasswordDialog(selectedUsuario);
-                handleCloseEditarDialog(false);
-              }}
-              color="secondary"
-              variant="outlined"
-            >
-              {t("adminUsers.actions.changePassword")}
-            </Button>
-          )}
-          {user?.rol === "administrador" && (
-            <Button
-              onClick={() => handleSendResetEmail(selectedUsuario)}
-              color="info"
-              variant="outlined"
-            >
-              {t("adminUsers.actions.sendResetLink")}
-            </Button>
+          {PASSWORD_ACTION_ROLES.includes(user?.rol ?? "") && (
+            <>
+              <Button
+                onClick={(event) => handleOpenPasswordMenu(event)}
+                variant="contained"
+                sx={[
+                  ACTION_BUTTON_BASE_SX,
+                  (theme) => getPasswordButtonStyles(theme),
+                ]}
+                endIcon={<ArrowDropDownIcon />}
+                aria-controls={
+                  isPasswordMenuOpen ? "password-actions-menu" : undefined
+                }
+                aria-haspopup="true"
+                aria-expanded={isPasswordMenuOpen ? "true" : undefined}
+              >
+                {t("adminUsers.actions.changePassword")}
+              </Button>
+              <Menu
+                id="password-actions-menu"
+                anchorEl={passwordMenuAnchorEl}
+                open={isPasswordMenuOpen}
+                onClose={handleClosePasswordMenu}
+              >
+                <MenuItem
+                  onClick={() => {
+                    if (!selectedUsuario) {
+                      handleClosePasswordMenu();
+                      return;
+                    }
+                    handleClosePasswordMenu();
+                    handleOpenPasswordDialog(selectedUsuario);
+                    handleCloseEditarDialog(false);
+                  }}
+                >
+                  {t("adminUsers.actions.changePassword")}
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    if (!selectedUsuario) {
+                      handleClosePasswordMenu();
+                      return;
+                    }
+                    handleClosePasswordMenu();
+                    handleSendResetEmail(selectedUsuario);
+                  }}
+                  sx={(theme) => ({
+                    color: theme.palette.warning.main,
+                    "&:hover": {
+                      backgroundColor:
+                        theme.palette.mode === "light"
+                          ? theme.palette.warning.light
+                          : theme.palette.warning.dark,
+                      color: theme.palette.getContrastText(
+                        theme.palette.mode === "light"
+                          ? theme.palette.warning.light
+                          : theme.palette.warning.dark,
+                      ),
+                    },
+                  })}
+                >
+                  {t("adminUsers.actions.sendResetLink")}
+                </MenuItem>
+              </Menu>
+            </>
           )}
           <Button
             onClick={() => {
@@ -1437,14 +1678,35 @@ const AdminUsuarios: React.FC = () => {
               handleCloseEditarDialog(false);
             }}
             color="error"
-            variant="outlined"
+            variant="contained"
+            sx={ACTION_BUTTON_BASE_SX}
           >
             {t("adminUsers.delete.title")}
           </Button>
           <Button
             onClick={handleEditar}
-            color="primary"
             variant="contained"
+            sx={[
+              ACTION_BUTTON_BASE_SX,
+              (theme) => {
+                const baseBg =
+                  theme.palette.mode === "light"
+                    ? theme.palette.success.main
+                    : theme.palette.success.dark;
+                const hoverBg =
+                  theme.palette.mode === "light"
+                    ? theme.palette.success.dark
+                    : theme.palette.success.main;
+                return {
+                  backgroundColor: baseBg,
+                  color: theme.palette.getContrastText(baseBg),
+                  "&:hover": {
+                    backgroundColor: hoverBg,
+                    color: theme.palette.getContrastText(hoverBg),
+                  },
+                };
+              },
+            ]}
             disabled={
               procesando ||
               !formData.nombre ||
@@ -1475,8 +1737,8 @@ const AdminUsuarios: React.FC = () => {
             />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEliminarDialog} color="primary">
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button onClick={handleCloseEliminarDialog} sx={{ minWidth: 140 }}>
             {t("common.cancel")}
           </Button>
           <Button

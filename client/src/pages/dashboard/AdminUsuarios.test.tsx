@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AdminUsuarios from './AdminUsuarios';
 import { I18nextProvider } from 'react-i18next';
@@ -17,6 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 const mockedUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 const mockedGet = (api as any).get as jest.Mock;
 const mockedPut = (api as any).put as jest.Mock;
+const mockedPost = (api as any).post as jest.Mock;
 
 beforeEach(() => {
   mockedUseAuth.mockReturnValue({ user: { rol: 'administrador' } } as any);
@@ -25,6 +26,10 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.clearAllMocks();
+  mockedGet.mockReset();
+  mockedPut.mockReset();
+  mockedPost.mockReset();
+  jest.useRealTimers();
 });
 
 test('muestra boton Ver Progreso cuando tiene progreso', async () => {
@@ -205,5 +210,104 @@ test('envía tutor vacío al desasignar en edición', async () => {
       '/users/u1',
       expect.objectContaining({ tutor: '' })
     );
+  });
+});
+
+test('invita usuarios por API sin abrir mailto', async () => {
+  jest.useFakeTimers();
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  const initialHref = window.location.href;
+
+  mockedGet.mockImplementation((url: string) => {
+    switch (url) {
+      case '/users':
+        return Promise.resolve({
+          data: {
+            data: [
+              {
+                _id: 'u1',
+                nombre: 'Res',
+                apellidos: 'A',
+                email: 'r@a.com',
+                rol: 'residente',
+                tipo: 'Programa Residentes',
+                tieneProgreso: false,
+              },
+            ],
+          },
+        });
+      case '/progreso/residente/u1':
+        return Promise.resolve({ data: { data: [] } });
+      case '/hospitals':
+        return Promise.resolve({
+          data: { data: [{ _id: 'h1', nombre: 'Hospital 1' }] },
+        });
+      case '/sociedades':
+        return Promise.resolve({
+          data: [{ _id: 's1', nombre: 'Sociedad 1', status: 'ACTIVO' }],
+        });
+      case '/access-codes':
+        return Promise.resolve({
+          data: {
+            data: [
+              {
+                codigo: 'CODE1',
+                rol: 'residente',
+                tipo: 'Programa Residentes',
+              },
+            ],
+          },
+        });
+      default:
+        return Promise.resolve({ data: { data: [] } });
+    }
+  });
+
+  mockedPost.mockResolvedValue({ data: { data: {} } });
+
+  render(
+    <I18nextProvider i18n={i18n}>
+      <AdminUsuarios />
+    </I18nextProvider>
+  );
+
+  const inviteButton = await screen.findByRole('button', {
+    name: /Invitar Usuario/i,
+  });
+  await user.click(inviteButton);
+
+  await screen.findByText('Invitar Usuarios');
+
+  const roleSelect = await screen.findByLabelText('Rol');
+  await user.selectOptions(roleSelect, 'residente');
+
+  const hospitalSelect = await screen.findByLabelText('Hospital');
+  await user.selectOptions(hospitalSelect, 'h1');
+
+  const emailInput = await screen.findByLabelText('Email 1');
+  await user.type(emailInput, 'residente@example.com');
+
+  const sendButton = screen.getByRole('button', { name: 'Enviar invitación' });
+  await user.click(sendButton);
+
+  await waitFor(() => {
+    expect(mockedPost).toHaveBeenCalledTimes(1);
+  });
+
+  const payload = mockedPost.mock.calls[0][1];
+  expect(payload).toMatchObject({
+    email: 'residente@example.com',
+    rol: 'residente',
+    tipo: 'Programa Residentes',
+    hospital: 'h1',
+  });
+  expect(payload).not.toHaveProperty('sociedad');
+
+  expect(window.location.href).toBe(initialHref);
+
+  await screen.findByText('Invitación enviada correctamente.');
+
+  await act(async () => {
+    jest.runOnlyPendingTimers();
   });
 });

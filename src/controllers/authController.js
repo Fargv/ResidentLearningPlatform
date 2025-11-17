@@ -9,6 +9,7 @@ const AccessCode = require('../models/AccessCode');
 const Hospital = require('../models/Hospital');
 const Notificacion = require('../models/Notificacion');
 const ErrorResponse = require('../utils/errorResponse');
+const sendEmail = require('../utils/sendEmail');
 const config = require('../config/config');
 const { inicializarProgresoFormativo } = require('../utils/initProgreso');
 const { Role } = require('../utils/roles');
@@ -276,11 +277,41 @@ const updatePassword = async (req, res, next) => {
 
 const requestPasswordReset = async (req, res, next) => {
   try {
-    const { email } = req.body;
+    const { email, mode } = req.body;
     const user = await User.findOne({ email }).populate('hospital');
 
     if (!user) {
       return next(new ErrorResponse('No existe un usuario con ese email', 404));
+    }
+
+    if (mode === 'automatic') {
+      const resetToken = user.getResetPasswordToken(24 * 60 * 60 * 1000);
+      await user.save({ validateBeforeSave: false });
+
+      let frontendUrl = process.env.FRONTEND_URL || '';
+      frontendUrl = frontendUrl ? frontendUrl.replace(/\/$/, '') : 'https://residentlearningplatform.netlify.app';
+      const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+
+      const message = `Hola ${user.nombre || ''},\n\n` +
+        'Has solicitado restablecer tu contraseña en la plataforma Resident Learning Platform.\n' +
+        `Haz clic en el siguiente enlace para continuar con el proceso:\n\n${resetUrl}\n\n` +
+        'Si no solicitaste este cambio, puedes ignorar este mensaje.';
+
+      try {
+        await sendEmail({
+          email: user.email,
+          subject: 'Restablecimiento de contraseña',
+          message
+        });
+      } catch (err) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        return next(new ErrorResponse('No se pudo enviar el email de restablecimiento', 500));
+      }
+
+      return res.status(200).json({ success: true });
     }
 
     const destinatarios = new Set();
@@ -340,7 +371,60 @@ const forgotPassword = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    res.status(200).json({ success: true, resetToken });
+    const baseFrontendUrl =
+      config.frontendUrl || 'https://residentlearningplatform.netlify.app';
+    const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
+      ? baseFrontendUrl.slice(0, -1)
+      : baseFrontendUrl;
+    const resetUrl = `${normalizedBaseUrl}/reset-password/${resetToken}`;
+
+    const fullName = [user.nombre, user.apellidos]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    const recipientName = fullName || user.email;
+
+    const subject = 'Restablece tu contraseña en Resident Learning Platform';
+    const textMessage = `Hola ${recipientName},
+
+Hemos recibido una solicitud para restablecer tu contraseña en Resident Learning Platform.
+
+Puedes completar el proceso utilizando el siguiente enlace: ${resetUrl}
+
+Si no solicitaste este cambio, puedes ignorar este mensaje.`;
+    const htmlMessage = `<p>Hola ${recipientName},</p>
+<p>Hemos recibido una solicitud para restablecer tu contraseña en <strong>Resident Learning Platform</strong>.</p>
+<p>Puedes completar el proceso utilizando el siguiente enlace:</p>
+<p><a href="${resetUrl}">${resetUrl}</a></p>
+<p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p>`;
+
+    try {
+      await sendEmail({
+        to: [{ email: user.email, name: recipientName }],
+        subject,
+        message: textMessage,
+        html: htmlMessage
+      });
+    } catch (emailError) {
+      console.error('[forgotPassword] Error enviando email de restablecimiento', {
+        userId: user._id?.toString(),
+        email: user.email,
+        error: emailError?.message || emailError
+      });
+
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return next(
+        new ErrorResponse(
+          'No se pudo enviar el email de restablecimiento de contraseña',
+          500
+        )
+      );
+    }
+
+    res.status(200).json({ success: true });
   } catch (err) {
     next(err);
   }

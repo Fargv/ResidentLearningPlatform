@@ -1,26 +1,110 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Box, Typography, Paper, Button, TextField,
-  Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  IconButton, Chip, LinearProgress, Alert, Snackbar,
-  Autocomplete, Tooltip, CircularProgress, Backdrop, Menu, MenuItem
+  Alert,
+  Autocomplete,
+  Backdrop,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Download as DownloadIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Download as DownloadIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+} from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation, Trans } from 'react-i18next';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import type { SxProps, Theme } from '@mui/material/styles';
 import api, {
   updateUserPassword,
-  getUserResetToken,
+  sendResetPasswordEmail,
   clearResetNotifications,
 } from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
 import { FaseCirugia } from '../../types/FaseCirugia';
 
+const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  flexWrap: 'wrap',
+  gap: 1,
+  justifyContent: 'center',
+};
+
+const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+  minWidth: { xs: '100%', sm: 220 },
+  height: 44,
+  mt: { xs: 1, sm: 0 },
+  fontWeight: 600,
+  flexBasis: { xs: '100%', sm: 'auto' },
+};
+
+const getPasswordButtonStyles = (theme: Theme) => {
+  const baseBg = theme.palette.mode === 'light' ? '#7E57C2' : '#9575CD';
+  const hoverBg = theme.palette.mode === 'light' ? '#673AB7' : '#7E57C2';
+
+  return {
+    backgroundColor: baseBg,
+    color: theme.palette.getContrastText(baseBg),
+    '&:hover': {
+      backgroundColor: hoverBg,
+      color: theme.palette.getContrastText(hoverBg),
+    },
+  };
+};
+
+const PASSWORD_ACTION_ROLES = [
+  'administrador',
+  'tutor',
+  'profesor',
+  'csm',
+  'instructor',
+];
+
+const CENTERED_DIALOG_ACTIONS_SX: SxProps<Theme> = {
+  justifyContent: 'center',
+  gap: 1,
+  flexWrap: 'wrap',
+};
+
 const TutorUsuarios: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const defaultProgramType = useMemo(() => {
+    if (user?.tipo) {
+      return user.tipo;
+    }
+    if (user?.rol === 'profesor') {
+      return 'Programa Sociedades';
+    }
+    return 'Programa Residentes';
+  }, [user?.tipo, user?.rol]);
   const typeKey = (tipo?: string) =>
     tipo === 'Programa Sociedades'
       ? 'programaSociedades'
@@ -31,12 +115,15 @@ const TutorUsuarios: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [procesando, setProcesando] = useState(false);
+  const [availableHospitals, setAvailableHospitals] = useState<any[]>([]);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editar, setEditar] = useState(false);
   const [selected, setSelected] = useState<any>(null);
   const [openEliminarDialog, setOpenEliminarDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [passwordMenuAnchorEl, setPasswordMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const isPasswordMenuOpen = Boolean(passwordMenuAnchorEl);
   const [passwordValue, setPasswordValue] = useState('');
 
   const [formData, setFormData] = useState({
@@ -44,7 +131,8 @@ const TutorUsuarios: React.FC = () => {
     nombre: '',
     apellidos: '',
     rol: user?.rol === 'profesor' ? 'participante' : 'residente',
-    hospital: user?.hospital?._id || ''
+    hospital: user?.hospital?._id || '',
+    tipo: defaultProgramType
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -62,6 +150,14 @@ const TutorUsuarios: React.FC = () => {
   const [selectedEspecialidades, setSelectedEspecialidades] = useState<string[]>([]);
   const [selectedTipos, setSelectedTipos] = useState<string[]>([]);
   const [selectedFases, setSelectedFases] = useState<string[]>([]);
+
+  const handleOpenPasswordMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setPasswordMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePasswordMenu = () => {
+    setPasswordMenuAnchorEl(null);
+  };
 
   const fetchUsuarios = useCallback(async () => {
     try {
@@ -130,14 +226,47 @@ const TutorUsuarios: React.FC = () => {
     fetchUsuarios();
   }, [fetchUsuarios, t]);
 
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      if (user?.rol !== 'csm' || !user?.zona) {
+        setAvailableHospitals([]);
+        return;
+      }
+
+      try {
+        const response = await api.get('/hospitals');
+        const data = response.data?.data ?? response.data ?? [];
+        const normalizedZona = user.zona.toUpperCase();
+        const filtered = Array.isArray(data)
+          ? data.filter(
+              (hospital: any) =>
+                typeof hospital?.zona === 'string' &&
+                hospital.zona.toUpperCase() === normalizedZona,
+            )
+          : [];
+        setAvailableHospitals(filtered);
+      } catch {
+        setAvailableHospitals([]);
+      }
+    };
+
+    fetchHospitals();
+  }, [user?.rol, user?.zona]);
+
   const handleCloseEditarDialog = (clearSelected = true) => {
     setOpenDialog(false);
+    handleClosePasswordMenu();
     if (clearSelected) setSelected(null);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name as string]: value });
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>,
+  ) => {
+    const { name, value } = e.target as { name?: string; value: unknown };
+    if (!name) return;
+    setFormData({ ...formData, [name]: value as string });
   };
 
   const handleSubmit = async () => {
@@ -221,29 +350,28 @@ const TutorUsuarios: React.FC = () => {
   };
 
   const handleSendResetEmail = async (usuario: any) => {
+    if (!usuario?.email) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      t('adminUsers.resetEmail.confirm', { email: usuario.email }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
-      const res = await getUserResetToken(usuario._id);
-      const resetToken = res.data.resetToken;
-      const frontendUrl =
-        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
-      const days = parseInt(
-        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
-        10,
-      );
-      const subject = encodeURIComponent(
-        t('adminUsers.resetEmail.subject', { app: t('common.appName') }),
-      );
-      const body = encodeURIComponent(
-        t('adminUsers.resetEmail.body', {
-          name: usuario.nombre,
-          app: t('common.appName'),
-          link: `${frontendUrl}/reset-password/${resetToken}`,
-          days,
-        }),
-      );
-      const mailtoLink = `mailto:${usuario.email}?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
+      const res = await sendResetPasswordEmail(usuario._id);
+      const targetEmail = res.data?.email || usuario.email;
+
       await clearResetNotifications(usuario._id);
+      setSnackbar({
+        open: true,
+        message: t('adminUsers.resetEmail.sent', { email: targetEmail }),
+        severity: 'success',
+      });
     } catch (err: any) {
       setSnackbar({
         open: true,
@@ -319,13 +447,20 @@ const TutorUsuarios: React.FC = () => {
   const roleOptions = Array.from(
     new Set(usuarios.map((u) => u.rol).filter((r): r is string => Boolean(r))),
   );
-  const hospitalOptions = Array.from(
-    new Map(
-      usuarios
-        .filter((u) => u.hospital)
-        .map((u) => [u.hospital._id, u.hospital]),
-    ).values(),
-  );
+  const hospitalOptions = useMemo(() => {
+    const pairs: [string, any][] = [];
+    availableHospitals.forEach((hospital) => {
+      if (hospital?._id) {
+        pairs.push([hospital._id, hospital]);
+      }
+    });
+    usuarios
+      .filter((u) => u.hospital)
+      .forEach((u) => {
+        pairs.push([u.hospital._id, u.hospital]);
+      });
+    return Array.from(new Map(pairs).values());
+  }, [availableHospitals, usuarios]);
   const societyOptions = Array.from(
     new Map(
       usuarios
@@ -408,7 +543,8 @@ const TutorUsuarios: React.FC = () => {
               nombre: '',
               apellidos: '',
               rol: user?.rol === 'profesor' ? 'participante' : 'residente',
-              hospital: user?.hospital?._id || ''
+              hospital: user?.hospital?._id || '',
+              tipo: defaultProgramType
             });
             setOpenDialog(true);
           }}
@@ -636,7 +772,8 @@ const TutorUsuarios: React.FC = () => {
                           nombre: usuario.nombre,
                           apellidos: usuario.apellidos,
                           rol: usuario.rol,
-                          hospital: usuario.hospital?._id || ''
+                          hospital: usuario.hospital?._id || '',
+                          tipo: usuario.tipo || defaultProgramType
                         });
                         setOpenDialog(true);
                       }}
@@ -657,48 +794,141 @@ const TutorUsuarios: React.FC = () => {
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.email')} name="email" value={formData.email} onChange={handleChange} />
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.name')} name="nombre" value={formData.nombre} onChange={handleChange} />
           <TextField fullWidth margin="dense" label={t('tutorUsers.form.surname')} name="apellidos" value={formData.apellidos} onChange={handleChange} />
-          <TextField
-            select
-            fullWidth
-            margin="dense"
-            label={t('tutorUsers.form.role')}
-            name="rol"
-            value={formData.rol}
-            onChange={handleChange}
-            slotProps={{ select: { native: true } }}
-          >
-            <option value="residente">{t('roles.residente')}</option>
-            <option value="tutor">{t('roles.tutor')}</option>
-          </TextField>
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="tutor-usuarios-role-label">
+              {t('tutorUsers.form.role')}
+            </InputLabel>
+            <Select
+              labelId="tutor-usuarios-role-label"
+              label={t('tutorUsers.form.role')}
+              name="rol"
+              value={formData.rol}
+              onChange={handleChange}
+            >
+              <MenuItem value="residente">{t('roles.residente')}</MenuItem>
+              <MenuItem value="tutor">{t('roles.tutor')}</MenuItem>
+            </Select>
+          </FormControl>
+          {user?.rol === 'csm' && (
+            <Autocomplete
+              options={hospitalOptions}
+              getOptionLabel={(option) => option?.nombre ?? ''}
+              value={
+                hospitalOptions.find((h) => h._id === formData.hospital) || null
+              }
+              onChange={(_, newValue) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  hospital: newValue?._id || '',
+                }))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  margin="dense"
+                  label={t('adminUsers.fields.hospital')}
+                />
+              )}
+            />
+          )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleCloseEditarDialog()}>
+        <DialogActions sx={DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleCloseEditarDialog()}
+            variant="contained"
+            sx={[
+              ACTION_BUTTON_BASE_SX,
+              (theme) => ({
+                backgroundColor:
+                  theme.palette.mode === 'light'
+                    ? theme.palette.grey[200]
+                    : theme.palette.grey[700],
+                color: theme.palette.text.primary,
+                '&:hover': {
+                  backgroundColor:
+                    theme.palette.mode === 'light'
+                      ? theme.palette.grey[300]
+                      : theme.palette.grey[600],
+                },
+              }),
+            ]}
+          >
             {t('tutorUsers.dialog.cancel')}
           </Button>
           {editar && selected && (
             <>
-              <Button
-                onClick={() => {
-                  handleOpenPasswordDialog(selected);
-                  handleCloseEditarDialog(false);
-                }}
-                color="secondary"
-                variant="outlined"
-              >
-                {t('adminUsers.actions.changePassword')}
-              </Button>
-              {(user?.rol === 'tutor' || user?.rol === 'csm') && (
-                <Button
-                  onClick={() => handleSendResetEmail(selected)}
-                  color="info"
-                  variant="outlined"
-                >
-                  {t('adminUsers.actions.sendResetLink')}
-                </Button>
+              {PASSWORD_ACTION_ROLES.includes(user?.rol ?? '') && (
+                <>
+                  <Button
+                    onClick={(event) => handleOpenPasswordMenu(event)}
+                    variant="contained"
+                    sx={[
+                      ACTION_BUTTON_BASE_SX,
+                      (theme) => getPasswordButtonStyles(theme),
+                    ]}
+                    endIcon={<ArrowDropDownIcon />}
+                    aria-controls={
+                      isPasswordMenuOpen ? 'password-actions-menu' : undefined
+                    }
+                    aria-haspopup="true"
+                    aria-expanded={isPasswordMenuOpen ? 'true' : undefined}
+                  >
+                    {t('adminUsers.actions.changePassword')}
+                  </Button>
+                  <Menu
+                    id="password-actions-menu"
+                    anchorEl={passwordMenuAnchorEl}
+                    open={isPasswordMenuOpen}
+                    onClose={handleClosePasswordMenu}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        if (!selected) {
+                          handleClosePasswordMenu();
+                          return;
+                        }
+                        handleClosePasswordMenu();
+                        handleOpenPasswordDialog(selected);
+                        handleCloseEditarDialog(false);
+                      }}
+                    >
+                      {t('adminUsers.actions.changePassword')}
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        if (!selected) {
+                          handleClosePasswordMenu();
+                          return;
+                        }
+                        handleClosePasswordMenu();
+                        void handleSendResetEmail(selected);
+                      }}
+                      sx={(theme) => ({
+                        color: theme.palette.warning.main,
+                        '&:hover': {
+                          backgroundColor:
+                            theme.palette.mode === 'light'
+                              ? theme.palette.warning.light
+                              : theme.palette.warning.dark,
+                          color: theme.palette.getContrastText(
+                            theme.palette.mode === 'light'
+                              ? theme.palette.warning.light
+                              : theme.palette.warning.dark,
+                          ),
+                        },
+                      })}
+                    >
+                      {t('adminUsers.actions.sendResetLink')}
+                    </MenuItem>
+                  </Menu>
+                </>
               )}
-              
+
               <Button
                 color="error"
+                variant="contained"
+                sx={ACTION_BUTTON_BASE_SX}
                 startIcon={<DeleteIcon />}
                 onClick={() => {
                   handleOpenEliminarDialog(selected);
@@ -709,7 +939,13 @@ const TutorUsuarios: React.FC = () => {
               </Button>
             </>
           )}
-          <Button onClick={handleSubmit} variant="contained" disabled={procesando}>
+          <Button
+            onClick={handleSubmit}
+            color="primary"
+            variant="contained"
+            sx={ACTION_BUTTON_BASE_SX}
+            disabled={procesando}
+          >
             {procesando
               ? t('tutorUsers.dialog.saving')
               : editar
@@ -732,15 +968,21 @@ const TutorUsuarios: React.FC = () => {
             onChange={(e) => setPasswordValue(e.target.value)}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePasswordDialog} color="primary">
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button
+            onClick={() => handleClosePasswordDialog()}
+            sx={{ minWidth: 140 }}
+          >
             {t('common.cancel')}
           </Button>
           <Button
             onClick={handleActualizarPassword}
-            color="secondary"
             variant="contained"
             disabled={procesando || !passwordValue}
+            sx={(theme) => ({
+              minWidth: 180,
+              ...getPasswordButtonStyles(theme),
+            })}
           >
             {procesando
               ? t('adminUsers.password.updating')
@@ -762,8 +1004,8 @@ const TutorUsuarios: React.FC = () => {
             />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEliminarDialog} color="primary">
+        <DialogActions sx={CENTERED_DIALOG_ACTIONS_SX}>
+          <Button onClick={handleCloseEliminarDialog} sx={{ minWidth: 140 }}>
             {t('common.cancel')}
           </Button>
           <Button

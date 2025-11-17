@@ -38,7 +38,56 @@ const legacyRoles: Record<string, string> = {
   alumno: 'participante'
 };
 
-const Register: React.FC = () => {
+type FormState = {
+  nombre: string;
+  apellidos: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  codigoAcceso: string;
+  consentimientoDatos: boolean;
+  hospital: string;
+  especialidad: string;
+  sociedad: string;
+  tipo: string;
+  rol: string;
+  zona: string;
+};
+
+export type RegisterFormKey = keyof FormState;
+export type RegisterInitialData = Partial<FormState>;
+
+const defaultFormState: FormState = {
+  nombre: '',
+  apellidos: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+  codigoAcceso: '',
+  consentimientoDatos: false,
+  hospital: '',
+  especialidad: '',
+  sociedad: '',
+  tipo: '',
+  rol: '',
+  zona: ''
+};
+
+interface RegisterProps {
+  initialData?: RegisterInitialData;
+  lockedFields?: RegisterFormKey[];
+  skipCodeValidation?: boolean;
+  title?: string;
+  infoMessage?: string;
+}
+
+const Register: React.FC<RegisterProps> = ({
+  initialData,
+  lockedFields = [],
+  skipCodeValidation = false,
+  title,
+  infoMessage
+}) => {
   const { t } = useTranslation();
   const zonaOptions = [
     'NORDESTE',
@@ -49,30 +98,40 @@ const Register: React.FC = () => {
     'LEVANTE',
     'CANARIAS'
   ];
-  const [formData, setFormData] = useState({
-    nombre: '',
-    apellidos: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    codigoAcceso: '',
-    consentimientoDatos: false,
-    hospital: '',
-    especialidad: '',
-    sociedad: '',
-    tipo: '',
-    rol: '',
-    zona: ''
+  const [formData, setFormData] = useState<FormState>({
+    ...defaultFormState,
+    ...(initialData || {})
   });
 
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [codigoError, setCodigoError] = useState<string | null>(null);
   const [hospitales, setHospitales] = useState<Hospital[]>([]);
   const [sociedades, setSociedades] = useState<Sociedad[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState<boolean>(
+    skipCodeValidation || Boolean(initialData?.codigoAcceso)
+  );
 
   const { nombre, apellidos, email, password, confirmPassword, codigoAcceso, consentimientoDatos, hospital, especialidad, sociedad, tipo, rol, zona } = formData;
   const { register, error, loading, clearError } = useAuth();
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData((prev) => ({
+        ...prev,
+        ...initialData
+      }));
+    }
+  }, [initialData]);
+
+  useEffect(() => {
+    if (skipCodeValidation || initialData?.codigoAcceso) {
+      setShowForm(true);
+      setCodigoError(null);
+    }
+  }, [skipCodeValidation, initialData]);
+
+  const isFieldLocked = (field: RegisterFormKey) => lockedFields.includes(field);
+  const resolvedTitle = title ?? t('register.title');
 
   useEffect(() => {
     const fetchHospitales = async () => {
@@ -100,6 +159,10 @@ const Register: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (skipCodeValidation) {
+      return;
+    }
+
     const validateCode = async () => {
       if (!codigoAcceso) {
         setShowForm(false);
@@ -126,15 +189,20 @@ const Register: React.FC = () => {
     };
 
     validateCode();
-  }, [codigoAcceso, t]);
+  }, [codigoAcceso, skipCodeValidation, t]);
 
   const onChange = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
+    const fieldName = name as RegisterFormKey;
+
+    if (isFieldLocked(fieldName)) {
+      return;
+    }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+      [fieldName]: type === 'checkbox' ? checked : value
+    }) as FormState);
 
     if (error) clearError();
 
@@ -147,6 +215,9 @@ const Register: React.FC = () => {
 
   const onSelectHospital = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
+    if (isFieldLocked(name as RegisterFormKey)) {
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value
@@ -159,6 +230,9 @@ const Register: React.FC = () => {
 
   const onSelectEspecialidad = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
+    if (isFieldLocked('especialidad')) {
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       especialidad: value
@@ -167,6 +241,9 @@ const Register: React.FC = () => {
 
   const onSelectSociedad = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
+    if (isFieldLocked('sociedad')) {
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       sociedad: value
@@ -222,26 +299,40 @@ const Register: React.FC = () => {
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'background.default', py: 4 }}>
       <Container maxWidth="sm">
         <Paper elevation={3} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2 }}>
-          <Box sx={{ mb: 3, textAlign: 'center' }}>
+          <Box sx={{ mb: 3, textAlign: 'center', width: '100%' }}>
             <img src="/logo.png" alt="Abex Excelencia Robótica" style={{ maxWidth: '200px', marginBottom: '16px' }} />
-            <Typography variant="h4" component="h1" gutterBottom>{t('register.title')}</Typography>
+            <Typography variant="h4" component="h1" gutterBottom>{resolvedTitle}</Typography>
+            {infoMessage && (
+              <Alert severity="info" sx={{ mt: 2, textAlign: 'left' }}>
+                {infoMessage}
+              </Alert>
+            )}
           </Box>
 
           <form onSubmit={onSubmit} style={{ width: '100%' }}>
-            <TextField margin="normal" fullWidth name="codigoAcceso" label={t('register.accessCode')} value={codigoAcceso} onChange={onChange} disabled={loading} required />
+            <TextField
+              margin="normal"
+              fullWidth
+              name="codigoAcceso"
+              label={t('register.accessCode')}
+              value={codigoAcceso}
+              onChange={onChange}
+              disabled={loading || isFieldLocked('codigoAcceso')}
+              required
+            />
             {codigoError && <Alert severity="error">{codigoError}</Alert>}
 
             {showForm && (
               <>
-                <TextField margin="normal" fullWidth label={t('register.name')} name="nombre" value={nombre} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label={t('register.surname')} name="apellidos" value={apellidos} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label={t('register.email')} name="email" type="email" value={email} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label={t('register.password')} name="password" type="password" value={password} onChange={onChange} disabled={loading} required />
-                <TextField margin="normal" fullWidth label={t('register.confirmPassword')} name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading} required />
+                <TextField margin="normal" fullWidth label={t('register.name')} name="nombre" value={nombre} onChange={onChange} disabled={loading || isFieldLocked('nombre')} required />
+                <TextField margin="normal" fullWidth label={t('register.surname')} name="apellidos" value={apellidos} onChange={onChange} disabled={loading || isFieldLocked('apellidos')} required />
+                <TextField margin="normal" fullWidth label={t('register.email')} name="email" type="email" value={email} onChange={onChange} disabled={loading || isFieldLocked('email')} required />
+                <TextField margin="normal" fullWidth label={t('register.password')} name="password" type="password" value={password} onChange={onChange} disabled={loading || isFieldLocked('password')} required />
+                <TextField margin="normal" fullWidth label={t('register.confirmPassword')} name="confirmPassword" type="password" value={confirmPassword} onChange={onChange} disabled={loading || isFieldLocked('confirmPassword')} required />
                 {passwordError && <Alert severity="warning">{passwordError}</Alert>}
 
                 {(rol === 'residente' || rol === 'tutor' || rol === 'participante' || rol === 'profesor') && (
-                  <FormControl fullWidth margin="normal" required={hospitalRequired} disabled={loading}>
+                  <FormControl fullWidth margin="normal" required={hospitalRequired} disabled={loading || isFieldLocked('hospital')}>
                     <InputLabel id="hospital-label">{t('register.hospital')}</InputLabel>
                     <Select labelId="hospital-label" id="hospital" name="hospital" value={hospital} label={t('register.hospital')} onChange={onSelectHospital}>
                       {hospitales.map((h) => (
@@ -252,7 +343,7 @@ const Register: React.FC = () => {
                 )}
 
                 {rol === 'csm' && (
-                  <FormControl fullWidth margin="normal" required disabled={loading}>
+                  <FormControl fullWidth margin="normal" required disabled={loading || isFieldLocked('zona')}>
                     <InputLabel id="zona-label">{t('register.zone')}</InputLabel>
                     <Select labelId="zona-label" id="zona" name="zona" value={zona} label={t('register.zone')} onChange={(e) => onChange(e as any)}>
                       {zonaOptions.map((z) => (
@@ -265,7 +356,7 @@ const Register: React.FC = () => {
                 )}
 
                 {(rol === 'residente' || rol === 'tutor') && (
-                  <FormControl fullWidth margin="normal" required disabled={loading}>
+                  <FormControl fullWidth margin="normal" required disabled={loading || isFieldLocked('especialidad')}>
                     <InputLabel id="especialidad-label">{t('register.specialty')}</InputLabel>
                     <Select labelId="especialidad-label" id="especialidad" name="especialidad" value={especialidad} label={t('register.specialty')} onChange={onSelectEspecialidad}>
                       <MenuItem value="ALL">{t('register.specialties.ALL')}</MenuItem>
@@ -279,7 +370,7 @@ const Register: React.FC = () => {
                 )}
 
                 {tipo === 'Programa Sociedades' && sociedades.length > 0 && (
-                  <FormControl fullWidth margin="normal" required disabled={loading}>
+                  <FormControl fullWidth margin="normal" required disabled={loading || isFieldLocked('sociedad')}>
                     <InputLabel id="sociedad-label">{t('register.society')}</InputLabel>
                     <Select labelId="sociedad-label" id="sociedad" name="sociedad" value={sociedad} label={t('register.society')} onChange={onSelectSociedad}>
                       <MenuItem value="">

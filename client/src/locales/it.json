@@ -197,6 +197,15 @@
     "consentSuffix": " e sono conforme al GDPR.",
     "registerButton": "Registrati"
   },
+  "registerInvite": {
+    "title": "Completa la tua registrazione",
+    "loading": "Validazione dell'invito in corso...",
+    "invalid": "Questo invito non esiste o è già stato utilizzato.",
+    "expired": "Questo invito è scaduto. Richiedine uno nuovo al tuo amministratore.",
+    "error": "Non siamo riusciti a convalidare il tuo invito.",
+    "ctaLogin": "Vai al login",
+    "prefilledNotice": "Abbiamo precompilato i dati dell'invito per {{email}}. Controlla le informazioni e completa la registrazione."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Annulla",
@@ -207,6 +216,7 @@
     "delete": "Elimina",
     "deleting": "Eliminazione in corso...",
     "phase": "Fase",
+    "download": "Scarica",
     "validate": "Convalida",
     "reject": "Rifiuta",
     "processing": "Elaborazione in corso...",
@@ -231,13 +241,13 @@
   },
   "forgotPassword": {
     "heading": "Hai dimenticato la password?",
-    "description": "Per reimpostare la password, contatta l'amministratore del sistema.",
+    "description": "Inserisci la tua email e ti invieremo automaticamente le istruzioni per reimpostare la password.",
     "emailLabel": "La tua email",
-    "submit": "Invia email all'amministratore",
+    "submit": "Invia reset automatico",
     "backToLogin": "Torna al login",
-    "requestSent": "Richiesta inviata.",
-    "error": "Errore durante l'invio della richiesta.",
-    "emailNotFound": "Non esiste un utente con quella email. Inserisci un indirizzo valido."
+    "success": "Se l'email esiste, abbiamo inviato le istruzioni per il reset.",
+    "error": "Impossibile completare il reset automatico.",
+    "emailNotFound": "Non esiste alcun utente con questa email. Inseriscine una valida."
   },
   "resetPassword": {
     "title": "Reimposta password",
@@ -690,7 +700,10 @@
     },
     "resetEmail": {
       "subject": "Reimposta la password di {{app}}",
-      "body": "Ciao {{name}},\n\nHai richiesto di reimpostare la tua password per {{app}}. Clicca sul link seguente per sceglierne una nuova:\n\n{{link}}\n\nQuesto link è personale, valido una sola volta e scade in {{days}} giorni.\n\nAdministrador del entorno"
+      "body": "Ciao {{name}},\n\nHai richiesto di reimpostare la tua password per {{app}}. Clicca sul link seguente per sceglierne una nuova:\n\n{{link}}\n\nQuesto link è personale, valido una sola volta e scade in {{days}} giorni.\n\nAdministrador del entorno",
+      "confirm": "Vuoi inviare il link di reimpostazione a {{email}}?",
+      "sent": "Link di reimpostazione inviato a {{email}}",
+      "unknownEmail": "questo utente"
     },
     "_comment": "Gestione utenti per amministratori",
     "buttons": {
@@ -805,7 +818,7 @@
       "role": "Ruolo",
       "actions": "Azioni"
     },
-    "viewProgress": "Vedi progresso"
+    "viewProgress": "Progresso"
   },
   "adminProgressDetail": {
     "loadError": "Errore nel caricamento del progresso",
@@ -879,7 +892,7 @@
       "rejected": "Nessuna validazione respinta"
     },
     "actions": {
-      "viewAttachment": "Vedi allegato"
+      "viewAttachment": "Allegati"
     },
     "dialog": {
       "validateTitle": "Convalida attività",
@@ -893,7 +906,7 @@
     "errorLoad": "Errore nel caricamento delle validazioni",
     "_comment": "Validazioni gestite dai formatori",
     "buttons": {
-      "viewAttachment": "Vedi allegato",
+      "viewAttachment": "Allegati",
       "validate": "Convalida",
       "reject": "Rifiuta",
       "cancel": "Annulla"
@@ -913,7 +926,8 @@
       "processing": "Elaborazione..."
     },
     "messages": {
-      "loadError": "Errore nel caricamento delle validazioni"
+      "loadError": "Errore nel caricamento delle validazioni",
+      "noAttachments": "Nessun allegato disponibile"
     }
   },
   "residentPhases": {
@@ -957,12 +971,18 @@
       "missingProgressId": "ID del progresso mancante",
       "noActivitySelected": "Nessuna attività selezionata",
       "selectDate": "Seleziona una data di completamento",
-      "optionalFileHint": "Allega un file opzionale (max 5MB)",
+      "optionalFileHint": "Puoi allegare fino a {{max}} file (max 5MB ciascuno)",
+      "maxFilesReached": "Hai raggiunto il limite di 5 file per questa attività.",
       "fileTooLarge": "Il file supera la dimensione massima di 5MB.",
       "surgeryRequired": "Seleziona o inserisci una procedura",
       "surgeonNameRequired": "Inserisci il nome del chirurgo",
       "participationRequired": "Seleziona una percentuale di partecipazione",
       "title": "Segna attività come completata",
+      "editTitle": "Modifica attività inviata",
+      "currentFiles": "File attuali",
+      "newAttachments": "Nuovi file selezionati",
+      "removeAttachment": "Rimuovi file",
+      "allMarkedForRemoval": "Tutti i file esistenti verranno rimossi.",
       "date": "Data di completamento"
     },
     "_comment": "Fasi e attività per residenti",

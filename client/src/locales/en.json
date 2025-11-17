@@ -180,6 +180,15 @@
     "consentSuffix": " and comply with the LOPD.",
     "registerButton": "Register"
   },
+  "registerInvite": {
+    "title": "Complete your registration",
+    "loading": "Validating invitation...",
+    "invalid": "This invitation does not exist or has already been used.",
+    "expired": "This invitation has expired. Please request a new one from your administrator.",
+    "error": "We couldn't validate your invitation.",
+    "ctaLogin": "Go to sign in",
+    "prefilledNotice": "We've prefilled the invitation details for {{email}}. Review the information and finish your registration."
+  },
   "society": {
     "convocatoria": {
       "label": "Call",
@@ -252,6 +261,7 @@
     "delete": "Delete",
     "deleting": "Deleting...",
     "phase": "Phase",
+    "download": "Download",
     "validate": "Validate",
     "reject": "Reject",
     "processing": "Processing...",
@@ -447,7 +457,10 @@
     },
     "resetEmail": {
       "subject": "Reset your {{app}} password",
-      "body": "Hello {{name}},\n\nYou requested to reset your password for {{app}}. Click the link below to choose a new one:\n\n{{link}}\n\nThis link is personal, valid only once and expires in {{days}} days.\n\nAdministrador del entorno"
+      "body": "Hello {{name}},\n\nYou requested to reset your password for {{app}}. Click the link below to choose a new one:\n\n{{link}}\n\nThis link is personal, valid only once and expires in {{days}} days.\n\nAdministrador del entorno",
+      "confirm": "Do you want to send the reset link to {{email}}?",
+      "sent": "Reset link sent to {{email}}",
+      "unknownEmail": "this user"
     },
     "_comment": "Admin user management",
     "buttons": {
@@ -563,7 +576,7 @@
       "role": "Role",
       "actions": "Actions"
     },
-    "viewProgress": "View Progress"
+    "viewProgress": "Progress"
   },
   "adminProgressDetail": {
     "loadError": "Error loading progress",
@@ -631,12 +644,12 @@
   },
   "forgotPassword": {
     "heading": "Forgot your password?",
-    "description": "To reset the password please contact the system administrator.",
+    "description": "Enter your email and we'll send you automatic instructions to reset your password.",
     "emailLabel": "Your email",
-    "submit": "Send email to administrator",
+    "submit": "Send automatic reset",
     "backToLogin": "Back to login",
-    "requestSent": "Request sent.",
-    "error": "Error sending request.",
+    "success": "If the email exists, we've sent reset instructions.",
+    "error": "We couldn't complete the automatic reset.",
     "emailNotFound": "No user with that email exists. Please enter a valid one."
   },
   "resetPassword": {
@@ -850,7 +863,7 @@
       "rejected": "No rejected validations"
     },
     "actions": {
-      "viewAttachment": "View attachment"
+      "viewAttachment": "Attachments"
     },
     "dialog": {
       "validateTitle": "Validate Activity",
@@ -864,7 +877,7 @@
     "errorLoad": "Error loading validations",
     "_comment": "Validations managed by Tutors",
     "buttons": {
-      "viewAttachment": "View attachment",
+      "viewAttachment": "Attachments",
       "validate": "Validate",
       "reject": "Reject",
       "cancel": "Cancel"
@@ -884,7 +897,8 @@
       "processing": "Processing..."
     },
     "messages": {
-      "loadError": "Error loading validations"
+      "loadError": "Error loading validations",
+      "noAttachments": "No attachments available"
     }
   },
   "residentPhases": {
@@ -894,6 +908,7 @@
     "activitySaveError": "Error saving the activity.",
     "activitySuccess": "✅ Activity recorded successfully",
     "noActivitySelectedError": "Internal error: No activity selected.",
+    "downloadAttachmentError": "Error downloading attachment.",
     "noTitle": "No title",
     "phaseTitle": "Phase {{number}}: {{name}}",
     "deadline": "Deadline",
@@ -902,6 +917,7 @@
     "phaseLocked": "Phase locked",
     "noProgress": "No training progress available.",
     "markAsCompleted": "Mark as completed",
+    "editActivity": "Edit activity",
     "unnamedActivity": "Unnamed activity",
     "comment": "Comment",
     "tutorComment": "Tutor comment",
@@ -912,6 +928,8 @@
     "surgeryType": "Surgery type: {{type}}",
     "surgeonName": "Surgeon's name: {{name}}",
     "participation": "Participation percentage: {{percent}}%",
+    "downloadAttachment": "Download file",
+    "pendingAttachment": "Uploaded attachment",
     "status": "Status",
     "dialog": {
       "completeActivity": "Mark activity as completed",
@@ -922,18 +940,24 @@
       "otherSurgeryTooltip": "Enter the surgery name",
       "surgeonName": "Surgeon's name",
       "participation": "Participation percentage",
-      "selectFile": "Select file",
+      "selectFile": "Select files",
       "cancel": "Cancel",
       "confirm": "Confirm",
       "missingProgressId": "Missing progress ID",
       "noActivitySelected": "No activity selected",
       "selectDate": "Select a completion date",
-      "optionalFileHint": "Attach an optional file (max 5MB)",
+      "optionalFileHint": "You can attach up to {{max}} files (max 5MB each)",
+      "maxFilesReached": "You reached the limit of 5 attachments for this activity.",
       "fileTooLarge": "The file exceeds the maximum size of 5MB.",
       "surgeryRequired": "Select or enter a procedure",
       "surgeonNameRequired": "Enter the surgeon's name",
       "participationRequired": "Select a participation percentage",
       "title": "Mark activity as completed",
+      "editTitle": "Edit submitted activity",
+      "currentFiles": "Current attachments",
+      "newAttachments": "New files selected",
+      "removeAttachment": "Remove attachment",
+      "allMarkedForRemoval": "All existing attachments will be removed.",
       "date": "Completion date"
     },
     "_comment": "Resident phases and activities",

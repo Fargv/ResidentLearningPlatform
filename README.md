@@ -6,7 +6,7 @@ Este proyecto implementa una plataforma web completa para llevar el seguimiento 
 
 - Sistema de autenticación con diferentes roles (residentes, participantes, tutores, profesores, CSM y administradores)
  - Seguimiento del progreso de los residentes y participantes a través de las diferentes fases del programa
- - Validación de actividades por parte de los tutores e profesores
+ - Validación de actividades por parte de los tutores y profesores
 ## Estructura del proyecto
 
 ```
@@ -55,16 +55,19 @@ davinci-platform/
 ## Instalación y ejecución
 
 ### Requisitos previos
-- Node.js (v18 o superior)
+- Node.js (v20 o superior)
 - MongoDB (local o Atlas)
 
 ### Instalación
 1. Clonar el repositorio
 2. Instalar dependencias del backend: `npm install`
 3. Instalar dependencias del frontend: `cd client && npm install`
-4. Copiar `.env.example` a `.env` y completar los valores requeridos, incluida
-   la variable `MONGO_URI` con la cadena de conexión a tu base de datos. Ajusta
-   `CLIENT_ORIGIN` con la URL desde la que se servirá el frontend
+4. Copiar `.env.example` a `.env` y completar los valores requeridos:
+   - `MONGO_URI` con la cadena de conexión a tu base de datos.
+   - `CLIENT_ORIGIN` y `FRONTEND_URL` con la URL desde la que se servirá el
+     frontend (por ejemplo, `http://localhost:5173` en desarrollo).
+   - `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` y `BREVO_SENDER_NAME` siguiendo la
+     guía de la sección [Configuración de Brevo](#configuración-de-brevo-envío-de-correos).
 
 ### Ejecución en desarrollo
 ```bash
@@ -83,6 +86,31 @@ Al igual que `dev.sh`, este script se puede ejecutar desde cualquier ubicación 
 ./deploy.sh
 ```
 Ver `DEPLOY.md` para instrucciones detalladas de despliegue.
+
+### Configuración de Brevo (envío de correos)
+Las variables `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` y `BREVO_SENDER_NAME` se
+rellenan en <https://app.brevo.com/> y permiten que el backend envíe
+notificaciones transaccionales.
+
+1. Inicia sesión en <https://app.brevo.com/> con la cuenta de la organización.
+2. Genera una clave API:
+   - Abre el menú **Configuración** y entra en **SMTP & API**.
+   - Pulsa **Generar una nueva clave API**, asigna un nombre descriptivo (p. ej.
+     "Resident Learning Platform") y elige el tipo **Transactional**.
+   - Copia la clave mostrada una única vez y pégala en `BREVO_API_KEY`.
+3. Configura un remitente autenticado:
+   - Desde **Configuración**, entra en **Remitentes & IPs** > **Remitentes** y
+     selecciona **Añadir remitente**.
+   - Introduce el nombre que verán los destinatarios y el correo corporativo
+     que se utilizará para enviar mensajes.
+   - Confirma el correo mediante el enlace que Brevo envía al buzón.
+   - Usa ese correo verificado como `BREVO_SENDER_EMAIL` y el nombre asociado en
+     `BREVO_SENDER_NAME`.
+4. (Opcional) Si envías correos desde un dominio propio, completa la verificación
+   de DNS en la sección **Dominios** para mejorar la entregabilidad.
+
+Guarda los cambios en el panel de Brevo y replica los valores en Render (o el
+proveedor que utilices) según lo indicado en `deploy.sh`/`DEPLOY.md`.
 
 ## Documentación
 - `DEPLOY.md`: Instrucciones detalladas para el despliegue en servicios gratuitos

@@ -101,6 +101,7 @@
     "delete": "Löschen",
     "deleting": "Lösche...",
     "phase": "Phase",
+    "download": "Herunterladen",
     "validate": "Validieren",
     "reject": "Ablehnen",
     "processing": "Verarbeite...",
@@ -125,13 +126,13 @@
   },
   "forgotPassword": {
     "heading": "Passwort vergessen?",
-    "description": "Um Ihr Passwort zurückzusetzen, wenden Sie sich bitte an den Systemadministrator.",
-    "emailLabel": "Ihre E-Mail",
-    "submit": "E-Mail an Administrator senden",
+    "description": "Gib deine E-Mail ein und wir senden dir automatische Anweisungen zum Zurücksetzen deines Passworts.",
+    "emailLabel": "Deine E-Mail",
+    "submit": "Automatischen Reset senden",
     "backToLogin": "Zurück zur Anmeldung",
-    "requestSent": "Anfrage gesendet.",
-    "error": "Fehler beim Senden der Anfrage.",
-    "emailNotFound": "Es existiert kein Benutzer mit dieser E-Mail. Bitte gib eine gültige ein."
+    "success": "Falls die E-Mail existiert, haben wir Anweisungen zum Zurücksetzen gesendet.",
+    "error": "Der automatische Reset konnte nicht abgeschlossen werden.",
+    "emailNotFound": "Es existiert kein Benutzer mit dieser E-Mail. Bitte gib eine gültige Adresse ein."
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
@@ -361,18 +362,24 @@
       "otherSurgeryTooltip": "Geben Sie den Namen der Operation ein",
       "surgeonName": "Name des Chirurgen",
       "participation": "Teilnahmeprozentsatz",
-      "selectFile": "Datei auswählen",
+      "selectFile": "Dateien auswählen",
       "cancel": "Abbrechen",
       "confirm": "Bestätigen",
       "missingProgressId": "Fortschritts-ID fehlt",
       "noActivitySelected": "Keine Aktivität ausgewählt",
       "selectDate": "Wähle ein Abschlussdatum",
-      "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
+      "optionalFileHint": "Du kannst bis zu {{max}} Dateien anhängen (max. 5MB pro Datei)",
+      "maxFilesReached": "Du hast das Limit von 5 Dateien für diese Aktivität erreicht.",
       "fileTooLarge": "Datei ist größer als 5MB.",
       "surgeryRequired": "Wähle oder gib ein Verfahren ein",
       "surgeonNameRequired": "Gib den Namen des Chirurgen ein",
       "participationRequired": "Wähle einen Beteiligungsprozentsatz",
       "title": "Aktivität abschließen",
+      "editTitle": "Aktivität bearbeiten",
+      "currentFiles": "Aktuelle Anhänge",
+      "newAttachments": "Neue ausgewählte Dateien",
+      "removeAttachment": "Anhang entfernen",
+      "allMarkedForRemoval": "Alle bestehenden Anhänge werden entfernt.",
       "date": "Abschlussdatum"
     },
     "messages": {
@@ -693,7 +700,10 @@
     },
     "resetEmail": {
       "subject": "Passwort für {{app}} zurücksetzen",
-      "body": "Hallo {{name}},\n\nDu hast beantragt, dein Passwort für {{app}} zurückzusetzen. Klicke auf den folgenden Link, um ein neues zu wählen:\n\n{{link}}\n\nDieser Link ist persönlich, gilt nur einmal und läuft in {{days}} Tagen ab.\n\nAdministrador del entorno"
+      "body": "Hallo {{name}},\n\nDu hast beantragt, dein Passwort für {{app}} zurückzusetzen. Klicke auf den folgenden Link, um ein neues zu wählen:\n\n{{link}}\n\nDieser Link ist persönlich, gilt nur einmal und läuft in {{days}} Tagen ab.\n\nAdministrador del entorno",
+      "confirm": "Möchten Sie den Zurücksetzungslink an {{email}} senden?",
+      "sent": "Zurücksetzungslink an {{email}} gesendet",
+      "unknownEmail": "diesen Benutzer"
     },
     "_comment": "Benutzerverwaltung",
     "buttons": {
@@ -808,7 +818,7 @@
       "role": "Rolle",
       "actions": "Aktionen"
     },
-    "viewProgress": "Fortschritt anzeigen"
+    "viewProgress": "Fortschritt"
   },
   "adminProgressDetail": {
     "loadError": "Fehler beim Laden des Fortschritts",
@@ -954,7 +964,7 @@
       "rejected": "Keine abgelehnten Validierungen"
     },
     "actions": {
-      "viewAttachment": "Anhang anzeigen"
+      "viewAttachment": "Anhänge"
     },
     "dialog": {
       "validateTitle": "Aktivität validieren",
@@ -968,7 +978,7 @@
     "errorLoad": "Fehler beim Laden der Validierungen",
     "_comment": "Von Tutorn verwaltete Validierungen",
     "buttons": {
-      "viewAttachment": "Anhang anzeigen",
+      "viewAttachment": "Anhänge",
       "validate": "Validieren",
       "reject": "Ablehnen",
       "cancel": "Abbrechen"
@@ -988,7 +998,8 @@
       "processing": "Verarbeite..."
     },
     "messages": {
-      "loadError": "Fehler beim Laden der Validierungen"
+      "loadError": "Fehler beim Laden der Validierungen",
+      "noAttachments": "Keine Anhänge verfügbar"
     }
   },
   "privacyPolicy": {

@@ -119,6 +119,15 @@
     "consentSuffix": " et je suis conforme au RGPD.",
     "registerButton": "S'inscrire"
   },
+  "registerInvite": {
+    "title": "Finalisez votre inscription",
+    "loading": "Validation de l'invitation...",
+    "invalid": "Cette invitation n'existe pas ou a déjà été utilisée.",
+    "expired": "Cette invitation a expiré. Demandez-en une nouvelle à votre administrateur.",
+    "error": "Nous n'avons pas pu valider votre invitation.",
+    "ctaLogin": "Aller à la connexion",
+    "prefilledNotice": "Nous avons pré-rempli les données de l'invitation pour {{email}}. Vérifiez les informations et finalisez votre inscription."
+  },
   "common": {
     "appName": "Resident Learning Platform",
     "cancel": "Annuler",
@@ -129,6 +138,7 @@
     "delete": "Supprimer",
     "deleting": "Suppression en cours...",
     "phase": "Phase",
+    "download": "Télécharger",
     "validate": "Valider",
     "reject": "Rejeter",
     "processing": "Traitement en cours...",
@@ -152,14 +162,14 @@
     "errorUpdatePassword": "Erreur lors de la mise à jour du mot de passe"
   },
   "forgotPassword": {
-    "heading": "Mot de passe oublié ?",
-    "description": "Pour réinitialiser votre mot de passe, veuillez contacter l’administrateur du système.",
-    "emailLabel": "Votre email",
-    "submit": "Envoyer un email à l'administrateur",
+    "heading": "Vous avez oublié votre mot de passe ?",
+    "description": "Saisissez votre e-mail et nous vous enverrons automatiquement les instructions pour réinitialiser votre mot de passe.",
+    "emailLabel": "Votre e-mail",
+    "submit": "Envoyer la réinitialisation automatique",
     "backToLogin": "Retour à la connexion",
-    "requestSent": "Demande envoyée.",
-    "error": "Erreur lors de l'envoi de la demande.",
-    "emailNotFound": "Aucun utilisateur avec cet e-mail n'existe. Veuillez en saisir un valide."
+    "success": "Si l'e-mail existe, nous avons envoyé les instructions de réinitialisation.",
+    "error": "La réinitialisation automatique n'a pas pu aboutir.",
+    "emailNotFound": "Aucun utilisateur avec cet e-mail. Veuillez en saisir un valide."
   },
   "resetPassword": {
     "title": "Réinitialiser le mot de passe",
@@ -344,7 +354,7 @@
       "role": "Rôle",
       "actions": "Actions"
     },
-    "viewProgress": "Voir le progrès"
+    "viewProgress": "Progrès"
   },
   "adminProgressDetail": {
     "loadError": "Erreur lors du chargement du progrès",
@@ -545,7 +555,10 @@
     },
     "resetEmail": {
       "subject": "Réinitialiser le mot de passe de {{app}}",
-      "body": "Bonjour {{name}},\n\nVous avez demandé à réinitialiser votre mot de passe pour {{app}}. Cliquez sur le lien ci-dessous pour en choisir un nouveau :\n\n{{link}}\n\nCe lien est personnel, valable une seule fois et expire dans {{days}} jours.\n\nAdministrador del entorno"
+      "body": "Bonjour {{name}},\n\nVous avez demandé à réinitialiser votre mot de passe pour {{app}}. Cliquez sur le lien ci-dessous pour en choisir un nouveau :\n\n{{link}}\n\nCe lien est personnel, valable une seule fois et expire dans {{days}} jours.\n\nAdministrador del entorno",
+      "confirm": "Voulez-vous envoyer le lien de réinitialisation à {{email}} ?",
+      "sent": "Lien de réinitialisation envoyé à {{email}}",
+      "unknownEmail": "cet utilisateur"
     },
     "_comment": "Gestion des utilisateurs pour les administrateurs",
     "buttons": {
@@ -615,18 +628,24 @@
       "otherSurgeryTooltip": "Saisissez le nom de la chirurgie",
       "surgeonName": "Nom du chirurgien",
       "participation": "Pourcentage de participation",
-      "selectFile": "Sélectionner un fichier",
+      "selectFile": "Sélectionner des fichiers",
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "missingProgressId": "ID de progrès manquant",
       "noActivitySelected": "Aucune activité sélectionnée",
       "selectDate": "Sélectionnez une date de réalisation",
-      "optionalFileHint": "Joindre un fichier facultatif (max. 5 Mo)",
+      "optionalFileHint": "Vous pouvez joindre jusqu'à {{max}} fichiers (max. 5 Mo chacun)",
+      "maxFilesReached": "Vous avez atteint la limite de 5 fichiers pour cette activité.",
       "fileTooLarge": "Le fichier dépasse la taille maximale de 5 Mo.",
       "surgeryRequired": "Sélectionnez ou saisissez une procédure",
       "surgeonNameRequired": "Entrez le nom du chirurgien",
       "participationRequired": "Sélectionnez un pourcentage de participation",
       "title": "Marquer l'activité comme complétée",
+      "editTitle": "Modifier l'activité envoyée",
+      "currentFiles": "Fichiers actuels",
+      "newAttachments": "Nouveaux fichiers sélectionnés",
+      "removeAttachment": "Supprimer le fichier",
+      "allMarkedForRemoval": "Tous les fichiers existants seront supprimés.",
       "date": "Date de réalisation"
     },
     "_comment": "Phases et activités pour les résidents",
@@ -686,7 +705,7 @@
       "rejected": "Aucune validation rejetée"
     },
     "actions": {
-      "viewAttachment": "Voir la pièce jointe"
+      "viewAttachment": "Pièces jointes"
     },
     "dialog": {
       "validateTitle": "Valider l'activité",
@@ -700,7 +719,7 @@
     "errorLoad": "Erreur lors du chargement des validations",
     "_comment": "Validations gérées par les Tutors",
     "buttons": {
-      "viewAttachment": "Voir la pièce jointe",
+      "viewAttachment": "Pièces jointes",
       "validate": "Valider",
       "reject": "Rejeter",
       "cancel": "Annuler"
@@ -720,7 +739,8 @@
       "processing": "Traitement en cours..."
     },
     "messages": {
-      "loadError": "Erreur lors du chargement des validations"
+      "loadError": "Erreur lors du chargement des validations",
+      "noAttachments": "Aucune pièce jointe disponible"
     }
   },
   "residentProgress": {

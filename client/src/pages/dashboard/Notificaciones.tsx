@@ -28,7 +28,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import {
   getNotificaciones,
   marcarNotificacionLeida,
-  getUserResetToken,
+  sendResetPasswordEmail,
   clearResetNotifications,
   eliminarNotificacion
 } from '../../api';
@@ -140,29 +140,23 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
 
   const handleSendResetLink = async (n: Notificacion) => {
     if (!n.entidadRelacionada?.id) return;
+
+    const emailMatch = n.mensaje?.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    const guessedEmail = emailMatch ? emailMatch[0] : null;
+    const confirmTarget = guessedEmail || t('adminUsers.resetEmail.unknownEmail');
+
+    const confirmed = window.confirm(
+      t('adminUsers.resetEmail.confirm', { email: confirmTarget })
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
-      const res = await getUserResetToken(n.entidadRelacionada.id);
-      const data = res.data.data || res.data;
-      const { resetToken, email, name } = data;
-      const frontendUrl =
-        process.env.REACT_APP_FRONTEND_URL || window.location.origin;
-      const days = parseInt(
-        process.env.REACT_APP_RESET_PASSWORD_EXPIRE_DAYS || '3',
-        10
-      );
-      const subject = encodeURIComponent(
-        t('adminUsers.resetEmail.subject', { app: t('common.appName') })
-      );
-      const body = encodeURIComponent(
-        t('adminUsers.resetEmail.body', {
-          name,
-          app: t('common.appName'),
-          link: `${frontendUrl}/reset-password/${resetToken}`,
-          days
-        })
-      );
-      const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
+      const res = await sendResetPasswordEmail(n.entidadRelacionada.id);
+      const data = res.data?.data || res.data;
+      const targetEmail = data?.email || guessedEmail || confirmTarget;
 
       await clearResetNotifications(n.entidadRelacionada.id);
 
@@ -176,8 +170,11 @@ const Notificaciones: React.FC<NotificacionesProps> = ({ onChange }) => {
         )
       );
       onChange?.();
+
+      window.alert(t('adminUsers.resetEmail.sent', { email: targetEmail }));
     } catch (err) {
       console.error('Error sending reset link', err);
+      window.alert(t('common.error'));
     }
   };
 

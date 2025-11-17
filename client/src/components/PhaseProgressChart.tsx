@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
 interface PhaseProgressChartProps {
@@ -10,8 +11,6 @@ interface PhaseProgressChartProps {
   validado: number;
 }
 
-const COLORS = ['#ff9800', '#2196f3', '#f44336', '#4caf50'];
-
 const PhaseProgressChart: React.FC<PhaseProgressChartProps> = ({
   phaseName,
   pendiente,
@@ -19,6 +18,14 @@ const PhaseProgressChart: React.FC<PhaseProgressChartProps> = ({
   rechazado,
   validado,
 }) => {
+  const theme = useTheme();
+  const colors = [
+    theme.palette.warning.main,
+    theme.palette.info.main,
+    theme.palette.error.main,
+    theme.palette.success.main,
+  ];
+
   const data = [
     { name: 'Pendiente', value: pendiente },
     { name: 'Completado', value: completado },
@@ -40,7 +47,7 @@ const PhaseProgressChart: React.FC<PhaseProgressChartProps> = ({
           label
         >
           {data.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Pie>
         <Tooltip />

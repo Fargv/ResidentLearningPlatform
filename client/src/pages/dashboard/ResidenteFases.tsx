@@ -3,9 +3,6 @@ import {
   Box,
   Typography,
   Alert,
-  List,
-  ListItem,
-  ListItemText,
   Chip,
   Skeleton,
   LinearProgress,
@@ -23,23 +20,108 @@ import {
   CircularProgress,
   Backdrop,
   Autocomplete,
-  MenuItem
+  MenuItem,
+  Paper,
+  Stack,
+  FormControlLabel,
+  IconButton
 } from '@mui/material';
+import Switch, { SwitchProps } from '@mui/material/Switch';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import DownloadIcon from '@mui/icons-material/Download';
+import CloseIcon from '@mui/icons-material/Close';
+import { useTheme, alpha, styled } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { useTranslation } from 'react-i18next';
 
+const CompletionSwitch = styled((props: SwitchProps) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 48,
+  height: 28,
+  padding: 0,
+  display: 'flex',
+  alignItems: 'center',
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 2,
+    transitionDuration: '200ms',
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
+      border: `1px solid ${theme.palette.primary.main}`
+    },
+    '&.Mui-checked': {
+      transform: 'translateX(20px)',
+      color: theme.palette.common.white,
+      '& .MuiSwitch-thumb': {
+        boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
+      },
+      '& + .MuiSwitch-track': {
+        backgroundColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.primary.main
+            : alpha(theme.palette.primary.light, 0.55),
+        borderColor: 'transparent',
+        opacity: 1
+      }
+    }
+  },
+  '& .MuiSwitch-thumb': {
+    width: 24,
+    height: 24,
+    boxSizing: 'border-box',
+    borderRadius: '50%',
+    backgroundColor: theme.palette.common.white,
+    boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`,
+    position: 'relative',
+    '&:before': {
+      content: "''",
+      position: 'absolute',
+      inset: 0,
+      borderRadius: '50%',
+      border: `1px solid ${alpha(theme.palette.common.black, 0.08)}`
+    }
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 999,
+    backgroundColor:
+      theme.palette.mode === 'light'
+        ? alpha(theme.palette.text.primary, 0.15)
+        : alpha(theme.palette.common.white, 0.25),
+    border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
+    opacity: 1,
+    boxSizing: 'border-box'
+  }
+}));
+
+const formatActivityType = (type?: string): string => {
+  if (!type) return '';
+  return type.charAt(0).toUpperCase() + type.slice(1);
+};
+
 const ResidenteFases: React.FC = () => {
+  const theme = useTheme();
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
+  const placeholderToken = '___';
+
+  const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
+    const raw = t(key as any, params);
+    return raw
+      .replace(new RegExp(`${placeholderToken}`, 'g'), '')
+      .replace(/[:：]\s*$/, '')
+      .replace(/[%％]\s*$/, '')
+      .trim();
+  };
   const [progresos, setProgresos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +130,7 @@ const ResidenteFases: React.FC = () => {
   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
   const [comentario, setComentario] = useState('');
   const [fecha, setFecha] = useState('');
-  const [archivo, setArchivo] = useState<File | null>(null);
+  const [archivos, setArchivos] = useState<File[]>([]);
   const [archivoError, setArchivoError] = useState(false);
   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -63,6 +145,12 @@ const ResidenteFases: React.FC = () => {
   const [porcentaje, setPorcentaje] = useState<number>(0);
   const [esCirugia, setEsCirugia] = useState(false);
   const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
+  const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
+  const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
+  const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
+  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
+  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
+  const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -167,25 +255,76 @@ const ResidenteFases: React.FC = () => {
     loadSociedad();
   }, [user]);
 
-  const handleOpenDialog = (progresoId: string, index: number) => {
+  const handleOpenDialog = (
+    progresoId: string,
+    index: number,
+    toggleKey?: string,
+    mode: 'complete' | 'edit' = 'complete'
+  ) => {
+    setDialogMode(mode);
     setSelectedProgresoId(progresoId);
     setSelectedActividadIndex(index);
+    setActiveToggleKey(mode === 'complete' ? toggleKey ?? null : null);
+
     const progreso = progresos.find(p => p._id === progresoId);
     const actividad = progreso?.actividades?.[index];
-    const esCirugia = actividad?.tipo === 'cirugia';
-    setEsCirugia(esCirugia);
-    setComentario('');
-    setFecha(new Date().toISOString().split('T')[0]);
-    setArchivo(null);
+    const esCirugiaActividad = actividad?.tipo === 'cirugia';
+    setEsCirugia(!!esCirugiaActividad);
+
+    const fechaBase = actividad?.fecha || actividad?.fechaRealizacion;
+    const fechaInicial = fechaBase
+      ? new Date(fechaBase).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0];
+    setFecha(fechaInicial);
+
+    setComentario(mode === 'edit' ? actividad?.comentariosResidente || '' : '');
     setArchivoError(false);
     setArchivoErrorMsg('');
-    setCirugia(null);
-    setOtraCirugia('');
-    setOtraCirugiaSeleccionada(false);
-    setNombreCirujano('');
-    setPorcentaje(0);
+
+    if (mode === 'edit' && esCirugiaActividad) {
+      if (actividad?.cirugia) {
+        setCirugia(actividad.cirugia);
+        setOtraCirugia('');
+        setOtraCirugiaSeleccionada(false);
+      } else if (actividad?.otraCirugia) {
+        setCirugia(null);
+        setOtraCirugia(actividad.otraCirugia);
+        setOtraCirugiaSeleccionada(true);
+      } else {
+        setCirugia(null);
+        setOtraCirugia('');
+        setOtraCirugiaSeleccionada(false);
+      }
+      setNombreCirujano(actividad?.nombreCirujano || '');
+      setPorcentaje(
+        typeof actividad?.porcentajeParticipacion === 'number'
+          ? actividad.porcentajeParticipacion
+          : 0
+      );
+    } else {
+      setCirugia(null);
+      setOtraCirugia('');
+      setOtraCirugiaSeleccionada(false);
+      setNombreCirujano('');
+      setPorcentaje(0);
+    }
+
+    setArchivos([]);
+    setAdjuntosEliminados([]);
+    setArchivoError(false);
+    setArchivoErrorMsg('');
+    setAdjuntosExistentes(mode === 'edit' ? actividad?.adjuntos || [] : []);
 
     setDialogOpen(true);
+  };
+
+  const handleToggleComplete = (progresoId: string, index: number, toggleKey: string) => {
+    setCompletionToggles(prev => ({ ...prev, [toggleKey]: true }));
+    handleOpenDialog(progresoId, index, toggleKey);
+  };
+
+  const handleEditActividad = (progresoId: string, index: number) => {
+    handleOpenDialog(progresoId, index, undefined, 'edit');
   };
 
   const botonConfirmarHabilitado =
@@ -199,38 +338,78 @@ const ResidenteFases: React.FC = () => {
         porcentaje > 0));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        setArchivo(null);
-        setArchivoError(true);
-        setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
-      } else {
-        setArchivo(file);
-        setArchivoError(false);
-        setArchivoErrorMsg('');
-      }
-    } else {
-      setArchivo(null);
-      setArchivoError(false);
-      setArchivoErrorMsg('');
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    const MAX_FILES = 5;
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    const existentesVisibles = adjuntosExistentes.filter(
+      adj => !adjuntosEliminados.includes(adj._id)
+    );
+    const remainingSlots = MAX_FILES - (existentesVisibles.length + archivos.length);
+
+    if (remainingSlots <= 0) {
+      setArchivoError(true);
+      setArchivoErrorMsg(t('residentPhases.dialog.maxFilesReached'));
+      e.target.value = '';
+      return;
     }
+
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    const invalidFile = filesToAdd.find(file => file.size > MAX_FILE_SIZE);
+    if (invalidFile) {
+      setArchivoError(true);
+      setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
+      e.target.value = '';
+      return;
+    }
+
+    if (filesToAdd.length === 0) {
+      e.target.value = '';
+      return;
+    }
+
+    setArchivos(prev => [...prev, ...filesToAdd]);
+    setArchivoError(false);
+    setArchivoErrorMsg('');
+    e.target.value = '';
   };
+
+  const handleRemoveNuevoArchivo = (index: number) => {
+    setArchivos(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveAdjuntoExistente = (id: string) => {
+    setAdjuntosEliminados(prev => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const adjuntosExistentesVisibles = adjuntosExistentes.filter(
+    adj => !adjuntosEliminados.includes(adj._id)
+  );
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
+    if (activeToggleKey) {
+      setCompletionToggles(prev => ({ ...prev, [activeToggleKey]: false }));
+      setActiveToggleKey(null);
+    }
     setCirugia(null);
     setOtraCirugia('');
     setNombreCirujano('');
     setPorcentaje(0);
     setEsCirugia(false);
     setOtraCirugiaSeleccionada(false);
+    setArchivos([]);
+    setAdjuntosExistentes([]);
+    setAdjuntosEliminados([]);
+    setDialogMode('complete');
+    setArchivoError(false);
+    setArchivoErrorMsg('');
   };
 
 
 
   const handleCompletarActividad = async () => {
-    
+
     if (!selectedProgresoId || selectedActividadIndex === null) {
       setSnackbarError(true);
       setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
@@ -257,7 +436,13 @@ const ResidenteFases: React.FC = () => {
         form.append('porcentajeParticipacion', String(porcentaje));
       }
 
-      if (archivo) form.append('adjunto', archivo);
+      if (adjuntosEliminados.length > 0) {
+        form.append('adjuntosAEliminar', JSON.stringify(adjuntosEliminados));
+      }
+
+      archivos.forEach(file => {
+        form.append('adjunto', file);
+      });
 
       const { data } = await api.put(
         `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
@@ -288,7 +473,28 @@ const ResidenteFases: React.FC = () => {
       setSnackbarOpen(true);
     } finally {
       handleCloseDialog();
-      setArchivo(null);
+      setArchivos([]);
+    }
+  };
+
+  const handleDownloadAdjunto = async (adjuntoId: string, nombreArchivo: string) => {
+    try {
+      setAttachmentDownloading(adjuntoId);
+      const res = await api.get(`/adjuntos/${adjuntoId}/download`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', nombreArchivo || 'adjunto');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('Error descargando adjunto:', err);
+      setSnackbarError(true);
+      setSnackbarMsg(t('residentPhases.downloadAttachmentError'));
+      setSnackbarOpen(true);
+    } finally {
+      setAttachmentDownloading(null);
     }
   };
 
@@ -357,9 +563,10 @@ const ResidenteFases: React.FC = () => {
 
   if (error) return <Alert severity="error">{error}</Alert>;
 
-  const allValidado = progresos
-    .filter(p => p.faseModel === 'Fase')
-    .every(p => p.estadoGeneral === 'validado');
+  const residentPhases = progresos.filter((p) => p.faseModel === 'Fase');
+  const allValidado =
+    residentPhases.length > 0 &&
+    residentPhases.every((p) => p.estadoGeneral === 'validado');
 
   return (
     <Box>
@@ -423,109 +630,363 @@ const ResidenteFases: React.FC = () => {
           })()}
 
           {item.estadoGeneral !== 'bloqueada' ? (
-            <List>
-              {Array.isArray(item.actividades) && item.actividades.length > 0 ? (
-                item.actividades.map((act: any, idx: number) => (
-                  <ListItem key={idx}>
-                  {act.estado === 'validado' && <VerifiedIcon sx={{ color: 'green', mr: 1 }} />}
-                  {act.estado === 'completado' && <CheckCircleOutlineIcon sx={{ color: 'blue', mr: 1 }} />}
-                  {act.estado === 'rechazado' && <CancelIcon sx={{ color: 'red', mr: 1 }} />}
-                  {act.estado === 'pendiente' && <HourglassEmptyIcon sx={{ color: 'gray', mr: 1 }} />}
-                  <ListItemText
-                    primary={act.nombre || t('residentPhases.unnamedActivity')}
-                    secondary={
-                      <>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('residentPhases.activityType', { type: act.tipo })}
-                        </Typography>
-                        {act.comentariosResidente && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.comment')}: {act.comentariosResidente}
-                          </Typography>
-                        )}
-                        {act.fecha && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.completedOn')}: {formatDayMonthYear(act.fecha)}
-                          </Typography>
-                        )}
-                        {act.tipo === 'cirugia' && act.estado !== 'pendiente' && (
-                          <>
-                            {(act.cirugia?.name || act.otraCirugia) && (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('residentPhases.surgeryType', {
-                                  type: act.cirugia?.name || act.otraCirugia
-                                })}
-                              </Typography>
-                            )}
-                            {act.nombreCirujano && (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('residentPhases.surgeonName', {
-                                  name: act.nombreCirujano
-                                })}
-                              </Typography>
-                            )}
-                            {typeof act.porcentajeParticipacion === 'number' && (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('residentPhases.participation', {
-                                  percent: act.porcentajeParticipacion
-                                })}
-                              </Typography>
-                            )}
-                          </>
-                        )}
-                        {act.comentariosTutor && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.tutorComment')}: {act.comentariosTutor}
-                          </Typography>
-                        )}
-                        {act.estado === 'rechazado' && act.comentariosRechazo && (
-                          <Typography variant="body2" color="error">
-                            {t('residentPhases.rejectionReason')}: {act.comentariosRechazo}
-                          </Typography>
-                        )}
-                        {act.fechaValidacion && (
-                          <Typography variant="body2" color="text.secondary">
-                            {t('residentPhases.validatedOn')}: {formatDayMonthYear(act.fechaValidacion)}
-                          </Typography>
-                        )}
-                        <Typography variant="body2" color="text.secondary">
-                          {t('residentPhases.status')}: {
-                            act.estado === 'validado'
-                              ? t('status.validado')
-                              : act.estado === 'rechazado'
-                              ? t('status.rechazado')
-                              : act.estado === 'completado'
-                              ? t('status.pendingValidation')
-                              : t('status.noCompletada')
-                          }
-                        </Typography>
-                      </>
+            Array.isArray(item.actividades) && item.actividades.length > 0 ? (
+              <Box
+                display="grid"
+                gap={2}
+                gridTemplateColumns={{ xs: '1fr', lg: '1fr 1fr' }}
+                alignItems="stretch"
+                sx={{ gridAutoRows: '1fr' }}
+              >
+                {item.actividades.map((act: any, idx: number) => {
+                  const statusData = (() => {
+                    switch (act.estado) {
+                      case 'validado':
+                        return {
+                          label: t('status.validado'),
+                          color: 'success' as const,
+                          icon: <VerifiedIcon fontSize="small" />
+                        };
+                      case 'rechazado':
+                        return {
+                          label: t('status.rechazado'),
+                          color: 'error' as const,
+                          icon: <CancelIcon fontSize="small" />
+                        };
+                      case 'completado':
+                        return {
+                          label: t('status.pendingValidation'),
+                          color: 'warning' as const,
+                          icon: <CheckCircleOutlineIcon fontSize="small" />
+                        };
+                      case 'pendiente':
+                        return {
+                          label: t('status.pendiente'),
+                          color: 'info' as const,
+                          icon: <HourglassEmptyIcon fontSize="small" />
+                        };
+                      default:
+                        return {
+                          label: t('status.noCompletada'),
+                          color: 'default' as const,
+                          icon: undefined
+                        };
                     }
-                  />
-                  {((!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') && item.estadoGeneral !== 'bloqueada') && (
-                    <Button
-                      size="small"
+                  })();
+
+                  const showCompleteButton =
+                    (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
+                    item.estadoGeneral !== 'bloqueada';
+
+                  const canEditPending =
+                    act.estado === 'completado' && item.estadoGeneral !== 'bloqueada';
+
+                  const toggleKey = `${item._id}-${idx}`;
+
+                  const completionDate = act.fecha || act.fechaRealizacion;
+                  const validationDate = act.fechaValidacion || act.validadoEl;
+
+                  const statusDate =
+                    act.estado === 'validado'
+                      ? validationDate
+                      : act.estado === 'completado'
+                      ? completionDate
+                      : null;
+
+                  const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
+
+                  const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
+
+                  if (act.tipo === 'cirugia') {
+                    if (act.cirugia?.name || act.otraCirugia) {
+                      surgeryDetails.push({
+                        label: getLabelFromTranslation('residentPhases.surgeryType', { type: placeholderToken }),
+                        value: act.cirugia?.name || act.otraCirugia
+                      });
+                    }
+
+                    if (act.nombreCirujano) {
+                      surgeryDetails.push({
+                        label: getLabelFromTranslation('residentPhases.surgeonName', { name: placeholderToken }),
+                        value: act.nombreCirujano
+                      });
+                    }
+
+                    if (typeof act.porcentajeParticipacion === 'number') {
+                      surgeryDetails.push({
+                        label: getLabelFromTranslation('residentPhases.participation', { percent: placeholderToken }),
+                        value: `${act.porcentajeParticipacion}%`
+                      });
+                    }
+                  }
+
+                  const renderCommentSection = (
+                    label: string,
+                    value: React.ReactNode,
+                    options?: { color?: string; borderColor?: string }
+                  ) => (
+                    <Box key={label} sx={{ mt: 2, width: '100%' }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                        sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+                      >
+                        {label}
+                      </Typography>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          mt: 0.75,
+                          p: 1.5,
+                          borderRadius: 2,
+                          backgroundColor:
+                            theme.palette.mode === 'light'
+                              ? theme.palette.common.white
+                              : theme.palette.grey[800],
+                          border: `1px solid ${
+                            options?.borderColor || theme.palette.divider
+                          }`
+                        }}
+                      >
+                        <Typography variant="body2" color={options?.color || 'text.primary'}>
+                          {value}
+                        </Typography>
+                      </Paper>
+                    </Box>
+                  );
+
+                  return (
+                    <Paper
+                      key={act._id || idx}
                       variant="outlined"
-                      onClick={() => {
-                        handleOpenDialog(item._id, idx);
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor:
+                          theme.palette.mode === 'light'
+                            ? theme.palette.grey[100]
+                            : theme.palette.grey[900],
+                        borderColor:
+                          theme.palette.mode === 'light'
+                            ? theme.palette.grey[300]
+                            : theme.palette.grey[700],
+                        boxShadow:
+                          theme.palette.mode === 'light'
+                            ? '0 4px 10px rgba(15, 23, 42, 0.08)'
+                            : '0 4px 12px rgba(15, 23, 42, 0.35)',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
                       }}
-                      sx={{ ml: 2 }}
                     >
-                      {t('residentPhases.markAsCompleted')}
-                    </Button>
-                  )}
-                  </ListItem>
-                ))
-              ) : (
-                <ListItem>
-                  <ListItemText primary={t('residentPhases.noActivities')} />
-                </ListItem>
-              )}
-            </List>
-          ) : (
+                      <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        justifyContent="space-between"
+                        alignItems={{ xs: 'flex-start', sm: 'center' }}
+                        spacing={1.5}
+                      >
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          alignItems="center"
+                          flexWrap="wrap"
+                          useFlexGap
+                        >
+                          {formatActivityType(act.tipo) && (
+                            <Chip
+                              size="small"
+                              label={formatActivityType(act.tipo)}
+                              variant="outlined"
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor:
+                                  theme.palette.mode === 'light'
+                                    ? theme.palette.grey[100]
+                                    : theme.palette.grey[800],
+                                color: theme.palette.text.primary
+                              }}
+                            />
+                          )}
+                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+                            {act.nombre || t('residentPhases.unnamedActivity')}
+                          </Typography>
+                        </Stack>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                          gap={0.5}
+                        >
+                          <Chip
+                            size="small"
+                            label={statusData.label}
+                            color={statusData.color}
+                            icon={statusData.icon}
+                            sx={{
+                              fontWeight: 600,
+                              alignSelf: { xs: 'flex-start', sm: 'flex-end' }
+                            }}
+                          />
+                          {formattedStatusDate && (
+                            <Typography variant="caption" color="text.secondary">
+                              {formattedStatusDate}
+                            </Typography>
+                          )}
+                        </Box>
+                      </Stack>
+
+                      <Box sx={{ mt: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                        {act.comentariosResidente &&
+                          renderCommentSection(t('residentPhases.comment'), act.comentariosResidente)}
+
+                        {surgeryDetails.length > 0 && (
+                          <Box
+                            sx={{
+                              mt: act.comentariosResidente ? 2 : 1,
+                              display: 'grid',
+                              gap: 2,
+                              gridTemplateColumns: {
+                                xs: '1fr',
+                                sm: `repeat(${Math.min(surgeryDetails.length, 3)}, 1fr)`
+                              }
+                            }}
+                          >
+                            {surgeryDetails.map((detail, detailIdx) => (
+                              <Box key={`${detail.label}-${detailIdx}`}>
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  fontWeight={600}
+                                  sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+                                >
+                                  {detail.label}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                                  {detail.value}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                        )}
+
+                        {act.comentariosTutor &&
+                          renderCommentSection(t('residentPhases.tutorComment'), act.comentariosTutor)}
+
+                        {act.estado === 'rechazado' && act.comentariosRechazo &&
+                          renderCommentSection(t('residentPhases.rejectionReason'), act.comentariosRechazo, {
+                            color: theme.palette.error.main,
+                            borderColor: theme.palette.error.light
+                          })}
+
+                        {act.estado === 'completado' && act.adjuntos?.length > 0 && (
+                          <Box sx={{ mt: 2 }}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              fontWeight={600}
+                              sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
+                            >
+                              {t('residentPhases.pendingAttachment')}
+                            </Typography>
+                            <Stack spacing={1} sx={{ mt: 1 }}>
+                              {act.adjuntos.map((adjunto: any) => (
+                                <Button
+                                  key={adjunto._id}
+                                  variant="text"
+                                  size="small"
+                                  startIcon={
+                                    attachmentDownloading === adjunto._id ? (
+                                      <CircularProgress size={16} color="inherit" />
+                                    ) : (
+                                      <DownloadIcon fontSize="small" />
+                                    )
+                                  }
+                                  onClick={() =>
+                                    handleDownloadAdjunto(adjunto._id, adjunto.nombreArchivo)
+                                  }
+                                  disabled={attachmentDownloading === adjunto._id}
+                                  sx={{ justifyContent: 'flex-start' }}
+                                >
+                                  {adjunto.nombreArchivo}
+                                </Button>
+                              ))}
+                            </Stack>
+                          </Box>
+                        )}
+                      </Box>
+
+                      {(showCompleteButton || canEditPending) && (
+                        <Box
+                          display="flex"
+                          flexDirection={{ xs: 'column', sm: 'row' }}
+                          justifyContent={{ xs: 'center', sm: 'flex-end' }}
+                          alignItems={{ xs: 'stretch', sm: 'center' }}
+                          gap={2}
+                          mt={3}
+                        >
+                          {showCompleteButton && (
+                            <FormControlLabel
+                              control={
+                                <CompletionSwitch
+                                  checked={completionToggles[toggleKey] || false}
+                                  onChange={(_, checked) => {
+                                    if (checked) {
+                                      handleToggleComplete(item._id, idx, toggleKey);
+                                    }
+                                  }}
+                                  inputProps={{
+                                    'aria-label': t('residentPhases.markAsCompleted') as string
+                                  }}
+                                />
+                              }
+                              label={
+                                <Typography variant="body2" fontWeight={600}>
+                                  {t('residentPhases.markAsCompleted')}
+                                </Typography>
+                              }
+                              sx={{
+                                mx: 0,
+                                gap: 1.5,
+                                alignSelf: { xs: 'stretch', sm: 'flex-end' },
+                                alignItems: 'center',
+                                '& .MuiSwitch-root': {
+                                  display: 'flex'
+                                },
+                                '& .MuiFormControlLabel-label': {
+                                  color:
+                                    theme.palette.mode === 'light'
+                                      ? theme.palette.primary.main
+                                      : theme.palette.primary.light
+                                }
+                              }}
+                            />
+                          )}
+
+                          {canEditPending && (
+                            <Button
+                              variant="outlined"
+                              onClick={() => handleEditActividad(item._id, idx)}
+                              sx={{ alignSelf: { xs: 'stretch', sm: 'flex-end' } }}
+                            >
+                              {t('residentPhases.editActivity')}
+                            </Button>
+                          )}
+                        </Box>
+                      )}
+                    </Paper>
+                  );
+                })}
+              </Box>
+            ) : (
               <Typography variant="body2" color="text.secondary">
-              {t('residentPhases.phaseLocked')}
+                {t('residentPhases.noActivities')}
               </Typography>
+            )
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              {t('residentPhases.phaseLocked')}
+            </Typography>
           )}
           {item.estadoGeneral === 'validado' &&
             item.actividades.some((a: any) => a.tipo === 'cirugia') && (
@@ -578,7 +1039,11 @@ const ResidenteFases: React.FC = () => {
 
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>{t('residentPhases.dialog.title')}</DialogTitle>
+        <DialogTitle>
+          {dialogMode === 'edit'
+            ? t('residentPhases.dialog.editTitle')
+            : t('residentPhases.dialog.title')}
+        </DialogTitle>
         <DialogContent>
           <TextField
             label={t('residentPhases.dialog.date')}
@@ -690,16 +1155,111 @@ const ResidenteFases: React.FC = () => {
             <input
               type="file"
               hidden
-              accept="application/pdf,image/png,image/jpeg"
+              multiple
+              accept="application/pdf,image/*"
               onChange={handleFileChange}
             />
           </Button>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+            {t('residentPhases.dialog.optionalFileHint', { max: 5 })}
+          </Typography>
 
-          {archivo && !archivoError && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {archivo.name} – {(archivo.size / (1024 * 1024)).toFixed(1)} MB
-            </Typography>
+          {adjuntosExistentes.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" fontWeight={600}>
+                {t('residentPhases.dialog.currentFiles')}
+              </Typography>
+              <Stack spacing={1} sx={{ mt: 1 }}>
+                {adjuntosExistentesVisibles.map(adjunto => (
+                  <Paper
+                    key={adjunto._id}
+                    elevation={0}
+                    sx={{
+                      p: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      borderRadius: 1.5,
+                      border: `1px solid ${theme.palette.divider}`
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      {adjunto.nombreArchivo}
+                    </Typography>
+                    <Tooltip title={t('residentPhases.downloadAttachment')}>
+                      <span>
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            handleDownloadAdjunto(adjunto._id, adjunto.nombreArchivo)
+                          }
+                          disabled={attachmentDownloading === adjunto._id}
+                        >
+                          {attachmentDownloading === adjunto._id ? (
+                            <CircularProgress size={18} color="inherit" />
+                          ) : (
+                            <DownloadIcon fontSize="small" />
+                          )}
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                    <Tooltip title={t('residentPhases.dialog.removeAttachment')}>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleRemoveAdjuntoExistente(adjunto._id)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Paper>
+                ))}
+                {adjuntosExistentesVisibles.length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    {t('residentPhases.dialog.allMarkedForRemoval')}
+                  </Typography>
+                )}
+              </Stack>
+            </Box>
           )}
+
+          {archivos.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" fontWeight={600}>
+                {t('residentPhases.dialog.newAttachments')}
+              </Typography>
+              <Stack spacing={1} sx={{ mt: 1 }}>
+                {archivos.map((file, index) => (
+                  <Paper
+                    key={`${file.name}-${file.size}-${index}`}
+                    elevation={0}
+                    sx={{
+                      p: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      borderRadius: 1.5,
+                      border: `1px solid ${theme.palette.divider}`
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      {file.name} – {(file.size / (1024 * 1024)).toFixed(1)} MB
+                    </Typography>
+                    <Tooltip title={t('residentPhases.dialog.removeAttachment')}>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleRemoveNuevoArchivo(index)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Paper>
+                ))}
+              </Stack>
+            </Box>
+          )}
+
           {archivoError && (
             <Typography variant="body2" color="error" sx={{ mt: 1 }}>
               {archivoErrorMsg}
@@ -724,7 +1284,7 @@ const ResidenteFases: React.FC = () => {
                 ? t('residentPhases.dialog.surgeonNameRequired')
                 : esCirugia && porcentaje === 0
                 ? t('residentPhases.dialog.participationRequired')
-                : t('residentPhases.dialog.optionalFileHint')
+                : t('residentPhases.dialog.optionalFileHint', { max: 5 })
             }
             arrow
             disableHoverListener={botonConfirmarHabilitado}

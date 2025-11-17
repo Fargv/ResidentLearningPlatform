@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { Role } = require('../utils/roles');
 
+const programTypes = ['Programa Residentes', 'Programa Sociedades'];
+
 const invitacionSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -19,6 +21,16 @@ const invitacionSchema = new mongoose.Schema({
       return this.rol === Role.RESIDENTE || this.rol === Role.TUTOR;
     }
   },
+  zona: {
+    type: String,
+    required: function() {
+      return this.rol === Role.CSM;
+    }
+  },
+  sociedad: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Sociedades'
+  },
   token: {
     type: String,
     required: true
@@ -35,6 +47,11 @@ const invitacionSchema = new mongoose.Schema({
     type: String,
     enum: ['pendiente', 'aceptada', 'expirada'],
     default: 'pendiente'
+  },
+  tipo: {
+    type: String,
+    enum: programTypes,
+    default: 'Programa Residentes'
   },
   admin: {
     type: mongoose.Schema.Types.ObjectId,

@@ -49,6 +49,48 @@ const updatePhaseStatus = async (progreso) => {
 
 
 
+
+const formatProgresoParaResidente = (progresoDoc) => {
+  const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
+  const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+    if (typeof adj.actividadIndex !== 'number') return acc;
+    const key = adj.actividadIndex;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push({
+      _id: adj._id.toString(),
+      nombreArchivo: adj.nombreArchivo,
+      mimeType: adj.mimeType,
+      fechaSubida: adj.fechaSubida
+    });
+    return acc;
+  }, {});
+
+  return {
+    _id: plain._id.toString(),
+    fase: plain.fase,
+    faseModel: plain.faseModel,
+    estadoGeneral: plain.estadoGeneral,
+    actividades: (plain.actividades || []).map((act, index) => ({
+      nombre: act.nombre,
+      tipo: act.tipo,
+      completada: act.estado === 'validado',
+      comentariosResidente: act.comentariosResidente || '',
+      comentariosTutor: act.comentariosTutor || '',
+      fecha: act.fechaRealizacion,
+      fechaValidacion: act.fechaValidacion,
+      comentariosRechazo: act.comentariosRechazo || '',
+      fechaRechazo: act.fechaRechazo,
+      estado: act.estado,
+      porcentajeParticipacion: act.porcentajeParticipacion,
+      cirugia: act.cirugia,
+      otraCirugia: act.otraCirugia,
+      nombreCirujano: act.nombreCirujano,
+      adjuntos: adjuntosPorIndice[index] || []
+    }))
+  };
+};
+
+
 const inicializarProgresoFormativo = async (req, res, next) => {
   try {
   const user = await User.findById(req.params.id);
@@ -145,32 +187,14 @@ const getProgresoResidente = async (req, res, next) => {
       .populate('actividades.actividad')
       .populate('actividades.cirugia');
 
+    await ProgresoResidente.populate(progresoPorFase, {
+      path: 'adjuntos',
+      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+    });
+
     // Ordenar las fases por su campo 'orden'
     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
-      const resultado = progresoPorFase.map(item => {
-        return {
-          _id: item._id.toString(),
-          fase: item.fase,
-          faseModel: item.faseModel,
-          estadoGeneral: item.estadoGeneral,
-          actividades: item.actividades.map(act => ({
-            nombre: act.nombre,
-            tipo: act.tipo,
-            completada: act.estado === 'validado',
-            comentariosResidente: act.comentariosResidente || '',
-            comentariosTutor: act.comentariosTutor || '',
-            fecha: act.fechaRealizacion,
-            fechaValidacion: act.fechaValidacion,
-            comentariosRechazo: act.comentariosRechazo || '',
-            fechaRechazo: act.fechaRechazo,
-            estado: act.estado,
-            porcentajeParticipacion: act.porcentajeParticipacion,
-            cirugia: act.cirugia,
-            otraCirugia: act.otraCirugia,
-            nombreCirujano: act.nombreCirujano
-          }))
-        };
-      });
+    const resultado = progresoPorFase.map(formatProgresoParaResidente);
       
 
     res.status(200).json({
@@ -214,12 +238,40 @@ const getProgresoResidentePorFase = async (req, res, next) => {
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
-     .populate('fase')
+      .populate('fase')
       .populate('actividades.actividad')
-      .populate('actividades.cirugia')
-      .lean();
+      .populate('actividades.cirugia');
 
-    const filtered = progreso.filter(p => p.residente);
+    await ProgresoResidente.populate(progreso, {
+      path: 'adjuntos',
+      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+    });
+
+    const resultado = progreso.map(item => {
+      const plain = item.toObject({ virtuals: true });
+      const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+        if (typeof adj.actividadIndex !== 'number') return acc;
+        const key = adj.actividadIndex;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push({
+          _id: adj._id.toString(),
+          nombreArchivo: adj.nombreArchivo,
+          mimeType: adj.mimeType,
+          fechaSubida: adj.fechaSubida
+        });
+        return acc;
+      }, {});
+
+      return {
+        ...plain,
+        actividades: plain.actividades.map((act, index) => ({
+          ...act,
+          adjuntos: adjuntosPorIndice[index] || []
+        }))
+      };
+    });
+
+    const filtered = resultado.filter(p => p.residente);
 
     res.status(200).json({
       success: true,
@@ -618,7 +670,28 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     const actividadExistente = progreso.actividades[index];
+
     const estadoPrevio = actividadExistente.estado;
+    const actividadIndex = Number(index);
+
+    const existingAdjuntos = await Adjunto.find({ progreso: id, actividadIndex });
+
+    let adjuntosAEliminar = [];
+    if (req.body.adjuntosAEliminar) {
+      try {
+        const raw = req.body.adjuntosAEliminar;
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed)) {
+          adjuntosAEliminar = parsed.filter(item => typeof item === 'string');
+        } else if (typeof parsed === 'string') {
+          adjuntosAEliminar = [parsed];
+        } else {
+          return next(new ErrorResponse('Formato de adjuntos a eliminar no válido', 400));
+        }
+      } catch (err) {
+        return next(new ErrorResponse('Formato de adjuntos a eliminar no válido', 400));
+      }
+    }
 
     if (actividadOriginal.tipo === 'cirugia') {
       const porcentaje = Number(porcentajeParticipacion);
@@ -642,25 +715,60 @@ const marcarActividadCompletada = async (req, res, next) => {
     actividadExistente.fechaRealizacion = fechaRealizacion ? new Date(fechaRealizacion) : new Date();
     actividadExistente.comentariosResidente = comentariosResidente;
 
-    // Si el residente adjunta un archivo, guardarlo como Adjunto en MongoDB
-    if (req.files && req.files.adjunto) {
-      const file = req.files.adjunto;
-      const allowed = ['application/pdf', 'image/png', 'image/jpeg'];
-      if (!allowed.includes(file.mimetype)) {
-        return next(new ErrorResponse('Tipo de archivo no permitido', 400));
+    const allowedMimeTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/heic', 'image/heif'];
+    const MAX_FILES = 5;
+
+    const filesFromRequest = [];
+    if (req.files) {
+      const posiblesCampos = ['adjunto', 'adjuntos'];
+      for (const campo of posiblesCampos) {
+        const value = req.files[campo];
+        if (!value) continue;
+        if (Array.isArray(value)) {
+          filesFromRequest.push(...value);
+        } else {
+          filesFromRequest.push(value);
+        }
+      }
+    }
+
+    for (const file of filesFromRequest) {
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        return next(new ErrorResponse(`Tipo de archivo no permitido: ${file.name}`, 400));
       }
       if (file.size > 5 * 1024 * 1024) {
-        return next(new ErrorResponse('El archivo supera el límite de 5MB', 400));
+        return next(new ErrorResponse(`El archivo ${file.name} supera el límite de 5MB`, 400));
       }
-      await Adjunto.create({
+    }
+
+    const existingMap = new Map(existingAdjuntos.map(adj => [adj._id.toString(), adj]));
+    const idsParaEliminar = adjuntosAEliminar.filter(idEliminar => existingMap.has(idEliminar));
+    const restantes = existingAdjuntos.filter(adj => !idsParaEliminar.includes(adj._id.toString()));
+
+    if (restantes.length + filesFromRequest.length > MAX_FILES) {
+      return next(new ErrorResponse('Solo se permiten hasta 5 archivos adjuntos por actividad', 400));
+    }
+
+    if (idsParaEliminar.length > 0) {
+      await Adjunto.deleteMany({
+        _id: { $in: idsParaEliminar },
+        progreso: id,
+        actividadIndex
+      });
+    }
+
+    if (filesFromRequest.length > 0) {
+      const adjuntosParaCrear = filesFromRequest.map(file => ({
         progreso: id,
         usuario: req.user._id,
-        actividadIndex: Number(index),
+        actividadIndex,
         nombreArchivo: file.name,
         mimeType: file.mimetype,
         datos: file.data,
         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
-      });
+      }));
+
+      await Adjunto.insertMany(adjuntosParaCrear);
     }
 
     await progreso.save();
@@ -696,8 +804,12 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     await progreso.populate(['fase', 'actividades.actividad', 'actividades.cirugia']);
+    await progreso.populate({
+      path: 'adjuntos',
+      select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+    });
 
-    res.status(200).json({ success: true, data: progreso });
+    res.status(200).json({ success: true, data: formatProgresoParaResidente(progreso) });
   } catch (err) {
     next(err);
   }
@@ -798,14 +910,41 @@ const getValidacionesPendientes = async (req, res, next) => {
       return true;
     });
 
+    const progresoIds = filtrados.map(p => p._id);
+    const adjuntosPorActividad = new Map();
+
+    if (progresoIds.length) {
+      const adjuntos = await Adjunto.find({
+        progreso: { $in: progresoIds },
+        actividadIndex: { $ne: null }
+      })
+        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
+        .lean();
+
+      adjuntos.forEach(adjunto => {
+        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
+        if (!adjuntosPorActividad.has(key)) {
+          adjuntosPorActividad.set(key, []);
+        }
+        adjuntosPorActividad.get(key).push({
+          _id: adjunto._id,
+          nombreArchivo: adjunto.nombreArchivo,
+          mimeType: adjunto.mimeType,
+          fechaSubida: adjunto.fechaSubida
+        });
+      });
+
+      for (const lista of adjuntosPorActividad.values()) {
+        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
+      }
+    }
+
     for (const progreso of filtrados) {
 
       for (let index = 0; index < progreso.actividades.length; index++) {
         const actividad = progreso.actividades[index];
-        const existeAdjunto = await Adjunto.exists({
-          progreso: progreso._id,
-          actividadIndex: index
-        });
+        const key = `${progreso._id.toString()}-${index}`;
+        const adjuntos = adjuntosPorActividad.get(key) || [];
 
         const item = {
           _id: `${progreso._id}-${index}`,
@@ -818,7 +957,8 @@ const getValidacionesPendientes = async (req, res, next) => {
             actividad.fechaRealizacion || progreso.fechaRegistro,
           estado: actividad.estado,
           comentariosRechazo: actividad.comentariosRechazo || '',
-          tieneAdjunto: !!existeAdjunto
+          tieneAdjunto: adjuntos.length > 0,
+          adjuntos
         };
 
         if (actividad.estado === 'completado') pendientes.push(item);
@@ -862,15 +1002,42 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
     const validadas = [];
     const rechazadas = [];
 
+    const progresoIds = progresos.map(p => p._id);
+    const adjuntosPorActividad = new Map();
+
+    if (progresoIds.length) {
+      const adjuntos = await Adjunto.find({
+        progreso: { $in: progresoIds },
+        actividadIndex: { $ne: null }
+      })
+        .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
+        .lean();
+
+      adjuntos.forEach(adjunto => {
+        const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
+        if (!adjuntosPorActividad.has(key)) {
+          adjuntosPorActividad.set(key, []);
+        }
+        adjuntosPorActividad.get(key).push({
+          _id: adjunto._id,
+          nombreArchivo: adjunto.nombreArchivo,
+          mimeType: adjunto.mimeType,
+          fechaSubida: adjunto.fechaSubida
+        });
+      });
+
+      for (const lista of adjuntosPorActividad.values()) {
+        lista.sort((a, b) => new Date(a.fechaSubida).getTime() - new Date(b.fechaSubida).getTime());
+      }
+    }
+
     for (const progreso of progresos) {
       if (!progreso.residente) continue;
 
       for (let index = 0; index < progreso.actividades.length; index++) {
         const actividad = progreso.actividades[index];
-        const existeAdjunto = await Adjunto.exists({
-          progreso: progreso._id,
-          actividadIndex: index
-        });
+        const key = `${progreso._id.toString()}-${index}`;
+        const adjuntos = adjuntosPorActividad.get(key) || [];
 
         const item = {
           _id: `${progreso._id}-${index}`,
@@ -883,7 +1050,8 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
             actividad.fechaRealizacion || progreso.fechaRegistro,
           estado: actividad.estado,
           comentariosRechazo: actividad.comentariosRechazo || '',
-          tieneAdjunto: !!existeAdjunto
+          tieneAdjunto: adjuntos.length > 0,
+          adjuntos
         };
 
         if (actividad.estado === 'completado') pendientes.push(item);
@@ -1005,6 +1173,8 @@ const rechazarActividad = async (req, res, next) => {
       tipo: 'rechazo',
       mensaje: `Tu actividad "${actividad.actividad.nombre || actividad.nombre}" ha sido rechazada. Motivo: ${comentarios}`
     });
+
+    await Adjunto.deleteMany({ progreso: id, actividadIndex: Number(index) });
 
     res.status(200).json({ success: true, data: progreso });
   } catch (err) {

@@ -269,6 +269,15 @@
     "consentSuffix": " e cumpro coa LOPD.",
     "registerButton": "Rexistrarse"
   },
+  "registerInvite": {
+    "title": "Completa o teu rexistro",
+    "loading": "Validando a invitación...",
+    "invalid": "A invitación non existe ou xa foi utilizada.",
+    "expired": "Esta invitación caducou. Solicita unha nova ao teu administrador.",
+    "error": "Non puidemos validar a túa invitación.",
+    "ctaLogin": "Ir ao inicio de sesión",
+    "prefilledNotice": "Preenchemos os datos da invitación para {{email}}. Revisa a información e completa o rexistro."
+  },
   "society": {
     "convocatoria": {
       "label": "Convocatoria",
@@ -323,6 +332,7 @@
     "delete": "Eliminar",
     "deleting": "Eliminando...",
     "phase": "Fase",
+    "download": "Descargar",
     "validate": "Validar",
     "reject": "Rexectar",
     "processing": "Procesando...",
@@ -516,7 +526,10 @@
     },
     "resetEmail": {
       "subject": "Restablecer contrasinal de {{app}}",
-      "body": "Ola {{name}},\n\nSolicitaches restablecer o teu contrasinal en {{app}}. Preme na seguinte ligazón para escoller un novo:\n\n{{link}}\n\nEsta ligazón é persoal, só é válida unha vez e caduca en {{days}} días.\n\nAdministrador del entorno"
+      "body": "Ola {{name}},\n\nSolicitaches restablecer o teu contrasinal en {{app}}. Preme na seguinte ligazón para escoller un novo:\n\n{{link}}\n\nEsta ligazón é persoal, só é válida unha vez e caduca en {{days}} días.\n\nAdministrador del entorno",
+      "confirm": "Queres enviar a ligazón de restablecemento a {{email}}?",
+      "sent": "Ligazón de restablecemento enviada a {{email}}",
+      "unknownEmail": "este usuario"
     },
     "_comment": "Xestión de usuarios para administradores",
     "buttons": {
@@ -561,7 +574,7 @@
       "role": "Rol",
       "actions": "Accións"
     },
-    "viewProgress": "Ver progreso"
+    "viewProgress": "Progreso"
   },
   "adminProgressDetail": {
     "loadError": "Erro ao cargar o progreso",
@@ -627,13 +640,13 @@
   },
   "forgotPassword": {
     "heading": "Esqueciches o contrasinal?",
-    "description": "Para restablecer o contrasinal, contacta co administrador do sistema.",
-    "emailLabel": "O teu correo",
-    "submit": "Enviar correo ao administrador",
+    "description": "Introduce o teu correo electrónico e enviarémosche instrucións automáticas para restablecer o contrasinal.",
+    "emailLabel": "O teu correo electrónico",
+    "submit": "Enviar restablecemento automático",
     "backToLogin": "Volver ao inicio de sesión",
-    "requestSent": "Solicitude enviada.",
-    "error": "Erro ao enviar a solicitude.",
-    "emailNotFound": "Non existe ningún usuario con ese correo. Introduce un válido."
+    "success": "Se o correo existe, enviamos as instrucións de restablecemento.",
+    "error": "Non foi posible completar o restablecemento automático.",
+    "emailNotFound": "Non existe ningún usuario con ese correo. Introduce un correo válido."
   },
   "resetPassword": {
     "title": "Restablecer contrasinal",
@@ -824,7 +837,7 @@
       "rejected": "Non hai validacións rexeitadas"
     },
     "actions": {
-      "viewAttachment": "Ver adxunto"
+      "viewAttachment": "Adxuntos"
     },
     "dialog": {
       "validateTitle": "Validar actividade",
@@ -838,7 +851,7 @@
     "errorLoad": "Erro ao cargar as validacións",
     "_comment": "Validacións xestionadas por Tutores",
     "buttons": {
-      "viewAttachment": "Ver adxunto",
+      "viewAttachment": "Adxuntos",
       "validate": "Validar",
       "reject": "Rexectar",
       "cancel": "Cancelar"
@@ -858,7 +871,8 @@
       "processing": "Procesando..."
     },
     "messages": {
-      "loadError": "Erro ao cargar as validacións"
+      "loadError": "Erro ao cargar as validacións",
+      "noAttachments": "Non hai anexos dispoñibles"
     }
   },
   "emails": {
@@ -928,6 +942,7 @@
     "activitySaveError": "Erro ao gardar a actividade.",
     "activitySuccess": "✅ Actividade rexistrada con éxito",
     "noActivitySelectedError": "Erro interno: Non se seleccionou ningunha actividade.",
+    "downloadAttachmentError": "Erro ao descargar o ficheiro adxunto.",
     "noTitle": "Sen título",
     "phaseTitle": "Fase {{number}}: {{name}}",
     "deadline": "Data límite",
@@ -936,6 +951,7 @@
     "phaseLocked": "Fase bloqueada",
     "noProgress": "Non hai progreso formativo dispoñible.",
     "markAsCompleted": "Marcar como completada",
+    "editActivity": "Editar actividade",
     "unnamedActivity": "Actividade sen nome",
     "comment": "Comentario",
     "tutorComment": "Comentario do Tutor",
@@ -946,6 +962,8 @@
     "surgeryType": "Tipo de cirurxía: {{type}}",
     "surgeonName": "Nome do cirurxián: {{name}}",
     "participation": "Porcentaxe de participación: {{percent}}%",
+    "downloadAttachment": "Descargar ficheiro",
+    "pendingAttachment": "Ficheiro adxunto enviado",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividade como completada",
@@ -956,18 +974,24 @@
       "otherSurgeryTooltip": "Escriba o nome da cirurxía",
       "surgeonName": "Nome do cirurxián",
       "participation": "Porcentaxe de participación",
-      "selectFile": "Seleccionar ficheiro",
+      "selectFile": "Seleccionar ficheiros",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta o ID do progreso",
       "noActivitySelected": "Non se seleccionou ningunha actividade",
       "selectDate": "Selecciona unha data de realización",
-      "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
+      "optionalFileHint": "Podes anexar ata {{max}} ficheiros (máx. 5MB cada un)",
+      "maxFilesReached": "Acadaches o límite de 5 ficheiros para esta actividade.",
       "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB.",
       "surgeryRequired": "Selecciona ou escribe un procedemento",
       "surgeonNameRequired": "Introduce o nome do cirurxián",
       "participationRequired": "Selecciona unha porcentaxe de participación",
       "title": "Marcar actividade como completada",
+      "editTitle": "Editar actividade enviada",
+      "currentFiles": "Ficheiros actuais",
+      "newAttachments": "Novos ficheiros seleccionados",
+      "removeAttachment": "Eliminar ficheiro",
+      "allMarkedForRemoval": "Marcaches todos os ficheiros existentes para eliminar.",
       "date": "Data de realización"
     },
     "messages": {

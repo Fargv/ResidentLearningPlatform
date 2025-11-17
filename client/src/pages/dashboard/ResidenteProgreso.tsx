@@ -101,7 +101,7 @@ const ResidenteProgreso: React.FC = () => {
   }
   if (error) return <Alert severity="error">{error}</Alert>;
 
-  const filteredProgresos = progresos.filter(p => p.faseModel === 'Fase');
+  const filteredProgresos = progresos.filter((p) => p.faseModel === 'Fase');
   const phaseStats = filteredProgresos.map(p => {
     const counts = { pendiente: 0, completado: 0, rechazado: 0, validado: 0 };
     p.actividades.forEach(a => {
@@ -121,7 +121,9 @@ const ResidenteProgreso: React.FC = () => {
     };
   });
 
-  const allValidado = filteredProgresos.every(p => p.estadoGeneral === 'validado');
+  const allValidado =
+    filteredProgresos.length > 0 &&
+    filteredProgresos.every((p) => p.estadoGeneral === 'validado');
 
   return (
     <Box>
