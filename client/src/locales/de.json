@@ -374,6 +374,8 @@
       "surgeryRequired": "Wähle oder gib ein Verfahren ein",
       "surgeonNameRequired": "Gib den Namen des Chirurgen ein",
       "participationRequired": "Wähle einen Beteiligungsprozentsatz",
+      "requiredFieldsNote": "Mit * gekennzeichnete Felder sind Pflichtfelder.",
+      "requiredSurgeryFields": "Vervollständige die Pflichtfelder der Operation.",
       "title": "Aktivität abschließen",
       "editTitle": "Aktivität bearbeiten",
       "currentFiles": "Aktuelle Anhänge",

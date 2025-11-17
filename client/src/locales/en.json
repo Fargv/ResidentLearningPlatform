@@ -952,6 +952,8 @@
       "surgeryRequired": "Select or enter a procedure",
       "surgeonNameRequired": "Enter the surgeon's name",
       "participationRequired": "Select a participation percentage",
+      "requiredFieldsNote": "Fields marked with * are required.",
+      "requiredSurgeryFields": "Complete the required surgery fields.",
       "title": "Mark activity as completed",
       "editTitle": "Edit submitted activity",
       "currentFiles": "Current attachments",

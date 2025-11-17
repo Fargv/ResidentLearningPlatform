@@ -935,6 +935,8 @@
       "surgeryRequired": "Aukeratu edo idatzi prozedura bat",
       "surgeonNameRequired": "Idatzi zirujauaren izena",
       "participationRequired": "Aukeratu parte-hartzearen ehunekoa",
+      "requiredFieldsNote": "* duten eremuak derrigorrezkoak dira.",
+      "requiredSurgeryFields": "Bete kirurgiako derrigorrezko eremuak.",
       "title": "Markatu jarduera osatutzat",
       "editTitle": "Edit activity",
       "currentFiles": "Current attachments",

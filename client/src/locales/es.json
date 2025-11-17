@@ -944,6 +944,8 @@
       "surgeryRequired": "Selecciona o escribe un procedimiento",
       "surgeonNameRequired": "Ingresa el nombre del cirujano",
       "participationRequired": "Selecciona un porcentaje de participación",
+      "requiredFieldsNote": "Los campos marcados con * son obligatorios.",
+      "requiredSurgeryFields": "Completa los campos obligatorios de la cirugía.",
       "title": "Marcar actividad como completada",
       "editTitle": "Editar actividad enviada",
       "currentFiles": "Archivos actuales",

@@ -640,6 +640,8 @@
       "surgeryRequired": "Sélectionnez ou saisissez une procédure",
       "surgeonNameRequired": "Entrez le nom du chirurgien",
       "participationRequired": "Sélectionnez un pourcentage de participation",
+      "requiredFieldsNote": "Les champs marqués d'un * sont obligatoires.",
+      "requiredSurgeryFields": "Complétez les champs obligatoires de la chirurgie.",
       "title": "Marquer l'activité comme complétée",
       "editTitle": "Modifier l'activité envoyée",
       "currentFiles": "Fichiers actuels",

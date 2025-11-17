@@ -1,235 +1,701 @@
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index 406ed4c8b4e60f53d3c8cd09ae011d30a8b63ccb..c62647fd8abc41cdd9128044a1e1dbc8f8b916df 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -48,67 +48,67 @@ import api, {
-   getTutors,
-   sendResetPasswordEmail,
-   clearResetNotifications,
- } from "../../api";
- import InviteUsersMail from "../../components/InviteUsersMail";
- import BackButton from "../../components/BackButton";
- import { useTranslation, Trans } from "react-i18next";
- import { getRoleChipSx } from "../../utils/roleChipColors";
- import { FaseCirugia } from "../../types/FaseCirugia";
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 46f984480c5f11ee5365077e1de510b300602d0e..7d97c5fbb642417ccc8b6f3f269fdc003e206bbb 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -116,57 +116,59 @@ const ResidenteFases: React.FC = () => {
  
- const DIALOG_ACTIONS_SX: SxProps<Theme> = {
-   flexWrap: "wrap",
-   gap: 1,
-   justifyContent: "center",
- };
- 
- const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
-   minWidth: { xs: "100%", sm: 180 },
-   height: 40,
-   fontSize: "0.9rem",
-   mt: { xs: 1, sm: 0 },
-   fontWeight: 600,
-   flexBasis: { xs: "100%", sm: "auto" },
- };
- 
--const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
--  display: "flex",
--  flexDirection: "column",
--  alignItems: "center",
--  justifyContent: "center",
--  width: "100%",
--  gap: 1,
--};
--
--const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
--  width: { xs: "100%", sm: 150 },
--  maxWidth: "100%",
--  height: 38,
--  fontSize: "0.85rem",
--  mt: 0,
--  fontWeight: 600,
--};
-+const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
-+  display: "flex",
-+  flexDirection: "column",
-+  alignItems: "center",
-+  justifyContent: "center",
-+  width: "100%",
-+  gap: 0.75,
-+};
-+
-+const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
-+  width: { xs: "100%", sm: 140 },
-+  maxWidth: "100%",
-+  height: 36,
-+  fontSize: "0.8rem",
-+  mt: 0,
-+  fontWeight: 600,
-+};
- 
- const getEditActionButtonStyles = (theme: Theme) => {
-   const baseBg =
-     theme.palette.mode === "light"
-       ? theme.palette.primary.main
-       : theme.palette.primary.dark;
-   const hoverBg =
-     theme.palette.mode === "light"
-       ? theme.palette.primary.dark
-       : theme.palette.primary.main;
- 
-   return {
-     backgroundColor: baseBg,
-     color: theme.palette.getContrastText(baseBg),
-     "&:hover": {
-       backgroundColor: hoverBg,
-       color: theme.palette.getContrastText(hoverBg),
-     },
+   const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
+     const raw = t(key as any, params);
+     return raw
+       .replace(new RegExp(`${placeholderToken}`, 'g'), '')
+       .replace(/[:：]\s*$/, '')
+       .replace(/[%％]\s*$/, '')
+       .trim();
    };
- };
+   const [progresos, setProgresos] = useState<any[]>([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+   const [comentario, setComentario] = useState('');
+   const [fecha, setFecha] = useState('');
+   const [archivos, setArchivos] = useState<File[]>([]);
+   const [archivoError, setArchivoError] = useState(false);
+   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
+   const [snackbarMsg, setSnackbarMsg] = useState('');
+   const [snackbarError, setSnackbarError] = useState(false);
+   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+   const [downloadLoading, setDownloadLoading] = useState(false);
+-  const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+-  const [cirugia, setCirugia] = useState<any | null>(null);
+-  const [otraCirugia, setOtraCirugia] = useState('');
+-  const [nombreCirujano, setNombreCirujano] = useState('');
+-  const [porcentaje, setPorcentaje] = useState<number>(0);
+-  const [esCirugia, setEsCirugia] = useState(false);
+-  const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
++  const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
++  const [cirugia, setCirugia] = useState<any | null>(null);
++  const [otraCirugia, setOtraCirugia] = useState('');
++  const [surgeryInputValue, setSurgeryInputValue] = useState('');
++  const [nombreCirujano, setNombreCirujano] = useState('');
++  const [porcentaje, setPorcentaje] = useState<number>(0);
++  const [esCirugia, setEsCirugia] = useState(false);
++  const [mostrarErroresCirugia, setMostrarErroresCirugia] = useState(false);
++  const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
+   const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
+   const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
+   const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
+   const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
+   const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
+   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
  
- const getProgressActionButtonStyles = (theme: Theme) => {
-   const baseBg = theme.palette.mode === "light" ? "#EC407A" : "#F06292";
-   const hoverBg = theme.palette.mode === "light" ? "#D81B60" : "#EC407A";
+   const dateFieldMap: Record<number, keyof Sociedad> = {
+     1: 'fechaModulosOnline',
+     2: 'fechaSimulacion',
+     3: 'fechaAtividadesFirstAssistant',
+     4: 'fechaModuloOnlineStepByStep',
+     5: 'fechaHandOn'
+   };
  
-@@ -919,112 +919,142 @@ const AdminUsuarios: React.FC = () => {
-           renderInput={(params) => (
-             <TextField {...params} label={t("adminUsers.fields.type")} />
-           )}
-           sx={{ minWidth: 200 }}
-         />
-         <Autocomplete
-           multiple
-           options={faseOptions}
-           value={selectedFases}
-           onChange={(e, newValue) => setSelectedFases(newValue as string[])}
-           renderInput={(params) => (
-             <TextField
-               {...params}
-               label={t("adminUsers.fields.phase", "Fase")}
-             />
-           )}
-           sx={{ minWidth: 200 }}
-         />
-       </Box>
  
-      {/* Tabla de usuarios */}
-       <Paper sx={{ width: "100%", overflow: "hidden" }}>
-         <TableContainer>
-           <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
-             <TableHead>
--              <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
-+              <TableRow
-+                sx={(theme) => {
-+                  const backgroundColor =
-+                    theme.palette.mode === "light"
-+                      ? theme.palette.primary.light
-+                      : theme.palette.primary.dark;
-+                  const textColor = theme.palette.getContrastText(backgroundColor);
+   const getSociedadDateObj = (fase: number): Date | null => {
+     if (!sociedadInfo) return null;
+     const field = dateFieldMap[fase];
+     const value = field ? (sociedadInfo as any)[field] : null;
+     return value ? new Date(value) : null;
+   };
+ 
+   const getSociedadDate = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+@@ -245,119 +247,120 @@ const ResidenteFases: React.FC = () => {
+       if (!sociedadId) return;
+       try {
+         const res = await api.get(`/sociedades/${sociedadId}`);
+         const data = res.data.data || res.data;
+         setSociedadInfo(data);
+       } catch (err) {
+         console.error('Error cargando sociedad', err);
+       }
+     };
+ 
+     loadSociedad();
+   }, [user]);
+ 
+   const handleOpenDialog = (
+     progresoId: string,
+     index: number,
+     toggleKey?: string,
+     mode: 'complete' | 'edit' = 'complete'
+   ) => {
+     setDialogMode(mode);
+     setSelectedProgresoId(progresoId);
+     setSelectedActividadIndex(index);
+     setActiveToggleKey(mode === 'complete' ? toggleKey ?? null : null);
+ 
+     const progreso = progresos.find(p => p._id === progresoId);
+-    const actividad = progreso?.actividades?.[index];
+-    const esCirugiaActividad = actividad?.tipo === 'cirugia';
+-    setEsCirugia(!!esCirugiaActividad);
+-
+-    const fechaBase = actividad?.fecha || actividad?.fechaRealizacion;
+-    const fechaInicial = fechaBase
+-      ? new Date(fechaBase).toISOString().split('T')[0]
+-      : new Date().toISOString().split('T')[0];
++    const actividad = progreso?.actividades?.[index];
++    const esCirugiaActividad = actividad?.tipo === 'cirugia';
++    setEsCirugia(!!esCirugiaActividad);
++    setMostrarErroresCirugia(false);
 +
-+                  return {
-+                    backgroundColor,
-+                    "& .MuiTableCell-root": {
-+                      backgroundColor,
-+                      color: textColor,
-+                      fontWeight: 600,
-+                    },
-+                  };
++    const fechaBase = actividad?.fecha || actividad?.fechaRealizacion;
++    const fechaInicial = fechaBase
++      ? new Date(fechaBase).toISOString().split('T')[0]
++      : new Date().toISOString().split('T')[0];
+     setFecha(fechaInicial);
+ 
+     setComentario(mode === 'edit' ? actividad?.comentariosResidente || '' : '');
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+ 
+     if (mode === 'edit' && esCirugiaActividad) {
+-      if (actividad?.cirugia) {
+-        setCirugia(actividad.cirugia);
+-        setOtraCirugia('');
+-        setOtraCirugiaSeleccionada(false);
+-      } else if (actividad?.otraCirugia) {
+-        setCirugia(null);
+-        setOtraCirugia(actividad.otraCirugia);
+-        setOtraCirugiaSeleccionada(true);
+-      } else {
+-        setCirugia(null);
+-        setOtraCirugia('');
+-        setOtraCirugiaSeleccionada(false);
+-      }
+-      setNombreCirujano(actividad?.nombreCirujano || '');
+-      setPorcentaje(
+-        typeof actividad?.porcentajeParticipacion === 'number'
+-          ? actividad.porcentajeParticipacion
++      if (actividad?.cirugia) {
++        setCirugia(actividad.cirugia);
++        setSurgeryInputValue(actividad.cirugia.name || '');
++        setOtraCirugia('');
++        setOtraCirugiaSeleccionada(false);
++      } else if (actividad?.otraCirugia) {
++        setCirugia(null);
++        setOtraCirugia(actividad.otraCirugia);
++        setOtraCirugiaSeleccionada(true);
++        setSurgeryInputValue(actividad.otraCirugia);
++      } else {
++        setCirugia(null);
++        setOtraCirugia('');
++        setOtraCirugiaSeleccionada(false);
++        setSurgeryInputValue('');
++      }
++      setNombreCirujano(actividad?.nombreCirujano || '');
++      setPorcentaje(
++        typeof actividad?.porcentajeParticipacion === 'number'
++          ? actividad.porcentajeParticipacion
+           : 0
+       );
+-    } else {
+-      setCirugia(null);
+-      setOtraCirugia('');
+-      setOtraCirugiaSeleccionada(false);
+-      setNombreCirujano('');
+-      setPorcentaje(0);
+-    }
++    } else {
++      setCirugia(null);
++      setOtraCirugia('');
++      setOtraCirugiaSeleccionada(false);
++      setSurgeryInputValue('');
++      setNombreCirujano('');
++      setPorcentaje(0);
++    }
+ 
+     setArchivos([]);
+     setAdjuntosEliminados([]);
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+     setAdjuntosExistentes(mode === 'edit' ? actividad?.adjuntos || [] : []);
+ 
+     setDialogOpen(true);
+   };
+ 
+   const handleToggleComplete = (progresoId: string, index: number, toggleKey: string) => {
+     setCompletionToggles(prev => ({ ...prev, [toggleKey]: true }));
+     handleOpenDialog(progresoId, index, toggleKey);
+   };
+ 
+   const handleEditActividad = (progresoId: string, index: number) => {
+     handleOpenDialog(progresoId, index, undefined, 'edit');
+   };
+ 
+-  const botonConfirmarHabilitado =
+-    Boolean(selectedProgresoId) &&
+-    selectedActividadIndex !== null &&
+-    Boolean(fecha) &&
+-    !archivoError &&
+-    (!esCirugia ||
+-      ((cirugia || otraCirugia.trim()) &&
+-        nombreCirujano.trim() !== '' &&
+-        porcentaje > 0));
++  const botonConfirmarHabilitado =
++    Boolean(selectedProgresoId) &&
++    selectedActividadIndex !== null &&
++    Boolean(fecha) &&
++    !archivoError;
+ 
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const files = e.target.files ? Array.from(e.target.files) : [];
+     const MAX_FILES = 5;
+     const MAX_FILE_SIZE = 5 * 1024 * 1024;
+     const existentesVisibles = adjuntosExistentes.filter(
+       adj => !adjuntosEliminados.includes(adj._id)
+     );
+     const remainingSlots = MAX_FILES - (existentesVisibles.length + archivos.length);
+ 
+     if (remainingSlots <= 0) {
+       setArchivoError(true);
+       setArchivoErrorMsg(t('residentPhases.dialog.maxFilesReached'));
+       e.target.value = '';
+       return;
+     }
+ 
+     const filesToAdd = files.slice(0, remainingSlots);
+ 
+     const invalidFile = filesToAdd.find(file => file.size > MAX_FILE_SIZE);
+     if (invalidFile) {
+       setArchivoError(true);
+       setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
+       e.target.value = '';
+       return;
+@@ -370,134 +373,149 @@ const ResidenteFases: React.FC = () => {
+ 
+     setArchivos(prev => [...prev, ...filesToAdd]);
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+     e.target.value = '';
+   };
+ 
+   const handleRemoveNuevoArchivo = (index: number) => {
+     setArchivos(prev => prev.filter((_, i) => i !== index));
+   };
+ 
+   const handleRemoveAdjuntoExistente = (id: string) => {
+     setAdjuntosEliminados(prev => (prev.includes(id) ? prev : [...prev, id]));
+   };
+ 
+   const adjuntosExistentesVisibles = adjuntosExistentes.filter(
+     adj => !adjuntosEliminados.includes(adj._id)
+   );
+ 
+   const handleCloseDialog = () => {
+     setDialogOpen(false);
+     if (activeToggleKey) {
+       setCompletionToggles(prev => ({ ...prev, [activeToggleKey]: false }));
+       setActiveToggleKey(null);
+     }
+-    setCirugia(null);
+-    setOtraCirugia('');
+-    setNombreCirujano('');
+-    setPorcentaje(0);
+-    setEsCirugia(false);
+-    setOtraCirugiaSeleccionada(false);
+-    setArchivos([]);
+-    setAdjuntosExistentes([]);
+-    setAdjuntosEliminados([]);
++    setCirugia(null);
++    setOtraCirugia('');
++    setSurgeryInputValue('');
++    setNombreCirujano('');
++    setPorcentaje(0);
++    setEsCirugia(false);
++    setOtraCirugiaSeleccionada(false);
++    setMostrarErroresCirugia(false);
++    setArchivos([]);
++    setAdjuntosExistentes([]);
++    setAdjuntosEliminados([]);
+     setDialogMode('complete');
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+   };
+ 
+ 
+ 
+-  const handleCompletarActividad = async () => {
+-
+-    if (!selectedProgresoId || selectedActividadIndex === null) {
+-      setSnackbarError(true);
+-      setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
+-      setSnackbarOpen(true);
+-      return;
+-    }
+-
+-   try {
+-      const form = new FormData();
+-      form.append('fechaRealizacion', fecha);
+-      form.append('comentariosResidente', comentario);
+-
+-      const progreso = progresos.find(p => p._id === selectedProgresoId);
+-      const actividad = progreso?.actividades?.[selectedActividadIndex!];
+-      const esCirugia = actividad?.tipo === 'cirugia';
+-
+-      if (esCirugia) {
+-        if (cirugia) {
+-          form.append('cirugia', cirugia._id);
+-        } else if (otraCirugia) {
+-          form.append('otraCirugia', otraCirugia);
+-        }
+-        if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+-        form.append('porcentajeParticipacion', String(porcentaje));
+-      }
+-
+-      if (adjuntosEliminados.length > 0) {
+-        form.append('adjuntosAEliminar', JSON.stringify(adjuntosEliminados));
+-      }
+-
+-      archivos.forEach(file => {
+-        form.append('adjunto', file);
+-      });
+-
+-      const { data } = await api.put(
+-        `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
+-        form,
+-        { headers: { 'Content-Type': 'multipart/form-data' } }
+-      );
+-
+-      if (!data?.success) {
+-        setSnackbarError(true);
+-        setSnackbarMsg(t('residentPhases.activityFail'));
+-        setSnackbarOpen(true);
+-        return;
+-      }
+-
+-      setProgresos(prev =>
+-        prev.map((prog) =>
+-          prog._id === selectedProgresoId ? data.data : prog
+-        )
+-      );
+-
+-      setSnackbarError(false);
+-      setSnackbarMsg(t('residentPhases.activitySuccess'));
+-      setSnackbarOpen(true);
+-    } catch (err) {
+-      console.error('Error actualizando actividad:', err);
+-      setSnackbarError(true);
+-      setSnackbarMsg(t('residentPhases.activitySaveError'));
+-      setSnackbarOpen(true);
+-    } finally {
+-      handleCloseDialog();
+-      setArchivos([]);
+-    }
+-  };
++  const handleCompletarActividad = async () => {
++    if (!selectedProgresoId || selectedActividadIndex === null) {
++      setSnackbarError(true);
++      setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
++      setSnackbarOpen(true);
++      return;
++    }
++    const progreso = progresos.find(p => p._id === selectedProgresoId);
++    const actividad = progreso?.actividades?.[selectedActividadIndex!];
++    const esCirugiaActividad = actividad?.tipo === 'cirugia';
++
++    if (esCirugiaActividad) {
++      setMostrarErroresCirugia(true);
++      const otraCirugiaLimpia = otraCirugia.trim();
++      const faltaCirugia = !(cirugia || otraCirugiaLimpia);
++      const faltaNombreCirujano = !nombreCirujano.trim();
++      const faltaPorcentaje = porcentaje === 0;
++
++      if (faltaCirugia || faltaNombreCirujano || faltaPorcentaje) {
++        setSnackbarError(true);
++        setSnackbarMsg(t('residentPhases.dialog.requiredSurgeryFields'));
++        setSnackbarOpen(true);
++        return;
++      }
++    }
++
++    try {
++      const form = new FormData();
++      form.append('fechaRealizacion', fecha);
++      form.append('comentariosResidente', comentario);
++
++      if (esCirugiaActividad) {
++        if (cirugia) {
++          form.append('cirugia', cirugia._id);
++        } else if (otraCirugia.trim()) {
++          form.append('otraCirugia', otraCirugia.trim());
++        }
++        if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
++        form.append('porcentajeParticipacion', String(porcentaje));
++      }
++
++      if (adjuntosEliminados.length > 0) {
++        form.append('adjuntosAEliminar', JSON.stringify(adjuntosEliminados));
++      }
++
++      archivos.forEach(file => {
++        form.append('adjunto', file);
++      });
++
++      const { data } = await api.put(
++        `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
++        form,
++        { headers: { 'Content-Type': 'multipart/form-data' } }
++      );
++
++      if (!data?.success) {
++        setSnackbarError(true);
++        setSnackbarMsg(t('residentPhases.activityFail'));
++        setSnackbarOpen(true);
++        return;
++      }
++
++      setProgresos(prev =>
++        prev.map((prog) =>
++          prog._id === selectedProgresoId ? data.data : prog
++        )
++      );
++
++      setSnackbarError(false);
++      setSnackbarMsg(t('residentPhases.activitySuccess'));
++      setSnackbarOpen(true);
++    } catch (err) {
++      console.error('Error actualizando actividad:', err);
++      setSnackbarError(true);
++      setSnackbarMsg(t('residentPhases.activitySaveError'));
++      setSnackbarOpen(true);
++    } finally {
++      handleCloseDialog();
++      setArchivos([]);
++    }
++  };
+ 
+   const handleDownloadAdjunto = async (adjuntoId: string, nombreArchivo: string) => {
+     try {
+       setAttachmentDownloading(adjuntoId);
+       const res = await api.get(`/adjuntos/${adjuntoId}/download`, { responseType: 'blob' });
+       const url = window.URL.createObjectURL(new Blob([res.data]));
+       const link = document.createElement('a');
+       link.href = url;
+       link.setAttribute('download', nombreArchivo || 'adjunto');
+       document.body.appendChild(link);
+       link.click();
+       link.remove();
+     } catch (err) {
+       console.error('Error descargando adjunto:', err);
+       setSnackbarError(true);
+       setSnackbarMsg(t('residentPhases.downloadAttachmentError'));
+       setSnackbarOpen(true);
+     } finally {
+       setAttachmentDownloading(null);
+     }
+   };
+ 
+   const handleDescargarCertificado = async () => {
+     if (!user?._id) return;
+     setDownloadLoading(true);
+@@ -1041,137 +1059,153 @@ const ResidenteFases: React.FC = () => {
+       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+         <DialogTitle>
+           {dialogMode === 'edit'
+             ? t('residentPhases.dialog.editTitle')
+             : t('residentPhases.dialog.title')}
+         </DialogTitle>
+         <DialogContent>
+           <TextField
+             label={t('residentPhases.dialog.date')}
+             type="date"
+             value={fecha}
+             onChange={(e) => setFecha(e.target.value)}
+             fullWidth
+             margin="normal"
+             InputLabelProps={{ shrink: true }}
+           />
+           <TextField
+             label={t('residentPhases.dialog.comment')}
+             value={comentario}
+             onChange={(e) => setComentario(e.target.value)}
+             fullWidth
+             multiline
+             rows={3}
+             margin="normal"
+           />
+-          {esCirugia && (
+-            <>
+-              <Autocomplete
+-                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+-                isOptionEqualToValue={(opt, val) => opt._id === val._id}
+-                getOptionLabel={(option: any) =>
+-                  typeof option === 'string' ? option : option.name
+-                }
+-                value={cirugia}
+-                inputValue={
+-                  otraCirugiaSeleccionada
+-                    ? otraCirugia
+-                    : cirugia?.name || ''
+-                }
+-                onChange={(_, value) => {
+-                  if (typeof value === 'string') {
+-                    if (otraCirugiaSeleccionada) {
+-                      setOtraCirugia(value);
+-                    }
+-                  } else if (!value) {
+-                    setCirugia(null);
+-                    setOtraCirugiaSeleccionada(false);
+-                  } else if ((value as any)?._id === 'other') {
+-                    setCirugia(null);
+-                    setOtraCirugia('');
+-                    setOtraCirugiaSeleccionada(true);
+-                  } else {
+-                    setCirugia(value);
+-                    setOtraCirugiaSeleccionada(false);
+-                  }
+-                }}
+-                onInputChange={(_, newValue) => {
+-                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
+-                }}
+-                renderInput={(params) => (
+-                  <TextField
+-                    {...params}
+-                    label={t('residentPhases.dialog.surgery')}
+-                    margin="normal"
+-                    error={esCirugia && !(cirugia || otraCirugia.trim())}
+-                    helperText={
+-                      esCirugia && !(cirugia || otraCirugia.trim())
+-                        ? t('residentPhases.dialog.surgeryRequired')
+-                        : otraCirugiaSeleccionada
+-                        ? t('residentPhases.dialog.otherSurgeryTooltip')
+-                        : ''
+-                    }
+-                  />
+-                )}
+-                fullWidth
+-                freeSolo={otraCirugiaSeleccionada}
+-              />
+-              <TextField
+-                label={t('residentPhases.dialog.surgeonName')}
+-                value={nombreCirujano}
+-                onChange={(e) => setNombreCirujano(e.target.value)}
+-                fullWidth
+-                margin="normal"
+-                error={esCirugia && !nombreCirujano.trim()}
+-                helperText={
+-                  esCirugia && !nombreCirujano.trim()
+-                    ? t('residentPhases.dialog.surgeonNameRequired')
+-                    : ''
+-                }
+-              />
+-              <TextField
+-                select
+-                label={t('residentPhases.dialog.participation')}
+-                value={porcentaje}
+-                onChange={(e) => setPorcentaje(Number(e.target.value))}
+-                fullWidth
+-                margin="normal"
+-                error={esCirugia && porcentaje === 0}
+-                helperText={
+-                  esCirugia && porcentaje === 0
+-                    ? t('residentPhases.dialog.participationRequired')
+-                    : ''
+-                }
+-              >
+-                {[0, 25, 50, 75, 100].map((val) => (
+-                  <MenuItem key={val} value={val}>
+-                    {val}%
+-                  </MenuItem>
+-                ))}
+-              </TextField>
+-            </>
+-          )}
++          {esCirugia && (
++            <>
++              <Autocomplete
++                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
++                isOptionEqualToValue={(opt, val) =>
++                  typeof val === 'string'
++                    ? opt.name === val
++                    : opt._id === (val as any)?._id
++                }
++                getOptionLabel={(option: any) =>
++                  typeof option === 'string' ? option : option.name
++                }
++                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
++                inputValue={surgeryInputValue}
++                onChange={(_, value) => {
++                  if (typeof value === 'string') {
++                    setCirugia(null);
++                    setOtraCirugia(value);
++                    setOtraCirugiaSeleccionada(true);
++                    setSurgeryInputValue(value);
++                  } else if (!value) {
++                    setCirugia(null);
++                    setOtraCirugia('');
++                    setOtraCirugiaSeleccionada(false);
++                    setSurgeryInputValue('');
++                  } else if ((value as any)?._id === 'other') {
++                    setCirugia(null);
++                    setOtraCirugia('');
++                    setOtraCirugiaSeleccionada(true);
++                    setSurgeryInputValue('');
++                  } else {
++                    setCirugia(value);
++                    setOtraCirugiaSeleccionada(false);
++                    setSurgeryInputValue(value.name || '');
++                  }
 +                }}
++                onInputChange={(_, newValue) => {
++                  setSurgeryInputValue(newValue);
++                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
++                }}
++                renderInput={(params) => (
++                  <TextField
++                    {...params}
++                    label={t('residentPhases.dialog.surgery')}
++                    margin="normal"
++                    required
++                    error={
++                      mostrarErroresCirugia &&
++                      esCirugia &&
++                      !(cirugia || otraCirugia.trim())
++                    }
++                    helperText={
++                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
++                        ? t('residentPhases.dialog.surgeryRequired')
++                        : otraCirugiaSeleccionada
++                        ? t('residentPhases.dialog.otherSurgeryTooltip')
++                        : ''
++                    }
++                  />
++                )}
++                fullWidth
++                freeSolo={otraCirugiaSeleccionada}
++              />
++              <TextField
++                label={t('residentPhases.dialog.surgeonName')}
++                value={nombreCirujano}
++                onChange={(e) => setNombreCirujano(e.target.value)}
++                fullWidth
++                margin="normal"
++                required
++                error={mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()}
++                helperText={
++                  mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()
++                    ? t('residentPhases.dialog.surgeonNameRequired')
++                    : ''
++                }
++              />
++              <TextField
++                select
++                label={t('residentPhases.dialog.participation')}
++                value={porcentaje}
++                onChange={(e) => setPorcentaje(Number(e.target.value))}
++                fullWidth
++                margin="normal"
++                required
++                error={mostrarErroresCirugia && esCirugia && porcentaje === 0}
++                helperText={
++                  mostrarErroresCirugia && esCirugia && porcentaje === 0
++                    ? t('residentPhases.dialog.participationRequired')
++                    : ''
++                }
 +              >
-                 <TableCell
-                   onClick={() => handleSort("nombre")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.name")}
-                 </TableCell>
-                 <TableCell
-                   onClick={() => handleSort("email")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.email")}
-                 </TableCell>
-                 <TableCell>{t("adminUsers.table.type")}</TableCell>
-                 <TableCell>{t("adminUsers.table.society")}</TableCell>
-                 <TableCell
-                   onClick={() => handleSort("rol")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.role")}
-                 </TableCell>
-                 <TableCell
-                   onClick={() => handleSort("hospital")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.hospital")}
-                 </TableCell>
-                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
--                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
-+                <TableCell
-+                  sx={{
-+                    width: { xs: 160, md: 200 },
-+                    maxWidth: { xs: 160, md: 220 },
-+                  }}
-+                >
-+                  {t("adminUsers.table.tutor")}
-+                </TableCell>
-                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
-                 <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
-                 <TableCell sx={{ width: 40 }}></TableCell>
-                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
-               </TableRow>
-             </TableHead>
-             <TableBody>
-               {displayUsuarios.map((usuario) => (
-                 <TableRow key={usuario._id} hover>
-                   <TableCell>
-                     {usuario.nombre} {usuario.apellidos}
-                   </TableCell>
-                   <TableCell>{usuario.email}</TableCell>
-                   <TableCell>
-                     {usuario.tipo
-                       ? t(`types.${typeKey(usuario.tipo)}`)
-                       : "-"}
-                   </TableCell>
-                   <TableCell>
-                     {usuario.sociedad?.nombre ||
-                       usuario.sociedad?.titulo ||
-                       "-"}
-                   </TableCell>
-                   <TableCell>
-                     <Chip
-                       label={t(`roles.${usuario.rol}`)}
-                       size="small"
-                       sx={getRoleChipSx(usuario.rol)}
-                     />
-                   </TableCell>
-                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
-                   <TableCell>{usuario.especialidad || "-"}</TableCell>
--                  <TableCell>
-+                  <TableCell
-+                    sx={{
-+                      width: { xs: 160, md: 200 },
-+                      maxWidth: { xs: 160, md: 220 },
-+                      whiteSpace: "normal",
-+                    }}
-+                  >
-                     {usuario.rol === "residente"
-                       ? usuario.tutor && typeof usuario.tutor === "object"
-                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
-                         : <Chip color="warning" label={t("adminUsers.noTutor")} />
-                       : "-"}
-                   </TableCell>
-                   <TableCell>{usuario.zona || "-"}</TableCell>
-                   <TableCell>{usuario.faseActual || "-"}</TableCell>
-                   <TableCell align="center" sx={{ width: 40 }}>
-                     {usuario.fasesCirugia?.length ? (
-                       <>
-                         <Tooltip
-                           title={t('adminUsers.actions.downloadSurgeryReport', {
-                             phase: t('adminPhases.phase').toLowerCase(),
-                           })}
-                         >
-                           <IconButton
-                             onClick={(e) => handleOpenInformeMenu(e, usuario)}
-                             size="small"
-                           >
-                             <DownloadIcon />
-                           </IconButton>
-                         </Tooltip>
-                         <Menu
-                           anchorEl={anchorElInforme}
++                {[0, 25, 50, 75, 100].map((val) => (
++                  <MenuItem key={val} value={val}>
++                    {val}%
++                  </MenuItem>
++                ))}
++              </TextField>
++              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
++                {t('residentPhases.dialog.requiredFieldsNote')}
++              </Typography>
++            </>
++          )}
+           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+             {t('residentPhases.dialog.selectFile')}
+             <input
+               type="file"
+               hidden
+               multiple
+               accept="application/pdf,image/*"
+               onChange={handleFileChange}
+             />
+           </Button>
+           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+             {t('residentPhases.dialog.optionalFileHint', { max: 5 })}
+           </Typography>
+ 
+           {adjuntosExistentes.length > 0 && (
+             <Box sx={{ mt: 2 }}>
+               <Typography variant="body2" fontWeight={600}>
+                 {t('residentPhases.dialog.currentFiles')}
+               </Typography>
+               <Stack spacing={1} sx={{ mt: 1 }}>
+                 {adjuntosExistentesVisibles.map(adjunto => (
+                   <Paper
+                     key={adjunto._id}
+                     elevation={0}
+                     sx={{
