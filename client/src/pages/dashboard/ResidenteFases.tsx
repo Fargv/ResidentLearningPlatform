@@ -26,6 +26,7 @@ import {
   FormControlLabel,
   IconButton
 } from '@mui/material';
+import { createFilterOptions } from '@mui/material/Autocomplete';
 import Switch, { SwitchProps } from '@mui/material/Switch';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -107,6 +108,9 @@ const formatActivityType = (type?: string): string => {
   if (!type) return '';
   return type.charAt(0).toUpperCase() + type.slice(1);
 };
+
+type SurgeryOption = { _id: string; name: string; inputValue?: string };
+const surgeryFilter = createFilterOptions<SurgeryOption>();
 
 const ResidenteFases: React.FC = () => {
   const theme = useTheme();
@@ -1084,42 +1088,90 @@ const ResidenteFases: React.FC = () => {
           {esCirugia && (
             <>
               <Autocomplete
-                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+                options={surgeryTypes as SurgeryOption[]}
+                filterOptions={(options, params) => {
+                  const filtered = surgeryFilter(options, params);
+                  const trimmed = params.inputValue.trim();
+                  const alreadyExists = options.some(
+                    (option) =>
+                      option.name?.toLowerCase() === trimmed.toLowerCase()
+                  );
+
+                  if (trimmed && !alreadyExists) {
+                    filtered.push({
+                      inputValue: trimmed,
+                      _id: 'custom',
+                      name: t('residentPhases.dialog.surgeryAddCustom', {
+                        value: trimmed
+                      })
+                    });
+                  }
+
+                  return filtered;
+                }}
                 isOptionEqualToValue={(opt, val) =>
                   typeof val === 'string'
                     ? opt.name === val
                     : opt._id === (val as any)?._id
                 }
-                getOptionLabel={(option: any) =>
-                  typeof option === 'string' ? option : option.name
-                }
+                getOptionLabel={(option: any) => {
+                  if (typeof option === 'string') return option;
+                  if (option.inputValue) return option.inputValue;
+                  return option.name;
+                }}
                 value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
                 inputValue={surgeryInputValue}
                 onChange={(_, value) => {
                   if (typeof value === 'string') {
+                    const trimmedValue = value.trim();
                     setCirugia(null);
-                    setOtraCirugia(value);
-                    setOtraCirugiaSeleccionada(true);
-                    setSurgeryInputValue(value);
+                    setOtraCirugia(trimmedValue);
+                    setOtraCirugiaSeleccionada(!!trimmedValue);
+                    setSurgeryInputValue(trimmedValue);
+                  } else if (value && (value as SurgeryOption).inputValue) {
+                    const customValue = (value as SurgeryOption).inputValue || '';
+                    setCirugia(null);
+                    setOtraCirugia(customValue);
+                    setOtraCirugiaSeleccionada(!!customValue);
+                    setSurgeryInputValue(customValue);
                   } else if (!value) {
                     setCirugia(null);
                     setOtraCirugia('');
                     setOtraCirugiaSeleccionada(false);
                     setSurgeryInputValue('');
-                  } else if ((value as any)?._id === 'other') {
-                    setCirugia(null);
-                    setOtraCirugia('');
-                    setOtraCirugiaSeleccionada(true);
-                    setSurgeryInputValue('');
                   } else {
                     setCirugia(value);
+                    setOtraCirugia('');
                     setOtraCirugiaSeleccionada(false);
                     setSurgeryInputValue(value.name || '');
                   }
                 }}
-                onInputChange={(_, newValue) => {
+                onInputChange={(_, newValue, reason) => {
                   setSurgeryInputValue(newValue);
-                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
+                  if (otraCirugiaSeleccionada && reason === 'input')
+                    setOtraCirugia(newValue);
+                }}
+                renderOption={(props, option) => {
+                  const typedOption = option as SurgeryOption;
+                  return (
+                    <li
+                      {...props}
+                      key={
+                        typedOption._id ??
+                        typedOption.inputValue ??
+                        typedOption.name
+                      }
+                    >
+                      <Stack spacing={0.25}>
+                        <Typography variant="body2">{typedOption.name}</Typography>
+                        {typedOption.inputValue && (
+                          <Typography variant="caption" color="text.secondary">
+                            {t('residentPhases.dialog.otherSurgeryTooltip')}
+                          </Typography>
+                        )}
+                      </Stack>
+                    </li>
+                  );
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -1127,6 +1179,7 @@ const ResidenteFases: React.FC = () => {
                     label={t('residentPhases.dialog.surgery')}
                     margin="normal"
                     required
+                    placeholder={t('residentPhases.dialog.surgeryHelper')}
                     error={
                       mostrarErroresCirugia &&
                       esCirugia &&
@@ -1137,12 +1190,15 @@ const ResidenteFases: React.FC = () => {
                         ? t('residentPhases.dialog.surgeryRequired')
                         : otraCirugiaSeleccionada
                         ? t('residentPhases.dialog.otherSurgeryTooltip')
-                        : ''
+                        : t('residentPhases.dialog.surgeryHelper')
                     }
                   />
                 )}
                 fullWidth
-                freeSolo={otraCirugiaSeleccionada}
+                freeSolo
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
               />
               <TextField
                 label={t('residentPhases.dialog.surgeonName')}
