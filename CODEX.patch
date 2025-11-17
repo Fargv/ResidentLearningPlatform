@@ -1,235 +1,399 @@
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index 406ed4c8b4e60f53d3c8cd09ae011d30a8b63ccb..c62647fd8abc41cdd9128044a1e1dbc8f8b916df 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -48,67 +48,67 @@ import api, {
-   getTutors,
-   sendResetPasswordEmail,
-   clearResetNotifications,
- } from "../../api";
- import InviteUsersMail from "../../components/InviteUsersMail";
- import BackButton from "../../components/BackButton";
- import { useTranslation, Trans } from "react-i18next";
- import { getRoleChipSx } from "../../utils/roleChipColors";
- import { FaseCirugia } from "../../types/FaseCirugia";
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index 58bb10f77b395849f125ac004ea2a33e173d0d66..29af9f8385b5ddb60da77e8f210d6f6e659279aa 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -1,73 +1,74 @@
+-import React, { useEffect, useState } from 'react';
+-import {
+-  Box,
+-  Typography,
+-  Alert,
+-  Chip,
+-  Skeleton,
+-  LinearProgress,
+-  Accordion,
+-  AccordionSummary,
+-  AccordionDetails,
+-  Button,
+-  Dialog,
+-  DialogTitle,
+-  DialogContent,
+-  DialogActions,
+-  TextField,
+-  Snackbar,
+-  Tooltip,
+-  CircularProgress,
+-  Backdrop,
+-  Autocomplete,
+-  MenuItem,
+-  Paper,
+-  Stack,
+-  FormControlLabel,
+-  IconButton
+-} from '@mui/material';
++import React, { useEffect, useState } from 'react';
++import {
++  Box,
++  Typography,
++  Alert,
++  Chip,
++  Skeleton,
++  LinearProgress,
++  Accordion,
++  AccordionSummary,
++  AccordionDetails,
++  Button,
++  Dialog,
++  DialogTitle,
++  DialogContent,
++  DialogActions,
++  TextField,
++  Snackbar,
++  Tooltip,
++  CircularProgress,
++  Backdrop,
++  Autocomplete,
++  MenuItem,
++  Paper,
++  Stack,
++  FormControlLabel,
++  IconButton
++} from '@mui/material';
++import { createFilterOptions } from '@mui/material/Autocomplete';
+ import Switch, { SwitchProps } from '@mui/material/Switch';
  
- const DIALOG_ACTIONS_SX: SxProps<Theme> = {
-   flexWrap: "wrap",
-   gap: 1,
-   justifyContent: "center",
- };
- 
- const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
-   minWidth: { xs: "100%", sm: 180 },
-   height: 40,
-   fontSize: "0.9rem",
-   mt: { xs: 1, sm: 0 },
-   fontWeight: 600,
-   flexBasis: { xs: "100%", sm: "auto" },
- };
- 
--const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
--  display: "flex",
--  flexDirection: "column",
--  alignItems: "center",
--  justifyContent: "center",
--  width: "100%",
--  gap: 1,
--};
+ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+ import VerifiedIcon from '@mui/icons-material/Verified';
+ import CancelIcon from '@mui/icons-material/Cancel';
+ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+ import DownloadIcon from '@mui/icons-material/Download';
+ import CloseIcon from '@mui/icons-material/Close';
+ import { useTheme, alpha, styled } from '@mui/material/styles';
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ import { Sociedad } from '../../types/Sociedad';
+ import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
+-import { useTranslation } from 'react-i18next';
 -
--const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
--  width: { xs: "100%", sm: 150 },
--  maxWidth: "100%",
--  height: 38,
--  fontSize: "0.85rem",
--  mt: 0,
--  fontWeight: 600,
--};
-+const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
-+  display: "flex",
-+  flexDirection: "column",
-+  alignItems: "center",
-+  justifyContent: "center",
-+  width: "100%",
-+  gap: 0.75,
-+};
+-const CompletionSwitch = styled((props: SwitchProps) => (
+-  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+-))(({ theme }) => ({
++import { useTranslation } from 'react-i18next';
 +
-+const TABLE_ACTION_BUTTON_SX: SxProps<Theme> = {
-+  width: { xs: "100%", sm: 140 },
-+  maxWidth: "100%",
-+  height: 36,
-+  fontSize: "0.8rem",
-+  mt: 0,
-+  fontWeight: 600,
-+};
- 
- const getEditActionButtonStyles = (theme: Theme) => {
-   const baseBg =
-     theme.palette.mode === "light"
-       ? theme.palette.primary.main
-       : theme.palette.primary.dark;
-   const hoverBg =
-     theme.palette.mode === "light"
-       ? theme.palette.primary.dark
-       : theme.palette.primary.main;
- 
-   return {
-     backgroundColor: baseBg,
-     color: theme.palette.getContrastText(baseBg),
-     "&:hover": {
-       backgroundColor: hoverBg,
-       color: theme.palette.getContrastText(hoverBg),
++const CompletionSwitch = styled((props: SwitchProps) => (
++  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
++))(({ theme }) => ({
+   width: 48,
+   height: 28,
+   padding: 0,
+   display: 'flex',
+   alignItems: 'center',
+   '& .MuiSwitch-switchBase': {
+     padding: 0,
+     margin: 2,
+     transitionDuration: '200ms',
+     '&.Mui-focusVisible .MuiSwitch-thumb': {
+       boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
+       border: `1px solid ${theme.palette.primary.main}`
      },
-   };
- };
+     '&.Mui-checked': {
+       transform: 'translateX(20px)',
+       color: theme.palette.common.white,
+       '& .MuiSwitch-thumb': {
+         boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
+       },
+       '& + .MuiSwitch-track': {
+         backgroundColor:
+           theme.palette.mode === 'light'
+             ? theme.palette.primary.main
+             : alpha(theme.palette.primary.light, 0.55),
+         borderColor: 'transparent',
+@@ -81,54 +82,57 @@ const CompletionSwitch = styled((props: SwitchProps) => (
+     boxSizing: 'border-box',
+     borderRadius: '50%',
+     backgroundColor: theme.palette.common.white,
+     boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`,
+     position: 'relative',
+     '&:before': {
+       content: "''",
+       position: 'absolute',
+       inset: 0,
+       borderRadius: '50%',
+       border: `1px solid ${alpha(theme.palette.common.black, 0.08)}`
+     }
+   },
+   '& .MuiSwitch-track': {
+     borderRadius: 999,
+     backgroundColor:
+       theme.palette.mode === 'light'
+         ? alpha(theme.palette.text.primary, 0.15)
+         : alpha(theme.palette.common.white, 0.25),
+     border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
+     opacity: 1,
+     boxSizing: 'border-box'
+   }
+ }));
  
- const getProgressActionButtonStyles = (theme: Theme) => {
-   const baseBg = theme.palette.mode === "light" ? "#EC407A" : "#F06292";
-   const hoverBg = theme.palette.mode === "light" ? "#D81B60" : "#EC407A";
- 
-@@ -919,112 +919,142 @@ const AdminUsuarios: React.FC = () => {
-           renderInput={(params) => (
-             <TextField {...params} label={t("adminUsers.fields.type")} />
-           )}
-           sx={{ minWidth: 200 }}
-         />
-         <Autocomplete
-           multiple
-           options={faseOptions}
-           value={selectedFases}
-           onChange={(e, newValue) => setSelectedFases(newValue as string[])}
-           renderInput={(params) => (
-             <TextField
-               {...params}
-               label={t("adminUsers.fields.phase", "Fase")}
-             />
-           )}
-           sx={{ minWidth: 200 }}
-         />
-       </Box>
- 
-      {/* Tabla de usuarios */}
-       <Paper sx={{ width: "100%", overflow: "hidden" }}>
-         <TableContainer>
-           <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
-             <TableHead>
--              <TableRow sx={{ backgroundColor: "primary.light", color: "common.white" }}>
-+              <TableRow
-+                sx={(theme) => {
-+                  const backgroundColor =
-+                    theme.palette.mode === "light"
-+                      ? theme.palette.primary.light
-+                      : theme.palette.primary.dark;
-+                  const textColor = theme.palette.getContrastText(backgroundColor);
+-const formatActivityType = (type?: string): string => {
+-  if (!type) return '';
+-  return type.charAt(0).toUpperCase() + type.slice(1);
+-};
++const formatActivityType = (type?: string): string => {
++  if (!type) return '';
++  return type.charAt(0).toUpperCase() + type.slice(1);
++};
 +
-+                  return {
-+                    backgroundColor,
-+                    "& .MuiTableCell-root": {
-+                      backgroundColor,
-+                      color: textColor,
-+                      fontWeight: 600,
-+                    },
-+                  };
++type SurgeryOption = { _id: string; name: string; inputValue?: string };
++const surgeryFilter = createFilterOptions<SurgeryOption>();
+ 
+ const ResidenteFases: React.FC = () => {
+   const theme = useTheme();
+   const { user } = useAuth();
+   const { t, i18n } = useTranslation();
+   const placeholderToken = '___';
+ 
+   const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
+     const raw = t(key as any, params);
+     return raw
+       .replace(new RegExp(`${placeholderToken}`, 'g'), '')
+       .replace(/[:：]\s*$/, '')
+       .replace(/[%％]\s*$/, '')
+       .trim();
+   };
+   const [progresos, setProgresos] = useState<any[]>([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+   const [comentario, setComentario] = useState('');
+   const [fecha, setFecha] = useState('');
+   const [archivos, setArchivos] = useState<File[]>([]);
+   const [archivoError, setArchivoError] = useState(false);
+@@ -1061,111 +1065,163 @@ const ResidenteFases: React.FC = () => {
+           {dialogMode === 'edit'
+             ? t('residentPhases.dialog.editTitle')
+             : t('residentPhases.dialog.title')}
+         </DialogTitle>
+         <DialogContent>
+           <TextField
+             label={t('residentPhases.dialog.date')}
+             type="date"
+             value={fecha}
+             onChange={(e) => setFecha(e.target.value)}
+             fullWidth
+             margin="normal"
+             InputLabelProps={{ shrink: true }}
+           />
+           <TextField
+             label={t('residentPhases.dialog.comment')}
+             value={comentario}
+             onChange={(e) => setComentario(e.target.value)}
+             fullWidth
+             multiline
+             rows={3}
+             margin="normal"
+           />
+           {esCirugia && (
+             <>
+-              <Autocomplete
+-                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
+-                isOptionEqualToValue={(opt, val) =>
+-                  typeof val === 'string'
+-                    ? opt.name === val
+-                    : opt._id === (val as any)?._id
+-                }
+-                getOptionLabel={(option: any) =>
+-                  typeof option === 'string' ? option : option.name
+-                }
+-                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
+-                inputValue={surgeryInputValue}
+-                onChange={(_, value) => {
+-                  if (typeof value === 'string') {
+-                    setCirugia(null);
+-                    setOtraCirugia(value);
+-                    setOtraCirugiaSeleccionada(true);
+-                    setSurgeryInputValue(value);
+-                  } else if (!value) {
+-                    setCirugia(null);
+-                    setOtraCirugia('');
+-                    setOtraCirugiaSeleccionada(false);
+-                    setSurgeryInputValue('');
+-                  } else if ((value as any)?._id === 'other') {
+-                    setCirugia(null);
+-                    setOtraCirugia('');
+-                    setOtraCirugiaSeleccionada(true);
+-                    setSurgeryInputValue('');
+-                  } else {
+-                    setCirugia(value);
+-                    setOtraCirugiaSeleccionada(false);
+-                    setSurgeryInputValue(value.name || '');
+-                  }
+-                }}
+-                onInputChange={(_, newValue) => {
+-                  setSurgeryInputValue(newValue);
+-                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
+-                }}
+-                renderInput={(params) => (
+-                  <TextField
+-                    {...params}
+-                    label={t('residentPhases.dialog.surgery')}
+-                    margin="normal"
+-                    required
+-                    error={
+-                      mostrarErroresCirugia &&
+-                      esCirugia &&
+-                      !(cirugia || otraCirugia.trim())
+-                    }
+-                    helperText={
+-                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
+-                        ? t('residentPhases.dialog.surgeryRequired')
+-                        : otraCirugiaSeleccionada
+-                        ? t('residentPhases.dialog.otherSurgeryTooltip')
+-                        : ''
+-                    }
+-                  />
+-                )}
+-                fullWidth
+-                freeSolo={otraCirugiaSeleccionada}
+-              />
++              <Autocomplete
++                options={surgeryTypes as SurgeryOption[]}
++                filterOptions={(options, params) => {
++                  const filtered = surgeryFilter(options, params);
++                  const trimmed = params.inputValue.trim();
++                  const alreadyExists = options.some(
++                    (option) =>
++                      option.name?.toLowerCase() === trimmed.toLowerCase()
++                  );
++
++                  if (trimmed && !alreadyExists) {
++                    filtered.push({
++                      inputValue: trimmed,
++                      _id: 'custom',
++                      name: t('residentPhases.dialog.surgeryAddCustom', {
++                        value: trimmed
++                      })
++                    });
++                  }
++
++                  return filtered;
 +                }}
-+              >
-                 <TableCell
-                   onClick={() => handleSort("nombre")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.name")}
-                 </TableCell>
-                 <TableCell
-                   onClick={() => handleSort("email")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.email")}
-                 </TableCell>
-                 <TableCell>{t("adminUsers.table.type")}</TableCell>
-                 <TableCell>{t("adminUsers.table.society")}</TableCell>
-                 <TableCell
-                   onClick={() => handleSort("rol")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.role")}
-                 </TableCell>
-                 <TableCell
-                   onClick={() => handleSort("hospital")}
-                   sx={{ cursor: "pointer" }}
-                 >
-                   {t("adminUsers.table.hospital")}
-                 </TableCell>
-                 <TableCell>{t("adminUsers.table.specialty")}</TableCell>
--                <TableCell>{t("adminUsers.table.tutor")}</TableCell>
-+                <TableCell
-+                  sx={{
-+                    width: { xs: 160, md: 200 },
-+                    maxWidth: { xs: 160, md: 220 },
-+                  }}
-+                >
-+                  {t("adminUsers.table.tutor")}
-+                </TableCell>
-                 <TableCell>{t("adminUsers.table.zone")}</TableCell>
-                 <TableCell>{t("adminUsers.table.currentPhase", "Fase Actual")}</TableCell>
-                 <TableCell sx={{ width: 40 }}></TableCell>
-                 <TableCell align="right">{t("adminUsers.table.actions")}</TableCell>
-               </TableRow>
-             </TableHead>
-             <TableBody>
-               {displayUsuarios.map((usuario) => (
-                 <TableRow key={usuario._id} hover>
-                   <TableCell>
-                     {usuario.nombre} {usuario.apellidos}
-                   </TableCell>
-                   <TableCell>{usuario.email}</TableCell>
-                   <TableCell>
-                     {usuario.tipo
-                       ? t(`types.${typeKey(usuario.tipo)}`)
-                       : "-"}
-                   </TableCell>
-                   <TableCell>
-                     {usuario.sociedad?.nombre ||
-                       usuario.sociedad?.titulo ||
-                       "-"}
-                   </TableCell>
-                   <TableCell>
-                     <Chip
-                       label={t(`roles.${usuario.rol}`)}
-                       size="small"
-                       sx={getRoleChipSx(usuario.rol)}
-                     />
-                   </TableCell>
-                   <TableCell>{usuario.hospital?.nombre || "-"}</TableCell>
-                   <TableCell>{usuario.especialidad || "-"}</TableCell>
--                  <TableCell>
-+                  <TableCell
-+                    sx={{
-+                      width: { xs: 160, md: 200 },
-+                      maxWidth: { xs: 160, md: 220 },
-+                      whiteSpace: "normal",
-+                    }}
-+                  >
-                     {usuario.rol === "residente"
-                       ? usuario.tutor && typeof usuario.tutor === "object"
-                         ? `${usuario.tutor.nombre} ${usuario.tutor.apellidos}${usuario.tutor.especialidad ? ` (${usuario.tutor.especialidad})` : ""}`
-                         : <Chip color="warning" label={t("adminUsers.noTutor")} />
-                       : "-"}
-                   </TableCell>
-                   <TableCell>{usuario.zona || "-"}</TableCell>
-                   <TableCell>{usuario.faseActual || "-"}</TableCell>
-                   <TableCell align="center" sx={{ width: 40 }}>
-                     {usuario.fasesCirugia?.length ? (
-                       <>
-                         <Tooltip
-                           title={t('adminUsers.actions.downloadSurgeryReport', {
-                             phase: t('adminPhases.phase').toLowerCase(),
-                           })}
-                         >
-                           <IconButton
-                             onClick={(e) => handleOpenInformeMenu(e, usuario)}
-                             size="small"
-                           >
-                             <DownloadIcon />
-                           </IconButton>
-                         </Tooltip>
-                         <Menu
-                           anchorEl={anchorElInforme}
++                isOptionEqualToValue={(opt, val) =>
++                  typeof val === 'string'
++                    ? opt.name === val
++                    : opt._id === (val as any)?._id
++                }
++                getOptionLabel={(option: any) => {
++                  if (typeof option === 'string') return option;
++                  if (option.inputValue) return option.inputValue;
++                  return option.name;
++                }}
++                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
++                inputValue={surgeryInputValue}
++                onChange={(_, value) => {
++                  if (typeof value === 'string') {
++                    const trimmedValue = value.trim();
++                    setCirugia(null);
++                    setOtraCirugia(trimmedValue);
++                    setOtraCirugiaSeleccionada(!!trimmedValue);
++                    setSurgeryInputValue(trimmedValue);
++                  } else if (value && (value as SurgeryOption).inputValue) {
++                    const customValue = (value as SurgeryOption).inputValue || '';
++                    setCirugia(null);
++                    setOtraCirugia(customValue);
++                    setOtraCirugiaSeleccionada(!!customValue);
++                    setSurgeryInputValue(customValue);
++                  } else if (!value) {
++                    setCirugia(null);
++                    setOtraCirugia('');
++                    setOtraCirugiaSeleccionada(false);
++                    setSurgeryInputValue('');
++                  } else {
++                    setCirugia(value);
++                    setOtraCirugia('');
++                    setOtraCirugiaSeleccionada(false);
++                    setSurgeryInputValue(value.name || '');
++                  }
++                }}
++                onInputChange={(_, newValue, reason) => {
++                  setSurgeryInputValue(newValue);
++                  if (otraCirugiaSeleccionada && reason === 'input')
++                    setOtraCirugia(newValue);
++                }}
++                renderOption={(props, option) => {
++                  const typedOption = option as SurgeryOption;
++                  return (
++                    <li
++                      {...props}
++                      key={
++                        typedOption._id ??
++                        typedOption.inputValue ??
++                        typedOption.name
++                      }
++                    >
++                      <Stack spacing={0.25}>
++                        <Typography variant="body2">{typedOption.name}</Typography>
++                        {typedOption.inputValue && (
++                          <Typography variant="caption" color="text.secondary">
++                            {t('residentPhases.dialog.otherSurgeryTooltip')}
++                          </Typography>
++                        )}
++                      </Stack>
++                    </li>
++                  );
++                }}
++                renderInput={(params) => (
++                  <TextField
++                    {...params}
++                    label={t('residentPhases.dialog.surgery')}
++                    margin="normal"
++                    required
++                    placeholder={t('residentPhases.dialog.surgeryHelper')}
++                    error={
++                      mostrarErroresCirugia &&
++                      esCirugia &&
++                      !(cirugia || otraCirugia.trim())
++                    }
++                    helperText={
++                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
++                        ? t('residentPhases.dialog.surgeryRequired')
++                        : otraCirugiaSeleccionada
++                        ? t('residentPhases.dialog.otherSurgeryTooltip')
++                        : t('residentPhases.dialog.surgeryHelper')
++                    }
++                  />
++                )}
++                fullWidth
++                freeSolo
++                selectOnFocus
++                clearOnBlur
++                handleHomeEndKeys
++              />
+               <TextField
+                 label={t('residentPhases.dialog.surgeonName')}
+                 value={nombreCirujano}
+                 onChange={(e) => setNombreCirujano(e.target.value)}
+                 fullWidth
+                 margin="normal"
+                 required
+                 error={mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()}
+                 helperText={
+                   mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()
+                     ? t('residentPhases.dialog.surgeonNameRequired')
+                     : ''
+                 }
+               />
+               <TextField
+                 select
+                 label={t('residentPhases.dialog.participation')}
+                 value={porcentaje}
+                 onChange={(e) => setPorcentaje(Number(e.target.value))}
+                 fullWidth
+                 margin="normal"
+                 required
+                 error={mostrarErroresCirugia && esCirugia && porcentaje === 0}
+                 helperText={
+                   mostrarErroresCirugia && esCirugia && porcentaje === 0
