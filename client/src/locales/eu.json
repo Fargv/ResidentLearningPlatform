@@ -268,7 +268,21 @@
     "title": "Nire profila",
     "personalData": "Datu pertsonalak",
     "changePassword": "Pasahitza aldatu",
+    "overview": "Kontuaren laburpena",
     "noTutor": "Ez dago prestatzaile esleituta",
+    "status": {
+      "role": "Rola",
+      "hospital": "Ospitalea",
+      "program": "Programa",
+      "zone": "Eremua",
+      "specialty": "Espezialitatea",
+      "active": "Kontu aktiboa",
+      "inactive": "Kontu ez-aktiboa"
+    },
+    "completeness": {
+      "title": "Profilaren osotasuna",
+      "helper": "Eguneratu zure datuak esperientzia hobetzeko"
+    },
     "fields": {
       "name": "Izena",
       "lastName": "Abizenak",
@@ -288,7 +302,22 @@
       "passwordUpdateError": "Errorea pasahitza aldatzean"
     },
     "buttons": {
-      "changePassword": "Pasahitza aldatu"
+      "changePassword": "Pasahitza aldatu",
+      "edit": "Datuak editatu"
+    },
+    "editMode": {
+      "description": "Edizio modua aktibatuta: gorde edo bertan behera utzi irteteko",
+      "readonlyHint": "Irakurtzeko soilik"
+    },
+    "dialogs": {
+      "passwordTitle": "Pasahitza aldatu",
+      "passwordDescription": "Eguneratu pasahitza orri hau utzi gabe"
+    },
+    "security": {
+      "title": "Segurtasuna eta sarbidea",
+      "tipStrongPassword": "Erabili pasahitz sendo eta bakarrak.",
+      "tipRegularUpdates": "Eguneratu pasahitza aldizka.",
+      "tipSignOut": "Itxi saioa gailu partekatuetan."
     }
   },
   "adminHospitals": {

@@ -450,7 +450,21 @@
     "title": "Meu Perfil",
     "personalData": "Dados pessoais",
     "changePassword": "Alterar Senha",
+    "overview": "Visão geral da conta",
     "noTutor": "Nenhum tutor atribuído",
+    "status": {
+      "role": "Função",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialidade",
+      "active": "Conta ativa",
+      "inactive": "Conta inativa"
+    },
+    "completeness": {
+      "title": "Completude do perfil",
+      "helper": "Mantenha seus dados atualizados para uma melhor experiência"
+    },
     "fields": {
       "name": "Nome",
       "lastName": "Sobrenome",
@@ -472,7 +486,22 @@
       "passwordUpdateError": "Erro ao alterar a senha"
     },
     "buttons": {
-      "changePassword": "Alterar Senha"
+      "changePassword": "Alterar Senha",
+      "edit": "Editar dados"
+    },
+    "editMode": {
+      "description": "Modo de edição ativado: salve ou cancele para sair",
+      "readonlyHint": "Campo somente leitura"
+    },
+    "dialogs": {
+      "passwordTitle": "Alterar senha",
+      "passwordDescription": "Atualize sua senha sem sair desta página"
+    },
+    "security": {
+      "title": "Segurança e acesso",
+      "tipStrongPassword": "Use senhas fortes e únicas.",
+      "tipRegularUpdates": "Atualize sua senha regularmente.",
+      "tipSignOut": "Encerre a sessão em dispositivos compartilhados."
     }
   },
   "adminHospitals": {

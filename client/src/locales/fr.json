@@ -30,7 +30,21 @@
     "title": "Mon profil",
     "personalData": "Données personnelles",
     "changePassword": "Changer le mot de passe",
+    "overview": "Aperçu du compte",
     "noTutor": "Aucun tuteur assigné",
+    "status": {
+      "role": "Rôle",
+      "hospital": "Hôpital",
+      "program": "Programme",
+      "zone": "Zone",
+      "specialty": "Spécialité",
+      "active": "Compte actif",
+      "inactive": "Compte inactif"
+    },
+    "completeness": {
+      "title": "Complétude du profil",
+      "helper": "Gardez vos données à jour pour une meilleure expérience"
+    },
     "fields": {
       "name": "Prénom",
       "lastName": "Nom",
@@ -50,7 +64,22 @@
       "passwordUpdateError": "Erreur lors du changement de mot de passe"
     },
     "buttons": {
-      "changePassword": "Changer le mot de passe"
+      "changePassword": "Changer le mot de passe",
+      "edit": "Modifier les données"
+    },
+    "editMode": {
+      "description": "Mode édition activé : enregistrez ou annulez pour sortir",
+      "readonlyHint": "Champ en lecture seule"
+    },
+    "dialogs": {
+      "passwordTitle": "Changer le mot de passe",
+      "passwordDescription": "Mettez à jour votre mot de passe sans quitter cette page"
+    },
+    "security": {
+      "title": "Sécurité et accès",
+      "tipStrongPassword": "Utilisez des mots de passe forts et uniques.",
+      "tipRegularUpdates": "Renouvelez votre mot de passe régulièrement.",
+      "tipSignOut": "Déconnectez-vous sur les appareils partagés."
     }
   },
   "adminConfig": {

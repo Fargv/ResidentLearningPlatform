@@ -1,80 +1,1514 @@
-diff --git a/client/src/context/ColorModeContext.tsx b/client/src/context/ColorModeContext.tsx
-index 1ed940555ba025707f814bdb2e2239b1f9afc107..b6f1070e5ee845d6a755e8ef5f27742641f0fbc3 100644
---- a/client/src/context/ColorModeContext.tsx
-+++ b/client/src/context/ColorModeContext.tsx
-@@ -101,51 +101,51 @@ const getTheme = (mode: PaletteMode) =>
-               contrastText: '#ffffff',
-             }
-           : {
-               main: '#90caf9',
-               light: '#c3fdff',
-               dark: '#5d99c6',
-               contrastText: '#0b1929',
-             },
-       success:
-         mode === 'light'
-           ? {
-               main: '#4caf50',
-               light: '#81c784',
-               dark: '#357a38',
-               contrastText: '#ffffff',
-             }
-           : {
-               main: '#a5d6a7',
-               light: '#d7ffd9',
-               dark: '#75a478',
-               contrastText: '#08240f',
-             },
-       divider: mode === 'light' ? '#e0e0e0' : '#2d2d2d',
+diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
+index 37a5e4586c70bd77151d23a8e78f25214e8e3a4a..50264f08ec67d44b62c620ce45758c5a8a1510b4 100644
+--- a/client/src/locales/ca.json
++++ b/client/src/locales/ca.json
+@@ -98,72 +98,101 @@
+     "expired": "Aquesta invitació ha caducat. Sol·licita'n una de nova al teu administrador.",
+     "error": "No hem pogut validar la teva invitació.",
+     "ctaLogin": "Anar a l'inici de sessió",
+     "prefilledNotice": "Hem preomplert les dades de la invitació per a {{email}}. Revisa la informació i completa el registre."
+   },
+   "common": {
+     "appName": "Resident Learning Platform",
+     "cancel": "Cancel·lar",
+     "create": "Crear",
+     "creating": "Creant...",
+     "saveChanges": "Desar canvis",
+     "saving": "Desant...",
+     "delete": "Eliminar",
+     "deleting": "Eliminant...",
+     "phase": "Fase",
+     "download": "Descarregar",
+     "validate": "Validar",
+     "reject": "Rebutjar",
+     "processing": "Processant...",
+     "none": "Cap"
+   },
+   "profile": {
+     "title": "El meu perfil",
+     "personalData": "Dades personals",
+     "changePassword": "Canviar contrasenya",
++    "overview": "Resum del compte",
+     "noTutor": "Sense tutor assignat",
++    "status": {
++      "role": "Rol",
++      "hospital": "Hospital",
++      "program": "Programa",
++      "zone": "Zona",
++      "specialty": "Especialitat",
++      "active": "Compte actiu",
++      "inactive": "Compte inactiu"
++    },
++    "completeness": {
++      "title": "Compleció del perfil",
++      "helper": "Mantén les teves dades al dia per a una millor experiència"
++    },
+     "fields": {
+       "name": "Nom",
+       "lastName": "Cognoms",
+       "email": "Correu electrònic",
+       "hospital": "Hospital",
+       "society": "Societat",
+       "tutor": "Tutor",
+       "currentPassword": "Contrasenya actual",
+       "newPassword": "Nova contrasenya",
+       "confirmPassword": "Confirmar contrasenya"
      },
-     typography: {
--      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-+      fontFamily: '"Montserrat", "Roboto", "Helvetica", "Arial", sans-serif',
-       h1: { fontWeight: 500 },
-       h2: { fontWeight: 500 },
-       h3: { fontWeight: 500 },
-       h4: { fontWeight: 500 },
-       h5: { fontWeight: 500 },
-       h6: { fontWeight: 500 },
+     
+     "messages": {
+       "updateSuccess": "Perfil actualitzat",
+       "updateError": "Error en actualitzar el perfil",
+       "passwordMismatch": "Les contrasenyes no coincideixen",
+       "passwordUpdateSuccess": "Contrasenya actualitzada",
+       "passwordUpdateError": "Error en canviar la contrasenya"
      },
-     shape: { borderRadius: 8 },
-     components: {
-       MuiButton: {
-         styleOverrides: {
-           root: {
-             textTransform: 'none',
-             fontWeight: 500,
-           },
-         },
+     "buttons": {
+-      "changePassword": "Canviar contrasenya"
++      "changePassword": "Canviar contrasenya",
++      "edit": "Editar dades"
++    },
++    "editMode": {
++      "description": "Mode edició activat: desa o cancel·la per sortir",
++      "readonlyHint": "Camp només de lectura"
++    },
++    "dialogs": {
++      "passwordTitle": "Canviar contrasenya",
++      "passwordDescription": "Actualitza la contrasenya sense sortir d'aquesta pàgina"
++    },
++    "security": {
++      "title": "Seguretat i accés",
++      "tipStrongPassword": "Fes servir contrasenyes úniques i segures.",
++      "tipRegularUpdates": "Actualitza la contrasenya periòdicament.",
++      "tipSignOut": "Tanca sessió en dispositius compartits."
+     }
+   },
+   "adminHospitals": {
+     "title": "Gestió d'Hospitals",
+     "new": "Nou Hospital",
+     "searchPlaceholder": "Cerca per nom",
+     "loadError": "Error en carregar els hospitals",
+     "createSuccess": "Hospital creat correctament",
+     "createError": "Error en crear l'hospital",
+     "updateSuccess": "Hospital actualitzat correctament",
+     "updateError": "Error en actualitzar l'hospital",
+     "deleteSuccess": "Hospital eliminat correctament",
+     "deleteError": "Error en eliminar l'hospital",
+     "table": {
+       "aria": "taula d'hospitals",
+       "name": "Nom",
+       "city": "Ciutat",
+       "province": "Província",
+       "zone": "Zona",
+       "phone": "Telèfon",
+       "email": "Correu electrònic",
+       "actions": "Accions"
+     },
+     "fields": {
+       "name": "Nom",
+diff --git a/client/src/locales/de.json b/client/src/locales/de.json
+index ff0ed469c748c438c12a0856e51504d487887803..b3c7e7ccfe938e505a281f390d5049ade57f648d 100644
+--- a/client/src/locales/de.json
++++ b/client/src/locales/de.json
+@@ -501,72 +501,101 @@
+       "editActivity": {
+         "title": "Aktivität bearbeiten",
+         "save": "Speichern",
+         "cancel": "Abbrechen"
        },
-       MuiCard: {
-         styleOverrides: {
-           root: {
-             borderRadius: 8,
-             boxShadow:
-               mode === 'light'
-                 ? '0 2px 8px rgba(0, 0, 0, 0.1)'
-                 : '0 2px 8px rgba(0, 0, 0, 0.4)',
-diff --git a/client/src/index.css b/client/src/index.css
-index ec2585e8c0bb8188184ed1e0703c4c8f2a8419b0..12980342577095a569290fbb690c1043f838bbeb 100644
---- a/client/src/index.css
-+++ b/client/src/index.css
-@@ -1,13 +1,15 @@
-+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+       "deleteActivity": {
+         "title": "Aktivität löschen",
+         "cancel": "Abbrechen",
+         "content": "Möchten Sie die Aktivität <strong>{{name}}</strong> wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+         "contentWithProgress": "Die Aktivität <strong>{{name}}</strong> hat <strong>{{count}}</strong> Fortschrittsdatensätze. Sind Sie sicher, dass Sie sie löschen möchten? Dies entfernt auch diese Fortschrittsdatensätze bei allen Nutzern.",
+         "hasProgress": "Die Aktivität <strong>{{name}}</strong> hat <strong>{{count}}</strong> Fortschrittsdatensätze. Sind Sie sicher, dass Sie sie löschen möchten? Dies entfernt auch diese Fortschrittsdatensätze bei allen Nutzern.",
+         "confirm": "Sind Sie sicher, dass Sie die Aktivität <strong>{{name}}</strong> löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+       },
+       "createActivity": "Aktivität für die Phase <strong>{{phase}}</strong> wird erstellt"
+     },
+     "empty": "Keine Phasen erstellt. Erstellen Sie eine neue Phase, um zu beginnen.",
+     "requiresValidation": "Benötigt Validierung",
+     "requiresSignature": "Benötigt Unterschrift",
+     "requiresPercentage": "Benötigt Prozentsatz",
+     "requiresAttachment": "Benötigt Anhang"
+   },
+   "profile": {
+     "title": "Mein Profil",
+     "personalData": "Persönliche Daten",
+     "changePassword": "Passwort ändern",
++    "overview": "Kontenübersicht",
+     "noTutor": "Kein Tutor zugewiesen",
++    "status": {
++      "role": "Rolle",
++      "hospital": "Krankenhaus",
++      "program": "Programm",
++      "zone": "Zone",
++      "specialty": "Fachgebiet",
++      "active": "Aktives Konto",
++      "inactive": "Inaktives Konto"
++    },
++    "completeness": {
++      "title": "Profilvollständigkeit",
++      "helper": "Halten Sie Ihre Daten aktuell für ein besseres Erlebnis"
++    },
+     "fields": {
+       "name": "Name",
+       "lastName": "Nachname",
+       "email": "E-Mail",
+       "hospital": "Krankenhaus",
+       "society": "Gesellschaft",
+       "tutor": "Tutor",
+       "currentPassword": "Aktuelles Passwort",
+       "newPassword": "Neues Passwort",
+       "confirmPassword": "Passwort bestätigen"
+     },
+     
+     "messages": {
+       "updateSuccess": "Profil aktualisiert",
+       "updateError": "Fehler beim Aktualisieren des Profils",
+       "passwordMismatch": "Passwörter stimmen nicht überein",
+       "passwordUpdateSuccess": "Passwort aktualisiert",
+       "passwordUpdateError": "Fehler beim Ändern des Passworts"
+     },
+     "buttons": {
+-      "changePassword": "Passwort ändern"
++      "changePassword": "Passwort ändern",
++      "edit": "Daten bearbeiten"
++    },
++    "editMode": {
++      "description": "Bearbeitungsmodus aktiv: Speichern oder Abbrechen zum Beenden",
++      "readonlyHint": "Nur-Lesen-Feld"
++    },
++    "dialogs": {
++      "passwordTitle": "Passwort ändern",
++      "passwordDescription": "Aktualisieren Sie Ihr Passwort, ohne diese Seite zu verlassen"
++    },
++    "security": {
++      "title": "Sicherheit und Zugriff",
++      "tipStrongPassword": "Verwenden Sie starke, einzigartige Passwörter.",
++      "tipRegularUpdates": "Aktualisieren Sie Ihr Passwort regelmäßig.",
++      "tipSignOut": "Melden Sie sich auf gemeinsam genutzten Geräten ab."
+     }
+   },
+   "adminHospitals": {
+     "title": "Krankenhausverwaltung",
+     "new": "Neues Krankenhaus",
+     "searchPlaceholder": "Nach Name suchen",
+     "loadError": "Fehler beim Laden der Krankenhäuser",
+     "createSuccess": "Krankenhaus erfolgreich erstellt",
+     "createError": "Fehler beim Erstellen des Krankenhauses",
+     "updateSuccess": "Krankenhaus erfolgreich aktualisiert",
+     "updateError": "Fehler beim Aktualisieren des Krankenhauses",
+     "deleteSuccess": "Krankenhaus erfolgreich gelöscht",
+     "deleteError": "Fehler beim Löschen des Krankenhauses",
+     "table": {
+       "aria": "Tabelle der Krankenhäuser",
+       "name": "Name",
+       "city": "Stadt",
+       "province": "Provinz",
+       "zone": "Zone",
+       "phone": "Telefon",
+       "email": "E-Mail",
+       "actions": "Aktionen"
+     },
+     "fields": {
+       "name": "Name",
+diff --git a/client/src/locales/en.json b/client/src/locales/en.json
+index 293a2d620a3c68858f8898b45d67b79f2c07a2a1..b8480be8259dea2a14cc347f5be2070693e6f703 100644
+--- a/client/src/locales/en.json
++++ b/client/src/locales/en.json
+@@ -249,73 +249,102 @@
+     "phase4": {
+       "label": "Phase 4 - Console Surgery",
+       "description": "Surgeries performed by the resident with supervision."
+     }
+   },
+   "common": {
+     "appName": "Resident Learning Platform",
+     "cancel": "Cancel",
+     "create": "Create",
+     "creating": "Creating...",
+     "saveChanges": "Save Changes",
+     "saving": "Saving...",
+     "delete": "Delete",
+     "deleting": "Deleting...",
+     "phase": "Phase",
+     "download": "Download",
+     "validate": "Validate",
+     "reject": "Reject",
+     "processing": "Processing...",
+     "none": "None"
+   },
+   "profile": {
+     "title": "My Profile",
+     "personalData": "Personal Data",
+     "changePassword": "Change Password",
++    "overview": "Account overview",
+     "noTutor": "No tutor assigned",
++    "status": {
++      "role": "Role",
++      "hospital": "Hospital",
++      "program": "Program",
++      "zone": "Zone",
++      "specialty": "Specialty",
++      "active": "Active account",
++      "inactive": "Inactive account"
++    },
++    "completeness": {
++      "title": "Profile completeness",
++      "helper": "Keep your data up to date for a better experience"
++    },
+     "fields": {
+       "name": "Name",
+       "lastName": "Last Name",
+       "email": "Email",
+       "logoUrl": "Logo URL",
+       "hospital": "Hospital",
+       "society": "Society",
+       "tutor": "Tutor",
+       "currentPassword": "Current Password",
+       "newPassword": "New Password",
+       "confirmPassword": "Confirm Password"
+     },
+     
+     "messages": {
+       "updateSuccess": "Profile updated",
+       "updateError": "Error updating profile",
+       "passwordMismatch": "Passwords do not match",
+       "passwordUpdateSuccess": "Password updated",
+       "passwordUpdateError": "Error changing password"
+     },
+     "buttons": {
+-      "changePassword": "Change Password"
++      "changePassword": "Change Password",
++      "edit": "Edit data"
++    },
++    "editMode": {
++      "description": "Edit mode enabled: save or cancel to exit",
++      "readonlyHint": "Read-only field"
++    },
++    "dialogs": {
++      "passwordTitle": "Change password",
++      "passwordDescription": "Update your password without leaving this page"
++    },
++    "security": {
++      "title": "Security and access",
++      "tipStrongPassword": "Use strong, unique passwords.",
++      "tipRegularUpdates": "Refresh your password regularly.",
++      "tipSignOut": "Sign out on shared devices."
+     }
+   },
+   "adminHospitals": {
+     "title": "Hospital Management",
+     "new": "New Hospital",
+     "searchPlaceholder": "Search by Name",
+     "loadError": "Error loading hospitals",
+     "createSuccess": "Hospital created successfully",
+     "createError": "Error creating hospital",
+     "updateSuccess": "Hospital updated successfully",
+     "updateError": "Error updating hospital",
+     "deleteSuccess": "Hospital deleted successfully",
+     "deleteError": "Error deleting hospital",
+     "table": {
+       "aria": "hospitals table",
+       "name": "Name",
+       "city": "City",
+       "province": "Province",
+       "zone": "Zone",
+       "phone": "Phone",
+       "email": "Email",
+       "logoUrl": "Logo URL",
+       "actions": "Actions"
+     },
+     "fields": {
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index bb3fcefb7da9c22a6841074c3433c0201ec991ab..57b4e051d7a749d04c7c878784c125190deb042a 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -248,72 +248,101 @@
+     "phase4": {
+       "label": "Fase 4 - Cirugía en Consola",
+       "description": "Cirugías realizadas por el residente con supervisión."
+     }
+   },
+   "common": {
+     "appName": "Resident Learning Platform",
+     "cancel": "Cancelar",
+     "create": "Crear",
+     "creating": "Creando...",
+     "saveChanges": "Guardar Cambios",
+     "saving": "Guardando...",
+     "delete": "Eliminar",
+     "deleting": "Eliminando...",
+     "phase": "Fase",
+     "download": "Descargar",
+     "validate": "Validar",
+     "reject": "Rechazar",
+     "processing": "Procesando...",
+     "none": "Ninguno"
+   },
+   "profile": {
+     "title": "Mi Perfil",
+     "personalData": "Datos personales",
+     "changePassword": "Cambiar Contraseña",
+-      "noTutor": "Sin tutor asignado",
++    "overview": "Resumen de cuenta",
++    "noTutor": "Sin tutor asignado",
++    "status": {
++      "role": "Rol",
++      "hospital": "Hospital",
++      "program": "Programa",
++      "zone": "Zona",
++      "specialty": "Especialidad",
++      "active": "Cuenta activa",
++      "inactive": "Cuenta inactiva"
++    },
++    "completeness": {
++      "title": "Completitud del perfil",
++      "helper": "Mantén tus datos al día para que podamos personalizar tu experiencia"
++    },
+     "fields": {
+       "name": "Nombre",
+       "lastName": "Apellidos",
+       "email": "Email",
+       "hospital": "Hospital",
+       "society": "Sociedad",
+       "tutor": "Tutor",
+       "currentPassword": "Contraseña Actual",
+       "newPassword": "Nueva Contraseña",
+       "confirmPassword": "Confirmar Contraseña"
+     },
+-    
 +
- body {
-   margin: 0;
--  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
--    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
--    sans-serif;
-+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-+    'Helvetica Neue', sans-serif;
-   -webkit-font-smoothing: antialiased;
-   -moz-osx-font-smoothing: grayscale;
+     "messages": {
+       "updateSuccess": "Perfil actualizado",
+       "updateError": "Error al actualizar el perfil",
+       "passwordMismatch": "Las contraseñas no coinciden",
+       "passwordUpdateSuccess": "Contraseña actualizada",
+       "passwordUpdateError": "Error al cambiar la contraseña"
+     },
+     "buttons": {
+-      "changePassword": "Cambiar Contraseña"
++      "changePassword": "Cambiar Contraseña",
++      "edit": "Editar datos"
++    },
++    "editMode": {
++      "description": "Modo edición activado: guarda o cancela para salir",
++      "readonlyHint": "Campo de solo lectura"
++    },
++    "dialogs": {
++      "passwordTitle": "Cambiar contraseña",
++      "passwordDescription": "Actualiza tu contraseña sin salir de esta página"
++    },
++    "security": {
++      "title": "Seguridad y acceso",
++      "tipStrongPassword": "Usa contraseñas únicas y difíciles de adivinar.",
++      "tipRegularUpdates": "Actualiza tu contraseña de forma periódica.",
++      "tipSignOut": "Cierra sesión en dispositivos compartidos."
+     }
+   },
+   "adminHospitals": {
+     "title": "Gestión de Hospitales",
+     "new": "Nuevo Hospital",
+     "searchPlaceholder": "Buscar por Nombre",
+     "loadError": "Error al cargar los hospitales",
+     "createSuccess": "Hospital creado correctamente",
+     "createError": "Error al crear el hospital",
+     "updateSuccess": "Hospital actualizado correctamente",
+     "updateError": "Error al actualizar el hospital",
+     "deleteSuccess": "Hospital eliminado correctamente",
+     "deleteError": "Error al eliminar el hospital",
+     "table": {
+       "aria": "tabla de hospitales",
+       "name": "Nombre",
+       "city": "Ciudad",
+       "province": "Provincia",
+       "zone": "Zona",
+       "phone": "Teléfono",
+       "email": "Email",
+       "actions": "Acciones"
+     },
+     "fields": {
+       "name": "Nombre",
+diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
+index 4b2a813e05641cc682d0a21cf872917c43e0bcef..55ca2173e2e93874d2f39cd304fe78cdd090077c 100644
+--- a/client/src/locales/eu.json
++++ b/client/src/locales/eu.json
+@@ -246,71 +246,100 @@
+     "phase4": {
+       "label": "Fase 4 - Cirugía en Consola",
+       "description": "Cirugías realizadas por el residente con supervisión."
+     }
+   },
+   "common": {
+     "appName": "Resident Learning Platform",
+     "cancel": "Utzi",
+     "create": "Sortu",
+     "creating": "Sortzen...",
+     "saveChanges": "Aldaketak gorde",
+     "saving": "Gordetzen...",
+     "delete": "Ezabatu",
+     "deleting": "Ezabatzen...",
+     "phase": "Fasea",
+     "download": "Deskargatu",
+     "validate": "Balidatu",
+     "reject": "Baztertu",
+     "processing": "Prozesatzen...",
+     "none": "Bat ere ez"
+   },
+   "profile": {
+     "title": "Nire profila",
+     "personalData": "Datu pertsonalak",
+     "changePassword": "Pasahitza aldatu",
++    "overview": "Kontuaren laburpena",
+     "noTutor": "Ez dago prestatzaile esleituta",
++    "status": {
++      "role": "Rola",
++      "hospital": "Ospitalea",
++      "program": "Programa",
++      "zone": "Eremua",
++      "specialty": "Espezialitatea",
++      "active": "Kontu aktiboa",
++      "inactive": "Kontu ez-aktiboa"
++    },
++    "completeness": {
++      "title": "Profilaren osotasuna",
++      "helper": "Eguneratu zure datuak esperientzia hobetzeko"
++    },
+     "fields": {
+       "name": "Izena",
+       "lastName": "Abizenak",
+       "email": "Emaila",
+       "hospital": "Ospitalea",
+       "society": "Elkartea",
+       "tutor": "Prestatzailea",
+       "currentPassword": "Oraingo pasahitza",
+       "newPassword": "Pasahitz berria",
+       "confirmPassword": "Pasahitza berretsi"
+     },
+     "messages": {
+       "updateSuccess": "Profila eguneratu da",
+       "updateError": "Errorea profila eguneratzean",
+       "passwordMismatch": "Pasahitzak ez datoz bat",
+       "passwordUpdateSuccess": "Pasahitza eguneratu da",
+       "passwordUpdateError": "Errorea pasahitza aldatzean"
+     },
+     "buttons": {
+-      "changePassword": "Pasahitza aldatu"
++      "changePassword": "Pasahitza aldatu",
++      "edit": "Datuak editatu"
++    },
++    "editMode": {
++      "description": "Edizio modua aktibatuta: gorde edo bertan behera utzi irteteko",
++      "readonlyHint": "Irakurtzeko soilik"
++    },
++    "dialogs": {
++      "passwordTitle": "Pasahitza aldatu",
++      "passwordDescription": "Eguneratu pasahitza orri hau utzi gabe"
++    },
++    "security": {
++      "title": "Segurtasuna eta sarbidea",
++      "tipStrongPassword": "Erabili pasahitz sendo eta bakarrak.",
++      "tipRegularUpdates": "Eguneratu pasahitza aldizka.",
++      "tipSignOut": "Itxi saioa gailu partekatuetan."
+     }
+   },
+   "adminHospitals": {
+     "title": "Ospitalen kudeaketa",
+     "new": "Ospitale berria",
+     "searchPlaceholder": "Bilatu izenaren arabera",
+     "loadError": "Errorea ospitaleak kargatzean",
+     "createSuccess": "Ospitalea ongi sortu da",
+     "createError": "Errorea ospitalea sortzean",
+     "updateSuccess": "Ospitalea ongi eguneratu da",
+     "updateError": "Errorea ospitalea eguneratzean",
+     "deleteSuccess": "Ospitalea ongi ezabatu da",
+     "deleteError": "Errorea ospitalea ezabatzean",
+     "table": {
+       "aria": "ospitalen taula",
+       "name": "Izena",
+       "city": "Hiria",
+       "province": "Probintzia",
+       "zone": "Eremua",
+       "phone": "Telefonoa",
+       "email": "Emaila",
+       "actions": "Ekintzak"
+     },
+     "fields": {
+       "name": "Izena",
+diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
+index 2a16a2e0c096c94e2c3ade3ffda8024eba1d1361..98d935008ba931db38a14d2aca4042f9e8418434 100644
+--- a/client/src/locales/fr.json
++++ b/client/src/locales/fr.json
+@@ -8,71 +8,100 @@
+     "participant": "Participante du programme des sociétés {{title}}",
+     "professor": "Profesor du programme des sociétés {{title}}"
+   },
+   "actions": {
+     "dashboard": "Tableau de bord",
+     "myProgress": "Mon progrès",
+     "trainingPhases": "Phases de formation",
+     "validations": "Validations",
+     "myUsers": "Mes utilisateurs",
+     "usersProgress": "Progrès des utilisateurs",
+     "settings": "Paramètres",
+     "myProfile": "Mon profil",
+     "notifications": "Notifications",
+     "profile": "Profil",
+     "users": "Utilisateurs",
+     "reports": "Rapports",
+     "logout": "Déconnexion",
+     "download": "Télécharger",
+     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+     "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
+   },
+   "profile": {
+     "title": "Mon profil",
+     "personalData": "Données personnelles",
+     "changePassword": "Changer le mot de passe",
++    "overview": "Aperçu du compte",
+     "noTutor": "Aucun tuteur assigné",
++    "status": {
++      "role": "Rôle",
++      "hospital": "Hôpital",
++      "program": "Programme",
++      "zone": "Zone",
++      "specialty": "Spécialité",
++      "active": "Compte actif",
++      "inactive": "Compte inactif"
++    },
++    "completeness": {
++      "title": "Complétude du profil",
++      "helper": "Gardez vos données à jour pour une meilleure expérience"
++    },
+     "fields": {
+       "name": "Prénom",
+       "lastName": "Nom",
+       "email": "Email",
+       "hospital": "Hôpital",
+       "society": "Société",
+       "tutor": "Tuteur",
+       "currentPassword": "Mot de passe actuel",
+       "newPassword": "Nouveau mot de passe",
+       "confirmPassword": "Confirmer le mot de passe"
+     },
+     "messages": {
+       "updateSuccess": "Profil mis à jour",
+       "updateError": "Erreur lors de la mise à jour du profil",
+       "passwordMismatch": "Les mots de passe ne correspondent pas",
+       "passwordUpdateSuccess": "Mot de passe mis à jour",
+       "passwordUpdateError": "Erreur lors du changement de mot de passe"
+     },
+     "buttons": {
+-      "changePassword": "Changer le mot de passe"
++      "changePassword": "Changer le mot de passe",
++      "edit": "Modifier les données"
++    },
++    "editMode": {
++      "description": "Mode édition activé : enregistrez ou annulez pour sortir",
++      "readonlyHint": "Champ en lecture seule"
++    },
++    "dialogs": {
++      "passwordTitle": "Changer le mot de passe",
++      "passwordDescription": "Mettez à jour votre mot de passe sans quitter cette page"
++    },
++    "security": {
++      "title": "Sécurité et accès",
++      "tipStrongPassword": "Utilisez des mots de passe forts et uniques.",
++      "tipRegularUpdates": "Renouvelez votre mot de passe régulièrement.",
++      "tipSignOut": "Déconnectez-vous sur les appareils partagés."
+     }
+   },
+   "adminConfig": {
+     "title": "Paramètres",
+     "hospitals": "Hôpitaux",
+     "societies": "Sociétés",
+     "residentProgram": "Programme des résidents",
+     "societiesProgram": "Programme des sociétés",
+     "users": "Utilisateurs",
+     "accessCodes": "Codes d'accès",
+     "surgeryTypes": "Types de Chirurgie",
+     "debug": "Débogage"
+   },
+   "progressByPhase": "Progrès par phase",
+   "close": "Fermer",
+   "devWarning": "⚠️ VOUS ÊTES EN ENVIRONNEMENT DE DÉVELOPPEMENT ⚠️",
+   "brand": {
+     "name": "Abex Excellence Robotique"
+   },
+   "regions": {
+     "andalucia": "ANDALOUSIE"
+   },
+   "status": {
+     "pendingValidation": "En attente de validation",
+     "validado": "Validé",
+diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
+index cf87d53872dbf72b3882e435094e5943ffec4288..11d52906fb8720544eef59cd49979eb7ddc9d7c1 100644
+--- a/client/src/locales/gl.json
++++ b/client/src/locales/gl.json
+@@ -320,72 +320,101 @@
+       "intro": "Adestramento práctico Hands On.",
+       "item1": "Práctica intensiva",
+       "item2": "Retroalimentación personalizada"
+     }
+   },
+   "common": {
+     "appName": "Resident Learning Platform",
+     "cancel": "Cancelar",
+     "create": "Crear",
+     "creating": "Creando...",
+     "saveChanges": "Gardar cambios",
+     "saving": "Gardando...",
+     "delete": "Eliminar",
+     "deleting": "Eliminando...",
+     "phase": "Fase",
+     "download": "Descargar",
+     "validate": "Validar",
+     "reject": "Rexectar",
+     "processing": "Procesando...",
+     "none": "Ningún"
+   },
+   "profile": {
+     "title": "O meu perfil",
+     "personalData": "Datos persoais",
+     "changePassword": "Cambiar contrasinal",
++    "overview": "Resumo da conta",
+     "noTutor": "Sen tutor asignado",
++    "status": {
++      "role": "Rol",
++      "hospital": "Hospital",
++      "program": "Programa",
++      "zone": "Zona",
++      "specialty": "Especialidade",
++      "active": "Conta activa",
++      "inactive": "Conta inactiva"
++    },
++    "completeness": {
++      "title": "Completitude do perfil",
++      "helper": "Manteña os seus datos ao día para unha mellor experiencia"
++    },
+     "fields": {
+       "name": "Nome",
+       "lastName": "Apelidos",
+       "email": "Correo electrónico",
+       "hospital": "Hospital",
+       "society": "Sociedade",
+       "tutor": "Tutor",
+       "currentPassword": "Contrasinal actual",
+       "newPassword": "Novo contrasinal",
+       "confirmPassword": "Confirmar contrasinal"
+     },
+     
+     "messages": {
+       "updateSuccess": "Perfil actualizado",
+       "updateError": "Erro ao actualizar o perfil",
+       "passwordMismatch": "Os contrasinais non coinciden",
+       "passwordUpdateSuccess": "Contrasinal actualizado",
+       "passwordUpdateError": "Erro ao cambiar o contrasinal"
+     },
+     "buttons": {
+-      "changePassword": "Cambiar contrasinal"
++      "changePassword": "Cambiar contrasinal",
++      "edit": "Editar datos"
++    },
++    "editMode": {
++      "description": "Modo edición activado: garde ou cancele para saír",
++      "readonlyHint": "Campo só lectura"
++    },
++    "dialogs": {
++      "passwordTitle": "Cambiar contrasinal",
++      "passwordDescription": "Actualice o contrasinal sen saír desta páxina"
++    },
++    "security": {
++      "title": "Seguridade e acceso",
++      "tipStrongPassword": "Use contrasinais únicos e seguros.",
++      "tipRegularUpdates": "Actualice o contrasinal de forma periódica.",
++      "tipSignOut": "Peche sesión en dispositivos compartidos."
+     }
+   },
+   "adminHospitals": {
+     "title": "Xestión de hospitais",
+     "new": "Novo hospital",
+     "searchPlaceholder": "Buscar por nome",
+     "loadError": "Erro ao cargar os hospitais",
+     "createSuccess": "Hospital creado correctamente",
+     "createError": "Erro ao crear o hospital",
+     "updateSuccess": "Hospital actualizado correctamente",
+     "updateError": "Erro ao actualizar o hospital",
+     "deleteSuccess": "Hospital eliminado correctamente",
+     "deleteError": "Erro ao eliminar o hospital",
+     "table": {
+       "aria": "táboa de hospitais",
+       "name": "Nome",
+       "city": "Cidade",
+       "province": "Provincia",
+       "zone": "Zona",
+       "phone": "Teléfono",
+       "email": "Correo electrónico",
+       "actions": "Accións"
+     },
+     "fields": {
+       "name": "Nome",
+diff --git a/client/src/locales/it.json b/client/src/locales/it.json
+index ae5f7d084610260322ccd5704baebf75d99d318a..b0b44ee39c43562b5a7c36b41be3e6f1676225ef 100644
+--- a/client/src/locales/it.json
++++ b/client/src/locales/it.json
+@@ -496,72 +496,101 @@
+     },
+     "states": {
+       "active": "Attivo",
+       "inactive": "Inattivo"
+     },
+     "dialogs": {
+       "editTitle": "Modifica utente",
+       "inviteTitle": "Invita utente"
+     },
+     "messages": {
+       "loadError": "Errore durante il caricamento degli utenti",
+       "updateSuccess": "Utente aggiornato",
+       "inviteSuccess": "Utente invitato",
+       "deleteSuccess": "Utente eliminato",
+       "deleteError": "Errore durante l'eliminazione",
+       "genericError": "Errore"
+     },
+     "actions": {
+       "downloadSurgeryReport": "Scarica il report di {{phase}}"
+     }
+   },
+   "profile": {
+     "title": "Il mio profilo",
+     "personalData": "Dati personali",
+     "changePassword": "Cambia password",
++    "overview": "Panoramica dell'account",
+     "noTutor": "Nessun tutor assegnato",
++    "status": {
++      "role": "Ruolo",
++      "hospital": "Ospedale",
++      "program": "Programma",
++      "zone": "Zona",
++      "specialty": "Specialità",
++      "active": "Account attivo",
++      "inactive": "Account inattivo"
++    },
++    "completeness": {
++      "title": "Completezza del profilo",
++      "helper": "Mantieni i tuoi dati aggiornati per una migliore esperienza"
++    },
+     "fields": {
+       "name": "Nome",
+       "lastName": "Cognome",
+       "email": "Email",
+       "hospital": "Ospedale",
+       "society": "Società",
+       "tutor": "Tutor",
+       "currentPassword": "Password attuale",
+       "newPassword": "Nuova password",
+       "confirmPassword": "Conferma password"
+     },
+     
+     "messages": {
+       "updateSuccess": "Profilo aggiornato",
+       "updateError": "Errore nell'aggiornamento del profilo",
+       "passwordMismatch": "Le password non corrispondono",
+       "passwordUpdateSuccess": "Password aggiornata",
+       "passwordUpdateError": "Errore nel cambio della password"
+     },
+     "buttons": {
+-      "changePassword": "Cambia password"
++      "changePassword": "Cambia password",
++      "edit": "Modifica dati"
++    },
++    "editMode": {
++      "description": "Modalità modifica attiva: salva o annulla per uscire",
++      "readonlyHint": "Campo di sola lettura"
++    },
++    "dialogs": {
++      "passwordTitle": "Cambia password",
++      "passwordDescription": "Aggiorna la tua password senza lasciare questa pagina"
++    },
++    "security": {
++      "title": "Sicurezza e accesso",
++      "tipStrongPassword": "Usa password forti e uniche.",
++      "tipRegularUpdates": "Aggiorna regolarmente la password.",
++      "tipSignOut": "Disconnettiti dai dispositivi condivisi."
+     }
+   },
+   "adminHospitals": {
+     "title": "Gestione ospedali",
+     "new": "Nuovo ospedale",
+     "searchPlaceholder": "Cerca per nome",
+     "loadError": "Errore nel caricamento degli ospedali",
+     "createSuccess": "Ospedale creato correttamente",
+     "createError": "Errore nella creazione dell'ospedale",
+     "updateSuccess": "Ospedale aggiornato correttamente",
+     "updateError": "Errore nell'aggiornamento dell'ospedale",
+     "deleteSuccess": "Ospedale eliminato correttamente",
+     "deleteError": "Errore nell'eliminazione dell'ospedale",
+     "table": {
+       "aria": "tabella ospedali",
+       "name": "Nome",
+       "city": "Città",
+       "province": "Provincia",
+       "zone": "Zona",
+       "phone": "Telefono",
+       "email": "Email",
+       "actions": "Azioni"
+     },
+     "fields": {
+       "name": "Nome",
+diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
+index 7e0d481c435a58bf44eac3067146b727bd6413f0..fa43ef806a25ea06284ea0e1a70cc2a104ace7b7 100644
+--- a/client/src/locales/pt.json
++++ b/client/src/locales/pt.json
+@@ -428,73 +428,102 @@
+       "item2": "Avaliação de habilidades"
+     },
+     "firstAssistant": {
+       "label": "Primeiro Assistente",
+       "intro": "Atividades como primeiro assistente.",
+       "item1": "Participação em cirurgias",
+       "item2": "Registro de atividades"
+     },
+     "stepByStep": {
+       "label": "Step By Step",
+       "intro": "Cirurgias Step By Step.",
+       "item1": "Material de apoio",
+       "item2": "Revisão guiada"
+     },
+     "handsOn": {
+       "label": "Hands On",
+       "intro": "Treinamento prático Hands On.",
+       "item1": "Prática intensiva",
+       "item2": "Feedback personalizado"
+     }
+   },
+   "profile": {
+     "title": "Meu Perfil",
+     "personalData": "Dados pessoais",
+     "changePassword": "Alterar Senha",
++    "overview": "Visão geral da conta",
+     "noTutor": "Nenhum tutor atribuído",
++    "status": {
++      "role": "Função",
++      "hospital": "Hospital",
++      "program": "Programa",
++      "zone": "Zona",
++      "specialty": "Especialidade",
++      "active": "Conta ativa",
++      "inactive": "Conta inativa"
++    },
++    "completeness": {
++      "title": "Completude do perfil",
++      "helper": "Mantenha seus dados atualizados para uma melhor experiência"
++    },
+     "fields": {
+       "name": "Nome",
+       "lastName": "Sobrenome",
+       "email": "E-mail",
+       "logoUrl": "URL do logo",
+       "hospital": "Hospital",
+       "society": "Sociedade",
+       "tutor": "Tutor",
+       "currentPassword": "Senha Atual",
+       "newPassword": "Nova Senha",
+       "confirmPassword": "Confirmar Senha"
+     },
+     
+     "messages": {
+       "updateSuccess": "Perfil atualizado",
+       "updateError": "Erro ao atualizar o perfil",
+       "passwordMismatch": "As senhas não coincidem",
+       "passwordUpdateSuccess": "Senha atualizada",
+       "passwordUpdateError": "Erro ao alterar a senha"
+     },
+     "buttons": {
+-      "changePassword": "Alterar Senha"
++      "changePassword": "Alterar Senha",
++      "edit": "Editar dados"
++    },
++    "editMode": {
++      "description": "Modo de edição ativado: salve ou cancele para sair",
++      "readonlyHint": "Campo somente leitura"
++    },
++    "dialogs": {
++      "passwordTitle": "Alterar senha",
++      "passwordDescription": "Atualize sua senha sem sair desta página"
++    },
++    "security": {
++      "title": "Segurança e acesso",
++      "tipStrongPassword": "Use senhas fortes e únicas.",
++      "tipRegularUpdates": "Atualize sua senha regularmente.",
++      "tipSignOut": "Encerre a sessão em dispositivos compartilhados."
+     }
+   },
+   "adminHospitals": {
+     "title": "Gestão de Hospitais",
+     "new": "Novo Hospital",
+     "searchPlaceholder": "Pesquisar por Nome",
+     "loadError": "Erro ao carregar os hospitais",
+     "createSuccess": "Hospital criado com sucesso",
+     "createError": "Erro ao criar o hospital",
+     "updateSuccess": "Hospital atualizado com sucesso",
+     "updateError": "Erro ao atualizar o hospital",
+     "deleteSuccess": "Hospital excluído com sucesso",
+     "deleteError": "Erro ao excluir o hospital",
+     "table": {
+       "aria": "tabela de hospitais",
+       "name": "Nome",
+       "city": "Cidade",
+       "province": "Província",
+       "zone": "Zona",
+       "phone": "Telefone",
+       "email": "E-mail",
+       "logoUrl": "URL do logo",
+       "actions": "Ações"
+     },
+     "fields": {
+diff --git a/client/src/pages/dashboard/Perfil.tsx b/client/src/pages/dashboard/Perfil.tsx
+index 9de6c8f7d6a43da96e075f81a90b8802e2cc55d0..f786295ce431ebe0114ca67f4a7508f954bf8498 100644
+--- a/client/src/pages/dashboard/Perfil.tsx
++++ b/client/src/pages/dashboard/Perfil.tsx
+@@ -1,247 +1,414 @@
+-import React, { useEffect, useState } from 'react';
++import React, { useCallback, useEffect, useMemo, useState } from 'react';
+ import {
++  Alert,
++  Avatar,
+   Box,
+-  Typography,
++  Button,
++  Chip,
++  Dialog,
++  DialogActions,
++  DialogContent,
++  DialogTitle,
++  Divider,
++  Grid,
++  LinearProgress,
+   Paper,
++  Stack,
+   TextField,
+-  Button,
+-  Alert
++  Typography
+ } from '@mui/material';
+ import { useAuth } from '../../context/AuthContext';
+ import api, { updateProfile, changePassword } from '../../api';
+ import { useTranslation } from 'react-i18next';
+ 
+ interface ProfileForm {
+   nombre: string;
+   apellidos: string;
+   email: string;
+   hospital: string;
+   sociedad: string;
  }
  
- code {
-   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-     monospace;
+ interface PasswordForm {
+   currentPassword: string;
+   newPassword: string;
+   confirmPassword: string;
  }
+ 
+ const Perfil: React.FC = () => {
+   const { user } = useAuth();
+   const { t } = useTranslation();
+   const [formData, setFormData] = useState<ProfileForm>({
+     nombre: '',
+     apellidos: '',
+     email: '',
+     hospital: '',
+     sociedad: ''
+   });
+   const [formLoading, setFormLoading] = useState(false);
+   const [formSuccess, setFormSuccess] = useState<string | null>(null);
+   const [formError, setFormError] = useState<string | null>(null);
+ 
+   const [passData, setPassData] = useState<PasswordForm>({
+     currentPassword: '',
+     newPassword: '',
+     confirmPassword: ''
+   });
+   const [passLoading, setPassLoading] = useState(false);
+   const [passSuccess, setPassSuccess] = useState<string | null>(null);
+   const [passError, setPassError] = useState<string | null>(null);
++  const [isEditing, setIsEditing] = useState(false);
++  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+ 
+   const isAdmin = user?.rol === 'administrador';
+ 
+-  useEffect(() => {
+-    if (user) {
+-      setFormData(prev => ({
+-        ...prev,
+-        nombre: user.nombre,
+-        apellidos: user.apellidos,
+-        email: user.email,
+-        hospital: user.hospital?.nombre || '',
+-        sociedad: ''
+-      }));
+-      if ((user as any).sociedad) {
+-        api.get(`/sociedades/${(user as any).sociedad}`)
+-          .then(res => {
+-            const data = res.data.data || res.data;
+-            setFormData(f => ({ ...f, sociedad: data.titulo }));
+-          })
+-          .catch(() => { /* ignorar error */ });
+-      }
++  const hydrateFormFromUser = useCallback(() => {
++    if (!user) return;
++
++    setFormData(prev => ({
++      ...prev,
++      nombre: user.nombre,
++      apellidos: user.apellidos,
++      email: user.email,
++      hospital: user.hospital?.nombre || '',
++      sociedad: ''
++    }));
++
++    if ((user as any).sociedad) {
++      api.get(`/sociedades/${(user as any).sociedad}`)
++        .then(res => {
++          const data = res.data.data || res.data;
++          setFormData(f => ({ ...f, sociedad: data.titulo }));
++        })
++        .catch(() => { /* ignorar error */ });
+     }
+   }, [user]);
+ 
++  useEffect(() => {
++    hydrateFormFromUser();
++  }, [hydrateFormFromUser]);
++
+   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const { name, value } = e.target;
+     setFormData(prev => ({ ...prev, [name]: value }));
+   };
+ 
+   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+     e.preventDefault();
+     try {
+       setFormLoading(true);
+       setFormError(null);
+       await updateProfile({
+         nombre: formData.nombre,
+         apellidos: formData.apellidos,
+         email: formData.email
+       });
+       setFormSuccess(t('profile.messages.updateSuccess'));
++      setIsEditing(false);
+     } catch (err: any) {
+       setFormError(err.response?.data?.error || t('profile.messages.updateError'));
+     } finally {
+       setFormLoading(false);
+     }
+   };
+ 
+   const onPassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const { name, value } = e.target;
+     setPassData(prev => ({ ...prev, [name]: value }));
+   };
+ 
+   const onPassSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+     e.preventDefault();
+     if (passData.newPassword !== passData.confirmPassword) {
+       setPassError(t('profile.messages.passwordMismatch'));
+       return;
+     }
+     try {
+       setPassLoading(true);
+       setPassError(null);
+       await changePassword({
+         currentPassword: passData.currentPassword,
+         newPassword: passData.newPassword
+       });
+       setPassSuccess(t('profile.messages.passwordUpdateSuccess'));
+       setPassData({ currentPassword: '', newPassword: '', confirmPassword: '' });
++      setIsPasswordDialogOpen(false);
+     } catch (err: any) {
+       setPassError(err.response?.data?.error || t('profile.messages.passwordUpdateError'));
+     } finally {
+       setPassLoading(false);
+     }
+   };
+ 
++  const initials = useMemo(() => {
++    const first = formData.nombre?.[0] || '';
++    const last = formData.apellidos?.[0] || '';
++    return `${first}${last}`.toUpperCase() || '?';
++  }, [formData.apellidos, formData.nombre]);
++
++  const completionScore = useMemo(() => {
++    const fieldsToCheck = [
++      formData.nombre,
++      formData.apellidos,
++      formData.email,
++      formData.hospital,
++      user?.zona,
++      user?.especialidad,
++      formData.sociedad
++    ];
++    const filled = fieldsToCheck.filter(Boolean).length;
++    return Math.round((filled / fieldsToCheck.length) * 100);
++  }, [formData.apellidos, formData.email, formData.hospital, formData.nombre, formData.sociedad, user?.especialidad, user?.zona]);
++
++  const statusChips = useMemo(() => [
++    { key: 'role', label: t('profile.status.role'), value: user?.rol || t('common.none') },
++    { key: 'hospital', label: t('profile.status.hospital'), value: formData.hospital || t('common.none') },
++    { key: 'program', label: t('profile.status.program'), value: (user as any)?.tipo || t('common.none') },
++    { key: 'zone', label: t('profile.status.zone'), value: user?.zona || t('common.none') },
++    { key: 'specialty', label: t('profile.status.specialty'), value: user?.especialidad || t('common.none') }
++  ], [formData.hospital, t, (user as any)?.tipo, user?.especialidad, user?.rol, user?.zona]);
++
++  const handleOpenPasswordDialog = () => {
++    setPassError(null);
++    setPassSuccess(null);
++    setIsPasswordDialogOpen(true);
++  };
++
++  const handleClosePasswordDialog = () => {
++    setPassData({ currentPassword: '', newPassword: '', confirmPassword: '' });
++    setPassError(null);
++    setPassLoading(false);
++    setIsPasswordDialogOpen(false);
++  };
++
++  const handleStartEdit = () => {
++    setFormSuccess(null);
++    setFormError(null);
++    setIsEditing(true);
++  };
++
++  const handleCancelEdit = () => {
++    hydrateFormFromUser();
++    setIsEditing(false);
++  };
++
+   return (
+     <Box sx={{ px: 3, py: 2 }}>
+       <Typography variant="h4" gutterBottom>
+         {t('profile.title')}
+       </Typography>
+ 
+-      <Paper sx={{ p: 3, mb: 4 }}>
+-        <Typography variant="h6" gutterBottom>
+-          {t('profile.personalData')}
+-        </Typography>
+-        {formSuccess && <Alert severity="success" sx={{ mb: 2 }}>{formSuccess}</Alert>}
+-        {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
+-        <Box component="form" onSubmit={onSubmit}>
+-          <TextField
+-            name="nombre"
+-            label={t('profile.fields.name')}
+-            fullWidth
+-            margin="normal"
+-            value={formData.nombre}
+-            onChange={onChange}
+-            disabled={formLoading}
+-            required
+-          />
+-          <TextField
+-            name="apellidos"
+-            label={t('profile.fields.lastName')}
+-            fullWidth
+-            margin="normal"
+-            value={formData.apellidos}
+-            onChange={onChange}
+-            disabled={formLoading}
+-            required
+-          />
+-          <TextField
+-            name="email"
+-            label={t('profile.fields.email')}
+-            fullWidth
+-            margin="normal"
+-            value={formData.email}
+-            onChange={onChange}
+-            disabled={!isAdmin || formLoading}
+-            required
+-          />
+-          <TextField
+-            label={t('profile.fields.hospital')}
+-            fullWidth
+-            margin="normal"
+-            value={formData.hospital}
+-            disabled
+-          />
+-          {user?.rol === 'residente' && (
+-            <TextField
+-              label={t('profile.fields.tutor')}
+-              fullWidth
+-              margin="normal"
+-              value={user?.tutor ? `${user.tutor.nombre} ${user.tutor.apellidos}` : t('profile.noTutor')}
+-              disabled
+-            />
+-          )}
+-          {formData.sociedad && (
++      <Grid container spacing={3}>
++        <Grid item xs={12} md={4}>
++          <Paper sx={{ p: 3, height: '100%' }}>
++            <Stack direction="row" spacing={2} alignItems="center">
++              <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', width: 56, height: 56 }}>
++                {initials}
++              </Avatar>
++              <Box>
++                <Typography variant="h6">
++                  {`${formData.nombre} ${formData.apellidos}`.trim() || t('profile.title')}
++                </Typography>
++                <Typography variant="body2" color="text.secondary">{formData.email}</Typography>
++                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
++                  <Chip
++                    size="small"
++                    color={user?.activo === false ? 'default' : 'success'}
++                    label={user?.activo === false ? t('profile.status.inactive') : t('profile.status.active')}
++                  />
++                  <Chip size="small" variant="outlined" label={statusChips[0].value} />
++                </Stack>
++              </Box>
++            </Stack>
++            <Divider sx={{ my: 2 }} />
++            <Typography variant="subtitle1" gutterBottom>
++              {t('profile.overview')}
++            </Typography>
++            <Stack spacing={1} sx={{ mb: 2 }}>
++              {statusChips.map(chip => (
++                <Chip key={chip.key} label={`${chip.label}: ${chip.value}`} variant="outlined" sx={{ width: 'fit-content' }} />
++              ))}
++            </Stack>
++
++            <Typography variant="subtitle2" sx={{ fontWeight: 600 }} gutterBottom>
++              {t('profile.completeness.title')}
++            </Typography>
++            <LinearProgress value={completionScore} variant="determinate" sx={{ borderRadius: 1, mb: 1 }} />
++            <Typography variant="caption" color="text.secondary">
++              {completionScore}% · {t('profile.completeness.helper')}
++            </Typography>
++          </Paper>
++        </Grid>
++
++        <Grid item xs={12} md={8}>
++          <Paper sx={{ p: 3, height: '100%' }}>
++            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} sx={{ mb: 1 }}>
++              <Typography variant="h6">{t('profile.personalData')}</Typography>
++              {!isEditing && (
++                <Button variant="outlined" onClick={handleStartEdit} size="small">
++                  {t('profile.buttons.edit')}
++                </Button>
++              )}
++            </Stack>
++            {isEditing && (
++              <Alert severity="info" sx={{ mb: 2 }}>
++                {t('profile.editMode.description')}
++              </Alert>
++            )}
++            {formSuccess && <Alert severity="success" sx={{ mb: 2 }}>{formSuccess}</Alert>}
++            {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
++            <Box component="form" onSubmit={onSubmit}>
++              <TextField
++                name="nombre"
++                label={t('profile.fields.name')}
++                fullWidth
++                margin="normal"
++                value={formData.nombre}
++                onChange={onChange}
++                disabled={!isEditing || formLoading}
++                required
++              />
++              <TextField
++                name="apellidos"
++                label={t('profile.fields.lastName')}
++                fullWidth
++                margin="normal"
++                value={formData.apellidos}
++                onChange={onChange}
++                disabled={!isEditing || formLoading}
++                required
++              />
++              <TextField
++                name="email"
++                label={t('profile.fields.email')}
++                fullWidth
++                margin="normal"
++                value={formData.email}
++                onChange={onChange}
++                disabled={!isEditing || formLoading || !isAdmin}
++                required
++              />
++              <TextField
++                label={t('profile.fields.hospital')}
++                fullWidth
++                margin="normal"
++                value={formData.hospital}
++                disabled
++                helperText={t('profile.editMode.readonlyHint')}
++              />
++              {user?.rol === 'residente' && (
++                <TextField
++                  label={t('profile.fields.tutor')}
++                  fullWidth
++                  margin="normal"
++                  value={user?.tutor ? `${user.tutor.nombre} ${user.tutor.apellidos}` : t('profile.noTutor')}
++                  disabled
++                />
++              )}
++              {formData.sociedad && (
++                <TextField
++                  label={t('profile.fields.society')}
++                  fullWidth
++                  margin="normal"
++                  value={formData.sociedad}
++                  disabled
++                />
++              )}
++
++              {isEditing && (
++                <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 2 }}>
++                  <Button variant="text" onClick={handleCancelEdit} disabled={formLoading}>
++                    {t('common.cancel')}
++                  </Button>
++                  <Button type="submit" variant="contained" disabled={formLoading}>
++                    {formLoading ? t('common.processing') : t('common.saveChanges')}
++                  </Button>
++                </Stack>
++              )}
++            </Box>
++          </Paper>
++        </Grid>
++
++        <Grid item xs={12} md={6}>
++          <Paper sx={{ p: 3, height: '100%' }}>
++            <Typography variant="h6" gutterBottom>
++              {t('profile.changePassword')}
++            </Typography>
++            {passSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passSuccess}</Alert>}
++            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
++              {t('profile.dialogs.passwordDescription')}
++            </Typography>
++            <Button variant="contained" onClick={handleOpenPasswordDialog}>
++              {t('profile.buttons.changePassword')}
++            </Button>
++          </Paper>
++        </Grid>
++
++        <Grid item xs={12} md={6}>
++          <Paper sx={{ p: 3, height: '100%' }}>
++            <Typography variant="h6" gutterBottom>
++              {t('profile.security.title')}
++            </Typography>
++            <Stack spacing={1}>
++              <Alert severity="info" icon={false}>{t('profile.security.tipStrongPassword')}</Alert>
++              <Alert severity="info" icon={false}>{t('profile.security.tipRegularUpdates')}</Alert>
++              <Alert severity="info" icon={false}>{t('profile.security.tipSignOut')}</Alert>
++            </Stack>
++          </Paper>
++        </Grid>
++      </Grid>
++
++      <Dialog open={isPasswordDialogOpen} onClose={handleClosePasswordDialog} fullWidth maxWidth="sm">
++        <DialogTitle>{t('profile.dialogs.passwordTitle')}</DialogTitle>
++        <Box component="form" onSubmit={onPassSubmit}>
++          <DialogContent>
++            {passError && <Alert severity="error" sx={{ mb: 2 }}>{passError}</Alert>}
+             <TextField
+-              label={t('profile.fields.society')}
++              name="currentPassword"
++              label={t('profile.fields.currentPassword')}
++              type="password"
+               fullWidth
+               margin="normal"
+-              value={formData.sociedad}
+-              disabled={!isAdmin}
++              value={passData.currentPassword}
++              onChange={onPassChange}
++              disabled={passLoading}
++              required
+             />
+-          )}
+-          <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={formLoading}>
+-            {formLoading ? t('common.processing') : t('common.saveChanges')}
+-          </Button>
+-        </Box>
+-      </Paper>
+-
+-      <Paper sx={{ p: 3 }}>
+-        <Typography variant="h6" gutterBottom>
+-          {t('profile.changePassword')}
+-        </Typography>
+-        {passSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passSuccess}</Alert>}
+-        {passError && <Alert severity="error" sx={{ mb: 2 }}>{passError}</Alert>}
+-        <Box component="form" onSubmit={onPassSubmit}>
+-          <TextField
+-            name="currentPassword"
+-            label={t('profile.fields.currentPassword')}
+-            type="password"
+-            fullWidth
+-            margin="normal"
+-            value={passData.currentPassword}
+-            onChange={onPassChange}
+-            disabled={passLoading}
+-            required
+-          />
+-          <TextField
+-            name="newPassword"
+-            label={t('profile.fields.newPassword')}
+-            type="password"
+-            fullWidth
+-            margin="normal"
+-            value={passData.newPassword}
+-            onChange={onPassChange}
+-            disabled={passLoading}
+-            required
+-          />
+-          <TextField
+-            name="confirmPassword"
+-            label={t('profile.fields.confirmPassword')}
+-            type="password"
+-            fullWidth
+-            margin="normal"
+-            value={passData.confirmPassword}
+-            onChange={onPassChange}
+-            disabled={passLoading}
+-            required
+-          />
+-          <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={passLoading}>
+-            {passLoading ? t('common.processing') : t('profile.buttons.changePassword')}
+-          </Button>
++            <TextField
++              name="newPassword"
++              label={t('profile.fields.newPassword')}
++              type="password"
++              fullWidth
++              margin="normal"
++              value={passData.newPassword}
++              onChange={onPassChange}
++              disabled={passLoading}
++              required
++            />
++            <TextField
++              name="confirmPassword"
++              label={t('profile.fields.confirmPassword')}
++              type="password"
++              fullWidth
++              margin="normal"
++              value={passData.confirmPassword}
++              onChange={onPassChange}
++              disabled={passLoading}
++              required
++            />
++          </DialogContent>
++          <DialogActions>
++            <Button onClick={handleClosePasswordDialog} disabled={passLoading}>
++              {t('common.cancel')}
++            </Button>
++            <Button type="submit" variant="contained" disabled={passLoading}>
++              {passLoading ? t('common.processing') : t('profile.buttons.changePassword')}
++            </Button>
++          </DialogActions>
+         </Box>
+-      </Paper>
++      </Dialog>
+     </Box>
+   );
+ };
+ 
+ export default Perfil;

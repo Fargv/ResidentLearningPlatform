@@ -271,7 +271,21 @@
     "title": "My Profile",
     "personalData": "Personal Data",
     "changePassword": "Change Password",
+    "overview": "Account overview",
     "noTutor": "No tutor assigned",
+    "status": {
+      "role": "Role",
+      "hospital": "Hospital",
+      "program": "Program",
+      "zone": "Zone",
+      "specialty": "Specialty",
+      "active": "Active account",
+      "inactive": "Inactive account"
+    },
+    "completeness": {
+      "title": "Profile completeness",
+      "helper": "Keep your data up to date for a better experience"
+    },
     "fields": {
       "name": "Name",
       "lastName": "Last Name",
@@ -293,7 +307,22 @@
       "passwordUpdateError": "Error changing password"
     },
     "buttons": {
-      "changePassword": "Change Password"
+      "changePassword": "Change Password",
+      "edit": "Edit data"
+    },
+    "editMode": {
+      "description": "Edit mode enabled: save or cancel to exit",
+      "readonlyHint": "Read-only field"
+    },
+    "dialogs": {
+      "passwordTitle": "Change password",
+      "passwordDescription": "Update your password without leaving this page"
+    },
+    "security": {
+      "title": "Security and access",
+      "tipStrongPassword": "Use strong, unique passwords.",
+      "tipRegularUpdates": "Refresh your password regularly.",
+      "tipSignOut": "Sign out on shared devices."
     }
   },
   "adminHospitals": {

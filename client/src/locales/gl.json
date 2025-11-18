@@ -342,7 +342,21 @@
     "title": "O meu perfil",
     "personalData": "Datos persoais",
     "changePassword": "Cambiar contrasinal",
+    "overview": "Resumo da conta",
     "noTutor": "Sen tutor asignado",
+    "status": {
+      "role": "Rol",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialidade",
+      "active": "Conta activa",
+      "inactive": "Conta inactiva"
+    },
+    "completeness": {
+      "title": "Completitude do perfil",
+      "helper": "Manteña os seus datos ao día para unha mellor experiencia"
+    },
     "fields": {
       "name": "Nome",
       "lastName": "Apelidos",
@@ -363,7 +377,22 @@
       "passwordUpdateError": "Erro ao cambiar o contrasinal"
     },
     "buttons": {
-      "changePassword": "Cambiar contrasinal"
+      "changePassword": "Cambiar contrasinal",
+      "edit": "Editar datos"
+    },
+    "editMode": {
+      "description": "Modo edición activado: garde ou cancele para saír",
+      "readonlyHint": "Campo só lectura"
+    },
+    "dialogs": {
+      "passwordTitle": "Cambiar contrasinal",
+      "passwordDescription": "Actualice o contrasinal sen saír desta páxina"
+    },
+    "security": {
+      "title": "Seguridade e acceso",
+      "tipStrongPassword": "Use contrasinais únicos e seguros.",
+      "tipRegularUpdates": "Actualice o contrasinal de forma periódica.",
+      "tipSignOut": "Peche sesión en dispositivos compartidos."
     }
   },
   "adminHospitals": {

@@ -270,7 +270,21 @@
     "title": "Mi Perfil",
     "personalData": "Datos personales",
     "changePassword": "Cambiar Contraseña",
-      "noTutor": "Sin tutor asignado",
+    "overview": "Resumen de cuenta",
+    "noTutor": "Sin tutor asignado",
+    "status": {
+      "role": "Rol",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialidad",
+      "active": "Cuenta activa",
+      "inactive": "Cuenta inactiva"
+    },
+    "completeness": {
+      "title": "Completitud del perfil",
+      "helper": "Mantén tus datos al día para que podamos personalizar tu experiencia"
+    },
     "fields": {
       "name": "Nombre",
       "lastName": "Apellidos",
@@ -282,7 +296,7 @@
       "newPassword": "Nueva Contraseña",
       "confirmPassword": "Confirmar Contraseña"
     },
-    
+
     "messages": {
       "updateSuccess": "Perfil actualizado",
       "updateError": "Error al actualizar el perfil",
@@ -291,7 +305,22 @@
       "passwordUpdateError": "Error al cambiar la contraseña"
     },
     "buttons": {
-      "changePassword": "Cambiar Contraseña"
+      "changePassword": "Cambiar Contraseña",
+      "edit": "Editar datos"
+    },
+    "editMode": {
+      "description": "Modo edición activado: guarda o cancela para salir",
+      "readonlyHint": "Campo de solo lectura"
+    },
+    "dialogs": {
+      "passwordTitle": "Cambiar contraseña",
+      "passwordDescription": "Actualiza tu contraseña sin salir de esta página"
+    },
+    "security": {
+      "title": "Seguridad y acceso",
+      "tipStrongPassword": "Usa contraseñas únicas y difíciles de adivinar.",
+      "tipRegularUpdates": "Actualiza tu contraseña de forma periódica.",
+      "tipSignOut": "Cierra sesión en dispositivos compartidos."
     }
   },
   "adminHospitals": {

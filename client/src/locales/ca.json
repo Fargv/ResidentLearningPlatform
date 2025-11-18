@@ -120,7 +120,21 @@
     "title": "El meu perfil",
     "personalData": "Dades personals",
     "changePassword": "Canviar contrasenya",
+    "overview": "Resum del compte",
     "noTutor": "Sense tutor assignat",
+    "status": {
+      "role": "Rol",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialitat",
+      "active": "Compte actiu",
+      "inactive": "Compte inactiu"
+    },
+    "completeness": {
+      "title": "Compleció del perfil",
+      "helper": "Mantén les teves dades al dia per a una millor experiència"
+    },
     "fields": {
       "name": "Nom",
       "lastName": "Cognoms",
@@ -141,7 +155,22 @@
       "passwordUpdateError": "Error en canviar la contrasenya"
     },
     "buttons": {
-      "changePassword": "Canviar contrasenya"
+      "changePassword": "Canviar contrasenya",
+      "edit": "Editar dades"
+    },
+    "editMode": {
+      "description": "Mode edició activat: desa o cancel·la per sortir",
+      "readonlyHint": "Camp només de lectura"
+    },
+    "dialogs": {
+      "passwordTitle": "Canviar contrasenya",
+      "passwordDescription": "Actualitza la contrasenya sense sortir d'aquesta pàgina"
+    },
+    "security": {
+      "title": "Seguretat i accés",
+      "tipStrongPassword": "Fes servir contrasenyes úniques i segures.",
+      "tipRegularUpdates": "Actualitza la contrasenya periòdicament.",
+      "tipSignOut": "Tanca sessió en dispositius compartits."
     }
   },
   "adminHospitals": {

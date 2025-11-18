@@ -523,7 +523,21 @@
     "title": "Mein Profil",
     "personalData": "Persönliche Daten",
     "changePassword": "Passwort ändern",
+    "overview": "Kontenübersicht",
     "noTutor": "Kein Tutor zugewiesen",
+    "status": {
+      "role": "Rolle",
+      "hospital": "Krankenhaus",
+      "program": "Programm",
+      "zone": "Zone",
+      "specialty": "Fachgebiet",
+      "active": "Aktives Konto",
+      "inactive": "Inaktives Konto"
+    },
+    "completeness": {
+      "title": "Profilvollständigkeit",
+      "helper": "Halten Sie Ihre Daten aktuell für ein besseres Erlebnis"
+    },
     "fields": {
       "name": "Name",
       "lastName": "Nachname",
@@ -544,7 +558,22 @@
       "passwordUpdateError": "Fehler beim Ändern des Passworts"
     },
     "buttons": {
-      "changePassword": "Passwort ändern"
+      "changePassword": "Passwort ändern",
+      "edit": "Daten bearbeiten"
+    },
+    "editMode": {
+      "description": "Bearbeitungsmodus aktiv: Speichern oder Abbrechen zum Beenden",
+      "readonlyHint": "Nur-Lesen-Feld"
+    },
+    "dialogs": {
+      "passwordTitle": "Passwort ändern",
+      "passwordDescription": "Aktualisieren Sie Ihr Passwort, ohne diese Seite zu verlassen"
+    },
+    "security": {
+      "title": "Sicherheit und Zugriff",
+      "tipStrongPassword": "Verwenden Sie starke, einzigartige Passwörter.",
+      "tipRegularUpdates": "Aktualisieren Sie Ihr Passwort regelmäßig.",
+      "tipSignOut": "Melden Sie sich auf gemeinsam genutzten Geräten ab."
     }
   },
   "adminHospitals": {
