@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -19,11 +19,11 @@ import {
   Badge,
   useMediaQuery,
   useTheme,
-  alpha
+  alpha,
+  Fade
 } from '@mui/material';
 import {
   ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   School as SchoolIcon,
@@ -34,7 +34,10 @@ import {
   Settings as SettingsIcon,
   Brightness4 as Brightness4Icon,
   Brightness7 as Brightness7Icon,
-  Description as DescriptionIcon
+  Description as DescriptionIcon,
+  PushPin as PushPinIcon,
+  PushPinOutlined as PushPinOutlinedIcon,
+  Menu as MenuIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -67,6 +70,8 @@ const Dashboard: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isPinned, setIsPinned] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -120,8 +125,7 @@ const Dashboard: React.FC = () => {
       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
     }
 
-
-        if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+    if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
     }
 
@@ -142,7 +146,203 @@ const Dashboard: React.FC = () => {
 
 
   const menuItems = getMenuItems();
-  const showLabels = drawerOpen;
+
+  const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
+  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
+  const sidebarWidthCss = `${sidebarWidth}px`;
+
+  const handleSidebarHover = () => {
+    if (!isMobile && !isPinned) {
+      setIsHovering(true);
+    }
+  };
+
+  const handleSidebarLeave = () => {
+    if (!isMobile && !isPinned) {
+      setIsHovering(false);
+    }
+  };
+
+  const togglePin = () => {
+    if (!isMobile) {
+      setIsPinned((prev) => !prev);
+    }
+  };
+
+  const handlePrimaryAction = () => {
+    if (isMobile) {
+      handleDrawerToggle();
+    } else {
+      togglePin();
+    }
+  };
+
+  useEffect(() => {
+    if (isPinned) {
+      setIsHovering(false);
+    }
+  }, [isPinned]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsPinned(false);
+      setIsHovering(false);
+    }
+  }, [isMobile]);
+
+  const renderListItems = (showLabels: boolean, closeOnSelect?: boolean) => (
+    <>
+      {menuItems.map((item) => (
+        <ListItemButton
+          key={item.path}
+          onClick={() => {
+            navigate(item.path);
+            if (isMobile && closeOnSelect) handleDrawerClose();
+          }}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding'], { duration: theme.transitions.duration.shorter })
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+          <ListItemText
+            primary={item.text}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+            width: showLabels ? 'auto' : 0
+          }}
+        />
+      </ListItemButton>
+      ))
+    </>
+  );
+
+  const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
+    showLabels,
+    isMobileView,
+    onClose
+  }) => (
+    <>
+      <Toolbar
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: showLabels ? 'space-between' : 'center',
+          px: showLabels ? 1.5 : 1,
+          transition: theme.transitions.create(['padding'], { duration: theme.transitions.duration.shorter })
+        }}
+      >
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: showLabels ? 'flex-start' : 'center'
+          }}
+        >
+          <Box
+            component="img"
+            src="/logo-small.png"
+            alt="Logo"
+            sx={{
+              height: showLabels ? 48 : 32,
+              maxWidth: '100%',
+              width: 'auto',
+              mx: showLabels ? 'auto' : 0,
+              transition: theme.transitions.create(['height', 'margin'], { duration: theme.transitions.duration.shorter })
+            }}
+          />
+        </Box>
+        {isMobileView ? (
+          <IconButton onClick={onClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        ) : (
+          <Fade in={showLabels || isPinned} unmountOnExit mountOnEnter>
+            <IconButton
+              onClick={togglePin}
+              size="small"
+              color={isPinned ? 'primary' : 'default'}
+              sx={{ ml: showLabels ? 1 : 0 }}
+            >
+              {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+            </IconButton>
+          </Fade>
+        )}
+      </Toolbar>
+      <Divider />
+      <List>{renderListItems(showLabels, isMobileView)}</List>
+      <Divider />
+      <List>
+        <ListItemButton
+          onClick={() => {
+            navigate('/dashboard/perfil');
+            if (isMobile && isMobileView) handleDrawerClose();
+          }}
+          sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
+          <ListItemText
+            primary={t('actions.myProfile')}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+              width: showLabels ? 'auto' : 0
+            }}
+          />
+        </ListItemButton>
+        <ListItemButton
+          onClick={() => {
+            navigate('/dashboard/notificaciones');
+            if (isMobile && isMobileView) handleDrawerClose();
+          }}
+          sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
+            <Badge badgeContent={unreadCount} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </ListItemIcon>
+          <ListItemText
+            primary={t('actions.notifications')}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+              width: showLabels ? 'auto' : 0
+            }}
+          />
+        </ListItemButton>
+        <ListItemButton
+          onClick={handleLogout}
+          sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
+          <ListItemText
+            primary={t('actions.logout')}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+              width: showLabels ? 'auto' : 0
+            }}
+          />
+        </ListItemButton>
+      </List>
+    </>
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -150,13 +350,17 @@ const Dashboard: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          zIndex: theme.zIndex.drawer + 1,
-          transition: theme.transitions.create('width')
+          zIndex: theme.zIndex.drawer + 3,
+          transition: theme.transitions.create(['width', 'margin'], {
+            duration: theme.transitions.duration.standard
+          }),
+          width: isMobile ? '100%' : `calc(100% - ${sidebarWidthCss})`,
+          ml: isMobile ? 0 : sidebarWidthCss
         }}
       >
         <Toolbar>
-          <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
-            {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          <IconButton color="inherit" onClick={handlePrimaryAction} edge="start" sx={{ mr: 3 }}>
+            {isMobile ? <MenuIcon /> : isPinned ? <PushPinIcon /> : <PushPinOutlinedIcon />}
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Academic Program daVinci
@@ -191,12 +395,12 @@ const Dashboard: React.FC = () => {
               {user?.nombre?.charAt(0)}
             </Avatar>
           </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              onClick={handleMenuClose}
-              PaperProps={{
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            onClick={handleMenuClose}
+            PaperProps={{
               elevation: 0,
               sx: {
                 overflow: 'visible',
@@ -218,137 +422,141 @@ const Dashboard: React.FC = () => {
               }
             }}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleProfileClick}>
-                <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
-                {t('actions.profile')}
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={handleLogout}>
-                <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
-                {t('actions.logout')}
-              </MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
-      <Drawer
-        variant="temporary"
-        open={drawerOpen}
-        onClose={handleDrawerClose}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            ...(isMobile && !drawerOpen && { display: 'none' }),
-            overflowX: 'hidden'
-          }
-        }}
-        ModalProps={{ keepMounted: true }}
-      >
-        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'space-between' : 'center', px: showLabels ? 1.5 : 0 }}>
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'flex-start' : 'center' }}>
-            <Box
-              component="img"
-              src="/logo-small.png"
-              alt="Logo"
-              sx={{ height: showLabels ? 48 : 32, maxWidth: '100%', width: 'auto', mx: showLabels ? 'auto' : 0 }}
-            />
-          </Box>
-          <IconButton onClick={handleDrawerClose} sx={{ visibility: showLabels ? 'visible' : 'hidden' }}>
-            <ChevronLeftIcon />
-          </IconButton>
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={handleProfileClick}>
+              <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+              {t('actions.profile')}
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+              {t('actions.logout')}
+            </MenuItem>
+          </Menu>
         </Toolbar>
-        <Divider />
-        <List>
-          {menuItems.map((item) => (
-            <ListItemButton
-              key={item.path}
-              onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}
-              sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+      </AppBar>
+      {!isMobile && (
+        <Box onMouseEnter={handleSidebarHover} onMouseLeave={handleSidebarLeave} sx={{ position: 'relative' }}>
+          <Drawer
+            variant="permanent"
+            open
+            sx={{
+              width: sidebarWidthCss,
+              flexShrink: 0,
+              display: { xs: 'none', md: 'block' },
+              [`& .MuiDrawer-paper`]: {
+                width: sidebarWidthCss,
+                boxSizing: 'border-box',
+                overflowX: 'hidden',
+                transition: theme.transitions.create('width', {
+                  duration: theme.transitions.duration.standard
+                })
+              }
+            }}
+          >
+            <SidebarContent showLabels={isPinned} />
+          </Drawer>
+          {!isPinned && (
+            <Drawer
+              variant="temporary"
+              open={isHovering}
+              onClose={handleSidebarLeave}
+              ModalProps={{ keepMounted: true }}
+              hideBackdrop
+              sx={{
+                [`& .MuiDrawer-paper`]: {
+                  width: drawerWidth,
+                  boxSizing: 'border-box',
+                  overflowX: 'hidden',
+                  transition: theme.transitions.create(['transform', 'width'], {
+                    duration: theme.transitions.duration.standard
+                  })
+                },
+                zIndex: theme.zIndex.drawer + 2
+              }}
             >
-              <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} sx={{ display: showLabels ? 'block' : 'none' }} />
-            </ListItemButton>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          <ListItemButton
-            onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}
-            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-          >
-            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
-            <ListItemText primary={t('actions.myProfile')} sx={{ display: showLabels ? 'block' : 'none' }} />
-          </ListItemButton>
-          <ListItemButton
-            onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}
-            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-          >
-            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
-              <Badge badgeContent={unreadCount} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </ListItemIcon>
-            <ListItemText primary={t('actions.notifications')} sx={{ display: showLabels ? 'block' : 'none' }} />
-          </ListItemButton>
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-          >
-            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
-            <ListItemText primary={t('actions.logout')} sx={{ display: showLabels ? 'block' : 'none' }} />
-          </ListItemButton>
-        </List>
-      </Drawer>
+              <SidebarContent showLabels />
+            </Drawer>
+          )}
+        </Box>
+      )}
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={drawerOpen}
+          onClose={handleDrawerClose}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            display: { xs: 'block', md: 'none' },
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              overflowX: 'hidden'
+            }
+          }}
+          ModalProps={{ keepMounted: true }}
+        >
+          <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
+        </Drawer>
+      )}
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: '100%', backgroundColor: 'background.default', minHeight: '100vh' }}
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: '100%',
+          backgroundColor: 'background.default',
+          minHeight: '100vh',
+          ml: isMobile ? 0 : sidebarWidthCss,
+          transition: theme.transitions.create('margin', {
+            duration: theme.transitions.duration.standard
+          })
+        }}
       >
         <Toolbar />
         <Routes>
-  <Route path="/" element={<DashboardHome />} />
-  <Route path="/validaciones" element={<TutorValidaciones />} />
-  <Route path="/usuarios" element={<Usuarios />} />
-  <Route path="/hospitals" element={<AdminHospitales />} />
-  {user?.rol === 'administrador' && (
-    <Route path="/fases" element={<AdminFases />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/access-codes" element={<AdminAccessCodes />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/cirugias" element={<AdminCirugias />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/fases-soc" element={<AdminFasesSoc />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/informes" element={<AdminInformes />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
-  )}
-  <Route
-    path="/dashboard/progreso"
-    element={<Navigate to="/dashboard" replace />}
-  />
-  {user?.rol === 'administrador' && (
-    <Route path="/config" element={<AdminConfiguracion />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
-  )}
-  <Route path="/sociedades" element={<AdminSociedades />} />
-  {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
-    <Route path="/fases" element={<ResidenteFases />} />
-  ) : null}
-  <Route path="/perfil" element={<Perfil />} />
-  <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
-  {isDev && <Route path="/debug" element={<DebugDashboard />} />}
-</Routes>
+          <Route path="/" element={<DashboardHome />} />
+          <Route path="/validaciones" element={<TutorValidaciones />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/hospitals" element={<AdminHospitales />} />
+          {user?.rol === 'administrador' && (
+            <Route path="/fases" element={<AdminFases />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/access-codes" element={<AdminAccessCodes />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/cirugias" element={<AdminCirugias />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/fases-soc" element={<AdminFasesSoc />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/informes" element={<AdminInformes />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
+          )}
+          <Route
+            path="/dashboard/progreso"
+            element={<Navigate to="/dashboard" replace />}
+          />
+          {user?.rol === 'administrador' && (
+            <Route path="/config" element={<AdminConfiguracion />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
+          )}
+          <Route path="/sociedades" element={<AdminSociedades />} />
+          {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
+            <Route path="/fases" element={<ResidenteFases />} />
+          ) : null}
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
+          {isDev && <Route path="/debug" element={<DebugDashboard />} />}
+        </Routes>
 
       </Box>
     </Box>
