@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   CssBaseline,
@@ -97,6 +97,7 @@ const Dashboard: React.FC = () => {
     setDrawerOpen(false);
   }, [isMobile]);
 
+  const hoverTransitionDuration = 350;
   const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
   const handleDrawerClose = () => setDrawerOpen(false);
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
@@ -169,14 +170,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handlePrimaryAction = () => {
-    if (isMobile) {
-      handleDrawerToggle();
-    } else {
-      togglePin();
-    }
-  };
-
   useEffect(() => {
     if (isPinned) {
       setIsHovering(false);
@@ -190,6 +183,9 @@ const Dashboard: React.FC = () => {
     }
   }, [isMobile]);
 
+  const location = useLocation();
+  const isPathActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
+
   const renderListItems = (showLabels: boolean, closeOnSelect?: boolean) => (
   <>
     {menuItems.map((item) => (
@@ -202,10 +198,21 @@ const Dashboard: React.FC = () => {
         sx={{
           justifyContent: showLabels ? 'flex-start' : 'center',
           px: showLabels ? 2 : 1.25,
-          transition: theme.transitions.create(['padding'], {
-            duration: theme.transitions.duration.shorter
-          })
+          transition: theme.transitions.create(['padding', 'background-color'], {
+            duration: hoverTransitionDuration
+          }),
+          borderLeft: isPathActive(item.path) ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
+          '&.Mui-selected': {
+            backgroundColor: alpha(theme.palette.primary.main, 0.12),
+            '&:hover': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.18)
+            }
+          },
+          '& .MuiListItemIcon-root': {
+            color: isPathActive(item.path) ? theme.palette.primary.main : 'inherit'
+          }
         }}
+        selected={isPathActive(item.path)}
       >
         <ListItemIcon
           sx={{
@@ -221,7 +228,7 @@ const Dashboard: React.FC = () => {
           sx={{
             opacity: showLabels ? 1 : 0,
             transition: theme.transitions.create(['opacity', 'margin'], {
-              duration: theme.transitions.duration.shorter
+              duration: hoverTransitionDuration
             }),
             whiteSpace: 'nowrap',
             overflow: 'hidden',
@@ -247,7 +254,7 @@ const Dashboard: React.FC = () => {
           alignItems: 'center',
           justifyContent: showLabels ? 'space-between' : 'center',
           px: showLabels ? 1.5 : 1,
-          transition: theme.transitions.create(['padding'], { duration: theme.transitions.duration.shorter })
+          transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
         }}
       >
         <Box
@@ -263,11 +270,11 @@ const Dashboard: React.FC = () => {
             src="/logo-small.png"
             alt="Logo"
             sx={{
-              height: showLabels ? 48 : 32,
+              height: showLabels ? 48 : 40,
               maxWidth: '100%',
               width: 'auto',
               mx: showLabels ? 'auto' : 0,
-              transition: theme.transitions.create(['height', 'margin'], { duration: theme.transitions.duration.shorter })
+              transition: theme.transitions.create(['height', 'margin'], { duration: hoverTransitionDuration })
             }}
           />
         </Box>
@@ -276,12 +283,12 @@ const Dashboard: React.FC = () => {
             <ChevronLeftIcon />
           </IconButton>
         ) : (
-          <Fade in={showLabels || isPinned} unmountOnExit mountOnEnter>
+          <Fade in={showLabels} unmountOnExit mountOnEnter>
             <IconButton
               onClick={togglePin}
               size="small"
               color={isPinned ? 'primary' : 'default'}
-              sx={{ ml: showLabels ? 1 : 0 }}
+              sx={{ ml: 1 }}
             >
               {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
             </IconButton>
@@ -297,14 +304,31 @@ const Dashboard: React.FC = () => {
             navigate('/dashboard/perfil');
             if (isMobile && isMobileView) handleDrawerClose();
           }}
-          sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding', 'background-color'], {
+              duration: hoverTransitionDuration
+            }),
+            borderLeft: isPathActive('/dashboard/perfil') ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
+            '&.Mui-selected': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.18)
+              }
+            },
+            '& .MuiListItemIcon-root': {
+              color: isPathActive('/dashboard/perfil') ? theme.palette.primary.main : 'inherit'
+            }
+          }}
+          selected={isPathActive('/dashboard/perfil')}
         >
           <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
           <ListItemText
             primary={t('actions.myProfile')}
             sx={{
               opacity: showLabels ? 1 : 0,
-              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               ml: showLabels ? 0 : -1,
@@ -317,7 +341,26 @@ const Dashboard: React.FC = () => {
             navigate('/dashboard/notificaciones');
             if (isMobile && isMobileView) handleDrawerClose();
           }}
-          sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding', 'background-color'], {
+              duration: hoverTransitionDuration
+            }),
+            borderLeft: isPathActive('/dashboard/notificaciones')
+              ? `3px solid ${theme.palette.primary.main}`
+              : '3px solid transparent',
+            '&.Mui-selected': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.18)
+              }
+            },
+            '& .MuiListItemIcon-root': {
+              color: isPathActive('/dashboard/notificaciones') ? theme.palette.primary.main : 'inherit'
+            }
+          }}
+          selected={isPathActive('/dashboard/notificaciones')}
         >
           <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
             <Badge badgeContent={unreadCount} color="secondary">
@@ -328,7 +371,7 @@ const Dashboard: React.FC = () => {
             primary={t('actions.notifications')}
             sx={{
               opacity: showLabels ? 1 : 0,
-              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               ml: showLabels ? 0 : -1,
@@ -338,14 +381,23 @@ const Dashboard: React.FC = () => {
         </ListItemButton>
         <ListItemButton
           onClick={handleLogout}
-          sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding', 'background-color'], {
+              duration: hoverTransitionDuration
+            }),
+            '&:hover .MuiListItemIcon-root': {
+              color: theme.palette.primary.main
+            }
+          }}
         >
           <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
           <ListItemText
             primary={t('actions.logout')}
             sx={{
               opacity: showLabels ? 1 : 0,
-              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               ml: showLabels ? 0 : -1,
@@ -358,23 +410,26 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 3,
           transition: theme.transitions.create(['width', 'margin'], {
-            duration: theme.transitions.duration.standard
+            duration: hoverTransitionDuration
           }),
           width: isMobile ? '100%' : `calc(100% - ${sidebarWidthCss})`,
           ml: isMobile ? 0 : sidebarWidthCss
         }}
       >
         <Toolbar>
-          <IconButton color="inherit" onClick={handlePrimaryAction} edge="start" sx={{ mr: 3 }}>
-            {isMobile ? <MenuIcon /> : isPinned ? <PushPinIcon /> : <PushPinOutlinedIcon />}
-          </IconButton>
+          {!isMobile && <Box sx={{ width: theme.spacing(6) }} />}
+          {isMobile && (
+            <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Academic Program daVinci
           </Typography>
@@ -450,7 +505,7 @@ const Dashboard: React.FC = () => {
         </Toolbar>
       </AppBar>
       {!isMobile && (
-        <Box onMouseEnter={handleSidebarHover} onMouseLeave={handleSidebarLeave} sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative' }}>
           <Drawer
             variant="permanent"
             open
@@ -463,9 +518,14 @@ const Dashboard: React.FC = () => {
                 boxSizing: 'border-box',
                 overflowX: 'hidden',
                 transition: theme.transitions.create('width', {
-                  duration: theme.transitions.duration.standard
+                  duration: hoverTransitionDuration
                 })
               }
+            }}
+            PaperProps={{
+              onMouseEnter: handleSidebarHover,
+              onMouseLeave: handleSidebarLeave,
+              sx: { zIndex: theme.zIndex.appBar + (isPinned ? 1 : 0) }
             }}
           >
             <SidebarContent showLabels={isPinned} />
@@ -483,11 +543,13 @@ const Dashboard: React.FC = () => {
                   boxSizing: 'border-box',
                   overflowX: 'hidden',
                   transition: theme.transitions.create(['transform', 'width'], {
-                    duration: theme.transitions.duration.standard
-                  })
+                    duration: hoverTransitionDuration
+                  }),
+                  zIndex: theme.zIndex.appBar + 2
                 },
-                zIndex: theme.zIndex.drawer + 2
+                zIndex: theme.zIndex.appBar + 2
               }}
+              PaperProps={{ onMouseEnter: handleSidebarHover, onMouseLeave: handleSidebarLeave }}
             >
               <SidebarContent showLabels />
             </Drawer>
@@ -524,7 +586,7 @@ const Dashboard: React.FC = () => {
           minHeight: '100vh',
           ml: isMobile ? 0 : sidebarWidthCss,
           transition: theme.transitions.create('margin', {
-            duration: theme.transitions.duration.standard
+            duration: hoverTransitionDuration
           })
         }}
       >
