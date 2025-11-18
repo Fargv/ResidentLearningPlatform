@@ -1,192 +1,80 @@
-diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 61547e14dc614d1948b51934427d203847eb51c5..c790ecef6997ab4dd57348780af0d0a9626624c7 100644
---- a/client/src/pages/Dashboard.tsx
-+++ b/client/src/pages/Dashboard.tsx
-@@ -128,57 +128,57 @@ const Dashboard: React.FC = () => {
-     }
- 
-     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
-     }
- 
-     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
-     }
- 
-     if (user?.rol === 'administrador') {
-       items.push(
-         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
-         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
-       );
-     }
- 
-     return items;
-   };
- 
- 
-   const menuItems = getMenuItems();
- 
-   const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
--  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
--  const sidebarWidthCss = `${sidebarWidth}px`;
--  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
--  const toolbarHeight = isMobile ? 56 : 64;
--  const sidebarTopOffset = toolbarHeight + sidebarPadding;
--  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
--  const mainMarginLeft = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
-+  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
-+  const sidebarWidthCss = `${sidebarWidth}px`;
-+  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
-+  const toolbarHeight = isMobile ? 56 : 64;
-+  const sidebarTopOffset = toolbarHeight + sidebarPadding;
-+  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
-+  const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
- 
-   const handleSidebarHover = () => {
-     if (!isMobile && !isPinned) {
-       setIsHovering(true);
-     }
-   };
- 
-   const handleSidebarLeave = () => {
-     if (!isMobile && !isPinned) {
-       setIsHovering(false);
-     }
-   };
- 
-   const togglePin = () => {
-     if (!isMobile) {
-       setIsPinned((prev) => !prev);
-     }
-   };
- 
-   useEffect(() => {
-     if (isPinned) {
-       setIsHovering(false);
-     }
-   }, [isPinned]);
- 
-@@ -473,51 +473,51 @@ const Dashboard: React.FC = () => {
-                   right: 14,
-                   width: 10,
-                   height: 10,
-                   bgcolor: 'background.paper',
-                   transform: 'translateY(-50%) rotate(45deg)',
-                   zIndex: 0
-                 }
-               }
-             }}
-             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-           >
-             <MenuItem onClick={handleProfileClick}>
-               <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
-               {t('actions.profile')}
-             </MenuItem>
-             <Divider />
-             <MenuItem onClick={handleLogout}>
-               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
-               {t('actions.logout')}
-             </MenuItem>
-           </Menu>
-         </Toolbar>
-       </AppBar>
-       {!isMobile && (
--        <Box sx={{ position: 'relative', width: `${mainMarginLeft}px`, flexShrink: 0 }}>
-+        <Box sx={{ position: 'relative', width: `${sidebarSpace}px`, flexShrink: 0 }}>
-           <Drawer
-             variant="permanent"
-             open
-             sx={{
-               width: sidebarWidthCss,
-               flexShrink: 0,
-               display: { xs: 'none', md: 'block' },
-               [`& .MuiDrawer-paper`]: {
-                 width: sidebarWidthCss,
-                 boxSizing: 'border-box',
-                 overflowX: 'hidden',
-                 transition: theme.transitions.create('width', {
-                   duration: hoverTransitionDuration
-                 }),
-                 zIndex: theme.zIndex.appBar - 1,
-                 top: `${sidebarTopOffset}px`,
-                 left: `${sidebarPadding}px`,
-                 height: sidebarHeightCss,
-                 borderRadius: 1
-               }
-             }}
-             PaperProps={{
-               onMouseEnter: handleSidebarHover,
-               onMouseLeave: handleSidebarLeave,
-               sx: { zIndex: theme.zIndex.appBar - 1 }
-@@ -556,61 +556,58 @@ const Dashboard: React.FC = () => {
-         </Box>
-       )}
-       {isMobile && (
-         <Drawer
-           variant="temporary"
-           open={drawerOpen}
-           onClose={handleDrawerClose}
-           sx={{
-             width: drawerWidth,
-             flexShrink: 0,
-             display: { xs: 'block', md: 'none' },
-             [`& .MuiDrawer-paper`]: {
-               width: drawerWidth,
-               boxSizing: 'border-box',
-               overflowX: 'hidden',
-               top: `${toolbarHeight}px`
+diff --git a/client/src/context/ColorModeContext.tsx b/client/src/context/ColorModeContext.tsx
+index 1ed940555ba025707f814bdb2e2239b1f9afc107..b6f1070e5ee845d6a755e8ef5f27742641f0fbc3 100644
+--- a/client/src/context/ColorModeContext.tsx
++++ b/client/src/context/ColorModeContext.tsx
+@@ -101,51 +101,51 @@ const getTheme = (mode: PaletteMode) =>
+               contrastText: '#ffffff',
              }
-           }}
-           ModalProps={{ keepMounted: true }}
-         >
-           <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
-         </Drawer>
-       )}
-       <Box
-         component="main"
--        sx={{
--          flexGrow: 1,
--          p: 2.5,
--          ml: `${mainMarginLeft}px`,
--          width: '100%',
--          backgroundColor: 'background.default',
--          minHeight: '100vh',
--          transition: theme.transitions.create('margin', {
--            duration: hoverTransitionDuration
--          })
--        }}
-+        sx={{
-+          flexGrow: 1,
-+          p: 2.5,
-+          ml: 0,
-+          width: '100%',
-+          backgroundColor: 'background.default',
-+          minHeight: '100vh'
-+        }}
-       >
-         <Toolbar />
-         <Routes>
-           <Route path="/" element={<DashboardHome />} />
-           <Route path="/validaciones" element={<TutorValidaciones />} />
-           <Route path="/usuarios" element={<Usuarios />} />
-           <Route path="/hospitals" element={<AdminHospitales />} />
-           {user?.rol === 'administrador' && (
-             <Route path="/fases" element={<AdminFases />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/access-codes" element={<AdminAccessCodes />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/cirugias" element={<AdminCirugias />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/fases-soc" element={<AdminFasesSoc />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/informes" element={<AdminInformes />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
-           )}
+           : {
+               main: '#90caf9',
+               light: '#c3fdff',
+               dark: '#5d99c6',
+               contrastText: '#0b1929',
+             },
+       success:
+         mode === 'light'
+           ? {
+               main: '#4caf50',
+               light: '#81c784',
+               dark: '#357a38',
+               contrastText: '#ffffff',
+             }
+           : {
+               main: '#a5d6a7',
+               light: '#d7ffd9',
+               dark: '#75a478',
+               contrastText: '#08240f',
+             },
+       divider: mode === 'light' ? '#e0e0e0' : '#2d2d2d',
+     },
+     typography: {
+-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
++      fontFamily: '"Montserrat", "Roboto", "Helvetica", "Arial", sans-serif',
+       h1: { fontWeight: 500 },
+       h2: { fontWeight: 500 },
+       h3: { fontWeight: 500 },
+       h4: { fontWeight: 500 },
+       h5: { fontWeight: 500 },
+       h6: { fontWeight: 500 },
+     },
+     shape: { borderRadius: 8 },
+     components: {
+       MuiButton: {
+         styleOverrides: {
+           root: {
+             textTransform: 'none',
+             fontWeight: 500,
+           },
+         },
+       },
+       MuiCard: {
+         styleOverrides: {
+           root: {
+             borderRadius: 8,
+             boxShadow:
+               mode === 'light'
+                 ? '0 2px 8px rgba(0, 0, 0, 0.1)'
+                 : '0 2px 8px rgba(0, 0, 0, 0.4)',
+diff --git a/client/src/index.css b/client/src/index.css
+index ec2585e8c0bb8188184ed1e0703c4c8f2a8419b0..12980342577095a569290fbb690c1043f838bbeb 100644
+--- a/client/src/index.css
++++ b/client/src/index.css
+@@ -1,13 +1,15 @@
++@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
++
+ body {
+   margin: 0;
+-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+-    sans-serif;
++  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI',
++    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
++    'Helvetica Neue', sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+ }
+ 
+ code {
+   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+     monospace;
+ }
