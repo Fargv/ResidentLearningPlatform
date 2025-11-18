@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  Grid,
   LinearProgress,
   Paper,
   Stack,
@@ -198,165 +197,178 @@ const Perfil: React.FC = () => {
         {t('profile.title')}
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', width: 56, height: 56 }}>
-                {initials}
-              </Avatar>
-              <Box>
-                <Typography variant="h6">
-                  {`${formData.nombre} ${formData.apellidos}`.trim() || t('profile.title')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">{formData.email}</Typography>
-                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                  <Chip
-                    size="small"
-                    color={user?.activo === false ? 'default' : 'success'}
-                    label={user?.activo === false ? t('profile.status.inactive') : t('profile.status.active')}
-                  />
-                  <Chip size="small" variant="outlined" label={statusChips[0].value} />
-                </Stack>
-              </Box>
+      // Fragmento reemplazado sin Grid, usando Stack + Box
+
+<Stack spacing={3} sx={{ mt: 2 }}>
+  {/* FILA 1: Perfil (izquierda) + Datos personales (derecha) */}
+  <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+    {/* IZQUIERDA */}
+    <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 33%' } }}>
+      <Paper sx={{ p: 3, height: '100%' }}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', width: 56, height: 56 }}>
+            {initials}
+          </Avatar>
+          <Box>
+            <Typography variant="h6">
+              {`${formData.nombre} ${formData.apellidos}`.trim() || t('profile.title')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">{formData.email}</Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+              <Chip
+                size="small"
+                color={user?.activo === false ? 'default' : 'success'}
+                label={user?.activo === false ? t('profile.status.inactive') : t('profile.status.active')}
+              />
+              <Chip size="small" variant="outlined" label={statusChips[0].value} />
             </Stack>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="subtitle1" gutterBottom>
-              {t('profile.overview')}
-            </Typography>
-            <Stack spacing={1} sx={{ mb: 2 }}>
-              {statusChips.map(chip => (
-                <Chip key={chip.key} label={`${chip.label}: ${chip.value}`} variant="outlined" sx={{ width: 'fit-content' }} />
-              ))}
-            </Stack>
+          </Box>
+        </Stack>
+        <Divider sx={{ my: 2 }} />
 
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }} gutterBottom>
-              {t('profile.completeness.title')}
-            </Typography>
-            <LinearProgress value={completionScore} variant="determinate" sx={{ borderRadius: 1, mb: 1 }} />
-            <Typography variant="caption" color="text.secondary">
-              {completionScore}% · {t('profile.completeness.helper')}
-            </Typography>
-          </Paper>
-        </Grid>
+        <Typography variant="subtitle1" gutterBottom>
+          {t('profile.overview')}
+        </Typography>
+        <Stack spacing={1} sx={{ mb: 2 }}>
+          {statusChips.map(chip => (
+            <Chip key={chip.key} label={`${chip.label}: ${chip.value}`} variant="outlined" sx={{ width: 'fit-content' }} />
+          ))}
+        </Stack>
 
-        <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} sx={{ mb: 1 }}>
-              <Typography variant="h6">{t('profile.personalData')}</Typography>
-              {!isEditing && (
-                <Button variant="outlined" onClick={handleStartEdit} size="small">
-                  {t('profile.buttons.edit')}
-                </Button>
-              )}
-            </Stack>
-            {isEditing && (
-              <Alert severity="info" sx={{ mb: 2 }}>
-                {t('profile.editMode.description')}
-              </Alert>
-            )}
-            {formSuccess && <Alert severity="success" sx={{ mb: 2 }}>{formSuccess}</Alert>}
-            {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
-            <Box component="form" onSubmit={onSubmit}>
-              <TextField
-                name="nombre"
-                label={t('profile.fields.name')}
-                fullWidth
-                margin="normal"
-                value={formData.nombre}
-                onChange={onChange}
-                disabled={!isEditing || formLoading}
-                required
-              />
-              <TextField
-                name="apellidos"
-                label={t('profile.fields.lastName')}
-                fullWidth
-                margin="normal"
-                value={formData.apellidos}
-                onChange={onChange}
-                disabled={!isEditing || formLoading}
-                required
-              />
-              <TextField
-                name="email"
-                label={t('profile.fields.email')}
-                fullWidth
-                margin="normal"
-                value={formData.email}
-                onChange={onChange}
-                disabled={!isEditing || formLoading || !isAdmin}
-                required
-              />
-              <TextField
-                label={t('profile.fields.hospital')}
-                fullWidth
-                margin="normal"
-                value={formData.hospital}
-                disabled
-                helperText={t('profile.editMode.readonlyHint')}
-              />
-              {user?.rol === 'residente' && (
-                <TextField
-                  label={t('profile.fields.tutor')}
-                  fullWidth
-                  margin="normal"
-                  value={user?.tutor ? `${user.tutor.nombre} ${user.tutor.apellidos}` : t('profile.noTutor')}
-                  disabled
-                />
-              )}
-              {formData.sociedad && (
-                <TextField
-                  label={t('profile.fields.society')}
-                  fullWidth
-                  margin="normal"
-                  value={formData.sociedad}
-                  disabled
-                />
-              )}
+        <Typography variant="subtitle2" sx={{ fontWeight: 600 }} gutterBottom>
+          {t('profile.completeness.title')}
+        </Typography>
+        <LinearProgress value={completionScore} variant="determinate" sx={{ borderRadius: 1, mb: 1 }} />
+        <Typography variant="caption" color="text.secondary">
+          {completionScore}% · {t('profile.completeness.helper')}
+        </Typography>
+      </Paper>
+    </Box>
 
-              {isEditing && (
-                <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 2 }}>
-                  <Button variant="text" onClick={handleCancelEdit} disabled={formLoading}>
-                    {t('common.cancel')}
-                  </Button>
-                  <Button type="submit" variant="contained" disabled={formLoading}>
-                    {formLoading ? t('common.processing') : t('common.saveChanges')}
-                  </Button>
-                </Stack>
-              )}
-            </Box>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              {t('profile.changePassword')}
-            </Typography>
-            {passSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passSuccess}</Alert>}
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {t('profile.dialogs.passwordDescription')}
-            </Typography>
-            <Button variant="contained" onClick={handleOpenPasswordDialog}>
-              {t('profile.buttons.changePassword')}
+    {/* DERECHA */}
+    <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 66%' } }}>
+      <Paper sx={{ p: 3, height: '100%' }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} sx={{ mb: 1 }}>
+          <Typography variant="h6">{t('profile.personalData')}</Typography>
+          {!isEditing && (
+            <Button variant="outlined" onClick={handleStartEdit} size="small">
+              {t('profile.buttons.edit')}
             </Button>
-          </Paper>
-        </Grid>
+          )}
+        </Stack>
+        {isEditing && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            {t('profile.editMode.description')}
+          </Alert>
+        )}
+        {formSuccess && <Alert severity="success" sx={{ mb: 2 }}>{formSuccess}</Alert>}
+        {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
 
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              {t('profile.security.title')}
-            </Typography>
-            <Stack spacing={1}>
-              <Alert severity="info" icon={false}>{t('profile.security.tipStrongPassword')}</Alert>
-              <Alert severity="info" icon={false}>{t('profile.security.tipRegularUpdates')}</Alert>
-              <Alert severity="info" icon={false}>{t('profile.security.tipSignOut')}</Alert>
+        <Box component="form" onSubmit={onSubmit}>
+          <TextField
+            name="nombre"
+            label={t('profile.fields.name')}
+            fullWidth
+            margin="normal"
+            value={formData.nombre}
+            onChange={onChange}
+            disabled={!isEditing || formLoading}
+            required
+          />
+          <TextField
+            name="apellidos"
+            label={t('profile.fields.lastName')}
+            fullWidth
+            margin="normal"
+            value={formData.apellidos}
+            onChange={onChange}
+            disabled={!isEditing || formLoading}
+            required
+          />
+          <TextField
+            name="email"
+            label={t('profile.fields.email')}
+            fullWidth
+            margin="normal"
+            value={formData.email}
+            onChange={onChange}
+            disabled={!isEditing || formLoading || !isAdmin}
+            required
+          />
+          <TextField
+            label={t('profile.fields.hospital')}
+            fullWidth
+            margin="normal"
+            value={formData.hospital}
+            disabled
+            helperText={t('profile.editMode.readonlyHint')}
+          />
+          {user?.rol === 'residente' && (
+            <TextField
+              label={t('profile.fields.tutor')}
+              fullWidth
+              margin="normal"
+              value={user?.tutor ? `${user.tutor.nombre} ${user.tutor.apellidos}` : t('profile.noTutor')}
+              disabled
+            />
+          )}
+          {formData.sociedad && (
+            <TextField
+              label={t('profile.fields.society')}
+              fullWidth
+              margin="normal"
+              value={formData.sociedad}
+              disabled
+            />
+          )}
+
+          {isEditing && (
+            <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 2 }}>
+              <Button variant="text" onClick={handleCancelEdit} disabled={formLoading}>
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" variant="contained" disabled={formLoading}>
+                {formLoading ? t('common.processing') : t('common.saveChanges')}
+              </Button>
             </Stack>
-          </Paper>
-        </Grid>
-      </Grid>
+          )}
+        </Box>
+      </Paper>
+    </Box>
+  </Stack>
+
+  {/* FILA 2: Cambio de contraseña + Seguridad */}
+  <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+    <Box sx={{ flex: 1 }}>
+      <Paper sx={{ p: 3, height: '100%' }}>
+        <Typography variant="h6" gutterBottom>
+          {t('profile.changePassword')}
+        </Typography>
+        {passSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passSuccess}</Alert>}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {t('profile.dialogs.passwordDescription')}
+        </Typography>
+        <Button variant="contained" onClick={handleOpenPasswordDialog}>
+          {t('profile.buttons.changePassword')}
+        </Button>
+      </Paper>
+    </Box>
+
+    <Box sx={{ flex: 1 }}>
+      <Paper sx={{ p: 3, height: '100%' }}>
+        <Typography variant="h6" gutterBottom>
+          {t('profile.security.title')}
+        </Typography>
+        <Stack spacing={1}>
+          <Alert severity="info" icon={false}>{t('profile.security.tipStrongPassword')}</Alert>
+          <Alert severity="info" icon={false}>{t('profile.security.tipRegularUpdates')}</Alert>
+          <Alert severity="info" icon={false}>{t('profile.security.tipSignOut')}</Alert>
+        </Stack>
+      </Paper>
+    </Box>
+  </Stack>
+</Stack>
+
 
       <Dialog open={isPasswordDialogOpen} onClose={handleClosePasswordDialog} fullWidth maxWidth="sm">
         <DialogTitle>{t('profile.dialogs.passwordTitle')}</DialogTitle>
