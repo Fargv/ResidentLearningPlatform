@@ -1,8 +1,47 @@
 diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae901eed0bb7 100644
+index 3f189bd7854b998da5a8b5c7e1016f6d010a6791..3e70418e716e55f7d8c570c2d370abaeb19fe8fd 100644
 --- a/client/src/pages/Dashboard.tsx
 +++ b/client/src/pages/Dashboard.tsx
-@@ -39,144 +39,151 @@ import {
+@@ -1,93 +1,92 @@
+ import React, { useState, useEffect } from 'react';
+ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+ import {
+   Box,
+   CssBaseline,
+   Drawer,
+   AppBar,
+   Toolbar,
+   List,
+   Typography,
+   Divider,
+   IconButton,
+   ListItemButton,
+   ListItemIcon,
+   ListItemText,
+   Avatar,
+   Menu,
+   MenuItem,
+   Badge,
+   useMediaQuery,
+   useTheme,
+   alpha
+ } from '@mui/material';
+ import {
+-  Menu as MenuIcon,
+   ChevronLeft as ChevronLeftIcon,
++  ChevronRight as ChevronRightIcon,
+   Dashboard as DashboardIcon,
+   People as PeopleIcon,
+   School as SchoolIcon,
+   Assignment as AssignmentIcon,
+   Notifications as NotificationsIcon,
+   ExitToApp as LogoutIcon,
+   Person as PersonIcon,
+   Settings as SettingsIcon,
+   Brightness4 as Brightness4Icon,
+   Brightness7 as Brightness7Icon,
+   Description as DescriptionIcon
+ } from '@mui/icons-material';
  import { useAuth } from '../context/AuthContext';
  import { getNotificacionesNoLeidas } from '../api';
  import { useTranslation } from 'react-i18next';
@@ -28,11 +67,11 @@ index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae90
  import AdminInformes from './dashboard/AdminInformes';
  
  const drawerWidth = 240;
-+const collapsedDrawerWidth = 72;
+-const collapsedDrawerWidth = 72;
  
  const Dashboard: React.FC = () => {
    const { t } = useTranslation();
--  const [open, setOpen] = useState(false);
+-  const [drawerOpen, setDrawerOpen] = useState(false);
 +  const [drawerOpen, setDrawerOpen] = useState(false);
    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
    const [unreadCount, setUnreadCount] = useState(0);
@@ -57,34 +96,9 @@ index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae90
      refreshUnreadCount();
    }, []);
  
--  const handleDrawerOpen = () => setOpen(true);
--  const handleDrawerClose = () => setOpen(false);
-+  useEffect(() => {
-+    setDrawerOpen(false);
-+  }, [isMobile]);
-+
-+  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
-+  const handleDrawerClose = () => setDrawerOpen(false);
-   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
-   const handleMenuClose = () => setAnchorEl(null);
-   const handleLogout = async () => {
-     handleMenuClose();
-     await logout();
-     navigate('/login');
-   };
-   const handleProfileClick = () => {
-     handleMenuClose();
-     navigate('/dashboard/perfil');
-   };
- 
-   const getMenuItems = () => {
-     const items = [
-       {
-         text: t('actions.dashboard'),
-         icon: <DashboardIcon />,
-         path: '/dashboard',
-         roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
-       }
+   useEffect(() => {
+     setDrawerOpen(false);
+@@ -118,73 +117,68 @@ const Dashboard: React.FC = () => {
      ];
  
      if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
@@ -110,11 +124,13 @@ index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae90
  
      return items;
    };
-   
+-  
++
  
    const menuItems = getMenuItems();
-+  const showLabels = isMobile || drawerOpen;
-+  const currentDrawerWidth = isMobile ? 0 : drawerOpen ? drawerWidth : collapsedDrawerWidth;
+-  const showLabels = isMobile || drawerOpen;
+-  const currentDrawerWidth = isMobile ? 0 : drawerOpen ? drawerWidth : collapsedDrawerWidth;
++  const showLabels = drawerOpen;
  
    return (
      <Box sx={{ display: 'flex' }}>
@@ -123,20 +139,19 @@ index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae90
          position="fixed"
          sx={{
            zIndex: theme.zIndex.drawer + 1,
-           transition: theme.transitions.create(['width', 'margin']),
--          ...(open && {
--            marginLeft: drawerWidth,
--            width: `calc(100% - ${drawerWidth}px)`
-+          ...(!isMobile && {
-+            marginLeft: currentDrawerWidth,
-+            width: `calc(100% - ${currentDrawerWidth}px)`
-           })
+-          transition: theme.transitions.create(['width', 'margin']),
+-          ...(!isMobile && {
+-            marginLeft: currentDrawerWidth,
+-            width: `calc(100% - ${currentDrawerWidth}px)`
+-          })
++          transition: theme.transitions.create('width')
          }}
        >
          <Toolbar>
--          <IconButton color="inherit" onClick={handleDrawerOpen} edge="start" sx={{ mr: 5, ...(open && { display: 'none' }) }}>
+-          <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
+-            <MenuIcon />
 +          <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
-             <MenuIcon />
++            {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
            </IconButton>
            <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
              Academic Program daVinci
@@ -161,7 +176,9 @@ index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae90
            >
              {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
            </IconButton>
-@@ -211,101 +218,119 @@ const Dashboard: React.FC = () => {
+           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
+@@ -217,120 +211,123 @@ const Dashboard: React.FC = () => {
+                   right: 14,
                    width: 10,
                    height: 10,
                    bgcolor: 'background.paper',
@@ -186,97 +203,93 @@ index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae90
            </Toolbar>
          </AppBar>
        <Drawer
-         variant={isMobile ? 'temporary' : 'permanent'}
--        open={isMobile ? open : true}
-+        open={isMobile ? drawerOpen : true}
-         onClose={isMobile ? handleDrawerClose : undefined}
+-        variant={isMobile ? 'temporary' : 'permanent'}
+-        open={isMobile ? drawerOpen : true}
+-        onClose={isMobile ? handleDrawerClose : undefined}
++        variant="temporary"
++        open={drawerOpen}
++        onClose={handleDrawerClose}
          sx={{
--          width: drawerWidth,
-+          width: isMobile ? drawerWidth : currentDrawerWidth,
+-          width: isMobile ? drawerWidth : currentDrawerWidth,
++          width: drawerWidth,
            flexShrink: 0,
            [`& .MuiDrawer-paper`]: {
--            width: drawerWidth,
-+            width: isMobile ? drawerWidth : currentDrawerWidth,
+-            width: isMobile ? drawerWidth : currentDrawerWidth,
++            width: drawerWidth,
              boxSizing: 'border-box',
--            ...(isMobile && !open && { display: 'none' })
+-            ...(isMobile && !drawerOpen && { display: 'none' }),
+-            overflowX: 'hidden'
 +            ...(isMobile && !drawerOpen && { display: 'none' }),
 +            overflowX: 'hidden'
            }
          }}
++        ModalProps={{ keepMounted: true }}
        >
--        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: [1] }}>
--          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', pl: 1 }}>
--            <img src="/logo-small.png" alt="Logo" style={{ height: '40px', marginRight: '8px' }} />
--            <Typography variant="subtitle1" noWrap>da Vinci</Typography>
+-        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'space-between' : 'center', px: showLabels ? 1.5 : 0 }}>
+-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'flex-start' : 'center' }}>
+-            <Box
+-              component="img"
 +        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'space-between' : 'center', px: showLabels ? 1.5 : 0 }}>
 +          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'flex-start' : 'center' }}>
 +            <Box
 +              component="img"
-+              src="/logo-small.png"
-+              alt="Logo"
-+              sx={{ height: showLabels ? 48 : 32, maxWidth: '100%', width: 'auto', mx: showLabels ? 'auto' : 0 }}
+               src="/logo-small.png"
+               alt="Logo"
+               sx={{ height: showLabels ? 48 : 32, maxWidth: '100%', width: 'auto', mx: showLabels ? 'auto' : 0 }}
+-            />
 +            />
            </Box>
-           {isMobile && <IconButton onClick={handleDrawerClose}><ChevronLeftIcon /></IconButton>}
+-          {isMobile && <IconButton onClick={handleDrawerClose}><ChevronLeftIcon /></IconButton>}
++          <IconButton onClick={handleDrawerClose} sx={{ visibility: showLabels ? 'visible' : 'hidden' }}>
++            <ChevronLeftIcon />
++          </IconButton>
          </Toolbar>
          <Divider />
          <List>
            {menuItems.map((item) => (
--            <ListItemButton key={item.path} onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}>
--              <ListItemIcon>{item.icon}</ListItemIcon>
--              <ListItemText primary={item.text} />
-+            <ListItemButton
-+              key={item.path}
-+              onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}
-+              sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-+            >
-+              <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-+              <ListItemText primary={item.text} sx={{ display: showLabels ? 'block' : 'none' }} />
+             <ListItemButton
+               key={item.path}
+               onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}
+               sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+             >
+               <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
+               <ListItemText primary={item.text} sx={{ display: showLabels ? 'block' : 'none' }} />
              </ListItemButton>
            ))}
          </List>
          <Divider />
          <List>
--          <ListItemButton onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}>
--            <ListItemIcon><PersonIcon /></ListItemIcon>
--            <ListItemText primary={t('actions.myProfile')} />
-+          <ListItemButton
-+            onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}
-+            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-+          >
-+            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
-+            <ListItemText primary={t('actions.myProfile')} sx={{ display: showLabels ? 'block' : 'none' }} />
+           <ListItemButton
+             onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}
+             sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+           >
+             <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
+             <ListItemText primary={t('actions.myProfile')} sx={{ display: showLabels ? 'block' : 'none' }} />
            </ListItemButton>
--          <ListItemButton onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}>
--            <ListItemIcon>
-+          <ListItemButton
-+            onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}
-+            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-+          >
-+            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
+           <ListItemButton
+             onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}
+             sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+           >
+             <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
                <Badge badgeContent={unreadCount} color="secondary">
                  <NotificationsIcon />
                </Badge>
              </ListItemIcon>
--            <ListItemText primary={t('actions.notifications')} />
-+            <ListItemText primary={t('actions.notifications')} sx={{ display: showLabels ? 'block' : 'none' }} />
+             <ListItemText primary={t('actions.notifications')} sx={{ display: showLabels ? 'block' : 'none' }} />
            </ListItemButton>
--          <ListItemButton onClick={handleLogout}>
--            <ListItemIcon><LogoutIcon /></ListItemIcon>
--            <ListItemText primary={t('actions.logout')} />
-+          <ListItemButton
-+            onClick={handleLogout}
-+            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
-+          >
-+            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
-+            <ListItemText primary={t('actions.logout')} sx={{ display: showLabels ? 'block' : 'none' }} />
+           <ListItemButton
+             onClick={handleLogout}
+             sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
+           >
+             <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
+             <ListItemText primary={t('actions.logout')} sx={{ display: showLabels ? 'block' : 'none' }} />
            </ListItemButton>
          </List>
        </Drawer>
        <Box
          component="main"
--        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
-+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${currentDrawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
+-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${currentDrawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
++        sx={{ flexGrow: 1, p: 3, width: '100%', backgroundColor: 'background.default', minHeight: '100vh' }}
        >
          <Toolbar />
          <Routes>

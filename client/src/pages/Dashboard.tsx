@@ -22,8 +22,8 @@ import {
   alpha
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   School as SchoolIcon,
@@ -61,7 +61,6 @@ import LanguageSelector from '../components/LanguageSelector';
 import AdminInformes from './dashboard/AdminInformes';
 
 const drawerWidth = 240;
-const collapsedDrawerWidth = 72;
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -140,11 +139,10 @@ const Dashboard: React.FC = () => {
 
     return items;
   };
-  
+
 
   const menuItems = getMenuItems();
-  const showLabels = isMobile || drawerOpen;
-  const currentDrawerWidth = isMobile ? 0 : drawerOpen ? drawerWidth : collapsedDrawerWidth;
+  const showLabels = drawerOpen;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -153,16 +151,12 @@ const Dashboard: React.FC = () => {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          transition: theme.transitions.create(['width', 'margin']),
-          ...(!isMobile && {
-            marginLeft: currentDrawerWidth,
-            width: `calc(100% - ${currentDrawerWidth}px)`
-          })
+          transition: theme.transitions.create('width')
         }}
       >
         <Toolbar>
           <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
-            <MenuIcon />
+            {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Academic Program daVinci
@@ -239,19 +233,20 @@ const Dashboard: React.FC = () => {
           </Toolbar>
         </AppBar>
       <Drawer
-        variant={isMobile ? 'temporary' : 'permanent'}
-        open={isMobile ? drawerOpen : true}
-        onClose={isMobile ? handleDrawerClose : undefined}
+        variant="temporary"
+        open={drawerOpen}
+        onClose={handleDrawerClose}
         sx={{
-          width: isMobile ? drawerWidth : currentDrawerWidth,
+          width: drawerWidth,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            width: isMobile ? drawerWidth : currentDrawerWidth,
+            width: drawerWidth,
             boxSizing: 'border-box',
             ...(isMobile && !drawerOpen && { display: 'none' }),
             overflowX: 'hidden'
           }
         }}
+        ModalProps={{ keepMounted: true }}
       >
         <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'space-between' : 'center', px: showLabels ? 1.5 : 0 }}>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'flex-start' : 'center' }}>
@@ -262,7 +257,9 @@ const Dashboard: React.FC = () => {
               sx={{ height: showLabels ? 48 : 32, maxWidth: '100%', width: 'auto', mx: showLabels ? 'auto' : 0 }}
             />
           </Box>
-          {isMobile && <IconButton onClick={handleDrawerClose}><ChevronLeftIcon /></IconButton>}
+          <IconButton onClick={handleDrawerClose} sx={{ visibility: showLabels ? 'visible' : 'hidden' }}>
+            <ChevronLeftIcon />
+          </IconButton>
         </Toolbar>
         <Divider />
         <List>
@@ -308,7 +305,7 @@ const Dashboard: React.FC = () => {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${currentDrawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
+        sx={{ flexGrow: 1, p: 3, width: '100%', backgroundColor: 'background.default', minHeight: '100vh' }}
       >
         <Toolbar />
         <Routes>
