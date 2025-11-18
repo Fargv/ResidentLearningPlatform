@@ -1,8 +1,93 @@
 diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98def10671f 100644
+index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f93d4eaba 100644
 --- a/client/src/pages/Dashboard.tsx
 +++ b/client/src/pages/Dashboard.tsx
-@@ -75,52 +75,52 @@ const Dashboard: React.FC = () => {
+@@ -1,178 +1,184 @@
+ import React, { useState, useEffect, useMemo } from 'react';
+ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+ import {
+   Box,
+   CssBaseline,
+   Drawer,
+-  AppBar,
+-  Toolbar,
++  AppBar,
++  Toolbar,
+   List,
+   Typography,
+   Divider,
+   IconButton,
+   ListItemButton,
+   ListItemIcon,
+   ListItemText,
+   Avatar,
+   Menu,
+   MenuItem,
+   Badge,
+   useMediaQuery,
+   useTheme,
+   alpha,
+   Fade
+ } from '@mui/material';
+ import {
+   ChevronLeft as ChevronLeftIcon,
+   Dashboard as DashboardIcon,
+   People as PeopleIcon,
+   School as SchoolIcon,
+   Assignment as AssignmentIcon,
+   Notifications as NotificationsIcon,
+   ExitToApp as LogoutIcon,
+   Person as PersonIcon,
+   Settings as SettingsIcon,
+   Brightness4 as Brightness4Icon,
+-  Brightness7 as Brightness7Icon,
+-  Description as DescriptionIcon,
+-  PushPin as PushPinIcon,
+-  PushPinOutlined as PushPinOutlinedIcon,
+-  Menu as MenuIcon
+-} from '@mui/icons-material';
++  Brightness7 as Brightness7Icon,
++  Description as DescriptionIcon,
++  PushPin as PushPinIcon,
++  PushPinOutlined as PushPinOutlinedIcon,
++  Menu as MenuIcon,
++  ChevronRight as ChevronRightIcon
++} from '@mui/icons-material';
+ import { useAuth } from '../context/AuthContext';
+ import { getNotificacionesNoLeidas } from '../api';
+ import { useTranslation } from 'react-i18next';
+ import { useColorMode } from '../context/ColorModeContext';
+ 
+ // Páginas del dashboard
+ import DashboardHome from './dashboard/DashboardHome';
+ import TutorValidaciones from './dashboard/TutorValidaciones';
+ import Usuarios from './dashboard/Usuarios';
+ import AdminHospitales from './dashboard/AdminHospitales';
+ import AdminFases from './dashboard/AdminFases';
+ import AdminFasesSoc from './dashboard/AdminFasesSoc';
+ import AdminSociedades from './dashboard/AdminSociedades';
+ import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
+ import Perfil from './dashboard/Perfil';
+ import Notificaciones from './dashboard/Notificaciones';
+ import DebugDashboard from './DebugDashboard';
+ import ResidenteFases from './dashboard/ResidenteFases';
+ import AdminAccessCodes from './dashboard/AdminAccessCodes';
+ import AdminConfiguracion from './dashboard/AdminConfiguracion';
+ import AdminCirugias from './dashboard/AdminCirugias';
+ import LanguageSelector from '../components/LanguageSelector';
+ import AdminInformes from './dashboard/AdminInformes';
+ 
+ const drawerWidth = 240;
+ 
+ const Dashboard: React.FC = () => {
+-  const { t } = useTranslation();
+-  const [drawerOpen, setDrawerOpen] = useState(false);
++  const { t } = useTranslation();
++  const [drawerOpen, setDrawerOpen] = useState(false);
+   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+   const [unreadCount, setUnreadCount] = useState(0);
+   const [isPinned, setIsPinned] = useState(false);
+   const [isHovering, setIsHovering] = useState(false);
    const { user, logout } = useAuth();
    const navigate = useNavigate();
    const theme = useTheme();
@@ -30,9 +115,10 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
  
 -  const hoverTransitionDuration = 350;
 -  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
+-  const handleDrawerClose = () => setDrawerOpen(false);
 +  const hoverTransitionDuration = 350;
 +  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
-   const handleDrawerClose = () => setDrawerOpen(false);
++  const handleDrawerClose = () => setDrawerOpen(false);
    const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
    const handleMenuClose = () => setAnchorEl(null);
    const handleLogout = async () => {
@@ -57,7 +143,49 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
  
      if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
        items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
-@@ -162,51 +162,54 @@ const Dashboard: React.FC = () => {
+     }
+ 
+     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
+     }
+ 
+     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
+     }
+ 
+     if (user?.rol === 'administrador') {
+       items.push(
+         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
+         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
+       );
+     }
+ 
+     return items;
+   };
+ 
+ 
+   const menuItems = getMenuItems();
+ 
+-  const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
+-  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
+-  const sidebarWidthCss = `${sidebarWidth}px`;
++  const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
++  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
++  const sidebarWidthCss = `${sidebarWidth}px`;
++  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
++  const toolbarHeight = isMobile ? 56 : 64;
++  const sidebarTopOffset = toolbarHeight + sidebarPadding;
++  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
++  const mainMarginLeft = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
+ 
+   const handleSidebarHover = () => {
+     if (!isMobile && !isPinned) {
+       setIsHovering(true);
+     }
+   };
+ 
+   const handleSidebarLeave = () => {
      if (!isMobile && !isPinned) {
        setIsHovering(false);
      }
@@ -75,45 +203,151 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
      }
    }, [isPinned]);
  
-   useEffect(() => {
-     if (isMobile) {
-       setIsPinned(false);
-       setIsHovering(false);
-     }
-   }, [isMobile]);
+@@ -223,104 +229,87 @@ const Dashboard: React.FC = () => {
+             justifyContent: 'center'
+           }}
+         >
+           {item.icon}
+         </ListItemIcon>
  
-   const location = useLocation();
--  const isPathActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
-+  const isPathActive = (path: string) =>
-+    path === '/dashboard'
-+      ? location.pathname === path
-+      : location.pathname === path || location.pathname.startsWith(`${path}/`);
+         <ListItemText
+           primary={item.text}
+           sx={{
+             opacity: showLabels ? 1 : 0,
+             transition: theme.transitions.create(['opacity', 'margin'], {
+               duration: hoverTransitionDuration
+             }),
+             whiteSpace: 'nowrap',
+             overflow: 'hidden',
+             ml: showLabels ? 0 : -1,
+             width: showLabels ? 'auto' : 0
+           }}
+         />
+       </ListItemButton>
+     ))}
+   </>
+ );
  
-   const renderListItems = (showLabels: boolean, closeOnSelect?: boolean) => (
-   <>
-     {menuItems.map((item) => (
-       <ListItemButton
-         key={item.path}
-         onClick={() => {
-           navigate(item.path);
-           if (isMobile && closeOnSelect) handleDrawerClose();
-         }}
-         sx={{
-           justifyContent: showLabels ? 'flex-start' : 'center',
-           px: showLabels ? 2 : 1.25,
-           transition: theme.transitions.create(['padding', 'background-color'], {
-             duration: hoverTransitionDuration
-           }),
-           borderLeft: isPathActive(item.path) ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
-           '&.Mui-selected': {
-             backgroundColor: alpha(theme.palette.primary.main, 0.12),
-             '&:hover': {
-               backgroundColor: alpha(theme.palette.primary.main, 0.18)
+ 
+-  const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
+-    showLabels,
+-    isMobileView,
+-    onClose
+-  }) => (
+-    <>
+-      <Toolbar
+-        sx={{
+-          display: 'flex',
+-          alignItems: 'center',
+-          justifyContent: showLabels ? 'space-between' : 'center',
+-          px: showLabels ? 1.5 : 1,
+-          transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
+-        }}
+-      >
+-        <Box
+-          sx={{
+-            flexGrow: 1,
+-            display: 'flex',
+-            alignItems: 'center',
+-            justifyContent: showLabels ? 'flex-start' : 'center'
+-          }}
+-        >
+-          <Box
+-            component="img"
+-            src="/logo-small.png"
+-            alt="Logo"
+-            sx={{
+-              height: showLabels ? 48 : 40,
+-              maxWidth: '100%',
+-              width: 'auto',
+-              mx: showLabels ? 'auto' : 0,
+-              transition: theme.transitions.create(['height', 'margin'], { duration: hoverTransitionDuration })
+-            }}
+-          />
+-        </Box>
+-        {isMobileView ? (
+-          <IconButton onClick={onClose}>
+-            <ChevronLeftIcon />
+-          </IconButton>
+-        ) : (
+-          <Fade in={showLabels} unmountOnExit mountOnEnter>
+-            <IconButton
+-              onClick={togglePin}
+-              size="small"
+-              color={isPinned ? 'primary' : 'default'}
+-              sx={{ ml: 1 }}
+-            >
+-              {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+-            </IconButton>
+-          </Fade>
+-        )}
+-      </Toolbar>
+-      <Divider />
++  const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
++    showLabels,
++    isMobileView,
++    onClose
++  }) => (
++    <>
++      <Toolbar
++        sx={{
++          display: 'flex',
++          alignItems: 'center',
++          justifyContent: 'center',
++          px: showLabels ? 1.5 : 1,
++          transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
++        }}
++      >
++        {isMobileView ? (
++          <IconButton onClick={onClose}>
++            <ChevronLeftIcon />
++          </IconButton>
++        ) : showLabels ? (
++          <Fade in={showLabels} unmountOnExit mountOnEnter>
++            <IconButton
++              onClick={togglePin}
++              size="small"
++              color={isPinned ? 'primary' : 'default'}
++              sx={{ ml: 1 }}
++            >
++              {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
++            </IconButton>
++          </Fade>
++        ) : (
++          <IconButton onClick={togglePin} size="small">
++            <ChevronRightIcon fontSize="small" />
++          </IconButton>
++        )}
++      </Toolbar>
++      <Divider />
+       <List>{renderListItems(showLabels, isMobileView)}</List>
+       <Divider />
+       <List>
+         <ListItemButton
+           onClick={() => {
+             navigate('/dashboard/perfil');
+             if (isMobile && isMobileView) handleDrawerClose();
+           }}
+           sx={{
+             justifyContent: showLabels ? 'flex-start' : 'center',
+             px: showLabels ? 2 : 1.25,
+             transition: theme.transitions.create(['padding', 'background-color'], {
+               duration: hoverTransitionDuration
+             }),
+             borderLeft: isPathActive('/dashboard/perfil') ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
+             '&.Mui-selected': {
+               backgroundColor: alpha(theme.palette.primary.main, 0.12),
+               '&:hover': {
+                 backgroundColor: alpha(theme.palette.primary.main, 0.18)
+               }
+             },
+             '& .MuiListItemIcon-root': {
+               color: isPathActive('/dashboard/perfil') ? theme.palette.primary.main : 'inherit'
              }
-           },
-           '& .MuiListItemIcon-root': {
-             color: isPathActive(item.path) ? theme.palette.primary.main : 'inherit'
-@@ -390,57 +393,57 @@ const Dashboard: React.FC = () => {
+           }}
+@@ -391,70 +380,68 @@ const Dashboard: React.FC = () => {
+               duration: hoverTransitionDuration
+             }),
              '&:hover .MuiListItemIcon-root': {
                color: theme.palette.primary.main
              }
@@ -137,33 +371,44 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
    );
  
    return (
-     <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
-       <CssBaseline />
+-    <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
+-      <CssBaseline />
 -      <AppBar
 -        position="fixed"
 -        sx={{
--          zIndex: theme.zIndex.drawer + 3,
+-          zIndex: theme.zIndex.drawer - 1,
 -          transition: theme.transitions.create(['width', 'margin'], {
 -            duration: hoverTransitionDuration
 -          }),
+-          width: isMobile ? '100%' : `calc(100% - ${sidebarWidthCss})`,
+-          ml: isMobile ? 0 : sidebarWidthCss
+-        }}
+-      >
+-        <Toolbar>
+-          {!isMobile && <Box sx={{ width: theme.spacing(6) }} />}
+-          {isMobile && (
+-            <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
+-              <MenuIcon />
+-            </IconButton>
+-          )}
++    <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
++      <CssBaseline />
 +      <AppBar
 +        position="fixed"
 +        sx={{
-+          zIndex: theme.zIndex.drawer - 1,
++          zIndex: theme.zIndex.drawer + 2,
 +          transition: theme.transitions.create(['width', 'margin'], {
 +            duration: hoverTransitionDuration
 +          }),
-           width: isMobile ? '100%' : `calc(100% - ${sidebarWidthCss})`,
-           ml: isMobile ? 0 : sidebarWidthCss
-         }}
-       >
-         <Toolbar>
-           {!isMobile && <Box sx={{ width: theme.spacing(6) }} />}
-           {isMobile && (
-             <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
-               <MenuIcon />
-             </IconButton>
-           )}
++          width: '100%'
++        }}
++      >
++        <Toolbar>
++          {isMobile && (
++            <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
++              <MenuIcon />
++            </IconButton>
++          )}
            <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
              Academic Program daVinci
            </Typography>
@@ -178,7 +423,21 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
                '.MuiSvgIcon-root': { color: 'inherit' }
-@@ -484,132 +487,131 @@ const Dashboard: React.FC = () => {
+             }}
+           />
+           <IconButton
+             color="inherit"
+             onClick={toggleColorMode}
+             sx={{ mr: 1, color: 'inherit' }}
+           >
+             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+           </IconButton>
+           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
+             <Badge badgeContent={unreadCount} color="secondary">
+@@ -484,133 +471,144 @@ const Dashboard: React.FC = () => {
+                   position: 'absolute',
+                   top: 0,
+                   right: 14,
                    width: 10,
                    height: 10,
                    bgcolor: 'background.paper',
@@ -201,62 +460,40 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
              </MenuItem>
            </Menu>
          </Toolbar>
-       </AppBar>
-       {!isMobile && (
-         <Box sx={{ position: 'relative' }}>
+-      </AppBar>
+-      {!isMobile && (
+-        <Box sx={{ position: 'relative' }}>
 -          <Drawer
 -            variant="permanent"
 -            open
 -            sx={{
 -              width: sidebarWidthCss,
-+          <Drawer
-+            variant="permanent"
-+            open
-+            sx={{
-+              width: sidebarWidthCss,
-               flexShrink: 0,
-               display: { xs: 'none', md: 'block' },
+-              flexShrink: 0,
+-              display: { xs: 'none', md: 'block' },
 -              [`& .MuiDrawer-paper`]: {
 -                width: sidebarWidthCss,
 -                boxSizing: 'border-box',
 -                overflowX: 'hidden',
 -                transition: theme.transitions.create('width', {
 -                  duration: hoverTransitionDuration
--                })
+-                }),
+-                zIndex: theme.zIndex.appBar + 2
 -              }
 -            }}
 -            PaperProps={{
 -              onMouseEnter: handleSidebarHover,
 -              onMouseLeave: handleSidebarLeave,
--              sx: { zIndex: theme.zIndex.appBar + (isPinned ? 1 : 0) }
+-              sx: { zIndex: theme.zIndex.appBar + 2 }
 -            }}
 -          >
 -            <SidebarContent showLabels={isPinned} />
 -          </Drawer>
-+              [`& .MuiDrawer-paper`]: {
-+                width: sidebarWidthCss,
-+                boxSizing: 'border-box',
-+                overflowX: 'hidden',
-+                transition: theme.transitions.create('width', {
-+                  duration: hoverTransitionDuration
-+                }),
-+                zIndex: theme.zIndex.appBar + 2
-+              }
-+            }}
-+            PaperProps={{
-+              onMouseEnter: handleSidebarHover,
-+              onMouseLeave: handleSidebarLeave,
-+              sx: { zIndex: theme.zIndex.appBar + 2 }
-+            }}
-+          >
-+            <SidebarContent showLabels={isPinned} />
-+          </Drawer>
-           {!isPinned && (
-             <Drawer
-               variant="temporary"
-               open={isHovering}
-               onClose={handleSidebarLeave}
-               ModalProps={{ keepMounted: true }}
+-          {!isPinned && (
+-            <Drawer
+-              variant="temporary"
+-              open={isHovering}
+-              onClose={handleSidebarLeave}
+-              ModalProps={{ keepMounted: true }}
 -              hideBackdrop
 -              sx={{
 -                [`& .MuiDrawer-paper`]: {
@@ -265,8 +502,7 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
 -                  overflowX: 'hidden',
 -                  transition: theme.transitions.create(['transform', 'width'], {
 -                    duration: hoverTransitionDuration
--                  }),
--                  zIndex: theme.zIndex.appBar + 2
+-                  })
 -                },
 -                zIndex: theme.zIndex.appBar + 2
 -              }}
@@ -274,6 +510,44 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
 -            >
 -              <SidebarContent showLabels />
 -            </Drawer>
++      </AppBar>
++      {!isMobile && (
++        <Box sx={{ position: 'relative', width: `${mainMarginLeft}px`, flexShrink: 0 }}>
++          <Drawer
++            variant="permanent"
++            open
++            sx={{
++              width: sidebarWidthCss,
++              flexShrink: 0,
++              display: { xs: 'none', md: 'block' },
++              [`& .MuiDrawer-paper`]: {
++                width: sidebarWidthCss,
++                boxSizing: 'border-box',
++                overflowX: 'hidden',
++                transition: theme.transitions.create('width', {
++                  duration: hoverTransitionDuration
++                }),
++                zIndex: theme.zIndex.appBar - 1,
++                top: `${sidebarTopOffset}px`,
++                left: `${sidebarPadding}px`,
++                height: sidebarHeightCss,
++                borderRadius: 1
++              }
++            }}
++            PaperProps={{
++              onMouseEnter: handleSidebarHover,
++              onMouseLeave: handleSidebarLeave,
++              sx: { zIndex: theme.zIndex.appBar - 1 }
++            }}
++          >
++            <SidebarContent showLabels={isPinned} />
++          </Drawer>
++          {!isPinned && (
++            <Drawer
++              variant="temporary"
++              open={isHovering}
++              onClose={handleSidebarLeave}
++              ModalProps={{ keepMounted: true }}
 +              hideBackdrop
 +              sx={{
 +                [`& .MuiDrawer-paper`]: {
@@ -282,9 +556,14 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
 +                  overflowX: 'hidden',
 +                  transition: theme.transitions.create(['transform', 'width'], {
 +                    duration: hoverTransitionDuration
-+                  })
++                  }),
++                  zIndex: theme.zIndex.appBar - 1,
++                  top: `${sidebarTopOffset}px`,
++                  left: `${sidebarPadding}px`,
++                  height: sidebarHeightCss,
++                  borderRadius: 1
 +                },
-+                zIndex: theme.zIndex.appBar + 2
++                zIndex: theme.zIndex.appBar - 1
 +              }}
 +              PaperProps={{ onMouseEnter: handleSidebarHover, onMouseLeave: handleSidebarLeave }}
 +            >
@@ -293,48 +572,64 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
            )}
          </Box>
        )}
-       {isMobile && (
-         <Drawer
-           variant="temporary"
-           open={drawerOpen}
-           onClose={handleDrawerClose}
+-      {isMobile && (
+-        <Drawer
+-          variant="temporary"
+-          open={drawerOpen}
+-          onClose={handleDrawerClose}
++      {isMobile && (
++        <Drawer
++          variant="temporary"
++          open={drawerOpen}
++          onClose={handleDrawerClose}
            sx={{
-             width: drawerWidth,
-             flexShrink: 0,
-             display: { xs: 'block', md: 'none' },
-             [`& .MuiDrawer-paper`]: {
-               width: drawerWidth,
-               boxSizing: 'border-box',
-               overflowX: 'hidden'
-             }
-           }}
-           ModalProps={{ keepMounted: true }}
-         >
-           <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
+-            width: drawerWidth,
+-            flexShrink: 0,
+-            display: { xs: 'block', md: 'none' },
+-            [`& .MuiDrawer-paper`]: {
+-              width: drawerWidth,
+-              boxSizing: 'border-box',
+-              overflowX: 'hidden'
+-            }
+-          }}
+-          ModalProps={{ keepMounted: true }}
+-        >
+-          <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
++            width: drawerWidth,
++            flexShrink: 0,
++            display: { xs: 'block', md: 'none' },
++            [`& .MuiDrawer-paper`]: {
++              width: drawerWidth,
++              boxSizing: 'border-box',
++              overflowX: 'hidden',
++              top: `${toolbarHeight}px`
++            }
++          }}
++          ModalProps={{ keepMounted: true }}
++        >
++          <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
          </Drawer>
        )}
        <Box
--        component="main"
+         component="main"
 -        sx={{
 -          flexGrow: 1,
--          p: 3,
+-          p: 2.5,
 -          width: '100%',
 -          backgroundColor: 'background.default',
 -          minHeight: '100vh',
--          ml: isMobile ? 0 : sidebarWidthCss,
 -          transition: theme.transitions.create('margin', {
 -            duration: hoverTransitionDuration
--          })
-+        component="main"
 +        sx={{
 +          flexGrow: 1,
 +          p: 2.5,
++          ml: `${mainMarginLeft}px`,
 +          width: '100%',
 +          backgroundColor: 'background.default',
 +          minHeight: '100vh',
 +          transition: theme.transitions.create('margin', {
 +            duration: hoverTransitionDuration
-+          })
+           })
          }}
        >
          <Toolbar />
@@ -359,4 +654,3 @@ index 8c00168f7b1abeaddd91350fefe77a229816ee7f..bb3c8cb365c1f6099ebb84d7c83bc98d
              <Route path="/informes" element={<AdminInformes />} />
            )}
            {user?.rol === 'administrador' && (
-             <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />

@@ -37,7 +37,8 @@ import {
   Description as DescriptionIcon,
   PushPin as PushPinIcon,
   PushPinOutlined as PushPinOutlinedIcon,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -151,6 +152,11 @@ const Dashboard: React.FC = () => {
   const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
   const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
   const sidebarWidthCss = `${sidebarWidth}px`;
+  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
+  const toolbarHeight = isMobile ? 56 : 64;
+  const sidebarTopOffset = toolbarHeight + sidebarPadding;
+  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
+  const mainMarginLeft = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
 
   const handleSidebarHover = () => {
     if (!isMobile && !isPinned) {
@@ -255,37 +261,16 @@ const Dashboard: React.FC = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: showLabels ? 'space-between' : 'center',
+          justifyContent: 'center',
           px: showLabels ? 1.5 : 1,
           transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
         }}
       >
-        <Box
-          sx={{
-            flexGrow: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: showLabels ? 'flex-start' : 'center'
-          }}
-        >
-          <Box
-            component="img"
-            src="/logo-small.png"
-            alt="Logo"
-            sx={{
-              height: showLabels ? 48 : 40,
-              maxWidth: '100%',
-              width: 'auto',
-              mx: showLabels ? 'auto' : 0,
-              transition: theme.transitions.create(['height', 'margin'], { duration: hoverTransitionDuration })
-            }}
-          />
-        </Box>
         {isMobileView ? (
           <IconButton onClick={onClose}>
             <ChevronLeftIcon />
           </IconButton>
-        ) : (
+        ) : showLabels ? (
           <Fade in={showLabels} unmountOnExit mountOnEnter>
             <IconButton
               onClick={togglePin}
@@ -296,6 +281,10 @@ const Dashboard: React.FC = () => {
               {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
             </IconButton>
           </Fade>
+        ) : (
+          <IconButton onClick={togglePin} size="small">
+            <ChevronRightIcon fontSize="small" />
+          </IconButton>
         )}
       </Toolbar>
       <Divider />
@@ -418,16 +407,14 @@ const Dashboard: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          zIndex: theme.zIndex.drawer - 1,
+          zIndex: theme.zIndex.drawer + 2,
           transition: theme.transitions.create(['width', 'margin'], {
             duration: hoverTransitionDuration
           }),
-          width: isMobile ? '100%' : `calc(100% - ${sidebarWidthCss})`,
-          ml: isMobile ? 0 : sidebarWidthCss
+          width: '100%'
         }}
       >
         <Toolbar>
-          {!isMobile && <Box sx={{ width: theme.spacing(6) }} />}
           {isMobile && (
             <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
               <MenuIcon />
@@ -508,7 +495,7 @@ const Dashboard: React.FC = () => {
         </Toolbar>
       </AppBar>
       {!isMobile && (
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative', width: `${mainMarginLeft}px`, flexShrink: 0 }}>
           <Drawer
             variant="permanent"
             open
@@ -523,13 +510,17 @@ const Dashboard: React.FC = () => {
                 transition: theme.transitions.create('width', {
                   duration: hoverTransitionDuration
                 }),
-                zIndex: theme.zIndex.appBar + 2
+                zIndex: theme.zIndex.appBar - 1,
+                top: `${sidebarTopOffset}px`,
+                left: `${sidebarPadding}px`,
+                height: sidebarHeightCss,
+                borderRadius: 1
               }
             }}
             PaperProps={{
               onMouseEnter: handleSidebarHover,
               onMouseLeave: handleSidebarLeave,
-              sx: { zIndex: theme.zIndex.appBar + 2 }
+              sx: { zIndex: theme.zIndex.appBar - 1 }
             }}
           >
             <SidebarContent showLabels={isPinned} />
@@ -548,9 +539,14 @@ const Dashboard: React.FC = () => {
                   overflowX: 'hidden',
                   transition: theme.transitions.create(['transform', 'width'], {
                     duration: hoverTransitionDuration
-                  })
+                  }),
+                  zIndex: theme.zIndex.appBar - 1,
+                  top: `${sidebarTopOffset}px`,
+                  left: `${sidebarPadding}px`,
+                  height: sidebarHeightCss,
+                  borderRadius: 1
                 },
-                zIndex: theme.zIndex.appBar + 2
+                zIndex: theme.zIndex.appBar - 1
               }}
               PaperProps={{ onMouseEnter: handleSidebarHover, onMouseLeave: handleSidebarLeave }}
             >
@@ -571,7 +567,8 @@ const Dashboard: React.FC = () => {
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: 'border-box',
-              overflowX: 'hidden'
+              overflowX: 'hidden',
+              top: `${toolbarHeight}px`
             }
           }}
           ModalProps={{ keepMounted: true }}
@@ -584,6 +581,7 @@ const Dashboard: React.FC = () => {
         sx={{
           flexGrow: 1,
           p: 2.5,
+          ml: `${mainMarginLeft}px`,
           width: '100%',
           backgroundColor: 'background.default',
           minHeight: '100vh',
