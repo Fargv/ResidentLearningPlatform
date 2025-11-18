@@ -191,36 +191,49 @@ const Dashboard: React.FC = () => {
   }, [isMobile]);
 
   const renderListItems = (showLabels: boolean, closeOnSelect?: boolean) => (
-    <>
-      {menuItems.map((item) => (
-        <ListItemButton
-          key={item.path}
-          onClick={() => {
-            navigate(item.path);
-            if (isMobile && closeOnSelect) handleDrawerClose();
-          }}
+  <>
+    {menuItems.map((item) => (
+      <ListItemButton
+        key={item.path}
+        onClick={() => {
+          navigate(item.path);
+          if (isMobile && closeOnSelect) handleDrawerClose();
+        }}
+        sx={{
+          justifyContent: showLabels ? 'flex-start' : 'center',
+          px: showLabels ? 2 : 1.25,
+          transition: theme.transitions.create(['padding'], {
+            duration: theme.transitions.duration.shorter
+          })
+        }}
+      >
+        <ListItemIcon
           sx={{
-            justifyContent: showLabels ? 'flex-start' : 'center',
-            px: showLabels ? 2 : 1.25,
-            transition: theme.transitions.create(['padding'], { duration: theme.transitions.duration.shorter })
+            minWidth: showLabels ? 40 : 'auto',
+            justifyContent: 'center'
           }}
         >
-          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
-          <ListItemText
-            primary={item.text}
-            sx={{
-              opacity: showLabels ? 1 : 0,
-              transition: theme.transitions.create(['opacity', 'margin'], { duration: theme.transitions.duration.shorter }),
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              ml: showLabels ? 0 : -1,
+          {item.icon}
+        </ListItemIcon>
+
+        <ListItemText
+          primary={item.text}
+          sx={{
+            opacity: showLabels ? 1 : 0,
+            transition: theme.transitions.create(['opacity', 'margin'], {
+              duration: theme.transitions.duration.shorter
+            }),
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            ml: showLabels ? 0 : -1,
             width: showLabels ? 'auto' : 0
           }}
         />
       </ListItemButton>
-      ))
-    </>
-  );
+    ))}
+  </>
+);
+
 
   const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
     showLabels,
