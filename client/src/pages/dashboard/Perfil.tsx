@@ -145,8 +145,9 @@ const Perfil: React.FC = () => {
     return `${first}${last}`.toUpperCase() || '?';
   }, [formData.apellidos, formData.nombre]);
 
-  const completionScore = useMemo(() => {
-    const fieldsToCheck = [
+  const completionScore =
+  Math.round(
+    ([
       formData.nombre,
       formData.apellidos,
       formData.email,
@@ -154,18 +155,19 @@ const Perfil: React.FC = () => {
       user?.zona,
       user?.especialidad,
       formData.sociedad
-    ];
-    const filled = fieldsToCheck.filter(Boolean).length;
-    return Math.round((filled / fieldsToCheck.length) * 100);
-  }, [formData.apellidos, formData.email, formData.hospital, formData.nombre, formData.sociedad, user?.especialidad, user?.zona]);
+    ].filter(Boolean).length /
+      7) *
+      100
+  );
 
-  const statusChips = useMemo(() => [
-    { key: 'role', label: t('profile.status.role'), value: user?.rol || t('common.none') },
-    { key: 'hospital', label: t('profile.status.hospital'), value: formData.hospital || t('common.none') },
-    { key: 'program', label: t('profile.status.program'), value: (user as any)?.tipo || t('common.none') },
-    { key: 'zone', label: t('profile.status.zone'), value: user?.zona || t('common.none') },
-    { key: 'specialty', label: t('profile.status.specialty'), value: user?.especialidad || t('common.none') }
-  ], [formData.hospital, t, (user as any)?.tipo, user?.especialidad, user?.rol, user?.zona]);
+  const statusChips = [
+  { key: 'role', label: t('profile.status.role'), value: user?.rol || t('common.none') },
+  { key: 'hospital', label: t('profile.status.hospital'), value: formData.hospital || t('common.none') },
+  { key: 'program', label: t('profile.status.program'), value: (user as any)?.tipo || t('common.none') },
+  { key: 'zone', label: t('profile.status.zone'), value: user?.zona || t('common.none') },
+  { key: 'specialty', label: t('profile.status.specialty'), value: user?.especialidad || t('common.none') }
+];
+
 
   const handleOpenPasswordDialog = () => {
     setPassError(null);
@@ -197,7 +199,7 @@ const Perfil: React.FC = () => {
         {t('profile.title')}
       </Typography>
 
-      // Fragmento reemplazado sin Grid, usando Stack + Box
+      {/* Fragmento reemplazado sin Grid, usando Stack + Box */}
 
 <Stack spacing={3} sx={{ mt: 2 }}>
   {/* FILA 1: Perfil (izquierda) + Datos personales (derecha) */}
