@@ -184,7 +184,10 @@ const Dashboard: React.FC = () => {
   }, [isMobile]);
 
   const location = useLocation();
-  const isPathActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
+  const isPathActive = (path: string) =>
+    path === '/dashboard'
+      ? location.pathname === path
+      : location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const renderListItems = (showLabels: boolean, closeOnSelect?: boolean) => (
   <>
@@ -415,7 +418,7 @@ const Dashboard: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          zIndex: theme.zIndex.drawer + 3,
+          zIndex: theme.zIndex.drawer - 1,
           transition: theme.transitions.create(['width', 'margin'], {
             duration: hoverTransitionDuration
           }),
@@ -519,13 +522,14 @@ const Dashboard: React.FC = () => {
                 overflowX: 'hidden',
                 transition: theme.transitions.create('width', {
                   duration: hoverTransitionDuration
-                })
+                }),
+                zIndex: theme.zIndex.appBar + 2
               }
             }}
             PaperProps={{
               onMouseEnter: handleSidebarHover,
               onMouseLeave: handleSidebarLeave,
-              sx: { zIndex: theme.zIndex.appBar + (isPinned ? 1 : 0) }
+              sx: { zIndex: theme.zIndex.appBar + 2 }
             }}
           >
             <SidebarContent showLabels={isPinned} />
@@ -544,8 +548,7 @@ const Dashboard: React.FC = () => {
                   overflowX: 'hidden',
                   transition: theme.transitions.create(['transform', 'width'], {
                     duration: hoverTransitionDuration
-                  }),
-                  zIndex: theme.zIndex.appBar + 2
+                  })
                 },
                 zIndex: theme.zIndex.appBar + 2
               }}
@@ -580,11 +583,10 @@ const Dashboard: React.FC = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 2.5,
           width: '100%',
           backgroundColor: 'background.default',
           minHeight: '100vh',
-          ml: isMobile ? 0 : sidebarWidthCss,
           transition: theme.transitions.create('margin', {
             duration: hoverTransitionDuration
           })
