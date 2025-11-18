@@ -1,399 +1,304 @@
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index 58bb10f77b395849f125ac004ea2a33e173d0d66..29af9f8385b5ddb60da77e8f210d6f6e659279aa 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -1,73 +1,74 @@
--import React, { useEffect, useState } from 'react';
--import {
--  Box,
--  Typography,
--  Alert,
--  Chip,
--  Skeleton,
--  LinearProgress,
--  Accordion,
--  AccordionSummary,
--  AccordionDetails,
--  Button,
--  Dialog,
--  DialogTitle,
--  DialogContent,
--  DialogActions,
--  TextField,
--  Snackbar,
--  Tooltip,
--  CircularProgress,
--  Backdrop,
--  Autocomplete,
--  MenuItem,
--  Paper,
--  Stack,
--  FormControlLabel,
--  IconButton
--} from '@mui/material';
-+import React, { useEffect, useState } from 'react';
-+import {
-+  Box,
-+  Typography,
-+  Alert,
-+  Chip,
-+  Skeleton,
-+  LinearProgress,
-+  Accordion,
-+  AccordionSummary,
-+  AccordionDetails,
-+  Button,
-+  Dialog,
-+  DialogTitle,
-+  DialogContent,
-+  DialogActions,
-+  TextField,
-+  Snackbar,
-+  Tooltip,
-+  CircularProgress,
-+  Backdrop,
-+  Autocomplete,
-+  MenuItem,
-+  Paper,
-+  Stack,
-+  FormControlLabel,
-+  IconButton
-+} from '@mui/material';
-+import { createFilterOptions } from '@mui/material/Autocomplete';
- import Switch, { SwitchProps } from '@mui/material/Switch';
+diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
+index 6a9e3c865ff471aa4bb0a9c0fd2d3f759ca9820c..1b22dfe99ad833328ca96d0255b8ae901eed0bb7 100644
+--- a/client/src/pages/Dashboard.tsx
++++ b/client/src/pages/Dashboard.tsx
+@@ -39,144 +39,151 @@ import {
+ import { useAuth } from '../context/AuthContext';
+ import { getNotificacionesNoLeidas } from '../api';
+ import { useTranslation } from 'react-i18next';
+ import { useColorMode } from '../context/ColorModeContext';
  
- import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
- import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
- import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
- import VerifiedIcon from '@mui/icons-material/Verified';
- import CancelIcon from '@mui/icons-material/Cancel';
- import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
- import DownloadIcon from '@mui/icons-material/Download';
- import CloseIcon from '@mui/icons-material/Close';
- import { useTheme, alpha, styled } from '@mui/material/styles';
- import api from '../../api';
- import { useAuth } from '../../context/AuthContext';
- import { Sociedad } from '../../types/Sociedad';
- import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
--import { useTranslation } from 'react-i18next';
--
--const CompletionSwitch = styled((props: SwitchProps) => (
--  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
--))(({ theme }) => ({
-+import { useTranslation } from 'react-i18next';
-+
-+const CompletionSwitch = styled((props: SwitchProps) => (
-+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-+))(({ theme }) => ({
-   width: 48,
-   height: 28,
-   padding: 0,
-   display: 'flex',
-   alignItems: 'center',
-   '& .MuiSwitch-switchBase': {
-     padding: 0,
-     margin: 2,
-     transitionDuration: '200ms',
-     '&.Mui-focusVisible .MuiSwitch-thumb': {
-       boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
-       border: `1px solid ${theme.palette.primary.main}`
-     },
-     '&.Mui-checked': {
-       transform: 'translateX(20px)',
-       color: theme.palette.common.white,
-       '& .MuiSwitch-thumb': {
-         boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
-       },
-       '& + .MuiSwitch-track': {
-         backgroundColor:
-           theme.palette.mode === 'light'
-             ? theme.palette.primary.main
-             : alpha(theme.palette.primary.light, 0.55),
-         borderColor: 'transparent',
-@@ -81,54 +82,57 @@ const CompletionSwitch = styled((props: SwitchProps) => (
-     boxSizing: 'border-box',
-     borderRadius: '50%',
-     backgroundColor: theme.palette.common.white,
-     boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`,
-     position: 'relative',
-     '&:before': {
-       content: "''",
-       position: 'absolute',
-       inset: 0,
-       borderRadius: '50%',
-       border: `1px solid ${alpha(theme.palette.common.black, 0.08)}`
-     }
-   },
-   '& .MuiSwitch-track': {
-     borderRadius: 999,
-     backgroundColor:
-       theme.palette.mode === 'light'
-         ? alpha(theme.palette.text.primary, 0.15)
-         : alpha(theme.palette.common.white, 0.25),
-     border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
-     opacity: 1,
-     boxSizing: 'border-box'
-   }
- }));
+ // Páginas del dashboard
+ import DashboardHome from './dashboard/DashboardHome';
+ import TutorValidaciones from './dashboard/TutorValidaciones';
+ import Usuarios from './dashboard/Usuarios';
+ import AdminHospitales from './dashboard/AdminHospitales';
+ import AdminFases from './dashboard/AdminFases';
+ import AdminFasesSoc from './dashboard/AdminFasesSoc';
+ import AdminSociedades from './dashboard/AdminSociedades';
+ import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
+ import Perfil from './dashboard/Perfil';
+ import Notificaciones from './dashboard/Notificaciones';
+ import DebugDashboard from './DebugDashboard';
+ import ResidenteFases from './dashboard/ResidenteFases';
+ import AdminAccessCodes from './dashboard/AdminAccessCodes';
+ import AdminConfiguracion from './dashboard/AdminConfiguracion';
+ import AdminCirugias from './dashboard/AdminCirugias';
+ import LanguageSelector from '../components/LanguageSelector';
+ import AdminInformes from './dashboard/AdminInformes';
  
--const formatActivityType = (type?: string): string => {
--  if (!type) return '';
--  return type.charAt(0).toUpperCase() + type.slice(1);
--};
-+const formatActivityType = (type?: string): string => {
-+  if (!type) return '';
-+  return type.charAt(0).toUpperCase() + type.slice(1);
-+};
-+
-+type SurgeryOption = { _id: string; name: string; inputValue?: string };
-+const surgeryFilter = createFilterOptions<SurgeryOption>();
+ const drawerWidth = 240;
++const collapsedDrawerWidth = 72;
  
- const ResidenteFases: React.FC = () => {
+ const Dashboard: React.FC = () => {
+   const { t } = useTranslation();
+-  const [open, setOpen] = useState(false);
++  const [drawerOpen, setDrawerOpen] = useState(false);
+   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+   const [unreadCount, setUnreadCount] = useState(0);
+   const { user, logout } = useAuth();
+   const navigate = useNavigate();
    const theme = useTheme();
-   const { user } = useAuth();
-   const { t, i18n } = useTranslation();
-   const placeholderToken = '___';
+   const { toggleColorMode } = useColorMode();
+   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
+   const isDev = env === 'dev';
  
-   const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
-     const raw = t(key as any, params);
-     return raw
-       .replace(new RegExp(`${placeholderToken}`, 'g'), '')
-       .replace(/[:：]\s*$/, '')
-       .replace(/[%％]\s*$/, '')
-       .trim();
+   const refreshUnreadCount = async () => {
+     try {
+       const res = await getNotificacionesNoLeidas();
+       setUnreadCount(res.data.count || 0);
+     } catch (err) {
+       console.error('Error obteniendo notificaciones no leidas', err);
+     }
    };
-   const [progresos, setProgresos] = useState<any[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [dialogOpen, setDialogOpen] = useState(false);
-   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
-   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
-   const [comentario, setComentario] = useState('');
-   const [fecha, setFecha] = useState('');
-   const [archivos, setArchivos] = useState<File[]>([]);
-   const [archivoError, setArchivoError] = useState(false);
-@@ -1061,111 +1065,163 @@ const ResidenteFases: React.FC = () => {
-           {dialogMode === 'edit'
-             ? t('residentPhases.dialog.editTitle')
-             : t('residentPhases.dialog.title')}
-         </DialogTitle>
-         <DialogContent>
-           <TextField
-             label={t('residentPhases.dialog.date')}
-             type="date"
-             value={fecha}
-             onChange={(e) => setFecha(e.target.value)}
-             fullWidth
-             margin="normal"
-             InputLabelProps={{ shrink: true }}
-           />
-           <TextField
-             label={t('residentPhases.dialog.comment')}
-             value={comentario}
-             onChange={(e) => setComentario(e.target.value)}
-             fullWidth
-             multiline
-             rows={3}
-             margin="normal"
-           />
-           {esCirugia && (
-             <>
--              <Autocomplete
--                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
--                isOptionEqualToValue={(opt, val) =>
--                  typeof val === 'string'
--                    ? opt.name === val
--                    : opt._id === (val as any)?._id
--                }
--                getOptionLabel={(option: any) =>
--                  typeof option === 'string' ? option : option.name
--                }
--                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
--                inputValue={surgeryInputValue}
--                onChange={(_, value) => {
--                  if (typeof value === 'string') {
--                    setCirugia(null);
--                    setOtraCirugia(value);
--                    setOtraCirugiaSeleccionada(true);
--                    setSurgeryInputValue(value);
--                  } else if (!value) {
--                    setCirugia(null);
--                    setOtraCirugia('');
--                    setOtraCirugiaSeleccionada(false);
--                    setSurgeryInputValue('');
--                  } else if ((value as any)?._id === 'other') {
--                    setCirugia(null);
--                    setOtraCirugia('');
--                    setOtraCirugiaSeleccionada(true);
--                    setSurgeryInputValue('');
--                  } else {
--                    setCirugia(value);
--                    setOtraCirugiaSeleccionada(false);
--                    setSurgeryInputValue(value.name || '');
--                  }
--                }}
--                onInputChange={(_, newValue) => {
--                  setSurgeryInputValue(newValue);
--                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
--                }}
--                renderInput={(params) => (
--                  <TextField
--                    {...params}
--                    label={t('residentPhases.dialog.surgery')}
--                    margin="normal"
--                    required
--                    error={
--                      mostrarErroresCirugia &&
--                      esCirugia &&
--                      !(cirugia || otraCirugia.trim())
--                    }
--                    helperText={
--                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
--                        ? t('residentPhases.dialog.surgeryRequired')
--                        : otraCirugiaSeleccionada
--                        ? t('residentPhases.dialog.otherSurgeryTooltip')
--                        : ''
--                    }
--                  />
--                )}
--                fullWidth
--                freeSolo={otraCirugiaSeleccionada}
--              />
-+              <Autocomplete
-+                options={surgeryTypes as SurgeryOption[]}
-+                filterOptions={(options, params) => {
-+                  const filtered = surgeryFilter(options, params);
-+                  const trimmed = params.inputValue.trim();
-+                  const alreadyExists = options.some(
-+                    (option) =>
-+                      option.name?.toLowerCase() === trimmed.toLowerCase()
-+                  );
+ 
+   useEffect(() => {
+     refreshUnreadCount();
+   }, []);
+ 
+-  const handleDrawerOpen = () => setOpen(true);
+-  const handleDrawerClose = () => setOpen(false);
++  useEffect(() => {
++    setDrawerOpen(false);
++  }, [isMobile]);
 +
-+                  if (trimmed && !alreadyExists) {
-+                    filtered.push({
-+                      inputValue: trimmed,
-+                      _id: 'custom',
-+                      name: t('residentPhases.dialog.surgeryAddCustom', {
-+                        value: trimmed
-+                      })
-+                    });
-+                  }
-+
-+                  return filtered;
-+                }}
-+                isOptionEqualToValue={(opt, val) =>
-+                  typeof val === 'string'
-+                    ? opt.name === val
-+                    : opt._id === (val as any)?._id
-+                }
-+                getOptionLabel={(option: any) => {
-+                  if (typeof option === 'string') return option;
-+                  if (option.inputValue) return option.inputValue;
-+                  return option.name;
-+                }}
-+                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
-+                inputValue={surgeryInputValue}
-+                onChange={(_, value) => {
-+                  if (typeof value === 'string') {
-+                    const trimmedValue = value.trim();
-+                    setCirugia(null);
-+                    setOtraCirugia(trimmedValue);
-+                    setOtraCirugiaSeleccionada(!!trimmedValue);
-+                    setSurgeryInputValue(trimmedValue);
-+                  } else if (value && (value as SurgeryOption).inputValue) {
-+                    const customValue = (value as SurgeryOption).inputValue || '';
-+                    setCirugia(null);
-+                    setOtraCirugia(customValue);
-+                    setOtraCirugiaSeleccionada(!!customValue);
-+                    setSurgeryInputValue(customValue);
-+                  } else if (!value) {
-+                    setCirugia(null);
-+                    setOtraCirugia('');
-+                    setOtraCirugiaSeleccionada(false);
-+                    setSurgeryInputValue('');
-+                  } else {
-+                    setCirugia(value);
-+                    setOtraCirugia('');
-+                    setOtraCirugiaSeleccionada(false);
-+                    setSurgeryInputValue(value.name || '');
-+                  }
-+                }}
-+                onInputChange={(_, newValue, reason) => {
-+                  setSurgeryInputValue(newValue);
-+                  if (otraCirugiaSeleccionada && reason === 'input')
-+                    setOtraCirugia(newValue);
-+                }}
-+                renderOption={(props, option) => {
-+                  const typedOption = option as SurgeryOption;
-+                  return (
-+                    <li
-+                      {...props}
-+                      key={
-+                        typedOption._id ??
-+                        typedOption.inputValue ??
-+                        typedOption.name
-+                      }
-+                    >
-+                      <Stack spacing={0.25}>
-+                        <Typography variant="body2">{typedOption.name}</Typography>
-+                        {typedOption.inputValue && (
-+                          <Typography variant="caption" color="text.secondary">
-+                            {t('residentPhases.dialog.otherSurgeryTooltip')}
-+                          </Typography>
-+                        )}
-+                      </Stack>
-+                    </li>
-+                  );
-+                }}
-+                renderInput={(params) => (
-+                  <TextField
-+                    {...params}
-+                    label={t('residentPhases.dialog.surgery')}
-+                    margin="normal"
-+                    required
-+                    placeholder={t('residentPhases.dialog.surgeryHelper')}
-+                    error={
-+                      mostrarErroresCirugia &&
-+                      esCirugia &&
-+                      !(cirugia || otraCirugia.trim())
-+                    }
-+                    helperText={
-+                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
-+                        ? t('residentPhases.dialog.surgeryRequired')
-+                        : otraCirugiaSeleccionada
-+                        ? t('residentPhases.dialog.otherSurgeryTooltip')
-+                        : t('residentPhases.dialog.surgeryHelper')
-+                    }
-+                  />
-+                )}
-+                fullWidth
-+                freeSolo
-+                selectOnFocus
-+                clearOnBlur
-+                handleHomeEndKeys
-+              />
-               <TextField
-                 label={t('residentPhases.dialog.surgeonName')}
-                 value={nombreCirujano}
-                 onChange={(e) => setNombreCirujano(e.target.value)}
-                 fullWidth
-                 margin="normal"
-                 required
-                 error={mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()}
-                 helperText={
-                   mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()
-                     ? t('residentPhases.dialog.surgeonNameRequired')
-                     : ''
++  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
++  const handleDrawerClose = () => setDrawerOpen(false);
+   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+   const handleMenuClose = () => setAnchorEl(null);
+   const handleLogout = async () => {
+     handleMenuClose();
+     await logout();
+     navigate('/login');
+   };
+   const handleProfileClick = () => {
+     handleMenuClose();
+     navigate('/dashboard/perfil');
+   };
+ 
+   const getMenuItems = () => {
+     const items = [
+       {
+         text: t('actions.dashboard'),
+         icon: <DashboardIcon />,
+         path: '/dashboard',
+         roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
+       }
+     ];
+ 
+     if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
+       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
+     }
+ 
+ 
+         if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
+     }
+ 
+     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
+     }
+ 
+     if (user?.rol === 'administrador') {
+       items.push(
+         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
+         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
+       );
+     }
+ 
+     return items;
+   };
+   
+ 
+   const menuItems = getMenuItems();
++  const showLabels = isMobile || drawerOpen;
++  const currentDrawerWidth = isMobile ? 0 : drawerOpen ? drawerWidth : collapsedDrawerWidth;
+ 
+   return (
+     <Box sx={{ display: 'flex' }}>
+       <CssBaseline />
+       <AppBar
+         position="fixed"
+         sx={{
+           zIndex: theme.zIndex.drawer + 1,
+           transition: theme.transitions.create(['width', 'margin']),
+-          ...(open && {
+-            marginLeft: drawerWidth,
+-            width: `calc(100% - ${drawerWidth}px)`
++          ...(!isMobile && {
++            marginLeft: currentDrawerWidth,
++            width: `calc(100% - ${currentDrawerWidth}px)`
+           })
+         }}
+       >
+         <Toolbar>
+-          <IconButton color="inherit" onClick={handleDrawerOpen} edge="start" sx={{ mr: 5, ...(open && { display: 'none' }) }}>
++          <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
+             <MenuIcon />
+           </IconButton>
+           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
+             Academic Program daVinci
+           </Typography>
+           <LanguageSelector
+             sx={{
+               mr: 2,
+               color: 'inherit',
+               '.MuiSelect-select': { color: 'inherit' },
+               '.MuiOutlinedInput-notchedOutline': {
+                 borderColor: (theme) => alpha(theme.palette.common.white, 0.5),
+               },
+               '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
+               '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
+               '.MuiSvgIcon-root': { color: 'inherit' }
+             }}
+           />
+           <IconButton
+             color="inherit"
+             onClick={toggleColorMode}
+             sx={{ mr: 1, color: 'inherit' }}
+           >
+             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+           </IconButton>
+@@ -211,101 +218,119 @@ const Dashboard: React.FC = () => {
+                   width: 10,
+                   height: 10,
+                   bgcolor: 'background.paper',
+                   transform: 'translateY(-50%) rotate(45deg)',
+                   zIndex: 0
                  }
-               />
-               <TextField
-                 select
-                 label={t('residentPhases.dialog.participation')}
-                 value={porcentaje}
-                 onChange={(e) => setPorcentaje(Number(e.target.value))}
-                 fullWidth
-                 margin="normal"
-                 required
-                 error={mostrarErroresCirugia && esCirugia && porcentaje === 0}
-                 helperText={
-                   mostrarErroresCirugia && esCirugia && porcentaje === 0
+               }
+             }}
+             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+             >
+               <MenuItem onClick={handleProfileClick}>
+                 <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+                 {t('actions.profile')}
+               </MenuItem>
+               <Divider />
+               <MenuItem onClick={handleLogout}>
+                 <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+                 {t('actions.logout')}
+               </MenuItem>
+             </Menu>
+           </Toolbar>
+         </AppBar>
+       <Drawer
+         variant={isMobile ? 'temporary' : 'permanent'}
+-        open={isMobile ? open : true}
++        open={isMobile ? drawerOpen : true}
+         onClose={isMobile ? handleDrawerClose : undefined}
+         sx={{
+-          width: drawerWidth,
++          width: isMobile ? drawerWidth : currentDrawerWidth,
+           flexShrink: 0,
+           [`& .MuiDrawer-paper`]: {
+-            width: drawerWidth,
++            width: isMobile ? drawerWidth : currentDrawerWidth,
+             boxSizing: 'border-box',
+-            ...(isMobile && !open && { display: 'none' })
++            ...(isMobile && !drawerOpen && { display: 'none' }),
++            overflowX: 'hidden'
+           }
+         }}
+       >
+-        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: [1] }}>
+-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', pl: 1 }}>
+-            <img src="/logo-small.png" alt="Logo" style={{ height: '40px', marginRight: '8px' }} />
+-            <Typography variant="subtitle1" noWrap>da Vinci</Typography>
++        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'space-between' : 'center', px: showLabels ? 1.5 : 0 }}>
++          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: showLabels ? 'flex-start' : 'center' }}>
++            <Box
++              component="img"
++              src="/logo-small.png"
++              alt="Logo"
++              sx={{ height: showLabels ? 48 : 32, maxWidth: '100%', width: 'auto', mx: showLabels ? 'auto' : 0 }}
++            />
+           </Box>
+           {isMobile && <IconButton onClick={handleDrawerClose}><ChevronLeftIcon /></IconButton>}
+         </Toolbar>
+         <Divider />
+         <List>
+           {menuItems.map((item) => (
+-            <ListItemButton key={item.path} onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}>
+-              <ListItemIcon>{item.icon}</ListItemIcon>
+-              <ListItemText primary={item.text} />
++            <ListItemButton
++              key={item.path}
++              onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}
++              sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
++            >
++              <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>{item.icon}</ListItemIcon>
++              <ListItemText primary={item.text} sx={{ display: showLabels ? 'block' : 'none' }} />
+             </ListItemButton>
+           ))}
+         </List>
+         <Divider />
+         <List>
+-          <ListItemButton onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}>
+-            <ListItemIcon><PersonIcon /></ListItemIcon>
+-            <ListItemText primary={t('actions.myProfile')} />
++          <ListItemButton
++            onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}
++            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
++          >
++            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
++            <ListItemText primary={t('actions.myProfile')} sx={{ display: showLabels ? 'block' : 'none' }} />
+           </ListItemButton>
+-          <ListItemButton onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}>
+-            <ListItemIcon>
++          <ListItemButton
++            onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}
++            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
++          >
++            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
+               <Badge badgeContent={unreadCount} color="secondary">
+                 <NotificationsIcon />
+               </Badge>
+             </ListItemIcon>
+-            <ListItemText primary={t('actions.notifications')} />
++            <ListItemText primary={t('actions.notifications')} sx={{ display: showLabels ? 'block' : 'none' }} />
+           </ListItemButton>
+-          <ListItemButton onClick={handleLogout}>
+-            <ListItemIcon><LogoutIcon /></ListItemIcon>
+-            <ListItemText primary={t('actions.logout')} />
++          <ListItemButton
++            onClick={handleLogout}
++            sx={{ justifyContent: showLabels ? 'flex-start' : 'center', px: showLabels ? 2 : 1.25 }}
++          >
++            <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
++            <ListItemText primary={t('actions.logout')} sx={{ display: showLabels ? 'block' : 'none' }} />
+           </ListItemButton>
+         </List>
+       </Drawer>
+       <Box
+         component="main"
+-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
++        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${currentDrawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
+       >
+         <Toolbar />
+         <Routes>
+   <Route path="/" element={<DashboardHome />} />
+   <Route path="/validaciones" element={<TutorValidaciones />} />
+   <Route path="/usuarios" element={<Usuarios />} />
+   <Route path="/hospitals" element={<AdminHospitales />} />
+   {user?.rol === 'administrador' && (
+     <Route path="/fases" element={<AdminFases />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/access-codes" element={<AdminAccessCodes />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/cirugias" element={<AdminCirugias />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/fases-soc" element={<AdminFasesSoc />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/informes" element={<AdminInformes />} />
+   )}
+   {user?.rol === 'administrador' && (
+     <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
+   )}
