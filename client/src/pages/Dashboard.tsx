@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
   const toolbarHeight = isMobile ? 56 : 64;
   const sidebarTopOffset = toolbarHeight + sidebarPadding;
   const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
-  const mainMarginLeft = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
+  const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
 
   const handleSidebarHover = () => {
     if (!isMobile && !isPinned) {
@@ -495,7 +495,7 @@ const Dashboard: React.FC = () => {
         </Toolbar>
       </AppBar>
       {!isMobile && (
-        <Box sx={{ position: 'relative', width: `${mainMarginLeft}px`, flexShrink: 0 }}>
+        <Box sx={{ position: 'relative', width: `${sidebarSpace}px`, flexShrink: 0 }}>
           <Drawer
             variant="permanent"
             open
@@ -581,13 +581,10 @@ const Dashboard: React.FC = () => {
         sx={{
           flexGrow: 1,
           p: 2.5,
-          ml: `${mainMarginLeft}px`,
+          ml: 0,
           width: '100%',
           backgroundColor: 'background.default',
-          minHeight: '100vh',
-          transition: theme.transitions.create('margin', {
-            duration: hoverTransitionDuration
-          })
+          minHeight: '100vh'
         }}
       >
         <Toolbar />

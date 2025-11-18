@@ -1,148 +1,8 @@
 diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f93d4eaba 100644
+index 61547e14dc614d1948b51934427d203847eb51c5..c790ecef6997ab4dd57348780af0d0a9626624c7 100644
 --- a/client/src/pages/Dashboard.tsx
 +++ b/client/src/pages/Dashboard.tsx
-@@ -1,178 +1,184 @@
- import React, { useState, useEffect, useMemo } from 'react';
- import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
- import {
-   Box,
-   CssBaseline,
-   Drawer,
--  AppBar,
--  Toolbar,
-+  AppBar,
-+  Toolbar,
-   List,
-   Typography,
-   Divider,
-   IconButton,
-   ListItemButton,
-   ListItemIcon,
-   ListItemText,
-   Avatar,
-   Menu,
-   MenuItem,
-   Badge,
-   useMediaQuery,
-   useTheme,
-   alpha,
-   Fade
- } from '@mui/material';
- import {
-   ChevronLeft as ChevronLeftIcon,
-   Dashboard as DashboardIcon,
-   People as PeopleIcon,
-   School as SchoolIcon,
-   Assignment as AssignmentIcon,
-   Notifications as NotificationsIcon,
-   ExitToApp as LogoutIcon,
-   Person as PersonIcon,
-   Settings as SettingsIcon,
-   Brightness4 as Brightness4Icon,
--  Brightness7 as Brightness7Icon,
--  Description as DescriptionIcon,
--  PushPin as PushPinIcon,
--  PushPinOutlined as PushPinOutlinedIcon,
--  Menu as MenuIcon
--} from '@mui/icons-material';
-+  Brightness7 as Brightness7Icon,
-+  Description as DescriptionIcon,
-+  PushPin as PushPinIcon,
-+  PushPinOutlined as PushPinOutlinedIcon,
-+  Menu as MenuIcon,
-+  ChevronRight as ChevronRightIcon
-+} from '@mui/icons-material';
- import { useAuth } from '../context/AuthContext';
- import { getNotificacionesNoLeidas } from '../api';
- import { useTranslation } from 'react-i18next';
- import { useColorMode } from '../context/ColorModeContext';
- 
- // Páginas del dashboard
- import DashboardHome from './dashboard/DashboardHome';
- import TutorValidaciones from './dashboard/TutorValidaciones';
- import Usuarios from './dashboard/Usuarios';
- import AdminHospitales from './dashboard/AdminHospitales';
- import AdminFases from './dashboard/AdminFases';
- import AdminFasesSoc from './dashboard/AdminFasesSoc';
- import AdminSociedades from './dashboard/AdminSociedades';
- import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
- import Perfil from './dashboard/Perfil';
- import Notificaciones from './dashboard/Notificaciones';
- import DebugDashboard from './DebugDashboard';
- import ResidenteFases from './dashboard/ResidenteFases';
- import AdminAccessCodes from './dashboard/AdminAccessCodes';
- import AdminConfiguracion from './dashboard/AdminConfiguracion';
- import AdminCirugias from './dashboard/AdminCirugias';
- import LanguageSelector from '../components/LanguageSelector';
- import AdminInformes from './dashboard/AdminInformes';
- 
- const drawerWidth = 240;
- 
- const Dashboard: React.FC = () => {
--  const { t } = useTranslation();
--  const [drawerOpen, setDrawerOpen] = useState(false);
-+  const { t } = useTranslation();
-+  const [drawerOpen, setDrawerOpen] = useState(false);
-   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-   const [unreadCount, setUnreadCount] = useState(0);
-   const [isPinned, setIsPinned] = useState(false);
-   const [isHovering, setIsHovering] = useState(false);
-   const { user, logout } = useAuth();
-   const navigate = useNavigate();
-   const theme = useTheme();
-   const { toggleColorMode } = useColorMode();
-   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
-   const isDev = env === 'dev';
- 
-   const refreshUnreadCount = async () => {
-     try {
-       const res = await getNotificacionesNoLeidas();
-       setUnreadCount(res.data.count || 0);
-     } catch (err) {
-       console.error('Error obteniendo notificaciones no leidas', err);
-     }
-   };
- 
-   useEffect(() => {
-     refreshUnreadCount();
-   }, []);
- 
-   useEffect(() => {
-     setDrawerOpen(false);
-   }, [isMobile]);
- 
--  const hoverTransitionDuration = 350;
--  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
--  const handleDrawerClose = () => setDrawerOpen(false);
-+  const hoverTransitionDuration = 350;
-+  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
-+  const handleDrawerClose = () => setDrawerOpen(false);
-   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
-   const handleMenuClose = () => setAnchorEl(null);
-   const handleLogout = async () => {
-     handleMenuClose();
-     await logout();
-     navigate('/login');
-   };
-   const handleProfileClick = () => {
-     handleMenuClose();
-     navigate('/dashboard/perfil');
-   };
- 
-   const getMenuItems = () => {
-     const items = [
-       {
-         text: t('actions.dashboard'),
-         icon: <DashboardIcon />,
-         path: '/dashboard',
-         roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
-       }
-     ];
- 
-     if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
+@@ -128,57 +128,57 @@ const Dashboard: React.FC = () => {
      }
  
      if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
@@ -167,17 +27,21 @@ index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f
  
    const menuItems = getMenuItems();
  
--  const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
+   const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
 -  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
 -  const sidebarWidthCss = `${sidebarWidth}px`;
-+  const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
+-  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
+-  const toolbarHeight = isMobile ? 56 : 64;
+-  const sidebarTopOffset = toolbarHeight + sidebarPadding;
+-  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
+-  const mainMarginLeft = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
 +  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
 +  const sidebarWidthCss = `${sidebarWidth}px`;
 +  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
 +  const toolbarHeight = isMobile ? 56 : 64;
 +  const sidebarTopOffset = toolbarHeight + sidebarPadding;
 +  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
-+  const mainMarginLeft = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
++  const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
  
    const handleSidebarHover = () => {
      if (!isMobile && !isPinned) {
@@ -203,240 +67,7 @@ index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f
      }
    }, [isPinned]);
  
-@@ -223,104 +229,87 @@ const Dashboard: React.FC = () => {
-             justifyContent: 'center'
-           }}
-         >
-           {item.icon}
-         </ListItemIcon>
- 
-         <ListItemText
-           primary={item.text}
-           sx={{
-             opacity: showLabels ? 1 : 0,
-             transition: theme.transitions.create(['opacity', 'margin'], {
-               duration: hoverTransitionDuration
-             }),
-             whiteSpace: 'nowrap',
-             overflow: 'hidden',
-             ml: showLabels ? 0 : -1,
-             width: showLabels ? 'auto' : 0
-           }}
-         />
-       </ListItemButton>
-     ))}
-   </>
- );
- 
- 
--  const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
--    showLabels,
--    isMobileView,
--    onClose
--  }) => (
--    <>
--      <Toolbar
--        sx={{
--          display: 'flex',
--          alignItems: 'center',
--          justifyContent: showLabels ? 'space-between' : 'center',
--          px: showLabels ? 1.5 : 1,
--          transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
--        }}
--      >
--        <Box
--          sx={{
--            flexGrow: 1,
--            display: 'flex',
--            alignItems: 'center',
--            justifyContent: showLabels ? 'flex-start' : 'center'
--          }}
--        >
--          <Box
--            component="img"
--            src="/logo-small.png"
--            alt="Logo"
--            sx={{
--              height: showLabels ? 48 : 40,
--              maxWidth: '100%',
--              width: 'auto',
--              mx: showLabels ? 'auto' : 0,
--              transition: theme.transitions.create(['height', 'margin'], { duration: hoverTransitionDuration })
--            }}
--          />
--        </Box>
--        {isMobileView ? (
--          <IconButton onClick={onClose}>
--            <ChevronLeftIcon />
--          </IconButton>
--        ) : (
--          <Fade in={showLabels} unmountOnExit mountOnEnter>
--            <IconButton
--              onClick={togglePin}
--              size="small"
--              color={isPinned ? 'primary' : 'default'}
--              sx={{ ml: 1 }}
--            >
--              {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
--            </IconButton>
--          </Fade>
--        )}
--      </Toolbar>
--      <Divider />
-+  const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
-+    showLabels,
-+    isMobileView,
-+    onClose
-+  }) => (
-+    <>
-+      <Toolbar
-+        sx={{
-+          display: 'flex',
-+          alignItems: 'center',
-+          justifyContent: 'center',
-+          px: showLabels ? 1.5 : 1,
-+          transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
-+        }}
-+      >
-+        {isMobileView ? (
-+          <IconButton onClick={onClose}>
-+            <ChevronLeftIcon />
-+          </IconButton>
-+        ) : showLabels ? (
-+          <Fade in={showLabels} unmountOnExit mountOnEnter>
-+            <IconButton
-+              onClick={togglePin}
-+              size="small"
-+              color={isPinned ? 'primary' : 'default'}
-+              sx={{ ml: 1 }}
-+            >
-+              {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
-+            </IconButton>
-+          </Fade>
-+        ) : (
-+          <IconButton onClick={togglePin} size="small">
-+            <ChevronRightIcon fontSize="small" />
-+          </IconButton>
-+        )}
-+      </Toolbar>
-+      <Divider />
-       <List>{renderListItems(showLabels, isMobileView)}</List>
-       <Divider />
-       <List>
-         <ListItemButton
-           onClick={() => {
-             navigate('/dashboard/perfil');
-             if (isMobile && isMobileView) handleDrawerClose();
-           }}
-           sx={{
-             justifyContent: showLabels ? 'flex-start' : 'center',
-             px: showLabels ? 2 : 1.25,
-             transition: theme.transitions.create(['padding', 'background-color'], {
-               duration: hoverTransitionDuration
-             }),
-             borderLeft: isPathActive('/dashboard/perfil') ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
-             '&.Mui-selected': {
-               backgroundColor: alpha(theme.palette.primary.main, 0.12),
-               '&:hover': {
-                 backgroundColor: alpha(theme.palette.primary.main, 0.18)
-               }
-             },
-             '& .MuiListItemIcon-root': {
-               color: isPathActive('/dashboard/perfil') ? theme.palette.primary.main : 'inherit'
-             }
-           }}
-@@ -391,70 +380,68 @@ const Dashboard: React.FC = () => {
-               duration: hoverTransitionDuration
-             }),
-             '&:hover .MuiListItemIcon-root': {
-               color: theme.palette.primary.main
-             }
-           }}
-         >
-           <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
-           <ListItemText
-             primary={t('actions.logout')}
-             sx={{
-               opacity: showLabels ? 1 : 0,
-               transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
-               whiteSpace: 'nowrap',
-               overflow: 'hidden',
-               ml: showLabels ? 0 : -1,
-               width: showLabels ? 'auto' : 0
-             }}
-           />
-         </ListItemButton>
-       </List>
-     </>
-   );
- 
-   return (
--    <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
--      <CssBaseline />
--      <AppBar
--        position="fixed"
--        sx={{
--          zIndex: theme.zIndex.drawer - 1,
--          transition: theme.transitions.create(['width', 'margin'], {
--            duration: hoverTransitionDuration
--          }),
--          width: isMobile ? '100%' : `calc(100% - ${sidebarWidthCss})`,
--          ml: isMobile ? 0 : sidebarWidthCss
--        }}
--      >
--        <Toolbar>
--          {!isMobile && <Box sx={{ width: theme.spacing(6) }} />}
--          {isMobile && (
--            <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
--              <MenuIcon />
--            </IconButton>
--          )}
-+    <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
-+      <CssBaseline />
-+      <AppBar
-+        position="fixed"
-+        sx={{
-+          zIndex: theme.zIndex.drawer + 2,
-+          transition: theme.transitions.create(['width', 'margin'], {
-+            duration: hoverTransitionDuration
-+          }),
-+          width: '100%'
-+        }}
-+      >
-+        <Toolbar>
-+          {isMobile && (
-+            <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
-+              <MenuIcon />
-+            </IconButton>
-+          )}
-           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-             Academic Program daVinci
-           </Typography>
-           <LanguageSelector
-             sx={{
-               mr: 2,
-               color: 'inherit',
-               '.MuiSelect-select': { color: 'inherit' },
-               '.MuiOutlinedInput-notchedOutline': {
-                 borderColor: (theme) => alpha(theme.palette.common.white, 0.5),
-               },
-               '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
-               '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'common.white' },
-               '.MuiSvgIcon-root': { color: 'inherit' }
-             }}
-           />
-           <IconButton
-             color="inherit"
-             onClick={toggleColorMode}
-             sx={{ mr: 1, color: 'inherit' }}
-           >
-             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-           </IconButton>
-           <IconButton color="inherit" onClick={() => navigate('/dashboard/notificaciones')}>
-             <Badge badgeContent={unreadCount} color="secondary">
-@@ -484,133 +471,144 @@ const Dashboard: React.FC = () => {
-                   position: 'absolute',
-                   top: 0,
+@@ -473,51 +473,51 @@ const Dashboard: React.FC = () => {
                    right: 14,
                    width: 10,
                    height: 10,
@@ -460,154 +91,57 @@ index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f
              </MenuItem>
            </Menu>
          </Toolbar>
--      </AppBar>
--      {!isMobile && (
--        <Box sx={{ position: 'relative' }}>
--          <Drawer
--            variant="permanent"
--            open
--            sx={{
--              width: sidebarWidthCss,
--              flexShrink: 0,
--              display: { xs: 'none', md: 'block' },
--              [`& .MuiDrawer-paper`]: {
--                width: sidebarWidthCss,
--                boxSizing: 'border-box',
--                overflowX: 'hidden',
--                transition: theme.transitions.create('width', {
--                  duration: hoverTransitionDuration
--                }),
--                zIndex: theme.zIndex.appBar + 2
--              }
--            }}
--            PaperProps={{
--              onMouseEnter: handleSidebarHover,
--              onMouseLeave: handleSidebarLeave,
--              sx: { zIndex: theme.zIndex.appBar + 2 }
--            }}
--          >
--            <SidebarContent showLabels={isPinned} />
--          </Drawer>
--          {!isPinned && (
--            <Drawer
--              variant="temporary"
--              open={isHovering}
--              onClose={handleSidebarLeave}
--              ModalProps={{ keepMounted: true }}
--              hideBackdrop
--              sx={{
--                [`& .MuiDrawer-paper`]: {
--                  width: drawerWidth,
--                  boxSizing: 'border-box',
--                  overflowX: 'hidden',
--                  transition: theme.transitions.create(['transform', 'width'], {
--                    duration: hoverTransitionDuration
--                  })
--                },
--                zIndex: theme.zIndex.appBar + 2
--              }}
--              PaperProps={{ onMouseEnter: handleSidebarHover, onMouseLeave: handleSidebarLeave }}
--            >
--              <SidebarContent showLabels />
--            </Drawer>
-+      </AppBar>
-+      {!isMobile && (
-+        <Box sx={{ position: 'relative', width: `${mainMarginLeft}px`, flexShrink: 0 }}>
-+          <Drawer
-+            variant="permanent"
-+            open
-+            sx={{
-+              width: sidebarWidthCss,
-+              flexShrink: 0,
-+              display: { xs: 'none', md: 'block' },
-+              [`& .MuiDrawer-paper`]: {
-+                width: sidebarWidthCss,
-+                boxSizing: 'border-box',
-+                overflowX: 'hidden',
-+                transition: theme.transitions.create('width', {
-+                  duration: hoverTransitionDuration
-+                }),
-+                zIndex: theme.zIndex.appBar - 1,
-+                top: `${sidebarTopOffset}px`,
-+                left: `${sidebarPadding}px`,
-+                height: sidebarHeightCss,
-+                borderRadius: 1
-+              }
-+            }}
-+            PaperProps={{
-+              onMouseEnter: handleSidebarHover,
-+              onMouseLeave: handleSidebarLeave,
-+              sx: { zIndex: theme.zIndex.appBar - 1 }
-+            }}
-+          >
-+            <SidebarContent showLabels={isPinned} />
-+          </Drawer>
-+          {!isPinned && (
-+            <Drawer
-+              variant="temporary"
-+              open={isHovering}
-+              onClose={handleSidebarLeave}
-+              ModalProps={{ keepMounted: true }}
-+              hideBackdrop
-+              sx={{
-+                [`& .MuiDrawer-paper`]: {
-+                  width: drawerWidth,
-+                  boxSizing: 'border-box',
-+                  overflowX: 'hidden',
-+                  transition: theme.transitions.create(['transform', 'width'], {
-+                    duration: hoverTransitionDuration
-+                  }),
-+                  zIndex: theme.zIndex.appBar - 1,
-+                  top: `${sidebarTopOffset}px`,
-+                  left: `${sidebarPadding}px`,
-+                  height: sidebarHeightCss,
-+                  borderRadius: 1
-+                },
-+                zIndex: theme.zIndex.appBar - 1
-+              }}
-+              PaperProps={{ onMouseEnter: handleSidebarHover, onMouseLeave: handleSidebarLeave }}
-+            >
-+              <SidebarContent showLabels />
-+            </Drawer>
-           )}
+       </AppBar>
+       {!isMobile && (
+-        <Box sx={{ position: 'relative', width: `${mainMarginLeft}px`, flexShrink: 0 }}>
++        <Box sx={{ position: 'relative', width: `${sidebarSpace}px`, flexShrink: 0 }}>
+           <Drawer
+             variant="permanent"
+             open
+             sx={{
+               width: sidebarWidthCss,
+               flexShrink: 0,
+               display: { xs: 'none', md: 'block' },
+               [`& .MuiDrawer-paper`]: {
+                 width: sidebarWidthCss,
+                 boxSizing: 'border-box',
+                 overflowX: 'hidden',
+                 transition: theme.transitions.create('width', {
+                   duration: hoverTransitionDuration
+                 }),
+                 zIndex: theme.zIndex.appBar - 1,
+                 top: `${sidebarTopOffset}px`,
+                 left: `${sidebarPadding}px`,
+                 height: sidebarHeightCss,
+                 borderRadius: 1
+               }
+             }}
+             PaperProps={{
+               onMouseEnter: handleSidebarHover,
+               onMouseLeave: handleSidebarLeave,
+               sx: { zIndex: theme.zIndex.appBar - 1 }
+@@ -556,61 +556,58 @@ const Dashboard: React.FC = () => {
          </Box>
        )}
--      {isMobile && (
--        <Drawer
--          variant="temporary"
--          open={drawerOpen}
--          onClose={handleDrawerClose}
-+      {isMobile && (
-+        <Drawer
-+          variant="temporary"
-+          open={drawerOpen}
-+          onClose={handleDrawerClose}
+       {isMobile && (
+         <Drawer
+           variant="temporary"
+           open={drawerOpen}
+           onClose={handleDrawerClose}
            sx={{
--            width: drawerWidth,
--            flexShrink: 0,
--            display: { xs: 'block', md: 'none' },
--            [`& .MuiDrawer-paper`]: {
--              width: drawerWidth,
--              boxSizing: 'border-box',
--              overflowX: 'hidden'
--            }
--          }}
--          ModalProps={{ keepMounted: true }}
--        >
--          <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
-+            width: drawerWidth,
-+            flexShrink: 0,
-+            display: { xs: 'block', md: 'none' },
-+            [`& .MuiDrawer-paper`]: {
-+              width: drawerWidth,
-+              boxSizing: 'border-box',
-+              overflowX: 'hidden',
-+              top: `${toolbarHeight}px`
-+            }
-+          }}
-+          ModalProps={{ keepMounted: true }}
-+        >
-+          <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
+             width: drawerWidth,
+             flexShrink: 0,
+             display: { xs: 'block', md: 'none' },
+             [`& .MuiDrawer-paper`]: {
+               width: drawerWidth,
+               boxSizing: 'border-box',
+               overflowX: 'hidden',
+               top: `${toolbarHeight}px`
+             }
+           }}
+           ModalProps={{ keepMounted: true }}
+         >
+           <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
          </Drawer>
        )}
        <Box
@@ -615,22 +149,22 @@ index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f
 -        sx={{
 -          flexGrow: 1,
 -          p: 2.5,
+-          ml: `${mainMarginLeft}px`,
 -          width: '100%',
 -          backgroundColor: 'background.default',
 -          minHeight: '100vh',
 -          transition: theme.transitions.create('margin', {
 -            duration: hoverTransitionDuration
+-          })
+-        }}
 +        sx={{
 +          flexGrow: 1,
 +          p: 2.5,
-+          ml: `${mainMarginLeft}px`,
++          ml: 0,
 +          width: '100%',
 +          backgroundColor: 'background.default',
-+          minHeight: '100vh',
-+          transition: theme.transitions.create('margin', {
-+            duration: hoverTransitionDuration
-           })
-         }}
++          minHeight: '100vh'
++        }}
        >
          <Toolbar />
          <Routes>
@@ -654,3 +188,5 @@ index 44fb5dfc1d60c56552b46dbef57add9c1ce91da5..fc574c96be8c84951b5a2f4b7c2a772f
              <Route path="/informes" element={<AdminInformes />} />
            )}
            {user?.rol === 'administrador' && (
+             <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
+           )}
