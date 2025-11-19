@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
+  Avatar,
   Box,
   Typography,
   Alert,
   CircularProgress,
-  Card,
-  CardActionArea,
-  CardContent,
   Paper,
   Chip,
+  Divider,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
   Backdrop,
+  Stack,
   useTheme,
+  CardActionArea,
 } from "@mui/material";
 import {
   Assignment as AssignmentIcon,
@@ -480,43 +481,137 @@ const DashboardHome: React.FC = () => {
     }
   };
 
- return (
-    <Box>
-      <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            {t('welcome', { name: user?.nombre })}
-          </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          {getRoleSubtitle()}
-        </Typography>
-      </Box>
-      {user?.tipo === "Programa Sociedades" && sociedadInfo && (
-        <Paper sx={{ p: 2, mb: 3 }}>
+  const initials = useMemo(() => {
+    const first = user?.nombre?.[0] || user?.email?.[0] || "";
+    const last = user?.apellidos?.[0] || "";
+    const letters = `${first}${last}`;
+    return letters ? letters.toUpperCase() : "?";
+  }, [user?.apellidos, user?.email, user?.nombre]);
+
+  const heroChips = useMemo(
+    () => [
+      { key: "role", label: t('profile.status.role'), value: user?.rol || t('common.none') },
+      { key: "program", label: t('profile.status.program'), value: user?.tipo || t('common.none') },
+      { key: "hospital", label: t('profile.status.hospital'), value: user?.hospital?.nombre },
+      { key: "zone", label: t('profile.status.zone'), value: user?.zona },
+      { key: "specialty", label: t('profile.status.specialty'), value: user?.especialidad },
+      { key: "society", label: t('profile.fields.society'), value: sociedadInfo?.titulo },
+    ].filter((chip) => !!chip.value),
+    [sociedadInfo?.titulo, t, user?.especialidad, user?.hospital?.nombre, user?.rol, user?.tipo, user?.zona],
+  );
+
+  return (
+    <Box sx={{ px: 3, py: 2 }}>
+      <Stack spacing={3}>
+        <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
+          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
+            <Paper sx={{ p: 3, height: '100%' }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }}>
+                <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', width: 64, height: 64, fontSize: 28 }}>
+                  {initials}
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" color="text.secondary">
+                    {t('profile.overview')}
+                  </Typography>
+                  <Typography variant="h4" component="h1">
+                    {t('welcome', { name: user?.nombre || user?.email })}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {getRoleSubtitle()}
+                  </Typography>
+                </Box>
+              </Stack>
+              {!!heroChips.length && <Divider sx={{ my: 3 }} />}
+              {!!heroChips.length && (
+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                  {heroChips.map((chip) => (
+                    <Chip
+                      key={chip.key}
+                      label={`${chip.label}: ${chip.value}`}
+                      variant="outlined"
+                      size="small"
+                      sx={{ mr: 1, mb: 1 }}
+                    />
+                  ))}
+                </Stack>
+              )}
+            </Paper>
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
+            <Paper sx={{ p: 3, height: '100%' }}>
+              <Typography variant="h6" gutterBottom>
+                {t('actions.dashboard')}
+              </Typography>
+              <Stack direction="row" spacing={2} flexWrap="wrap">
+                {actions.map((action) => (
+                  <Box
+                    key={action.label}
+                    component="button"
+                    type="button"
+                    onClick={() => navigate(action.path)}
+                    sx={{
+                      flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33% - 16px)' },
+                      border: 'none',
+                      background: 'transparent',
+                      p: 0,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <Paper
+                      variant="outlined"
+                      sx={{
+                        p: 2,
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        borderRadius: 2,
+                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                        '&:hover': {
+                          boxShadow: 4,
+                          transform: 'translateY(-2px)',
+                        },
+                      }}
+                    >
+                      <Box sx={{ color: 'primary.main', '& svg': { fontSize: 36 } }}>{action.icon}</Box>
+                      <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                        {action.label}
+                      </Typography>
+                    </Paper>
+                  </Box>
+                ))}
+              </Stack>
+            </Paper>
+          </Box>
+        </Stack>
+        {user?.tipo === "Programa Sociedades" && sociedadInfo && (
+          <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               {sociedadInfo.titulo}
             </Typography>
-          <Chip
-            label={sociedadInfo.status}
-            color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
-            size="small"
-            sx={{ mb: 2 }}
-          />
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-            {societyMilestones.map((m, idx) => {
-              const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
-              const percent = phaseData?.percent ?? 0;
-              return (
+            <Chip
+              label={sociedadInfo.status}
+              color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
+              size="small"
+              sx={{ mb: 2 }}
+            />
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              {societyMilestones.map((m, idx) => {
+                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
+                const percent = phaseData?.percent ?? 0;
+                return (
                 <Box
                   key={m.label}
                   sx={{
                     flex: {
-                      xs: "1 1 100%",
-                      md:
-                        idx === 0
-                          ? "1 1 100%"
-                          : "1 1 calc(50% - 16px)",
+                      xs: '1 1 100%',
+                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 16px)',
                     },
-                    minWidth: { xs: "250px", md: "250px" },
+                    minWidth: { xs: '250px', md: '250px' },
                   }}
                 >
                   <CardActionArea
@@ -587,40 +682,40 @@ const DashboardHome: React.FC = () => {
                 </Box>
               );
             })}
-          </Box>
-          {socAllValidado && (
-            <Box textAlign="center" mt={2}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleDescargarCertificado}
-                disabled={downloadLoading}
-                startIcon={<WorkspacePremiumIcon />}
-              >
-                {t('residentProgress.downloadCertificate')}
-              </Button>
-            </Box>
-          )}
-       </Paper>
-      )}
-      {user?.tipo === "Programa Residentes" &&
-        (user?.rol === "residente" ||
-          user?.rol === "tutor" ||
-          user?.rol === "csm" ||
-          user?.rol === "profesor" ||
-          user?.rol === "participante") &&
-        phaseSummary.length > 0 && (
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
+            </Stack>
+            {socAllValidado && (
+              <Box textAlign="center" mt={2}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleDescargarCertificado}
+                  disabled={downloadLoading}
+                  startIcon={<WorkspacePremiumIcon />}
+                >
+                  {t('residentProgress.downloadCertificate')}
+                </Button>
+              </Box>
+            )}
+          </Paper>
+        )}
+        {user?.tipo === "Programa Residentes" &&
+          (user?.rol === "residente" ||
+            user?.rol === "tutor" ||
+            user?.rol === "csm" ||
+            user?.rol === "profesor" ||
+            user?.rol === "participante") &&
+          phaseSummary.length > 0 && (
+            <Paper sx={{ p: 3 }}>
+              <Typography variant="h6" gutterBottom>
                 {t('progressByPhase')}
               </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-              {phaseSummary.map((p, idx) => (
-                <Box
-                  key={p.progresoId}
-                  sx={{
-                    flex: "1 1 calc(50% - 16px)",
-                    minWidth: "250px",
+              <Stack direction="row" spacing={2} flexWrap="wrap">
+                {phaseSummary.map((p, idx) => (
+                  <Box
+                    key={p.progresoId}
+                    sx={{
+                    flex: '1 1 calc(50% - 16px)',
+                    minWidth: '250px',
                   }}
                 >
                   <CardActionArea
@@ -684,59 +779,23 @@ const DashboardHome: React.FC = () => {
                   )}
                 </Box>
               ))}
-            </Box>
-            {allValidado && (
-              <Box textAlign="center" mt={2}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleDescargarCertificado}
-                  disabled={downloadLoading}
-                  startIcon={<WorkspacePremiumIcon />}
-                >
-                  {t('residentProgress.downloadCertificate')}
-                </Button>
-              </Box>
-            )}
-          </Paper>
-        )}
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
-        {actions.map((action) => (
-          <Box
-            key={action.label}
-            sx={{
-              width: {
-                xs: "100%",
-                sm: "48%",
-                md: "31%",
-                lg: "23%",
-              },
-            }}
-          >
-            <Card>
-              <CardActionArea onClick={() => navigate(action.path)}>
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    py: 4,
-                  }}
-                >
-                  {action.icon}
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mt: 1, textAlign: "center" }}
+              </Stack>
+              {allValidado && (
+                <Box textAlign="center" mt={2}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleDescargarCertificado}
+                    disabled={downloadLoading}
+                    startIcon={<WorkspacePremiumIcon />}
                   >
-                    {action.label}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Box>
-        ))}
-      </Box>
-
+                    {t('residentProgress.downloadCertificate')}
+                  </Button>
+                </Box>
+              )}
+            </Paper>
+          )}
+      </Stack>
 
       {renderContent()}
         <Dialog open={openDialog} onClose={handleCloseDialog}>
