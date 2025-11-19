@@ -712,6 +712,7 @@
     "completionDate": "Fecha de realización",
     "selectDate": "Selecciona una fecha de realización",
     "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "El archivo supera el tamaño máximo de 5MB."
   },
   "types": {
@@ -942,6 +943,7 @@
     "surgeryType": "Kirurgia mota: {{type}}",
     "surgeonName": "Zirujauaren izena: {{name}}",
     "participation": "Parte-hartze portzentaia: {{percent}}%",
+    "requiresAttachment": "Eranskina behar du",
     "status": "Egoera",
     "dialog": {
       "completeActivity": "Markatu jarduera osatutzat",
@@ -955,6 +957,7 @@
       "surgeonName": "Zirujauaren izena",
       "participation": "Parte-hartze ehunekoa",
       "selectFile": "Select files",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Utzi",
       "confirm": "Baieztatu",
       "missingProgressId": "Falta da aurrerapenaren IDa",
@@ -968,6 +971,7 @@
       "participationRequired": "Aukeratu parte-hartzearen ehunekoa",
       "requiredFieldsNote": "* duten eremuak derrigorrezkoak dira.",
       "requiredSurgeryFields": "Bete kirurgiako derrigorrezko eremuak.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Markatu jarduera osatutzat",
       "editTitle": "Edit activity",
       "currentFiles": "Current attachments",

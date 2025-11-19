@@ -943,6 +943,7 @@
     "completionDate": "Data de realización",
     "selectDate": "Selecciona unha data de realización",
     "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB."
   },
   "residentMilestones": {
@@ -993,6 +994,7 @@
     "participation": "Porcentaxe de participación: {{percent}}%",
     "downloadAttachment": "Descargar ficheiro",
     "pendingAttachment": "Ficheiro adxunto enviado",
+    "requiresAttachment": "Require adxunto",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividade como completada",
@@ -1006,6 +1008,7 @@
       "surgeonName": "Nome do cirurxián",
       "participation": "Porcentaxe de participación",
       "selectFile": "Seleccionar ficheiros",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta o ID do progreso",
@@ -1019,6 +1022,7 @@
       "participationRequired": "Selecciona unha porcentaxe de participación",
       "requiredFieldsNote": "Os campos marcados con * son obrigatorios.",
       "requiredSurgeryFields": "Completa os campos obrigatorios da cirurxía.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Marcar actividade como completada",
       "editTitle": "Editar actividade enviada",
       "currentFiles": "Ficheiros actuais",

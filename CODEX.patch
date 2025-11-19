@@ -1,77 +1,1441 @@
-diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index a15d5024a5caece4bc135cf0062a3acb117c9a0d..7bbedaf257aad023df54a914ebeafd8540f0b079 100644
---- a/client/src/pages/dashboard/DashboardHome.tsx
-+++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -615,63 +615,64 @@ const DashboardHome: React.FC = () => {
-                         },
+diff --git a/client/src/pages/dashboard/AdminFases.tsx b/client/src/pages/dashboard/AdminFases.tsx
+index 70f59b93f2ae4ef446a5f1aff866b39e5de15137..b0c7f66eb420c865a054c2dc1a1c0c7e8f3ba131 100644
+--- a/client/src/pages/dashboard/AdminFases.tsx
++++ b/client/src/pages/dashboard/AdminFases.tsx
+@@ -2,50 +2,52 @@ import React, { useState, useEffect, useCallback } from 'react';
+ import {
+   Box,
+   Typography,
+   Paper,
+   Divider,
+   Button,
+   TextField,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogContentText,
+   DialogActions,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   IconButton,
+   Chip,
+   LinearProgress,
+   Alert,
+   Snackbar,
+   Tabs,
+   Tab,
++  FormControlLabel,
++  Switch,
+ } from "@mui/material";
+ import {
+   Add as AddIcon,
+   Edit as EditIcon,
+   Delete as DeleteIcon,
+   //Assignment as AssignmentIcon
+ } from "@mui/icons-material";
+ import api from "../../api";
+ import { useTranslation, Trans } from "react-i18next";
+ 
+ interface TabPanelProps {
+   children?: React.ReactNode;
+   index: number;
+   value: number;
+ }
+ 
+ function TabPanel(props: TabPanelProps) {
+   const { children, value, index, ...other } = props;
+ 
+   return (
+     <div
+       role="tabpanel"
+       hidden={value !== index}
+       id={`fases-tabpanel-${index}`}
+       aria-labelledby={`fases-tab-${index}`}
+@@ -67,50 +69,51 @@ const AdminFases: React.FC = () => {
+   const [tabValue, setTabValue] = useState(0);
+   const [openCrearFaseDialog, setOpenCrearFaseDialog] = useState(false);
+   const [openEditarFaseDialog, setOpenEditarFaseDialog] = useState(false);
+   const [openEliminarFaseDialog, setOpenEliminarFaseDialog] = useState(false);
+   const [openCrearActividadDialog, setOpenCrearActividadDialog] =
+     useState(false);
+   const [openEditarActividadDialog, setOpenEditarActividadDialog] =
+     useState(false);
+   const [openEliminarActividadDialog, setOpenEliminarActividadDialog] =
+     useState(false);
+   const [selectedFase, setSelectedFase] = useState<any>(null);
+   const [selectedActividad, setSelectedActividad] = useState<any>(null);
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   const [hospitales, setHospitales] = useState<any[]>([]);
+   const [faseFormData, setFaseFormData] = useState({
+     numero: "",
+     nombre: "",
+     descripcion: "",
+   });
+   const [actividadFormData, setActividadFormData] = useState({
+     nombre: "",
+     descripcion: "",
+     tipo: "teórica",
+     fase: "",
+     orden: "",
++    requiereAdjunto: false,
+   });
+   const [procesando, setProcesando] = useState(false);
+   const [snackbar, setSnackbar] = useState({
+     open: false,
+     message: "",
+     severity: "success" as "success" | "error",
+   });
+   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(
+     null,
+   );
+ 
+   const fetchData = useCallback(async () => {
+     try {
+       setLoading(true);
+ 
+       //const usuariosRes = await api.get('/users');
+       //setUsuariosLista(usuariosRes.data.data);
+ 
+       const hospitalesRes = await api.get("/hospitals");
+       setHospitales(hospitalesRes.data.data);
+ 
+       const fasesRes = await api.get("/fases");
+       setFases(fasesRes.data.data);
+ 
+       const actividadesRes = await api.get("/actividades");
+@@ -299,92 +302,98 @@ const AdminFases: React.FC = () => {
+     } catch (err: any) {
+       setError(
+         err.response?.data?.error || t("adminPhases.messages.phaseDeleteError"),
+       );
+ 
+       setSnackbar({
+         open: true,
+         message:
+           err.response?.data?.error ||
+           t("adminPhases.messages.phaseDeleteError"),
+         severity: "error",
+       });
+     } finally {
+       setProcesando(false);
+     }
+   };
+ 
+   // Handlers para Actividades
+   const handleOpenCrearActividadDialog = (fase: any) => {
+     setActividadFormData({
+       nombre: "",
+       descripcion: "",
+       tipo: "teórica",
+       fase: fase._id,
+       orden: "",
++      requiereAdjunto: false,
+     });
+     setSelectedFase(fase);
+     setOpenCrearActividadDialog(true);
+   };
+ 
+   const handleCloseCrearActividadDialog = () => {
+     setOpenCrearActividadDialog(false);
+     setSelectedFase(null);
+   };
+ 
+   const handleOpenEditarActividadDialog = (actividad: any) => {
+     setSelectedActividad(actividad);
+     setActividadFormData({
+       nombre: actividad.nombre,
+       descripcion: actividad.descripcion || "",
+       tipo: actividad.tipo,
+       fase: actividad.fase._id,
+       orden: actividad.orden.toString(),
++      requiereAdjunto: Boolean(actividad.requiereAdjunto),
+     });
+     setOpenEditarActividadDialog(true);
+   };
+ 
+   const handleCloseEditarActividadDialog = () => {
+     setOpenEditarActividadDialog(false);
+     setSelectedActividad(null);
+   };
+ 
+   //const handleOpenEliminarActividadDialog = (actividad: any) => {
+   // setSelectedActividad(actividad);
+   //setOpenEliminarActividadDialog(true);
+   //};
+ 
+   const handleCloseEliminarActividadDialog = () => {
+     setOpenEliminarActividadDialog(false);
+     setSelectedActividad(null);
+   };
+ 
+-  const handleActividadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+-    const { name, value } = e.target;
++  const handleActividadChange = (
++    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
++  ) => {
++    const { name, value, type } = e.target;
+     setActividadFormData({
+       ...actividadFormData,
+-      [name]: value,
++      [name]: type === "checkbox"
++        ? (e.target as HTMLInputElement).checked
++        : value,
+     });
+   };
+ 
+   const handleCrearActividad = async () => {
+     try {
+       setProcesando(true);
+ 
+       const res = await api.post("/actividades", {
+         ...actividadFormData,
+         orden: parseInt(actividadFormData.orden),
+       });
+ 
+       // Actualizar lista de actividades
+       setActividades([...actividades, res.data.data]);
+ 
+       handleCloseCrearActividadDialog();
+ 
+       setSnackbar({
+         open: true,
+         message: t("adminPhases.messages.activityCreated"),
+         severity: "success",
+       });
+     } catch (err: any) {
+       setError(
+         err.response?.data?.error ||
+@@ -932,50 +941,61 @@ const AdminFases: React.FC = () => {
+             sx={{ mb: 2 }}
+             slotProps={{
+               select: {
+                 native: true,
+               },
+             }}
+           >
+             <option value="teórica">{t("adminPhases.theory")}</option>
+             <option value="práctica">{t("adminPhases.practice")}</option>
+             <option value="evaluación">{t("adminPhases.evaluation")}</option>
+             <option value="observación">{t("adminPhases.observation")}</option>
+             <option value="cirugia">{t("adminPhases.surgery")}</option>
+           </TextField>
+           <TextField
+             margin="dense"
+             id="orden"
+             name="orden"
+             label={t("adminPhases.order")}
+             type="number"
+             fullWidth
+             variant="outlined"
+             value={actividadFormData.orden}
+             onChange={handleActividadChange}
+             required
+           />
++          <FormControlLabel
++            control={
++              <Switch
++                name="requiereAdjunto"
++                checked={actividadFormData.requiereAdjunto}
++                onChange={handleActividadChange}
++              />
++            }
++            label={t("adminPhases.requiresAttachment")}
++            sx={{ mt: 1 }}
++          />
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseCrearActividadDialog} color="primary">
+             {t("common.cancel")}
+           </Button>
+           <Button
+             onClick={handleCrearActividad}
+             color="primary"
+             variant="contained"
+             disabled={
+               procesando ||
+               !actividadFormData.nombre ||
+               !actividadFormData.orden
+             }
+           >
+             {procesando ? t("common.creating") : t("common.create")}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       {/* Diálogo para editar actividad */}
+       <Dialog
+         open={openEditarActividadDialog}
+         onClose={handleCloseEditarActividadDialog}
+       >
+@@ -1049,50 +1069,61 @@ const AdminFases: React.FC = () => {
+               select: {
+                 native: true,
+               },
+             }}
+           >
+             {fases
+               .sort((a, b) => a.numero - b.numero)
+               .map((fase) => (
+                 <option key={fase._id} value={fase._id}>
+                   {t("common.phase")} {fase.numero}: {fase.nombre}
+                 </option>
+               ))}
+           </TextField>
+           <TextField
+             margin="dense"
+             id="orden"
+             name="orden"
+             label={t("adminPhases.order")}
+             type="number"
+             fullWidth
+             variant="outlined"
+             value={actividadFormData.orden}
+             onChange={handleActividadChange}
+             required
+           />
++          <FormControlLabel
++            control={
++              <Switch
++                name="requiereAdjunto"
++                checked={actividadFormData.requiereAdjunto}
++                onChange={handleActividadChange}
++              />
++            }
++            label={t("adminPhases.requiresAttachment")}
++            sx={{ mt: 1 }}
++          />
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseEditarActividadDialog} color="primary">
+             {t("common.cancel")}
+           </Button>
+           <Button
+             onClick={handleEditarActividad}
+             color="primary"
+             variant="contained"
+             disabled={
+               procesando ||
+               !actividadFormData.nombre ||
+               !actividadFormData.orden ||
+               !actividadFormData.fase
+             }
+           >
+             {procesando ? t("common.saving") : t("common.saveChanges")}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       {/* Diálogo para eliminar actividad */}
+       <Dialog
+         open={openEliminarActividadDialog}
+         onClose={handleCloseEliminarActividadDialog}
+diff --git a/client/src/pages/dashboard/AdminFasesSoc.tsx b/client/src/pages/dashboard/AdminFasesSoc.tsx
+index f62e9b3d377338a77aa1b3f8b6015a15d24d2858..5f1ad1d6dcf1c9a64ca6a613f117be3efb933071 100644
+--- a/client/src/pages/dashboard/AdminFasesSoc.tsx
++++ b/client/src/pages/dashboard/AdminFasesSoc.tsx
+@@ -1,51 +1,53 @@
+ import React, { useState, useEffect, useCallback } from 'react';
+ import {
+   Box,
+   Typography,
+   Paper,
+   Divider,
+   Button,
+   TextField,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogContentText,
+   DialogActions,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   IconButton,
+   Chip,
+   LinearProgress,
+   Alert,
+   Snackbar,
+   Tabs,
+-  Tab
++  Tab,
++  FormControlLabel,
++  Switch
+ } from '@mui/material';
+ import {
+   Add as AddIcon,
+   Edit as EditIcon,
+   Delete as DeleteIcon,
+   //Assignment as AssignmentIcon
+ } from '@mui/icons-material';
+ import api from '../../api';
+ import { useTranslation, Trans } from 'react-i18next';
+ 
+ 
+ interface TabPanelProps {
+   children?: React.ReactNode;
+   index: number;
+   value: number;
+ }
+ 
+ function TabPanel(props: TabPanelProps) {
+   const { children, value, index, ...other } = props;
+ 
+   return (
+     <div
+       role="tabpanel"
+       hidden={value !== index}
+       id={`fases-tabpanel-${index}`}
+@@ -68,51 +70,52 @@ const AdminFases: React.FC = () => {
+   const [error, setError] = useState<string | null>(null);
+   //const [usuarios, setUsuariosLista] = useState<any[]>([]);
+   const [fases, setFases] = useState<any[]>([]);
+   const [actividades, setActividades] = useState<any[]>([]);
+   const [tabValue, setTabValue] = useState(0);
+   const [openCrearFaseDialog, setOpenCrearFaseDialog] = useState(false);
+   const [openEditarFaseDialog, setOpenEditarFaseDialog] = useState(false);
+   const [openEliminarFaseDialog, setOpenEliminarFaseDialog] = useState(false);
+   const [openCrearActividadDialog, setOpenCrearActividadDialog] = useState(false);
+   const [openEditarActividadDialog, setOpenEditarActividadDialog] = useState(false);
+   const [openEliminarActividadDialog, setOpenEliminarActividadDialog] = useState(false);
+   const [selectedFase, setSelectedFase] = useState<any>(null);
+   const [selectedActividad, setSelectedActividad] = useState<any>(null);
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   const [hospitales, setHospitales] = useState<any[]>([]);
+   const [faseFormData, setFaseFormData] = useState({
+     numero: '',
+     nombre: '',
+     descripcion: ''
+   });
+   const [actividadFormData, setActividadFormData] = useState({
+     nombre: '',
+     descripcion: '',
+     tipo: 'teórica',
+     fase: '',
+-    orden: ''
++    orden: '',
++    requiereAdjunto: false
+   });
+   const [procesando, setProcesando] = useState(false);
+   const [snackbar, setSnackbar] = useState({
+     open: false,
+     message: '',
+     severity: 'success' as 'success' | 'error'
+   });
+   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
+ 
+   const fetchData = useCallback(async () => {
+     try {
+       setLoading(true);
+ 
+       //const usuariosRes = await api.get('/users');
+       //setUsuariosLista(usuariosRes.data.data);
+ 
+       const hospitalesRes = await api.get('/hospitals');
+       setHospitales(hospitalesRes.data.data);
+ 
+       const fasesRes = await api.get('/fasesSoc');
+       setFases(fasesRes.data.data);
+ 
+       const actividadesRes = await api.get('/actividadesSoc');
+       setActividades(actividadesRes.data.data);
+     } catch (err: any) {
+@@ -279,93 +282,99 @@ const AdminFases: React.FC = () => {
+       setSnackbar({
+         open: true,
+         message: t('adminPhasesSoc.messages.phaseDeleted', { removed: res.data.removedCount || 0, preserved: res.data.preservedCount || 0 }),
+         severity: 'success'
+       });
+     } catch (err: any) {
+       setError(err.response?.data?.error || t('adminPhasesSoc.messages.phaseDeleteError'));
+ 
+       setSnackbar({
+         open: true,
+         message: err.response?.data?.error || t('adminPhasesSoc.messages.phaseDeleteError'),
+         severity: 'error'
+       });
+     } finally {
+       setProcesando(false);
+     }
+   };
+ 
+   // Handlers para Actividades
+   const handleOpenCrearActividadDialog = (fase: any) => {
+     setActividadFormData({
+       nombre: '',
+       descripcion: '',
+       tipo: 'teórica',
+       fase: fase._id,
+-      orden: ''
++      orden: '',
++      requiereAdjunto: false
+     });
+     setSelectedFase(fase);
+     setOpenCrearActividadDialog(true);
+   };
+ 
+   const handleCloseCrearActividadDialog = () => {
+     setOpenCrearActividadDialog(false);
+     setSelectedFase(null);
+   };
+ 
+   const handleOpenEditarActividadDialog = (actividad: any) => {
+     setSelectedActividad(actividad);
+     setActividadFormData({
+       nombre: actividad.nombre,
+       descripcion: actividad.descripcion || '',
+       tipo: actividad.tipo,
+       fase: actividad.fase._id,
+-      orden: actividad.orden.toString()
++      orden: actividad.orden.toString(),
++      requiereAdjunto: Boolean(actividad.requiereAdjunto)
+     });
+     setOpenEditarActividadDialog(true);
+   };
+ 
+   const handleCloseEditarActividadDialog = () => {
+     setOpenEditarActividadDialog(false);
+     setSelectedActividad(null);
+   };
+ 
+   //const handleOpenEliminarActividadDialog = (actividad: any) => {
+    // setSelectedActividad(actividad);
+ //setOpenEliminarActividadDialog(true);
+   //};
+ 
+   const handleCloseEliminarActividadDialog = () => {
+     setOpenEliminarActividadDialog(false);
+     setSelectedActividad(null);
+   };
+ 
+-  const handleActividadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+-    const { name, value } = e.target;
++  const handleActividadChange = (
++    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
++  ) => {
++    const { name, value, type } = e.target;
+     setActividadFormData({
+       ...actividadFormData,
+-      [name]: value
++      [name]: type === 'checkbox'
++        ? (e.target as HTMLInputElement).checked
++        : value
+     });
+   };
+ 
+   const handleCrearActividad = async () => {
+     try {
+       setProcesando(true);
+       
+       const res = await api.post('/actividadesSoc', {
+             ...actividadFormData,
+             orden: parseInt(actividadFormData.orden)
+           });
+       
+       // Actualizar lista de actividades
+       setActividades([...actividades, res.data.data]);
+       
+       handleCloseCrearActividadDialog();
+       
+       setSnackbar({
+         open: true,
+         message: t('adminPhasesSoc.messages.activityCreated'),
+         severity: 'success'
+       });
+     } catch (err: any) {
+       setError(err.response?.data?.error || t('adminPhasesSoc.messages.activityCreateError'));
+ 
+@@ -858,50 +867,61 @@ const AdminFases: React.FC = () => {
+             sx={{ mb: 2 }}
+             slotProps={{
+               select: {
+                 native: true
+               }
+             }}
+           >
+                 <option value="teórica">{t('adminPhases.theory')}</option>
+                 <option value="práctica">{t('adminPhases.practice')}</option>
+                 <option value="evaluación">{t('adminPhases.evaluation')}</option>
+                 <option value="observación">{t('adminPhases.observation')}</option>
+                 <option value="cirugia">{t('adminPhases.surgery')}</option>
+           </TextField>
+           <TextField
+             margin="dense"
+             id="orden"
+             name="orden"
+             label={t('adminPhases.table.order')}
+             type="number"
+             fullWidth
+             variant="outlined"
+             value={actividadFormData.orden}
+             onChange={handleActividadChange}
+             required
+           />
++          <FormControlLabel
++            control={
++              <Switch
++                name="requiereAdjunto"
++                checked={actividadFormData.requiereAdjunto}
++                onChange={handleActividadChange}
++              />
++            }
++            label={t('adminPhases.requiresAttachment')}
++            sx={{ mt: 1 }}
++          />
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseCrearActividadDialog} color="primary">
+             {t('common.cancel')}
+           </Button>
+           <Button
+             onClick={handleCrearActividad}
+             color="primary"
+             variant="contained"
+             disabled={procesando || !actividadFormData.nombre || !actividadFormData.orden}
+           >
+             {procesando ? t('common.creating') : t('common.create')}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       {/* Diálogo para editar actividad */}
+       <Dialog open={openEditarActividadDialog} onClose={handleCloseEditarActividadDialog}>
+         <DialogTitle>{t('adminPhases.dialogs.editActivity.title')}</DialogTitle>
+         <DialogContent>
+           <TextField
+             autoFocus
+             margin="dense"
+             id="nombre"
+             name="nombre"
+@@ -966,50 +986,61 @@ const AdminFases: React.FC = () => {
+             sx={{ mb: 2 }}
+             slotProps={{
+               select: {
+                 native: true
+               }
+             }}
+           >
+             {fases.sort((a, b) => a.numero - b.numero).map((fase) => (
+               <option key={fase._id} value={fase._id}>
+                 {t('common.phase')} {fase.numero}: {fase.nombre}
+               </option>
+             ))}
+           </TextField>
+           <TextField
+             margin="dense"
+             id="orden"
+             name="orden"
+             label={t('adminPhases.table.order')}
+             type="number"
+             fullWidth
+             variant="outlined"
+             value={actividadFormData.orden}
+             onChange={handleActividadChange}
+             required
+           />
++          <FormControlLabel
++            control={
++              <Switch
++                name="requiereAdjunto"
++                checked={actividadFormData.requiereAdjunto}
++                onChange={handleActividadChange}
++              />
++            }
++            label={t('adminPhases.requiresAttachment')}
++            sx={{ mt: 1 }}
++          />
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseEditarActividadDialog} color="primary">
+             {t('common.cancel')}
+           </Button>
+           <Button
+             onClick={handleEditarActividad}
+             color="primary"
+             variant="contained"
+             disabled={procesando || !actividadFormData.nombre || !actividadFormData.orden || !actividadFormData.fase}
+           >
+             {procesando ? t('common.saving') : t('common.saveChanges')}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       {/* Diálogo para eliminar actividad */}
+       <Dialog open={openEliminarActividadDialog} onClose={handleCloseEliminarActividadDialog}>
+         <DialogTitle>{t('adminPhases.dialogs.deleteActivity.title')}</DialogTitle>
+         <DialogContent>
+           <DialogContentText>
+             {progresoVinculado !== null && progresoVinculado > 0 ? (
+               <Trans
+                 i18nKey="adminPhases.dialogs.deleteActivity.contentWithProgress"
+                 values={{ name: selectedActividad?.nombre, count: progresoVinculado }}
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index ea67a06e89bcb83b1db20762515ff465cd1b481b..cbdab0d6b42a72615f08695423012d81da32410e 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -1,63 +1,64 @@
+-import React, { useEffect, useState } from 'react';
++import React, { useEffect, useMemo, useState } from 'react';
+ import {
+   Box,
+   Typography,
+   Alert,
+   Chip,
+   Skeleton,
+   LinearProgress,
+   Accordion,
+   AccordionSummary,
+   AccordionDetails,
+   Button,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogActions,
+   TextField,
+   Snackbar,
+   Tooltip,
+   CircularProgress,
+   Backdrop,
+   Autocomplete,
+   MenuItem,
+   Paper,
+   Stack,
+   FormControlLabel,
+   IconButton
+ } from '@mui/material';
+ import { createFilterOptions } from '@mui/material/Autocomplete';
+ import Switch, { SwitchProps } from '@mui/material/Switch';
+ 
+ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+ import VerifiedIcon from '@mui/icons-material/Verified';
+ import CancelIcon from '@mui/icons-material/Cancel';
+ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+-import DownloadIcon from '@mui/icons-material/Download';
++import DownloadIcon from '@mui/icons-material/Download';
++import AttachFileIcon from '@mui/icons-material/AttachFile';
+ import CloseIcon from '@mui/icons-material/Close';
+ import { useTheme, alpha, styled } from '@mui/material/styles';
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ import { Sociedad } from '../../types/Sociedad';
+ import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
+ import { useTranslation } from 'react-i18next';
+ 
+ const CompletionSwitch = styled((props: SwitchProps) => (
+   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+ ))(({ theme }) => ({
+   width: 48,
+   height: 28,
+   padding: 0,
+   display: 'flex',
+   alignItems: 'center',
+   '& .MuiSwitch-switchBase': {
+     padding: 0,
+     margin: 2,
+     transitionDuration: '200ms',
+     '&.Mui-focusVisible .MuiSwitch-thumb': {
+       boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
+       border: `1px solid ${theme.palette.primary.main}`
+     },
+     '&.Mui-checked': {
+@@ -132,52 +133,58 @@ const ResidenteFases: React.FC = () => {
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+   const [comentario, setComentario] = useState('');
+   const [fecha, setFecha] = useState('');
+   const [archivos, setArchivos] = useState<File[]>([]);
+   const [archivoError, setArchivoError] = useState(false);
+   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
+   const [snackbarMsg, setSnackbarMsg] = useState('');
+   const [snackbarError, setSnackbarError] = useState(false);
+   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+   const [downloadLoading, setDownloadLoading] = useState(false);
+   const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+   const [cirugia, setCirugia] = useState<any | null>(null);
+   const [otraCirugia, setOtraCirugia] = useState('');
+   const [surgeryInputValue, setSurgeryInputValue] = useState('');
+   const [nombreCirujano, setNombreCirujano] = useState('');
+   const [porcentaje, setPorcentaje] = useState<number>(0);
+   const [esCirugia, setEsCirugia] = useState(false);
+   const [mostrarErroresCirugia, setMostrarErroresCirugia] = useState(false);
+   const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
+   const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
+   const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
+   const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
+-  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
+-  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
++  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
++  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
++  const actividadSeleccionada = useMemo(() => {
++    if (!selectedProgresoId || selectedActividadIndex === null) return null;
++    const progresoActual = progresos.find(p => p._id === selectedProgresoId);
++    return progresoActual?.actividades?.[selectedActividadIndex] || null;
++  }, [progresos, selectedActividadIndex, selectedProgresoId]);
++  const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
+   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
+ 
+   const dateFieldMap: Record<number, keyof Sociedad> = {
+     1: 'fechaModulosOnline',
+     2: 'fechaSimulacion',
+     3: 'fechaAtividadesFirstAssistant',
+     4: 'fechaModuloOnlineStepByStep',
+     5: 'fechaHandOn'
+   };
+ 
+ 
+   const getSociedadDateObj = (fase: number): Date | null => {
+     if (!sociedadInfo) return null;
+     const field = dateFieldMap[fase];
+     const value = field ? (sociedadInfo as any)[field] : null;
+     return value ? new Date(value) : null;
+   };
+ 
+   const getSociedadDate = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatMonthYear(date.toISOString()) : '';
+   };
+ 
+   const getSociedadDateShort = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+@@ -316,156 +323,181 @@ const ResidenteFases: React.FC = () => {
+       setOtraCirugia('');
+       setOtraCirugiaSeleccionada(false);
+       setSurgeryInputValue('');
+       setNombreCirujano('');
+       setPorcentaje(0);
+     }
+ 
+     setArchivos([]);
+     setAdjuntosEliminados([]);
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+     setAdjuntosExistentes(mode === 'edit' ? actividad?.adjuntos || [] : []);
+ 
+     setDialogOpen(true);
+   };
+ 
+   const handleToggleComplete = (progresoId: string, index: number, toggleKey: string) => {
+     setCompletionToggles(prev => ({ ...prev, [toggleKey]: true }));
+     handleOpenDialog(progresoId, index, toggleKey);
+   };
+ 
+   const handleEditActividad = (progresoId: string, index: number) => {
+     handleOpenDialog(progresoId, index, undefined, 'edit');
+   };
+ 
+-  const botonConfirmarHabilitado =
+-    Boolean(selectedProgresoId) &&
+-    selectedActividadIndex !== null &&
+-    Boolean(fecha) &&
+-    !archivoError;
+-
+-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const files = e.target.files ? Array.from(e.target.files) : [];
+     const MAX_FILES = 5;
+     const MAX_FILE_SIZE = 5 * 1024 * 1024;
+     const existentesVisibles = adjuntosExistentes.filter(
+       adj => !adjuntosEliminados.includes(adj._id)
+     );
+     const remainingSlots = MAX_FILES - (existentesVisibles.length + archivos.length);
+ 
+     if (remainingSlots <= 0) {
+       setArchivoError(true);
+       setArchivoErrorMsg(t('residentPhases.dialog.maxFilesReached'));
+       e.target.value = '';
+       return;
+     }
+ 
+     const filesToAdd = files.slice(0, remainingSlots);
+ 
+     const invalidFile = filesToAdd.find(file => file.size > MAX_FILE_SIZE);
+     if (invalidFile) {
+       setArchivoError(true);
+       setArchivoErrorMsg(t('residentPhases.dialog.fileTooLarge'));
+       e.target.value = '';
+       return;
+     }
+ 
+     if (filesToAdd.length === 0) {
+       e.target.value = '';
+       return;
+     }
+ 
+     setArchivos(prev => [...prev, ...filesToAdd]);
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+     e.target.value = '';
+   };
+ 
+   const handleRemoveNuevoArchivo = (index: number) => {
+     setArchivos(prev => prev.filter((_, i) => i !== index));
+   };
+ 
+   const handleRemoveAdjuntoExistente = (id: string) => {
+     setAdjuntosEliminados(prev => (prev.includes(id) ? prev : [...prev, id]));
+   };
+ 
+-  const adjuntosExistentesVisibles = adjuntosExistentes.filter(
+-    adj => !adjuntosEliminados.includes(adj._id)
+-  );
++  const adjuntosExistentesVisibles = adjuntosExistentes.filter(
++    adj => !adjuntosEliminados.includes(adj._id)
++  );
++  const totalAdjuntosSeleccionados =
++    adjuntosExistentesVisibles.length + archivos.length;
++  const adjuntosObligatoriosCompletos =
++    !actividadRequiereAdjunto || totalAdjuntosSeleccionados > 0;
++  const botonConfirmarHabilitado =
++    Boolean(selectedProgresoId) &&
++    selectedActividadIndex !== null &&
++    Boolean(fecha) &&
++    !archivoError &&
++    adjuntosObligatoriosCompletos;
++  const tooltipMessage = (() => {
++    if (archivoError) return archivoErrorMsg;
++    if (!selectedProgresoId) return t('residentPhases.dialog.missingProgressId');
++    if (selectedActividadIndex === null) return t('residentPhases.dialog.noActivitySelected');
++    if (!fecha) return t('residentPhases.dialog.selectDate');
++    if (esCirugia && !(cirugia || otraCirugia.trim())) return t('residentPhases.dialog.surgeryRequired');
++    if (esCirugia && !nombreCirujano.trim()) return t('residentPhases.dialog.surgeonNameRequired');
++    if (esCirugia && porcentaje === 0) return t('residentPhases.dialog.participationRequired');
++    if (!adjuntosObligatoriosCompletos) return t('residentPhases.dialog.attachmentRequired');
++    return actividadRequiereAdjunto
++      ? t('residentPhases.dialog.mandatoryFileHint', { max: 5 })
++      : t('residentPhases.dialog.optionalFileHint', { max: 5 });
++  })();
+ 
+   const handleCloseDialog = () => {
+     setDialogOpen(false);
+     if (activeToggleKey) {
+       setCompletionToggles(prev => ({ ...prev, [activeToggleKey]: false }));
+       setActiveToggleKey(null);
+     }
+     setCirugia(null);
+     setOtraCirugia('');
+     setSurgeryInputValue('');
+     setNombreCirujano('');
+     setPorcentaje(0);
+     setEsCirugia(false);
+     setOtraCirugiaSeleccionada(false);
+     setMostrarErroresCirugia(false);
+     setArchivos([]);
+     setAdjuntosExistentes([]);
+     setAdjuntosEliminados([]);
+     setDialogMode('complete');
+     setArchivoError(false);
+     setArchivoErrorMsg('');
+   };
+ 
+ 
+ 
+   const handleCompletarActividad = async () => {
+     if (!selectedProgresoId || selectedActividadIndex === null) {
+       setSnackbarError(true);
+       setSnackbarMsg(t('residentPhases.noActivitySelectedError'));
+       setSnackbarOpen(true);
+       return;
+     }
+-    const progreso = progresos.find(p => p._id === selectedProgresoId);
+-    const actividad = progreso?.actividades?.[selectedActividadIndex!];
+-    const esCirugiaActividad = actividad?.tipo === 'cirugia';
+-
+-    if (esCirugiaActividad) {
+-      setMostrarErroresCirugia(true);
+-      const otraCirugiaLimpia = otraCirugia.trim();
+-      const faltaCirugia = !(cirugia || otraCirugiaLimpia);
++    const progreso = progresos.find(p => p._id === selectedProgresoId);
++    const actividad = progreso?.actividades?.[selectedActividadIndex!];
++    const esCirugiaActividad = actividad?.tipo === 'cirugia';
++    const requiereAdjuntoActividad = Boolean(actividad?.requiereAdjunto);
++
++    if (esCirugiaActividad) {
++      setMostrarErroresCirugia(true);
++      const otraCirugiaLimpia = otraCirugia.trim();
++      const faltaCirugia = !(cirugia || otraCirugiaLimpia);
+       const faltaNombreCirujano = !nombreCirujano.trim();
+       const faltaPorcentaje = porcentaje === 0;
+ 
+       if (faltaCirugia || faltaNombreCirujano || faltaPorcentaje) {
+         setSnackbarError(true);
+         setSnackbarMsg(t('residentPhases.dialog.requiredSurgeryFields'));
+         setSnackbarOpen(true);
+-        return;
+-      }
+-    }
+-
+-    try {
++        return;
++      }
++    }
++
++    if (requiereAdjuntoActividad && totalAdjuntosSeleccionados === 0) {
++      setSnackbarError(true);
++      setSnackbarMsg(t('residentPhases.dialog.attachmentRequired'));
++      setSnackbarOpen(true);
++      return;
++    }
++
++    try {
+       const form = new FormData();
+       form.append('fechaRealizacion', fecha);
+       form.append('comentariosResidente', comentario);
+ 
+       if (esCirugiaActividad) {
+         if (cirugia) {
+           form.append('cirugia', cirugia._id);
+         } else if (otraCirugia.trim()) {
+           form.append('otraCirugia', otraCirugia.trim());
+         }
+         if (nombreCirujano) form.append('nombreCirujano', nombreCirujano);
+         form.append('porcentajeParticipacion', String(porcentaje));
+       }
+ 
+       if (adjuntosEliminados.length > 0) {
+         form.append('adjuntosAEliminar', JSON.stringify(adjuntosEliminados));
+       }
+ 
+       archivos.forEach(file => {
+         form.append('adjunto', file);
+       });
+ 
+       const { data } = await api.put(
+         `/progreso/${selectedProgresoId}/actividad/${selectedActividadIndex}`,
+         form,
+@@ -793,69 +825,78 @@ const ResidenteFases: React.FC = () => {
+                           theme.palette.mode === 'light'
+                             ? theme.palette.grey[300]
+                             : theme.palette.grey[700],
+                         boxShadow:
+                           theme.palette.mode === 'light'
+                             ? '0 4px 10px rgba(15, 23, 42, 0.08)'
+                             : '0 4px 12px rgba(15, 23, 42, 0.35)',
+                         height: '100%',
+                         display: 'flex',
+                         flexDirection: 'column'
                        }}
                      >
-                       <Box sx={{ color: 'primary.main', '& svg': { fontSize: 36 } }}>{action.icon}</Box>
-                       <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                         {action.label}
-                       </Typography>
-                     </Paper>
-                   </Box>
+                       <Stack
+                         direction={{ xs: 'column', sm: 'row' }}
+                         justifyContent="space-between"
+                         alignItems={{ xs: 'flex-start', sm: 'center' }}
+                         spacing={1.5}
+                       >
+                         <Stack
+                           direction="row"
+                           spacing={1}
+                           alignItems="center"
+                           flexWrap="wrap"
+                           useFlexGap
+                         >
+-                          {formatActivityType(act.tipo) && (
+-                            <Chip
+-                              size="small"
+-                              label={formatActivityType(act.tipo)}
+-                              variant="outlined"
+-                              sx={{
+-                                fontWeight: 600,
+-                                backgroundColor:
+-                                  theme.palette.mode === 'light'
+-                                    ? theme.palette.grey[100]
+-                                    : theme.palette.grey[800],
+-                                color: theme.palette.text.primary
+-                              }}
+-                            />
+-                          )}
+-                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+-                            {act.nombre || t('residentPhases.unnamedActivity')}
+-                          </Typography>
+-                        </Stack>
++                          {formatActivityType(act.tipo) && (
++                            <Chip
++                              size="small"
++                              label={formatActivityType(act.tipo)}
++                              variant="outlined"
++                              sx={{
++                                fontWeight: 600,
++                                backgroundColor:
++                                  theme.palette.mode === 'light'
++                                    ? theme.palette.grey[100]
++                                    : theme.palette.grey[800],
++                                color: theme.palette.text.primary
++                              }}
++                            />
++                          )}
++                          {act.requiereAdjunto && (
++                            <Chip
++                              size="small"
++                              color="warning"
++                              icon={<AttachFileIcon fontSize="small" />}
++                              label={t('residentPhases.requiresAttachment')}
++                              sx={{ fontWeight: 600 }}
++                            />
++                          )}
++                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
++                            {act.nombre || t('residentPhases.unnamedActivity')}
++                          </Typography>
++                        </Stack>
+                         <Box
+                           display="flex"
+                           flexDirection="column"
+                           alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                           gap={0.5}
+                         >
+                           <Chip
+                             size="small"
+                             label={statusData.label}
+                             color={statusData.color}
+                             icon={statusData.icon}
+                             sx={{
+                               fontWeight: 600,
+                               alignSelf: { xs: 'flex-start', sm: 'flex-end' }
+                             }}
+                           />
+                           {formattedStatusDate && (
+                             <Typography variant="caption" color="text.secondary">
+                               {formattedStatusDate}
+                             </Typography>
+                           )}
+                         </Box>
+                       </Stack>
+ 
+                       <Box sx={{ mt: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+@@ -1218,63 +1259,70 @@ const ResidenteFases: React.FC = () => {
+                 select
+                 label={t('residentPhases.dialog.participation')}
+                 value={porcentaje}
+                 onChange={(e) => setPorcentaje(Number(e.target.value))}
+                 fullWidth
+                 margin="normal"
+                 required
+                 error={mostrarErroresCirugia && esCirugia && porcentaje === 0}
+                 helperText={
+                   mostrarErroresCirugia && esCirugia && porcentaje === 0
+                     ? t('residentPhases.dialog.participationRequired')
+                     : ''
+                 }
+               >
+                 {[0, 25, 50, 75, 100].map((val) => (
+                   <MenuItem key={val} value={val}>
+                     {val}%
+                   </MenuItem>
                  ))}
-               </Stack>
-             </Paper>
-           </Box>
-         </Stack>
-         {user?.tipo === "Programa Sociedades" && sociedadInfo && (
-           <Paper sx={{ p: 3 }}>
-             <Typography variant="h6" gutterBottom>
-               {sociedadInfo.titulo}
-             </Typography>
-             <Chip
-               label={sociedadInfo.status}
-               color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
-               size="small"
-               sx={{ mb: 2 }}
-             />
--            <Stack direction="row" spacing={2} flexWrap="wrap">
--              {societyMilestones.map((m, idx) => {
--                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
--                const percent = phaseData?.percent ?? 0;
--                return (
-+            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-+              {societyMilestones.map((m, idx) => {
-+                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
-+                const percent = phaseData?.percent ?? 0;
-+                return (
-                 <Box
-                   key={m.label}
-                   sx={{
-                     flex: {
--                      xs: '1 1 100%',
--                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 16px)',
-+                      xs: '1 1 100%',
-+                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
-                     },
--                    minWidth: { xs: '250px', md: '250px' },
-+                    minWidth: { xs: '250px', md: '250px' },
-+                    mt: 2,
-                   }}
-                 >
-                   <CardActionArea
-                     onClick={() => handleOpenDialog(m)}
+               </TextField>
+               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                 {t('residentPhases.dialog.requiredFieldsNote')}
+               </Typography>
+             </>
+           )}
+-          <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+-            {t('residentPhases.dialog.selectFile')}
+-            <input
+-              type="file"
+-              hidden
+-              multiple
+-              accept="application/pdf,image/*"
+-              onChange={handleFileChange}
+-            />
+-          </Button>
+-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+-            {t('residentPhases.dialog.optionalFileHint', { max: 5 })}
+-          </Typography>
++          {actividadRequiereAdjunto && (
++            <Alert severity="info" sx={{ mt: 2 }}>
++              {t('residentPhases.dialog.attachmentMandatory')}
++            </Alert>
++          )}
++          <Button variant="outlined" component="label" sx={{ mt: 1 }}>
++            {t('residentPhases.dialog.selectFile')}
++            <input
++              type="file"
++              hidden
++              multiple
++              accept="application/pdf,image/*"
++              onChange={handleFileChange}
++            />
++          </Button>
++          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
++            {actividadRequiereAdjunto
++              ? t('residentPhases.dialog.mandatoryFileHint', { max: 5 })
++              : t('residentPhases.dialog.optionalFileHint', { max: 5 })}
++          </Typography>
+ 
+           {adjuntosExistentes.length > 0 && (
+             <Box sx={{ mt: 2 }}>
+               <Typography variant="body2" fontWeight={600}>
+                 {t('residentPhases.dialog.currentFiles')}
+               </Typography>
+               <Stack spacing={1} sx={{ mt: 1 }}>
+                 {adjuntosExistentesVisibles.map(adjunto => (
+                   <Paper
+                     key={adjunto._id}
+                     elevation={0}
                      sx={{
-                       "&:hover": {
-                         backgroundColor: "action.hover",
-                         transform: "scale(1.02)",
-                       },
-                       cursor: "pointer",
+                       p: 1,
+                       display: 'flex',
+                       alignItems: 'center',
+                       gap: 1,
+                       borderRadius: 1.5,
+                       border: `1px solid ${theme.palette.divider}`
                      }}
                    >
-                     <Paper
-                       elevation={2}
-                       sx={{
-                         px: 2,
-                         pt: 3,
-                         pb: 2.5,
-                         minHeight: 150,
-                         display: 'flex',
-                         flexDirection: 'column',
-                         justifyContent: 'center',
-                         borderLeft: `6px solid ${theme.palette.primary.main}`,
-                         background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
-                       }}
+                     <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                       {adjunto.nombreArchivo}
+                     </Typography>
+                     <Tooltip title={t('residentPhases.downloadAttachment')}>
+                       <span>
+@@ -1334,76 +1382,60 @@ const ResidenteFases: React.FC = () => {
+                   >
+                     <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                       {file.name} – {(file.size / (1024 * 1024)).toFixed(1)} MB
+                     </Typography>
+                     <Tooltip title={t('residentPhases.dialog.removeAttachment')}>
+                       <IconButton
+                         size="small"
+                         color="error"
+                         onClick={() => handleRemoveNuevoArchivo(index)}
+                       >
+                         <CloseIcon fontSize="small" />
+                       </IconButton>
+                     </Tooltip>
+                   </Paper>
+                 ))}
+               </Stack>
+             </Box>
+           )}
+ 
+           {archivoError && (
+             <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+               {archivoErrorMsg}
+             </Typography>
+           )}
+         </DialogContent>
+-        <DialogActions>
+-          <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
+-          <Tooltip
+-            title={
+-              archivoError
+-                ? archivoErrorMsg
+-                : !selectedProgresoId
+-                ? t('residentPhases.dialog.missingProgressId')
+-                : selectedActividadIndex === null
+-                ? t('residentPhases.dialog.noActivitySelected')
+-                : !fecha
+-                ? t('residentPhases.dialog.selectDate')
+-                : esCirugia && !(cirugia || otraCirugia.trim())
+-                ? t('residentPhases.dialog.surgeryRequired')
+-                : esCirugia && !nombreCirujano.trim()
+-                ? t('residentPhases.dialog.surgeonNameRequired')
+-                : esCirugia && porcentaje === 0
+-                ? t('residentPhases.dialog.participationRequired')
+-                : t('residentPhases.dialog.optionalFileHint', { max: 5 })
+-            }
+-            arrow
+-            disableHoverListener={botonConfirmarHabilitado}
+-          >
+-            <span>
+-              <Button
+-                onClick={handleCompletarActividad}
++        <DialogActions>
++          <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
++          <Tooltip
++            title={tooltipMessage}
++            arrow
++            disableHoverListener={botonConfirmarHabilitado}
++          >
++            <span>
++              <Button
++                onClick={handleCompletarActividad}
+                 variant="contained"
+                 disabled={!botonConfirmarHabilitado}
+               >
+                 {t('residentPhases.dialog.confirm')}
+               </Button>
+             </span>
+           </Tooltip>
+         </DialogActions>
+ 
+       </Dialog>
+ 
+       <Snackbar
+         open={snackbarOpen}
+         autoHideDuration={4000}
+         onClose={handleCloseSnackbar}
+         message={snackbarMsg}
+         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+         ContentProps={{
+           sx: { bgcolor: snackbarError ? 'error.main' : 'success.main', color: 'white' }
+         }}
+       />
+     </Box>
+   );
+ };
+ 
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index c34280495bafa217d4073d8e3c418f54fd5a2657..a5d1df263bc0145e7478d20c5700fa0acc4dd6a6 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -48,69 +48,73 @@ const updatePhaseStatus = async (progreso) => {
+ };
+ 
+ 
+ 
+ 
+ const formatProgresoParaResidente = (progresoDoc) => {
+   const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
+   const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+     if (typeof adj.actividadIndex !== 'number') return acc;
+     const key = adj.actividadIndex;
+     if (!acc[key]) acc[key] = [];
+     acc[key].push({
+       _id: adj._id.toString(),
+       nombreArchivo: adj.nombreArchivo,
+       mimeType: adj.mimeType,
+       fechaSubida: adj.fechaSubida
+     });
+     return acc;
+   }, {});
+ 
+   return {
+     _id: plain._id.toString(),
+     fase: plain.fase,
+     faseModel: plain.faseModel,
+     estadoGeneral: plain.estadoGeneral,
+-    actividades: (plain.actividades || []).map((act, index) => ({
+-      nombre: act.nombre,
+-      tipo: act.tipo,
+-      completada: act.estado === 'validado',
+-      comentariosResidente: act.comentariosResidente || '',
+-      comentariosTutor: act.comentariosTutor || '',
++    actividades: (plain.actividades || []).map((act, index) => ({
++      nombre: act.nombre,
++      tipo: act.tipo,
++      completada: act.estado === 'validado',
++      comentariosResidente: act.comentariosResidente || '',
++      comentariosTutor: act.comentariosTutor || '',
+       fecha: act.fechaRealizacion,
+       fechaValidacion: act.fechaValidacion,
+       comentariosRechazo: act.comentariosRechazo || '',
+       fechaRechazo: act.fechaRechazo,
+       estado: act.estado,
+       porcentajeParticipacion: act.porcentajeParticipacion,
+       cirugia: act.cirugia,
+       otraCirugia: act.otraCirugia,
+-      nombreCirujano: act.nombreCirujano,
+-      adjuntos: adjuntosPorIndice[index] || []
+-    }))
+-  };
+-};
++      nombreCirujano: act.nombreCirujano,
++      adjuntos: adjuntosPorIndice[index] || [],
++      requiereAdjunto: Boolean(
++        (act.actividad && act.actividad.requiereAdjunto) ||
++          act.requiereAdjunto
++      )
++    }))
++  };
++};
+ 
+ 
+ const inicializarProgresoFormativo = async (req, res, next) => {
+   try {
+   const user = await User.findById(req.params.id);
+   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
+     return res.status(404).json({ success: false, error: 'Residente no válido' });
+   }
+ 
+      if (req.body.tipo) user.tipo = req.body.tipo;
+     const count = await inicializarProgresoFormativoDB(user);
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ 
+ 
+ 
+ 
+ // @desc    Obtener todos los registros de progreso
+ // @route   GET /api/progreso
+ // @access  Private/Admin
+ const getAllProgreso = async (req, res, next) => {
+@@ -720,55 +724,63 @@ const marcarActividadCompletada = async (req, res, next) => {
+     const filesFromRequest = [];
+     if (req.files) {
+       const posiblesCampos = ['adjunto', 'adjuntos'];
+       for (const campo of posiblesCampos) {
+         const value = req.files[campo];
+         if (!value) continue;
+         if (Array.isArray(value)) {
+           filesFromRequest.push(...value);
+         } else {
+           filesFromRequest.push(value);
+         }
+       }
+     }
+ 
+     for (const file of filesFromRequest) {
+       if (!allowedMimeTypes.includes(file.mimetype)) {
+         return next(new ErrorResponse(`Tipo de archivo no permitido: ${file.name}`, 400));
+       }
+       if (file.size > 5 * 1024 * 1024) {
+         return next(new ErrorResponse(`El archivo ${file.name} supera el límite de 5MB`, 400));
+       }
+     }
+ 
+     const existingMap = new Map(existingAdjuntos.map(adj => [adj._id.toString(), adj]));
+     const idsParaEliminar = adjuntosAEliminar.filter(idEliminar => existingMap.has(idEliminar));
+-    const restantes = existingAdjuntos.filter(adj => !idsParaEliminar.includes(adj._id.toString()));
+-
+-    if (restantes.length + filesFromRequest.length > MAX_FILES) {
+-      return next(new ErrorResponse('Solo se permiten hasta 5 archivos adjuntos por actividad', 400));
+-    }
++    const restantes = existingAdjuntos.filter(adj => !idsParaEliminar.includes(adj._id.toString()));
++
++    const requiereAdjuntoObligatorio = Boolean(
++      actividadExistente.actividad && actividadExistente.actividad.requiereAdjunto
++    );
++
++    if (requiereAdjuntoObligatorio && restantes.length + filesFromRequest.length === 0) {
++      return next(new ErrorResponse('Esta actividad requiere al menos un adjunto', 400));
++    }
++
++    if (restantes.length + filesFromRequest.length > MAX_FILES) {
++      return next(new ErrorResponse('Solo se permiten hasta 5 archivos adjuntos por actividad', 400));
++    }
+ 
+     if (idsParaEliminar.length > 0) {
+       await Adjunto.deleteMany({
+         _id: { $in: idsParaEliminar },
+         progreso: id,
+         actividadIndex
+       });
+     }
+ 
+     if (filesFromRequest.length > 0) {
+       const adjuntosParaCrear = filesFromRequest.map(file => ({
+         progreso: id,
+         usuario: req.user._id,
+         actividadIndex,
+         nombreArchivo: file.name,
+         mimeType: file.mimetype,
+         datos: file.data,
+         tipoArchivo: file.mimetype === 'application/pdf' ? 'documento' : 'imagen'
+       }));
+ 
+       await Adjunto.insertMany(adjuntosParaCrear);
+     }
+ 
+     await progreso.save();
+ 

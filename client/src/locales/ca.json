@@ -876,6 +876,7 @@
     "completionDate": "Data de realització",
     "selectDate": "Selecciona una data de realització",
     "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "El fitxer supera la mida màxima de 5MB."
   },
   "society": {
@@ -985,6 +986,7 @@
     "surgeryType": "Tipus de cirurgia: {{type}}",
     "surgeonName": "Nom del cirurgià: {{name}}",
     "participation": "Percentatge de participació: {{percent}}%",
+    "requiresAttachment": "Requereix adjunt",
     "status": "Estat",
     "dialog": {
       "completeActivity": "Marcar activitat com a completada",
@@ -998,6 +1000,7 @@
       "surgeonName": "Nom del cirurgià",
       "participation": "Percentatge de participació",
       "selectFile": "Seleccionar fitxers",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Cancel·lar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta l’ID del progrés",
@@ -1011,6 +1014,7 @@
       "participationRequired": "Selecciona un percentatge de participació",
       "requiredFieldsNote": "Els camps marcats amb * són obligatoris.",
       "requiredSurgeryFields": "Completa els camps obligatoris de la cirurgia.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Marcar activitat com a completada",
       "editTitle": "Editar activitat enviada",
       "currentFiles": "Fitxers actuals",

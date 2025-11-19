@@ -358,6 +358,7 @@
     "completionDate": "Data di completamento",
     "selectDate": "Seleziona una data di completamento",
     "optionalFileHint": "Allega un file opzionale (max. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "Il file supera la dimensione massima di 5MB."
   },
   "society": {
@@ -984,6 +985,7 @@
     "surgeryType": "Tipo di chirurgia: {{type}}",
     "surgeonName": "Nome del chirurgo: {{name}}",
     "participation": "Percentuale di partecipazione: {{percent}}%",
+    "requiresAttachment": "Richiede allegato",
     "status": "Stato",
     "dialog": {
       "completeActivity": "Segna attività come completata",
@@ -997,6 +999,7 @@
       "surgeonName": "Nome del chirurgo",
       "participation": "Percentuale di partecipazione",
       "selectFile": "Seleziona file",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Annulla",
       "confirm": "Conferma",
       "missingProgressId": "ID del progresso mancante",
@@ -1010,6 +1013,7 @@
       "participationRequired": "Seleziona una percentuale di partecipazione",
       "requiredFieldsNote": "I campi contrassegnati con * sono obbligatori.",
       "requiredSurgeryFields": "Compila i campi obbligatori dell'intervento.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Segna attività come completata",
       "editTitle": "Modifica attività inviata",
       "currentFiles": "File attuali",

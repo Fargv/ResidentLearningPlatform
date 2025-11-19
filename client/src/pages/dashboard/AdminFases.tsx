@@ -24,6 +24,8 @@ import {
   Snackbar,
   Tabs,
   Tab,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -89,6 +91,7 @@ const AdminFases: React.FC = () => {
     tipo: "teórica",
     fase: "",
     orden: "",
+    requiereAdjunto: false,
   });
   const [procesando, setProcesando] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -321,6 +324,7 @@ const AdminFases: React.FC = () => {
       tipo: "teórica",
       fase: fase._id,
       orden: "",
+      requiereAdjunto: false,
     });
     setSelectedFase(fase);
     setOpenCrearActividadDialog(true);
@@ -339,6 +343,7 @@ const AdminFases: React.FC = () => {
       tipo: actividad.tipo,
       fase: actividad.fase._id,
       orden: actividad.orden.toString(),
+      requiereAdjunto: Boolean(actividad.requiereAdjunto),
     });
     setOpenEditarActividadDialog(true);
   };
@@ -358,11 +363,15 @@ const AdminFases: React.FC = () => {
     setSelectedActividad(null);
   };
 
-  const handleActividadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleActividadChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value, type } = e.target;
     setActividadFormData({
       ...actividadFormData,
-      [name]: value,
+      [name]: type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : value,
     });
   };
 
@@ -954,6 +963,17 @@ const AdminFases: React.FC = () => {
             onChange={handleActividadChange}
             required
           />
+          <FormControlLabel
+            control={
+              <Switch
+                name="requiereAdjunto"
+                checked={actividadFormData.requiereAdjunto}
+                onChange={handleActividadChange}
+              />
+            }
+            label={t("adminPhases.requiresAttachment")}
+            sx={{ mt: 1 }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearActividadDialog} color="primary">
@@ -1070,6 +1090,17 @@ const AdminFases: React.FC = () => {
             value={actividadFormData.orden}
             onChange={handleActividadChange}
             required
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                name="requiereAdjunto"
+                checked={actividadFormData.requiereAdjunto}
+                onChange={handleActividadChange}
+              />
+            }
+            label={t("adminPhases.requiresAttachment")}
+            sx={{ mt: 1 }}
           />
         </DialogContent>
         <DialogActions>
