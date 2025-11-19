@@ -982,6 +982,8 @@
     "noActivitySelectedError": "Error intern: No s'ha seleccionat cap activitat.",
     "noTitle": "Sense títol",
     "phaseTitle": "Fase {{number}}: {{name}}",
+    "viewInstructions": "Veure instruccions",
+    "instructionsTitle": "Instruccions de {{phase}}",
     "deadline": "Data límit",
     "validatedProgress": "Progrés validat: {{percent}}%",
     "noActivities": "No hi ha activitats disponibles",

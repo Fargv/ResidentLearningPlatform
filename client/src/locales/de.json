@@ -346,6 +346,8 @@
     "noActivitySelectedError": "Interner Fehler: Keine Aktivität ausgewählt.",
     "noTitle": "Kein Titel",
     "phaseTitle": "Phase {{number}}: {{name}}",
+    "viewInstructions": "Anweisungen anzeigen",
+    "instructionsTitle": "Anweisungen für {{phase}}",
     "deadline": "Frist",
     "validatedProgress": "Validierter Fortschritt: {{percent}}%",
     "noActivities": "Keine Aktivitäten verfügbar",

@@ -38,12 +38,15 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import DownloadIcon from '@mui/icons-material/Download';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useTheme, alpha, styled } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { useTranslation } from 'react-i18next';
+import RichTextViewer from '../../components/RichTextViewer';
+import { richTextOrUndefined } from '../../utils/richText';
 
 const CompletionSwitch = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -164,6 +167,11 @@ const ResidenteFases: React.FC = () => {
   }, [progresos, selectedActividadIndex, selectedProgresoId]);
   const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
+  const [instructionsDialog, setInstructionsDialog] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+  }>({ open: false, title: '', description: undefined });
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -604,6 +612,31 @@ const ResidenteFases: React.FC = () => {
     setSnackbarOpen(false);
   };
 
+  const handleOpenInstructionsDialog = (fase: any, descriptionHtml: string) => {
+    const phaseLabel = t('residentPhases.phaseTitle', {
+      number: fase?.numero || '—',
+      name: fase?.nombre || t('residentPhases.noTitle'),
+    });
+    setInstructionsDialog({
+      open: true,
+      title: t('residentPhases.instructionsTitle', { phase: phaseLabel }),
+      description: descriptionHtml,
+    });
+  };
+
+  const handleInstructionsButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    fase: any,
+    descriptionHtml: string,
+  ) => {
+    event.stopPropagation();
+    handleOpenInstructionsDialog(fase, descriptionHtml);
+  };
+
+  const handleCloseInstructionsDialog = () => {
+    setInstructionsDialog((prev) => ({ ...prev, open: false }));
+  };
+
   if (loading) {
     return (
       <Box>
@@ -628,16 +661,40 @@ const ResidenteFases: React.FC = () => {
       
       {Array.isArray(progresos) && progresos.length > 0 ? (
   progresos.map((item, index) => {
+    const phaseDescriptionHtml = richTextOrUndefined(item.fase?.descripcion);
 
     return (
       <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">
-            {t('residentPhases.phaseTitle', {
-              number: item.fase?.numero || '—',
-              name: item.fase?.nombre || t('residentPhases.noTitle')
-            })}
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              flexWrap: 'wrap',
+              flex: 1,
+            }}
+          >
+            <Typography variant="h6">
+              {t('residentPhases.phaseTitle', {
+                number: item.fase?.numero || '—',
+                name: item.fase?.nombre || t('residentPhases.noTitle')
+              })}
+            </Typography>
+            {phaseDescriptionHtml && (
+              <Tooltip title={t('residentPhases.viewInstructions')}>
+                <IconButton
+                  size="small"
+                  color="primary"
+                  onClick={(event) =>
+                    handleInstructionsButtonClick(event, item.fase, phaseDescriptionHtml)
+                  }
+                >
+                  <InfoOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
           {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
             <Typography
               sx={{ ml: 'auto', color: getDateColor(item.fase.numero, item.estadoGeneral) }}
@@ -1120,6 +1177,30 @@ const ResidenteFases: React.FC = () => {
 
 
 
+
+      <Dialog
+        open={instructionsDialog.open}
+        onClose={handleCloseInstructionsDialog}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          {instructionsDialog.title ||
+            t('residentPhases.instructionsTitle', {
+              phase: t('residentPhases.noTitle'),
+            })}
+        </DialogTitle>
+        <DialogContent>
+          <RichTextViewer
+            content={instructionsDialog.description}
+            variant="inline"
+            minHeight={0}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         <DialogTitle>

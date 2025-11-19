@@ -940,6 +940,8 @@
     "noActivitySelectedError": "Barne errorea: Ez da jarduerarik hautatu.",
     "noTitle": "Izenbururik gabe",
     "phaseTitle": "Fasea {{number}}: {{name}}",
+    "viewInstructions": "Ikusi jarraibideak",
+    "instructionsTitle": "Jarraibideak {{phase}}-rentzat",
     "deadline": "Epemuga",
     "validatedProgress": "Balidatutako aurrerapena: {{percent}}%",
     "noActivities": "Ez dago jarduerarik eskuragarri",

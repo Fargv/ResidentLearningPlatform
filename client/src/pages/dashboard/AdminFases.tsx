@@ -31,11 +31,12 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  //Assignment as AssignmentIcon
+  Check as CheckIcon,
 } from "@mui/icons-material";
 import api from "../../api";
 import { useTranslation, Trans } from "react-i18next";
 import RichTextDescriptionField from "../../components/RichTextDescriptionField";
+import RichTextViewer from "../../components/RichTextViewer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -200,6 +201,13 @@ const AdminFases: React.FC = () => {
 
   const handleDescripcionChange = (descripcion: string) => {
     setFaseFormData((prev) => ({
+      ...prev,
+      descripcion,
+    }));
+  };
+
+  const handleActividadDescripcionChange = (descripcion: string) => {
+    setActividadFormData((prev) => ({
       ...prev,
       descripcion,
     }));
@@ -600,9 +608,11 @@ const AdminFases: React.FC = () => {
                 </Button>
               </Box>
 
-              <Typography variant="body1" paragraph>
-                {fase.descripcion}
-              </Typography>
+              <RichTextViewer
+                content={fase.descripcion}
+                minHeight={120}
+                sx={{ mb: 2 }}
+              />
 
               <Divider sx={{ my: 2 }} />
 
@@ -656,18 +666,19 @@ const AdminFases: React.FC = () => {
                           <TableCell>{actividad.orden}</TableCell>
                           <TableCell>{actividad.nombre}</TableCell>
                           <TableCell align="center">
-                            <Typography
-                              component="span"
-                              role="img"
-                              aria-label={
-                                actividad.requiereAdjunto
-                                  ? t('adminPhases.requiresAttachment')
-                                  : t('adminPhases.optionalAttachment')
-                              }
-                              sx={{ fontSize: '1.2rem' }}
-                            >
-                              {actividad.requiereAdjunto ? '✔️' : '❌'}
-                            </Typography>
+                            {actividad.requiereAdjunto ? (
+                              <CheckIcon
+                                color="success"
+                                fontSize="small"
+                                aria-label={t('adminPhases.requiresAttachment')}
+                              />
+                            ) : (
+                              <Box
+                                component="span"
+                                aria-label={t('adminPhases.optionalAttachment')}
+                                sx={{ display: 'inline-block', width: 24 }}
+                              />
+                            )}
                           </TableCell>
                           <TableCell>
                             <Chip
@@ -696,7 +707,14 @@ const AdminFases: React.FC = () => {
                               size="small"
                             />
                           </TableCell>
-                          <TableCell>{actividad.descripcion}</TableCell>
+                          <TableCell sx={{ width: '25%' }}>
+                            <RichTextViewer
+                              content={actividad.descripcion}
+                              minHeight={0}
+                              variant="inline"
+                              sx={{ fontSize: '0.9rem' }}
+                            />
+                          </TableCell>
                           <TableCell align="right">
                             <IconButton
                               color="primary"
@@ -744,7 +762,12 @@ const AdminFases: React.FC = () => {
       </Paper>
 
       {/* Diálogo para crear fase */}
-      <Dialog open={openCrearFaseDialog} onClose={handleCloseCrearFaseDialog}>
+      <Dialog
+        open={openCrearFaseDialog}
+        onClose={handleCloseCrearFaseDialog}
+        fullWidth
+        maxWidth="md"
+      >
         <DialogTitle>{t("adminPhases.actions.newPhase")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -778,6 +801,7 @@ const AdminFases: React.FC = () => {
             label={t("adminPhases.description")}
             value={faseFormData.descripcion}
             onChange={handleDescripcionChange}
+            minHeight={320}
           />
         </DialogContent>
         <DialogActions>
@@ -798,7 +822,12 @@ const AdminFases: React.FC = () => {
       </Dialog>
 
       {/* Diálogo para editar fase */}
-      <Dialog open={openEditarFaseDialog} onClose={handleCloseEditarFaseDialog}>
+      <Dialog
+        open={openEditarFaseDialog}
+        onClose={handleCloseEditarFaseDialog}
+        fullWidth
+        maxWidth="md"
+      >
         <DialogTitle>{t("adminPhases.actions.editPhase")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -832,6 +861,7 @@ const AdminFases: React.FC = () => {
             label={t("adminPhases.description")}
             value={faseFormData.descripcion}
             onChange={handleDescripcionChange}
+            minHeight={320}
           />
         </DialogContent>
         <DialogActions>
@@ -896,6 +926,8 @@ const AdminFases: React.FC = () => {
       <Dialog
         open={openCrearActividadDialog}
         onClose={handleCloseCrearActividadDialog}
+        fullWidth
+        maxWidth="md"
       >
         <DialogTitle>{t("adminPhases.actions.newActivity")}</DialogTitle>
         <DialogContent>
@@ -920,19 +952,11 @@ const AdminFases: React.FC = () => {
             required
             sx={{ mb: 2 }}
           />
-          <TextField
-            margin="dense"
-            id="descripcion"
-            name="descripcion"
+          <RichTextDescriptionField
             label={t("adminPhases.description")}
-            type="text"
-            fullWidth
-            multiline
-            rows={3}
-            variant="outlined"
             value={actividadFormData.descripcion}
-            onChange={handleActividadChange}
-            sx={{ mb: 2 }}
+            onChange={handleActividadDescripcionChange}
+            minHeight={280}
           />
           <TextField
             select
@@ -1005,6 +1029,8 @@ const AdminFases: React.FC = () => {
       <Dialog
         open={openEditarActividadDialog}
         onClose={handleCloseEditarActividadDialog}
+        fullWidth
+        maxWidth="md"
       >
         <DialogTitle>{t("adminPhases.actions.editActivity")}</DialogTitle>
         <DialogContent>
@@ -1022,19 +1048,11 @@ const AdminFases: React.FC = () => {
             required
             sx={{ mb: 2 }}
           />
-          <TextField
-            margin="dense"
-            id="descripcion"
-            name="descripcion"
+          <RichTextDescriptionField
             label={t("adminPhases.description")}
-            type="text"
-            fullWidth
-            multiline
-            rows={3}
-            variant="outlined"
             value={actividadFormData.descripcion}
-            onChange={handleActividadChange}
-            sx={{ mb: 2 }}
+            onChange={handleActividadDescripcionChange}
+            minHeight={280}
           />
           <TextField
             select

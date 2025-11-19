@@ -229,6 +229,8 @@
     "noActivitySelectedError": "Erro interno: Nenhuma atividade selecionada.",
     "noTitle": "Sem título",
     "phaseTitle": "Fase {{number}}: {{name}}",
+    "viewInstructions": "Ver instruções",
+    "instructionsTitle": "Instruções de {{phase}}",
     "deadline": "Data limite",
     "validatedProgress": "Progresso validado: {{percent}}%",
     "noActivities": "Nenhuma atividade disponível",

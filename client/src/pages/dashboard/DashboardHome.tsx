@@ -35,6 +35,8 @@ import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
 import { Sociedad } from "../../types/Sociedad";
 import { useTranslation } from 'react-i18next';
 import { alpha, lighten } from '@mui/material/styles';
+import RichTextViewer from "../../components/RichTextViewer";
+import { richTextOrUndefined } from "../../utils/richText";
 
 interface ResidentPhaseSummary {
   name: string;
@@ -61,15 +63,6 @@ interface PhaseDialogData {
   descriptionNode?: React.ReactNode;
   descriptionHtml?: string;
 }
-
-const stripHtmlText = (html?: string | null) =>
-  html ? html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').trim() : '';
-
-const normalizeDescriptionHtml = (html?: string | null) => {
-  const text = stripHtmlText(html);
-  return text ? html || undefined : undefined;
-};
-
 
 const DashboardHome: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -665,7 +658,7 @@ const DashboardHome: React.FC = () => {
                 >
                   <CardActionArea
                     onClick={() => {
-                      const phaseDescription = normalizeDescriptionHtml(
+                      const phaseDescription = richTextOrUndefined(
                         phaseData?.description,
                       );
                       handleOpenDialog({
@@ -780,7 +773,7 @@ const DashboardHome: React.FC = () => {
                 >
                   <CardActionArea
                     onClick={() => {
-                      const descriptionHtml = normalizeDescriptionHtml(p.description);
+                      const descriptionHtml = richTextOrUndefined(p.description);
                       handleOpenDialog({
                         label: p.name,
                         descriptionHtml,
@@ -869,13 +862,13 @@ const DashboardHome: React.FC = () => {
           <DialogTitle>{selectedPhase?.label}</DialogTitle>
           <DialogContent>
             {selectedPhase?.descriptionHtml ? (
-              <Box
+              <RichTextViewer
+                content={selectedPhase.descriptionHtml}
+                variant="inline"
+                minHeight={0}
                 sx={{
                   '& > :last-child': { mb: 0 },
                   '& p': { mb: 1.5 },
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: selectedPhase.descriptionHtml,
                 }}
               />
             ) : selectedPhase?.descriptionNode ? (

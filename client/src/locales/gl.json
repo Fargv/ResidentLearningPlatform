@@ -987,6 +987,8 @@
     "downloadAttachmentError": "Erro ao descargar o ficheiro adxunto.",
     "noTitle": "Sen título",
     "phaseTitle": "Fase {{number}}: {{name}}",
+    "viewInstructions": "Ver instrucións",
+    "instructionsTitle": "Instrucións de {{phase}}",
     "deadline": "Data límite",
     "validatedProgress": "Progreso validado: {{percent}}%",
     "noActivities": "Non hai actividades dispoñibles",

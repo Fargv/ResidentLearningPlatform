@@ -16,6 +16,7 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import LinkIcon from '@mui/icons-material/Link';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { normalizeRichText, stripHtmlText } from '../utils/richText';
 
 interface RichTextDescriptionFieldProps {
   label: string;
@@ -30,12 +31,6 @@ type ToolbarCommand =
   | 'insertUnorderedList'
   | 'insertOrderedList'
   | 'createLink';
-
-const stripHtml = (html: string) =>
-  html
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .trim();
 
 const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
   label,
@@ -112,8 +107,9 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
   );
 
   const handleSave = () => {
-    const cleanText = stripHtml(draft);
-    onChange(cleanText ? draft : '');
+    const normalized = normalizeRichText(draft);
+    const cleanText = stripHtmlText(normalized);
+    onChange(cleanText ? normalized : '');
     setIsEditing(false);
   };
 
@@ -125,7 +121,7 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
     }
   };
 
-  const showPlaceholder = !isEditing && !stripHtml(value || '').length;
+  const showPlaceholder = !isEditing && !stripHtmlText(value || '').length;
 
   return (
     <Box sx={{ mt: 2 }}>
@@ -198,7 +194,8 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
               variant="contained"
               startIcon={<CheckIcon />}
               onClick={handleSave}
-              disabled={!stripHtml(draft) && !stripHtml(value || '')}
+              disabled={stripHtmlText(draft) === stripHtmlText(value || '')}
+
             >
               {t('common.saveChanges')}
             </Button>

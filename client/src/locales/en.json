@@ -952,6 +952,8 @@
     "downloadAttachmentError": "Error downloading attachment.",
     "noTitle": "No title",
     "phaseTitle": "Phase {{number}}: {{name}}",
+    "viewInstructions": "View instructions",
+    "instructionsTitle": "Instructions for {{phase}}",
     "deadline": "Deadline",
     "validatedProgress": "Validated progress: {{percent}}%",
     "noActivities": "No activities available",
