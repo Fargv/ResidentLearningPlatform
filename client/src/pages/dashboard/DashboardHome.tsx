@@ -35,16 +35,19 @@ import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
 import { Sociedad } from "../../types/Sociedad";
 import { useTranslation } from 'react-i18next';
 import type { Fase } from "../../components/ProgressPorFase";
+import { alpha, lighten } from '@mui/material/styles';
 
 
 const DashboardHome: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const theme = useTheme();
-  const progressFillColor =
-    theme.palette.mode === "dark"
-      ? theme.palette.primary.dark
-      : theme.palette.primary.light;
+  const progressFillColor = useMemo(() => {
+    const base = theme.palette.primary.main;
+    return theme.palette.mode === 'dark'
+      ? alpha(base, 0.5)
+      : lighten(base, 0.65);
+  }, [theme]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
@@ -198,6 +201,11 @@ const DashboardHome: React.FC = () => {
       description: t('residentMilestones.phase4.description'),
     },
   ];
+
+  const getSocietyPhaseLabel = (phaseNumber: number) => {
+    const milestone = societyMilestones.find((m) => m.phase === phaseNumber);
+    return milestone?.label || `${t('adminPhases.phase')} ${phaseNumber}`;
+  };
 
   const handleOpenDialog = (phase: { label: string; date?: string; description: React.ReactNode }) => {
 
@@ -500,6 +508,33 @@ const DashboardHome: React.FC = () => {
     [sociedadInfo?.titulo, t, user?.especialidad, user?.hospital?.nombre, user?.rol, user?.tipo, user?.zona],
   );
 
+  const societyDownloadButtons = socPhaseSummary
+    .filter((phase) => phase.estadoGeneral === 'validado' && phase.hasSurgery)
+    .map((phase) => {
+      const displayLabel = getSocietyPhaseLabel(phase.phase);
+      return {
+        key: `soc-${phase.progresoId}`,
+        label: t('residentProgress.downloadSurgeryReport', { phase: displayLabel }),
+        onClick: () =>
+          handleDescargarInformeCirugias(
+            phase.progresoId,
+            `${t('adminPhases.phase')} ${phase.phase}`,
+          ),
+      };
+    });
+
+  const residentDownloadButtons = phaseSummary
+    .filter((phase) => phase.estadoGeneral === 'validado' && phase.hasSurgery)
+    .map((phase) => ({
+      key: `res-${phase.progresoId}`,
+      label: t('residentProgress.downloadSurgeryReport', { phase: phase.name }),
+      onClick: () =>
+        handleDescargarInformeCirugias(
+          phase.progresoId,
+          `${t('adminPhases.phase')} ${phase.faseNumero}`,
+        ),
+    }));
+
   return (
     <Box sx={{ px: 3, py: 2 }}>
       <Stack spacing={3}>
@@ -630,7 +665,13 @@ const DashboardHome: React.FC = () => {
                     <Paper
                       elevation={2}
                       sx={{
-                        p: 2,
+                        px: 2,
+                        pt: 3,
+                        pb: 2.5,
+                        minHeight: 150,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
                         borderLeft: `6px solid ${theme.palette.primary.main}`,
                         background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
                       }}
@@ -648,56 +689,51 @@ const DashboardHome: React.FC = () => {
                       >
                         {formatMonthYear(m.date || "") || "—"}
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        fontWeight="bold"
-                        sx={{
-                          color:
-                            theme.palette.mode === "dark"
-                              ? theme.palette.common.white
-                              : theme.palette.primary.main,
-                        }}
-                      >
-                        {percent}%
-                      </Typography>
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          sx={{
+                            color: theme.palette.primary.main,
+                          }}
+                        >
+                          {percent}%
+                        </Typography>
                     </Paper>
                   </CardActionArea>
-                  {phaseData &&
-                    phaseData.estadoGeneral === 'validado' &&
-                    phaseData.hasSurgery && (
-                      <Box textAlign="center" mt={1}>
-                        <Button
-                          variant="contained"
-                          onClick={() =>
-                            handleDescargarInformeCirugias(
-                              phaseData.progresoId,
-                              `${t('adminPhases.phase')} ${phaseData.phase}`,
-                            )
-                          }
-                          disabled={downloadLoading}
-                        >
-                          {t('residentProgress.downloadSurgeryReport', {
-                            phase: m.label,
-                          })}
-                        </Button>
-                      </Box>
-                    )}
                 </Box>
               );
             })}
             </Stack>
-            {socAllValidado && (
-              <Box textAlign="center" mt={2}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleDescargarCertificado}
-                  disabled={downloadLoading}
-                  startIcon={<WorkspacePremiumIcon />}
-                >
-                  {t('residentProgress.downloadCertificate')}
-                </Button>
-              </Box>
+            {(societyDownloadButtons.length > 0 || socAllValidado) && (
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={2}
+                justifyContent="center"
+                flexWrap="wrap"
+                mt={3}
+              >
+                {societyDownloadButtons.map((button) => (
+                  <Button
+                    key={button.key}
+                    variant="contained"
+                    onClick={button.onClick}
+                    disabled={downloadLoading}
+                  >
+                    {button.label}
+                  </Button>
+                ))}
+                {socAllValidado && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleDescargarCertificado}
+                    disabled={downloadLoading}
+                    startIcon={<WorkspacePremiumIcon />}
+                  >
+                    {t('residentProgress.downloadCertificate')}
+                  </Button>
+                )}
+              </Stack>
             )}
           </Paper>
         )}
@@ -717,9 +753,9 @@ const DashboardHome: React.FC = () => {
                   <Box
                     key={p.progresoId}
                     sx={{
-                    flex: '1 1 calc(50% - 16px)',
-                    minWidth: '250px',
-                  }}
+                      flex: '1 1 calc(50% - 16px)',
+                      minWidth: '250px',
+                    }}
                 >
                   <CardActionArea
                     onClick={() =>
@@ -739,7 +775,13 @@ const DashboardHome: React.FC = () => {
                     <Paper
                       elevation={2}
                       sx={{
-                        p: 2,
+                        px: 2,
+                        pt: 3,
+                        pb: 2.5,
+                        minHeight: 150,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
                         borderLeft: `6px solid ${theme.palette.primary.main}`,
                         background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
                       }}
@@ -751,10 +793,7 @@ const DashboardHome: React.FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         sx={{
-                          color:
-                            theme.palette.mode === "dark"
-                              ? theme.palette.common.white
-                              : "text.secondary",
+                          color: theme.palette.primary.main,
                           textShadow: 'none',
                         }}
                       >
@@ -762,39 +801,39 @@ const DashboardHome: React.FC = () => {
                       </Typography>
                     </Paper>
                   </CardActionArea>
-                  {p.estadoGeneral === 'validado' && p.hasSurgery && (
-                    <Box textAlign="center" mt={1}>
-                      <Button
-                        variant="contained"
-                        onClick={() =>
-                          handleDescargarInformeCirugias(
-                            p.progresoId,
-                            `${t('adminPhases.phase')} ${p.faseNumero}`,
-                          )
-                        }
-                        disabled={downloadLoading}
-                      >
-                        {t('residentProgress.downloadSurgeryReport', {
-                          phase: p.name,
-                        })}
-                      </Button>
-                    </Box>
-                  )}
                 </Box>
               ))}
               </Stack>
-              {allValidado && (
-                <Box textAlign="center" mt={2}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleDescargarCertificado}
-                    disabled={downloadLoading}
-                    startIcon={<WorkspacePremiumIcon />}
-                  >
-                    {t('residentProgress.downloadCertificate')}
-                  </Button>
-                </Box>
+              {(residentDownloadButtons.length > 0 || allValidado) && (
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={2}
+                  justifyContent="center"
+                  flexWrap="wrap"
+                  mt={3}
+                >
+                  {residentDownloadButtons.map((button) => (
+                    <Button
+                      key={button.key}
+                      variant="contained"
+                      onClick={button.onClick}
+                      disabled={downloadLoading}
+                    >
+                      {button.label}
+                    </Button>
+                  ))}
+                  {allValidado && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleDescargarCertificado}
+                      disabled={downloadLoading}
+                      startIcon={<WorkspacePremiumIcon />}
+                    >
+                      {t('residentProgress.downloadCertificate')}
+                    </Button>
+                  )}
+                </Stack>
               )}
             </Paper>
           )}
