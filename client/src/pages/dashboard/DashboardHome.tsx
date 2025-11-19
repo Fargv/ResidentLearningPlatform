@@ -637,7 +637,7 @@ const DashboardHome: React.FC = () => {
               size="small"
               sx={{ mb: 2 }}
             />
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
               {societyMilestones.map((m, idx) => {
                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
                 const percent = phaseData?.percent ?? 0;
@@ -647,9 +647,10 @@ const DashboardHome: React.FC = () => {
                   sx={{
                     flex: {
                       xs: '1 1 100%',
-                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 16px)',
+                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
                     },
                     minWidth: { xs: '250px', md: '250px' },
+                    mt: 2,
                   }}
                 >
                   <CardActionArea
