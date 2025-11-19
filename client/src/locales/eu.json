@@ -53,6 +53,7 @@
       "aria": "{{number}}. faseko jarduerak",
       "order": "Ordena",
       "name": "Izena",
+      "attachmentRequired": "Eranskina derrigorrezkoa",
       "type": "Mota",
       "actions": "Ekintzak",
       "description": "Deskribapena",
@@ -140,7 +141,8 @@
     "requiresValidation": "Balidazioa behar du",
     "requiresSignature": "Sinadura behar du",
     "requiresPercentage": "Ehunekoa behar du",
-    "requiresAttachment": "Eranskina behar du"
+    "requiresAttachment": "Eranskina behar du",
+    "optionalAttachment": "Aukerako eranskina"
   },
   "progressByPhase": "Fasearen araberako aurrerapena",
   "close": "Itxi",
@@ -262,7 +264,16 @@
     "validate": "Balidatu",
     "reject": "Baztertu",
     "processing": "Prozesatzen...",
+    "edit": "Editatu",
+    "enterUrl": "Sartu URL bat",
     "none": "Bat ere ez"
+  },
+  "richText": {
+    "bold": "Lodia",
+    "italic": "Etzana",
+    "bulletList": "Buletdun zerrenda",
+    "orderedList": "Zenbakidun zerrenda",
+    "link": "Esteka"
   },
   "profile": {
     "title": "Nire profila",
@@ -523,6 +534,7 @@
     "table": {
       "order": "Ordena",
       "name": "Izena",
+      "attachmentRequired": "Eranskina derrigorrezkoa",
       "type": "Mota",
       "actions": "Ekintzak"
     },
@@ -584,7 +596,8 @@
     "requiresValidation": "Balidazioa behar du",
     "requiresSignature": "Sinadura behar du",
     "requiresPercentage": "Ehunekoa behar du",
-    "requiresAttachment": "Eranskina behar du"
+    "requiresAttachment": "Eranskina behar du",
+    "optionalAttachment": "Aukerako eranskina"
   },
   "adminUserProgress": {
     "title": "Erabiltzaileen aurrerapena",

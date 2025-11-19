@@ -105,7 +105,16 @@
     "validate": "Validieren",
     "reject": "Ablehnen",
     "processing": "Verarbeite...",
+    "edit": "Bearbeiten",
+    "enterUrl": "Gib eine URL ein",
     "none": "Keine"
+  },
+  "richText": {
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "bulletList": "Aufzählung",
+    "orderedList": "Nummerierte Liste",
+    "link": "Link"
   },
   "auth": {
     "login": "Anmelden",
@@ -441,6 +450,7 @@
       "aria": "Aktivitäten der Phase {{number}}",
       "order": "Reihenfolge",
       "name": "Name",
+      "attachmentRequired": "Anhang erforderlich",
       "type": "Typ",
       "actions": "Aktionen",
       "description": "Beschreibung",
@@ -521,7 +531,8 @@
     "requiresValidation": "Benötigt Validierung",
     "requiresSignature": "Benötigt Unterschrift",
     "requiresPercentage": "Benötigt Prozentsatz",
-    "requiresAttachment": "Benötigt Anhang"
+    "requiresAttachment": "Benötigt Anhang",
+    "optionalAttachment": "Anhang optional"
   },
   "profile": {
     "title": "Mein Profil",
@@ -782,6 +793,7 @@
     "table": {
       "order": "Reihenfolge",
       "name": "Name",
+      "attachmentRequired": "Anhang erforderlich",
       "type": "Typ",
       "actions": "Aktionen"
     },

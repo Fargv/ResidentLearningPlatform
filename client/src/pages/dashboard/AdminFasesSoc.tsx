@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import api from '../../api';
 import { useTranslation, Trans } from 'react-i18next';
+import RichTextDescriptionField from '../../components/RichTextDescriptionField';
 
 
 interface TabPanelProps {
@@ -195,6 +196,13 @@ const AdminFases: React.FC = () => {
       ...faseFormData,
       [name]: value
     });
+  };
+
+  const handleDescripcionChange = (descripcion: string) => {
+    setFaseFormData((prev) => ({
+      ...prev,
+      descripcion,
+    }));
   };
 
   const handleCrearFase = async () => {
@@ -578,6 +586,7 @@ const AdminFases: React.FC = () => {
                   <TableRow>
                     <TableCell>{t('adminPhases.table.order')}</TableCell>
                     <TableCell>{t('adminPhases.table.name')}</TableCell>
+                    <TableCell>{t('adminPhases.table.attachmentRequired')}</TableCell>
                     <TableCell>{t('adminPhases.table.type')}</TableCell>
                     <TableCell>{t('adminPhases.description')}</TableCell>
                     <TableCell align="right">{t('adminPhases.table.actions')}</TableCell>
@@ -587,13 +596,27 @@ const AdminFases: React.FC = () => {
                   {actividades
                     .filter(actividad => actividad.fase._id === fase._id)
                     .sort((a, b) => a.orden - b.orden)
-                    .map((actividad) => (
-                      <TableRow key={actividad._id} hover>
-                        <TableCell>{actividad.orden}</TableCell>
-                        <TableCell>{actividad.nombre}</TableCell>
-                        <TableCell>
-                         <Chip
-                            label={
+                  .map((actividad) => (
+                    <TableRow key={actividad._id} hover>
+                      <TableCell>{actividad.orden}</TableCell>
+                      <TableCell>{actividad.nombre}</TableCell>
+                      <TableCell align="center">
+                        <Typography
+                          component="span"
+                          role="img"
+                          aria-label={
+                            actividad.requiereAdjunto
+                              ? t('adminPhases.requiresAttachment')
+                              : t('adminPhases.optionalAttachment')
+                          }
+                          sx={{ fontSize: '1.2rem' }}
+                        >
+                          {actividad.requiereAdjunto ? '✔️' : '❌'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                       <Chip
+                          label={
                               actividad.tipo === 'teórica'
                                 ? t('adminPhases.theory')
                                 : actividad.tipo === 'práctica'
@@ -639,7 +662,7 @@ const AdminFases: React.FC = () => {
                     ))}
                   {actividades.filter(actividad => actividad.fase._id === fase._id).length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
+                      <TableCell colSpan={6} align="center">
                         {t('adminPhases.messages.noActivities')}
                       </TableCell>
                     </TableRow>
@@ -690,18 +713,10 @@ const AdminFases: React.FC = () => {
             required
             sx={{ mb: 2 }}
           />
-          <TextField
-            margin="dense"
-            id="descripcion"
-            name="descripcion"
+          <RichTextDescriptionField
             label={t('adminPhases.description')}
-            type="text"
-            fullWidth
-            multiline
-            rows={4}
-            variant="outlined"
             value={faseFormData.descripcion}
-            onChange={handleFaseChange}
+            onChange={handleDescripcionChange}
           />
         </DialogContent>
         <DialogActions>
@@ -750,18 +765,10 @@ const AdminFases: React.FC = () => {
             required
             sx={{ mb: 2 }}
           />
-          <TextField
-            margin="dense"
-            id="descripcion"
-            name="descripcion"
+          <RichTextDescriptionField
             label={t('adminPhases.description')}
-            type="text"
-            fullWidth
-            multiline
-            rows={4}
-            variant="outlined"
             value={faseFormData.descripcion}
-            onChange={handleFaseChange}
+            onChange={handleDescripcionChange}
           />
         </DialogContent>
         <DialogActions>

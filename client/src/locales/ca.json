@@ -114,7 +114,16 @@
     "validate": "Validar",
     "reject": "Rebutjar",
     "processing": "Processant...",
+    "edit": "Edita",
+    "enterUrl": "Introdueix una URL",
     "none": "Cap"
+  },
+  "richText": {
+    "bold": "Negreta",
+    "italic": "Cursiva",
+    "bulletList": "Llista amb vinyetes",
+    "orderedList": "Llista numerada",
+    "link": "Enllaç"
   },
   "profile": {
     "title": "El meu perfil",
@@ -277,6 +286,7 @@
       "aria": "activitats de la fase {{number}}",
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Adjunt obligatori",
       "type": "Tipus",
       "actions": "Accions",
       "description": "Descripció",
@@ -364,7 +374,8 @@
     "requiresValidation": "Requereix validació",
     "requiresSignature": "Requereix signatura",
     "requiresPercentage": "Requereix percentatge",
-    "requiresAttachment": "Requereix adjunt"
+    "requiresAttachment": "Requereix adjunt",
+    "optionalAttachment": "Adjunt opcional"
   },
   "adminPhasesSoc": {
     "_comment": "Gestió de fases per al programa de Societats",
@@ -373,6 +384,7 @@
     "table": {
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Adjunt obligatori",
       "type": "Tipus",
       "actions": "Accions"
     },

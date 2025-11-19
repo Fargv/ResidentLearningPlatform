@@ -55,6 +55,7 @@
       "aria": "actividades de la fase {{number}}",
       "order": "Orden",
       "name": "Nombre",
+      "attachmentRequired": "Adjunto obligatorio",
       "type": "Tipo",
       "actions": "Acciones",
       "description": "Descripción",
@@ -142,7 +143,8 @@
     "requiresValidation": "Requiere validación",
     "requiresSignature": "Requiere firma",
     "requiresPercentage": "Requiere porcentaje",
-    "requiresAttachment": "Requiere adjunto"
+    "requiresAttachment": "Requiere adjunto",
+    "optionalAttachment": "Adjunto opcional"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
@@ -264,7 +266,16 @@
     "validate": "Validar",
     "reject": "Rechazar",
     "processing": "Procesando...",
+    "edit": "Editar",
+    "enterUrl": "Introduce una URL",
     "none": "Ninguno"
+  },
+  "richText": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "bulletList": "Lista con viñetas",
+    "orderedList": "Lista numerada",
+    "link": "Enlace"
   },
   "profile": {
     "title": "Mi Perfil",
@@ -528,6 +539,7 @@
     "table": {
       "order": "Orden",
       "name": "Nombre",
+      "attachmentRequired": "Adjunto obligatorio",
       "type": "Tipo",
       "actions": "Acciones"
     },

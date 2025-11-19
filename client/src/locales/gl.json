@@ -55,6 +55,7 @@
       "aria": "actividades da fase {{number}}",
       "order": "Orde",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatorio",
       "type": "Tipo",
       "actions": "Accións",
       "description": "Descrición",
@@ -142,7 +143,8 @@
     "requiresValidation": "Require validación",
     "requiresSignature": "Require sinatura",
     "requiresPercentage": "Require porcentaxe",
-    "requiresAttachment": "Require adxunto"
+    "requiresAttachment": "Require adxunto",
+    "optionalAttachment": "Adxunto opcional"
   },
   "adminPhasesSoc": {
     "_comment": "Xestión de fases para o programa de Sociedades",
@@ -151,6 +153,7 @@
     "table": {
       "order": "Orde",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatorio",
       "type": "Tipo",
       "actions": "Accións"
     },
@@ -336,7 +339,16 @@
     "validate": "Validar",
     "reject": "Rexectar",
     "processing": "Procesando...",
+    "edit": "Editar",
+    "enterUrl": "Introduce unha URL",
     "none": "Ningún"
+  },
+  "richText": {
+    "bold": "Negra",
+    "italic": "Cursiva",
+    "bulletList": "Lista con viñetas",
+    "orderedList": "Lista numerada",
+    "link": "Ligazón"
   },
   "profile": {
     "title": "O meu perfil",

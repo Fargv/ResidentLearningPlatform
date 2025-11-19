@@ -62,6 +62,7 @@
       "aria": "activities of phase {{number}}",
       "order": "Order",
       "name": "Name",
+      "attachmentRequired": "Attachment required",
       "type": "Type",
       "actions": "Actions",
       "description": "Description",
@@ -142,7 +143,8 @@
     "requiresValidation": "Requires validation",
     "requiresSignature": "Requires signature",
     "requiresPercentage": "Requires percentage",
-    "requiresAttachment": "Requires attachment"
+    "requiresAttachment": "Requires attachment",
+    "optionalAttachment": "Attachment optional"
   },
   "progressByPhase": "Progress by phase",
   "close": "Close",
@@ -265,7 +267,16 @@
     "validate": "Validate",
     "reject": "Reject",
     "processing": "Processing...",
+    "edit": "Edit",
+    "enterUrl": "Enter a URL",
     "none": "None"
+  },
+  "richText": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "bulletList": "Bulleted list",
+    "orderedList": "Numbered list",
+    "link": "Link"
   },
   "profile": {
     "title": "My Profile",
@@ -531,6 +542,7 @@
     "table": {
       "order": "Order",
       "name": "Name",
+      "attachmentRequired": "Attachment required",
       "type": "Type",
       "actions": "Actions"
     },

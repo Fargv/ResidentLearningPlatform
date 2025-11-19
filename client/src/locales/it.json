@@ -60,6 +60,7 @@
       "aria": "attività della fase {{number}}",
       "order": "Ordine",
       "name": "Nome",
+      "attachmentRequired": "Allegato obbligatorio",
       "type": "Tipo",
       "actions": "Azioni",
       "description": "Descrizione",
@@ -140,7 +141,8 @@
     "requiresValidation": "Richiede convalida",
     "requiresSignature": "Richiede firma",
     "requiresPercentage": "Richiede percentuale",
-    "requiresAttachment": "Richiede allegato"
+    "requiresAttachment": "Richiede allegato",
+    "optionalAttachment": "Allegato facoltativo"
   },
   "progressByPhase": "Progresso per fase",
   "close": "Chiudi",
@@ -220,7 +222,16 @@
     "validate": "Convalida",
     "reject": "Rifiuta",
     "processing": "Elaborazione in corso...",
+    "edit": "Modifica",
+    "enterUrl": "Inserisci un URL",
     "none": "Nessuno"
+  },
+  "richText": {
+    "bold": "Grassetto",
+    "italic": "Corsivo",
+    "bulletList": "Elenco puntato",
+    "orderedList": "Elenco numerato",
+    "link": "Link"
   },
   "auth": {
     "login": "Accesso",
@@ -775,6 +786,7 @@
     "table": {
       "order": "Ordine",
       "name": "Nome",
+      "attachmentRequired": "Allegato obbligatorio",
       "type": "Tipo",
       "actions": "Azioni"
     },

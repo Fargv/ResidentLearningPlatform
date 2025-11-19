@@ -116,7 +116,16 @@
     "validate": "Validar",
     "reject": "Rejeitar",
     "processing": "Processando...",
+    "edit": "Editar",
+    "enterUrl": "Insere um URL",
     "none": "Nenhum"
+  },
+  "richText": {
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "bulletList": "Lista com marcadores",
+    "orderedList": "Lista numerada",
+    "link": "Link"
   },
   "auth": {
     "login": "Entrar",
@@ -317,6 +326,7 @@
       "aria": "atividades da fase {{number}}",
       "order": "Ordem",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatório",
       "type": "Tipo",
       "actions": "Ações",
       "description": "Descrição",
@@ -404,7 +414,8 @@
     "requiresValidation": "Requer validação",
     "requiresSignature": "Requer assinatura",
     "requiresPercentage": "Requer percentagem",
-    "requiresAttachment": "Requer anexo"
+    "requiresAttachment": "Requer anexo",
+    "optionalAttachment": "Anexo opcional"
   },
   "society": {
     "convocatoria": {
@@ -716,6 +727,7 @@
     "table": {
       "order": "Ordem",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatório",
       "type": "Tipo",
       "actions": "Ações"
     },

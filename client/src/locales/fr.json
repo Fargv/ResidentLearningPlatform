@@ -171,7 +171,16 @@
     "validate": "Valider",
     "reject": "Rejeter",
     "processing": "Traitement en cours...",
+    "edit": "Modifier",
+    "enterUrl": "Saisissez une URL",
     "none": "Aucun"
+  },
+  "richText": {
+    "bold": "Gras",
+    "italic": "Italique",
+    "bulletList": "Liste à puces",
+    "orderedList": "Liste numérotée",
+    "link": "Lien"
   },
   "auth": {
     "login": "Connexion",
@@ -825,6 +834,7 @@
       "aria": "activités de la phase {{number}}",
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Pièce jointe obligatoire",
       "type": "Type",
       "actions": "Actions",
       "description": "Description",
@@ -919,7 +929,8 @@
     "requiresValidation": "Nécessite une validation",
     "requiresSignature": "Nécessite une signature",
     "requiresPercentage": "Nécessite un pourcentage",
-    "requiresAttachment": "Nécessite une pièce jointe"
+    "requiresAttachment": "Nécessite une pièce jointe",
+    "optionalAttachment": "Pièce jointe facultative"
   },
   "adminPhasesSoc": {
     "_comment": "Gestion des phases pour le programme des sociétés",
@@ -928,6 +939,7 @@
     "table": {
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Pièce jointe obligatoire",
       "type": "Type",
       "actions": "Actions"
     },

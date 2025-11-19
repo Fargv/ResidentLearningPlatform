@@ -865,10 +865,30 @@ const ResidenteFases: React.FC = () => {
                           {act.requiereAdjunto && (
                             <Chip
                               size="small"
-                              color="warning"
                               icon={<AttachFileIcon fontSize="small" />}
                               label={t('residentPhases.requiresAttachment')}
-                              sx={{ fontWeight: 600 }}
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor:
+                                  theme.palette.mode === 'light'
+                                    ? alpha(theme.palette.secondary.light, 0.25)
+                                    : alpha(theme.palette.secondary.main, 0.35),
+                                color:
+                                  theme.palette.mode === 'light'
+                                    ? theme.palette.secondary.dark
+                                    : theme.palette.secondary.light,
+                                '& .MuiChip-icon': {
+                                  color:
+                                    theme.palette.mode === 'light'
+                                      ? theme.palette.secondary.dark
+                                      : theme.palette.secondary.light,
+                                },
+                                border: `1px solid ${
+                                  theme.palette.mode === 'light'
+                                    ? alpha(theme.palette.secondary.main, 0.4)
+                                    : alpha(theme.palette.secondary.light, 0.6)
+                                }`,
+                              }}
                             />
                           )}
                           <Typography variant="subtitle1" fontWeight={600} color="text.primary">

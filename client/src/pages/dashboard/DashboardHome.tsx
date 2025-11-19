@@ -34,8 +34,41 @@ import api from "../../api";
 import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
 import { Sociedad } from "../../types/Sociedad";
 import { useTranslation } from 'react-i18next';
-import type { Fase } from "../../components/ProgressPorFase";
 import { alpha, lighten } from '@mui/material/styles';
+
+interface ResidentPhaseSummary {
+  name: string;
+  percent: number;
+  estadoGeneral: string;
+  progresoId: string;
+  faseNumero: number;
+  hasSurgery: boolean;
+  description?: string | null;
+}
+
+interface SocietyPhaseSummary {
+  phase: number;
+  percent: number;
+  estadoGeneral: string;
+  progresoId: string;
+  hasSurgery: boolean;
+  description?: string | null;
+}
+
+interface PhaseDialogData {
+  label: string;
+  date?: string;
+  descriptionNode?: React.ReactNode;
+  descriptionHtml?: string;
+}
+
+const stripHtmlText = (html?: string | null) =>
+  html ? html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').trim() : '';
+
+const normalizeDescriptionHtml = (html?: string | null) => {
+  const text = stripHtmlText(html);
+  return text ? html || undefined : undefined;
+};
 
 
 const DashboardHome: React.FC = () => {
@@ -51,34 +84,13 @@ const DashboardHome: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
-  const [phaseSummary, setPhaseSummary] = useState<
-    {
-      name: string;
-      percent: number;
-      estadoGeneral: string;
-      progresoId: string;
-      faseNumero: number;
-      hasSurgery: boolean;
-    }[]
-  >([]);
-  const [socPhaseSummary, setSocPhaseSummary] = useState<
-    {
-      phase: number;
-      percent: number;
-      estadoGeneral: string;
-      progresoId: string;
-      hasSurgery: boolean;
-    }[]
-  >([]);
+  const [phaseSummary, setPhaseSummary] = useState<ResidentPhaseSummary[]>([]);
+  const [socPhaseSummary, setSocPhaseSummary] = useState<SocietyPhaseSummary[]>([]);
   const [progressLoading, setProgressLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [socAllValidado, setSocAllValidado] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedPhase, setSelectedPhase] = useState<{
-    label: string;
-    date?: string;
-    description: React.ReactNode;
-  } | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<PhaseDialogData | null>(null);
 
 
   const societyMilestones = [
@@ -207,14 +219,10 @@ const DashboardHome: React.FC = () => {
     return milestone?.label || `${t('adminPhases.phase')} ${phaseNumber}`;
   };
 
-  const handleOpenDialog = (phase: { label: string; date?: string; description: React.ReactNode }) => {
-
-     setSelectedPhase(phase);
+  const handleOpenDialog = (phase: PhaseDialogData) => {
+    setSelectedPhase(phase);
     setOpenDialog(true);
   };
-
-  const onFaseClick = (_fase: Fase, idx: number) =>
-    handleOpenDialog(residentMilestones[idx]);
 
   const handleCloseDialog = () => setOpenDialog(false);
   useEffect(() => {
@@ -283,6 +291,7 @@ const DashboardHome: React.FC = () => {
                 progresoId: p._id,
                 faseNumero: p.fase.numero,
                 hasSurgery,
+                description: p.fase?.descripcion ?? null,
               };
             });
           setPhaseSummary(summary);
@@ -311,6 +320,7 @@ const DashboardHome: React.FC = () => {
               estadoGeneral: p.estadoGeneral,
               progresoId: p._id,
               hasSurgery,
+              description: p.fase?.descripcion ?? null,
             };
           });
           setSocPhaseSummary(socSummary);
@@ -654,7 +664,17 @@ const DashboardHome: React.FC = () => {
                   }}
                 >
                   <CardActionArea
-                    onClick={() => handleOpenDialog(m)}
+                    onClick={() => {
+                      const phaseDescription = normalizeDescriptionHtml(
+                        phaseData?.description,
+                      );
+                      handleOpenDialog({
+                        label: m.label,
+                        date: m.date,
+                        descriptionHtml: phaseDescription,
+                        descriptionNode: phaseDescription ? undefined : m.description,
+                      });
+                    }}
                     sx={{
                       "&:hover": {
                         backgroundColor: "action.hover",
@@ -759,12 +779,16 @@ const DashboardHome: React.FC = () => {
                     }}
                 >
                   <CardActionArea
-                    onClick={() =>
-                      onFaseClick(
-                        { nombre: p.name, porcentaje: p.percent },
-                        idx,
-                      )
-                    }
+                    onClick={() => {
+                      const descriptionHtml = normalizeDescriptionHtml(p.description);
+                      handleOpenDialog({
+                        label: p.name,
+                        descriptionHtml,
+                        descriptionNode: descriptionHtml
+                          ? undefined
+                          : residentMilestones[idx]?.description,
+                      });
+                    }}
                     sx={{
                       "&:hover": {
                         backgroundColor: "action.hover",
@@ -844,7 +868,21 @@ const DashboardHome: React.FC = () => {
         <Dialog open={openDialog} onClose={handleCloseDialog}>
           <DialogTitle>{selectedPhase?.label}</DialogTitle>
           <DialogContent>
-            {selectedPhase?.description}
+            {selectedPhase?.descriptionHtml ? (
+              <Box
+                sx={{
+                  '& > :last-child': { mb: 0 },
+                  '& p': { mb: 1.5 },
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: selectedPhase.descriptionHtml,
+                }}
+              />
+            ) : selectedPhase?.descriptionNode ? (
+              selectedPhase.descriptionNode
+            ) : (
+              <Typography color="text.secondary">{t('common.none')}</Typography>
+            )}
             {selectedPhase?.date && (
               <Typography variant="body2" color="text.secondary">
                 {formatDayMonthYear(selectedPhase.date)}
