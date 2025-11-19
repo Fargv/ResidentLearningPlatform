@@ -1,182 +1,64 @@
 diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index a3ec2928c723f8baae878abd7752de15af9dbf8f..cc3877b6d4f07ea82ce5c398cde628025cd2f524 100644
+index e1a254a499661c833111d10ed1c8281adde0298d..7eec2a4785e428d44d64bcd7688e3bca2f7496a4 100644
 --- a/client/src/pages/dashboard/DashboardHome.tsx
 +++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -1,43 +1,44 @@
--import React, { useState, useEffect } from "react";
-+import React, { useState, useEffect, useMemo } from "react";
- import {
-+  Avatar,
-   Box,
-   Typography,
-   Alert,
-   CircularProgress,
--  Card,
--  CardActionArea,
--  CardContent,
-   Paper,
-   Chip,
-+  Divider,
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogActions,
-   Button,
-   Backdrop,
-+  Stack,
-   useTheme,
-+  CardActionArea,
- } from "@mui/material";
- import {
-   Assignment as AssignmentIcon,
-   School as SchoolIcon,
-   People as PeopleIcon,
-   Settings as SettingsIcon,
-   Assessment as AssessmentIcon,
-   Person as PersonIcon,
-   Notifications as NotificationsIcon,
-   WorkspacePremium as WorkspacePremiumIcon
- } from "@mui/icons-material";
- import { useNavigate } from "react-router-dom";
- import { useAuth } from "../../context/AuthContext";
- import api from "../../api";
- import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
- import { Sociedad } from "../../types/Sociedad";
- import { useTranslation } from 'react-i18next';
- import type { Fase } from "../../components/ProgressPorFase";
- 
- 
- const DashboardHome: React.FC = () => {
-   const { t, i18n } = useTranslation();
-   const { user } = useAuth();
-   const theme = useTheme();
-   const progressFillColor =
-@@ -458,87 +459,181 @@ const DashboardHome: React.FC = () => {
-   const getRoleSubtitle = () => {
-     if (!user) return "";
-     const hospital = user.hospital?.nombre;
-     switch (user.rol) {
-       case "administrador":
-         return t('role.adminPanel');
-       case "tutor":
-         return hospital ? t('role.tutor', { hospital }) : "";
-       case "csm":
-         return hospital ? t('role.csm', { hospital }) : "";
-       case "residente":
-         return hospital ? t('role.resident', { hospital }) : "";
-       case "participante":
-         return sociedadInfo?.titulo
-           ? t('role.participant', { title: sociedadInfo.titulo })
-           : "";
-       case "profesor":
-         return sociedadInfo?.titulo
-           ? t('role.professor', { title: sociedadInfo.titulo })
-           : "";
-       default:
-         return "";
-     }
-   };
- 
-- return (
--    <Box>
--      <Box sx={{ mb: 4 }}>
--          <Typography variant="h4" component="h1" gutterBottom>
--            {t('welcome', { name: user?.nombre })}
--          </Typography>
--        <Typography variant="subtitle1" color="text.secondary">
--          {getRoleSubtitle()}
--        </Typography>
--      </Box>
--      {user?.tipo === "Programa Sociedades" && sociedadInfo && (
--        <Paper sx={{ p: 2, mb: 3 }}>
-+  const initials = useMemo(() => {
-+    const first = user?.nombre?.[0] || user?.email?.[0] || "";
-+    const last = user?.apellidos?.[0] || "";
-+    const letters = `${first}${last}`;
-+    return letters ? letters.toUpperCase() : "?";
-+  }, [user?.apellidos, user?.email, user?.nombre]);
-+
-+  const heroChips = useMemo(
-+    () => [
-+      { key: "role", label: t('profile.status.role'), value: user?.rol || t('common.none') },
-+      { key: "program", label: t('profile.status.program'), value: user?.tipo || t('common.none') },
-+      { key: "hospital", label: t('profile.status.hospital'), value: user?.hospital?.nombre },
-+      { key: "zone", label: t('profile.status.zone'), value: user?.zona },
-+      { key: "specialty", label: t('profile.status.specialty'), value: user?.especialidad },
-+      { key: "society", label: t('profile.fields.society'), value: sociedadInfo?.titulo },
-+    ].filter((chip) => !!chip.value),
-+    [sociedadInfo?.titulo, t, user?.especialidad, user?.hospital?.nombre, user?.rol, user?.tipo, user?.zona],
-+  );
-+
-+  return (
-+    <Box sx={{ px: 3, py: 2 }}>
-+      <Stack spacing={3}>
-+        <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
-+          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
-+            <Paper sx={{ p: 3, height: '100%' }}>
-+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }}>
-+                <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', width: 64, height: 64, fontSize: 28 }}>
-+                  {initials}
-+                </Avatar>
-+                <Box>
-+                  <Typography variant="h6" color="text.secondary">
-+                    {t('profile.overview')}
-+                  </Typography>
-+                  <Typography variant="h4" component="h1">
-+                    {t('welcome', { name: user?.nombre || user?.email })}
-+                  </Typography>
-+                  <Typography variant="body1" color="text.secondary">
-+                    {getRoleSubtitle()}
-+                  </Typography>
-+                </Box>
-+              </Stack>
-+              {!!heroChips.length && <Divider sx={{ my: 3 }} />}
-+              {!!heroChips.length && (
-+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-+                  {heroChips.map((chip) => (
-+                    <Chip
-+                      key={chip.key}
-+                      label={`${chip.label}: ${chip.value}`}
-+                      variant="outlined"
-+                      size="small"
-+                      sx={{ mr: 1, mb: 1 }}
-+                    />
-+                  ))}
-+                </Stack>
-+              )}
-+            </Paper>
-+          </Box>
-+          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
-+            <Paper sx={{ p: 3, height: '100%' }}>
-+              <Typography variant="h6" gutterBottom>
-+                {t('actions.dashboard')}
-+              </Typography>
-+              <Stack direction="row" spacing={2} flexWrap="wrap">
-+                {actions.map((action) => (
-+                  <Box
-+                    key={action.label}
-+                    component="button"
-+                    type="button"
-+                    onClick={() => navigate(action.path)}
-+                    sx={{
-+                      flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33% - 16px)' },
-+                      border: 'none',
-+                      background: 'transparent',
-+                      p: 0,
-+                      cursor: 'pointer',
-+                      textAlign: 'left',
-+                    }}
-+                  >
+@@ -537,68 +537,71 @@ const DashboardHome: React.FC = () => {
+                 </Stack>
+               )}
+             </Paper>
+           </Box>
+           <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
+             <Paper sx={{ p: 3, height: '100%' }}>
+               <Typography variant="h6" gutterBottom>
+                 {t('actions.dashboard')}
+               </Typography>
+               <Stack direction="row" spacing={2} flexWrap="wrap">
+                 {actions.map((action) => (
+                   <Box
+                     key={action.label}
+                     component="button"
+                     type="button"
+                     onClick={() => navigate(action.path)}
+                     sx={{
+                       flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33% - 16px)' },
+                       border: 'none',
+                       background: 'transparent',
+                       p: 0,
+                       cursor: 'pointer',
+                       textAlign: 'left',
+                     }}
+                   >
+-                    <Paper
+-                      variant="outlined"
+-                      sx={{
+-                        p: 2,
+-                        height: '100%',
+-                        display: 'flex',
+-                        flexDirection: 'column',
+-                        alignItems: 'center',
+-                        justifyContent: 'center',
+-                        textAlign: 'center',
+-                        borderRadius: 2,
+-                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+-                        '&:hover': {
+-                          boxShadow: 4,
+-                          transform: 'translateY(-2px)',
+-                        },
+-                      }}
+-                    >
 +                    <Paper
 +                      variant="outlined"
 +                      sx={{
-+                        p: 2,
++                        px: 3,
++                        py: 2.5,
 +                        height: '100%',
++                        minHeight: 120,
 +                        display: 'flex',
 +                        flexDirection: 'column',
 +                        alignItems: 'center',
 +                        justifyContent: 'center',
 +                        textAlign: 'center',
++                        gap: 1,
 +                        borderRadius: 2,
 +                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
 +                        '&:hover': {
@@ -185,317 +67,28 @@ index a3ec2928c723f8baae878abd7752de15af9dbf8f..cc3877b6d4f07ea82ce5c398cde62802
 +                        },
 +                      }}
 +                    >
-+                      <Box sx={{ color: 'primary.main', '& svg': { fontSize: 36 } }}>{action.icon}</Box>
-+                      <Typography variant="subtitle1" sx={{ mt: 1 }}>
-+                        {action.label}
-+                      </Typography>
-+                    </Paper>
-+                  </Box>
-+                ))}
-+              </Stack>
-+            </Paper>
-+          </Box>
-+        </Stack>
-+        {user?.tipo === "Programa Sociedades" && sociedadInfo && (
-+          <Paper sx={{ p: 3 }}>
+                       <Box sx={{ color: 'primary.main', '& svg': { fontSize: 36 } }}>{action.icon}</Box>
+                       <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                         {action.label}
+                       </Typography>
+                     </Paper>
+                   </Box>
+                 ))}
+               </Stack>
+             </Paper>
+           </Box>
+         </Stack>
+         {user?.tipo === "Programa Sociedades" && sociedadInfo && (
+           <Paper sx={{ p: 3 }}>
              <Typography variant="h6" gutterBottom>
                {sociedadInfo.titulo}
              </Typography>
--          <Chip
--            label={sociedadInfo.status}
--            color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
--            size="small"
--            sx={{ mb: 2 }}
--          />
--          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
--            {societyMilestones.map((m, idx) => {
--              const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
--              const percent = phaseData?.percent ?? 0;
--              return (
-+            <Chip
-+              label={sociedadInfo.status}
-+              color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
-+              size="small"
-+              sx={{ mb: 2 }}
-+            />
-+            <Stack direction="row" spacing={2} flexWrap="wrap">
-+              {societyMilestones.map((m, idx) => {
-+                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
-+                const percent = phaseData?.percent ?? 0;
-+                return (
-                 <Box
-                   key={m.label}
-                   sx={{
-                     flex: {
--                      xs: "1 1 100%",
--                      md:
--                        idx === 0
--                          ? "1 1 100%"
--                          : "1 1 calc(50% - 16px)",
-+                      xs: '1 1 100%',
-+                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 16px)',
-                     },
--                    minWidth: { xs: "250px", md: "250px" },
-+                    minWidth: { xs: '250px', md: '250px' },
-                   }}
-                 >
-                   <CardActionArea
-                     onClick={() => handleOpenDialog(m)}
-                     sx={{
-                       "&:hover": {
-                         backgroundColor: "action.hover",
-                         transform: "scale(1.02)",
-                       },
-                       cursor: "pointer",
-                     }}
-                   >
-                     <Paper
-                       elevation={2}
-                       sx={{
-                         p: 2,
-                         borderLeft: `6px solid ${theme.palette.primary.main}`,
-                         background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
-                       }}
-                     >
-                       <Typography
-                         variant="subtitle2"
-                         sx={{ color: 'text.secondary' }}
-                       >
-                         {m.label}
-@@ -565,84 +660,84 @@ const DashboardHome: React.FC = () => {
-                     </Paper>
-                   </CardActionArea>
-                   {phaseData &&
-                     phaseData.estadoGeneral === 'validado' &&
-                     phaseData.hasSurgery && (
-                       <Box textAlign="center" mt={1}>
-                         <Button
-                           variant="contained"
-                           onClick={() =>
-                             handleDescargarInformeCirugias(
-                               phaseData.progresoId,
-                               `${t('adminPhases.phase')} ${phaseData.phase}`,
-                             )
-                           }
-                           disabled={downloadLoading}
-                         >
-                           {t('residentProgress.downloadSurgeryReport', {
-                             phase: m.label,
-                           })}
-                         </Button>
-                       </Box>
-                     )}
-                 </Box>
-               );
-             })}
--          </Box>
--          {socAllValidado && (
--            <Box textAlign="center" mt={2}>
--              <Button
--                variant="contained"
--                color="secondary"
--                onClick={handleDescargarCertificado}
--                disabled={downloadLoading}
--                startIcon={<WorkspacePremiumIcon />}
--              >
--                {t('residentProgress.downloadCertificate')}
--              </Button>
--            </Box>
--          )}
--       </Paper>
--      )}
--      {user?.tipo === "Programa Residentes" &&
--        (user?.rol === "residente" ||
--          user?.rol === "tutor" ||
--          user?.rol === "csm" ||
--          user?.rol === "profesor" ||
--          user?.rol === "participante") &&
--        phaseSummary.length > 0 && (
--          <Paper sx={{ p: 2, mb: 3 }}>
--            <Typography variant="h6" gutterBottom>
-+            </Stack>
-+            {socAllValidado && (
-+              <Box textAlign="center" mt={2}>
-+                <Button
-+                  variant="contained"
-+                  color="secondary"
-+                  onClick={handleDescargarCertificado}
-+                  disabled={downloadLoading}
-+                  startIcon={<WorkspacePremiumIcon />}
-+                >
-+                  {t('residentProgress.downloadCertificate')}
-+                </Button>
-+              </Box>
-+            )}
-+          </Paper>
-+        )}
-+        {user?.tipo === "Programa Residentes" &&
-+          (user?.rol === "residente" ||
-+            user?.rol === "tutor" ||
-+            user?.rol === "csm" ||
-+            user?.rol === "profesor" ||
-+            user?.rol === "participante") &&
-+          phaseSummary.length > 0 && (
-+            <Paper sx={{ p: 3 }}>
-+              <Typography variant="h6" gutterBottom>
-                 {t('progressByPhase')}
-               </Typography>
--            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
--              {phaseSummary.map((p, idx) => (
--                <Box
--                  key={p.progresoId}
--                  sx={{
--                    flex: "1 1 calc(50% - 16px)",
--                    minWidth: "250px",
-+              <Stack direction="row" spacing={2} flexWrap="wrap">
-+                {phaseSummary.map((p, idx) => (
-+                  <Box
-+                    key={p.progresoId}
-+                    sx={{
-+                    flex: '1 1 calc(50% - 16px)',
-+                    minWidth: '250px',
-                   }}
-                 >
-                   <CardActionArea
-                     onClick={() =>
-                       onFaseClick(
-                         { nombre: p.name, porcentaje: p.percent },
-                         idx,
-                       )
-                     }
-                     sx={{
-                       "&:hover": {
-                         backgroundColor: "action.hover",
-                         transform: "scale(1.02)",
-                       },
-                       cursor: "pointer",
-                     }}
-                   >
-                     <Paper
-                       elevation={2}
-                       sx={{
-                         p: 2,
-                         borderLeft: `6px solid ${theme.palette.primary.main}`,
-                         background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
-                       }}
-                     >
-@@ -662,103 +757,67 @@ const DashboardHome: React.FC = () => {
-                       >
-                         {p.percent}%
-                       </Typography>
-                     </Paper>
-                   </CardActionArea>
-                   {p.estadoGeneral === 'validado' && p.hasSurgery && (
-                     <Box textAlign="center" mt={1}>
-                       <Button
-                         variant="contained"
-                         onClick={() =>
-                           handleDescargarInformeCirugias(
-                             p.progresoId,
-                             `${t('adminPhases.phase')} ${p.faseNumero}`,
-                           )
-                         }
-                         disabled={downloadLoading}
-                       >
-                         {t('residentProgress.downloadSurgeryReport', {
-                           phase: p.name,
-                         })}
-                       </Button>
-                     </Box>
-                   )}
-                 </Box>
-               ))}
--            </Box>
--            {allValidado && (
--              <Box textAlign="center" mt={2}>
--                <Button
--                  variant="contained"
--                  color="secondary"
--                  onClick={handleDescargarCertificado}
--                  disabled={downloadLoading}
--                  startIcon={<WorkspacePremiumIcon />}
--                >
--                  {t('residentProgress.downloadCertificate')}
--                </Button>
--              </Box>
--            )}
--          </Paper>
--        )}
--      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
--        {actions.map((action) => (
--          <Box
--            key={action.label}
--            sx={{
--              width: {
--                xs: "100%",
--                sm: "48%",
--                md: "31%",
--                lg: "23%",
--              },
--            }}
--          >
--            <Card>
--              <CardActionArea onClick={() => navigate(action.path)}>
--                <CardContent
--                  sx={{
--                    display: "flex",
--                    flexDirection: "column",
--                    alignItems: "center",
--                    py: 4,
--                  }}
--                >
--                  {action.icon}
--                  <Typography
--                    variant="subtitle1"
--                    sx={{ mt: 1, textAlign: "center" }}
-+              </Stack>
-+              {allValidado && (
-+                <Box textAlign="center" mt={2}>
-+                  <Button
-+                    variant="contained"
-+                    color="secondary"
-+                    onClick={handleDescargarCertificado}
-+                    disabled={downloadLoading}
-+                    startIcon={<WorkspacePremiumIcon />}
-                   >
--                    {action.label}
--                  </Typography>
--                </CardContent>
--              </CardActionArea>
--            </Card>
--          </Box>
--        ))}
--      </Box>
--
-+                    {t('residentProgress.downloadCertificate')}
-+                  </Button>
-+                </Box>
-+              )}
-+            </Paper>
-+          )}
-+      </Stack>
- 
-       {renderContent()}
-         <Dialog open={openDialog} onClose={handleCloseDialog}>
-           <DialogTitle>{selectedPhase?.label}</DialogTitle>
-           <DialogContent>
-             {selectedPhase?.description}
-             {selectedPhase?.date && (
-               <Typography variant="body2" color="text.secondary">
-                 {formatDayMonthYear(selectedPhase.date)}
-               </Typography>
-             )}
-           </DialogContent>
-           <DialogActions>
-             <Button onClick={handleCloseDialog}>{t('close')}</Button>
-           </DialogActions>
-         </Dialog>
-         <Backdrop
-           open={downloadLoading}
-           sx={{ color: theme.palette.common.white, zIndex: (theme) => theme.zIndex.drawer + 1 }}
-         >
-           <CircularProgress color="inherit" />
-         </Backdrop>
-       </Box>
-     );
-   };
+             <Chip
+               label={sociedadInfo.status}
+               color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
+               size="small"
+               sx={{ mb: 2 }}
+             />
+             <Stack direction="row" spacing={2} flexWrap="wrap">
+               {societyMilestones.map((m, idx) => {
+                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);

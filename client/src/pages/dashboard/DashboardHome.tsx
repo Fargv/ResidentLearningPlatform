@@ -562,13 +562,16 @@ const DashboardHome: React.FC = () => {
                     <Paper
                       variant="outlined"
                       sx={{
-                        p: 2,
+                        px: 3,
+                        py: 2.5,
                         height: '100%',
+                        minHeight: 120,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         textAlign: 'center',
+                        gap: 1,
                         borderRadius: 2,
                         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                         '&:hover': {
