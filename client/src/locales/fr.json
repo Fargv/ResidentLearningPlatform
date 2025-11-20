@@ -30,7 +30,21 @@
     "title": "Mon profil",
     "personalData": "Données personnelles",
     "changePassword": "Changer le mot de passe",
+    "overview": "Aperçu du compte",
     "noTutor": "Aucun tuteur assigné",
+    "status": {
+      "role": "Rôle",
+      "hospital": "Hôpital",
+      "program": "Programme",
+      "zone": "Zone",
+      "specialty": "Spécialité",
+      "active": "Compte actif",
+      "inactive": "Compte inactif"
+    },
+    "completeness": {
+      "title": "Complétude du profil",
+      "helper": "Gardez vos données à jour pour une meilleure expérience"
+    },
     "fields": {
       "name": "Prénom",
       "lastName": "Nom",
@@ -50,7 +64,22 @@
       "passwordUpdateError": "Erreur lors du changement de mot de passe"
     },
     "buttons": {
-      "changePassword": "Changer le mot de passe"
+      "changePassword": "Changer le mot de passe",
+      "edit": "Modifier les données"
+    },
+    "editMode": {
+      "description": "Mode édition activé : enregistrez ou annulez pour sortir",
+      "readonlyHint": "Champ en lecture seule"
+    },
+    "dialogs": {
+      "passwordTitle": "Changer le mot de passe",
+      "passwordDescription": "Mettez à jour votre mot de passe sans quitter cette page"
+    },
+    "security": {
+      "title": "Sécurité et accès",
+      "tipStrongPassword": "Utilisez des mots de passe forts et uniques.",
+      "tipRegularUpdates": "Renouvelez votre mot de passe régulièrement.",
+      "tipSignOut": "Déconnectez-vous sur les appareils partagés."
     }
   },
   "adminConfig": {
@@ -142,7 +171,16 @@
     "validate": "Valider",
     "reject": "Rejeter",
     "processing": "Traitement en cours...",
+    "edit": "Modifier",
+    "enterUrl": "Saisissez une URL",
     "none": "Aucun"
+  },
+  "richText": {
+    "bold": "Gras",
+    "italic": "Italique",
+    "bulletList": "Liste à puces",
+    "orderedList": "Liste numérotée",
+    "link": "Lien"
   },
   "auth": {
     "login": "Connexion",
@@ -280,6 +318,7 @@
     "completionDate": "Date de réalisation",
     "selectDate": "Sélectionnez une date de réalisation",
     "optionalFileHint": "Joindre un fichier facultatif (max. 5 Mo)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "Le fichier dépasse la taille maximale de 5 Mo."
   },
   "society": {
@@ -602,6 +641,8 @@
     "noActivitySelectedError": "Erreur interne : aucune activité sélectionnée.",
     "noTitle": "Sans titre",
     "phaseTitle": "Phase {{number}} : {{name}}",
+    "viewInstructions": "Voir les instructions",
+    "instructionsTitle": "Instructions pour {{phase}}",
     "deadline": "Date limite",
     "validatedProgress": "Progrès validé : {{percent}}%",
     "noActivities": "Aucune activité disponible",
@@ -618,6 +659,7 @@
     "surgeryType": "Type de chirurgie : {{type}}",
     "surgeonName": "Nom du chirurgien : {{name}}",
     "participation": "Pourcentage de participation : {{percent}} %",
+    "requiresAttachment": "Attachment required",
     "status": "Statut",
     "dialog": {
       "completeActivity": "Marquer l'activité comme complétée",
@@ -631,6 +673,7 @@
       "surgeonName": "Nom du chirurgien",
       "participation": "Pourcentage de participation",
       "selectFile": "Sélectionner des fichiers",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "missingProgressId": "ID de progrès manquant",
@@ -644,6 +687,7 @@
       "participationRequired": "Sélectionnez un pourcentage de participation",
       "requiredFieldsNote": "Les champs marqués d'un * sont obligatoires.",
       "requiredSurgeryFields": "Complétez les champs obligatoires de la chirurgie.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Marquer l'activité comme complétée",
       "editTitle": "Modifier l'activité envoyée",
       "currentFiles": "Fichiers actuels",
@@ -760,7 +804,7 @@
     "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Tuteur du programme de résidents de ",
     "tutorTitle": "Tuteur du programme de résidents",
     "tutorPlaceholder": "Tuteur du programme :",
@@ -792,6 +836,7 @@
       "aria": "activités de la phase {{number}}",
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Pièce jointe obligatoire",
       "type": "Type",
       "actions": "Actions",
       "description": "Description",
@@ -886,7 +931,8 @@
     "requiresValidation": "Nécessite une validation",
     "requiresSignature": "Nécessite une signature",
     "requiresPercentage": "Nécessite un pourcentage",
-    "requiresAttachment": "Nécessite une pièce jointe"
+    "requiresAttachment": "Nécessite une pièce jointe",
+    "optionalAttachment": "Pièce jointe facultative"
   },
   "adminPhasesSoc": {
     "_comment": "Gestion des phases pour le programme des sociétés",
@@ -895,6 +941,7 @@
     "table": {
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Pièce jointe obligatoire",
       "type": "Type",
       "actions": "Actions"
     },

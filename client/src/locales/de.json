@@ -105,7 +105,16 @@
     "validate": "Validieren",
     "reject": "Ablehnen",
     "processing": "Verarbeite...",
+    "edit": "Bearbeiten",
+    "enterUrl": "Gib eine URL ein",
     "none": "Keine"
+  },
+  "richText": {
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "bulletList": "Aufzählung",
+    "orderedList": "Nummerierte Liste",
+    "link": "Link"
   },
   "auth": {
     "login": "Anmelden",
@@ -243,6 +252,7 @@
     "completionDate": "Abschlussdatum",
     "selectDate": "Wählen Sie ein Abschlussdatum",
     "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "Die Datei überschreitet die maximale Größe von 5MB."
   },
   "society": {
@@ -320,7 +330,7 @@
     "body": "Hiermit wird bestätigt, dass <strong>{{name}}</strong> die zugewiesene Ausbildungsphase des Academic Program zu Technologien des Da Vinci®-Roboters erfolgreich abgeschlossen hat.<br /><br />Dieser Kurs ist Teil des Ausbildungsplans für Robotertechnologie in Zusammenarbeit mit dem Krankenhaus <strong>{{hospital}}</strong> und unter der Aufsicht des zugewiesenen Tutors.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Tutor des Residenzprogramms des ",
     "tutorTitle": "Tutor des Residenzprogramms",
     "tutorPlaceholder": "Tutor des Programms:",
@@ -336,6 +346,8 @@
     "noActivitySelectedError": "Interner Fehler: Keine Aktivität ausgewählt.",
     "noTitle": "Kein Titel",
     "phaseTitle": "Phase {{number}}: {{name}}",
+    "viewInstructions": "Anweisungen anzeigen",
+    "instructionsTitle": "Anweisungen für {{phase}}",
     "deadline": "Frist",
     "validatedProgress": "Validierter Fortschritt: {{percent}}%",
     "noActivities": "Keine Aktivitäten verfügbar",
@@ -352,6 +364,7 @@
     "surgeryType": "Operationsart: {{type}}",
     "surgeonName": "Name des Chirurgen: {{name}}",
     "participation": "Teilnahmeprozentsatz: {{percent}}%",
+    "requiresAttachment": "Attachment required",
     "status": "Status",
     "dialog": {
       "completeActivity": "Aktivität als abgeschlossen markieren",
@@ -365,6 +378,7 @@
       "surgeonName": "Name des Chirurgen",
       "participation": "Teilnahmeprozentsatz",
       "selectFile": "Dateien auswählen",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Abbrechen",
       "confirm": "Bestätigen",
       "missingProgressId": "Fortschritts-ID fehlt",
@@ -378,6 +392,7 @@
       "participationRequired": "Wähle einen Beteiligungsprozentsatz",
       "requiredFieldsNote": "Mit * gekennzeichnete Felder sind Pflichtfelder.",
       "requiredSurgeryFields": "Vervollständige die Pflichtfelder der Operation.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Aktivität abschließen",
       "editTitle": "Aktivität bearbeiten",
       "currentFiles": "Aktuelle Anhänge",
@@ -437,6 +452,7 @@
       "aria": "Aktivitäten der Phase {{number}}",
       "order": "Reihenfolge",
       "name": "Name",
+      "attachmentRequired": "Anhang erforderlich",
       "type": "Typ",
       "actions": "Aktionen",
       "description": "Beschreibung",
@@ -517,13 +533,28 @@
     "requiresValidation": "Benötigt Validierung",
     "requiresSignature": "Benötigt Unterschrift",
     "requiresPercentage": "Benötigt Prozentsatz",
-    "requiresAttachment": "Benötigt Anhang"
+    "requiresAttachment": "Benötigt Anhang",
+    "optionalAttachment": "Anhang optional"
   },
   "profile": {
     "title": "Mein Profil",
     "personalData": "Persönliche Daten",
     "changePassword": "Passwort ändern",
+    "overview": "Kontenübersicht",
     "noTutor": "Kein Tutor zugewiesen",
+    "status": {
+      "role": "Rolle",
+      "hospital": "Krankenhaus",
+      "program": "Programm",
+      "zone": "Zone",
+      "specialty": "Fachgebiet",
+      "active": "Aktives Konto",
+      "inactive": "Inaktives Konto"
+    },
+    "completeness": {
+      "title": "Profilvollständigkeit",
+      "helper": "Halten Sie Ihre Daten aktuell für ein besseres Erlebnis"
+    },
     "fields": {
       "name": "Name",
       "lastName": "Nachname",
@@ -544,7 +575,22 @@
       "passwordUpdateError": "Fehler beim Ändern des Passworts"
     },
     "buttons": {
-      "changePassword": "Passwort ändern"
+      "changePassword": "Passwort ändern",
+      "edit": "Daten bearbeiten"
+    },
+    "editMode": {
+      "description": "Bearbeitungsmodus aktiv: Speichern oder Abbrechen zum Beenden",
+      "readonlyHint": "Nur-Lesen-Feld"
+    },
+    "dialogs": {
+      "passwordTitle": "Passwort ändern",
+      "passwordDescription": "Aktualisieren Sie Ihr Passwort, ohne diese Seite zu verlassen"
+    },
+    "security": {
+      "title": "Sicherheit und Zugriff",
+      "tipStrongPassword": "Verwenden Sie starke, einzigartige Passwörter.",
+      "tipRegularUpdates": "Aktualisieren Sie Ihr Passwort regelmäßig.",
+      "tipSignOut": "Melden Sie sich auf gemeinsam genutzten Geräten ab."
     }
   },
   "adminHospitals": {
@@ -749,6 +795,7 @@
     "table": {
       "order": "Reihenfolge",
       "name": "Name",
+      "attachmentRequired": "Anhang erforderlich",
       "type": "Typ",
       "actions": "Aktionen"
     },

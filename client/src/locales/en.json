@@ -62,6 +62,7 @@
       "aria": "activities of phase {{number}}",
       "order": "Order",
       "name": "Name",
+      "attachmentRequired": "Attachment required",
       "type": "Type",
       "actions": "Actions",
       "description": "Description",
@@ -142,7 +143,8 @@
     "requiresValidation": "Requires validation",
     "requiresSignature": "Requires signature",
     "requiresPercentage": "Requires percentage",
-    "requiresAttachment": "Requires attachment"
+    "requiresAttachment": "Requires attachment",
+    "optionalAttachment": "Attachment optional"
   },
   "progressByPhase": "Progress by phase",
   "close": "Close",
@@ -265,13 +267,36 @@
     "validate": "Validate",
     "reject": "Reject",
     "processing": "Processing...",
+    "edit": "Edit",
+    "enterUrl": "Enter a URL",
     "none": "None"
+  },
+  "richText": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "bulletList": "Bulleted list",
+    "orderedList": "Numbered list",
+    "link": "Link"
   },
   "profile": {
     "title": "My Profile",
     "personalData": "Personal Data",
     "changePassword": "Change Password",
+    "overview": "Account overview",
     "noTutor": "No tutor assigned",
+    "status": {
+      "role": "Role",
+      "hospital": "Hospital",
+      "program": "Program",
+      "zone": "Zone",
+      "specialty": "Specialty",
+      "active": "Active account",
+      "inactive": "Inactive account"
+    },
+    "completeness": {
+      "title": "Profile completeness",
+      "helper": "Keep your data up to date for a better experience"
+    },
     "fields": {
       "name": "Name",
       "lastName": "Last Name",
@@ -293,7 +318,22 @@
       "passwordUpdateError": "Error changing password"
     },
     "buttons": {
-      "changePassword": "Change Password"
+      "changePassword": "Change Password",
+      "edit": "Edit data"
+    },
+    "editMode": {
+      "description": "Edit mode enabled: save or cancel to exit",
+      "readonlyHint": "Read-only field"
+    },
+    "dialogs": {
+      "passwordTitle": "Change password",
+      "passwordDescription": "Update your password without leaving this page"
+    },
+    "security": {
+      "title": "Security and access",
+      "tipStrongPassword": "Use strong, unique passwords.",
+      "tipRegularUpdates": "Refresh your password regularly.",
+      "tipSignOut": "Sign out on shared devices."
     }
   },
   "adminHospitals": {
@@ -502,6 +542,7 @@
     "table": {
       "order": "Order",
       "name": "Name",
+      "attachmentRequired": "Attachment required",
       "type": "Type",
       "actions": "Actions"
     },
@@ -911,6 +952,8 @@
     "downloadAttachmentError": "Error downloading attachment.",
     "noTitle": "No title",
     "phaseTitle": "Phase {{number}}: {{name}}",
+    "viewInstructions": "View instructions",
+    "instructionsTitle": "Instructions for {{phase}}",
     "deadline": "Deadline",
     "validatedProgress": "Validated progress: {{percent}}%",
     "noActivities": "No activities available",
@@ -930,6 +973,7 @@
     "participation": "Participation percentage: {{percent}}%",
     "downloadAttachment": "Download file",
     "pendingAttachment": "Uploaded attachment",
+    "requiresAttachment": "Attachment required",
     "status": "Status",
     "dialog": {
       "completeActivity": "Mark activity as completed",
@@ -943,12 +987,14 @@
       "surgeonName": "Surgeon's name",
       "participation": "Participation percentage",
       "selectFile": "Select files",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Cancel",
       "confirm": "Confirm",
       "missingProgressId": "Missing progress ID",
       "noActivitySelected": "No activity selected",
       "selectDate": "Select a completion date",
       "optionalFileHint": "You can attach up to {{max}} files (max 5MB each)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
       "maxFilesReached": "You reached the limit of 5 attachments for this activity.",
       "fileTooLarge": "The file exceeds the maximum size of 5MB.",
       "surgeryRequired": "Select or enter a procedure",
@@ -956,6 +1002,7 @@
       "participationRequired": "Select a participation percentage",
       "requiredFieldsNote": "Fields marked with * are required.",
       "requiredSurgeryFields": "Complete the required surgery fields.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Mark activity as completed",
       "editTitle": "Edit submitted activity",
       "currentFiles": "Current attachments",
@@ -1003,7 +1050,7 @@
     "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
     "bodySociedad": "This certifies that <strong>{{name}}</strong> has completed the INTUITIVE / {{sociedad}} robotic surgery training curriculum.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Residents program tutor at ",
     "tutorTitle": "Residents program tutor",
     "tutorPlaceholder": "Program tutor:",

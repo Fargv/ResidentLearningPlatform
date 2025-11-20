@@ -123,7 +123,7 @@ const getTheme = (mode: PaletteMode) =>
       divider: mode === 'light' ? '#e0e0e0' : '#2d2d2d',
     },
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"Montserrat", "Roboto", "Helvetica", "Arial", sans-serif',
       h1: { fontWeight: 500 },
       h2: { fontWeight: 500 },
       h3: { fontWeight: 500 },

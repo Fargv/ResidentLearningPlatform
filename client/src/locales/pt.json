@@ -116,7 +116,16 @@
     "validate": "Validar",
     "reject": "Rejeitar",
     "processing": "Processando...",
+    "edit": "Editar",
+    "enterUrl": "Insere um URL",
     "none": "Nenhum"
+  },
+  "richText": {
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "bulletList": "Lista com marcadores",
+    "orderedList": "Lista numerada",
+    "link": "Link"
   },
   "auth": {
     "login": "Entrar",
@@ -200,6 +209,7 @@
     "completionDate": "Data de realização",
     "selectDate": "Selecione uma data de realização",
     "optionalFileHint": "Anexe um arquivo opcional (máx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "O arquivo excede o tamanho máximo de 5MB."
   },
   "residentProgress": {
@@ -219,6 +229,8 @@
     "noActivitySelectedError": "Erro interno: Nenhuma atividade selecionada.",
     "noTitle": "Sem título",
     "phaseTitle": "Fase {{number}}: {{name}}",
+    "viewInstructions": "Ver instruções",
+    "instructionsTitle": "Instruções de {{phase}}",
     "deadline": "Data limite",
     "validatedProgress": "Progresso validado: {{percent}}%",
     "noActivities": "Nenhuma atividade disponível",
@@ -235,6 +247,7 @@
     "surgeryType": "Tipo de cirurgia: {{type}}",
     "surgeonName": "Nome do cirurgião: {{name}}",
     "participation": "Percentual de participação: {{percent}}%",
+    "requiresAttachment": "Attachment required",
     "status": "Status",
     "dialog": {
       "completeActivity": "Marcar atividade como concluída",
@@ -248,6 +261,7 @@
       "surgeonName": "Nome do cirurgião",
       "participation": "Percentual de participação",
       "selectFile": "Selecionar arquivos",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta o ID do progresso",
@@ -261,6 +275,7 @@
       "participationRequired": "Selecione uma porcentagem de participação",
       "requiredFieldsNote": "Os campos marcados com * são obrigatórios.",
       "requiredSurgeryFields": "Preencha os campos obrigatórios da cirurgia.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Marcar atividade como concluída",
       "editTitle": "Editar atividade enviada",
       "currentFiles": "Arquivos atuais",
@@ -313,6 +328,7 @@
       "aria": "atividades da fase {{number}}",
       "order": "Ordem",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatório",
       "type": "Tipo",
       "actions": "Ações",
       "description": "Descrição",
@@ -400,7 +416,8 @@
     "requiresValidation": "Requer validação",
     "requiresSignature": "Requer assinatura",
     "requiresPercentage": "Requer percentagem",
-    "requiresAttachment": "Requer anexo"
+    "requiresAttachment": "Requer anexo",
+    "optionalAttachment": "Anexo opcional"
   },
   "society": {
     "convocatoria": {
@@ -450,7 +467,21 @@
     "title": "Meu Perfil",
     "personalData": "Dados pessoais",
     "changePassword": "Alterar Senha",
+    "overview": "Visão geral da conta",
     "noTutor": "Nenhum tutor atribuído",
+    "status": {
+      "role": "Função",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialidade",
+      "active": "Conta ativa",
+      "inactive": "Conta inativa"
+    },
+    "completeness": {
+      "title": "Completude do perfil",
+      "helper": "Mantenha seus dados atualizados para uma melhor experiência"
+    },
     "fields": {
       "name": "Nome",
       "lastName": "Sobrenome",
@@ -472,7 +503,22 @@
       "passwordUpdateError": "Erro ao alterar a senha"
     },
     "buttons": {
-      "changePassword": "Alterar Senha"
+      "changePassword": "Alterar Senha",
+      "edit": "Editar dados"
+    },
+    "editMode": {
+      "description": "Modo de edição ativado: salve ou cancele para sair",
+      "readonlyHint": "Campo somente leitura"
+    },
+    "dialogs": {
+      "passwordTitle": "Alterar senha",
+      "passwordDescription": "Atualize sua senha sem sair desta página"
+    },
+    "security": {
+      "title": "Segurança e acesso",
+      "tipStrongPassword": "Use senhas fortes e únicas.",
+      "tipRegularUpdates": "Atualize sua senha regularmente.",
+      "tipSignOut": "Encerre a sessão em dispositivos compartilhados."
     }
   },
   "adminHospitals": {
@@ -683,6 +729,7 @@
     "table": {
       "order": "Ordem",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatório",
       "type": "Tipo",
       "actions": "Ações"
     },
@@ -1015,7 +1062,7 @@
     "body": "Certifica-se que <strong>{{name}}</strong> completou satisfatoriamente a fase formativa designada do Academic Program em tecnologias do robô Da Vinci®. <br /><br />Este curso faz parte do plano formativo em tecnologia robótica em colaboração com o hospital <strong>{{hospital}}</strong> e sob a supervisão do seu tutor designado.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Tutor do programa de residentes do ",
     "tutorTitle": "Tutor do programa de residentes",
     "tutorPlaceholder": "Tutor do programa:",

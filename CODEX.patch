@@ -1,399 +1,509 @@
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index 58bb10f77b395849f125ac004ea2a33e173d0d66..29af9f8385b5ddb60da77e8f210d6f6e659279aa 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -1,73 +1,74 @@
--import React, { useEffect, useState } from 'react';
--import {
--  Box,
--  Typography,
--  Alert,
--  Chip,
--  Skeleton,
--  LinearProgress,
--  Accordion,
--  AccordionSummary,
--  AccordionDetails,
--  Button,
--  Dialog,
--  DialogTitle,
--  DialogContent,
--  DialogActions,
--  TextField,
--  Snackbar,
--  Tooltip,
--  CircularProgress,
--  Backdrop,
--  Autocomplete,
--  MenuItem,
--  Paper,
--  Stack,
--  FormControlLabel,
--  IconButton
--} from '@mui/material';
-+import React, { useEffect, useState } from 'react';
-+import {
-+  Box,
-+  Typography,
-+  Alert,
-+  Chip,
-+  Skeleton,
-+  LinearProgress,
-+  Accordion,
-+  AccordionSummary,
-+  AccordionDetails,
-+  Button,
-+  Dialog,
-+  DialogTitle,
-+  DialogContent,
-+  DialogActions,
-+  TextField,
-+  Snackbar,
-+  Tooltip,
-+  CircularProgress,
-+  Backdrop,
-+  Autocomplete,
-+  MenuItem,
-+  Paper,
-+  Stack,
-+  FormControlLabel,
-+  IconButton
-+} from '@mui/material';
-+import { createFilterOptions } from '@mui/material/Autocomplete';
- import Switch, { SwitchProps } from '@mui/material/Switch';
- 
- import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
- import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
- import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
- import VerifiedIcon from '@mui/icons-material/Verified';
- import CancelIcon from '@mui/icons-material/Cancel';
- import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
- import DownloadIcon from '@mui/icons-material/Download';
- import CloseIcon from '@mui/icons-material/Close';
- import { useTheme, alpha, styled } from '@mui/material/styles';
- import api from '../../api';
- import { useAuth } from '../../context/AuthContext';
- import { Sociedad } from '../../types/Sociedad';
- import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
--import { useTranslation } from 'react-i18next';
--
--const CompletionSwitch = styled((props: SwitchProps) => (
--  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
--))(({ theme }) => ({
-+import { useTranslation } from 'react-i18next';
-+
-+const CompletionSwitch = styled((props: SwitchProps) => (
-+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-+))(({ theme }) => ({
-   width: 48,
-   height: 28,
-   padding: 0,
-   display: 'flex',
-   alignItems: 'center',
-   '& .MuiSwitch-switchBase': {
-     padding: 0,
-     margin: 2,
-     transitionDuration: '200ms',
-     '&.Mui-focusVisible .MuiSwitch-thumb': {
-       boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
-       border: `1px solid ${theme.palette.primary.main}`
+diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
+index a16d3d4b4d69caa3489ca1d847b782abd92bba42..ddc2a7bc8d153fafafd6efec8f478d0534fc0074 100644
+--- a/client/src/locales/ca.json
++++ b/client/src/locales/ca.json
+@@ -944,51 +944,51 @@
+       "label": "Fase 2 - Formació Preclínica",
+       "description": "Exercicis de simulació i entrenaments en entorn segur."
      },
-     '&.Mui-checked': {
-       transform: 'translateX(20px)',
-       color: theme.palette.common.white,
-       '& .MuiSwitch-thumb': {
-         boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
-       },
-       '& + .MuiSwitch-track': {
-         backgroundColor:
-           theme.palette.mode === 'light'
-             ? theme.palette.primary.main
-             : alpha(theme.palette.primary.light, 0.55),
-         borderColor: 'transparent',
-@@ -81,54 +82,57 @@ const CompletionSwitch = styled((props: SwitchProps) => (
-     boxSizing: 'border-box',
-     borderRadius: '50%',
-     backgroundColor: theme.palette.common.white,
-     boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`,
-     position: 'relative',
-     '&:before': {
-       content: "''",
-       position: 'absolute',
-       inset: 0,
-       borderRadius: '50%',
-       border: `1px solid ${alpha(theme.palette.common.black, 0.08)}`
+     "phase3": {
+       "label": "Fase 3 - Assistència Quirúrgica",
+       "description": "Participació com a ajudant en quiròfan."
+     },
+     "phase4": {
+       "label": "Fase 4 - Cirurgia en Consola",
+       "description": "Cirurgies realitzades pel resident amb supervisió."
      }
    },
-   '& .MuiSwitch-track': {
-     borderRadius: 999,
-     backgroundColor:
-       theme.palette.mode === 'light'
-         ? alpha(theme.palette.text.primary, 0.15)
-         : alpha(theme.palette.common.white, 0.25),
-     border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
-     opacity: 1,
-     boxSizing: 'border-box'
+   "residentProgress": {
+     "title": "El meu progrés",
+     "errorLoad": "Error en carregar el progrés",
+     "downloadError": "Error en descarregar el certificat",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Descarregar informe de {{phase}}",
+     "downloadSurgeryReportError": "Error en descarregar l'informe de cirurgies"
+   },
+   "certificate": {
+     "title": "Certificat de Compliment",
+     "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tutor del programa de residents del ",
+     "tutorTitle": "Tutor del programa de residents",
+     "tutorPlaceholder": "Tutor del programa:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsable de formació del programa {{programa}}"
+   },
+   "residentPhases": {
+     "title": "Les meves fases formatives",
+     "errorLoad": "Error en carregar el progrés",
+     "activityFail": "No s'ha pogut completar l'activitat.",
+     "activitySaveError": "Error en desar l'activitat.",
+     "activitySuccess": "✅ Activitat registrada amb èxit",
+     "noActivitySelectedError": "Error intern: No s'ha seleccionat cap activitat.",
+     "noTitle": "Sense títol",
+     "phaseTitle": "Fase {{number}}: {{name}}",
+     "viewInstructions": "Veure instruccions",
+     "instructionsTitle": "Instruccions de {{phase}}",
+     "deadline": "Data límit",
+     "validatedProgress": "Progrés validat: {{percent}}%",
+     "noActivities": "No hi ha activitats disponibles",
+     "phaseLocked": "Fase bloquejada",
+     "noProgress": "No hi ha progrés formatiu disponible.",
+     "markAsCompleted": "Marcar com a completada",
+     "unnamedActivity": "Activitat sense nom",
+     "comment": "Comentari",
+diff --git a/client/src/locales/de.json b/client/src/locales/de.json
+index 6e347e2ed0a98def0d2d5475f39836d7d0a78ef7..a8daa11a394c3064b1b5cc9f0baa63dc2452f362 100644
+--- a/client/src/locales/de.json
++++ b/client/src/locales/de.json
+@@ -308,51 +308,51 @@
+       "label": "Phase 2 – Präklinische Ausbildung",
+       "description": "Simulation und Training in sicherer Umgebung."
+     },
+     "phase3": {
+       "label": "Phase 3 – Chirurgische Assistenz",
+       "description": "Teilnahme als Assistent im Operationssaal."
+     },
+     "phase4": {
+       "label": "Phase 4 – Chirurgie an der Konsole",
+       "description": "Durchführung von Eingriffen durch den Bewohner unter Aufsicht."
+     }
+   },
+   "residentProgress": {
+     "title": "Mein Fortschritt",
+     "errorLoad": "Fehler beim Laden des Fortschritts",
+     "downloadError": "Fehler beim Herunterladen des Zertifikats",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Bericht für {{phase}} herunterladen",
+     "downloadSurgeryReportError": "Fehler beim Herunterladen des Chirurgieberichts"
+   },
+   "certificate": {
+     "title": "Zertifikat über den Abschluss",
+     "body": "Hiermit wird bestätigt, dass <strong>{{name}}</strong> die zugewiesene Ausbildungsphase des Academic Program zu Technologien des Da Vinci®-Roboters erfolgreich abgeschlossen hat.<br /><br />Dieser Kurs ist Teil des Ausbildungsplans für Robotertechnologie in Zusammenarbeit mit dem Krankenhaus <strong>{{hospital}}</strong> und unter der Aufsicht des zugewiesenen Tutors.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tutor des Residenzprogramms des ",
+     "tutorTitle": "Tutor des Residenzprogramms",
+     "tutorPlaceholder": "Tutor des Programms:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Verantwortlicher für die Ausbildung des Programms {{programa}}"
+   },
+   "residentPhases": {
+     "title": "Meine Ausbildungsphasen",
+     "errorLoad": "Fehler beim Laden des Fortschritts",
+     "activityFail": "Aktivität konnte nicht abgeschlossen werden.",
+     "activitySaveError": "Fehler beim Speichern der Aktivität.",
+     "activitySuccess": "✅ Aktivität erfolgreich registriert",
+     "noActivitySelectedError": "Interner Fehler: Keine Aktivität ausgewählt.",
+     "noTitle": "Kein Titel",
+     "phaseTitle": "Phase {{number}}: {{name}}",
+     "viewInstructions": "Anweisungen anzeigen",
+     "instructionsTitle": "Anweisungen für {{phase}}",
+     "deadline": "Frist",
+     "validatedProgress": "Validierter Fortschritt: {{percent}}%",
+     "noActivities": "Keine Aktivitäten verfügbar",
+     "phaseLocked": "Phase gesperrt",
+     "noProgress": "Kein Fortschritt verfügbar.",
+     "markAsCompleted": "Als abgeschlossen markieren",
+     "unnamedActivity": "Aktivität ohne Namen",
+     "comment": "Kommentar",
+diff --git a/client/src/locales/en.json b/client/src/locales/en.json
+index 27500980bef69236b3b285b641b8a426f3efa9f2..2304326216d352b82ef22d82539b7aff44ea7995 100644
+--- a/client/src/locales/en.json
++++ b/client/src/locales/en.json
+@@ -1028,51 +1028,51 @@
+       "rejectionReason": "Rejection reason",
+       "completedDate": "Completed on",
+       "validatedDate": "Validated on",
+       "state": "Status"
+     },
+     "states": {
+       "validated": "Validated",
+       "rejected": "Rejected",
+       "pending": "Pending validation",
+       "notCompleted": "Not completed"
+     }
+   },
+   "residentProgress": {
+     "title": "My Progress",
+     "errorLoad": "Error loading progress",
+     "downloadError": "Error downloading certificate",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Download report for {{phase}}",
+     "downloadSurgeryReportError": "Error downloading surgery report"
+   },
+   "certificate": {
+     "title": "Certificate of Completion",
+     "body": "This certifies that <strong>{{name}}</strong> has successfully completed the training phase assigned within the Academic Program on Da Vinci® robot technologies.<br /><br />This course is part of the training plan in robotic technology in collaboration with the hospital <strong>{{hospital}}</strong> and under the supervision of the assigned tutor.",
+     "bodySociedad": "This certifies that <strong>{{name}}</strong> has completed the INTUITIVE / {{sociedad}} robotic surgery training curriculum.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Residents program tutor at ",
+     "tutorTitle": "Residents program tutor",
+     "tutorPlaceholder": "Program tutor:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Training manager of the {{programa}} program"
+   },
+   "emails": {
+     "inviteSubject": "Invitation to the Da Vinci Training Platform"
+   },
+   "debug": {
+     "tokenValid": "✅ Token valid and decoded",
+     "tokenInvalid": "❌ Token invalid or corrupt"
+   },
+   "status": {
+     "pendingValidation": "Pending validation",
+     "validado": "Validated",
+     "rechazado": "Rejected",
+     "completado": "Completed",
+     "pendiente": "Pending",
+     "noCompletada": "Not completed",
+     "enProgreso": "In progress",
+     "bloqueada": "Blocked",
+     "active": "Active",
+     "inactive": "Inactive",
+     "validated": "Validated",
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index f8273e4168c22bdb7f35dfe142e831c92aee9e0b..e5d4ea7c9168c15e9c79ece943925c5bae56a974 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -1020,51 +1020,51 @@
+       "rejectionReason": "Motivo rechazo",
+       "completedDate": "Fecha completada",
+       "validatedDate": "Validado el",
+       "state": "Estado"
+     },
+     "states": {
+       "validated": "Validado",
+       "rejected": "Rechazado",
+       "pending": "Pendiente de validación",
+       "notCompleted": "No completada"
+     }
+   },
+   "residentProgress": {
+     "title": "Mi Progreso",
+     "errorLoad": "Error al cargar el progreso",
+     "downloadError": "Error al descargar certificado",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Descargar informe de {{phase}}",
+     "downloadSurgeryReportError": "Error al descargar informe de cirugías"
+   },
+   "certificate": {
+     "title": "Certificado de Cumplimiento",
+     "body": "Se certifica que <strong>{{name}}</strong> ha completado satisfactoriamente la fase formativa asignada del Academic Program en tecnologías del robot Da Vinci®. <br /><br />Este curso se enmarca dentro del plan formativo en tecnología robótica en colaboración con el hospital <strong>{{hospital}}</strong> y bajo la supervisión de su tutor asignado.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tutor del programa de residentes del ",
+     "tutorTitle": "Tutor del programa de residentes",
+     "tutorPlaceholder": "Tutor del programa:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsable de formación del programa {{programa}}"
+   },
+   "emails": {
+     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
+   },
+   "debug": {
+     "tokenValid": "✅ Token válido y decodificado",
+     "tokenInvalid": "❌ Token no válido o corrupto"
+   },
+   "status": {
+     "pendingValidation": "Pendiente de validación",
+     "validado": "Validado",
+     "rechazado": "Rechazado",
+     "completado": "Completado",
+     "pendiente": "Pendiente",
+     "noCompletada": "No completada",
+     "enProgreso": "En progreso",
+     "bloqueada": "Bloqueada",
+     "active": "Activo",
+     "inactive": "Inactivo",
+     "validated": "Validado",
+diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
+index 2c83fa497d7bddd99f1c928ba4603142cf2394b0..1b05db5590f983a0382802e3a77d3fb6f72b29d0 100644
+--- a/client/src/locales/eu.json
++++ b/client/src/locales/eu.json
+@@ -1012,51 +1012,51 @@
+       "rejectionReason": "Baztertzeko arrazoia",
+       "completedDate": "Osatze data",
+       "validatedDate": "Balidatua",
+       "state": "Egoera"
+     },
+     "states": {
+       "validated": "Balidatua",
+       "rejected": "Baztertua",
+       "pending": "Balidazioaren zain",
+       "notCompleted": "Osatu gabe"
+     }
+   },
+   "residentProgress": {
+     "title": "Nire aurrerapena",
+     "errorLoad": "Errorea aurrerapena kargatzean",
+     "downloadError": "Errorea ziurtagiria deskargatzean",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Deskargatu {{phase}} txostena",
+     "downloadSurgeryReportError": "Errorea kirurgia txostena deskargatzean"
+   },
+   "certificate": {
+     "title": "Osaketaren Ziurtagiria",
+     "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madril, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Egoiliarren programaren tutorea ",
+     "tutorTitle": "Egoiliarren programaren tutorea",
+     "tutorPlaceholder": "Programaren tutorea:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Programaren prestakuntzaren arduraduna {{programa}}"
+   },
+   "emails": {
+     "inviteSubject": "Gonbidapena Da Vinci Prestakuntza Plataformara"
+   },
+   "debug": {
+     "tokenValid": "✅ Token baliozkoa eta deskodetua",
+     "tokenInvalid": "❌ Token baliogabea edo hondatuta"
+   },
+   "status": {
+     "pendingValidation": "Balidazioaren zain",
+     "validado": "Balidatuta",
+     "rechazado": "Baztertuta",
+     "completado": "Osatuta",
+     "pendiente": "Zain",
+     "noCompletada": "Osatu gabe",
+     "enProgreso": "Prozesuan",
+     "bloqueada": "Blokeatuta",
+     "active": "Aktibo",
+     "inactive": "Inaktibo",
+     "validated": "Balidatuta",
+diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
+index e60b3d7fff8d02a77014e048909f5e60a63ecace..4d889b25b25aaadca51240dc6d92d36861fb2699 100644
+--- a/client/src/locales/fr.json
++++ b/client/src/locales/fr.json
+@@ -782,51 +782,51 @@
+       "validateConfirm": "Vous validez l'activité {{activity}} du résident {{resident}}.",
+       "rejectConfirm": "Vous rejetez l'activité {{activity}} du résident {{resident}}.",
+       "commentsOptional": "Commentaires (facultatif)",
+       "digitalSignature": "Signature numérique",
+       "rejectReason": "Motif du rejet",
+       "processing": "Traitement en cours..."
+     },
+     "messages": {
+       "loadError": "Erreur lors du chargement des validations",
+       "noAttachments": "Aucune pièce jointe disponible"
+     }
+   },
+   "residentProgress": {
+     "title": "Mon progrès",
+     "errorLoad": "Erreur lors du chargement du progrès",
+     "downloadError": "Erreur lors du téléchargement du certificat",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Télécharger le rapport de {{phase}}",
+     "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
+   },
+   "certificate": {
+     "title": "Certificat de réussite",
+     "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tuteur du programme de résidents de ",
+     "tutorTitle": "Tuteur du programme de résidents",
+     "tutorPlaceholder": "Tuteur du programme :",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsable de formation du programme {{programa}}"
+   },
+   "adminPhases": {
+     "_comment": "Gestion des phases d'administration",
+     "phase": "Phase",
+     "activity": "Activité",
+     "activities": "Activités",
+     "name": "Nom",
+     "order": "Ordre",
+     "type": "Type",
+     "description": "Description",
+     "number": "Numéro",
+     "evaluation": "Évaluation",
+     "observation": "Observation",
+     "practice": "Pratique",
+     "theory": "Théorie",
+     "surgery": "Chirurgie",
+     "errorForbidden": "Vous n'avez pas la permission d'accéder à cette section",
+     "errorLoadData": "Erreur lors du chargement des données",
+     "tabs": {
+       "aria": "onglets des phases",
+diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
+index 7606cf12fd283d32abb598950d13c3ae49d2cf0d..ffea4553e7d9f6cb3854dbe413119f0529238a46 100644
+--- a/client/src/locales/gl.json
++++ b/client/src/locales/gl.json
+@@ -914,51 +914,51 @@
+     "messages": {
+       "loadError": "Erro ao cargar as validacións",
+       "noAttachments": "Non hai anexos dispoñibles"
+     }
+   },
+   "emails": {
+     "inviteSubject": "Invitación á Plataforma de Formación Da Vinci"
+   },
+   "debug": {
+     "tokenValid": "✅ Token válido e decodificado",
+     "tokenInvalid": "❌ Token non válido ou corrompido"
+   },
+   "residentProgress": {
+     "title": "O meu progreso",
+     "errorLoad": "Erro ao cargar o progreso",
+     "downloadError": "Erro ao descargar o certificado",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Descargar informe de {{phase}}",
+     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
+   },
+   "certificate": {
+     "title": "Certificado de Cumprimento",
+     "body": "Certifícase que <strong>{{name}}</strong> completou satisfactoriamente a fase formativa asignada do Academic Program en tecnoloxías do robot Da Vinci®. <br /><br />Este curso enmárcase dentro do plan formativo en tecnoloxía robótica en colaboración co hospital <strong>{{hospital}}</strong> e baixo a supervisión do seu titor asignado.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Titor do programa de residentes do ",
+     "tutorTitle": "Titor do programa de residentes",
+     "tutorPlaceholder": "Titor do programa:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsable de formación do programa {{programa}}"
+   },
+   "forms": {
+     "code": "Código",
+     "numericCode": "Código numérico",
+     "postalCode": "Código postal",
+     "address": "Enderezo",
+     "phone": "Teléfono",
+     "description": "Descrición",
+     "number": "Número",
+     "title": "Título",
+     "completionDate": "Data de realización",
+     "selectDate": "Selecciona unha data de realización",
+     "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
+       "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
+     "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB."
+   },
+   "residentMilestones": {
+     "phase1": {
+       "label": "Fase 1 - Preparación Inicial",
+       "description": "Familiarización co sistema Da Vinci e aspectos teóricos iniciais."
+diff --git a/client/src/locales/it.json b/client/src/locales/it.json
+index ec0d4f825a9bd7446af5eaef0d9d6260598f74d4..a1f61712b19eb150a1d37eb2b80145a796359df0 100644
+--- a/client/src/locales/it.json
++++ b/client/src/locales/it.json
+@@ -425,51 +425,51 @@
+       "label": "Fase 2 - Formazione preclinica",
+       "description": "Esercizi di simulazione e formazione in ambiente sicuro."
+     },
+     "phase3": {
+       "label": "Fase 3 - Assistenza chirurgica",
+       "description": "Partecipazione come assistente in sala operatoria."
+     },
+     "phase4": {
+       "label": "Fase 4 - Chirurgia alla console",
+       "description": "Chirurgie eseguite dal residente sotto supervisione."
+     }
+   },
+   "residentProgress": {
+     "title": "Il mio progresso",
+     "errorLoad": "Errore durante il caricamento del progresso",
+     "downloadError": "Errore durante il download del certificato",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Scarica il report di {{phase}}",
+     "downloadSurgeryReportError": "Errore nel download del report delle chirurgie"
+   },
+   "certificate": {
+     "title": "Certificato di Completamento",
+     "body": "Si certifica che <strong>{{name}}</strong> ha completato con successo la fase formativa assegnata dell'Academic Program sulle tecnologie del robot Da Vinci®. <br /><br />Questo corso rientra nel piano formativo sulla tecnologia robotica in collaborazione con l'ospedale <strong>{{hospital}}</strong> e sotto la supervisione del tutor assegnato.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tutor del programma di residenti del ",
+     "tutorTitle": "Tutor del programma di residenti",
+     "tutorPlaceholder": "Tutor del programma:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsabile della formazione del programma {{programa}}"
+   },
+   "tutorUsers": {
+     "title": "I miei utenti",
+     "invite": "Invita utente",
+     "edit": "Modifica utente",
+     "updated": "Utente aggiornato",
+     "invited": "Utente invitato",
+     "deleted": "Utente eliminato",
+     "error": "Errore",
+     "deleteError": "Errore durante l'eliminazione",
+     "loadError": "Errore durante il caricamento degli utenti",
+     "table": {
+       "name": "Nome",
+       "email": "Email",
+       "role": "Ruolo",
+       "status": "Stato",
+       "actions": "Azioni",
+       "state": "Stato"
+     },
+     "form": {
+diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
+index adbaa22499fd5780fb343f034017670d55b76b28..d8dd45c0afbebc7a45bc95cb15cc4b0b22e4012e 100644
+--- a/client/src/locales/pt.json
++++ b/client/src/locales/pt.json
+@@ -1040,47 +1040,47 @@
+     },
+     "states": {
+       "validated": "Validado",
+       "rejected": "Rejeitado"
+     },
+     "dialogs": {
+       "validateTitle": "Validar Atividade",
+       "rejectTitle": "Rejeitar Atividade",
+       "validateConfirm": "Você está validando a atividade {{activity}} do residente {{resident}}.",
+       "rejectConfirm": "Você está rejeitando a atividade {{activity}} do residente {{resident}}.",
+       "commentsOptional": "Comentários (opcional)",
+       "digitalSignature": "Assinatura Digital",
+       "rejectReason": "Motivo da rejeição",
+       "processing": "Processando..."
+     },
+     "messages": {
+       "loadError": "Erro ao carregar as validações",
+       "noAttachments": "Nenhum anexo disponível"
+     }
+   },
+   "certificate": {
+     "title": "Certificado de Cumprimento",
+     "body": "Certifica-se que <strong>{{name}}</strong> completou satisfatoriamente a fase formativa designada do Academic Program em tecnologias do robô Da Vinci®. <br /><br />Este curso faz parte do plano formativo em tecnologia robótica em colaboração com o hospital <strong>{{hospital}}</strong> e sob a supervisão do seu tutor designado.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
++    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tutor do programa de residentes do ",
+     "tutorTitle": "Tutor do programa de residentes",
+     "tutorPlaceholder": "Tutor do programa:",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsável pela formação do programa {{programa}}"
+   },
+   "emails": {
+     "inviteSubject": "Convite para a Plataforma de Formação Da Vinci"
+   },
+   "debug": {
+     "tokenValid": "✅ Token válido e decodificado",
+     "tokenInvalid": "❌ Token inválido ou corrompido"
+   },
+   "privacyPolicy": {
+     "title": "Política de privacidade",
+     "lastUpdated": "Última atualização: {{date}}"
+   },
+   "adminReports": {
+     "exportHospitals": "Hospitais"
    }
- }));
- 
--const formatActivityType = (type?: string): string => {
--  if (!type) return '';
--  return type.charAt(0).toUpperCase() + type.slice(1);
--};
-+const formatActivityType = (type?: string): string => {
-+  if (!type) return '';
-+  return type.charAt(0).toUpperCase() + type.slice(1);
-+};
-+
-+type SurgeryOption = { _id: string; name: string; inputValue?: string };
-+const surgeryFilter = createFilterOptions<SurgeryOption>();
- 
- const ResidenteFases: React.FC = () => {
-   const theme = useTheme();
-   const { user } = useAuth();
-   const { t, i18n } = useTranslation();
-   const placeholderToken = '___';
- 
-   const getLabelFromTranslation = (key: string, params: Record<string, string>) => {
-     const raw = t(key as any, params);
-     return raw
-       .replace(new RegExp(`${placeholderToken}`, 'g'), '')
-       .replace(/[:：]\s*$/, '')
-       .replace(/[%％]\s*$/, '')
-       .trim();
-   };
-   const [progresos, setProgresos] = useState<any[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [dialogOpen, setDialogOpen] = useState(false);
-   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
-   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
-   const [comentario, setComentario] = useState('');
-   const [fecha, setFecha] = useState('');
-   const [archivos, setArchivos] = useState<File[]>([]);
-   const [archivoError, setArchivoError] = useState(false);
-@@ -1061,111 +1065,163 @@ const ResidenteFases: React.FC = () => {
-           {dialogMode === 'edit'
-             ? t('residentPhases.dialog.editTitle')
-             : t('residentPhases.dialog.title')}
-         </DialogTitle>
-         <DialogContent>
-           <TextField
-             label={t('residentPhases.dialog.date')}
-             type="date"
-             value={fecha}
-             onChange={(e) => setFecha(e.target.value)}
-             fullWidth
-             margin="normal"
-             InputLabelProps={{ shrink: true }}
-           />
-           <TextField
-             label={t('residentPhases.dialog.comment')}
-             value={comentario}
-             onChange={(e) => setComentario(e.target.value)}
-             fullWidth
-             multiline
-             rows={3}
-             margin="normal"
-           />
-           {esCirugia && (
-             <>
--              <Autocomplete
--                options={[...surgeryTypes, { _id: 'other', name: 'Other' }]}
--                isOptionEqualToValue={(opt, val) =>
--                  typeof val === 'string'
--                    ? opt.name === val
--                    : opt._id === (val as any)?._id
--                }
--                getOptionLabel={(option: any) =>
--                  typeof option === 'string' ? option : option.name
--                }
--                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
--                inputValue={surgeryInputValue}
--                onChange={(_, value) => {
--                  if (typeof value === 'string') {
--                    setCirugia(null);
--                    setOtraCirugia(value);
--                    setOtraCirugiaSeleccionada(true);
--                    setSurgeryInputValue(value);
--                  } else if (!value) {
--                    setCirugia(null);
--                    setOtraCirugia('');
--                    setOtraCirugiaSeleccionada(false);
--                    setSurgeryInputValue('');
--                  } else if ((value as any)?._id === 'other') {
--                    setCirugia(null);
--                    setOtraCirugia('');
--                    setOtraCirugiaSeleccionada(true);
--                    setSurgeryInputValue('');
--                  } else {
--                    setCirugia(value);
--                    setOtraCirugiaSeleccionada(false);
--                    setSurgeryInputValue(value.name || '');
--                  }
--                }}
--                onInputChange={(_, newValue) => {
--                  setSurgeryInputValue(newValue);
--                  if (otraCirugiaSeleccionada) setOtraCirugia(newValue);
--                }}
--                renderInput={(params) => (
--                  <TextField
--                    {...params}
--                    label={t('residentPhases.dialog.surgery')}
--                    margin="normal"
--                    required
--                    error={
--                      mostrarErroresCirugia &&
--                      esCirugia &&
--                      !(cirugia || otraCirugia.trim())
--                    }
--                    helperText={
--                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
--                        ? t('residentPhases.dialog.surgeryRequired')
--                        : otraCirugiaSeleccionada
--                        ? t('residentPhases.dialog.otherSurgeryTooltip')
--                        : ''
--                    }
--                  />
--                )}
--                fullWidth
--                freeSolo={otraCirugiaSeleccionada}
--              />
-+              <Autocomplete
-+                options={surgeryTypes as SurgeryOption[]}
-+                filterOptions={(options, params) => {
-+                  const filtered = surgeryFilter(options, params);
-+                  const trimmed = params.inputValue.trim();
-+                  const alreadyExists = options.some(
-+                    (option) =>
-+                      option.name?.toLowerCase() === trimmed.toLowerCase()
-+                  );
-+
-+                  if (trimmed && !alreadyExists) {
-+                    filtered.push({
-+                      inputValue: trimmed,
-+                      _id: 'custom',
-+                      name: t('residentPhases.dialog.surgeryAddCustom', {
-+                        value: trimmed
-+                      })
-+                    });
-+                  }
-+
-+                  return filtered;
-+                }}
-+                isOptionEqualToValue={(opt, val) =>
-+                  typeof val === 'string'
-+                    ? opt.name === val
-+                    : opt._id === (val as any)?._id
-+                }
-+                getOptionLabel={(option: any) => {
-+                  if (typeof option === 'string') return option;
-+                  if (option.inputValue) return option.inputValue;
-+                  return option.name;
-+                }}
-+                value={otraCirugiaSeleccionada ? otraCirugia : cirugia}
-+                inputValue={surgeryInputValue}
-+                onChange={(_, value) => {
-+                  if (typeof value === 'string') {
-+                    const trimmedValue = value.trim();
-+                    setCirugia(null);
-+                    setOtraCirugia(trimmedValue);
-+                    setOtraCirugiaSeleccionada(!!trimmedValue);
-+                    setSurgeryInputValue(trimmedValue);
-+                  } else if (value && (value as SurgeryOption).inputValue) {
-+                    const customValue = (value as SurgeryOption).inputValue || '';
-+                    setCirugia(null);
-+                    setOtraCirugia(customValue);
-+                    setOtraCirugiaSeleccionada(!!customValue);
-+                    setSurgeryInputValue(customValue);
-+                  } else if (!value) {
-+                    setCirugia(null);
-+                    setOtraCirugia('');
-+                    setOtraCirugiaSeleccionada(false);
-+                    setSurgeryInputValue('');
-+                  } else {
-+                    setCirugia(value);
-+                    setOtraCirugia('');
-+                    setOtraCirugiaSeleccionada(false);
-+                    setSurgeryInputValue(value.name || '');
-+                  }
-+                }}
-+                onInputChange={(_, newValue, reason) => {
-+                  setSurgeryInputValue(newValue);
-+                  if (otraCirugiaSeleccionada && reason === 'input')
-+                    setOtraCirugia(newValue);
-+                }}
-+                renderOption={(props, option) => {
-+                  const typedOption = option as SurgeryOption;
-+                  return (
-+                    <li
-+                      {...props}
-+                      key={
-+                        typedOption._id ??
-+                        typedOption.inputValue ??
-+                        typedOption.name
-+                      }
-+                    >
-+                      <Stack spacing={0.25}>
-+                        <Typography variant="body2">{typedOption.name}</Typography>
-+                        {typedOption.inputValue && (
-+                          <Typography variant="caption" color="text.secondary">
-+                            {t('residentPhases.dialog.otherSurgeryTooltip')}
-+                          </Typography>
-+                        )}
-+                      </Stack>
-+                    </li>
-+                  );
-+                }}
-+                renderInput={(params) => (
-+                  <TextField
-+                    {...params}
-+                    label={t('residentPhases.dialog.surgery')}
-+                    margin="normal"
-+                    required
-+                    placeholder={t('residentPhases.dialog.surgeryHelper')}
-+                    error={
-+                      mostrarErroresCirugia &&
-+                      esCirugia &&
-+                      !(cirugia || otraCirugia.trim())
-+                    }
-+                    helperText={
-+                      mostrarErroresCirugia && esCirugia && !(cirugia || otraCirugia.trim())
-+                        ? t('residentPhases.dialog.surgeryRequired')
-+                        : otraCirugiaSeleccionada
-+                        ? t('residentPhases.dialog.otherSurgeryTooltip')
-+                        : t('residentPhases.dialog.surgeryHelper')
-+                    }
-+                  />
-+                )}
-+                fullWidth
-+                freeSolo
-+                selectOnFocus
-+                clearOnBlur
-+                handleHomeEndKeys
-+              />
-               <TextField
-                 label={t('residentPhases.dialog.surgeonName')}
-                 value={nombreCirujano}
-                 onChange={(e) => setNombreCirujano(e.target.value)}
-                 fullWidth
-                 margin="normal"
-                 required
-                 error={mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()}
-                 helperText={
-                   mostrarErroresCirugia && esCirugia && !nombreCirujano.trim()
-                     ? t('residentPhases.dialog.surgeonNameRequired')
-                     : ''
-                 }
-               />
-               <TextField
-                 select
-                 label={t('residentPhases.dialog.participation')}
-                 value={porcentaje}
-                 onChange={(e) => setPorcentaje(Number(e.target.value))}
-                 fullWidth
-                 margin="normal"
-                 required
-                 error={mostrarErroresCirugia && esCirugia && porcentaje === 0}
-                 helperText={
-                   mostrarErroresCirugia && esCirugia && porcentaje === 0
+ }

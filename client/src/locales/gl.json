@@ -55,6 +55,7 @@
       "aria": "actividades da fase {{number}}",
       "order": "Orde",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatorio",
       "type": "Tipo",
       "actions": "Accións",
       "description": "Descrición",
@@ -142,7 +143,8 @@
     "requiresValidation": "Require validación",
     "requiresSignature": "Require sinatura",
     "requiresPercentage": "Require porcentaxe",
-    "requiresAttachment": "Require adxunto"
+    "requiresAttachment": "Require adxunto",
+    "optionalAttachment": "Adxunto opcional"
   },
   "adminPhasesSoc": {
     "_comment": "Xestión de fases para o programa de Sociedades",
@@ -151,6 +153,7 @@
     "table": {
       "order": "Orde",
       "name": "Nome",
+      "attachmentRequired": "Anexo obrigatorio",
       "type": "Tipo",
       "actions": "Accións"
     },
@@ -336,13 +339,36 @@
     "validate": "Validar",
     "reject": "Rexectar",
     "processing": "Procesando...",
+    "edit": "Editar",
+    "enterUrl": "Introduce unha URL",
     "none": "Ningún"
+  },
+  "richText": {
+    "bold": "Negra",
+    "italic": "Cursiva",
+    "bulletList": "Lista con viñetas",
+    "orderedList": "Lista numerada",
+    "link": "Ligazón"
   },
   "profile": {
     "title": "O meu perfil",
     "personalData": "Datos persoais",
     "changePassword": "Cambiar contrasinal",
+    "overview": "Resumo da conta",
     "noTutor": "Sen tutor asignado",
+    "status": {
+      "role": "Rol",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialidade",
+      "active": "Conta activa",
+      "inactive": "Conta inactiva"
+    },
+    "completeness": {
+      "title": "Completitude do perfil",
+      "helper": "Manteña os seus datos ao día para unha mellor experiencia"
+    },
     "fields": {
       "name": "Nome",
       "lastName": "Apelidos",
@@ -363,7 +389,22 @@
       "passwordUpdateError": "Erro ao cambiar o contrasinal"
     },
     "buttons": {
-      "changePassword": "Cambiar contrasinal"
+      "changePassword": "Cambiar contrasinal",
+      "edit": "Editar datos"
+    },
+    "editMode": {
+      "description": "Modo edición activado: garde ou cancele para saír",
+      "readonlyHint": "Campo só lectura"
+    },
+    "dialogs": {
+      "passwordTitle": "Cambiar contrasinal",
+      "passwordDescription": "Actualice o contrasinal sen saír desta páxina"
+    },
+    "security": {
+      "title": "Seguridade e acceso",
+      "tipStrongPassword": "Use contrasinais únicos e seguros.",
+      "tipRegularUpdates": "Actualice o contrasinal de forma periódica.",
+      "tipSignOut": "Peche sesión en dispositivos compartidos."
     }
   },
   "adminHospitals": {
@@ -895,7 +936,7 @@
     "body": "Certifícase que <strong>{{name}}</strong> completou satisfactoriamente a fase formativa asignada do Academic Program en tecnoloxías do robot Da Vinci®. <br /><br />Este curso enmárcase dentro do plan formativo en tecnoloxía robótica en colaboración co hospital <strong>{{hospital}}</strong> e baixo a supervisión do seu titor asignado.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Titor do programa de residentes do ",
     "tutorTitle": "Titor do programa de residentes",
     "tutorPlaceholder": "Titor do programa:",
@@ -914,6 +955,7 @@
     "completionDate": "Data de realización",
     "selectDate": "Selecciona unha data de realización",
     "optionalFileHint": "Adxunta un ficheiro opcional (máx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "O ficheiro supera o tamaño máximo de 5MB."
   },
   "residentMilestones": {
@@ -945,6 +987,8 @@
     "downloadAttachmentError": "Erro ao descargar o ficheiro adxunto.",
     "noTitle": "Sen título",
     "phaseTitle": "Fase {{number}}: {{name}}",
+    "viewInstructions": "Ver instrucións",
+    "instructionsTitle": "Instrucións de {{phase}}",
     "deadline": "Data límite",
     "validatedProgress": "Progreso validado: {{percent}}%",
     "noActivities": "Non hai actividades dispoñibles",
@@ -964,6 +1008,7 @@
     "participation": "Porcentaxe de participación: {{percent}}%",
     "downloadAttachment": "Descargar ficheiro",
     "pendingAttachment": "Ficheiro adxunto enviado",
+    "requiresAttachment": "Require adxunto",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividade como completada",
@@ -977,6 +1022,7 @@
       "surgeonName": "Nome do cirurxián",
       "participation": "Porcentaxe de participación",
       "selectFile": "Seleccionar ficheiros",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta o ID do progreso",
@@ -990,6 +1036,7 @@
       "participationRequired": "Selecciona unha porcentaxe de participación",
       "requiredFieldsNote": "Os campos marcados con * son obrigatorios.",
       "requiredSurgeryFields": "Completa os campos obrigatorios da cirurxía.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Marcar actividade como completada",
       "editTitle": "Editar actividade enviada",
       "currentFiles": "Ficheiros actuais",
@@ -1031,4 +1078,3 @@
     "exportHospitals": "Hospitais"
   }
 }
-

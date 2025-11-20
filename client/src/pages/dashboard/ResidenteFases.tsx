@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Typography,
@@ -36,13 +36,17 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import DownloadIcon from '@mui/icons-material/Download';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useTheme, alpha, styled } from '@mui/material/styles';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { Sociedad } from '../../types/Sociedad';
 import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
 import { useTranslation } from 'react-i18next';
+import RichTextViewer from '../../components/RichTextViewer';
+import { richTextOrUndefined } from '../../utils/richText';
 
 const CompletionSwitch = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -156,7 +160,18 @@ const ResidenteFases: React.FC = () => {
   const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
   const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
   const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
+  const actividadSeleccionada = useMemo(() => {
+    if (!selectedProgresoId || selectedActividadIndex === null) return null;
+    const progresoActual = progresos.find(p => p._id === selectedProgresoId);
+    return progresoActual?.actividades?.[selectedActividadIndex] || null;
+  }, [progresos, selectedActividadIndex, selectedProgresoId]);
+  const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
+  const [instructionsDialog, setInstructionsDialog] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+  }>({ open: false, title: '', description: undefined });
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -338,12 +353,6 @@ const ResidenteFases: React.FC = () => {
     handleOpenDialog(progresoId, index, undefined, 'edit');
   };
 
-  const botonConfirmarHabilitado =
-    Boolean(selectedProgresoId) &&
-    selectedActividadIndex !== null &&
-    Boolean(fecha) &&
-    !archivoError;
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     const MAX_FILES = 5;
@@ -392,6 +401,29 @@ const ResidenteFases: React.FC = () => {
   const adjuntosExistentesVisibles = adjuntosExistentes.filter(
     adj => !adjuntosEliminados.includes(adj._id)
   );
+  const totalAdjuntosSeleccionados =
+    adjuntosExistentesVisibles.length + archivos.length;
+  const adjuntosObligatoriosCompletos =
+    !actividadRequiereAdjunto || totalAdjuntosSeleccionados > 0;
+  const botonConfirmarHabilitado =
+    Boolean(selectedProgresoId) &&
+    selectedActividadIndex !== null &&
+    Boolean(fecha) &&
+    !archivoError &&
+    adjuntosObligatoriosCompletos;
+  const tooltipMessage = (() => {
+    if (archivoError) return archivoErrorMsg;
+    if (!selectedProgresoId) return t('residentPhases.dialog.missingProgressId');
+    if (selectedActividadIndex === null) return t('residentPhases.dialog.noActivitySelected');
+    if (!fecha) return t('residentPhases.dialog.selectDate');
+    if (esCirugia && !(cirugia || otraCirugia.trim())) return t('residentPhases.dialog.surgeryRequired');
+    if (esCirugia && !nombreCirujano.trim()) return t('residentPhases.dialog.surgeonNameRequired');
+    if (esCirugia && porcentaje === 0) return t('residentPhases.dialog.participationRequired');
+    if (!adjuntosObligatoriosCompletos) return t('residentPhases.dialog.attachmentRequired');
+    return actividadRequiereAdjunto
+      ? t('residentPhases.dialog.mandatoryFileHint', { max: 5 })
+      : t('residentPhases.dialog.optionalFileHint', { max: 5 });
+  })();
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -427,6 +459,7 @@ const ResidenteFases: React.FC = () => {
     const progreso = progresos.find(p => p._id === selectedProgresoId);
     const actividad = progreso?.actividades?.[selectedActividadIndex!];
     const esCirugiaActividad = actividad?.tipo === 'cirugia';
+    const requiereAdjuntoActividad = Boolean(actividad?.requiereAdjunto);
 
     if (esCirugiaActividad) {
       setMostrarErroresCirugia(true);
@@ -441,6 +474,13 @@ const ResidenteFases: React.FC = () => {
         setSnackbarOpen(true);
         return;
       }
+    }
+
+    if (requiereAdjuntoActividad && totalAdjuntosSeleccionados === 0) {
+      setSnackbarError(true);
+      setSnackbarMsg(t('residentPhases.dialog.attachmentRequired'));
+      setSnackbarOpen(true);
+      return;
     }
 
     try {
@@ -572,6 +612,31 @@ const ResidenteFases: React.FC = () => {
     setSnackbarOpen(false);
   };
 
+  const handleOpenInstructionsDialog = (fase: any, descriptionHtml: string) => {
+    const phaseLabel = t('residentPhases.phaseTitle', {
+      number: fase?.numero || '—',
+      name: fase?.nombre || t('residentPhases.noTitle'),
+    });
+    setInstructionsDialog({
+      open: true,
+      title: t('residentPhases.instructionsTitle', { phase: phaseLabel }),
+      description: descriptionHtml,
+    });
+  };
+
+  const handleInstructionsButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    fase: any,
+    descriptionHtml: string,
+  ) => {
+    event.stopPropagation();
+    handleOpenInstructionsDialog(fase, descriptionHtml);
+  };
+
+  const handleCloseInstructionsDialog = () => {
+    setInstructionsDialog((prev) => ({ ...prev, open: false }));
+  };
+
   if (loading) {
     return (
       <Box>
@@ -596,16 +661,40 @@ const ResidenteFases: React.FC = () => {
       
       {Array.isArray(progresos) && progresos.length > 0 ? (
   progresos.map((item, index) => {
+    const phaseDescriptionHtml = richTextOrUndefined(item.fase?.descripcion);
 
     return (
       <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">
-            {t('residentPhases.phaseTitle', {
-              number: item.fase?.numero || '—',
-              name: item.fase?.nombre || t('residentPhases.noTitle')
-            })}
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              flexWrap: 'wrap',
+              flex: 1,
+            }}
+          >
+            <Typography variant="h6">
+              {t('residentPhases.phaseTitle', {
+                number: item.fase?.numero || '—',
+                name: item.fase?.nombre || t('residentPhases.noTitle')
+              })}
+            </Typography>
+            {phaseDescriptionHtml && (
+              <Tooltip title={t('residentPhases.viewInstructions')}>
+                <IconButton
+                  size="small"
+                  color="primary"
+                  onClick={(event) =>
+                    handleInstructionsButtonClick(event, item.fase, phaseDescriptionHtml)
+                  }
+                >
+                  <InfoOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
           {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
             <Typography
               sx={{ ml: 'auto', color: getDateColor(item.fase.numero, item.estadoGeneral) }}
@@ -827,6 +916,35 @@ const ResidenteFases: React.FC = () => {
                                     ? theme.palette.grey[100]
                                     : theme.palette.grey[800],
                                 color: theme.palette.text.primary
+                              }}
+                            />
+                          )}
+                          {act.requiereAdjunto && (
+                            <Chip
+                              size="small"
+                              icon={<AttachFileIcon fontSize="small" />}
+                              label={t('residentPhases.requiresAttachment')}
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor:
+                                  theme.palette.mode === 'light'
+                                    ? alpha(theme.palette.secondary.light, 0.25)
+                                    : alpha(theme.palette.secondary.main, 0.35),
+                                color:
+                                  theme.palette.mode === 'light'
+                                    ? theme.palette.secondary.dark
+                                    : theme.palette.secondary.light,
+                                '& .MuiChip-icon': {
+                                  color:
+                                    theme.palette.mode === 'light'
+                                      ? theme.palette.secondary.dark
+                                      : theme.palette.secondary.light,
+                                },
+                                border: `1px solid ${
+                                  theme.palette.mode === 'light'
+                                    ? alpha(theme.palette.secondary.main, 0.4)
+                                    : alpha(theme.palette.secondary.light, 0.6)
+                                }`,
                               }}
                             />
                           )}
@@ -1060,6 +1178,30 @@ const ResidenteFases: React.FC = () => {
 
 
 
+      <Dialog
+        open={instructionsDialog.open}
+        onClose={handleCloseInstructionsDialog}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          {instructionsDialog.title ||
+            t('residentPhases.instructionsTitle', {
+              phase: t('residentPhases.noTitle'),
+            })}
+        </DialogTitle>
+        <DialogContent>
+          <RichTextViewer
+            content={instructionsDialog.description}
+            variant="inline"
+            minHeight={0}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         <DialogTitle>
           {dialogMode === 'edit'
@@ -1240,6 +1382,11 @@ const ResidenteFases: React.FC = () => {
               </Typography>
             </>
           )}
+          {actividadRequiereAdjunto && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              {t('residentPhases.dialog.attachmentMandatory')}
+            </Alert>
+          )}
           <Button variant="outlined" component="label" sx={{ mt: 1 }}>
             {t('residentPhases.dialog.selectFile')}
             <input
@@ -1251,7 +1398,9 @@ const ResidenteFases: React.FC = () => {
             />
           </Button>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-            {t('residentPhases.dialog.optionalFileHint', { max: 5 })}
+            {actividadRequiereAdjunto
+              ? t('residentPhases.dialog.mandatoryFileHint', { max: 5 })
+              : t('residentPhases.dialog.optionalFileHint', { max: 5 })}
           </Typography>
 
           {adjuntosExistentes.length > 0 && (
@@ -1359,23 +1508,7 @@ const ResidenteFases: React.FC = () => {
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t('residentPhases.dialog.cancel')}</Button>
           <Tooltip
-            title={
-              archivoError
-                ? archivoErrorMsg
-                : !selectedProgresoId
-                ? t('residentPhases.dialog.missingProgressId')
-                : selectedActividadIndex === null
-                ? t('residentPhases.dialog.noActivitySelected')
-                : !fecha
-                ? t('residentPhases.dialog.selectDate')
-                : esCirugia && !(cirugia || otraCirugia.trim())
-                ? t('residentPhases.dialog.surgeryRequired')
-                : esCirugia && !nombreCirujano.trim()
-                ? t('residentPhases.dialog.surgeonNameRequired')
-                : esCirugia && porcentaje === 0
-                ? t('residentPhases.dialog.participationRequired')
-                : t('residentPhases.dialog.optionalFileHint', { max: 5 })
-            }
+            title={tooltipMessage}
             arrow
             disableHoverListener={botonConfirmarHabilitado}
           >

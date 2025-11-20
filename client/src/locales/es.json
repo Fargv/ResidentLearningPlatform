@@ -55,6 +55,7 @@
       "aria": "actividades de la fase {{number}}",
       "order": "Orden",
       "name": "Nombre",
+      "attachmentRequired": "Adjunto obligatorio",
       "type": "Tipo",
       "actions": "Acciones",
       "description": "Descripción",
@@ -142,7 +143,8 @@
     "requiresValidation": "Requiere validación",
     "requiresSignature": "Requiere firma",
     "requiresPercentage": "Requiere porcentaje",
-    "requiresAttachment": "Requiere adjunto"
+    "requiresAttachment": "Requiere adjunto",
+    "optionalAttachment": "Adjunto opcional"
   },
   "progressByPhase": "Progreso por fase",
   "close": "Cerrar",
@@ -264,13 +266,36 @@
     "validate": "Validar",
     "reject": "Rechazar",
     "processing": "Procesando...",
+    "edit": "Editar",
+    "enterUrl": "Introduce una URL",
     "none": "Ninguno"
+  },
+  "richText": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "bulletList": "Lista con viñetas",
+    "orderedList": "Lista numerada",
+    "link": "Enlace"
   },
   "profile": {
     "title": "Mi Perfil",
     "personalData": "Datos personales",
     "changePassword": "Cambiar Contraseña",
-      "noTutor": "Sin tutor asignado",
+    "overview": "Resumen de cuenta",
+    "noTutor": "Sin tutor asignado",
+    "status": {
+      "role": "Rol",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialidad",
+      "active": "Cuenta activa",
+      "inactive": "Cuenta inactiva"
+    },
+    "completeness": {
+      "title": "Completitud del perfil",
+      "helper": "Mantén tus datos al día para que podamos personalizar tu experiencia"
+    },
     "fields": {
       "name": "Nombre",
       "lastName": "Apellidos",
@@ -282,7 +307,7 @@
       "newPassword": "Nueva Contraseña",
       "confirmPassword": "Confirmar Contraseña"
     },
-    
+
     "messages": {
       "updateSuccess": "Perfil actualizado",
       "updateError": "Error al actualizar el perfil",
@@ -291,7 +316,22 @@
       "passwordUpdateError": "Error al cambiar la contraseña"
     },
     "buttons": {
-      "changePassword": "Cambiar Contraseña"
+      "changePassword": "Cambiar Contraseña",
+      "edit": "Editar datos"
+    },
+    "editMode": {
+      "description": "Modo edición activado: guarda o cancela para salir",
+      "readonlyHint": "Campo de solo lectura"
+    },
+    "dialogs": {
+      "passwordTitle": "Cambiar contraseña",
+      "passwordDescription": "Actualiza tu contraseña sin salir de esta página"
+    },
+    "security": {
+      "title": "Seguridad y acceso",
+      "tipStrongPassword": "Usa contraseñas únicas y difíciles de adivinar.",
+      "tipRegularUpdates": "Actualiza tu contraseña de forma periódica.",
+      "tipSignOut": "Cierra sesión en dispositivos compartidos."
     }
   },
   "adminHospitals": {
@@ -499,6 +539,7 @@
     "table": {
       "order": "Orden",
       "name": "Nombre",
+      "attachmentRequired": "Adjunto obligatorio",
       "type": "Tipo",
       "actions": "Acciones"
     },
@@ -900,9 +941,11 @@
     "activitySaveError": "Error al guardar la actividad.",
     "activitySuccess": "✅ Actividad registrada con éxito",
     "noActivitySelectedError": "Error interno: No se ha seleccionado ninguna actividad.",
-    "downloadAttachmentError": "Error al descargar el archivo adjunto.",
-    "noTitle": "Sin título",
-    "phaseTitle": "Fase {{number}}: {{name}}",
+  "downloadAttachmentError": "Error al descargar el archivo adjunto.",
+  "noTitle": "Sin título",
+  "phaseTitle": "Fase {{number}}: {{name}}",
+  "viewInstructions": "Ver instrucciones",
+  "instructionsTitle": "Instrucciones de {{phase}}",
     "deadline": "Fecha límite",
     "validatedProgress": "Progreso validado: {{percent}}%",
     "noActivities": "No hay actividades disponibles",
@@ -922,6 +965,7 @@
     "participation": "Porcentaje de participación: {{percent}}%",
     "downloadAttachment": "Descargar archivo",
     "pendingAttachment": "Archivo adjunto enviado",
+    "requiresAttachment": "Adjunto obligatorio",
     "status": "Estado",
     "dialog": {
       "completeActivity": "Marcar actividad como completada",
@@ -935,12 +979,14 @@
       "surgeonName": "Nombre del cirujano",
       "participation": "Porcentaje de participación",
       "selectFile": "Seleccionar archivos",
+      "attachmentMandatory": "Esta actividad requiere adjuntar al menos un archivo antes de marcarla como completada.",
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta el ID del progreso",
       "noActivitySelected": "No se ha seleccionado ninguna actividad",
       "selectDate": "Selecciona una fecha de realización",
       "optionalFileHint": "Puedes adjuntar hasta {{max}} archivos (máx. 5MB cada uno)",
+      "mandatoryFileHint": "Adjuntar archivos es obligatorio para esta actividad (máx. {{max}} archivos de 5MB cada uno)",
       "maxFilesReached": "Has alcanzado el límite de 5 archivos para esta actividad.",
       "fileTooLarge": "El archivo supera el tamaño máximo de 5MB.",
       "surgeryRequired": "Selecciona o escribe un procedimiento",
@@ -948,6 +994,7 @@
       "participationRequired": "Selecciona un porcentaje de participación",
       "requiredFieldsNote": "Los campos marcados con * son obligatorios.",
       "requiredSurgeryFields": "Completa los campos obligatorios de la cirugía.",
+      "attachmentRequired": "Debes adjuntar al menos un archivo para completar esta actividad.",
       "title": "Marcar actividad como completada",
       "editTitle": "Editar actividad enviada",
       "currentFiles": "Archivos actuales",
@@ -995,7 +1042,7 @@
     "body": "Se certifica que <strong>{{name}}</strong> ha completado satisfactoriamente la fase formativa asignada del Academic Program en tecnologías del robot Da Vinci®. <br /><br />Este curso se enmarca dentro del plan formativo en tecnología robótica en colaboración con el hospital <strong>{{hospital}}</strong> y bajo la supervisión de su tutor asignado.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Tutor del programa de residentes del ",
     "tutorTitle": "Tutor del programa de residentes",
     "tutorPlaceholder": "Tutor del programa:",

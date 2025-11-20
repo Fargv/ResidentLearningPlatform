@@ -114,13 +114,36 @@
     "validate": "Validar",
     "reject": "Rebutjar",
     "processing": "Processant...",
+    "edit": "Edita",
+    "enterUrl": "Introdueix una URL",
     "none": "Cap"
+  },
+  "richText": {
+    "bold": "Negreta",
+    "italic": "Cursiva",
+    "bulletList": "Llista amb vinyetes",
+    "orderedList": "Llista numerada",
+    "link": "Enllaç"
   },
   "profile": {
     "title": "El meu perfil",
     "personalData": "Dades personals",
     "changePassword": "Canviar contrasenya",
+    "overview": "Resum del compte",
     "noTutor": "Sense tutor assignat",
+    "status": {
+      "role": "Rol",
+      "hospital": "Hospital",
+      "program": "Programa",
+      "zone": "Zona",
+      "specialty": "Especialitat",
+      "active": "Compte actiu",
+      "inactive": "Compte inactiu"
+    },
+    "completeness": {
+      "title": "Compleció del perfil",
+      "helper": "Mantén les teves dades al dia per a una millor experiència"
+    },
     "fields": {
       "name": "Nom",
       "lastName": "Cognoms",
@@ -141,7 +164,22 @@
       "passwordUpdateError": "Error en canviar la contrasenya"
     },
     "buttons": {
-      "changePassword": "Canviar contrasenya"
+      "changePassword": "Canviar contrasenya",
+      "edit": "Editar dades"
+    },
+    "editMode": {
+      "description": "Mode edició activat: desa o cancel·la per sortir",
+      "readonlyHint": "Camp només de lectura"
+    },
+    "dialogs": {
+      "passwordTitle": "Canviar contrasenya",
+      "passwordDescription": "Actualitza la contrasenya sense sortir d'aquesta pàgina"
+    },
+    "security": {
+      "title": "Seguretat i accés",
+      "tipStrongPassword": "Fes servir contrasenyes úniques i segures.",
+      "tipRegularUpdates": "Actualitza la contrasenya periòdicament.",
+      "tipSignOut": "Tanca sessió en dispositius compartits."
     }
   },
   "adminHospitals": {
@@ -248,6 +286,7 @@
       "aria": "activitats de la fase {{number}}",
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Adjunt obligatori",
       "type": "Tipus",
       "actions": "Accions",
       "description": "Descripció",
@@ -335,7 +374,8 @@
     "requiresValidation": "Requereix validació",
     "requiresSignature": "Requereix signatura",
     "requiresPercentage": "Requereix percentatge",
-    "requiresAttachment": "Requereix adjunt"
+    "requiresAttachment": "Requereix adjunt",
+    "optionalAttachment": "Adjunt opcional"
   },
   "adminPhasesSoc": {
     "_comment": "Gestió de fases per al programa de Societats",
@@ -344,6 +384,7 @@
     "table": {
       "order": "Ordre",
       "name": "Nom",
+      "attachmentRequired": "Adjunt obligatori",
       "type": "Tipus",
       "actions": "Accions"
     },
@@ -847,6 +888,7 @@
     "completionDate": "Data de realització",
     "selectDate": "Selecciona una data de realització",
     "optionalFileHint": "Adjunta un fitxer opcional (màx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "El fitxer supera la mida màxima de 5MB."
   },
   "society": {
@@ -924,7 +966,7 @@
     "body": "Es certifica que <strong>{{name}}</strong> ha completat satisfactòriament la fase formativa assignada de l'Academic Program en tecnologies del robot Da Vinci®. <br /><br />Aquest curs s'emmarca dins del pla formatiu en tecnologia robòtica en col·laboració amb l'hospital <strong>{{hospital}}</strong> i sota la supervisió del seu tutor assignat.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Tutor del programa de residents del ",
     "tutorTitle": "Tutor del programa de residents",
     "tutorPlaceholder": "Tutor del programa:",
@@ -940,6 +982,8 @@
     "noActivitySelectedError": "Error intern: No s'ha seleccionat cap activitat.",
     "noTitle": "Sense títol",
     "phaseTitle": "Fase {{number}}: {{name}}",
+    "viewInstructions": "Veure instruccions",
+    "instructionsTitle": "Instruccions de {{phase}}",
     "deadline": "Data límit",
     "validatedProgress": "Progrés validat: {{percent}}%",
     "noActivities": "No hi ha activitats disponibles",
@@ -956,6 +1000,7 @@
     "surgeryType": "Tipus de cirurgia: {{type}}",
     "surgeonName": "Nom del cirurgià: {{name}}",
     "participation": "Percentatge de participació: {{percent}}%",
+    "requiresAttachment": "Requereix adjunt",
     "status": "Estat",
     "dialog": {
       "completeActivity": "Marcar activitat com a completada",
@@ -969,6 +1014,7 @@
       "surgeonName": "Nom del cirurgià",
       "participation": "Percentatge de participació",
       "selectFile": "Seleccionar fitxers",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Cancel·lar",
       "confirm": "Confirmar",
       "missingProgressId": "Falta l’ID del progrés",
@@ -982,6 +1028,7 @@
       "participationRequired": "Selecciona un percentatge de participació",
       "requiredFieldsNote": "Els camps marcats amb * són obligatoris.",
       "requiredSurgeryFields": "Completa els camps obligatoris de la cirurgia.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Marcar activitat com a completada",
       "editTitle": "Editar activitat enviada",
       "currentFiles": "Fitxers actuals",

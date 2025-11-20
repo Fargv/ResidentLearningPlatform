@@ -53,6 +53,7 @@
       "aria": "{{number}}. faseko jarduerak",
       "order": "Ordena",
       "name": "Izena",
+      "attachmentRequired": "Eranskina derrigorrezkoa",
       "type": "Mota",
       "actions": "Ekintzak",
       "description": "Deskribapena",
@@ -140,7 +141,8 @@
     "requiresValidation": "Balidazioa behar du",
     "requiresSignature": "Sinadura behar du",
     "requiresPercentage": "Ehunekoa behar du",
-    "requiresAttachment": "Eranskina behar du"
+    "requiresAttachment": "Eranskina behar du",
+    "optionalAttachment": "Aukerako eranskina"
   },
   "progressByPhase": "Fasearen araberako aurrerapena",
   "close": "Itxi",
@@ -262,13 +264,36 @@
     "validate": "Balidatu",
     "reject": "Baztertu",
     "processing": "Prozesatzen...",
+    "edit": "Editatu",
+    "enterUrl": "Sartu URL bat",
     "none": "Bat ere ez"
+  },
+  "richText": {
+    "bold": "Lodia",
+    "italic": "Etzana",
+    "bulletList": "Buletdun zerrenda",
+    "orderedList": "Zenbakidun zerrenda",
+    "link": "Esteka"
   },
   "profile": {
     "title": "Nire profila",
     "personalData": "Datu pertsonalak",
     "changePassword": "Pasahitza aldatu",
+    "overview": "Kontuaren laburpena",
     "noTutor": "Ez dago prestatzaile esleituta",
+    "status": {
+      "role": "Rola",
+      "hospital": "Ospitalea",
+      "program": "Programa",
+      "zone": "Eremua",
+      "specialty": "Espezialitatea",
+      "active": "Kontu aktiboa",
+      "inactive": "Kontu ez-aktiboa"
+    },
+    "completeness": {
+      "title": "Profilaren osotasuna",
+      "helper": "Eguneratu zure datuak esperientzia hobetzeko"
+    },
     "fields": {
       "name": "Izena",
       "lastName": "Abizenak",
@@ -288,7 +313,22 @@
       "passwordUpdateError": "Errorea pasahitza aldatzean"
     },
     "buttons": {
-      "changePassword": "Pasahitza aldatu"
+      "changePassword": "Pasahitza aldatu",
+      "edit": "Datuak editatu"
+    },
+    "editMode": {
+      "description": "Edizio modua aktibatuta: gorde edo bertan behera utzi irteteko",
+      "readonlyHint": "Irakurtzeko soilik"
+    },
+    "dialogs": {
+      "passwordTitle": "Pasahitza aldatu",
+      "passwordDescription": "Eguneratu pasahitza orri hau utzi gabe"
+    },
+    "security": {
+      "title": "Segurtasuna eta sarbidea",
+      "tipStrongPassword": "Erabili pasahitz sendo eta bakarrak.",
+      "tipRegularUpdates": "Eguneratu pasahitza aldizka.",
+      "tipSignOut": "Itxi saioa gailu partekatuetan."
     }
   },
   "adminHospitals": {
@@ -494,6 +534,7 @@
     "table": {
       "order": "Ordena",
       "name": "Izena",
+      "attachmentRequired": "Eranskina derrigorrezkoa",
       "type": "Mota",
       "actions": "Ekintzak"
     },
@@ -555,7 +596,8 @@
     "requiresValidation": "Balidazioa behar du",
     "requiresSignature": "Sinadura behar du",
     "requiresPercentage": "Ehunekoa behar du",
-    "requiresAttachment": "Eranskina behar du"
+    "requiresAttachment": "Eranskina behar du",
+    "optionalAttachment": "Aukerako eranskina"
   },
   "adminUserProgress": {
     "title": "Erabiltzaileen aurrerapena",
@@ -683,6 +725,7 @@
     "completionDate": "Fecha de realización",
     "selectDate": "Selecciona una fecha de realización",
     "optionalFileHint": "Adjunta un archivo opcional (máx. 5MB)",
+      "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
     "fileTooLarge": "El archivo supera el tamaño máximo de 5MB."
   },
   "types": {
@@ -897,6 +940,8 @@
     "noActivitySelectedError": "Barne errorea: Ez da jarduerarik hautatu.",
     "noTitle": "Izenbururik gabe",
     "phaseTitle": "Fasea {{number}}: {{name}}",
+    "viewInstructions": "Ikusi jarraibideak",
+    "instructionsTitle": "Jarraibideak {{phase}}-rentzat",
     "deadline": "Epemuga",
     "validatedProgress": "Balidatutako aurrerapena: {{percent}}%",
     "noActivities": "Ez dago jarduerarik eskuragarri",
@@ -913,6 +958,7 @@
     "surgeryType": "Kirurgia mota: {{type}}",
     "surgeonName": "Zirujauaren izena: {{name}}",
     "participation": "Parte-hartze portzentaia: {{percent}}%",
+    "requiresAttachment": "Eranskina behar du",
     "status": "Egoera",
     "dialog": {
       "completeActivity": "Markatu jarduera osatutzat",
@@ -926,6 +972,7 @@
       "surgeonName": "Zirujauaren izena",
       "participation": "Parte-hartze ehunekoa",
       "selectFile": "Select files",
+      "attachmentMandatory": "This activity requires at least one attachment before it can be marked as completed.",
       "cancel": "Utzi",
       "confirm": "Baieztatu",
       "missingProgressId": "Falta da aurrerapenaren IDa",
@@ -939,6 +986,7 @@
       "participationRequired": "Aukeratu parte-hartzearen ehunekoa",
       "requiredFieldsNote": "* duten eremuak derrigorrezkoak dira.",
       "requiredSurgeryFields": "Bete kirurgiako derrigorrezko eremuak.",
+      "attachmentRequired": "Attach at least one file to complete this activity.",
       "title": "Markatu jarduera osatutzat",
       "editTitle": "Edit activity",
       "currentFiles": "Current attachments",
@@ -986,7 +1034,7 @@
     "body": "Honela ziurtatzen da <strong>{{name}}</strong>k arrakastaz amaitu duela Da Vinci® robotaren teknologietan Academic Programak esleitutako prestakuntza fasea.<br /><br />Ikastaro hau teknologia robotikoaren prestakuntza planaren barruan kokatzen da, <strong>{{hospital}}</strong> ospitalearekin elkarlanean eta esleitutako tutorearen gainbegiradapean.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madril, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Egoiliarren programaren tutorea ",
     "tutorTitle": "Egoiliarren programaren tutorea",
     "tutorPlaceholder": "Programaren tutorea:",

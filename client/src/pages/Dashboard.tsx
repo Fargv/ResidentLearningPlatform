@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   CssBaseline,
@@ -19,10 +19,10 @@ import {
   Badge,
   useMediaQuery,
   useTheme,
-  alpha
+  alpha,
+  Fade
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
@@ -34,7 +34,11 @@ import {
   Settings as SettingsIcon,
   Brightness4 as Brightness4Icon,
   Brightness7 as Brightness7Icon,
-  Description as DescriptionIcon
+  Description as DescriptionIcon,
+  PushPin as PushPinIcon,
+  PushPinOutlined as PushPinOutlinedIcon,
+  Menu as MenuIcon,
+  ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -64,9 +68,11 @@ const drawerWidth = 240;
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isPinned, setIsPinned] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -88,8 +94,13 @@ const Dashboard: React.FC = () => {
     refreshUnreadCount();
   }, []);
 
-  const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [isMobile]);
+
+  const hoverTransitionDuration = 350;
+  const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
+  const handleDrawerClose = () => setDrawerOpen(false);
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
   const handleLogout = async () => {
@@ -116,8 +127,7 @@ const Dashboard: React.FC = () => {
       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
     }
 
-
-        if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+    if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
     }
 
@@ -135,28 +145,281 @@ const Dashboard: React.FC = () => {
 
     return items;
   };
-  
+
 
   const menuItems = getMenuItems();
 
+  const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
+  const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
+  const sidebarWidthCss = `${sidebarWidth}px`;
+  const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
+  const toolbarHeight = isMobile ? 56 : 64;
+  const sidebarTopOffset = toolbarHeight + sidebarPadding;
+  const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
+  const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
+
+  const handleSidebarHover = () => {
+    if (!isMobile && !isPinned) {
+      setIsHovering(true);
+    }
+  };
+
+  const handleSidebarLeave = () => {
+    if (!isMobile && !isPinned) {
+      setIsHovering(false);
+    }
+  };
+
+  const togglePin = () => {
+    if (!isMobile) {
+      setIsPinned((prev) => !prev);
+    }
+  };
+
+  useEffect(() => {
+    if (isPinned) {
+      setIsHovering(false);
+    }
+  }, [isPinned]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsPinned(false);
+      setIsHovering(false);
+    }
+  }, [isMobile]);
+
+  const location = useLocation();
+  const isPathActive = (path: string) =>
+    path === '/dashboard'
+      ? location.pathname === path
+      : location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+  const renderListItems = (showLabels: boolean, closeOnSelect?: boolean) => (
+  <>
+    {menuItems.map((item) => (
+      <ListItemButton
+        key={item.path}
+        onClick={() => {
+          navigate(item.path);
+          if (isMobile && closeOnSelect) handleDrawerClose();
+        }}
+        sx={{
+          justifyContent: showLabels ? 'flex-start' : 'center',
+          px: showLabels ? 2 : 1.25,
+          transition: theme.transitions.create(['padding', 'background-color'], {
+            duration: hoverTransitionDuration
+          }),
+          borderLeft: isPathActive(item.path) ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
+          '&.Mui-selected': {
+            backgroundColor: alpha(theme.palette.primary.main, 0.12),
+            '&:hover': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.18)
+            }
+          },
+          '& .MuiListItemIcon-root': {
+            color: isPathActive(item.path) ? theme.palette.primary.main : 'inherit'
+          }
+        }}
+        selected={isPathActive(item.path)}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: showLabels ? 40 : 'auto',
+            justifyContent: 'center'
+          }}
+        >
+          {item.icon}
+        </ListItemIcon>
+
+        <ListItemText
+          primary={item.text}
+          sx={{
+            opacity: showLabels ? 1 : 0,
+            transition: theme.transitions.create(['opacity', 'margin'], {
+              duration: hoverTransitionDuration
+            }),
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            ml: showLabels ? 0 : -1,
+            width: showLabels ? 'auto' : 0
+          }}
+        />
+      </ListItemButton>
+    ))}
+  </>
+);
+
+
+  const SidebarContent: React.FC<{ showLabels: boolean; isMobileView?: boolean; onClose?: () => void }> = ({
+    showLabels,
+    isMobileView,
+    onClose
+  }) => (
+    <>
+      <Toolbar
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          px: showLabels ? 1.5 : 1,
+          transition: theme.transitions.create(['padding'], { duration: hoverTransitionDuration })
+        }}
+      >
+        {isMobileView ? (
+          <IconButton onClick={onClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        ) : showLabels ? (
+          <Fade in={showLabels} unmountOnExit mountOnEnter>
+            <IconButton
+              onClick={togglePin}
+              size="small"
+              color={isPinned ? 'primary' : 'default'}
+              sx={{ ml: 1 }}
+            >
+              {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+            </IconButton>
+          </Fade>
+        ) : (
+          <IconButton onClick={togglePin} size="small">
+            <ChevronRightIcon fontSize="small" />
+          </IconButton>
+        )}
+      </Toolbar>
+      <Divider />
+      <List>{renderListItems(showLabels, isMobileView)}</List>
+      <Divider />
+      <List>
+        <ListItemButton
+          onClick={() => {
+            navigate('/dashboard/perfil');
+            if (isMobile && isMobileView) handleDrawerClose();
+          }}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding', 'background-color'], {
+              duration: hoverTransitionDuration
+            }),
+            borderLeft: isPathActive('/dashboard/perfil') ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
+            '&.Mui-selected': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.18)
+              }
+            },
+            '& .MuiListItemIcon-root': {
+              color: isPathActive('/dashboard/perfil') ? theme.palette.primary.main : 'inherit'
+            }
+          }}
+          selected={isPathActive('/dashboard/perfil')}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><PersonIcon /></ListItemIcon>
+          <ListItemText
+            primary={t('actions.myProfile')}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+              width: showLabels ? 'auto' : 0
+            }}
+          />
+        </ListItemButton>
+        <ListItemButton
+          onClick={() => {
+            navigate('/dashboard/notificaciones');
+            if (isMobile && isMobileView) handleDrawerClose();
+          }}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding', 'background-color'], {
+              duration: hoverTransitionDuration
+            }),
+            borderLeft: isPathActive('/dashboard/notificaciones')
+              ? `3px solid ${theme.palette.primary.main}`
+              : '3px solid transparent',
+            '&.Mui-selected': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.18)
+              }
+            },
+            '& .MuiListItemIcon-root': {
+              color: isPathActive('/dashboard/notificaciones') ? theme.palette.primary.main : 'inherit'
+            }
+          }}
+          selected={isPathActive('/dashboard/notificaciones')}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}>
+            <Badge badgeContent={unreadCount} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </ListItemIcon>
+          <ListItemText
+            primary={t('actions.notifications')}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+              width: showLabels ? 'auto' : 0
+            }}
+          />
+        </ListItemButton>
+        <ListItemButton
+          onClick={handleLogout}
+          sx={{
+            justifyContent: showLabels ? 'flex-start' : 'center',
+            px: showLabels ? 2 : 1.25,
+            transition: theme.transitions.create(['padding', 'background-color'], {
+              duration: hoverTransitionDuration
+            }),
+            '&:hover .MuiListItemIcon-root': {
+              color: theme.palette.primary.main
+            }
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: showLabels ? 40 : 'auto', justifyContent: 'center' }}><LogoutIcon /></ListItemIcon>
+          <ListItemText
+            primary={t('actions.logout')}
+            sx={{
+              opacity: showLabels ? 1 : 0,
+              transition: theme.transitions.create(['opacity', 'margin'], { duration: hoverTransitionDuration }),
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              ml: showLabels ? 0 : -1,
+              width: showLabels ? 'auto' : 0
+            }}
+          />
+        </ListItemButton>
+      </List>
+    </>
+  );
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', backgroundColor: 'background.default', minHeight: '100vh' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
-          zIndex: theme.zIndex.drawer + 1,
-          transition: theme.transitions.create(['width', 'margin']),
-          ...(open && {
-            marginLeft: drawerWidth,
-            width: `calc(100% - ${drawerWidth}px)`
-          })
+          zIndex: theme.zIndex.drawer + 2,
+          transition: theme.transitions.create(['width', 'margin'], {
+            duration: hoverTransitionDuration
+          }),
+          width: '100%'
         }}
       >
         <Toolbar>
-          <IconButton color="inherit" onClick={handleDrawerOpen} edge="start" sx={{ mr: 5, ...(open && { display: 'none' }) }}>
-            <MenuIcon />
-          </IconButton>
+          {isMobile && (
+            <IconButton color="inherit" onClick={handleDrawerToggle} edge="start" sx={{ mr: 3 }}>
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Academic Program daVinci
           </Typography>
@@ -190,12 +453,12 @@ const Dashboard: React.FC = () => {
               {user?.nombre?.charAt(0)}
             </Avatar>
           </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              onClick={handleMenuClose}
-              PaperProps={{
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            onClick={handleMenuClose}
+            PaperProps={{
               elevation: 0,
               sx: {
                 overflow: 'visible',
@@ -217,116 +480,155 @@ const Dashboard: React.FC = () => {
               }
             }}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleProfileClick}>
-                <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
-                {t('actions.profile')}
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={handleLogout}>
-                <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
-                {t('actions.logout')}
-              </MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
-      <Drawer
-        variant={isMobile ? 'temporary' : 'permanent'}
-        open={isMobile ? open : true}
-        onClose={isMobile ? handleDrawerClose : undefined}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            ...(isMobile && !open && { display: 'none' })
-          }
-        }}
-      >
-        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: [1] }}>
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', pl: 1 }}>
-            <img src="/logo-small.png" alt="Logo" style={{ height: '40px', marginRight: '8px' }} />
-            <Typography variant="subtitle1" noWrap>da Vinci</Typography>
-          </Box>
-          {isMobile && <IconButton onClick={handleDrawerClose}><ChevronLeftIcon /></IconButton>}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={handleProfileClick}>
+              <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+              {t('actions.profile')}
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+              {t('actions.logout')}
+            </MenuItem>
+          </Menu>
         </Toolbar>
-        <Divider />
-        <List>
-          {menuItems.map((item) => (
-            <ListItemButton key={item.path} onClick={() => { navigate(item.path); if (isMobile) handleDrawerClose(); }}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          <ListItemButton onClick={() => { navigate('/dashboard/perfil'); if (isMobile) handleDrawerClose(); }}>
-            <ListItemIcon><PersonIcon /></ListItemIcon>
-            <ListItemText primary={t('actions.myProfile')} />
-          </ListItemButton>
-          <ListItemButton onClick={() => { navigate('/dashboard/notificaciones'); if (isMobile) handleDrawerClose(); }}>
-            <ListItemIcon>
-              <Badge badgeContent={unreadCount} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </ListItemIcon>
-            <ListItemText primary={t('actions.notifications')} />
-          </ListItemButton>
-          <ListItemButton onClick={handleLogout}>
-            <ListItemIcon><LogoutIcon /></ListItemIcon>
-            <ListItemText primary={t('actions.logout')} />
-          </ListItemButton>
-        </List>
-      </Drawer>
+      </AppBar>
+      {!isMobile && (
+        <Box sx={{ position: 'relative', width: `${sidebarSpace}px`, flexShrink: 0 }}>
+          <Drawer
+            variant="permanent"
+            open
+            sx={{
+              width: sidebarWidthCss,
+              flexShrink: 0,
+              display: { xs: 'none', md: 'block' },
+              [`& .MuiDrawer-paper`]: {
+                width: sidebarWidthCss,
+                boxSizing: 'border-box',
+                overflowX: 'hidden',
+                transition: theme.transitions.create('width', {
+                  duration: hoverTransitionDuration
+                }),
+                zIndex: theme.zIndex.appBar - 1,
+                top: `${sidebarTopOffset}px`,
+                left: `${sidebarPadding}px`,
+                height: sidebarHeightCss,
+                borderRadius: 1
+              }
+            }}
+            PaperProps={{
+              onMouseEnter: handleSidebarHover,
+              onMouseLeave: handleSidebarLeave,
+              sx: { zIndex: theme.zIndex.appBar - 1 }
+            }}
+          >
+            <SidebarContent showLabels={isPinned} />
+          </Drawer>
+          {!isPinned && (
+            <Drawer
+              variant="temporary"
+              open={isHovering}
+              onClose={handleSidebarLeave}
+              ModalProps={{ keepMounted: true }}
+              hideBackdrop
+              sx={{
+                [`& .MuiDrawer-paper`]: {
+                  width: drawerWidth,
+                  boxSizing: 'border-box',
+                  overflowX: 'hidden',
+                  transition: theme.transitions.create(['transform', 'width'], {
+                    duration: hoverTransitionDuration
+                  }),
+                  zIndex: theme.zIndex.appBar - 1,
+                  top: `${sidebarTopOffset}px`,
+                  left: `${sidebarPadding}px`,
+                  height: sidebarHeightCss,
+                  borderRadius: 1
+                },
+                zIndex: theme.zIndex.appBar - 1
+              }}
+              PaperProps={{ onMouseEnter: handleSidebarHover, onMouseLeave: handleSidebarLeave }}
+            >
+              <SidebarContent showLabels />
+            </Drawer>
+          )}
+        </Box>
+      )}
+      {isMobile && (
+        <Drawer
+          variant="temporary"
+          open={drawerOpen}
+          onClose={handleDrawerClose}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            display: { xs: 'block', md: 'none' },
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              overflowX: 'hidden',
+              top: `${toolbarHeight}px`
+            }
+          }}
+          ModalProps={{ keepMounted: true }}
+        >
+          <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
+        </Drawer>
+      )}
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: 'background.default', minHeight: '100vh' }}
+        sx={{
+          flexGrow: 1,
+          p: 2.5,
+          ml: 0,
+          width: '100%',
+          backgroundColor: 'background.default',
+          minHeight: '100vh'
+        }}
       >
         <Toolbar />
         <Routes>
-  <Route path="/" element={<DashboardHome />} />
-  <Route path="/validaciones" element={<TutorValidaciones />} />
-  <Route path="/usuarios" element={<Usuarios />} />
-  <Route path="/hospitals" element={<AdminHospitales />} />
-  {user?.rol === 'administrador' && (
-    <Route path="/fases" element={<AdminFases />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/access-codes" element={<AdminAccessCodes />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/cirugias" element={<AdminCirugias />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/fases-soc" element={<AdminFasesSoc />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/informes" element={<AdminInformes />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
-  )}
-  <Route
-    path="/dashboard/progreso"
-    element={<Navigate to="/dashboard" replace />}
-  />
-  {user?.rol === 'administrador' && (
-    <Route path="/config" element={<AdminConfiguracion />} />
-  )}
-  {user?.rol === 'administrador' && (
-    <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
-  )}
-  <Route path="/sociedades" element={<AdminSociedades />} />
-  {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
-    <Route path="/fases" element={<ResidenteFases />} />
-  ) : null}
-  <Route path="/perfil" element={<Perfil />} />
-  <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
-  {isDev && <Route path="/debug" element={<DebugDashboard />} />}
-</Routes>
+          <Route path="/" element={<DashboardHome />} />
+          <Route path="/validaciones" element={<TutorValidaciones />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/hospitals" element={<AdminHospitales />} />
+          {user?.rol === 'administrador' && (
+            <Route path="/fases" element={<AdminFases />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/access-codes" element={<AdminAccessCodes />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/cirugias" element={<AdminCirugias />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/fases-soc" element={<AdminFasesSoc />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/informes" element={<AdminInformes />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
+          )}
+          <Route
+            path="/dashboard/progreso"
+            element={<Navigate to="/dashboard" replace />}
+          />
+          {user?.rol === 'administrador' && (
+            <Route path="/config" element={<AdminConfiguracion />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
+          )}
+          <Route path="/sociedades" element={<AdminSociedades />} />
+          {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
+            <Route path="/fases" element={<ResidenteFases />} />
+          ) : null}
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
+          {isDev && <Route path="/debug" element={<DebugDashboard />} />}
+        </Routes>
 
       </Box>
     </Box>

@@ -85,7 +85,11 @@ const formatProgresoParaResidente = (progresoDoc) => {
       cirugia: act.cirugia,
       otraCirugia: act.otraCirugia,
       nombreCirujano: act.nombreCirujano,
-      adjuntos: adjuntosPorIndice[index] || []
+      adjuntos: adjuntosPorIndice[index] || [],
+      requiereAdjunto: Boolean(
+        (act.actividad && act.actividad.requiereAdjunto) ||
+          act.requiereAdjunto
+      )
     }))
   };
 };
@@ -670,7 +674,6 @@ const marcarActividadCompletada = async (req, res, next) => {
     }
 
     const actividadExistente = progreso.actividades[index];
-
     const estadoPrevio = actividadExistente.estado;
     const actividadIndex = Number(index);
 
@@ -744,6 +747,14 @@ const marcarActividadCompletada = async (req, res, next) => {
     const existingMap = new Map(existingAdjuntos.map(adj => [adj._id.toString(), adj]));
     const idsParaEliminar = adjuntosAEliminar.filter(idEliminar => existingMap.has(idEliminar));
     const restantes = existingAdjuntos.filter(adj => !idsParaEliminar.includes(adj._id.toString()));
+
+    const requiereAdjuntoObligatorio = Boolean(
+      actividadExistente.actividad && actividadExistente.actividad.requiereAdjunto
+    );
+
+    if (requiereAdjuntoObligatorio && restantes.length + filesFromRequest.length === 0) {
+      return next(new ErrorResponse('Esta actividad requiere al menos un adjunto', 400));
+    }
 
     if (restantes.length + filesFromRequest.length > MAX_FILES) {
       return next(new ErrorResponse('Solo se permiten hasta 5 archivos adjuntos por actividad', 400));
