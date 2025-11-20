@@ -330,7 +330,7 @@
     "body": "Hiermit wird bestätigt, dass <strong>{{name}}</strong> die zugewiesene Ausbildungsphase des Academic Program zu Technologien des Da Vinci®-Roboters erfolgreich abgeschlossen hat.<br /><br />Dieser Kurs ist Teil des Ausbildungsplans für Robotertechnologie in Zusammenarbeit mit dem Krankenhaus <strong>{{hospital}}</strong> und unter der Aufsicht des zugewiesenen Tutors.",
     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
     "dateLine": "Madrid, {{date}}",
-    "footer": "Certificado generado automáticamente por Academic Program Da Vinci · {{url}}",
+    "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
     "tutorPrefix": "Tutor des Residenzprogramms des ",
     "tutorTitle": "Tutor des Residenzprogramms",
     "tutorPlaceholder": "Tutor des Programms:",
