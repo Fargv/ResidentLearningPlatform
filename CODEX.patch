@@ -1,926 +1,150 @@
-diff --git a/client/src/api.ts b/client/src/api.ts
-index 8f92f7bb3aa109c39496beb22b4ca0011bc986c8..972557c083a6fc6d1351f992f04257e662c7c000 100644
---- a/client/src/api.ts
-+++ b/client/src/api.ts
-@@ -28,29 +28,35 @@ export const eliminarNotificaciones = (ids: string[]) =>
-   api.delete('/notificaciones', { data: { ids } });
- export const marcarNotificacionNoLeida = (id: string) =>
-   api.put(`/notificaciones/${id}/no-leer`);
- export const updateProfile = (data: { nombre: string; apellidos: string; email: string }) =>
-   api.put('/auth/updatedetails', data);
- export const changePassword = (data: { currentPassword: string; newPassword: string }) =>
-   api.put('/auth/updatepassword', data);
- 
- // Admin user management
- export const createUser = (data: Record<string, any>) => api.post('/users', data);
- export const updateUserPassword = (id: string, newPassword: string) =>
-   api.put(`/users/${id}/password`, { password: newPassword });
- 
- export const getTutors = (hospital: string, especialidad: string) =>
-   api.get('/users/tutores', { params: { hospital, especialidad } });
- 
- export const sendResetPasswordEmail = (id: string) =>
-   api.post(`/users/${id}/reset-password`);
- 
- export const clearResetNotifications = (userId: string) =>
-   api.delete(`/notificaciones/password-reset/${userId}`);
- 
- export const requestPasswordReset = (email: string) =>
-   api.post('/auth/request-reset', { email });
- 
--export const requestPasswordResetAutomatic = (email: string) =>
--  api.post('/auth/forgotpassword', { email });
-+export const requestPasswordResetAutomatic = (email: string) =>
-+  api.post('/auth/forgotpassword', { email });
-+
-+// Invitations
-+export const getInvitations = () => api.get('/users/invitations');
-+export const cancelInvitation = (id: string) => api.delete(`/users/invitations/${id}`);
-+export const resendInvitation = (payload: Record<string, string>) =>
-+  api.post('/users/invite', payload);
- 
- 
-diff --git a/client/src/locales/en.json b/client/src/locales/en.json
-index bc81d7205407813e0419b0a68c58138447d2025f..c33f49dab8175a1077407518a826f280fc003037 100644
---- a/client/src/locales/en.json
-+++ b/client/src/locales/en.json
-@@ -1,41 +1,42 @@
- {
-   "welcome": "Welcome, {{name}}",
-   "role": {
-     "adminPanel": "Administration Panel",
-     "tutor": "Tutor of residents at {{hospital}} hospital",
-     "csm": "CSM of residents at {{hospital}} hospital",
-     "resident": "Resident at {{hospital}} hospital",
-     "participant": "Participante of the societies program {{title}}",
-     "professor": "Profesor of the societies program {{title}}"
-   },
-   "actions": {
-     "dashboard": "Dashboard",
-     "myProgress": "My Progress",
-     "trainingPhases": "Training Phases",
-     "validations": "Validations",
-     "myUsers": "My Users",
-+    "invitations": "Invitations",
-     "usersProgress": "Users Progress",
-     "settings": "Settings",
-     "myProfile": "My Profile",
-     "notifications": "Notifications",
-     "profile": "Profile",
-     "users": "Users",
-     "reports": "Reports",
-     "logout": "Logout",
-     "download": "Download",
-     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
-     "downloadSurgeryReportError": "Error downloading surgery report"
-   },
-   "adminConfig": {
-     "title": "Settings",
-     "hospitals": "Hospitals",
-     "societies": "Societies",
-     "residentProgram": "Resident Program",
-     "societiesProgram": "Societies Program",
-     "users": "Users",
-     "accessCodes": "Access Codes",
-     "surgeryTypes": "Surgery Types",
-     "debug": "Debug"
-   },
-   "adminPhases": {
-     "_comment": "Admin phases management",
-@@ -409,50 +410,51 @@
-     },
-     "dialog": {
-       "editTitle": "Edit Society",
-       "createTitle": "New Society"
-     },
-     "fields": {
-       "titulo": "Title",
-       "status": "Status",
-       "fechaConvocatoria": "Call Date",
-       "fechaPresentacion": "Presentation Date",
-       "fechaModulosOnline": "Online Modules",
-       "fechaSimulacion": "Simulation",
-       "fechaAtividadesFirstAssistant": "First Assistant",
-       "fechaModuloOnlineStepByStep": "Step By Step",
-       "fechaHandOn": "Hands On"
-     }
-   },
-   "adminUsers": {
-     "titleAll": "Manage All Users",
-     "titleHospital": "Users of Your Hospital",
-     "searchPlaceholder": "Search by name or email",
-     "loadError": "Error loading data",
-     "actions": {
-       "create": "Create User",
-       "invite": "Invite User",
-+      "manageInvitations": "Manage invitations",
-       "edit": "Edit",
-       "delete": "Delete",
-       "changePassword": "Change password",
-       "sendResetLink": "Send reset link",
-       "createProgress": "Create progress",
-       "downloadSurgeryReport": "Download report for {{phase}}"
-     },
-     "createSuccess": "User created successfully",
-     "createError": "Error creating user",
-     "updateSuccess": "User updated successfully",
-     "updateError": "Error updating user",
-     "deleteSuccess": "User deleted successfully",
-     "deleteError": "Error deleting user",
-     "passwordUpdated": "Password updated",
-     "passwordError": "Error updating password",
-     "createProgressSuccess": "Training progress created successfully",
-     "createProgressError": "Error creating progress",
-     "noTutor": "No tutor assigned",
-     "table": {
-       "aria": "users table",
-       "name": "Name",
-       "email": "Email",
-       "logoUrl": "Logo URL",
-       "type": "Type",
-       "society": "Society",
-@@ -1056,33 +1058,81 @@
-     "tutorPlaceholder": "Program tutor:",
-     "signatureLine": "________________________________________",
-     "responsableTitle": "Training manager of the {{programa}} program"
-   },
-   "emails": {
-     "inviteSubject": "Invitation to the Da Vinci Training Platform"
-   },
-   "debug": {
-     "tokenValid": "✅ Token valid and decoded",
-     "tokenInvalid": "❌ Token invalid or corrupt"
-   },
-   "status": {
-     "pendingValidation": "Pending validation",
-     "validado": "Validated",
-     "rechazado": "Rejected",
-     "completado": "Completed",
-     "pendiente": "Pending",
-     "noCompletada": "Not completed",
-     "enProgreso": "In progress",
-     "bloqueada": "Blocked",
-     "active": "Active",
-     "inactive": "Inactive",
-     "validated": "Validated",
-     "rejected": "Rejected"
-   },
-+  "adminInvitations": {
-+    "title": "Sent invitations",
-+    "subtitle": "Review, resend or cancel the invitations you have already sent.",
-+    "searchPlaceholder": "Search by email, role, hospital, society or zone",
-+    "table": {
-+      "email": "Email",
-+      "role": "Role",
-+      "program": "Program",
-+      "scope": "Context",
-+      "sent": "Sent",
-+      "expires": "Expires",
-+      "status": "Status",
-+      "admin": "Sent by",
-+      "actions": "Actions",
-+      "loading": "Loading invitations...",
-+      "empty": "No invitations found"
-+    },
-+    "status": {
-+      "pending": "Pending",
-+      "expired": "Expired",
-+      "accepted": "Accepted",
-+      "registered": "User created"
-+    },
-+    "actions": {
-+      "refresh": "Refresh",
-+      "copy": "Copy link",
-+      "resend": "Resend",
-+      "delete": "Delete"
-+    },
-+    "labels": {
-+      "convertedTo": "Converted into user {{name}}"
-+    },
-+    "dialogs": {
-+      "deleteTitle": "Delete invitation",
-+      "deleteConfirm": "Do you want to delete the invitation to {{email}}?",
-+      "cancel": "Cancel",
-+      "delete": "Delete"
-+    },
-+    "feedback": {
-+      "resent": "Invitation resent",
-+      "resendError": "Could not resend the invitation",
-+      "linkCopied": "Link copied to clipboard",
-+      "copyError": "Could not copy the link",
-+      "noLink": "There is no available link for this invitation",
-+      "deleted": "Invitation deleted",
-+      "deleteError": "Could not delete the invitation"
-+    }
-+  },
-   "privacyPolicy": {
-     "title": "Privacy Policy",
-     "lastUpdated": "Last updated: {{date}}"
-   },
-   "adminReports": {
-     "exportHospitals": "Hospitals"
-   }
- }
-diff --git a/client/src/locales/es.json b/client/src/locales/es.json
-index eb217346baafaaef83db54fef30c65f42ae9e206..46902dcaa5740eec66e0fb322af6fdabd4e03149 100644
---- a/client/src/locales/es.json
-+++ b/client/src/locales/es.json
-@@ -1,41 +1,42 @@
- {
-   "welcome": "Bienvenido/a, {{name}}",
-   "role": {
-     "adminPanel": "Panel de Administración",
-     "tutor": "Tutor de residentes del hospital {{hospital}}",
-     "csm": "CSM de residentes del hospital {{hospital}}",
-     "resident": "Residente del hospital {{hospital}}",
-     "participant": "Participante del programa de sociedades {{title}}",
-     "professor": "Profesor del programa de sociedades {{title}}"
-   },
-   "actions": {
-     "dashboard": "Dashboard",
-     "myProgress": "Mi Progreso",
-     "trainingPhases": "Fases Formativas",
-     "validations": "Validaciones",
-     "myUsers": "Mis Usuarios",
-+    "invitations": "Invitaciones",
-     "usersProgress": "Progreso Usuarios",
-     "settings": "Configuración",
-     "myProfile": "Mi Perfil",
-     "notifications": "Notificaciones",
-     "profile": "Perfil",
-     "users": "Usuarios",
-     "reports": "Informes",
-     "logout": "Cerrar sesión",
-     "download": "Descargar",
-     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
-     "downloadSurgeryReportError": "Error al descargar informe de cirugías"
-   },
-   "adminConfig": {
-     "title": "Configuración",
-     "hospitals": "Hospitales",
-     "societies": "Sociedades",
-     "residentProgram": "Programa Residentes",
-     "societiesProgram": "Programa Sociedades",
-     "users": "Usuarios",
-     "accessCodes": "Códigos de Acceso",
-     "surgeryTypes": "Tipos de Cirugía",
-     "debug": "Debug"
-   },
-   "adminPhases": {
-     "_comment": "Gestión de fases para administradores",
-@@ -408,50 +409,51 @@
-       "editTitle": "Editar Sociedad",
-       "createTitle": "Nueva Sociedad"
-     },
-     "fields": {
-       "titulo": "Título",
-       "status": "Estado",
-       "fechaConvocatoria": "Fecha de convocatoria",
-       "fechaPresentacion": "Fecha de presentación",
-       "fechaModulosOnline": "Módulos online",
-       "fechaSimulacion": "Simulación",
-       "fechaAtividadesFirstAssistant": "First Assistant",
-       "fechaModuloOnlineStepByStep": "Step By Step",
-       "fechaHandOn": "Hand On",
-       "urlLogo": "URL del logo",
-       "responsablePrograma": "Responsable del programa"
-     }
-   },
-   "adminUsers": {
-     "titleAll": "Gestión de Todos los Usuarios",
-     "titleHospital": "Usuarios de Tu Hospital",
-     "searchPlaceholder": "Buscar por nombre o email",
-     "loadError": "Error al cargar los datos",
-     "actions": {
-       "create": "Crear Usuario",
-       "invite": "Invitar Usuario",
-+      "manageInvitations": "Gestionar invitaciones",
-       "edit": "Editar",
-       "delete": "Eliminar",
-       "changePassword": "Cambiar contraseña",
-       "sendResetLink": "Enviar reseteo de Contraseña",
-       "createProgress": "Crear progreso",
-       "downloadSurgeryReport": "Descargar informe de {{phase}}"
-     },
-     "createSuccess": "Usuario creado correctamente",
-     "createError": "Error al crear el usuario",
-     "updateSuccess": "Usuario actualizado correctamente",
-     "updateError": "Error al actualizar el usuario",
-     "deleteSuccess": "Usuario eliminado correctamente",
-     "deleteError": "Error al eliminar el usuario",
-     "passwordUpdated": "Contraseña actualizada",
-     "passwordError": "Error al actualizar la contraseña",
-     "createProgressSuccess": "Progreso formativo creado con éxito",
-     "createProgressError": "Error al crear el progreso",
-     "noTutor": "Residente sin tutor asignado",
-     "table": {
-       "aria": "tabla de usuarios",
-       "name": "Nombre",
-       "email": "Email",
-       "type": "Tipo",
-       "society": "Sociedad",
-       "role": "Rol",
-@@ -1048,33 +1050,81 @@
-     "tutorPlaceholder": "Tutor del programa:",
-     "signatureLine": "________________________________________",
-     "responsableTitle": "Responsable de formación del programa {{programa}}"
-   },
-   "emails": {
-     "inviteSubject": "Invitación a la Plataforma de Formación Da Vinci"
-   },
-   "debug": {
-     "tokenValid": "✅ Token válido y decodificado",
-     "tokenInvalid": "❌ Token no válido o corrupto"
-   },
-   "status": {
-     "pendingValidation": "Pendiente de validación",
-     "validado": "Validado",
-     "rechazado": "Rechazado",
-     "completado": "Completado",
-     "pendiente": "Pendiente",
-     "noCompletada": "No completada",
-     "enProgreso": "En progreso",
-     "bloqueada": "Bloqueada",
-     "active": "Activo",
-     "inactive": "Inactivo",
-     "validated": "Validado",
-     "rejected": "Rechazado"
-   },
-+  "adminInvitations": {
-+    "title": "Invitaciones enviadas",
-+    "subtitle": "Supervisa, reenvía o elimina invitaciones ya enviadas.",
-+    "searchPlaceholder": "Buscar por email, rol, hospital, sociedad o zona",
-+    "table": {
-+      "email": "Email",
-+      "role": "Rol",
-+      "program": "Programa",
-+      "scope": "Ámbito",
-+      "sent": "Enviada",
-+      "expires": "Caduca",
-+      "status": "Estado",
-+      "admin": "Enviada por",
-+      "actions": "Acciones",
-+      "loading": "Cargando invitaciones...",
-+      "empty": "No hay invitaciones registradas"
-+    },
-+    "status": {
-+      "pending": "Pendiente",
-+      "expired": "Expirada",
-+      "accepted": "Aceptada",
-+      "registered": "Usuario creado"
-+    },
-+    "actions": {
-+      "refresh": "Actualizar",
-+      "copy": "Copiar enlace",
-+      "resend": "Reenviar",
-+      "delete": "Eliminar"
-+    },
-+    "labels": {
-+      "convertedTo": "Convertida en usuario {{name}}"
-+    },
-+    "dialogs": {
-+      "deleteTitle": "Eliminar invitación",
-+      "deleteConfirm": "¿Quieres eliminar la invitación a {{email}}?",
-+      "cancel": "Cancelar",
-+      "delete": "Eliminar"
-+    },
-+    "feedback": {
-+      "resent": "Invitación reenviada",
-+      "resendError": "No se pudo reenviar la invitación",
-+      "linkCopied": "Enlace copiado al portapapeles",
-+      "copyError": "No se pudo copiar el enlace",
-+      "noLink": "No hay enlace disponible para esta invitación",
-+      "deleted": "Invitación eliminada",
-+      "deleteError": "No se pudo eliminar la invitación"
-+    }
-+  },
-   "privacyPolicy": {
-     "title": "Política de Privacidad",
-     "lastUpdated": "Última actualización: {{date}}"
-   },
-   "adminReports": {
-     "exportHospitals": "Hospitales"
-   }
- }
-diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
-index 10bb5d88e78c7741b2fe5dbdf8d6f744cd8ff453..9168e239a02b33474d14c8406d03e4623c3eae52 100644
---- a/client/src/locales/fr.json
-+++ b/client/src/locales/fr.json
-@@ -1,41 +1,42 @@
- {
-   "welcome": "Bienvenue, {{name}}",
-   "role": {
-     "adminPanel": "Panneau d'administration",
-     "tutor": "Tutor des résidents de l'hôpital {{hospital}}",
-     "csm": "Coordinateur des résidents de l'hôpital {{hospital}}",
-     "resident": "Résident de l'hôpital {{hospital}}",
-     "participant": "Participante du programme des sociétés {{title}}",
-     "professor": "Profesor du programme des sociétés {{title}}"
-   },
-   "actions": {
-     "dashboard": "Tableau de bord",
-     "myProgress": "Mon progrès",
-     "trainingPhases": "Phases de formation",
-     "validations": "Validations",
-     "myUsers": "Mes utilisateurs",
-+    "invitations": "Invitations",
-     "usersProgress": "Progrès des utilisateurs",
-     "settings": "Paramètres",
-     "myProfile": "Mon profil",
-     "notifications": "Notifications",
-     "profile": "Profil",
-     "users": "Utilisateurs",
-     "reports": "Rapports",
-     "logout": "Déconnexion",
-     "download": "Télécharger",
-     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
-     "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
-   },
-   "profile": {
-     "title": "Mon profil",
-     "personalData": "Données personnelles",
-     "changePassword": "Changer le mot de passe",
-     "overview": "Aperçu du compte",
-     "noTutor": "Aucun tuteur assigné",
-     "status": {
-       "role": "Rôle",
-       "hospital": "Hôpital",
-       "program": "Programme",
-       "zone": "Zone",
-       "specialty": "Spécialité",
-       "active": "Compte actif",
-@@ -508,50 +509,51 @@
-     },
-     "dialog": {
-       "editTitle": "Modifier la Société",
-       "createTitle": "Nouvelle Société"
-     },
-     "fields": {
-       "titulo": "Titre",
-       "status": "Statut",
-       "fechaConvocatoria": "Date de l'appel",
-       "fechaPresentacion": "Date de présentation",
-       "fechaModulosOnline": "Modules en ligne",
-       "fechaSimulacion": "Simulation",
-       "fechaAtividadesFirstAssistant": "Premier Assistant",
-       "fechaModuloOnlineStepByStep": "Étape par Étape",
-       "fechaHandOn": "Pratique"
-     }
-   },
-   "adminUsers": {
-     "titleAll": "Gestion de tous les utilisateurs",
-     "titleHospital": "Utilisateurs de votre hôpital",
-     "searchPlaceholder": "Rechercher par nom ou email",
-     "loadError": "Erreur lors du chargement des données",
-     "actions": {
-       "create": "Créer un utilisateur",
-       "invite": "Inviter un utilisateur",
-+      "manageInvitations": "Gérer les invitations",
-       "edit": "Modifier",
-       "delete": "Supprimer",
-       "changePassword": "Changer le mot de passe",
-       "sendResetLink": "Envoyer le lien de réinitialisation",
-       "createProgress": "Créer un progrès",
-       "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
-     },
-     "createSuccess": "Utilisateur créé avec succès",
-     "createError": "Erreur lors de la création de l'utilisateur",
-     "updateSuccess": "Utilisateur mis à jour avec succès",
-     "updateError": "Erreur lors de la mise à jour de l'utilisateur",
-     "deleteSuccess": "Utilisateur supprimé avec succès",
-     "deleteError": "Erreur lors de la suppression de l'utilisateur",
-     "passwordUpdated": "Mot de passe mis à jour",
-     "passwordError": "Erreur lors de la mise à jour du mot de passe",
-     "createProgressSuccess": "Progrès de formation créé avec succès",
-     "createProgressError": "Erreur lors de la création du progrès",
-     "noTutor": "Aucun tuteur assigné",
-     "table": {
-       "aria": "tableau des utilisateurs",
-       "name": "Nom",
-       "email": "Email",
-       "type": "Type",
-       "society": "Société",
-       "role": "Rôle",
-@@ -1055,33 +1057,81 @@
-     },
-     "roles": {
-       "resident": "Résident",
-       "tutor": "Tutor"
-     },
-     "states": {
-       "active": "Actif",
-       "inactive": "Inactif"
-     },
-     "dialogs": {
-       "editTitle": "Modifier l'utilisateur",
-       "inviteTitle": "Inviter un utilisateur"
-     },
-     "messages": {
-       "loadError": "Erreur lors du chargement des utilisateurs",
-       "updateSuccess": "Utilisateur mis à jour",
-       "inviteSuccess": "Utilisateur invité",
-       "deleteSuccess": "Utilisateur supprimé",
-       "deleteError": "Erreur lors de la suppression",
-       "genericError": "Erreur"
-     },
-     "actions": {
-       "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
-     }
-   },
-+  "adminInvitations": {
-+    "title": "Invitations envoyées",
-+    "subtitle": "Consultez, renvoyez ou supprimez les invitations déjà envoyées.",
-+    "searchPlaceholder": "Rechercher par email, rôle, hôpital, société ou zone",
-+    "table": {
-+      "email": "Email",
-+      "role": "Rôle",
-+      "program": "Programme",
-+      "scope": "Contexte",
-+      "sent": "Envoyée",
-+      "expires": "Expire",
-+      "status": "Statut",
-+      "admin": "Envoyée par",
-+      "actions": "Actions",
-+      "loading": "Chargement des invitations...",
-+      "empty": "Aucune invitation enregistrée"
-+    },
-+    "status": {
-+      "pending": "En attente",
-+      "expired": "Expirée",
-+      "accepted": "Acceptée",
-+      "registered": "Utilisateur créé"
-+    },
-+    "actions": {
-+      "refresh": "Actualiser",
-+      "copy": "Copier le lien",
-+      "resend": "Renvoyer",
-+      "delete": "Supprimer"
-+    },
-+    "labels": {
-+      "convertedTo": "Convertie en utilisateur {{name}}"
-+    },
-+    "dialogs": {
-+      "deleteTitle": "Supprimer l'invitation",
-+      "deleteConfirm": "Voulez-vous supprimer l'invitation envoyée à {{email}} ?",
-+      "cancel": "Annuler",
-+      "delete": "Supprimer"
-+    },
-+    "feedback": {
-+      "resent": "Invitation renvoyée",
-+      "resendError": "Impossible de renvoyer l'invitation",
-+      "linkCopied": "Lien copié dans le presse-papiers",
-+      "copyError": "Impossible de copier le lien",
-+      "noLink": "Aucun lien disponible pour cette invitation",
-+      "deleted": "Invitation supprimée",
-+      "deleteError": "Impossible de supprimer l'invitation"
-+    }
-+  },
-   "privacyPolicy": {
-     "title": "Politique de confidentialité",
-     "lastUpdated": "Dernière mise à jour : {{date}}"
-   },
-   "adminReports": {
-     "exportHospitals": "Hôpitaux"
-   }
- }
-diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 32e1803086241d5be0513be58b6ffa15e054b53c..54481658ac3c31e045c39bf70263f1ce5117065c 100644
---- a/client/src/pages/Dashboard.tsx
-+++ b/client/src/pages/Dashboard.tsx
-@@ -14,77 +14,79 @@ import {
-   ListItemIcon,
-   ListItemText,
-   Avatar,
-   Menu,
-   MenuItem,
-   Badge,
-   useMediaQuery,
-   useTheme,
-   alpha,
-   Fade
- } from '@mui/material';
- import {
-   ChevronLeft as ChevronLeftIcon,
-   Dashboard as DashboardIcon,
-   People as PeopleIcon,
-   School as SchoolIcon,
-   Assignment as AssignmentIcon,
-   Notifications as NotificationsIcon,
-   ExitToApp as LogoutIcon,
-   Person as PersonIcon,
-   Settings as SettingsIcon,
-   Brightness4 as Brightness4Icon,
-   Brightness7 as Brightness7Icon,
-   Description as DescriptionIcon,
-   PushPin as PushPinIcon,
--  PushPinOutlined as PushPinOutlinedIcon,
--  Menu as MenuIcon,
--  ChevronRight as ChevronRightIcon
--} from '@mui/icons-material';
-+  PushPinOutlined as PushPinOutlinedIcon,
-+  Menu as MenuIcon,
-+  ChevronRight as ChevronRightIcon,
-+  MailOutline as MailOutlineIcon
-+} from '@mui/icons-material';
- import { useAuth } from '../context/AuthContext';
- import { getNotificacionesNoLeidas } from '../api';
- import { useTranslation } from 'react-i18next';
- import { useColorMode } from '../context/ColorModeContext';
- 
- // Páginas del dashboard
- import DashboardHome from './dashboard/DashboardHome';
- import TutorValidaciones from './dashboard/TutorValidaciones';
- import Usuarios from './dashboard/Usuarios';
- import AdminHospitales from './dashboard/AdminHospitales';
- import AdminFases from './dashboard/AdminFases';
- import AdminFasesSoc from './dashboard/AdminFasesSoc';
- import AdminSociedades from './dashboard/AdminSociedades';
- import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
- import Perfil from './dashboard/Perfil';
- import Notificaciones from './dashboard/Notificaciones';
- import DebugDashboard from './DebugDashboard';
- import ResidenteFases from './dashboard/ResidenteFases';
--import AdminAccessCodes from './dashboard/AdminAccessCodes';
--import AdminConfiguracion from './dashboard/AdminConfiguracion';
--import AdminCirugias from './dashboard/AdminCirugias';
--import LanguageSelector from '../components/LanguageSelector';
--import AdminInformes from './dashboard/AdminInformes';
-+import AdminAccessCodes from './dashboard/AdminAccessCodes';
-+import AdminConfiguracion from './dashboard/AdminConfiguracion';
-+import AdminCirugias from './dashboard/AdminCirugias';
-+import LanguageSelector from '../components/LanguageSelector';
-+import AdminInformes from './dashboard/AdminInformes';
-+import AdminInvitaciones from './dashboard/AdminInvitaciones';
- 
- const drawerWidth = 240;
- 
- const Dashboard: React.FC = () => {
-   const { t } = useTranslation();
-   const [drawerOpen, setDrawerOpen] = useState(false);
-   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-   const [unreadCount, setUnreadCount] = useState(0);
-   const [isPinned, setIsPinned] = useState(false);
-   const [isHovering, setIsHovering] = useState(false);
-   const { user, logout } = useAuth();
-   const navigate = useNavigate();
-   const theme = useTheme();
-   const { toggleColorMode } = useColorMode();
-   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
-   const isDev = env === 'dev';
- 
-   const refreshUnreadCount = async () => {
-     try {
-       const res = await getNotificacionesNoLeidas();
-       setUnreadCount(res.data.count || 0);
-     } catch (err) {
-       console.error('Error obteniendo notificaciones no leidas', err);
-     }
-@@ -115,54 +117,55 @@ const Dashboard: React.FC = () => {
- 
-   const getMenuItems = () => {
-     const items = [
-       {
-         text: t('actions.dashboard'),
-         icon: <DashboardIcon />,
-         path: '/dashboard',
-         roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
+diff --git a/src/controllers/userController.js b/src/controllers/userController.js
+index 30c4b7bd669941084695f03837d8fa7ebbb3ff01..317c0b6138641837babe3b495ae68caf4ccc0789 100644
+--- a/src/controllers/userController.js
++++ b/src/controllers/userController.js
+@@ -753,51 +753,51 @@ exports.inviteUser = async (req, res, next) => {
+           new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
+         );
        }
+     }
+ 
+     const programType =
+       tipo ||
+       requester?.tipo ||
+       ([Role.PARTICIPANTE, Role.PROFESOR].includes(rol)
+         ? 'Programa Sociedades'
+         : 'Programa Residentes');
+ 
+     const accessCode = await AccessCode.findOne({ rol, tipo: programType });
+ 
+     if (!accessCode) {
+       return next(
+         new ErrorResponse(
+           `Falta configurar el código de acceso para el rol ${rol}`,
+           400
+         )
+       );
+     }
+ 
+     // Generar token
+     const token = crypto.randomBytes(20).toString('hex');
+-    const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
++    const fechaExpiracion = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // 14 días
+     const fechaEnvio = new Date();
+ 
+     const resolvedSociedad = sociedad || requester?.sociedad;
+     const invitationUpdate = {
+       email,
+       rol,
+       sociedad: sociedad || requester?.sociedad,
+       tipo: programType,
+       token,
+       fechaExpiracion,
+       fechaEnvio,
+       estado: 'pendiente',
+       admin: requester?._id || requester?.id
+     };
+ 
+     if (hospital) {
+       invitationUpdate.hospital = hospital;
+     }
+ 
+     if (resolvedSociedad) {
+       invitationUpdate.sociedad = resolvedSociedad;
+     }
+ 
+     if (zonaVal) {
+       invitationUpdate.zona = zonaVal;
+@@ -811,80 +811,88 @@ exports.inviteUser = async (req, res, next) => {
+     }
+ 
+     if (!resolvedSociedad && existingInvitation?.sociedad) {
+       updateDoc.$unset = { ...(updateDoc.$unset || {}), sociedad: '' };
+     }
+ 
+     if (!zonaVal && existingInvitation?.zona) {
+       updateDoc.$unset = { ...(updateDoc.$unset || {}), zona: '' };
+     }
+ 
+     const invitacion = await Invitacion.findOneAndUpdate(updateQuery, updateDoc, {
+       new: true,
+       upsert: true,
+       setDefaultsOnInsert: true
+     });
+ 
+     // Crear URL de registro basada en la configuración del frontend
+     const baseFrontendUrl = config.frontendUrl || 'http://localhost:5173';
+     const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
+       ? baseFrontendUrl.slice(0, -1)
+       : baseFrontendUrl;
+     const registerUrl = `${normalizedBaseUrl}/register/${token}`;
+ 
+     // Preparar mensaje de email
+     const roleLabel = rol ? rol.toUpperCase() : '';
++    const fechaExpiracionLabel = fechaExpiracion.toLocaleDateString('es-ES', {
++      day: 'numeric',
++      month: 'long',
++      year: 'numeric'
++    });
++
+     const messageLines = [
+       '📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:',
+       '',
+       `🔹 Rol: ${roleLabel}`,
+       `🔐 Código de acceso: ${accessCode.codigo}`,
+       '',
+       '📝 Regístrate en el siguiente enlace:',
+       registerUrl,
+       '',
++      `Este enlace es válido durante 14 días (hasta el ${fechaExpiracionLabel}).`,
++      'Si el enlace ha caducado, solicita una nueva invitación a tu administrador.',
++      '',
+       'Si tienes cualquier duda, no dudes en consultarnos.',
+       '',
+       'Un saludo,',
+       'Equipo de Formación Da Vinci',
+-      'ABEX Excelencia Robótica',
+-      '',
+-      'Este enlace expirará en 7 días.'
++      'ABEX Excelencia Robótica'
      ];
  
-     if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
-     }
+     const message = messageLines.join('\n');
+     const html = `
+       <p>📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:</p>
+       <p><strong>🔹 Rol:</strong> ${roleLabel}<br />
+       <strong>🔐 Código de acceso:</strong> ${accessCode.codigo}</p>
+       <p>📝 Regístrate en el siguiente enlace:<br />
+       <a href="${registerUrl}" target="_blank" rel="noopener noreferrer">${registerUrl}</a></p>
++      <p>Este enlace es válido durante 14 días (hasta el ${fechaExpiracionLabel}).<br />
++      Si el enlace ha caducado, solicita una nueva invitación a tu administrador.</p>
+       <p>Si tienes cualquier duda, no dudes en consultarnos.</p>
+       <p>Un saludo,<br />
+       Equipo de Formación Da Vinci<br />
+       ABEX Excelencia Robótica</p>
+-      <p>Este enlace expirará en 7 días.</p>
+     `.trim();
  
-     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
-     }
+     try {
+       await sendEmail({
+         email: invitacion.email,
+         subject: 'Invitación a la plataforma de formación da Vinci',
+         message,
+         html
+       });
+       
+       // Crear registro de auditoría
+       await createAuditLog({
+         usuario: requester?._id,
+         accion: 'invitar_usuario',
+         descripcion: `Invitación enviada a: ${email} con rol: ${rol}`,
+         ip: req.ip
+       });
  
-     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
-     }
- 
-     if (user?.rol === 'administrador') {
-       items.push(
--        { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
--        { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
--        { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
--      );
-+        { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-+        { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
-+        { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
-+        { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
-+      );
-     }
- 
-     return items;
-   };
- 
- 
-   const menuItems = getMenuItems();
- 
-   const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
-   const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
-   const sidebarWidthCss = `${sidebarWidth}px`;
-   const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
-   const toolbarHeight = isMobile ? 56 : 64;
-   const sidebarTopOffset = toolbarHeight + sidebarPadding;
-   const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
-   const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
- 
-   const handleSidebarHover = () => {
-     if (!isMobile && !isPinned) {
-       setIsHovering(true);
-     }
-   };
- 
-   const handleSidebarLeave = () => {
-     if (!isMobile && !isPinned) {
-@@ -571,56 +574,59 @@ const Dashboard: React.FC = () => {
-               top: `${toolbarHeight}px`
-             }
-           }}
-           ModalProps={{ keepMounted: true }}
-         >
-           <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
-         </Drawer>
-       )}
-       <Box
-         component="main"
-         sx={{
-           flexGrow: 1,
-           p: 2.5,
-           ml: 0,
-           width: '100%',
-           backgroundColor: 'background.default',
-           minHeight: '100vh'
-         }}
-       >
-         <Toolbar />
-         <Routes>
-           <Route path="/" element={<DashboardHome />} />
-           <Route path="/validaciones" element={<TutorValidaciones />} />
-           <Route path="/usuarios" element={<Usuarios />} />
-           <Route path="/hospitals" element={<AdminHospitales />} />
--          {user?.rol === 'administrador' && (
--            <Route path="/fases" element={<AdminFases />} />
--          )}
--          {user?.rol === 'administrador' && (
--            <Route path="/access-codes" element={<AdminAccessCodes />} />
--          )}
-+          {user?.rol === 'administrador' && (
-+            <Route path="/fases" element={<AdminFases />} />
-+          )}
-+          {user?.rol === 'administrador' && (
-+            <Route path="/invitations" element={<AdminInvitaciones />} />
-+          )}
-+          {user?.rol === 'administrador' && (
-+            <Route path="/access-codes" element={<AdminAccessCodes />} />
-+          )}
-           {user?.rol === 'administrador' && (
-             <Route path="/cirugias" element={<AdminCirugias />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/fases-soc" element={<AdminFasesSoc />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/informes" element={<AdminInformes />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
-           )}
-           <Route
-             path="/dashboard/progreso"
-             element={<Navigate to="/dashboard" replace />}
-           />
-           {user?.rol === 'administrador' && (
-             <Route path="/config" element={<AdminConfiguracion />} />
-           )}
-           {user?.rol === 'administrador' && (
-             <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
-           )}
-           <Route path="/sociedades" element={<AdminSociedades />} />
-           {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
-             <Route path="/fases" element={<ResidenteFases />} />
-diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index a3f7c9354a3319fa60cd88aa37f73727b2175a26..0d907c3b90c5df6eb5546d9ec6c74340cca0ee4a 100644
---- a/client/src/pages/dashboard/AdminUsuarios.tsx
-+++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -12,52 +12,53 @@ import {
-   DialogContentText,
-   DialogActions,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Autocomplete,
-   IconButton,
-   Tooltip,
-   CircularProgress,
-   Backdrop,
-   Menu,
-   MenuItem,
- } from "@mui/material";
- import type { SxProps, Theme } from "@mui/material/styles";
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Download as DownloadIcon,
--  Assessment as AssessmentIcon,
--  ArrowDropDown as ArrowDropDownIcon,
-+  Assessment as AssessmentIcon,
-+  ArrowDropDown as ArrowDropDownIcon,
-+  MailOutline as MailOutlineIcon,
- 
-    //Person as PersonIcon,
-   //Email as EmailIcon
- } from "@mui/icons-material";
- import { useAuth } from "../../context/AuthContext";
- import { useNavigate } from "react-router-dom";
- import api, {
-   createUser,
-   updateUserPassword,
-   getTutors,
-   sendResetPasswordEmail,
-   clearResetNotifications,
- } from "../../api";
- import InviteUsersMail from "../../components/InviteUsersMail";
- import BackButton from "../../components/BackButton";
- import { useTranslation, Trans } from "react-i18next";
- import { getRoleChipSx } from "../../utils/roleChipColors";
- import { FaseCirugia } from "../../types/FaseCirugia";
- 
- const DIALOG_ACTIONS_SX: SxProps<Theme> = {
-   flexWrap: "wrap",
-   gap: 1,
-   justifyContent: "center",
- };
- 
-@@ -818,50 +819,61 @@ const AdminUsuarios: React.FC = () => {
-         sx={{
-           display: "flex",
-           justifyContent: "space-between",
-           alignItems: "center",
-           mb: 3,
-         }}
-       >
-         <Typography variant="h4" component="h1" gutterBottom>
-           {user?.rol === "administrador"
-             ? t("adminUsers.titleAll")
-             : t("adminUsers.titleHospital")}
-         </Typography>
-         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-           <BackButton sx={{ mr: 1 }} />
-           {user?.rol === "administrador" && (
-             <Button
-               variant="contained"
-               color="success"
-               startIcon={<AddIcon />}
-               onClick={handleOpenCrearDialog}
-               sx={{ mr: 1 }}
-             >
-               {t("adminUsers.actions.create")}
-             </Button>
-           )}
-+          {user?.rol === "administrador" && (
-+            <Button
-+              variant="outlined"
-+              color="secondary"
-+              startIcon={<MailOutlineIcon />}
-+              onClick={() => navigate("/dashboard/invitations")}
-+              sx={{ mr: 1 }}
-+            >
-+              {t("adminUsers.actions.manageInvitations")}
-+            </Button>
-+          )}
-           <Button
-             variant="contained"
-             color="primary"
-             startIcon={<AddIcon />}
-             onClick={handleOpenInvitarDialog}
-           >
-             {t("adminUsers.actions.invite")}
-           </Button>
-         </Box>
-       </Box>
- 
-      <TextField
-         variant="outlined"
-         placeholder={t("adminUsers.searchPlaceholder")}
-         value={search}
-         onChange={(e) => setSearch(e.target.value)}
-         fullWidth
-         margin="normal"
-       />
-       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
-         <Autocomplete
-           multiple
-           options={allRoles}
-           value={selectedRoles}
-           onChange={(e, newValue) =>
+       res.status(200).json({
+         success: true,
+         data: invitacion
+       });
+     } catch (err) {
+       console.log(err);
+       

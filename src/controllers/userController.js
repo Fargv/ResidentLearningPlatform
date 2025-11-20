@@ -775,7 +775,7 @@ exports.inviteUser = async (req, res, next) => {
 
     // Generar token
     const token = crypto.randomBytes(20).toString('hex');
-    const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
+    const fechaExpiracion = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // 14 días
     const fechaEnvio = new Date();
 
     const resolvedSociedad = sociedad || requester?.sociedad;
@@ -833,6 +833,12 @@ exports.inviteUser = async (req, res, next) => {
 
     // Preparar mensaje de email
     const roleLabel = rol ? rol.toUpperCase() : '';
+    const fechaExpiracionLabel = fechaExpiracion.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
     const messageLines = [
       '📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:',
       '',
@@ -842,13 +848,14 @@ exports.inviteUser = async (req, res, next) => {
       '📝 Regístrate en el siguiente enlace:',
       registerUrl,
       '',
+      `Este enlace es válido durante 14 días (hasta el ${fechaExpiracionLabel}).`,
+      'Si el enlace ha caducado, solicita una nueva invitación a tu administrador.',
+      '',
       'Si tienes cualquier duda, no dudes en consultarnos.',
       '',
       'Un saludo,',
       'Equipo de Formación Da Vinci',
-      'ABEX Excelencia Robótica',
-      '',
-      'Este enlace expirará en 7 días.'
+      'ABEX Excelencia Robótica'
     ];
 
     const message = messageLines.join('\n');
@@ -858,11 +865,12 @@ exports.inviteUser = async (req, res, next) => {
       <strong>🔐 Código de acceso:</strong> ${accessCode.codigo}</p>
       <p>📝 Regístrate en el siguiente enlace:<br />
       <a href="${registerUrl}" target="_blank" rel="noopener noreferrer">${registerUrl}</a></p>
+      <p>Este enlace es válido durante 14 días (hasta el ${fechaExpiracionLabel}).<br />
+      Si el enlace ha caducado, solicita una nueva invitación a tu administrador.</p>
       <p>Si tienes cualquier duda, no dudes en consultarnos.</p>
       <p>Un saludo,<br />
       Equipo de Formación Da Vinci<br />
       ABEX Excelencia Robótica</p>
-      <p>Este enlace expirará en 7 días.</p>
     `.trim();
 
     try {
