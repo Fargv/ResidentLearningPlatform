@@ -53,6 +53,7 @@ const allowedOrigins = Array.from(new Set([
   'http://localhost:3000',
   'http://localhost:5173',
   'https://residentlearningplatform.netlify.app',
+  'https://academicprogramdavinci.com',
   'https://academicprogramdavinci.netlify.app',
   ...envOrigins,
 ]));
