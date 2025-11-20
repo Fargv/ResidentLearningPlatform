@@ -1,150 +1,66 @@
-diff --git a/src/controllers/userController.js b/src/controllers/userController.js
-index 30c4b7bd669941084695f03837d8fa7ebbb3ff01..317c0b6138641837babe3b495ae68caf4ccc0789 100644
---- a/src/controllers/userController.js
-+++ b/src/controllers/userController.js
-@@ -753,51 +753,51 @@ exports.inviteUser = async (req, res, next) => {
-           new ErrorResponse('No autorizado para invitar usuarios de otra zona', 403)
-         );
-       }
-     }
+diff --git a/client/src/pages/dashboard/AdminInvitaciones.tsx b/client/src/pages/dashboard/AdminInvitaciones.tsx
+index 87a49ab76a4d7db335eca82ca8c1b5df0f72663d..605ab82927be6cd2dcffc664809cda4d630ea851 100644
+--- a/client/src/pages/dashboard/AdminInvitaciones.tsx
++++ b/client/src/pages/dashboard/AdminInvitaciones.tsx
+@@ -47,51 +47,60 @@ interface AdminUser {
+   email?: string;
+ }
  
-     const programType =
-       tipo ||
-       requester?.tipo ||
-       ([Role.PARTICIPANTE, Role.PROFESOR].includes(rol)
-         ? 'Programa Sociedades'
-         : 'Programa Residentes');
+ interface Invitation {
+   _id: string;
+   email: string;
+   rol: string;
+   tipo: string;
+   hospital?: BasicEntity;
+   sociedad?: BasicEntity;
+   zona?: string;
+   estado?: string;
+   token?: string;
+   fechaEnvio?: string;
+   fechaExpiracion?: string;
+   admin?: AdminUser;
+ }
  
-     const accessCode = await AccessCode.findOne({ rol, tipo: programType });
+ interface InvitationWithStatus extends Invitation {
+   userMatch?: { _id: string; nombre?: string; apellidos?: string; email: string };
+   derivedStatus: 'pendiente' | 'expirada' | 'aceptada' | 'registrado';
+ }
  
-     if (!accessCode) {
-       return next(
-         new ErrorResponse(
-           `Falta configurar el código de acceso para el rol ${rol}`,
-           400
-         )
-       );
-     }
- 
-     // Generar token
-     const token = crypto.randomBytes(20).toString('hex');
--    const fechaExpiracion = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
-+    const fechaExpiracion = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // 14 días
-     const fechaEnvio = new Date();
- 
-     const resolvedSociedad = sociedad || requester?.sociedad;
-     const invitationUpdate = {
-       email,
-       rol,
-       sociedad: sociedad || requester?.sociedad,
-       tipo: programType,
-       token,
-       fechaExpiracion,
-       fechaEnvio,
-       estado: 'pendiente',
-       admin: requester?._id || requester?.id
-     };
- 
-     if (hospital) {
-       invitationUpdate.hospital = hospital;
-     }
- 
-     if (resolvedSociedad) {
-       invitationUpdate.sociedad = resolvedSociedad;
-     }
- 
-     if (zonaVal) {
-       invitationUpdate.zona = zonaVal;
-@@ -811,80 +811,88 @@ exports.inviteUser = async (req, res, next) => {
-     }
- 
-     if (!resolvedSociedad && existingInvitation?.sociedad) {
-       updateDoc.$unset = { ...(updateDoc.$unset || {}), sociedad: '' };
-     }
- 
-     if (!zonaVal && existingInvitation?.zona) {
-       updateDoc.$unset = { ...(updateDoc.$unset || {}), zona: '' };
-     }
- 
-     const invitacion = await Invitacion.findOneAndUpdate(updateQuery, updateDoc, {
-       new: true,
-       upsert: true,
-       setDefaultsOnInsert: true
-     });
- 
-     // Crear URL de registro basada en la configuración del frontend
-     const baseFrontendUrl = config.frontendUrl || 'http://localhost:5173';
-     const normalizedBaseUrl = baseFrontendUrl.endsWith('/')
-       ? baseFrontendUrl.slice(0, -1)
-       : baseFrontendUrl;
-     const registerUrl = `${normalizedBaseUrl}/register/${token}`;
- 
-     // Preparar mensaje de email
-     const roleLabel = rol ? rol.toUpperCase() : '';
-+    const fechaExpiracionLabel = fechaExpiracion.toLocaleDateString('es-ES', {
-+      day: 'numeric',
-+      month: 'long',
-+      year: 'numeric'
-+    });
+ const formatDateTime = (value?: string) => {
+   if (!value) return '—';
+-  return new Date(value).toLocaleString();
++  const date = new Date(value);
++  if (Number.isNaN(date.getTime())) return '—';
 +
-     const messageLines = [
-       '📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:',
-       '',
-       `🔹 Rol: ${roleLabel}`,
-       `🔐 Código de acceso: ${accessCode.codigo}`,
-       '',
-       '📝 Regístrate en el siguiente enlace:',
-       registerUrl,
-       '',
-+      `Este enlace es válido durante 14 días (hasta el ${fechaExpiracionLabel}).`,
-+      'Si el enlace ha caducado, solicita una nueva invitación a tu administrador.',
-+      '',
-       'Si tienes cualquier duda, no dudes en consultarnos.',
-       '',
-       'Un saludo,',
-       'Equipo de Formación Da Vinci',
--      'ABEX Excelencia Robótica',
--      '',
--      'Este enlace expirará en 7 días.'
-+      'ABEX Excelencia Robótica'
-     ];
++  const day = String(date.getDate()).padStart(2, '0');
++  const month = String(date.getMonth() + 1).padStart(2, '0');
++  const year = date.getFullYear();
++  const hours = String(date.getHours()).padStart(2, '0');
++  const minutes = String(date.getMinutes()).padStart(2, '0');
++
++  return `${month}/${day}/${year} ${hours}:${minutes}`;
+ };
  
-     const message = messageLines.join('\n');
-     const html = `
-       <p>📣 Has sido invitado a unirte a la Plataforma de Formación Da Vinci como:</p>
-       <p><strong>🔹 Rol:</strong> ${roleLabel}<br />
-       <strong>🔐 Código de acceso:</strong> ${accessCode.codigo}</p>
-       <p>📝 Regístrate en el siguiente enlace:<br />
-       <a href="${registerUrl}" target="_blank" rel="noopener noreferrer">${registerUrl}</a></p>
-+      <p>Este enlace es válido durante 14 días (hasta el ${fechaExpiracionLabel}).<br />
-+      Si el enlace ha caducado, solicita una nueva invitación a tu administrador.</p>
-       <p>Si tienes cualquier duda, no dudes en consultarnos.</p>
-       <p>Un saludo,<br />
-       Equipo de Formación Da Vinci<br />
-       ABEX Excelencia Robótica</p>
--      <p>Este enlace expirará en 7 días.</p>
-     `.trim();
+ const getFrontendBaseUrl = () => {
+   const envValue = process.env.REACT_APP_FRONTEND_URL || (window as any).REACT_APP_FRONTEND_URL;
+   const base = envValue || window.location.origin;
+   return base.endsWith('/') ? base.slice(0, -1) : base;
+ };
  
+ const AdminInvitaciones: React.FC = () => {
+   const { t } = useTranslation();
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState<string | null>(null);
+   const [invitations, setInvitations] = useState<InvitationWithStatus[]>([]);
+   const [search, setSearch] = useState('');
+   const [feedback, setFeedback] = useState<{
+     message: string;
+     severity: 'success' | 'error' | 'info';
+   } | null>(null);
+   const [confirming, setConfirming] = useState<InvitationWithStatus | null>(null);
+   const [actionId, setActionId] = useState<string | null>(null);
+ 
+   const fetchInvitations = async () => {
      try {
-       await sendEmail({
-         email: invitacion.email,
-         subject: 'Invitación a la plataforma de formación da Vinci',
-         message,
-         html
-       });
-       
-       // Crear registro de auditoría
-       await createAuditLog({
-         usuario: requester?._id,
-         accion: 'invitar_usuario',
-         descripcion: `Invitación enviada a: ${email} con rol: ${rol}`,
-         ip: req.ip
-       });
- 
-       res.status(200).json({
-         success: true,
-         data: invitacion
-       });
-     } catch (err) {
-       console.log(err);
-       
+       setLoading(true);
+       setError(null);
