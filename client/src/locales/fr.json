@@ -14,6 +14,7 @@
     "trainingPhases": "Phases de formation",
     "validations": "Validations",
     "myUsers": "Mes utilisateurs",
+    "invitations": "Invitations",
     "usersProgress": "Progrès des utilisateurs",
     "settings": "Paramètres",
     "myProfile": "Mon profil",
@@ -530,6 +531,7 @@
     "actions": {
       "create": "Créer un utilisateur",
       "invite": "Inviter un utilisateur",
+      "manageInvitations": "Gérer les invitations",
       "edit": "Modifier",
       "delete": "Supprimer",
       "changePassword": "Changer le mot de passe",
@@ -1075,6 +1077,54 @@
     },
     "actions": {
       "downloadSurgeryReport": "Télécharger le rapport de {{phase}}"
+    }
+  },
+  "adminInvitations": {
+    "title": "Invitations envoyées",
+    "subtitle": "Consultez, renvoyez ou supprimez les invitations déjà envoyées.",
+    "searchPlaceholder": "Rechercher par email, rôle, hôpital, société ou zone",
+    "table": {
+      "email": "Email",
+      "role": "Rôle",
+      "program": "Programme",
+      "scope": "Contexte",
+      "sent": "Envoyée",
+      "expires": "Expire",
+      "status": "Statut",
+      "admin": "Envoyée par",
+      "actions": "Actions",
+      "loading": "Chargement des invitations...",
+      "empty": "Aucune invitation enregistrée"
+    },
+    "status": {
+      "pending": "En attente",
+      "expired": "Expirée",
+      "accepted": "Acceptée",
+      "registered": "Utilisateur créé"
+    },
+    "actions": {
+      "refresh": "Actualiser",
+      "copy": "Copier le lien",
+      "resend": "Renvoyer",
+      "delete": "Supprimer"
+    },
+    "labels": {
+      "convertedTo": "Convertie en utilisateur {{name}}"
+    },
+    "dialogs": {
+      "deleteTitle": "Supprimer l'invitation",
+      "deleteConfirm": "Voulez-vous supprimer l'invitation envoyée à {{email}} ?",
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    },
+    "feedback": {
+      "resent": "Invitation renvoyée",
+      "resendError": "Impossible de renvoyer l'invitation",
+      "linkCopied": "Lien copié dans le presse-papiers",
+      "copyError": "Impossible de copier le lien",
+      "noLink": "Aucun lien disponible pour cette invitation",
+      "deleted": "Invitation supprimée",
+      "deleteError": "Impossible de supprimer l'invitation"
     }
   },
   "privacyPolicy": {

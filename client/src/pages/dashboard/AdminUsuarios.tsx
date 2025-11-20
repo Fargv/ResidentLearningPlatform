@@ -36,6 +36,7 @@ import {
   Download as DownloadIcon,
   Assessment as AssessmentIcon,
   ArrowDropDown as ArrowDropDownIcon,
+  MailOutline as MailOutlineIcon,
 
    //Person as PersonIcon,
   //Email as EmailIcon
@@ -838,6 +839,17 @@ const AdminUsuarios: React.FC = () => {
               sx={{ mr: 1 }}
             >
               {t("adminUsers.actions.create")}
+            </Button>
+          )}
+          {user?.rol === "administrador" && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              startIcon={<MailOutlineIcon />}
+              onClick={() => navigate("/dashboard/invitations")}
+              sx={{ mr: 1 }}
+            >
+              {t("adminUsers.actions.manageInvitations")}
             </Button>
           )}
           <Button

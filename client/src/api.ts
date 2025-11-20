@@ -53,4 +53,10 @@ export const requestPasswordReset = (email: string) =>
 export const requestPasswordResetAutomatic = (email: string) =>
   api.post('/auth/forgotpassword', { email });
 
+// Invitations
+export const getInvitations = () => api.get('/users/invitations');
+export const cancelInvitation = (id: string) => api.delete(`/users/invitations/${id}`);
+export const resendInvitation = (payload: Record<string, string>) =>
+  api.post('/users/invite', payload);
+
 

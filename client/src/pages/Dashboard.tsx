@@ -38,7 +38,8 @@ import {
   PushPin as PushPinIcon,
   PushPinOutlined as PushPinOutlinedIcon,
   Menu as MenuIcon,
-  ChevronRight as ChevronRightIcon
+  ChevronRight as ChevronRightIcon,
+  MailOutline as MailOutlineIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { getNotificacionesNoLeidas } from '../api';
@@ -63,6 +64,7 @@ import AdminConfiguracion from './dashboard/AdminConfiguracion';
 import AdminCirugias from './dashboard/AdminCirugias';
 import LanguageSelector from '../components/LanguageSelector';
 import AdminInformes from './dashboard/AdminInformes';
+import AdminInvitaciones from './dashboard/AdminInvitaciones';
 
 const drawerWidth = 240;
 
@@ -138,6 +140,7 @@ const Dashboard: React.FC = () => {
     if (user?.rol === 'administrador') {
       items.push(
         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+        { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
@@ -595,6 +598,9 @@ const Dashboard: React.FC = () => {
           <Route path="/hospitals" element={<AdminHospitales />} />
           {user?.rol === 'administrador' && (
             <Route path="/fases" element={<AdminFases />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/invitations" element={<AdminInvitaciones />} />
           )}
           {user?.rol === 'administrador' && (
             <Route path="/access-codes" element={<AdminAccessCodes />} />

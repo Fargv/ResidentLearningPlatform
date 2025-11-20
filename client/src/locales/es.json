@@ -14,6 +14,7 @@
     "trainingPhases": "Fases Formativas",
     "validations": "Validaciones",
     "myUsers": "Mis Usuarios",
+    "invitations": "Invitaciones",
     "usersProgress": "Progreso Usuarios",
     "settings": "Configuración",
     "myProfile": "Mi Perfil",
@@ -430,6 +431,7 @@
     "actions": {
       "create": "Crear Usuario",
       "invite": "Invitar Usuario",
+      "manageInvitations": "Gestionar invitaciones",
       "edit": "Editar",
       "delete": "Eliminar",
       "changePassword": "Cambiar contraseña",
@@ -1069,6 +1071,54 @@
     "inactive": "Inactivo",
     "validated": "Validado",
     "rejected": "Rechazado"
+  },
+  "adminInvitations": {
+    "title": "Invitaciones enviadas",
+    "subtitle": "Supervisa, reenvía o elimina invitaciones ya enviadas.",
+    "searchPlaceholder": "Buscar por email, rol, hospital, sociedad o zona",
+    "table": {
+      "email": "Email",
+      "role": "Rol",
+      "program": "Programa",
+      "scope": "Ámbito",
+      "sent": "Enviada",
+      "expires": "Caduca",
+      "status": "Estado",
+      "admin": "Enviada por",
+      "actions": "Acciones",
+      "loading": "Cargando invitaciones...",
+      "empty": "No hay invitaciones registradas"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "expired": "Expirada",
+      "accepted": "Aceptada",
+      "registered": "Usuario creado"
+    },
+    "actions": {
+      "refresh": "Actualizar",
+      "copy": "Copiar enlace",
+      "resend": "Reenviar",
+      "delete": "Eliminar"
+    },
+    "labels": {
+      "convertedTo": "Convertida en usuario {{name}}"
+    },
+    "dialogs": {
+      "deleteTitle": "Eliminar invitación",
+      "deleteConfirm": "¿Quieres eliminar la invitación a {{email}}?",
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
+    },
+    "feedback": {
+      "resent": "Invitación reenviada",
+      "resendError": "No se pudo reenviar la invitación",
+      "linkCopied": "Enlace copiado al portapapeles",
+      "copyError": "No se pudo copiar el enlace",
+      "noLink": "No hay enlace disponible para esta invitación",
+      "deleted": "Invitación eliminada",
+      "deleteError": "No se pudo eliminar la invitación"
+    }
   },
   "privacyPolicy": {
     "title": "Política de Privacidad",
