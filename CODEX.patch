@@ -1,8 +1,84 @@
 diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index 4f2d7caae04fbf1343ec206d23cd56d710098523..5ee08e9c51a5e6e63c2707ab1dc58d23bb5481d5 100644
+index 27b04cb33f2aea99b51b4fbf68ba6f641d019398..06a0ce8c4a44b2459c1dddf190d0ab49f2a0ba07 100644
 --- a/client/src/pages/dashboard/DashboardHome.tsx
 +++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -626,51 +626,57 @@ const DashboardHome: React.FC = () => {
+@@ -567,66 +567,67 @@ const DashboardHome: React.FC = () => {
+                     {getRoleSubtitle()}
+                   </Typography>
+                 </Box>
+               </Stack>
+               {!!heroChips.length && <Divider sx={{ my: 3 }} />}
+               {!!heroChips.length && (
+                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                   {heroChips.map((chip) => (
+                     <Chip
+                       key={chip.key}
+                       label={`${chip.label}: ${chip.value}`}
+                       variant="outlined"
+                       size="small"
+                       sx={{ mr: 1, mb: 1 }}
+                     />
+                   ))}
+                 </Stack>
+               )}
+             </Paper>
+           </Box>
+           <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
+             <Paper sx={{ p: 3, height: '100%' }}>
+               <Typography variant="h6" gutterBottom>
+                 {t('actions.dashboard')}
+               </Typography>
+-              <Stack direction="row" spacing={2} flexWrap="wrap">
+-                {actions.map((action) => (
+-                  <Box
+-                    key={action.label}
+-                    component="button"
+-                    type="button"
+-                    onClick={() => navigate(action.path)}
+-                    sx={{
+-                      flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33% - 16px)' },
+-                      border: 'none',
+-                      background: 'transparent',
+-                      p: 0,
+-                      cursor: 'pointer',
+-                      textAlign: 'left',
+-                    }}
+-                  >
++              <Stack direction="row" spacing={2} flexWrap="wrap" rowGap={2}>
++                {actions.map((action) => (
++                  <Box
++                    key={action.label}
++                    component="button"
++                    type="button"
++                    onClick={() => navigate(action.path)}
++                    sx={{
++                      flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33% - 16px)' },
++                      border: 'none',
++                      background: 'transparent',
++                      p: 0,
++                      cursor: 'pointer',
++                      textAlign: 'left',
++                      mb: 2,
++                    }}
++                  >
+                     <Paper
+                       variant="outlined"
+                       sx={{
+                         px: 3,
+                         py: 2.5,
+                         height: '100%',
+                         minHeight: 120,
+                         display: 'flex',
+                         flexDirection: 'column',
+                         alignItems: 'center',
+                         justifyContent: 'center',
+                         textAlign: 'center',
+                         gap: 1,
+                         borderRadius: 2,
+                         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                         '&:hover': {
+                           boxShadow: 4,
+                           transform: 'translateY(-2px)',
                          },
                        }}
                      >
@@ -10,107 +86,3 @@ index 4f2d7caae04fbf1343ec206d23cd56d710098523..5ee08e9c51a5e6e63c2707ab1dc58d23
                        <Typography variant="subtitle1" sx={{ mt: 1 }}>
                          {action.label}
                        </Typography>
-                     </Paper>
-                   </Box>
-                 ))}
-               </Stack>
-             </Paper>
-           </Box>
-         </Stack>
-         {user?.tipo === "Programa Sociedades" && sociedadInfo && (
-           <Paper sx={{ p: 3 }}>
-             <Typography variant="h6" gutterBottom>
-               {sociedadInfo.titulo}
-             </Typography>
-             <Chip
-               label={sociedadInfo.status}
-               color={sociedadInfo.status === "ACTIVO" ? "success" : "default"}
-               size="small"
-               sx={{ mb: 2 }}
-             />
--            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-+            <Stack
-+              direction="row"
-+              spacing={2}
-+              flexWrap="wrap"
-+              justifyContent="center"
-+              rowGap={2}
-+            >
-               {societyMilestones.map((m, idx) => {
-                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
-                 const percent = phaseData?.percent ?? 0;
-                 return (
-                   <Box
-                     key={m.label}
-                     sx={{
-                       flex: {
-                         xs: '1 1 100%',
-                         md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
-                       },
-                       minWidth: { xs: '250px', md: '250px' },
-                       mb: 2,
-                     }}
-                   >
-                     <CardActionArea
-                       onClick={() => {
-                         const phaseDescription = richTextOrUndefined(
-                           phaseData?.description,
-                         );
-                         handleOpenDialog({
-                           label: m.label,
-                           date: m.date,
-                           descriptionHtml: phaseDescription,
-                           descriptionNode: phaseDescription ? undefined : m.description,
-@@ -748,51 +754,51 @@ const DashboardHome: React.FC = () => {
-                   <Button
-                     variant="contained"
-                     color="secondary"
-                     onClick={handleDescargarCertificado}
-                     disabled={downloadLoading}
-                     startIcon={<WorkspacePremiumIcon />}
-                   >
-                     {t('residentProgress.downloadCertificate')}
-                   </Button>
-                 )}
-               </Stack>
-             )}
-           </Paper>
-         )}
-         {user?.tipo === "Programa Residentes" &&
-           (user?.rol === "residente" ||
-             user?.rol === "tutor" ||
-             user?.rol === "csm" ||
-             user?.rol === "profesor" ||
-             user?.rol === "participante") &&
-           phaseSummary.length > 0 && (
-             <Paper sx={{ p: 3 }}>
-               <Typography variant="h6" gutterBottom>
-                 {t('progressByPhase')}
-               </Typography>
--              <Stack direction="row" spacing={2} flexWrap="wrap">
-+              <Stack direction="row" spacing={2} flexWrap="wrap" rowGap={2}>
-                 {phaseSummary.map((p, idx) => (
-                   <Box
-                     key={p.progresoId}
-                     sx={{
-                       flex: '1 1 calc(50% - 16px)',
-                       minWidth: '250px',
-                       mb: 2,
-                     }}
-                   >
-                     <CardActionArea
-                       onClick={() => {
-                         const descriptionHtml = richTextOrUndefined(p.description);
-                         handleOpenDialog({
-                           label: p.name,
-                           descriptionHtml,
-                           descriptionNode: descriptionHtml
-                             ? undefined
-                             : residentMilestones[idx]?.description,
-                         });
-                       }}
-                       sx={{
-                         "&:hover": {
-                           backgroundColor: "action.hover",
-                           transform: "scale(1.02)",
-                         },

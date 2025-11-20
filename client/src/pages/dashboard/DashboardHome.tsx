@@ -589,7 +589,7 @@ const DashboardHome: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 {t('actions.dashboard')}
               </Typography>
-              <Stack direction="row" spacing={2} flexWrap="wrap">
+              <Stack direction="row" spacing={2} flexWrap="wrap" rowGap={2}>
                 {actions.map((action) => (
                   <Box
                     key={action.label}
@@ -603,6 +603,7 @@ const DashboardHome: React.FC = () => {
                       p: 0,
                       cursor: 'pointer',
                       textAlign: 'left',
+                      mb: 2,
                     }}
                   >
                     <Paper
