@@ -74,6 +74,14 @@ const DashboardHome: React.FC = () => {
       ? alpha(base, 0.5)
       : lighten(base, 0.65);
   }, [theme]);
+
+  const progressEmptyColor = useMemo(
+    () =>
+      theme.palette.mode === 'dark'
+        ? alpha(theme.palette.common.white, 0.08)
+        : theme.palette.grey[200],
+    [theme]
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
@@ -640,77 +648,69 @@ const DashboardHome: React.FC = () => {
               size="small"
               sx={{ mb: 2 }}
             />
-            <Stack
-              direction="row"
-              spacing={3}
-              flexWrap="wrap"
-              justifyContent="center"
-              sx={{ mt: 2 }}
-            >
-              {societyMilestones.map((m) => {
+            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+              {societyMilestones.map((m, idx) => {
                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
                 const percent = phaseData?.percent ?? 0;
                 return (
-                <Box
-                  key={m.label}
-                  sx={{
-                    flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
-                    maxWidth: { xs: '100%', sm: '360px' },
-                    minWidth: { xs: '260px', sm: '300px' },
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CardActionArea
-                    onClick={() => {
-                      const phaseDescription = richTextOrUndefined(
-                        phaseData?.description,
-                      );
-                      handleOpenDialog({
-                        label: m.label,
-                        date: m.date,
-                        descriptionHtml: phaseDescription,
-                        descriptionNode: phaseDescription ? undefined : m.description,
-                      });
-                    }}
+                  <Box
+                    key={m.label}
                     sx={{
-                      width: '100%',
-                      borderRadius: 2,
-                      overflow: 'hidden',
-                      "&:hover": {
-                        backgroundColor: "action.hover",
-                        transform: "scale(1.02)",
+                      flex: {
+                        xs: '1 1 100%',
+                        md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
                       },
-                      cursor: "pointer",
+                      minWidth: { xs: '250px', md: '250px' },
+                      mb: 2,
                     }}
                   >
-                    <Paper
-                      elevation={2}
+                    <CardActionArea
+                      onClick={() => {
+                        const phaseDescription = richTextOrUndefined(
+                          phaseData?.description,
+                        );
+                        handleOpenDialog({
+                          label: m.label,
+                          date: m.date,
+                          descriptionHtml: phaseDescription,
+                          descriptionNode: phaseDescription ? undefined : m.description,
+                        });
+                      }}
                       sx={{
-                        px: 2,
-                        pt: 3,
-                        pb: 2.5,
-                        minHeight: 150,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        borderLeft: `6px solid ${theme.palette.primary.main}`,
-                        background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
+                        "&:hover": {
+                          backgroundColor: "action.hover",
+                          transform: "scale(1.02)",
+                        },
+                        cursor: "pointer",
                       }}
                     >
-                      <Typography
-                        variant="subtitle2"
-                        sx={{ color: 'text.secondary' }}
+                      <Paper
+                        elevation={2}
+                        sx={{
+                          px: 2,
+                          pt: 3,
+                          pb: 2.5,
+                          minHeight: 150,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          borderLeft: `6px solid ${theme.palette.primary.main}`,
+                          background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${progressEmptyColor} ${percent}%)`,
+                        }}
                       >
-                        {m.label}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        sx={{ color: theme.palette.primary.main }}
-                      >
-                        {formatMonthYear(m.date || "") || "—"}
-                      </Typography>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          {m.label}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          sx={{ color: theme.palette.primary.main }}
+                        >
+                          {formatMonthYear(m.date || "") || "—"}
+                        </Typography>
                         <Typography
                           variant="body2"
                           fontWeight="bold"
@@ -720,12 +720,12 @@ const DashboardHome: React.FC = () => {
                         >
                           {percent}%
                         </Typography>
-                    </Paper>
-                  </CardActionArea>
-                </Box>
+                      </Paper>
+                    </CardActionArea>
+                  </Box>
                 );
               })}
-              </Stack>
+            </Stack>
             {(societyDownloadButtons.length > 0 || socAllValidado) && (
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}
@@ -770,77 +770,66 @@ const DashboardHome: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 {t('progressByPhase')}
               </Typography>
-              <Stack
-                direction="row"
-                spacing={3}
-                flexWrap="wrap"
-                justifyContent="center"
-                sx={{ mt: 2 }}
-              >
+              <Stack direction="row" spacing={2} flexWrap="wrap">
                 {phaseSummary.map((p, idx) => (
                   <Box
                     key={p.progresoId}
                     sx={{
-                      flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
-                      maxWidth: { xs: '100%', sm: '360px' },
-                      minWidth: { xs: '260px', sm: '300px' },
-                      display: 'flex',
-                      justifyContent: 'center',
-                    }}
-                >
-                  <CardActionArea
-                    onClick={() => {
-                      const descriptionHtml = richTextOrUndefined(p.description);
-                      handleOpenDialog({
-                        label: p.name,
-                        descriptionHtml,
-                        descriptionNode: descriptionHtml
-                          ? undefined
-                          : residentMilestones[idx]?.description,
-                      });
-                    }}
-                    sx={{
-                      width: '100%',
-                      borderRadius: 2,
-                      overflow: 'hidden',
-                      "&:hover": {
-                        backgroundColor: "action.hover",
-                        transform: "scale(1.02)",
-                      },
-                      cursor: "pointer",
+                      flex: '1 1 calc(50% - 16px)',
+                      minWidth: '250px',
+                      mb: 2,
                     }}
                   >
-                    <Paper
-                      elevation={2}
+                    <CardActionArea
+                      onClick={() => {
+                        const descriptionHtml = richTextOrUndefined(p.description);
+                        handleOpenDialog({
+                          label: p.name,
+                          descriptionHtml,
+                          descriptionNode: descriptionHtml
+                            ? undefined
+                            : residentMilestones[idx]?.description,
+                        });
+                      }}
                       sx={{
-                        px: 2,
-                        pt: 3,
-                        pb: 2.5,
-                        minHeight: 150,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        borderLeft: `6px solid ${theme.palette.primary.main}`,
-                        background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
+                        "&:hover": {
+                          backgroundColor: "action.hover",
+                          transform: "scale(1.02)",
+                        },
+                        cursor: "pointer",
                       }}
                     >
-                      <Typography variant="subtitle2" color="text.secondary">
-                        {p.name}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
+                      <Paper
+                        elevation={2}
                         sx={{
-                          color: theme.palette.primary.main,
-                          textShadow: 'none',
+                          px: 2,
+                          pt: 3,
+                          pb: 2.5,
+                          minHeight: 150,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          borderLeft: `6px solid ${theme.palette.primary.main}`,
+                          background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${progressEmptyColor} ${p.percent}%)`,
                         }}
                       >
-                        {p.percent}%
-                      </Typography>
-                    </Paper>
-                  </CardActionArea>
-                </Box>
-              ))}
+                        <Typography variant="subtitle2" color="text.secondary">
+                          {p.name}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          sx={{
+                            color: theme.palette.primary.main,
+                            textShadow: 'none',
+                          }}
+                        >
+                          {p.percent}%
+                        </Typography>
+                      </Paper>
+                    </CardActionArea>
+                  </Box>
+                ))}
               </Stack>
               {(residentDownloadButtons.length > 0 || allValidado) && (
                 <Stack
