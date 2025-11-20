@@ -1103,6 +1103,7 @@
       "registered": "Utilisateur créé"
     },
     "actions": {
+      "invite": "Nouvelle invitation",
       "refresh": "Actualiser",
       "copy": "Copier le lien",
       "resend": "Renvoyer",
@@ -1124,7 +1125,8 @@
       "copyError": "Impossible de copier le lien",
       "noLink": "Aucun lien disponible pour cette invitation",
       "deleted": "Invitation supprimée",
-      "deleteError": "Impossible de supprimer l'invitation"
+      "deleteError": "Impossible de supprimer l'invitation",
+      "catalogsError": "Impossible de charger les données pour envoyer une nouvelle invitation"
     }
   },
   "privacyPolicy": {

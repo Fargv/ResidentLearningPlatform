@@ -1104,6 +1104,7 @@
       "registered": "User created"
     },
     "actions": {
+      "invite": "New invitation",
       "refresh": "Refresh",
       "copy": "Copy link",
       "resend": "Resend",
@@ -1125,7 +1126,8 @@
       "copyError": "Could not copy the link",
       "noLink": "There is no available link for this invitation",
       "deleted": "Invitation deleted",
-      "deleteError": "Could not delete the invitation"
+      "deleteError": "Could not delete the invitation",
+      "catalogsError": "Could not load the data to send a new invitation"
     }
   },
   "privacyPolicy": {

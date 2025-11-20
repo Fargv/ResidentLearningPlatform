@@ -26,12 +26,14 @@ import {
 } from '@mui/material';
 import {
   ContentCopy as ContentCopyIcon,
+  MailOutline as MailOutlineIcon,
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
   Send as SendIcon
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../../components/BackButton';
+import InviteUsersMail from '../../components/InviteUsersMail';
 import api, { getInvitations } from '../../api';
 
 interface BasicEntity {
@@ -67,6 +69,8 @@ interface InvitationWithStatus extends Invitation {
   derivedStatus: 'pendiente' | 'expirada' | 'aceptada' | 'registrado';
 }
 
+type CatalogEntity = { _id: string; nombre: string };
+
 const formatDateTime = (value?: string) => {
   if (!value) return '—';
   const date = new Date(value);
@@ -99,6 +103,10 @@ const AdminInvitaciones: React.FC = () => {
   } | null>(null);
   const [confirming, setConfirming] = useState<InvitationWithStatus | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
+  const [openInviteDialog, setOpenInviteDialog] = useState(false);
+  const [hospitals, setHospitals] = useState<CatalogEntity[]>([]);
+  const [societies, setSocieties] = useState<CatalogEntity[]>([]);
+  const [catalogsLoading, setCatalogsLoading] = useState(false);
 
   const fetchInvitations = async () => {
     try {
@@ -150,6 +158,40 @@ const AdminInvitaciones: React.FC = () => {
     fetchInvitations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!openInviteDialog) return;
+
+    const loadCatalogs = async () => {
+      try {
+        setCatalogsLoading(true);
+        const [hospitalsRes, societiesRes] = await Promise.all([
+          api.get('/hospitals'),
+          api.get('/sociedades')
+        ]);
+
+        const hospitalsData = hospitalsRes.data?.data || hospitalsRes.data || [];
+        const societiesData = societiesRes.data?.data || societiesRes.data || [];
+
+        setHospitals(hospitalsData.map((hospital: any) => ({ _id: hospital._id, nombre: hospital.nombre })));
+        setSocieties(
+          societiesData.map((society: any) => ({
+            _id: society._id,
+            nombre: society.nombre || society.titulo || ''
+          }))
+        );
+      } catch (err: any) {
+        setFeedback({
+          message: err?.response?.data?.error || t('adminInvitations.feedback.catalogsError'),
+          severity: 'error'
+        });
+      } finally {
+        setCatalogsLoading(false);
+      }
+    };
+
+    void loadCatalogs();
+  }, [openInviteDialog, t]);
 
   const filteredInvitations = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -278,6 +320,14 @@ const AdminInvitaciones: React.FC = () => {
           </Typography>
         </Box>
         <Stack direction="row" spacing={1} alignItems="center">
+          <Button
+            variant="contained"
+            startIcon={<MailOutlineIcon />}
+            onClick={() => setOpenInviteDialog(true)}
+            disabled={catalogsLoading}
+          >
+            {t('adminInvitations.actions.invite')}
+          </Button>
           <BackButton />
           <Button
             variant="outlined"
@@ -476,6 +526,14 @@ const AdminInvitaciones: React.FC = () => {
             </Alert>
         </Snackbar>
         )}
+
+      <InviteUsersMail
+        open={openInviteDialog}
+        onClose={() => setOpenInviteDialog(false)}
+        hospitals={hospitals}
+        societies={societies}
+        onSuccess={fetchInvitations}
+      />
 
     </Box>
   );

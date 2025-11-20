@@ -32,6 +32,7 @@ interface InviteUsersMailProps {
   onClose: () => void;
   hospitals: BasicEntity[];
   societies: BasicEntity[];
+  onSuccess?: () => void;
 }
 
 interface AccessCode {
@@ -73,6 +74,7 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
   onClose,
   hospitals,
   societies,
+  onSuccess,
 }) => {
   const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
   const [role, setRole] = useState<Role | ''>('');
@@ -292,6 +294,10 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
             ? 'Invitación enviada correctamente.'
             : 'Invitaciones enviadas correctamente.',
       });
+
+      if (onSuccess) {
+        onSuccess();
+      }
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
       closeDialog();

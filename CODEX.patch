@@ -1,8 +1,488 @@
+diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
+index 339c39af591399086631d120ef0887b680773d90..54352a138a38ccf24a0d11ca42778317c397ffb8 100644
+--- a/client/src/components/InviteUsersMail.tsx
++++ b/client/src/components/InviteUsersMail.tsx
+@@ -5,97 +5,99 @@ import {
+   Button,
+   Dialog,
+   DialogActions,
+   DialogContent,
+   DialogContentText,
+   DialogTitle,
+   FormControl,
+   InputLabel,
+   MenuItem,
+   Select,
+   TextField,
+   Typography,
+ } from '@mui/material';
+ import type { DialogProps } from '@mui/material/Dialog';
+ import type { SelectChangeEvent } from '@mui/material/Select';
+ import api from '../api';
+ import Role from '../types/roles';
+ 
+ type ProgramType = 'Programa Residentes' | 'Programa Sociedades';
+ 
+ interface BasicEntity {
+   _id: string;
+   nombre: string;
+ }
+ 
+-interface InviteUsersMailProps {
+-  open: boolean;
+-  onClose: () => void;
+-  hospitals: BasicEntity[];
+-  societies: BasicEntity[];
+-}
++interface InviteUsersMailProps {
++  open: boolean;
++  onClose: () => void;
++  hospitals: BasicEntity[];
++  societies: BasicEntity[];
++  onSuccess?: () => void;
++}
+ 
+ interface AccessCode {
+   codigo: string;
+   rol: Role;
+   tipo: ProgramType;
+ }
+ 
+ const roles = Object.values(Role) as Role[];
+ const isRole = (v: string): v is Role => (roles as string[]).includes(v);
+ 
+ const legacyRoleMap: Record<string, Role> = {
+   formador: Role.TUTOR,
+   coordinador: Role.CSM,
+   instructor: Role.PROFESOR,
+   alumno: Role.PARTICIPANTE,
+ };
+ 
+ const zoneOptions = [
+   'NORDESTE',
+   'NORTE',
+   'CENTRO',
+   'ANDALUCÍA',
+   'PORTUGAL',
+   'LEVANTE',
+   'CANARIAS',
+ ];
+ 
+ const normalizeRoleValue = (value: string): Role | undefined => {
+   if (isRole(value)) {
+     return value;
+   }
+ 
+   return legacyRoleMap[value];
+ };
+ 
+-const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
+-  open,
+-  onClose,
+-  hospitals,
+-  societies,
+-}) => {
++const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
++  open,
++  onClose,
++  hospitals,
++  societies,
++  onSuccess,
++}) => {
+   const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
+   const [role, setRole] = useState<Role | ''>('');
+   const [selectedCode, setSelectedCode] = useState<AccessCode | null>(null);
+   const [emails, setEmails] = useState<string[]>(['']);
+   const [selectedHospital, setSelectedHospital] = useState('');
+   const [selectedSociety, setSelectedSociety] = useState('');
+   const [selectedZone, setSelectedZone] = useState('');
+   const [feedback, setFeedback] = useState<
+     { type: 'success' | 'error'; message: string } | null
+   >(null);
+   const [submitting, setSubmitting] = useState(false);
+ 
+   useEffect(() => {
+     if (open) {
+       api
+         .get('/access-codes')
+         .then((res) => {
+           const data = res.data.data || res.data;
+           setAccessCodes(data);
+         })
+         .catch(() => {
+           setAccessCodes([]);
+         });
+     }
+   }, [open]);
+@@ -263,60 +265,64 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
+             email,
+           }),
+         ),
+       );
+ 
+       const failures = results.filter(
+         (result): result is PromiseRejectedResult => result.status === 'rejected',
+       );
+ 
+       if (failures.length > 0) {
+         const firstError = failures[0].reason as any;
+         const errorMessage =
+           firstError?.response?.data?.error ||
+           firstError?.message ||
+           'No se pudieron enviar algunas invitaciones.';
+         const successCount = results.length - failures.length;
+         const message =
+           successCount > 0
+             ? `Se enviaron ${successCount} invitaciones, pero otras fallaron: ${errorMessage}`
+             : errorMessage;
+ 
+         setFeedback({ type: 'error', message });
+         return;
+       }
+ 
+-      setFeedback({
+-        type: 'success',
+-        message:
+-          validEmails.length === 1
+-            ? 'Invitación enviada correctamente.'
+-            : 'Invitaciones enviadas correctamente.',
+-      });
+-
+-      await new Promise((resolve) => setTimeout(resolve, 1500));
+-      closeDialog();
++      setFeedback({
++        type: 'success',
++        message:
++          validEmails.length === 1
++            ? 'Invitación enviada correctamente.'
++            : 'Invitaciones enviadas correctamente.',
++      });
++
++      if (onSuccess) {
++        onSuccess();
++      }
++
++      await new Promise((resolve) => setTimeout(resolve, 1500));
++      closeDialog();
+     } catch (err: any) {
+       const message =
+         err?.response?.data?.error ||
+         err?.message ||
+         'No se pudo enviar la invitación.';
+       setFeedback({ type: 'error', message });
+     } finally {
+       setSubmitting(false);
+     }
+   };
+ 
+   const requiresHospitalSelection =
+     role === Role.RESIDENTE || role === Role.TUTOR;
+   const requiresSocietySelection =
+     role === Role.PARTICIPANTE || role === Role.PROFESOR;
+   const requiresZoneSelection = role === Role.CSM;
+ 
+   return (
+     <Dialog open={open} onClose={handleDialogClose} fullWidth maxWidth="sm">
+       <DialogTitle>Invitar Usuarios</DialogTitle>
+       <DialogContent>
+         <DialogContentText>
+           Todos los usuarios deben tener el mismo rol. Al cambiar el rol se
+           reinicia la lista de correos.
+         </DialogContentText>
+diff --git a/client/src/locales/en.json b/client/src/locales/en.json
+index bde9be8c51de5d283186592c9c98f981a91f9897..a4d9817c22e11da0a3efda3e6f6e0da63c921879 100644
+--- a/client/src/locales/en.json
++++ b/client/src/locales/en.json
+@@ -1081,58 +1081,60 @@
+     "rejected": "Rejected"
+   },
+   "adminInvitations": {
+     "title": "Sent invitations",
+     "subtitle": "Review, resend or cancel the invitations you have already sent.",
+     "searchPlaceholder": "Search by email, role, hospital, society or zone",
+     "table": {
+       "email": "Email",
+       "role": "Role",
+       "program": "Program",
+       "scope": "Context",
+       "sent": "Sent",
+       "expires": "Expires",
+       "status": "Status",
+       "admin": "Sent by",
+       "actions": "Actions",
+       "loading": "Loading invitations...",
+       "empty": "No invitations found"
+     },
+     "status": {
+       "pending": "Pending",
+       "expired": "Expired",
+       "accepted": "Accepted",
+       "registered": "User created"
+     },
+-    "actions": {
+-      "refresh": "Refresh",
+-      "copy": "Copy link",
+-      "resend": "Resend",
+-      "delete": "Delete"
+-    },
++    "actions": {
++      "invite": "New invitation",
++      "refresh": "Refresh",
++      "copy": "Copy link",
++      "resend": "Resend",
++      "delete": "Delete"
++    },
+     "labels": {
+       "convertedTo": "Converted into user {{name}}"
+     },
+     "dialogs": {
+       "deleteTitle": "Delete invitation",
+       "deleteConfirm": "Do you want to delete the invitation to {{email}}?",
+       "cancel": "Cancel",
+       "delete": "Delete"
+     },
+     "feedback": {
+       "resent": "Invitation resent",
+-      "resendError": "Could not resend the invitation",
+-      "linkCopied": "Link copied to clipboard",
+-      "copyError": "Could not copy the link",
+-      "noLink": "There is no available link for this invitation",
+-      "deleted": "Invitation deleted",
+-      "deleteError": "Could not delete the invitation"
+-    }
+-  },
++      "resendError": "Could not resend the invitation",
++      "linkCopied": "Link copied to clipboard",
++      "copyError": "Could not copy the link",
++      "noLink": "There is no available link for this invitation",
++      "deleted": "Invitation deleted",
++      "deleteError": "Could not delete the invitation",
++      "catalogsError": "Could not load the data to send a new invitation"
++    }
++  },
+   "privacyPolicy": {
+     "title": "Privacy Policy",
+     "lastUpdated": "Last updated: {{date}}"
+   },
+   "adminReports": {
+     "exportHospitals": "Hospitals"
+   }
+ }
+diff --git a/client/src/locales/es.json b/client/src/locales/es.json
+index caec67d2d68c0a1160afef9ac31905e1e019950f..6b3697440c594b5b66290bf791b1b75df32149fa 100644
+--- a/client/src/locales/es.json
++++ b/client/src/locales/es.json
+@@ -1073,58 +1073,60 @@
+     "rejected": "Rechazado"
+   },
+   "adminInvitations": {
+     "title": "Invitaciones enviadas",
+     "subtitle": "Supervisa, reenvía o elimina invitaciones ya enviadas.",
+     "searchPlaceholder": "Buscar por email, rol, hospital, sociedad o zona",
+     "table": {
+       "email": "Email",
+       "role": "Rol",
+       "program": "Programa",
+       "scope": "Ámbito",
+       "sent": "Enviada",
+       "expires": "Caduca",
+       "status": "Estado",
+       "admin": "Enviada por",
+       "actions": "Acciones",
+       "loading": "Cargando invitaciones...",
+       "empty": "No hay invitaciones registradas"
+     },
+     "status": {
+       "pending": "Pendiente",
+       "expired": "Expirada",
+       "accepted": "Aceptada",
+       "registered": "Usuario creado"
+     },
+-    "actions": {
+-      "refresh": "Actualizar",
+-      "copy": "Copiar enlace",
+-      "resend": "Reenviar",
+-      "delete": "Eliminar"
+-    },
++    "actions": {
++      "invite": "Nueva invitación",
++      "refresh": "Actualizar",
++      "copy": "Copiar enlace",
++      "resend": "Reenviar",
++      "delete": "Eliminar"
++    },
+     "labels": {
+       "convertedTo": "Convertida en usuario {{name}}"
+     },
+     "dialogs": {
+       "deleteTitle": "Eliminar invitación",
+       "deleteConfirm": "¿Quieres eliminar la invitación a {{email}}?",
+       "cancel": "Cancelar",
+       "delete": "Eliminar"
+     },
+     "feedback": {
+       "resent": "Invitación reenviada",
+-      "resendError": "No se pudo reenviar la invitación",
+-      "linkCopied": "Enlace copiado al portapapeles",
+-      "copyError": "No se pudo copiar el enlace",
+-      "noLink": "No hay enlace disponible para esta invitación",
+-      "deleted": "Invitación eliminada",
+-      "deleteError": "No se pudo eliminar la invitación"
+-    }
+-  },
++      "resendError": "No se pudo reenviar la invitación",
++      "linkCopied": "Enlace copiado al portapapeles",
++      "copyError": "No se pudo copiar el enlace",
++      "noLink": "No hay enlace disponible para esta invitación",
++      "deleted": "Invitación eliminada",
++      "deleteError": "No se pudo eliminar la invitación",
++      "catalogsError": "No se pudieron cargar los datos para enviar una nueva invitación"
++    }
++  },
+   "privacyPolicy": {
+     "title": "Política de Privacidad",
+     "lastUpdated": "Última actualización: {{date}}"
+   },
+   "adminReports": {
+     "exportHospitals": "Hospitales"
+   }
+ }
+diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
+index 9d20b02865253d8ec7ac8082612daea3773f92ce..029335a5f7bb247b8e1be5eefa39629d572f8dad 100644
+--- a/client/src/locales/fr.json
++++ b/client/src/locales/fr.json
+@@ -1080,58 +1080,60 @@
+     }
+   },
+   "adminInvitations": {
+     "title": "Invitations envoyées",
+     "subtitle": "Consultez, renvoyez ou supprimez les invitations déjà envoyées.",
+     "searchPlaceholder": "Rechercher par email, rôle, hôpital, société ou zone",
+     "table": {
+       "email": "Email",
+       "role": "Rôle",
+       "program": "Programme",
+       "scope": "Contexte",
+       "sent": "Envoyée",
+       "expires": "Expire",
+       "status": "Statut",
+       "admin": "Envoyée par",
+       "actions": "Actions",
+       "loading": "Chargement des invitations...",
+       "empty": "Aucune invitation enregistrée"
+     },
+     "status": {
+       "pending": "En attente",
+       "expired": "Expirée",
+       "accepted": "Acceptée",
+       "registered": "Utilisateur créé"
+     },
+-    "actions": {
+-      "refresh": "Actualiser",
+-      "copy": "Copier le lien",
+-      "resend": "Renvoyer",
+-      "delete": "Supprimer"
+-    },
++    "actions": {
++      "invite": "Nouvelle invitation",
++      "refresh": "Actualiser",
++      "copy": "Copier le lien",
++      "resend": "Renvoyer",
++      "delete": "Supprimer"
++    },
+     "labels": {
+       "convertedTo": "Convertie en utilisateur {{name}}"
+     },
+     "dialogs": {
+       "deleteTitle": "Supprimer l'invitation",
+       "deleteConfirm": "Voulez-vous supprimer l'invitation envoyée à {{email}} ?",
+       "cancel": "Annuler",
+       "delete": "Supprimer"
+     },
+     "feedback": {
+       "resent": "Invitation renvoyée",
+-      "resendError": "Impossible de renvoyer l'invitation",
+-      "linkCopied": "Lien copié dans le presse-papiers",
+-      "copyError": "Impossible de copier le lien",
+-      "noLink": "Aucun lien disponible pour cette invitation",
+-      "deleted": "Invitation supprimée",
+-      "deleteError": "Impossible de supprimer l'invitation"
+-    }
+-  },
++      "resendError": "Impossible de renvoyer l'invitation",
++      "linkCopied": "Lien copié dans le presse-papiers",
++      "copyError": "Impossible de copier le lien",
++      "noLink": "Aucun lien disponible pour cette invitation",
++      "deleted": "Invitation supprimée",
++      "deleteError": "Impossible de supprimer l'invitation",
++      "catalogsError": "Impossible de charger les données pour envoyer une nouvelle invitation"
++    }
++  },
+   "privacyPolicy": {
+     "title": "Politique de confidentialité",
+     "lastUpdated": "Dernière mise à jour : {{date}}"
+   },
+   "adminReports": {
+     "exportHospitals": "Hôpitaux"
+   }
+ }
 diff --git a/client/src/pages/dashboard/AdminInvitaciones.tsx b/client/src/pages/dashboard/AdminInvitaciones.tsx
-index 744fb4b787f9c2b5d871aa21f2d092b1333e7f71..26fe19b0a220b870d346b90c3b0862ffe227215b 100644
+index a04bb979fcb6031a33e1506339ff786fc88b4721..e8bc91e4bb153720f18c0ac6485e4883123e6629 100644
 --- a/client/src/pages/dashboard/AdminInvitaciones.tsx
 +++ b/client/src/pages/dashboard/AdminInvitaciones.tsx
-@@ -54,53 +54,53 @@ interface Invitation {
+@@ -4,123 +4,131 @@ import {
+   Box,
+   Button,
+   Chip,
+   Dialog,
+   DialogActions,
+   DialogContent,
+   DialogContentText,
+   DialogTitle,
+   IconButton,
+   LinearProgress,
+   Paper,
+   Snackbar,
+   Stack,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   TextField,
+   Tooltip,
+   Typography
+ } from '@mui/material';
+ import {
+   ContentCopy as ContentCopyIcon,
++  MailOutline as MailOutlineIcon,
+   Delete as DeleteIcon,
+   Refresh as RefreshIcon,
+   Send as SendIcon
+ } from '@mui/icons-material';
+ import { useTranslation } from 'react-i18next';
+ import BackButton from '../../components/BackButton';
++import InviteUsersMail from '../../components/InviteUsersMail';
+ import api, { getInvitations } from '../../api';
+ 
+ interface BasicEntity {
+   _id: string;
+   nombre?: string;
+   titulo?: string;
+   zona?: string;
+ }
+ 
+ interface AdminUser {
+   nombre?: string;
+   apellidos?: string;
+   email?: string;
+ }
+ 
+ interface Invitation {
+   _id: string;
+   email: string;
+   rol: string;
    tipo: string;
    hospital?: BasicEntity;
    sociedad?: BasicEntity;
@@ -19,6 +499,8 @@ index 744fb4b787f9c2b5d871aa21f2d092b1333e7f71..26fe19b0a220b870d346b90c3b0862ff
    derivedStatus: 'pendiente' | 'expirada' | 'aceptada' | 'registrado';
  }
  
++type CatalogEntity = { _id: string; nombre: string };
++
  const formatDateTime = (value?: string) => {
    if (!value) return '—';
    const date = new Date(value);
@@ -28,12 +510,9 @@ index 744fb4b787f9c2b5d871aa21f2d092b1333e7f71..26fe19b0a220b870d346b90c3b0862ff
    const month = String(date.getMonth() + 1).padStart(2, '0');
    const year = date.getFullYear();
    const hours = String(date.getHours()).padStart(2, '0');
--  const minutes = String(date.getMinutes()).padStart(2, '0');
--
--  return `${month}/${day}/${year} ${hours}:${minutes}`;
-+  const minutes = String(date.getMinutes()).padStart(2, '0');
-+
-+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+   const minutes = String(date.getMinutes()).padStart(2, '0');
+ 
+   return `${day}/${month}/${year} ${hours}:${minutes}`;
  };
  
  const getFrontendBaseUrl = () => {
@@ -54,14 +533,95 @@ index 744fb4b787f9c2b5d871aa21f2d092b1333e7f71..26fe19b0a220b870d346b90c3b0862ff
    } | null>(null);
    const [confirming, setConfirming] = useState<InvitationWithStatus | null>(null);
    const [actionId, setActionId] = useState<string | null>(null);
++  const [openInviteDialog, setOpenInviteDialog] = useState(false);
++  const [hospitals, setHospitals] = useState<CatalogEntity[]>([]);
++  const [societies, setSocieties] = useState<CatalogEntity[]>([]);
++  const [catalogsLoading, setCatalogsLoading] = useState(false);
  
    const fetchInvitations = async () => {
      try {
        setLoading(true);
        setError(null);
-@@ -152,68 +152,73 @@ const AdminInvitaciones: React.FC = () => {
+ 
+       const [invitationsRes, usersRes] = await Promise.all([
+         getInvitations(),
+         api.get('/users')
+       ]);
+ 
+       const users = usersRes.data?.data || [];
+       const data: Invitation[] = invitationsRes.data?.data || invitationsRes.data || [];
+       const now = Date.now();
+ 
+       const enriched = data.map<InvitationWithStatus>((invitation) => {
+         const userMatch = users.find(
+           (u: any) =>
+             typeof u.email === 'string' &&
+             u.email.toLowerCase() === (invitation.email || '').toLowerCase()
+         );
+ 
+         const expired = invitation.fechaExpiracion
+           ? new Date(invitation.fechaExpiracion).getTime() < now
+           : false;
+@@ -129,50 +137,84 @@ const AdminInvitaciones: React.FC = () => {
+ 
+         if (userMatch) {
+           derivedStatus = 'registrado';
+         } else if (invitation.estado === 'aceptada') {
+           derivedStatus = 'aceptada';
+         } else if (expired || invitation.estado === 'expirada') {
+           derivedStatus = 'expirada';
+         }
+ 
+         return { ...invitation, userMatch, derivedStatus };
+       });
+ 
+       setInvitations(enriched);
+     } catch (err: any) {
+       setError(err?.response?.data?.error || t('adminInvitations.loadError'));
+     } finally {
+       setLoading(false);
+     }
+   };
+ 
+   useEffect(() => {
+     fetchInvitations();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
  
++  useEffect(() => {
++    if (!openInviteDialog) return;
++
++    const loadCatalogs = async () => {
++      try {
++        setCatalogsLoading(true);
++        const [hospitalsRes, societiesRes] = await Promise.all([
++          api.get('/hospitals'),
++          api.get('/sociedades')
++        ]);
++
++        const hospitalsData = hospitalsRes.data?.data || hospitalsRes.data || [];
++        const societiesData = societiesRes.data?.data || societiesRes.data || [];
++
++        setHospitals(hospitalsData.map((hospital: any) => ({ _id: hospital._id, nombre: hospital.nombre })));
++        setSocieties(
++          societiesData.map((society: any) => ({
++            _id: society._id,
++            nombre: society.nombre || society.titulo || ''
++          }))
++        );
++      } catch (err: any) {
++        setFeedback({
++          message: err?.response?.data?.error || t('adminInvitations.feedback.catalogsError'),
++          severity: 'error'
++        });
++      } finally {
++        setCatalogsLoading(false);
++      }
++    };
++
++    void loadCatalogs();
++  }, [openInviteDialog, t]);
++
    const filteredInvitations = useMemo(() => {
      const term = search.trim().toLowerCase();
      if (!term) return invitations;
@@ -85,125 +645,104 @@ index 744fb4b787f9c2b5d871aa21f2d092b1333e7f71..26fe19b0a220b870d346b90c3b0862ff
      });
    }, [invitations, search]);
  
--  const handleCopyLink = async (invitation: Invitation) => {
--    if (!invitation.token) {
-+  const handleCopyLink = async (invitation: InvitationWithStatus) => {
-+    const canCopyLink = invitation.derivedStatus === 'pendiente' && Boolean(invitation.token);
-+
-+    if (!canCopyLink) {
-       setFeedback({ message: t('adminInvitations.feedback.noLink'), severity: 'error' });
-       return;
-     }
-     const link = `${getFrontendBaseUrl()}/register/${invitation.token}`;
-     try {
-       await navigator.clipboard.writeText(link);
-       setFeedback({ message: t('adminInvitations.feedback.linkCopied'), severity: 'success' });
-     } catch (err: any) {
-       setFeedback({
-         message: err?.message || t('adminInvitations.feedback.copyError'),
-         severity: 'error'
-       });
-     }
+   const handleCopyLink = async (invitation: InvitationWithStatus) => {
+     const canCopyLink = invitation.derivedStatus === 'pendiente' && Boolean(invitation.token);
+@@ -256,50 +298,58 @@ const AdminInvitaciones: React.FC = () => {
+ 
+     return <Chip label={labels[status]} color={colors[status]} size="small" />;
    };
  
--  const handleResend = async (invitation: Invitation) => {
-+  const handleResend = async (invitation: InvitationWithStatus) => {
-+    const canResend = ['pendiente', 'expirada'].includes(invitation.derivedStatus);
-+    if (!canResend) return;
+   return (
+     <Box>
+       <Box
+         sx={{
+           display: 'flex',
+           justifyContent: 'space-between',
+           alignItems: 'center',
+           mb: 3,
+           flexWrap: 'wrap',
+           gap: 2
+         }}
+       >
+         <Box>
+           <Typography variant="h4" component="h1" gutterBottom>
+             {t('adminInvitations.title')}
+           </Typography>
+           <Typography variant="body1" color="text.secondary">
+             {t('adminInvitations.subtitle')}
+           </Typography>
+         </Box>
+         <Stack direction="row" spacing={1} alignItems="center">
++          <Button
++            variant="contained"
++            startIcon={<MailOutlineIcon />}
++            onClick={() => setOpenInviteDialog(true)}
++            disabled={catalogsLoading}
++          >
++            {t('adminInvitations.actions.invite')}
++          </Button>
+           <BackButton />
+           <Button
+             variant="outlined"
+             startIcon={<RefreshIcon />}
+             onClick={fetchInvitations}
+             disabled={loading}
+           >
+             {t('adminInvitations.actions.refresh')}
+           </Button>
+         </Stack>
+       </Box>
+ 
+       <TextField
+         fullWidth
+         placeholder={t('adminInvitations.searchPlaceholder')}
+         value={search}
+         onChange={(e) => setSearch(e.target.value)}
+         sx={{ mb: 2 }}
+       />
+ 
+       {loading && <LinearProgress sx={{ mb: 2 }} />}
+       {error && (
+         <Alert severity="error" sx={{ mb: 2 }}>
+           {error}
+         </Alert>
+@@ -455,30 +505,38 @@ const AdminInvitaciones: React.FC = () => {
+             startIcon={<DeleteIcon />}
+             disabled={Boolean(actionId)}
+           >
+             {t('adminInvitations.dialogs.delete')}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       {feedback && (
+         <Snackbar
+             open
+             autoHideDuration={4000}
+             onClose={() => setFeedback(null)}
+             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+         >
+             <Alert
+             severity={feedback.severity}
+             onClose={() => setFeedback(null)}
+             sx={{ width: '100%' }}
+             >
+             {feedback.message}
+             </Alert>
+         </Snackbar>
+         )}
+ 
++      <InviteUsersMail
++        open={openInviteDialog}
++        onClose={() => setOpenInviteDialog(false)}
++        hospitals={hospitals}
++        societies={societies}
++        onSuccess={fetchInvitations}
++      />
 +
-     setActionId(`${invitation._id}-resend`);
-     try {
-       const payload: Record<string, string> = {
-         email: invitation.email,
-         rol: invitation.rol,
-         tipo: invitation.tipo
-       };
-       if (invitation.hospital?._id) payload.hospital = invitation.hospital._id;
-       if (invitation.sociedad?._id) payload.sociedad = invitation.sociedad._id;
-       if (invitation.zona) payload.zona = invitation.zona;
+     </Box>
+   );
+ };
  
-       await api.post('/users/invite', payload);
-       setFeedback({ message: t('adminInvitations.feedback.resent'), severity: 'success' });
-       await fetchInvitations();
-     } catch (err: any) {
-       setFeedback({
-         message: err?.response?.data?.error || t('adminInvitations.feedback.resendError'),
-         severity: 'error'
-       });
-     } finally {
-       setActionId(null);
-     }
-   };
- 
-   const handleDelete = async () => {
-@@ -363,64 +368,68 @@ const AdminInvitaciones: React.FC = () => {
-                     <TableCell>{formatDateTime(invitation.fechaEnvio)}</TableCell>
-                     <TableCell>{formatDateTime(invitation.fechaExpiracion)}</TableCell>
-                     <TableCell>{renderStatusChip(invitation.derivedStatus)}</TableCell>
-                     <TableCell>
-                       {invitation.admin?.email ? (
-                         <Stack spacing={0.25}>
-                           <Typography variant="body2" fontWeight={600}>
-                             {`${invitation.admin.nombre || ''} ${invitation.admin.apellidos || ''}`.trim() ||
-                               invitation.admin.email}
-                           </Typography>
-                           <Typography variant="body2" color="text.secondary">
-                             {invitation.admin.email}
-                           </Typography>
-                         </Stack>
-                       ) : (
-                         '—'
-                       )}
-                     </TableCell>
-                     <TableCell align="right">
-                       <Stack direction="row" spacing={1} justifyContent="flex-end">
-                         <Tooltip title={t('adminInvitations.actions.copy')}>
-                           <span>
-                             <IconButton
-                               size="small"
-                               onClick={() => handleCopyLink(invitation)}
--                              disabled={!invitation.token}
-+                              disabled={
-+                                invitation.derivedStatus !== 'pendiente' || !invitation.token || Boolean(actionId)
-+                              }
-                               color="primary"
-                             >
-                               <ContentCopyIcon fontSize="small" />
-                             </IconButton>
-                           </span>
-                         </Tooltip>
-                         <Tooltip title={t('adminInvitations.actions.resend')}>
-                           <span>
-                             <IconButton
-                               size="small"
-                               color="secondary"
-                               onClick={() => handleResend(invitation)}
--                              disabled={Boolean(actionId)}
-+                              disabled={
-+                                !['pendiente', 'expirada'].includes(invitation.derivedStatus) || Boolean(actionId)
-+                              }
-                             >
-                               {actionId === `${invitation._id}-resend` ? (
-                                 <RefreshIcon fontSize="small" />
-                               ) : (
-                                 <SendIcon fontSize="small" />
-                               )}
-                             </IconButton>
-                           </span>
-                         </Tooltip>
-                         <Tooltip title={t('adminInvitations.actions.delete')}>
-                           <span>
-                             <IconButton
-                               size="small"
-                               color="error"
-                               onClick={() => setConfirming(invitation)}
-                               disabled={Boolean(actionId)}
-                             >
-                               <DeleteIcon fontSize="small" />
-                             </IconButton>
-                           </span>
-                         </Tooltip>
-                       </Stack>
-                     </TableCell>
-                   </TableRow>
-                 ))
+ export default AdminInvitaciones;
+\ No newline at end of file

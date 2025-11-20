@@ -1096,6 +1096,7 @@
       "registered": "Usuario creado"
     },
     "actions": {
+      "invite": "Nueva invitación",
       "refresh": "Actualizar",
       "copy": "Copiar enlace",
       "resend": "Reenviar",
@@ -1117,7 +1118,8 @@
       "copyError": "No se pudo copiar el enlace",
       "noLink": "No hay enlace disponible para esta invitación",
       "deleted": "Invitación eliminada",
-      "deleteError": "No se pudo eliminar la invitación"
+      "deleteError": "No se pudo eliminar la invitación",
+      "catalogsError": "No se pudieron cargar los datos para enviar una nueva invitación"
     }
   },
   "privacyPolicy": {
