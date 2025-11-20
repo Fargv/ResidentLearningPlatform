@@ -1,79 +1,8 @@
 diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index a92f615007ab8fb0cf28ec32e1b21fcbf3871266..fab2705dbdc832739c2cb0a11f3207e7ed685e87 100644
+index 4f2d7caae04fbf1343ec206d23cd56d710098523..5ee08e9c51a5e6e63c2707ab1dc58d23bb5481d5 100644
 --- a/client/src/pages/dashboard/DashboardHome.tsx
 +++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -46,56 +46,64 @@ interface ResidentPhaseSummary {
-   faseNumero: number;
-   hasSurgery: boolean;
-   description?: string | null;
- }
- 
- interface SocietyPhaseSummary {
-   phase: number;
-   percent: number;
-   estadoGeneral: string;
-   progresoId: string;
-   hasSurgery: boolean;
-   description?: string | null;
- }
- 
- interface PhaseDialogData {
-   label: string;
-   date?: string;
-   descriptionNode?: React.ReactNode;
-   descriptionHtml?: string;
- }
- 
- const DashboardHome: React.FC = () => {
-   const { t, i18n } = useTranslation();
-   const { user } = useAuth();
-   const theme = useTheme();
--  const progressFillColor = useMemo(() => {
--    const base = theme.palette.primary.main;
--    return theme.palette.mode === 'dark'
--      ? alpha(base, 0.5)
--      : lighten(base, 0.65);
--  }, [theme]);
-+  const progressFillColor = useMemo(() => {
-+    const base = theme.palette.primary.main;
-+    return theme.palette.mode === 'dark'
-+      ? alpha(base, 0.5)
-+      : lighten(base, 0.65);
-+  }, [theme]);
-+
-+  const progressEmptyColor = useMemo(
-+    () =>
-+      theme.palette.mode === 'dark'
-+        ? alpha(theme.palette.common.white, 0.08)
-+        : theme.palette.grey[200],
-+    [theme]
-+  );
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
-   const [phaseSummary, setPhaseSummary] = useState<ResidentPhaseSummary[]>([]);
-   const [socPhaseSummary, setSocPhaseSummary] = useState<SocietyPhaseSummary[]>([]);
-   const [progressLoading, setProgressLoading] = useState(false);
-   const [downloadLoading, setDownloadLoading] = useState(false);
-   const [socAllValidado, setSocAllValidado] = useState(false);
-   const [openDialog, setOpenDialog] = useState(false);
-   const [selectedPhase, setSelectedPhase] = useState<PhaseDialogData | null>(null);
- 
- 
-   const societyMilestones = [
-     {
-       phase: 1,
-       label:
-         t('society.convocatoria.label') +
-         ' / ' +
-         t('society.presentacion.label') +
-         ' / ' +
-         t('society.modOnline.label'),
-       date: sociedadInfo?.fechaModulosOnline,
-       description: (
-         <>
-           <Typography gutterBottom>
-@@ -618,252 +626,233 @@ const DashboardHome: React.FC = () => {
+@@ -626,51 +626,57 @@ const DashboardHome: React.FC = () => {
                          },
                        }}
                      >
@@ -99,181 +28,40 @@ index a92f615007ab8fb0cf28ec32e1b21fcbf3871266..fab2705dbdc832739c2cb0a11f3207e7
                size="small"
                sx={{ mb: 2 }}
              />
--            <Stack
--              direction="row"
--              spacing={3}
--              flexWrap="wrap"
--              justifyContent="center"
--              sx={{ mt: 2 }}
--            >
--              {societyMilestones.map((m) => {
--                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
--                const percent = phaseData?.percent ?? 0;
--                return (
--                <Box
--                  key={m.label}
--                  sx={{
--                    flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
--                    maxWidth: { xs: '100%', sm: '360px' },
--                    minWidth: { xs: '260px', sm: '300px' },
--                    display: 'flex',
--                    justifyContent: 'center',
--                  }}
--                >
--                  <CardActionArea
--                    onClick={() => {
--                      const phaseDescription = richTextOrUndefined(
--                        phaseData?.description,
--                      );
--                      handleOpenDialog({
--                        label: m.label,
--                        date: m.date,
--                        descriptionHtml: phaseDescription,
--                        descriptionNode: phaseDescription ? undefined : m.description,
--                      });
--                    }}
-+            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-+              {societyMilestones.map((m, idx) => {
-+                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
-+                const percent = phaseData?.percent ?? 0;
-+                return (
-+                  <Box
-+                    key={m.label}
+-            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
++            <Stack
++              direction="row"
++              spacing={2}
++              flexWrap="wrap"
++              justifyContent="center"
++              rowGap={2}
++            >
+               {societyMilestones.map((m, idx) => {
+                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
+                 const percent = phaseData?.percent ?? 0;
+                 return (
+                   <Box
+                     key={m.label}
                      sx={{
--                      width: '100%',
--                      borderRadius: 2,
--                      overflow: 'hidden',
--                      "&:hover": {
--                        backgroundColor: "action.hover",
--                        transform: "scale(1.02)",
-+                      flex: {
-+                        xs: '1 1 100%',
-+                        md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
+                       flex: {
+                         xs: '1 1 100%',
+                         md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
                        },
--                      cursor: "pointer",
-+                      minWidth: { xs: '250px', md: '250px' },
-+                      mb: 2,
+                       minWidth: { xs: '250px', md: '250px' },
+                       mb: 2,
                      }}
                    >
--                    <Paper
--                      elevation={2}
-+                    <CardActionArea
-+                      onClick={() => {
-+                        const phaseDescription = richTextOrUndefined(
-+                          phaseData?.description,
-+                        );
-+                        handleOpenDialog({
-+                          label: m.label,
-+                          date: m.date,
-+                          descriptionHtml: phaseDescription,
-+                          descriptionNode: phaseDescription ? undefined : m.description,
-+                        });
-+                      }}
-                       sx={{
--                        px: 2,
--                        pt: 3,
--                        pb: 2.5,
--                        minHeight: 150,
--                        display: 'flex',
--                        flexDirection: 'column',
--                        justifyContent: 'center',
--                        borderLeft: `6px solid ${theme.palette.primary.main}`,
--                        background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
-+                        "&:hover": {
-+                          backgroundColor: "action.hover",
-+                          transform: "scale(1.02)",
-+                        },
-+                        cursor: "pointer",
-                       }}
-                     >
--                      <Typography
--                        variant="subtitle2"
--                        sx={{ color: 'text.secondary' }}
--                      >
--                        {m.label}
--                      </Typography>
--                      <Typography
--                        variant="body1"
--                        fontWeight="bold"
--                        sx={{ color: theme.palette.primary.main }}
-+                      <Paper
-+                        elevation={2}
-+                        sx={{
-+                          px: 2,
-+                          pt: 3,
-+                          pb: 2.5,
-+                          minHeight: 150,
-+                          display: 'flex',
-+                          flexDirection: 'column',
-+                          justifyContent: 'center',
-+                          borderLeft: `6px solid ${theme.palette.primary.main}`,
-+                          background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${progressEmptyColor} ${percent}%)`,
-+                        }}
-                       >
--                        {formatMonthYear(m.date || "") || "—"}
--                      </Typography>
--                        <Typography
--                          variant="body2"
--                          fontWeight="bold"
--                          sx={{
--                            color: theme.palette.primary.main,
--                          }}
--                        >
--                          {percent}%
--                        </Typography>
--                    </Paper>
--                  </CardActionArea>
--                </Box>
--                );
--              })}
--              </Stack>
-+                        <Typography
-+                          variant="subtitle2"
-+                          sx={{ color: 'text.secondary' }}
-+                        >
-+                          {m.label}
-+                        </Typography>
-+                        <Typography
-+                          variant="body1"
-+                          fontWeight="bold"
-+                          sx={{ color: theme.palette.primary.main }}
-+                        >
-+                          {formatMonthYear(m.date || "") || "—"}
-+                        </Typography>
-+                        <Typography
-+                          variant="body2"
-+                          fontWeight="bold"
-+                          sx={{
-+                            color: theme.palette.primary.main,
-+                          }}
-+                        >
-+                          {percent}%
-+                        </Typography>
-+                      </Paper>
-+                    </CardActionArea>
-+                  </Box>
-+                );
-+              })}
-+            </Stack>
-             {(societyDownloadButtons.length > 0 || socAllValidado) && (
-               <Stack
-                 direction={{ xs: 'column', sm: 'row' }}
-                 spacing={2}
-                 justifyContent="center"
-                 flexWrap="wrap"
-                 mt={3}
-               >
-                 {societyDownloadButtons.map((button) => (
-                   <Button
-                     key={button.key}
-                     variant="contained"
-                     onClick={button.onClick}
-                     disabled={downloadLoading}
-                   >
-                     {button.label}
-                   </Button>
-                 ))}
-                 {socAllValidado && (
+                     <CardActionArea
+                       onClick={() => {
+                         const phaseDescription = richTextOrUndefined(
+                           phaseData?.description,
+                         );
+                         handleOpenDialog({
+                           label: m.label,
+                           date: m.date,
+                           descriptionHtml: phaseDescription,
+                           descriptionNode: phaseDescription ? undefined : m.description,
+@@ -748,51 +754,51 @@ const DashboardHome: React.FC = () => {
                    <Button
                      variant="contained"
                      color="secondary"
@@ -299,152 +87,30 @@ index a92f615007ab8fb0cf28ec32e1b21fcbf3871266..fab2705dbdc832739c2cb0a11f3207e7
                <Typography variant="h6" gutterBottom>
                  {t('progressByPhase')}
                </Typography>
--              <Stack
--                direction="row"
--                spacing={3}
--                flexWrap="wrap"
--                justifyContent="center"
--                sx={{ mt: 2 }}
--              >
--                {phaseSummary.map((p, idx) => (
--                  <Box
--                    key={p.progresoId}
--                    sx={{
--                      flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
--                      maxWidth: { xs: '100%', sm: '360px' },
--                      minWidth: { xs: '260px', sm: '300px' },
--                      display: 'flex',
--                      justifyContent: 'center',
--                    }}
--                >
--                  <CardActionArea
--                    onClick={() => {
--                      const descriptionHtml = richTextOrUndefined(p.description);
--                      handleOpenDialog({
--                        label: p.name,
--                        descriptionHtml,
--                        descriptionNode: descriptionHtml
--                          ? undefined
--                          : residentMilestones[idx]?.description,
--                      });
--                    }}
-+              <Stack direction="row" spacing={2} flexWrap="wrap">
-+                {phaseSummary.map((p, idx) => (
-+                  <Box
-+                    key={p.progresoId}
+-              <Stack direction="row" spacing={2} flexWrap="wrap">
++              <Stack direction="row" spacing={2} flexWrap="wrap" rowGap={2}>
+                 {phaseSummary.map((p, idx) => (
+                   <Box
+                     key={p.progresoId}
                      sx={{
--                      width: '100%',
--                      borderRadius: 2,
--                      overflow: 'hidden',
--                      "&:hover": {
--                        backgroundColor: "action.hover",
--                        transform: "scale(1.02)",
--                      },
--                      cursor: "pointer",
-+                      flex: '1 1 calc(50% - 16px)',
-+                      minWidth: '250px',
-+                      mb: 2,
+                       flex: '1 1 calc(50% - 16px)',
+                       minWidth: '250px',
+                       mb: 2,
                      }}
                    >
--                    <Paper
--                      elevation={2}
-+                    <CardActionArea
-+                      onClick={() => {
-+                        const descriptionHtml = richTextOrUndefined(p.description);
-+                        handleOpenDialog({
-+                          label: p.name,
-+                          descriptionHtml,
-+                          descriptionNode: descriptionHtml
-+                            ? undefined
-+                            : residentMilestones[idx]?.description,
-+                        });
-+                      }}
-                       sx={{
--                        px: 2,
--                        pt: 3,
--                        pb: 2.5,
--                        minHeight: 150,
--                        display: 'flex',
--                        flexDirection: 'column',
--                        justifyContent: 'center',
--                        borderLeft: `6px solid ${theme.palette.primary.main}`,
--                        background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
-+                        "&:hover": {
-+                          backgroundColor: "action.hover",
-+                          transform: "scale(1.02)",
-+                        },
-+                        cursor: "pointer",
+                     <CardActionArea
+                       onClick={() => {
+                         const descriptionHtml = richTextOrUndefined(p.description);
+                         handleOpenDialog({
+                           label: p.name,
+                           descriptionHtml,
+                           descriptionNode: descriptionHtml
+                             ? undefined
+                             : residentMilestones[idx]?.description,
+                         });
                        }}
-                     >
--                      <Typography variant="subtitle2" color="text.secondary">
--                        {p.name}
--                      </Typography>
--                      <Typography
--                        variant="body1"
--                        fontWeight="bold"
-+                      <Paper
-+                        elevation={2}
-                         sx={{
--                          color: theme.palette.primary.main,
--                          textShadow: 'none',
-+                          px: 2,
-+                          pt: 3,
-+                          pb: 2.5,
-+                          minHeight: 150,
-+                          display: 'flex',
-+                          flexDirection: 'column',
-+                          justifyContent: 'center',
-+                          borderLeft: `6px solid ${theme.palette.primary.main}`,
-+                          background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${progressEmptyColor} ${p.percent}%)`,
-                         }}
-                       >
--                        {p.percent}%
--                      </Typography>
--                    </Paper>
--                  </CardActionArea>
--                </Box>
--              ))}
--              </Stack>
-+                        <Typography variant="subtitle2" color="text.secondary">
-+                          {p.name}
-+                        </Typography>
-+                        <Typography
-+                          variant="body1"
-+                          fontWeight="bold"
-+                          sx={{
-+                            color: theme.palette.primary.main,
-+                            textShadow: 'none',
-+                          }}
-+                        >
-+                          {p.percent}%
-+                        </Typography>
-+                      </Paper>
-+                    </CardActionArea>
-+                  </Box>
-+                ))}
-+              </Stack>
-               {(residentDownloadButtons.length > 0 || allValidado) && (
-                 <Stack
-                   direction={{ xs: 'column', sm: 'row' }}
-                   spacing={2}
-                   justifyContent="center"
-                   flexWrap="wrap"
-                   mt={3}
-                 >
-                   {residentDownloadButtons.map((button) => (
-                     <Button
-                       key={button.key}
-                       variant="contained"
-                       onClick={button.onClick}
-                       disabled={downloadLoading}
-                     >
-                       {button.label}
-                     </Button>
-                   ))}
-                   {allValidado && (
-                     <Button
-                       variant="contained"
-                       color="secondary"
-                       onClick={handleDescargarCertificado}
-                       disabled={downloadLoading}
-                       startIcon={<WorkspacePremiumIcon />}
+                       sx={{
+                         "&:hover": {
+                           backgroundColor: "action.hover",
+                           transform: "scale(1.02)",
+                         },

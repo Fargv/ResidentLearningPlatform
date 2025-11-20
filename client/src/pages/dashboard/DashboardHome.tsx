@@ -648,7 +648,13 @@ const DashboardHome: React.FC = () => {
               size="small"
               sx={{ mb: 2 }}
             />
-            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+            <Stack
+              direction="row"
+              spacing={2}
+              flexWrap="wrap"
+              justifyContent="center"
+              rowGap={2}
+            >
               {societyMilestones.map((m, idx) => {
                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
                 const percent = phaseData?.percent ?? 0;
@@ -770,7 +776,7 @@ const DashboardHome: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 {t('progressByPhase')}
               </Typography>
-              <Stack direction="row" spacing={2} flexWrap="wrap">
+              <Stack direction="row" spacing={2} flexWrap="wrap" rowGap={2}>
                 {phaseSummary.map((p, idx) => (
                   <Box
                     key={p.progresoId}
