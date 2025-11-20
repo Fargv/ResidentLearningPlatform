@@ -1,15 +1,8 @@
 diff --git a/client/src/pages/dashboard/AdminInvitaciones.tsx b/client/src/pages/dashboard/AdminInvitaciones.tsx
-index 87a49ab76a4d7db335eca82ca8c1b5df0f72663d..605ab82927be6cd2dcffc664809cda4d630ea851 100644
+index 744fb4b787f9c2b5d871aa21f2d092b1333e7f71..26fe19b0a220b870d346b90c3b0862ffe227215b 100644
 --- a/client/src/pages/dashboard/AdminInvitaciones.tsx
 +++ b/client/src/pages/dashboard/AdminInvitaciones.tsx
-@@ -47,51 +47,60 @@ interface AdminUser {
-   email?: string;
- }
- 
- interface Invitation {
-   _id: string;
-   email: string;
-   rol: string;
+@@ -54,53 +54,53 @@ interface Invitation {
    tipo: string;
    hospital?: BasicEntity;
    sociedad?: BasicEntity;
@@ -28,17 +21,19 @@ index 87a49ab76a4d7db335eca82ca8c1b5df0f72663d..605ab82927be6cd2dcffc664809cda4d
  
  const formatDateTime = (value?: string) => {
    if (!value) return '—';
--  return new Date(value).toLocaleString();
-+  const date = new Date(value);
-+  if (Number.isNaN(date.getTime())) return '—';
-+
-+  const day = String(date.getDate()).padStart(2, '0');
-+  const month = String(date.getMonth() + 1).padStart(2, '0');
-+  const year = date.getFullYear();
-+  const hours = String(date.getHours()).padStart(2, '0');
+   const date = new Date(value);
+   if (Number.isNaN(date.getTime())) return '—';
+ 
+   const day = String(date.getDate()).padStart(2, '0');
+   const month = String(date.getMonth() + 1).padStart(2, '0');
+   const year = date.getFullYear();
+   const hours = String(date.getHours()).padStart(2, '0');
+-  const minutes = String(date.getMinutes()).padStart(2, '0');
+-
+-  return `${month}/${day}/${year} ${hours}:${minutes}`;
 +  const minutes = String(date.getMinutes()).padStart(2, '0');
 +
-+  return `${month}/${day}/${year} ${hours}:${minutes}`;
++  return `${day}/${month}/${year} ${hours}:${minutes}`;
  };
  
  const getFrontendBaseUrl = () => {
@@ -64,3 +59,151 @@ index 87a49ab76a4d7db335eca82ca8c1b5df0f72663d..605ab82927be6cd2dcffc664809cda4d
      try {
        setLoading(true);
        setError(null);
+@@ -152,68 +152,73 @@ const AdminInvitaciones: React.FC = () => {
+   }, []);
+ 
+   const filteredInvitations = useMemo(() => {
+     const term = search.trim().toLowerCase();
+     if (!term) return invitations;
+ 
+     return invitations.filter((invitation) => {
+       const hospitalName = invitation.hospital?.nombre || '';
+       const sociedadName = invitation.sociedad?.nombre || invitation.sociedad?.titulo || '';
+       const adminName = `${invitation.admin?.nombre || ''} ${invitation.admin?.apellidos || ''}`;
+       return [
+         invitation.email,
+         invitation.rol,
+         invitation.tipo,
+         hospitalName,
+         sociedadName,
+         adminName,
+         invitation.zona || ''
+       ]
+         .join(' ')
+         .toLowerCase()
+         .includes(term);
+     });
+   }, [invitations, search]);
+ 
+-  const handleCopyLink = async (invitation: Invitation) => {
+-    if (!invitation.token) {
++  const handleCopyLink = async (invitation: InvitationWithStatus) => {
++    const canCopyLink = invitation.derivedStatus === 'pendiente' && Boolean(invitation.token);
++
++    if (!canCopyLink) {
+       setFeedback({ message: t('adminInvitations.feedback.noLink'), severity: 'error' });
+       return;
+     }
+     const link = `${getFrontendBaseUrl()}/register/${invitation.token}`;
+     try {
+       await navigator.clipboard.writeText(link);
+       setFeedback({ message: t('adminInvitations.feedback.linkCopied'), severity: 'success' });
+     } catch (err: any) {
+       setFeedback({
+         message: err?.message || t('adminInvitations.feedback.copyError'),
+         severity: 'error'
+       });
+     }
+   };
+ 
+-  const handleResend = async (invitation: Invitation) => {
++  const handleResend = async (invitation: InvitationWithStatus) => {
++    const canResend = ['pendiente', 'expirada'].includes(invitation.derivedStatus);
++    if (!canResend) return;
++
+     setActionId(`${invitation._id}-resend`);
+     try {
+       const payload: Record<string, string> = {
+         email: invitation.email,
+         rol: invitation.rol,
+         tipo: invitation.tipo
+       };
+       if (invitation.hospital?._id) payload.hospital = invitation.hospital._id;
+       if (invitation.sociedad?._id) payload.sociedad = invitation.sociedad._id;
+       if (invitation.zona) payload.zona = invitation.zona;
+ 
+       await api.post('/users/invite', payload);
+       setFeedback({ message: t('adminInvitations.feedback.resent'), severity: 'success' });
+       await fetchInvitations();
+     } catch (err: any) {
+       setFeedback({
+         message: err?.response?.data?.error || t('adminInvitations.feedback.resendError'),
+         severity: 'error'
+       });
+     } finally {
+       setActionId(null);
+     }
+   };
+ 
+   const handleDelete = async () => {
+@@ -363,64 +368,68 @@ const AdminInvitaciones: React.FC = () => {
+                     <TableCell>{formatDateTime(invitation.fechaEnvio)}</TableCell>
+                     <TableCell>{formatDateTime(invitation.fechaExpiracion)}</TableCell>
+                     <TableCell>{renderStatusChip(invitation.derivedStatus)}</TableCell>
+                     <TableCell>
+                       {invitation.admin?.email ? (
+                         <Stack spacing={0.25}>
+                           <Typography variant="body2" fontWeight={600}>
+                             {`${invitation.admin.nombre || ''} ${invitation.admin.apellidos || ''}`.trim() ||
+                               invitation.admin.email}
+                           </Typography>
+                           <Typography variant="body2" color="text.secondary">
+                             {invitation.admin.email}
+                           </Typography>
+                         </Stack>
+                       ) : (
+                         '—'
+                       )}
+                     </TableCell>
+                     <TableCell align="right">
+                       <Stack direction="row" spacing={1} justifyContent="flex-end">
+                         <Tooltip title={t('adminInvitations.actions.copy')}>
+                           <span>
+                             <IconButton
+                               size="small"
+                               onClick={() => handleCopyLink(invitation)}
+-                              disabled={!invitation.token}
++                              disabled={
++                                invitation.derivedStatus !== 'pendiente' || !invitation.token || Boolean(actionId)
++                              }
+                               color="primary"
+                             >
+                               <ContentCopyIcon fontSize="small" />
+                             </IconButton>
+                           </span>
+                         </Tooltip>
+                         <Tooltip title={t('adminInvitations.actions.resend')}>
+                           <span>
+                             <IconButton
+                               size="small"
+                               color="secondary"
+                               onClick={() => handleResend(invitation)}
+-                              disabled={Boolean(actionId)}
++                              disabled={
++                                !['pendiente', 'expirada'].includes(invitation.derivedStatus) || Boolean(actionId)
++                              }
+                             >
+                               {actionId === `${invitation._id}-resend` ? (
+                                 <RefreshIcon fontSize="small" />
+                               ) : (
+                                 <SendIcon fontSize="small" />
+                               )}
+                             </IconButton>
+                           </span>
+                         </Tooltip>
+                         <Tooltip title={t('adminInvitations.actions.delete')}>
+                           <span>
+                             <IconButton
+                               size="small"
+                               color="error"
+                               onClick={() => setConfirming(invitation)}
+                               disabled={Boolean(actionId)}
+                             >
+                               <DeleteIcon fontSize="small" />
+                             </IconButton>
+                           </span>
+                         </Tooltip>
+                       </Stack>
+                     </TableCell>
+                   </TableRow>
+                 ))

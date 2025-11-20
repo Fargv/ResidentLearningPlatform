@@ -78,7 +78,7 @@ const formatDateTime = (value?: string) => {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  return `${month}/${day}/${year} ${hours}:${minutes}`;
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 
 const getFrontendBaseUrl = () => {
@@ -174,8 +174,10 @@ const AdminInvitaciones: React.FC = () => {
     });
   }, [invitations, search]);
 
-  const handleCopyLink = async (invitation: Invitation) => {
-    if (!invitation.token) {
+  const handleCopyLink = async (invitation: InvitationWithStatus) => {
+    const canCopyLink = invitation.derivedStatus === 'pendiente' && Boolean(invitation.token);
+
+    if (!canCopyLink) {
       setFeedback({ message: t('adminInvitations.feedback.noLink'), severity: 'error' });
       return;
     }
@@ -191,7 +193,10 @@ const AdminInvitaciones: React.FC = () => {
     }
   };
 
-  const handleResend = async (invitation: Invitation) => {
+  const handleResend = async (invitation: InvitationWithStatus) => {
+    const canResend = ['pendiente', 'expirada'].includes(invitation.derivedStatus);
+    if (!canResend) return;
+
     setActionId(`${invitation._id}-resend`);
     try {
       const payload: Record<string, string> = {
@@ -385,7 +390,9 @@ const AdminInvitaciones: React.FC = () => {
                             <IconButton
                               size="small"
                               onClick={() => handleCopyLink(invitation)}
-                              disabled={!invitation.token}
+                              disabled={
+                                invitation.derivedStatus !== 'pendiente' || !invitation.token || Boolean(actionId)
+                              }
                               color="primary"
                             >
                               <ContentCopyIcon fontSize="small" />
@@ -398,7 +405,9 @@ const AdminInvitaciones: React.FC = () => {
                               size="small"
                               color="secondary"
                               onClick={() => handleResend(invitation)}
-                              disabled={Boolean(actionId)}
+                              disabled={
+                                !['pendiente', 'expirada'].includes(invitation.derivedStatus) || Boolean(actionId)
+                              }
                             >
                               {actionId === `${invitation._id}-resend` ? (
                                 <RefreshIcon fontSize="small" />
