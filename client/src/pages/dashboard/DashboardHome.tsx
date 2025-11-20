@@ -640,20 +640,25 @@ const DashboardHome: React.FC = () => {
               size="small"
               sx={{ mb: 2 }}
             />
-            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-              {societyMilestones.map((m, idx) => {
+            <Stack
+              direction="row"
+              spacing={3}
+              flexWrap="wrap"
+              justifyContent="center"
+              sx={{ mt: 2 }}
+            >
+              {societyMilestones.map((m) => {
                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
                 const percent = phaseData?.percent ?? 0;
                 return (
                 <Box
                   key={m.label}
                   sx={{
-                    flex: {
-                      xs: '1 1 100%',
-                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
-                    },
-                    minWidth: { xs: '250px', md: '250px' },
-                    mt: 2,
+                    flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
+                    maxWidth: { xs: '100%', sm: '360px' },
+                    minWidth: { xs: '260px', sm: '300px' },
+                    display: 'flex',
+                    justifyContent: 'center',
                   }}
                 >
                   <CardActionArea
@@ -669,6 +674,9 @@ const DashboardHome: React.FC = () => {
                       });
                     }}
                     sx={{
+                      width: '100%',
+                      borderRadius: 2,
+                      overflow: 'hidden',
                       "&:hover": {
                         backgroundColor: "action.hover",
                         transform: "scale(1.02)",
@@ -715,9 +723,9 @@ const DashboardHome: React.FC = () => {
                     </Paper>
                   </CardActionArea>
                 </Box>
-              );
-            })}
-            </Stack>
+                );
+              })}
+              </Stack>
             {(societyDownloadButtons.length > 0 || socAllValidado) && (
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}
@@ -762,13 +770,22 @@ const DashboardHome: React.FC = () => {
               <Typography variant="h6" gutterBottom>
                 {t('progressByPhase')}
               </Typography>
-              <Stack direction="row" spacing={2} flexWrap="wrap">
+              <Stack
+                direction="row"
+                spacing={3}
+                flexWrap="wrap"
+                justifyContent="center"
+                sx={{ mt: 2 }}
+              >
                 {phaseSummary.map((p, idx) => (
                   <Box
                     key={p.progresoId}
                     sx={{
-                      flex: '1 1 calc(50% - 16px)',
-                      minWidth: '250px',
+                      flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
+                      maxWidth: { xs: '100%', sm: '360px' },
+                      minWidth: { xs: '260px', sm: '300px' },
+                      display: 'flex',
+                      justifyContent: 'center',
                     }}
                 >
                   <CardActionArea
@@ -783,6 +800,9 @@ const DashboardHome: React.FC = () => {
                       });
                     }}
                     sx={{
+                      width: '100%',
+                      borderRadius: 2,
+                      overflow: 'hidden',
                       "&:hover": {
                         backgroundColor: "action.hover",
                         transform: "scale(1.02)",

@@ -1,1378 +1,26 @@
-diff --git a/client/src/pages/dashboard/AdminFases.tsx b/client/src/pages/dashboard/AdminFases.tsx
-index d8b351371abad35ad03f7df7f1fb6d5a6e818bf7..ae159ce482bec59f5f92785a27d3dec494c20567 100644
---- a/client/src/pages/dashboard/AdminFases.tsx
-+++ b/client/src/pages/dashboard/AdminFases.tsx
-@@ -9,55 +9,56 @@ import {
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogContentText,
-   DialogActions,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   IconButton,
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Tabs,
-   Tab,
-   FormControlLabel,
-   Switch,
- } from "@mui/material";
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Delete as DeleteIcon,
--  //Assignment as AssignmentIcon
-+  Check as CheckIcon,
- } from "@mui/icons-material";
- import api from "../../api";
- import { useTranslation, Trans } from "react-i18next";
--import RichTextDescriptionField from "../../components/RichTextDescriptionField";
-+import RichTextDescriptionField from "../../components/RichTextDescriptionField";
-+import RichTextViewer from "../../components/RichTextViewer";
- 
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
- 
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`fases-tabpanel-${index}`}
-       aria-labelledby={`fases-tab-${index}`}
-       {...other}
-     >
-       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-     </div>
-   );
- }
- 
- const AdminFases: React.FC = () => {
-   const { t } = useTranslation();
-@@ -176,56 +177,63 @@ const AdminFases: React.FC = () => {
-       setOpenEliminarFaseDialog(true);
-     } catch (err: any) {
-       setSnackbar({
-         open: true,
-         message: t("adminPhases.messages.checkProgressError"),
-         severity: "error",
-       });
-     } finally {
-       setProcesando(false);
-     }
-   };
- 
-   const handleCloseEliminarFaseDialog = () => {
-     setOpenEliminarFaseDialog(false);
-     setSelectedFase(null);
-   };
- 
-   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const { name, value } = e.target;
-     setFaseFormData({
-       ...faseFormData,
-       [name]: value,
-     });
-   };
- 
--  const handleDescripcionChange = (descripcion: string) => {
--    setFaseFormData((prev) => ({
--      ...prev,
--      descripcion,
--    }));
--  };
-+  const handleDescripcionChange = (descripcion: string) => {
-+    setFaseFormData((prev) => ({
-+      ...prev,
-+      descripcion,
-+    }));
-+  };
-+
-+  const handleActividadDescripcionChange = (descripcion: string) => {
-+    setActividadFormData((prev) => ({
-+      ...prev,
-+      descripcion,
-+    }));
-+  };
- 
-   const handleCrearFase = async () => {
-     try {
-       setProcesando(true);
- 
-       const res = await api.post("/fases", {
-         ...faseFormData,
-         numero: parseInt(faseFormData.numero),
-       });
- 
-       // Actualizar lista de fases
-       setFases([...fases, res.data.data]);
- 
-       handleCloseCrearFaseDialog();
- 
-       setSnackbar({
-         open: true,
-         message: t("adminPhases.messages.phaseCreated"),
-         severity: "success",
-       });
-     } catch (err: any) {
-       setError(
-         err.response?.data?.error || t("adminPhases.messages.phaseCreateError"),
-       );
- 
-@@ -578,53 +586,55 @@ const AdminFases: React.FC = () => {
-                   startIcon={<AddIcon />}
-                   onClick={handleOpenCrearFaseDialog}
-                   sx={{ mr: 1 }}
-                 >
-                   {t("adminPhases.actions.newPhase")}
-                 </Button>
-                 <Button
-                   variant="outlined"
-                   color="primary"
-                   startIcon={<EditIcon />}
-                   onClick={() => handleOpenEditarFaseDialog(fase)}
-                   sx={{ mr: 1 }}
-                 >
-                   {t("adminPhases.actions.editPhase")}
-                 </Button>
-                 <Button
-                   variant="outlined"
-                   color="error"
-                   startIcon={<DeleteIcon />}
-                   onClick={() => handleConfirmarEliminarFase(fase)}
-                 >
-                   {t("adminPhases.actions.deletePhase")}
-                 </Button>
-               </Box>
- 
--              <Typography variant="body1" paragraph>
--                {fase.descripcion}
--              </Typography>
-+              <RichTextViewer
-+                content={fase.descripcion}
-+                minHeight={120}
-+                sx={{ mb: 2 }}
-+              />
- 
-               <Divider sx={{ my: 2 }} />
- 
-               <Box
-                 sx={{
-                   display: "flex",
-                   justifyContent: "space-between",
-                   alignItems: "center",
-                   mb: 2,
-                 }}
-               >
-                 <Typography variant="h6" component="h3">
-                   {t("adminPhases.activities")}
-                 </Typography>
-                 <Button
-                   variant="contained"
-                   color="primary"
-                   startIcon={<AddIcon />}
-                   onClick={() => handleOpenCrearActividadDialog(fase)}
-                 >
-                   {t("adminPhases.actions.newActivity")}
-                 </Button>
-               </Box>
- 
-               <TableContainer>
-@@ -633,227 +643,247 @@ const AdminFases: React.FC = () => {
-                     number: fase.numero,
-                   })}
-                 >
-                   <TableHead>
-                     <TableRow>
-                       <TableCell>{t("adminPhases.table.order")}</TableCell>
-                       <TableCell>{t("adminPhases.table.name")}</TableCell>
-                       <TableCell>{t("adminPhases.table.attachmentRequired")}</TableCell>
-                       <TableCell>{t("adminPhases.table.type")}</TableCell>
-                       <TableCell>
-                         {t("adminPhases.table.description")}
-                       </TableCell>
-                       <TableCell align="right">
-                         {t("adminPhases.table.actions")}
-                       </TableCell>
-                     </TableRow>
-                   </TableHead>
-                   <TableBody>
-                     {actividades
-                       .filter((actividad) => actividad.fase._id === fase._id)
-                       .sort((a, b) => a.orden - b.orden)
-                       .map((actividad) => (
-                         <TableRow key={actividad._id} hover>
-                           <TableCell>{actividad.orden}</TableCell>
-                           <TableCell>{actividad.nombre}</TableCell>
--                          <TableCell align="center">
--                            <Typography
--                              component="span"
--                              role="img"
--                              aria-label={
--                                actividad.requiereAdjunto
--                                  ? t('adminPhases.requiresAttachment')
--                                  : t('adminPhases.optionalAttachment')
--                              }
--                              sx={{ fontSize: '1.2rem' }}
--                            >
--                              {actividad.requiereAdjunto ? '✔️' : '❌'}
--                            </Typography>
--                          </TableCell>
-+                          <TableCell align="center">
-+                            {actividad.requiereAdjunto ? (
-+                              <CheckIcon
-+                                color="success"
-+                                fontSize="small"
-+                                aria-label={t('adminPhases.requiresAttachment')}
-+                              />
-+                            ) : (
-+                              <Box
-+                                component="span"
-+                                aria-label={t('adminPhases.optionalAttachment')}
-+                                sx={{ display: 'inline-block', width: 24 }}
-+                              />
-+                            )}
-+                          </TableCell>
-                           <TableCell>
-                             <Chip
-                               label={
-                                 actividad.tipo === "teórica"
-                                   ? t("adminPhases.theory")
-                                   : actividad.tipo === "práctica"
-                                     ? t("adminPhases.practice")
-                                     : actividad.tipo === "evaluación"
-                                       ? t("adminPhases.evaluation")
-                                       : actividad.tipo === "observación"
-                                         ? t("adminPhases.observation")
-                                         : t("adminPhases.surgery")
-                               }
-                               color={
-                                 actividad.tipo === "teórica"
-                                   ? "primary"
-                                   : actividad.tipo === "práctica"
-                                     ? "secondary"
-                                     : actividad.tipo === "evaluación"
-                                       ? "warning"
-                                       : actividad.tipo === "observación"
-                                         ? "info"
-                                         : "success"
-                               }
-                               size="small"
-                             />
-                           </TableCell>
--                          <TableCell>{actividad.descripcion}</TableCell>
-+                          <TableCell sx={{ width: '25%' }}>
-+                            <RichTextViewer
-+                              content={actividad.descripcion}
-+                              minHeight={0}
-+                              variant="inline"
-+                              sx={{ fontSize: '0.9rem' }}
-+                            />
-+                          </TableCell>
-                           <TableCell align="right">
-                             <IconButton
-                               color="primary"
-                               onClick={() =>
-                                 handleOpenEditarActividadDialog(actividad)
-                               }
-                               size="small"
-                             >
-                               <EditIcon />
-                             </IconButton>
-                             <IconButton
-                               color="error"
-                               onClick={() =>
-                                 handleConfirmarEliminarActividad(actividad)
-                               }
-                               size="small"
-                             >
-                               <DeleteIcon />
-                             </IconButton>
-                           </TableCell>
-                         </TableRow>
-                       ))}
-                     {actividades.filter(
-                       (actividad) => actividad.fase._id === fase._id,
-                     ).length === 0 && (
-                       <TableRow>
-                         <TableCell colSpan={6} align="center">
-                           {t("adminPhases.table.empty")}
-                         </TableCell>
-                       </TableRow>
-                     )}
-                   </TableBody>
-                 </Table>
-               </TableContainer>
-             </TabPanel>
-           ))}
- 
-         {fases.length === 0 && (
-           <Box sx={{ p: 3, textAlign: "center" }}>
-             <Typography variant="body1" color="text.secondary">
-               {t("adminPhases.empty")}
-             </Typography>
-           </Box>
-         )}
-       </Paper>
- 
-       {/* Diálogo para crear fase */}
--      <Dialog open={openCrearFaseDialog} onClose={handleCloseCrearFaseDialog}>
-+      <Dialog
-+        open={openCrearFaseDialog}
-+        onClose={handleCloseCrearFaseDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-         <DialogTitle>{t("adminPhases.actions.newPhase")}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="numero"
-             name="numero"
-             label={t("adminPhases.number")}
-             type="number"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.numero}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
-           <TextField
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t("adminPhases.name")}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.nombre}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <RichTextDescriptionField
-+          <RichTextDescriptionField
-             label={t("adminPhases.description")}
-             value={faseFormData.descripcion}
--            onChange={handleDescripcionChange}
-+            onChange={handleDescripcionChange}
-+            minHeight={320}
-           />
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseCrearFaseDialog} color="primary">
-             {t("common.cancel")}
-           </Button>
-           <Button
-             onClick={handleCrearFase}
-             color="primary"
-             variant="contained"
-             disabled={
-               procesando || !faseFormData.numero || !faseFormData.nombre
-             }
-           >
-             {procesando ? t("common.creating") : t("common.create")}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para editar fase */}
--      <Dialog open={openEditarFaseDialog} onClose={handleCloseEditarFaseDialog}>
-+      <Dialog
-+        open={openEditarFaseDialog}
-+        onClose={handleCloseEditarFaseDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-         <DialogTitle>{t("adminPhases.actions.editPhase")}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="numero"
-             name="numero"
-             label={t("adminPhases.number")}
-             type="number"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.numero}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
-           <TextField
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t("adminPhases.name")}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.nombre}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <RichTextDescriptionField
-+          <RichTextDescriptionField
-             label={t("adminPhases.description")}
-             value={faseFormData.descripcion}
--            onChange={handleDescripcionChange}
-+            onChange={handleDescripcionChange}
-+            minHeight={320}
-           />
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseEditarFaseDialog} color="primary">
-             {t("common.cancel")}
-           </Button>
-           <Button
-             onClick={handleEditarFase}
-             color="primary"
-             variant="contained"
-             disabled={
-               procesando || !faseFormData.numero || !faseFormData.nombre
-             }
-           >
-             {procesando ? t("common.saving") : t("common.saveChanges")}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para eliminar fase */}
-       <Dialog
-         open={openEliminarFaseDialog}
-         onClose={handleCloseEliminarFaseDialog}
-       >
-         <DialogTitle>{t("adminPhases.actions.deletePhase")}</DialogTitle>
-@@ -874,87 +904,81 @@ const AdminFases: React.FC = () => {
-                 values={{ name: selectedFase?.nombre }}
-                 components={{ strong: <strong /> }}
-               />
-             )}
-           </DialogContentText>
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseEliminarFaseDialog} color="primary">
-             {t("common.cancel")}
-           </Button>
-           <Button
-             onClick={handleEliminarFase}
-             color="error"
-             variant="contained"
-             disabled={procesando}
-           >
-             {procesando ? t("common.deleting") : t("common.delete")}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para crear actividad */}
-       <Dialog
-         open={openCrearActividadDialog}
-         onClose={handleCloseCrearActividadDialog}
-+        fullWidth
-+        maxWidth="md"
-       >
-         <DialogTitle>{t("adminPhases.actions.newActivity")}</DialogTitle>
-         <DialogContent>
-           <DialogContentText>
-             <Trans
-               i18nKey="adminPhases.dialogs.createActivity"
-               values={{ phase: selectedFase?.nombre }}
-               components={{ strong: <strong /> }}
-             />
-           </DialogContentText>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t("adminPhases.name")}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.nombre}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <TextField
--            margin="dense"
--            id="descripcion"
--            name="descripcion"
-+          <RichTextDescriptionField
-             label={t("adminPhases.description")}
--            type="text"
--            fullWidth
--            multiline
--            rows={3}
--            variant="outlined"
-             value={actividadFormData.descripcion}
--            onChange={handleActividadChange}
--            sx={{ mb: 2 }}
-+            onChange={handleActividadDescripcionChange}
-+            minHeight={280}
-           />
-           <TextField
-             select
-             margin="dense"
-             id="tipo"
-             name="tipo"
-             label={t("adminPhases.type")}
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.tipo}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-             slotProps={{
-               select: {
-                 native: true,
-               },
-             }}
-           >
-             <option value="teórica">{t("adminPhases.theory")}</option>
-             <option value="práctica">{t("adminPhases.practice")}</option>
-             <option value="evaluación">{t("adminPhases.evaluation")}</option>
-             <option value="observación">{t("adminPhases.observation")}</option>
-             <option value="cirugia">{t("adminPhases.surgery")}</option>
-           </TextField>
-@@ -983,80 +1007,74 @@ const AdminFases: React.FC = () => {
-           />
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseCrearActividadDialog} color="primary">
-             {t("common.cancel")}
-           </Button>
-           <Button
-             onClick={handleCrearActividad}
-             color="primary"
-             variant="contained"
-             disabled={
-               procesando ||
-               !actividadFormData.nombre ||
-               !actividadFormData.orden
-             }
-           >
-             {procesando ? t("common.creating") : t("common.create")}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para editar actividad */}
-       <Dialog
-         open={openEditarActividadDialog}
-         onClose={handleCloseEditarActividadDialog}
-+        fullWidth
-+        maxWidth="md"
-       >
-         <DialogTitle>{t("adminPhases.actions.editActivity")}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t("adminPhases.name")}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.nombre}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <TextField
--            margin="dense"
--            id="descripcion"
--            name="descripcion"
-+          <RichTextDescriptionField
-             label={t("adminPhases.description")}
--            type="text"
--            fullWidth
--            multiline
--            rows={3}
--            variant="outlined"
-             value={actividadFormData.descripcion}
--            onChange={handleActividadChange}
--            sx={{ mb: 2 }}
-+            onChange={handleActividadDescripcionChange}
-+            minHeight={280}
-           />
-           <TextField
-             select
-             margin="dense"
-             id="tipo"
-             name="tipo"
-             label={t("adminPhases.type")}
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.tipo}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-             slotProps={{
-               select: {
-                 native: true,
-               },
-             }}
-           >
-             <option value="teórica">{t("adminPhases.theory")}</option>
-             <option value="práctica">{t("adminPhases.practice")}</option>
-             <option value="evaluación">{t("adminPhases.evaluation")}</option>
-             <option value="observación">{t("adminPhases.observation")}</option>
-             <option value="cirugia">{t("adminPhases.surgery")}</option>
-           </TextField>
-diff --git a/client/src/pages/dashboard/AdminFasesSoc.tsx b/client/src/pages/dashboard/AdminFasesSoc.tsx
-index aad1578c26461e6b7e6fccb4ae2d18f833112f0c..628a8fb3bc44c5644c324374707f692741b2f88b 100644
---- a/client/src/pages/dashboard/AdminFasesSoc.tsx
-+++ b/client/src/pages/dashboard/AdminFasesSoc.tsx
-@@ -9,55 +9,56 @@ import {
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogContentText,
-   DialogActions,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   IconButton,
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Tabs,
-   Tab,
-   FormControlLabel,
-   Switch
- } from '@mui/material';
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Delete as DeleteIcon,
--  //Assignment as AssignmentIcon
-+  Check as CheckIcon,
- } from '@mui/icons-material';
- import api from '../../api';
- import { useTranslation, Trans } from 'react-i18next';
--import RichTextDescriptionField from '../../components/RichTextDescriptionField';
-+import RichTextDescriptionField from '../../components/RichTextDescriptionField';
-+import RichTextViewer from '../../components/RichTextViewer';
- 
- 
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
- 
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`fases-tabpanel-${index}`}
-       aria-labelledby={`fases-tab-${index}`}
-       {...other}
-     >
-       {value === index && (
-         <Box sx={{ p: 3 }}>
-           {children}
-         </Box>
-       )}
-     </div>
-@@ -176,56 +177,63 @@ const AdminFases: React.FC = () => {
-       setOpenEliminarFaseDialog(true);
-     } catch (err: any) {
-       setSnackbar({
-         open: true,
-         message: t('adminPhasesSoc.messages.progressCheckError'),
-         severity: 'error'
-       });
-     } finally {
-       setProcesando(false);
-     }
-   };
- 
-   const handleCloseEliminarFaseDialog = () => {
-     setOpenEliminarFaseDialog(false);
-     setSelectedFase(null);
-   };
- 
-   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const { name, value } = e.target;
-     setFaseFormData({
-       ...faseFormData,
-       [name]: value
-     });
-   };
- 
--  const handleDescripcionChange = (descripcion: string) => {
--    setFaseFormData((prev) => ({
--      ...prev,
--      descripcion,
--    }));
--  };
-+  const handleDescripcionChange = (descripcion: string) => {
-+    setFaseFormData((prev) => ({
-+      ...prev,
-+      descripcion,
-+    }));
-+  };
-+
-+  const handleActividadDescripcionChange = (descripcion: string) => {
-+    setActividadFormData((prev) => ({
-+      ...prev,
-+      descripcion,
-+    }));
-+  };
- 
-   const handleCrearFase = async () => {
-     try {
-       setProcesando(true);
-       
-       const res = await api.post('/fasesSoc', {
-         ...faseFormData,
-         numero: parseInt(faseFormData.numero)
-       });
-       
-       // Actualizar lista de fases
-       setFases([...fases, res.data.data]);
-       
-       handleCloseCrearFaseDialog();
-       
-       setSnackbar({
-         open: true,
-         message: t('adminPhasesSoc.messages.phaseCreated'),
-         severity: 'success'
-       });
-     } catch (err: any) {
-       setError(err.response?.data?.error || t('adminPhasesSoc.messages.phaseCreateError'));
- 
-       setSnackbar({
-         open: true,
-@@ -538,259 +546,281 @@ const AdminFases: React.FC = () => {
-                 startIcon={<AddIcon />}
-                 onClick={handleOpenCrearFaseDialog}
-                 sx={{ mr: 1 }}
-               >
-                 {t('adminPhases.dialogs.newPhase.title')}
-               </Button>
-               <Button
-                 variant="outlined"
-                 color="primary"
-                 startIcon={<EditIcon />}
-                 onClick={() => handleOpenEditarFaseDialog(fase)}
-                 sx={{ mr: 1 }}
-               >
-                 {t('adminPhases.dialogs.editPhase.title')}
-               </Button>
-               <Button
-                 variant="outlined"
-                 color="error"
-                 startIcon={<DeleteIcon />}
-                 onClick={() => handleConfirmarEliminarFase(fase)}
-               >
-                 {t('adminPhases.dialogs.deletePhase.title')}
-               </Button>
-             </Box>
-             
--            <Typography variant="body1" paragraph>
--              {fase.descripcion}
--            </Typography>
-+              <RichTextViewer
-+                content={fase.descripcion}
-+                minHeight={120}
-+                sx={{ mb: 2 }}
-+              />
-             
-             <Divider sx={{ my: 2 }} />
-             
-             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-               <Typography variant="h6" component="h3">
-                 {t('adminPhases.activities')}
-               </Typography>
-               <Button
-                 variant="contained"
-                 color="primary"
-                 startIcon={<AddIcon />}
-                 onClick={() => handleOpenCrearActividadDialog(fase)}
-               >
-                 {t('adminPhases.dialogs.newActivity.title')}
-               </Button>
-             </Box>
-             
-             <TableContainer>
-               <Table aria-label={`actividades de fase ${fase.numero}`}>
-                 <TableHead>
-                   <TableRow>
-                     <TableCell>{t('adminPhases.table.order')}</TableCell>
-                     <TableCell>{t('adminPhases.table.name')}</TableCell>
-                     <TableCell>{t('adminPhases.table.attachmentRequired')}</TableCell>
-                     <TableCell>{t('adminPhases.table.type')}</TableCell>
-                     <TableCell>{t('adminPhases.description')}</TableCell>
-                     <TableCell align="right">{t('adminPhases.table.actions')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {actividades
-                     .filter(actividad => actividad.fase._id === fase._id)
-                     .sort((a, b) => a.orden - b.orden)
-                   .map((actividad) => (
-                     <TableRow key={actividad._id} hover>
-                       <TableCell>{actividad.orden}</TableCell>
-                       <TableCell>{actividad.nombre}</TableCell>
--                      <TableCell align="center">
--                        <Typography
--                          component="span"
--                          role="img"
--                          aria-label={
--                            actividad.requiereAdjunto
--                              ? t('adminPhases.requiresAttachment')
--                              : t('adminPhases.optionalAttachment')
--                          }
--                          sx={{ fontSize: '1.2rem' }}
--                        >
--                          {actividad.requiereAdjunto ? '✔️' : '❌'}
--                        </Typography>
--                      </TableCell>
-+                          <TableCell align="center">
-+                            {actividad.requiereAdjunto ? (
-+                              <CheckIcon
-+                                color="success"
-+                                fontSize="small"
-+                                aria-label={t('adminPhases.requiresAttachment')}
-+                              />
-+                            ) : (
-+                              <Box
-+                                component="span"
-+                                aria-label={t('adminPhases.optionalAttachment')}
-+                                sx={{ display: 'inline-block', width: 24 }}
-+                              />
-+                            )}
-+                          </TableCell>
-                       <TableCell>
-                        <Chip
-                           label={
-                               actividad.tipo === 'teórica'
-                                 ? t('adminPhases.theory')
-                                 : actividad.tipo === 'práctica'
-                                   ? t('adminPhases.practice')
-                                   : actividad.tipo === 'evaluación'
-                                     ? t('adminPhases.evaluation')
-                                     : actividad.tipo === 'observación'
-                                       ? t('adminPhases.observation')
-                                       : t('adminPhases.surgery')
-                             }
-                             color={
-                               actividad.tipo === 'teórica'
-                                 ? 'primary'
-                                 : actividad.tipo === 'práctica'
-                                   ? 'secondary'
-                                   : actividad.tipo === 'evaluación'
-                                     ? 'warning'
-                                     : actividad.tipo === 'observación'
-                                       ? 'info'
-                                       : 'success'
-                             }
-                             size="small"
-                           />
-                         </TableCell>
--                        <TableCell>{actividad.descripcion}</TableCell>
-+                          <TableCell sx={{ width: '25%' }}>
-+                            <RichTextViewer
-+                              content={actividad.descripcion}
-+                              minHeight={0}
-+                              variant="inline"
-+                              sx={{ fontSize: '0.9rem' }}
-+                            />
-+                          </TableCell>
-                         <TableCell align="right">
-                           <IconButton 
-                             color="primary" 
-                             onClick={() => handleOpenEditarActividadDialog(actividad)}
-                             size="small"
-                           >
-                             <EditIcon />
-                           </IconButton>
-                           <IconButton 
-                             color="error" 
-                             onClick={() => handleConfirmarEliminarActividad(actividad)}
-                             size="small"
-                           >
-                             <DeleteIcon />
-                           </IconButton>
-                         </TableCell>
-                       </TableRow>
-                     ))}
-                   {actividades.filter(actividad => actividad.fase._id === fase._id).length === 0 && (
-                     <TableRow>
-                       <TableCell colSpan={6} align="center">
-                         {t('adminPhases.messages.noActivities')}
-                       </TableCell>
-                     </TableRow>
-                   )}
-                 </TableBody>
-               </Table>
-             </TableContainer>
-           </TabPanel>
-         ))}
-         
-         {fases.length === 0 && (
-           <Box sx={{ p: 3, textAlign: 'center' }}>
-             <Typography variant="body1" color="text.secondary">
-               {t('adminPhases.messages.noPhases')}
-             </Typography>
-           </Box>
-         )}
-       </Paper>
-       
-       {/* Diálogo para crear fase */}
--      <Dialog open={openCrearFaseDialog} onClose={handleCloseCrearFaseDialog}>
-+      <Dialog
-+        open={openCrearFaseDialog}
-+        onClose={handleCloseCrearFaseDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-         <DialogTitle>{t('adminPhases.dialogs.newPhase.title')}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="numero"
-             name="numero"
-             label={t('adminPhases.number')}
-             type="number"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.numero}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
-           <TextField
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t('adminPhases.table.name')}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.nombre}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <RichTextDescriptionField
-+          <RichTextDescriptionField
-             label={t('adminPhases.description')}
-             value={faseFormData.descripcion}
--            onChange={handleDescripcionChange}
-+            onChange={handleDescripcionChange}
-+            minHeight={320}
-           />
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseCrearFaseDialog} color="primary">
-             {t('common.cancel')}
-           </Button>
-           <Button
-             onClick={handleCrearFase}
-             color="primary"
-             variant="contained"
-             disabled={procesando || !faseFormData.numero || !faseFormData.nombre}
-           >
-             {procesando ? t('common.creating') : t('common.create')}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para editar fase */}
--      <Dialog open={openEditarFaseDialog} onClose={handleCloseEditarFaseDialog}>
-+      <Dialog
-+        open={openEditarFaseDialog}
-+        onClose={handleCloseEditarFaseDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-         <DialogTitle>{t('adminPhases.dialogs.editPhase.title')}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="numero"
-             name="numero"
-             label={t('adminPhases.number')}
-             type="number"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.numero}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
-           <TextField
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t('adminPhases.table.name')}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={faseFormData.nombre}
-             onChange={handleFaseChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <RichTextDescriptionField
-+          <RichTextDescriptionField
-             label={t('adminPhases.description')}
-             value={faseFormData.descripcion}
--            onChange={handleDescripcionChange}
-+            onChange={handleDescripcionChange}
-+            minHeight={320}
-           />
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseEditarFaseDialog} color="primary">
-             {t('common.cancel')}
-           </Button>
-           <Button
-             onClick={handleEditarFase}
-             color="primary"
-             variant="contained"
-             disabled={procesando || !faseFormData.numero || !faseFormData.nombre}
-           >
-             {procesando ? t('common.saving') : t('common.saveChanges')}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para eliminar fase */}
-       <Dialog open={openEliminarFaseDialog} onClose={handleCloseEliminarFaseDialog}>
-         <DialogTitle>{t('adminPhases.dialogs.deletePhase.title')}</DialogTitle>
-         <DialogContent>
-           <DialogContentText>
-             {progresoVinculado !== null && progresoVinculado > 0 ? (
-               <Trans
-                 i18nKey="adminPhases.dialogs.deletePhase.contentWithProgress"
-@@ -800,87 +830,84 @@ const AdminFases: React.FC = () => {
-             ) : (
-               <Trans
-                 i18nKey="adminPhases.dialogs.deletePhase.content"
-                 values={{ name: selectedFase?.nombre }}
-                 components={{ strong: <strong /> }}
-               />
-             )}
-           </DialogContentText>
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseEliminarFaseDialog} color="primary">
-             {t('common.cancel')}
-           </Button>
-           <Button
-             onClick={handleEliminarFase}
-             color="error"
-             variant="contained"
-             disabled={procesando}
-           >
-             {procesando ? t('common.deleting') : t('common.delete')}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para crear actividad */}
--      <Dialog open={openCrearActividadDialog} onClose={handleCloseCrearActividadDialog}>
-+      <Dialog
-+        open={openCrearActividadDialog}
-+        onClose={handleCloseCrearActividadDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-         <DialogTitle>{t('adminPhases.dialogs.newActivity.title')}</DialogTitle>
-         <DialogContent>
-           <DialogContentText>
-             <Trans
-               i18nKey="adminPhases.dialogs.newActivity.content"
-               values={{ phase: selectedFase?.nombre }}
-               components={{ strong: <strong /> }}
-             />
-           </DialogContentText>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t('adminPhases.table.name')}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.nombre}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <TextField
--            margin="dense"
--            id="descripcion"
--            name="descripcion"
-+          <RichTextDescriptionField
-             label={t('adminPhases.description')}
--            type="text"
--            fullWidth
--            multiline
--            rows={3}
--            variant="outlined"
-             value={actividadFormData.descripcion}
--            onChange={handleActividadChange}
--            sx={{ mb: 2 }}
-+            onChange={handleActividadDescripcionChange}
-+            minHeight={280}
-           />
-           <TextField
-             select
-             margin="dense"
-             id="tipo"
-             name="tipo"
-             label={t('adminPhases.table.type')}
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.tipo}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-             slotProps={{
-               select: {
-                 native: true
-               }
-             }}
-           >
-                 <option value="teórica">{t('adminPhases.theory')}</option>
-                 <option value="práctica">{t('adminPhases.practice')}</option>
-                 <option value="evaluación">{t('adminPhases.evaluation')}</option>
-                 <option value="observación">{t('adminPhases.observation')}</option>
-                 <option value="cirugia">{t('adminPhases.surgery')}</option>
-           </TextField>
-@@ -902,80 +929,77 @@ const AdminFases: React.FC = () => {
-                 name="requiereAdjunto"
-                 checked={actividadFormData.requiereAdjunto}
-                 onChange={handleActividadChange}
-               />
-             }
-             label={t('adminPhases.requiresAttachment')}
-             sx={{ mt: 1 }}
-           />
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseCrearActividadDialog} color="primary">
-             {t('common.cancel')}
-           </Button>
-           <Button
-             onClick={handleCrearActividad}
-             color="primary"
-             variant="contained"
-             disabled={procesando || !actividadFormData.nombre || !actividadFormData.orden}
-           >
-             {procesando ? t('common.creating') : t('common.create')}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
-       {/* Diálogo para editar actividad */}
--      <Dialog open={openEditarActividadDialog} onClose={handleCloseEditarActividadDialog}>
-+      <Dialog
-+        open={openEditarActividadDialog}
-+        onClose={handleCloseEditarActividadDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-         <DialogTitle>{t('adminPhases.dialogs.editActivity.title')}</DialogTitle>
-         <DialogContent>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="nombre"
-             name="nombre"
-             label={t('adminPhases.table.name')}
-             type="text"
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.nombre}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-           />
--          <TextField
--            margin="dense"
--            id="descripcion"
--            name="descripcion"
-+          <RichTextDescriptionField
-             label={t('adminPhases.description')}
--            type="text"
--            fullWidth
--            multiline
--            rows={3}
--            variant="outlined"
-             value={actividadFormData.descripcion}
--            onChange={handleActividadChange}
--            sx={{ mb: 2 }}
-+            onChange={handleActividadDescripcionChange}
-+            minHeight={280}
-           />
-           <TextField
-             select
-             margin="dense"
-             id="tipo"
-             name="tipo"
-             label={t('adminPhases.table.type')}
-             fullWidth
-             variant="outlined"
-             value={actividadFormData.tipo}
-             onChange={handleActividadChange}
-             required
-             sx={{ mb: 2 }}
-             slotProps={{
-                 select: {
-                   native: true
-                 }
-               }}
-           >
-             <option value="teórica">{t('adminPhases.theory')}</option>
-             <option value="práctica">{t('adminPhases.practice')}</option>
-             <option value="evaluación">{t('adminPhases.evaluation')}</option>
-             <option value="observación">{t('adminPhases.observation')}</option>
-             <option value="cirugia">{t('adminPhases.surgery')}</option>
-           </TextField>
 diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index b9568108755265064da89052d0e78387970552db..a9751bcdd07a7dad511c78769e3d23581b754eaa 100644
+index ea17a845a1dacd522611fe03b6356e57f9b12778..25c64689ad4ed3571411501efbc679c11c538b58 100644
 --- a/client/src/pages/dashboard/DashboardHome.tsx
 +++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -1,98 +1,91 @@
--import React, { useState, useEffect, useMemo } from "react";
-+import React, { useState, useEffect, useMemo } from "react";
- import {
--  Avatar,
-+  Avatar,
-   Box,
-   Typography,
-   Alert,
-   CircularProgress,
-   Paper,
-   Chip,
-   Divider,
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogActions,
-   Button,
-   Backdrop,
-   Stack,
-   useTheme,
-   CardActionArea,
- } from "@mui/material";
- import {
-   Assignment as AssignmentIcon,
-   School as SchoolIcon,
-   People as PeopleIcon,
-   Settings as SettingsIcon,
-   Assessment as AssessmentIcon,
-   Person as PersonIcon,
-   Notifications as NotificationsIcon,
-   WorkspacePremium as WorkspacePremiumIcon
- } from "@mui/icons-material";
- import { useNavigate } from "react-router-dom";
- import { useAuth } from "../../context/AuthContext";
- import api from "../../api";
- import { formatMonthYear, formatDayMonthYear } from "../../utils/date";
- import { Sociedad } from "../../types/Sociedad";
- import { useTranslation } from 'react-i18next';
--import { alpha, lighten } from '@mui/material/styles';
-+import { alpha, lighten } from '@mui/material/styles';
-+import RichTextViewer from "../../components/RichTextViewer";
-+import { richTextOrUndefined } from "../../utils/richText";
- 
- interface ResidentPhaseSummary {
-   name: string;
-   percent: number;
-   estadoGeneral: string;
-   progresoId: string;
-   faseNumero: number;
-   hasSurgery: boolean;
-   description?: string | null;
- }
- 
- interface SocietyPhaseSummary {
-   phase: number;
-   percent: number;
-   estadoGeneral: string;
-   progresoId: string;
-   hasSurgery: boolean;
-   description?: string | null;
- }
- 
- interface PhaseDialogData {
-   label: string;
-   date?: string;
-   descriptionNode?: React.ReactNode;
-   descriptionHtml?: string;
- }
- 
--const stripHtmlText = (html?: string | null) =>
--  html ? html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').trim() : '';
--
--const normalizeDescriptionHtml = (html?: string | null) => {
--  const text = stripHtmlText(html);
--  return text ? html || undefined : undefined;
--};
--
--
- const DashboardHome: React.FC = () => {
-   const { t, i18n } = useTranslation();
-   const { user } = useAuth();
-   const theme = useTheme();
-   const progressFillColor = useMemo(() => {
-     const base = theme.palette.primary.main;
-     return theme.palette.mode === 'dark'
-       ? alpha(base, 0.5)
-       : lighten(base, 0.65);
-   }, [theme]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
-   const [phaseSummary, setPhaseSummary] = useState<ResidentPhaseSummary[]>([]);
-   const [socPhaseSummary, setSocPhaseSummary] = useState<SocietyPhaseSummary[]>([]);
-   const [progressLoading, setProgressLoading] = useState(false);
-   const [downloadLoading, setDownloadLoading] = useState(false);
-   const [socAllValidado, setSocAllValidado] = useState(false);
-   const [openDialog, setOpenDialog] = useState(false);
-   const [selectedPhase, setSelectedPhase] = useState<PhaseDialogData | null>(null);
- 
- 
-   const societyMilestones = [
-     {
-       phase: 1,
-@@ -643,53 +636,53 @@ const DashboardHome: React.FC = () => {
+@@ -618,193 +618,213 @@ const DashboardHome: React.FC = () => {
+                         },
+                       }}
+                     >
+                       <Box sx={{ color: 'primary.main', '& svg': { fontSize: 36 } }}>{action.icon}</Box>
+                       <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                         {action.label}
+                       </Typography>
+                     </Paper>
+                   </Box>
+                 ))}
+               </Stack>
+             </Paper>
+           </Box>
+         </Stack>
+         {user?.tipo === "Programa Sociedades" && sociedadInfo && (
+           <Paper sx={{ p: 3 }}>
+             <Typography variant="h6" gutterBottom>
+               {sociedadInfo.titulo}
              </Typography>
              <Chip
                label={sociedadInfo.status}
@@ -1380,38 +28,202 @@ index b9568108755265064da89052d0e78387970552db..a9751bcdd07a7dad511c78769e3d2358
                size="small"
                sx={{ mb: 2 }}
              />
-             <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-               {societyMilestones.map((m, idx) => {
-                 const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
-                 const percent = phaseData?.percent ?? 0;
-                 return (
+-            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+-              {societyMilestones.map((m, idx) => {
+-                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
+-                const percent = phaseData?.percent ?? 0;
+-                return (
++            <Stack
++              direction="row"
++              spacing={3}
++              flexWrap="wrap"
++              justifyContent="center"
++              sx={{ mt: 2 }}
++            >
++              {societyMilestones.map((m) => {
++                const phaseData = socPhaseSummary.find((s) => s.phase === m.phase);
++                const percent = phaseData?.percent ?? 0;
++                return (
                  <Box
                    key={m.label}
                    sx={{
-                     flex: {
-                       xs: '1 1 100%',
-                       md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
-                     },
-                     minWidth: { xs: '250px', md: '250px' },
-                     mt: 2,
+-                    flex: {
+-                      xs: '1 1 100%',
+-                      md: idx === 0 ? '1 1 100%' : '1 1 calc(50% - 1rem)',
+-                    },
+-                    minWidth: { xs: '250px', md: '250px' },
+-                    mt: 2,
++                    flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
++                    maxWidth: { xs: '100%', sm: '360px' },
++                    minWidth: { xs: '260px', sm: '300px' },
++                    display: 'flex',
++                    justifyContent: 'center',
                    }}
                  >
                    <CardActionArea
-                     onClick={() => {
--                      const phaseDescription = normalizeDescriptionHtml(
+-                    onClick={() => {
+-                      const phaseDescription = richTextOrUndefined(
 -                        phaseData?.description,
 -                      );
+-                      handleOpenDialog({
++                    onClick={() => {
 +                      const phaseDescription = richTextOrUndefined(
 +                        phaseData?.description,
 +                      );
-                       handleOpenDialog({
++                      handleOpenDialog({
                          label: m.label,
                          date: m.date,
                          descriptionHtml: phaseDescription,
                          descriptionNode: phaseDescription ? undefined : m.description,
-                       });
-                     }}
+-                      });
+-                    }}
++                      });
++                    }}
                      sx={{
++                      width: '100%',
++                      borderRadius: 2,
++                      overflow: 'hidden',
+                       "&:hover": {
+                         backgroundColor: "action.hover",
+                         transform: "scale(1.02)",
+                       },
+                       cursor: "pointer",
+                     }}
+                   >
+                     <Paper
+                       elevation={2}
+                       sx={{
+-                        px: 2,
++                        px: 2,
+                         pt: 3,
+                         pb: 2.5,
+                         minHeight: 150,
+                         display: 'flex',
+                         flexDirection: 'column',
+                         justifyContent: 'center',
+                         borderLeft: `6px solid ${theme.palette.primary.main}`,
+                         background: `linear-gradient(90deg, ${progressFillColor} ${percent}%, ${theme.palette.background.paper} ${percent}%)`,
+                       }}
+                     >
+                       <Typography
+                         variant="subtitle2"
+                         sx={{ color: 'text.secondary' }}
+                       >
+                         {m.label}
+                       </Typography>
+                       <Typography
+                         variant="body1"
+                         fontWeight="bold"
+                         sx={{ color: theme.palette.primary.main }}
+                       >
+                         {formatMonthYear(m.date || "") || "—"}
+                       </Typography>
+                         <Typography
+                           variant="body2"
+                           fontWeight="bold"
+                           sx={{
+                             color: theme.palette.primary.main,
+                           }}
+                         >
+                           {percent}%
+                         </Typography>
+                     </Paper>
+                   </CardActionArea>
+                 </Box>
+-              );
+-            })}
+-            </Stack>
++                );
++              })}
++              </Stack>
+             {(societyDownloadButtons.length > 0 || socAllValidado) && (
+               <Stack
+                 direction={{ xs: 'column', sm: 'row' }}
+                 spacing={2}
+                 justifyContent="center"
+                 flexWrap="wrap"
+                 mt={3}
+               >
+                 {societyDownloadButtons.map((button) => (
+                   <Button
+                     key={button.key}
+                     variant="contained"
+                     onClick={button.onClick}
+                     disabled={downloadLoading}
+                   >
+                     {button.label}
+                   </Button>
+                 ))}
+                 {socAllValidado && (
+                   <Button
+                     variant="contained"
+                     color="secondary"
+                     onClick={handleDescargarCertificado}
+                     disabled={downloadLoading}
+                     startIcon={<WorkspacePremiumIcon />}
+                   >
+                     {t('residentProgress.downloadCertificate')}
+                   </Button>
+                 )}
+               </Stack>
+             )}
+           </Paper>
+         )}
+         {user?.tipo === "Programa Residentes" &&
+           (user?.rol === "residente" ||
+             user?.rol === "tutor" ||
+             user?.rol === "csm" ||
+             user?.rol === "profesor" ||
+             user?.rol === "participante") &&
+           phaseSummary.length > 0 && (
+-            <Paper sx={{ p: 3 }}>
+-              <Typography variant="h6" gutterBottom>
++            <Paper sx={{ p: 3 }}>
++              <Typography variant="h6" gutterBottom>
+                 {t('progressByPhase')}
+               </Typography>
+-              <Stack direction="row" spacing={2} flexWrap="wrap">
+-                {phaseSummary.map((p, idx) => (
+-                  <Box
+-                    key={p.progresoId}
+-                    sx={{
+-                      flex: '1 1 calc(50% - 16px)',
+-                      minWidth: '250px',
+-                    }}
++              <Stack
++                direction="row"
++                spacing={3}
++                flexWrap="wrap"
++                justifyContent="center"
++                sx={{ mt: 2 }}
++              >
++                {phaseSummary.map((p, idx) => (
++                  <Box
++                    key={p.progresoId}
++                    sx={{
++                      flex: { xs: '1 1 100%', sm: '1 1 320px', md: '1 1 320px' },
++                      maxWidth: { xs: '100%', sm: '360px' },
++                      minWidth: { xs: '260px', sm: '300px' },
++                      display: 'flex',
++                      justifyContent: 'center',
++                    }}
+                 >
+                   <CardActionArea
+                     onClick={() => {
+                       const descriptionHtml = richTextOrUndefined(p.description);
+                       handleOpenDialog({
+                         label: p.name,
+                         descriptionHtml,
+                         descriptionNode: descriptionHtml
+                           ? undefined
+                           : residentMilestones[idx]?.description,
+                       });
+-                    }}
++                    }}
+                     sx={{
++                      width: '100%',
++                      borderRadius: 2,
++                      overflow: 'hidden',
                        "&:hover": {
                          backgroundColor: "action.hover",
                          transform: "scale(1.02)",
@@ -1429,525 +241,11 @@ index b9568108755265064da89052d0e78387970552db..a9751bcdd07a7dad511c78769e3d2358
                          display: 'flex',
                          flexDirection: 'column',
                          justifyContent: 'center',
-@@ -758,51 +751,51 @@ const DashboardHome: React.FC = () => {
-             )}
-           </Paper>
-         )}
-         {user?.tipo === "Programa Residentes" &&
-           (user?.rol === "residente" ||
-             user?.rol === "tutor" ||
-             user?.rol === "csm" ||
-             user?.rol === "profesor" ||
-             user?.rol === "participante") &&
-           phaseSummary.length > 0 && (
-             <Paper sx={{ p: 3 }}>
-               <Typography variant="h6" gutterBottom>
-                 {t('progressByPhase')}
-               </Typography>
-               <Stack direction="row" spacing={2} flexWrap="wrap">
-                 {phaseSummary.map((p, idx) => (
-                   <Box
-                     key={p.progresoId}
-                     sx={{
-                       flex: '1 1 calc(50% - 16px)',
-                       minWidth: '250px',
-                     }}
-                 >
-                   <CardActionArea
-                     onClick={() => {
--                      const descriptionHtml = normalizeDescriptionHtml(p.description);
-+                      const descriptionHtml = richTextOrUndefined(p.description);
-                       handleOpenDialog({
-                         label: p.name,
-                         descriptionHtml,
-                         descriptionNode: descriptionHtml
-                           ? undefined
-                           : residentMilestones[idx]?.description,
-                       });
-                     }}
-                     sx={{
-                       "&:hover": {
-                         backgroundColor: "action.hover",
-                         transform: "scale(1.02)",
-                       },
-                       cursor: "pointer",
-                     }}
-                   >
-                     <Paper
-                       elevation={2}
-                       sx={{
-                         px: 2,
-                         pt: 3,
-                         pb: 2.5,
-                         minHeight: 150,
-                         display: 'flex',
-                         flexDirection: 'column',
-@@ -846,61 +839,61 @@ const DashboardHome: React.FC = () => {
+                         borderLeft: `6px solid ${theme.palette.primary.main}`,
+                         background: `linear-gradient(90deg, ${progressFillColor} ${p.percent}%, ${theme.palette.background.paper} ${p.percent}%)`,
+                       }}
                      >
-                       {button.label}
-                     </Button>
-                   ))}
-                   {allValidado && (
-                     <Button
-                       variant="contained"
-                       color="secondary"
-                       onClick={handleDescargarCertificado}
-                       disabled={downloadLoading}
-                       startIcon={<WorkspacePremiumIcon />}
-                     >
-                       {t('residentProgress.downloadCertificate')}
-                     </Button>
-                   )}
-                 </Stack>
-               )}
-             </Paper>
-           )}
-       </Stack>
- 
-       {renderContent()}
-         <Dialog open={openDialog} onClose={handleCloseDialog}>
-           <DialogTitle>{selectedPhase?.label}</DialogTitle>
-           <DialogContent>
--            {selectedPhase?.descriptionHtml ? (
--              <Box
--                sx={{
--                  '& > :last-child': { mb: 0 },
--                  '& p': { mb: 1.5 },
--                }}
--                dangerouslySetInnerHTML={{
--                  __html: selectedPhase.descriptionHtml,
--                }}
--              />
--            ) : selectedPhase?.descriptionNode ? (
--              selectedPhase.descriptionNode
--            ) : (
-+            {selectedPhase?.descriptionHtml ? (
-+              <RichTextViewer
-+                content={selectedPhase.descriptionHtml}
-+                variant="inline"
-+                minHeight={0}
-+                sx={{
-+                  '& > :last-child': { mb: 0 },
-+                  '& p': { mb: 1.5 },
-+                }}
-+              />
-+            ) : selectedPhase?.descriptionNode ? (
-+              selectedPhase.descriptionNode
-+            ) : (
-               <Typography color="text.secondary">{t('common.none')}</Typography>
-             )}
-             {selectedPhase?.date && (
-               <Typography variant="body2" color="text.secondary">
-                 {formatDayMonthYear(selectedPhase.date)}
-               </Typography>
-             )}
-           </DialogContent>
-           <DialogActions>
-             <Button onClick={handleCloseDialog}>{t('close')}</Button>
-           </DialogActions>
-         </Dialog>
-         <Backdrop
-           open={downloadLoading}
-           sx={{ color: theme.palette.common.white, zIndex: (theme) => theme.zIndex.drawer + 1 }}
-         >
-           <CircularProgress color="inherit" />
-         </Backdrop>
-       </Box>
-     );
-   };
- 
- export default DashboardHome;
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index 9fa0e57c5ac27388ae742ba23818250f80e16be2..621e136d84ebfc5bcae42259057fc7cbed957678 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -7,65 +7,68 @@ import {
-   Skeleton,
-   LinearProgress,
-   Accordion,
-   AccordionSummary,
-   AccordionDetails,
-   Button,
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogActions,
-   TextField,
-   Snackbar,
-   Tooltip,
-   CircularProgress,
-   Backdrop,
-   Autocomplete,
-   MenuItem,
-   Paper,
-   Stack,
-   FormControlLabel,
-   IconButton
- } from '@mui/material';
- import { createFilterOptions } from '@mui/material/Autocomplete';
- import Switch, { SwitchProps } from '@mui/material/Switch';
- 
--import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
--import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
--import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
--import VerifiedIcon from '@mui/icons-material/Verified';
--import CancelIcon from '@mui/icons-material/Cancel';
--import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
--import DownloadIcon from '@mui/icons-material/Download';
--import AttachFileIcon from '@mui/icons-material/AttachFile';
--import CloseIcon from '@mui/icons-material/Close';
--import { useTheme, alpha, styled } from '@mui/material/styles';
--import api from '../../api';
--import { useAuth } from '../../context/AuthContext';
--import { Sociedad } from '../../types/Sociedad';
--import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
--import { useTranslation } from 'react-i18next';
-+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-+import VerifiedIcon from '@mui/icons-material/Verified';
-+import CancelIcon from '@mui/icons-material/Cancel';
-+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-+import DownloadIcon from '@mui/icons-material/Download';
-+import AttachFileIcon from '@mui/icons-material/AttachFile';
-+import CloseIcon from '@mui/icons-material/Close';
-+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-+import { useTheme, alpha, styled } from '@mui/material/styles';
-+import api from '../../api';
-+import { useAuth } from '../../context/AuthContext';
-+import { Sociedad } from '../../types/Sociedad';
-+import { formatMonthYear, formatDayMonthYear } from '../../utils/date';
-+import { useTranslation } from 'react-i18next';
-+import RichTextViewer from '../../components/RichTextViewer';
-+import { richTextOrUndefined } from '../../utils/richText';
- 
- const CompletionSwitch = styled((props: SwitchProps) => (
-   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
- ))(({ theme }) => ({
-   width: 48,
-   height: 28,
-   padding: 0,
-   display: 'flex',
-   alignItems: 'center',
-   '& .MuiSwitch-switchBase': {
-     padding: 0,
-     margin: 2,
-     transitionDuration: '200ms',
-     '&.Mui-focusVisible .MuiSwitch-thumb': {
-       boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
-       border: `1px solid ${theme.palette.primary.main}`
-     },
-     '&.Mui-checked': {
-       transform: 'translateX(20px)',
-       color: theme.palette.common.white,
-       '& .MuiSwitch-thumb': {
-         boxShadow: `0 2px 6px ${alpha(theme.palette.primary.main, 0.35)}`
-       },
-       '& + .MuiSwitch-track': {
-         backgroundColor:
-@@ -135,57 +138,62 @@ const ResidenteFases: React.FC = () => {
-   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
-   const [comentario, setComentario] = useState('');
-   const [fecha, setFecha] = useState('');
-   const [archivos, setArchivos] = useState<File[]>([]);
-   const [archivoError, setArchivoError] = useState(false);
-   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
-   const [snackbarOpen, setSnackbarOpen] = useState(false);
-   const [snackbarMsg, setSnackbarMsg] = useState('');
-   const [snackbarError, setSnackbarError] = useState(false);
-   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
-   const [downloadLoading, setDownloadLoading] = useState(false);
-   const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
-   const [cirugia, setCirugia] = useState<any | null>(null);
-   const [otraCirugia, setOtraCirugia] = useState('');
-   const [surgeryInputValue, setSurgeryInputValue] = useState('');
-   const [nombreCirujano, setNombreCirujano] = useState('');
-   const [porcentaje, setPorcentaje] = useState<number>(0);
-   const [esCirugia, setEsCirugia] = useState(false);
-   const [mostrarErroresCirugia, setMostrarErroresCirugia] = useState(false);
-   const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
-   const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
-   const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
-   const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
-   const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
-   const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
--  const actividadSeleccionada = useMemo(() => {
--    if (!selectedProgresoId || selectedActividadIndex === null) return null;
--    const progresoActual = progresos.find(p => p._id === selectedProgresoId);
--    return progresoActual?.actividades?.[selectedActividadIndex] || null;
--  }, [progresos, selectedActividadIndex, selectedProgresoId]);
--  const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
--  const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
-+  const actividadSeleccionada = useMemo(() => {
-+    if (!selectedProgresoId || selectedActividadIndex === null) return null;
-+    const progresoActual = progresos.find(p => p._id === selectedProgresoId);
-+    return progresoActual?.actividades?.[selectedActividadIndex] || null;
-+  }, [progresos, selectedActividadIndex, selectedProgresoId]);
-+  const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
-+  const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
-+  const [instructionsDialog, setInstructionsDialog] = useState<{
-+    open: boolean;
-+    title: string;
-+    description?: string;
-+  }>({ open: false, title: '', description: undefined });
- 
-   const dateFieldMap: Record<number, keyof Sociedad> = {
-     1: 'fechaModulosOnline',
-     2: 'fechaSimulacion',
-     3: 'fechaAtividadesFirstAssistant',
-     4: 'fechaModuloOnlineStepByStep',
-     5: 'fechaHandOn'
-   };
- 
- 
-   const getSociedadDateObj = (fase: number): Date | null => {
-     if (!sociedadInfo) return null;
-     const field = dateFieldMap[fase];
-     const value = field ? (sociedadInfo as any)[field] : null;
-     return value ? new Date(value) : null;
-   };
- 
-   const getSociedadDate = (fase: number): string => {
-     const date = getSociedadDateObj(fase);
-     return date ? formatMonthYear(date.toISOString()) : '';
-   };
- 
-   const getSociedadDateShort = (fase: number): string => {
-     const date = getSociedadDateObj(fase);
-     return date ? formatDayMonthYear(date.toISOString()) : '';
-@@ -578,91 +586,140 @@ const ResidenteFases: React.FC = () => {
-     setDownloadLoading(true);
-     try {
-       const res = await api.get(`/informe-cirugias/${progresoId}`, {
-         responseType: 'blob',
-       });
-       const url = window.URL.createObjectURL(new Blob([res.data]));
-       const link = document.createElement('a');
-       const nombreUsuario = (user as any)?.nombre || (user as any)?.email || 'usuario';
-       link.href = url;
-       link.setAttribute(
-         'download',
-         `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
-       );
-       document.body.appendChild(link);
-       link.click();
-       link.remove();
-     } catch (err: any) {
-       setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
-       setSnackbarError(true);
-       setSnackbarOpen(true);
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
- 
--  const handleCloseSnackbar = () => {
--    setSnackbarOpen(false);
--  };
-+  const handleCloseSnackbar = () => {
-+    setSnackbarOpen(false);
-+  };
-+
-+  const handleOpenInstructionsDialog = (fase: any, descriptionHtml: string) => {
-+    const phaseLabel = t('residentPhases.phaseTitle', {
-+      number: fase?.numero || '—',
-+      name: fase?.nombre || t('residentPhases.noTitle'),
-+    });
-+    setInstructionsDialog({
-+      open: true,
-+      title: t('residentPhases.instructionsTitle', { phase: phaseLabel }),
-+      description: descriptionHtml,
-+    });
-+  };
-+
-+  const handleInstructionsButtonClick = (
-+    event: React.MouseEvent<HTMLButtonElement>,
-+    fase: any,
-+    descriptionHtml: string,
-+  ) => {
-+    event.stopPropagation();
-+    handleOpenInstructionsDialog(fase, descriptionHtml);
-+  };
-+
-+  const handleCloseInstructionsDialog = () => {
-+    setInstructionsDialog((prev) => ({ ...prev, open: false }));
-+  };
- 
-   if (loading) {
-     return (
-       <Box>
-         <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
-         {[...Array(3)].map((_, i) => (
-           <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
-         ))}
-       </Box>
-     );
-   }
- 
-   if (error) return <Alert severity="error">{error}</Alert>;
- 
-   const residentPhases = progresos.filter((p) => p.faseModel === 'Fase');
-   const allValidado =
-     residentPhases.length > 0 &&
-     residentPhases.every((p) => p.estadoGeneral === 'validado');
- 
-   return (
-     <Box>
-       <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
-       
--      {Array.isArray(progresos) && progresos.length > 0 ? (
--  progresos.map((item, index) => {
--
--    return (
--      <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
--        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
--          <Typography variant="h6">
--            {t('residentPhases.phaseTitle', {
--              number: item.fase?.numero || '—',
--              name: item.fase?.nombre || t('residentPhases.noTitle')
--            })}
--          </Typography>
--          {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
--            <Typography
--              sx={{ ml: 'auto', color: getDateColor(item.fase.numero, item.estadoGeneral) }}
-+      {Array.isArray(progresos) && progresos.length > 0 ? (
-+  progresos.map((item, index) => {
-+    const phaseDescriptionHtml = richTextOrUndefined(item.fase?.descripcion);
-+
-+    return (
-+      <Accordion key={item._id} defaultExpanded={item.estadoGeneral === 'en progreso'}>
-+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-+          <Box
-+            sx={{
-+              display: 'flex',
-+              alignItems: 'center',
-+              gap: 1,
-+              flexWrap: 'wrap',
-+              flex: 1,
-+            }}
-+          >
-+            <Typography variant="h6">
-+              {t('residentPhases.phaseTitle', {
-+                number: item.fase?.numero || '—',
-+                name: item.fase?.nombre || t('residentPhases.noTitle')
-+              })}
-+            </Typography>
-+            {phaseDescriptionHtml && (
-+              <Tooltip title={t('residentPhases.viewInstructions')}>
-+                <IconButton
-+                  size="small"
-+                  color="primary"
-+                  onClick={(event) =>
-+                    handleInstructionsButtonClick(event, item.fase, phaseDescriptionHtml)
-+                  }
-+                >
-+                  <InfoOutlinedIcon fontSize="small" />
-+                </IconButton>
-+              </Tooltip>
-+            )}
-+          </Box>
-+          {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
-+            <Typography
-+              sx={{ ml: 'auto', color: getDateColor(item.fase.numero, item.estadoGeneral) }}
-             >
-               {getSociedadDate(item.fase.numero)}
-             </Typography>
-           )}
-         </AccordionSummary>
-         <AccordionDetails>
-           <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
-             <Chip
-               label={item.estadoGeneral ? t(`status.${phaseStatusKey(item.estadoGeneral)}`) : '—'}
-               color={
-                 item.estadoGeneral === 'validado'
-                   ? 'success'
-                   : item.estadoGeneral === 'completado'
-                   ? 'primary'
-                   : 'default'
-               }
-             />
-             {user?.tipo === 'Programa Sociedades' && item.fase?.numero && (
-               <Typography sx={{ ml: 2, color: getDateColor(item.fase.numero, item.estadoGeneral) }}>
-                 {t('residentPhases.deadline')}: {getSociedadDateShort(item.fase.numero)}
-               </Typography>
-             )}
-           </Box>
- 
-           {(() => {
-@@ -1099,51 +1156,75 @@ const ResidenteFases: React.FC = () => {
- )}
-       {allValidado && (
-         <Box textAlign="center" mt={2}>
-           <Button
-             variant="contained"
-             color="secondary"
-             onClick={handleDescargarCertificado}
-             disabled={downloadLoading}
-             startIcon={<WorkspacePremiumIcon />}
-           >
-             {t('residentProgress.downloadCertificate')}
-           </Button>
-         </Box>
-       )}
- 
-       <Backdrop
-         open={downloadLoading}
-         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-       >
-         <CircularProgress color="inherit" />
-       </Backdrop>
- 
- 
- 
- 
--      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-+      <Dialog
-+        open={instructionsDialog.open}
-+        onClose={handleCloseInstructionsDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-+        <DialogTitle>
-+          {instructionsDialog.title ||
-+            t('residentPhases.instructionsTitle', {
-+              phase: t('residentPhases.noTitle'),
-+            })}
-+        </DialogTitle>
-+        <DialogContent>
-+          <RichTextViewer
-+            content={instructionsDialog.description}
-+            variant="inline"
-+            minHeight={0}
-+          />
-+        </DialogContent>
-+        <DialogActions>
-+          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
-+        </DialogActions>
-+      </Dialog>
-+
-+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-         <DialogTitle>
-           {dialogMode === 'edit'
-             ? t('residentPhases.dialog.editTitle')
-             : t('residentPhases.dialog.title')}
-         </DialogTitle>
-         <DialogContent>
-           <TextField
-             label={t('residentPhases.dialog.date')}
-             type="date"
-             value={fecha}
-             onChange={(e) => setFecha(e.target.value)}
-             fullWidth
-             margin="normal"
-             InputLabelProps={{ shrink: true }}
-           />
-           <TextField
-             label={t('residentPhases.dialog.comment')}
-             value={comentario}
-             onChange={(e) => setComentario(e.target.value)}
-             fullWidth
-             multiline
-             rows={3}
-             margin="normal"
-           />
-           {esCirugia && (
+                       <Typography variant="subtitle2" color="text.secondary">
+                         {p.name}
+                       </Typography>
+                       <Typography
