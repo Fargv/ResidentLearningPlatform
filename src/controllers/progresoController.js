@@ -48,6 +48,28 @@ const updatePhaseStatus = async (progreso) => {
 };
 
 
+const buildActividadDisplayData = (actividad = {}) => {
+  const actividadMaestra =
+    actividad.actividad && typeof actividad.actividad === 'object'
+      ? actividad.actividad
+      : null;
+
+  return {
+    nombre: actividadMaestra?.nombre || actividad.nombre,
+    descripcion:
+      actividadMaestra?.descripcion !== undefined
+        ? actividadMaestra.descripcion
+        : actividad.descripcion,
+    tipo: actividadMaestra?.tipo || actividad.tipo,
+    requiereAdjunto:
+      actividadMaestra?.requiereAdjunto !== undefined
+        ? actividadMaestra.requiereAdjunto
+        : actividad.requiereAdjunto,
+    actividadModel:
+      actividadMaestra?.constructor?.modelName || actividad.actividadModel,
+    actividadId: actividadMaestra?._id || actividad.actividad
+  };
+};
 
 
 const formatProgresoParaResidente = (progresoDoc) => {
@@ -70,27 +92,31 @@ const formatProgresoParaResidente = (progresoDoc) => {
     fase: plain.fase,
     faseModel: plain.faseModel,
     estadoGeneral: plain.estadoGeneral,
-    actividades: (plain.actividades || []).map((act, index) => ({
-      nombre: act.nombre,
-      tipo: act.tipo,
-      completada: act.estado === 'validado',
-      comentariosResidente: act.comentariosResidente || '',
-      comentariosTutor: act.comentariosTutor || '',
-      fecha: act.fechaRealizacion,
-      fechaValidacion: act.fechaValidacion,
-      comentariosRechazo: act.comentariosRechazo || '',
-      fechaRechazo: act.fechaRechazo,
-      estado: act.estado,
-      porcentajeParticipacion: act.porcentajeParticipacion,
-      cirugia: act.cirugia,
-      otraCirugia: act.otraCirugia,
-      nombreCirujano: act.nombreCirujano,
-      adjuntos: adjuntosPorIndice[index] || [],
-      requiereAdjunto: Boolean(
-        (act.actividad && act.actividad.requiereAdjunto) ||
-          act.requiereAdjunto
-      )
-    }))
+    actividades: (plain.actividades || []).map((act, index) => {
+      const actividadData = buildActividadDisplayData(act);
+
+      return {
+        nombre: actividadData.nombre,
+        descripcion: actividadData.descripcion,
+        tipo: actividadData.tipo,
+        actividad: actividadData.actividadId,
+        actividadModel: actividadData.actividadModel,
+        completada: act.estado === 'validado',
+        comentariosResidente: act.comentariosResidente || '',
+        comentariosTutor: act.comentariosTutor || '',
+        fecha: act.fechaRealizacion,
+        fechaValidacion: act.fechaValidacion,
+        comentariosRechazo: act.comentariosRechazo || '',
+        fechaRechazo: act.fechaRechazo,
+        estado: act.estado,
+        porcentajeParticipacion: act.porcentajeParticipacion,
+        cirugia: act.cirugia,
+        otraCirugia: act.otraCirugia,
+        nombreCirujano: act.nombreCirujano,
+        adjuntos: adjuntosPorIndice[index] || [],
+        requiereAdjunto: Boolean(actividadData.requiereAdjunto)
+      };
+    })
   };
 };
 
@@ -268,10 +294,20 @@ const getProgresoResidentePorFase = async (req, res, next) => {
 
       return {
         ...plain,
-        actividades: plain.actividades.map((act, index) => ({
-          ...act,
-          adjuntos: adjuntosPorIndice[index] || []
-        }))
+        actividades: plain.actividades.map((act, index) => {
+          const actividadData = buildActividadDisplayData(act);
+
+          return {
+            ...act,
+            nombre: actividadData.nombre,
+            descripcion: actividadData.descripcion,
+            tipo: actividadData.tipo,
+            actividadModel: actividadData.actividadModel,
+            actividad: actividadData.actividadId,
+            requiereAdjunto: Boolean(actividadData.requiereAdjunto),
+            adjuntos: adjuntosPorIndice[index] || []
+          };
+        })
       };
     });
 

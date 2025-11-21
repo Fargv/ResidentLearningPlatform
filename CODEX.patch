@@ -1,1594 +1,228 @@
-diff --git a/client/src/pages/dashboard/AdminFases.tsx b/client/src/pages/dashboard/AdminFases.tsx
-index d10e8e7dd3d0e39ecedd9daa2ae49379e9d21abc..8415b166658f7505a9fdf44bfb0122ef8b645c84 100644
---- a/client/src/pages/dashboard/AdminFases.tsx
-+++ b/client/src/pages/dashboard/AdminFases.tsx
-@@ -2,60 +2,58 @@ import React, { useState, useEffect, useCallback } from 'react';
- import {
-   Box,
-   Typography,
-   Paper,
-   Divider,
-   Button,
-   TextField,
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogContentText,
-   DialogActions,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   IconButton,
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Tabs,
-   Tab,
--  FormControlLabel,
--  Switch,
--  Tooltip,
-+  FormControlLabel,
-+  Switch,
- } from "@mui/material";
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Delete as DeleteIcon,
--  Check as CheckIcon,
--  InfoOutlined as InfoOutlinedIcon,
-+  Check as CheckIcon,
- } from "@mui/icons-material";
- import api from "../../api";
- import { useTranslation, Trans } from "react-i18next";
- import RichTextDescriptionField from "../../components/RichTextDescriptionField";
- import RichTextViewer from "../../components/RichTextViewer";
- 
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
- 
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`fases-tabpanel-${index}`}
-       aria-labelledby={`fases-tab-${index}`}
-       {...other}
-     >
-       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-     </div>
-@@ -84,55 +82,50 @@ const AdminFases: React.FC = () => {
-   const [selectedActividad, setSelectedActividad] = useState<any>(null);
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   const [hospitales, setHospitales] = useState<any[]>([]);
-   const [faseFormData, setFaseFormData] = useState({
-     numero: "",
-     nombre: "",
-     descripcion: "",
-   });
-   const [actividadFormData, setActividadFormData] = useState({
-     nombre: "",
-     descripcion: "",
-     tipo: "teórica",
-     fase: "",
-     orden: "",
-     requiereAdjunto: false,
-   });
-   const [procesando, setProcesando] = useState(false);
-   const [snackbar, setSnackbar] = useState({
-     open: false,
-     message: "",
-     severity: "success" as "success" | "error",
-   });
-   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(
-     null,
-   );
--  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
--    open: false,
--    title: "",
--    descripcion: "",
--  });
- 
-   const fetchData = useCallback(async () => {
-     try {
-       setLoading(true);
- 
-       //const usuariosRes = await api.get('/users');
-       //setUsuariosLista(usuariosRes.data.data);
- 
-       const hospitalesRes = await api.get("/hospitals");
-       setHospitales(hospitalesRes.data.data);
- 
-       const fasesRes = await api.get("/fases");
-       setFases(fasesRes.data.data);
- 
-       const actividadesRes = await api.get("/actividades");
-       setActividades(actividadesRes.data.data);
-     } catch (err: any) {
-       if (err.response?.status === 403) {
-         setError(t("adminPhases.errorForbidden"));
-       } else {
-         setError(err.response?.data?.error || t("adminPhases.errorLoadData"));
-       }
-     } finally {
-       setLoading(false);
-     }
-@@ -176,62 +169,50 @@ const AdminFases: React.FC = () => {
-   };
- 
-   const handleConfirmarEliminarFase = async (fase: any) => {
-     try {
-       setProcesando(true);
-       const res = await api.get(`/progreso/fase/${fase._id}/count`);
-       setProgresoVinculado(res.data.count);
-       setSelectedFase(fase);
-       setOpenEliminarFaseDialog(true);
-     } catch (err: any) {
-       setSnackbar({
-         open: true,
-         message: t("adminPhases.messages.checkProgressError"),
-         severity: "error",
-       });
-     } finally {
-       setProcesando(false);
-     }
-   };
- 
-   const handleCloseEliminarFaseDialog = () => {
-     setOpenEliminarFaseDialog(false);
-     setSelectedFase(null);
-   };
- 
--  const handleOpenDescripcionActividadDialog = (actividad: any) => {
--    setDescripcionActividadDialog({
--      open: true,
--      title: actividad.nombre,
--      descripcion: actividad.descripcion || "",
--    });
--  };
--
--  const handleCloseDescripcionActividadDialog = () => {
--    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
--  };
--
-   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const { name, value } = e.target;
-     setFaseFormData({
-       ...faseFormData,
-       [name]: value,
-     });
-   };
- 
-   const handleDescripcionChange = (descripcion: string) => {
-     setFaseFormData((prev) => ({
-       ...prev,
-       descripcion,
-     }));
-   };
- 
-   const handleActividadDescripcionChange = (descripcion: string) => {
-     setActividadFormData((prev) => ({
-       ...prev,
-       descripcion,
-     }));
-   };
- 
-   const handleCrearFase = async () => {
-     try {
-       setProcesando(true);
-@@ -704,72 +685,58 @@ const AdminFases: React.FC = () => {
-                               label={
-                                 actividad.tipo === "teórica"
-                                   ? t("adminPhases.theory")
-                                   : actividad.tipo === "práctica"
-                                     ? t("adminPhases.practice")
-                                     : actividad.tipo === "evaluación"
-                                       ? t("adminPhases.evaluation")
-                                       : actividad.tipo === "observación"
-                                         ? t("adminPhases.observation")
-                                         : t("adminPhases.surgery")
-                               }
-                               color={
-                                 actividad.tipo === "teórica"
-                                   ? "primary"
-                                   : actividad.tipo === "práctica"
-                                     ? "secondary"
-                                     : actividad.tipo === "evaluación"
-                                       ? "warning"
-                                       : actividad.tipo === "observación"
-                                         ? "info"
-                                         : "success"
-                               }
-                               size="small"
-                             />
-                           </TableCell>
--                          <TableCell sx={{ width: '25%' }}>
--                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
--                              <RichTextViewer
--                                content={actividad.descripcion}
--                                minHeight={0}
--                                variant="inline"
--                                sx={{ fontSize: '0.9rem', flex: 1 }}
--                              />
--                              {actividad.descripcion && (
--                                <Tooltip title={t('adminPhases.viewDescription')}>
--                                  <IconButton
--                                    aria-label={t('adminPhases.viewDescription')}
--                                    color="primary"
--                                    size="small"
--                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
--                                  >
--                                    <InfoOutlinedIcon fontSize="small" />
--                                  </IconButton>
--                                </Tooltip>
--                              )}
--                            </Box>
--                          </TableCell>
-+                          <TableCell sx={{ width: '25%' }}>
-+                            <RichTextViewer
-+                              content={actividad.descripcion}
-+                              minHeight={0}
-+                              variant="inline"
-+                              sx={{ fontSize: '0.9rem' }}
-+                            />
-+                          </TableCell>
-                           <TableCell align="right">
-                             <IconButton
-                               color="primary"
-                               onClick={() =>
-                                 handleOpenEditarActividadDialog(actividad)
-                               }
-                               size="small"
-                             >
-                               <EditIcon />
-                             </IconButton>
-                             <IconButton
-                               color="error"
-                               onClick={() =>
-                                 handleConfirmarEliminarActividad(actividad)
-                               }
-                               size="small"
-                             >
-                               <DeleteIcon />
-                             </IconButton>
-                           </TableCell>
-                         </TableRow>
-                       ))}
-                     {actividades.filter(
-                       (actividad) => actividad.fase._id === fase._id,
-                     ).length === 0 && (
-@@ -1200,69 +1167,44 @@ const AdminFases: React.FC = () => {
-               />
-             ) : (
-               <Trans
-                 i18nKey="adminPhases.dialogs.deleteActivity.confirm"
-                 values={{ name: selectedActividad?.nombre }}
-                 components={{ strong: <strong /> }}
-               />
-             )}
-           </DialogContentText>
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseEliminarActividadDialog} color="primary">
-             {t("common.cancel")}
-           </Button>
-           <Button
-             onClick={handleEliminarActividad}
-             color="error"
-             variant="contained"
-             disabled={procesando}
-           >
-             {procesando ? t("common.deleting") : t("common.delete")}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
--      <Dialog
--        open={descripcionActividadDialog.open}
--        onClose={handleCloseDescripcionActividadDialog}
--        fullWidth
--        maxWidth="md"
--      >
--        <DialogTitle>
--          {t('adminPhases.descriptionDialogTitle', {
--            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
--          })}
--        </DialogTitle>
--        <DialogContent>
--          <RichTextViewer
--            content={descripcionActividadDialog.descripcion}
--            variant="inline"
--            minHeight={0}
--          />
--        </DialogContent>
--        <DialogActions>
--          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
--            {t('common.close')}
--          </Button>
--        </DialogActions>
--      </Dialog>
--
-       {/* Snackbar para notificaciones */}
-       <Snackbar
-         open={snackbar.open}
-         autoHideDuration={6000}
-         onClose={handleCloseSnackbar}
-       >
-         <Alert
-           onClose={handleCloseSnackbar}
-           severity={snackbar.severity}
-           sx={{ width: "100%" }}
-         >
-           {snackbar.message}
-         </Alert>
-       </Snackbar>
-     </Box>
-   );
- };
- 
- export default AdminFases;
-diff --git a/client/src/pages/dashboard/AdminFasesSoc.tsx b/client/src/pages/dashboard/AdminFasesSoc.tsx
-index d98f6f1c11a09aa3347464b6815c78346754f090..3db7fb2ae037dd45f2af712f1e52140691402c3f 100644
---- a/client/src/pages/dashboard/AdminFasesSoc.tsx
-+++ b/client/src/pages/dashboard/AdminFasesSoc.tsx
-@@ -1,61 +1,59 @@
- import React, { useState, useEffect, useCallback } from 'react';
- import {
-   Box,
-   Typography,
-   Paper,
-   Divider,
-   Button,
-   TextField,
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogContentText,
-   DialogActions,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   IconButton,
-   Chip,
-   LinearProgress,
-   Alert,
-   Snackbar,
-   Tabs,
--  Tab,
--  FormControlLabel,
--  Switch,
--  Tooltip
-+  Tab,
-+  FormControlLabel,
-+  Switch
- } from '@mui/material';
- import {
-   Add as AddIcon,
-   Edit as EditIcon,
-   Delete as DeleteIcon,
--  Check as CheckIcon,
--  InfoOutlined as InfoOutlinedIcon
-+  Check as CheckIcon,
- } from '@mui/icons-material';
- import api from '../../api';
- import { useTranslation, Trans } from 'react-i18next';
- import RichTextDescriptionField from '../../components/RichTextDescriptionField';
- import RichTextViewer from '../../components/RichTextViewer';
- 
- 
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
- 
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`fases-tabpanel-${index}`}
-       aria-labelledby={`fases-tab-${index}`}
-       {...other}
-     >
-       {value === index && (
-@@ -84,55 +82,50 @@ const AdminFases: React.FC = () => {
-   const [openEliminarActividadDialog, setOpenEliminarActividadDialog] = useState(false);
-   const [selectedFase, setSelectedFase] = useState<any>(null);
-   const [selectedActividad, setSelectedActividad] = useState<any>(null);
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   const [hospitales, setHospitales] = useState<any[]>([]);
-   const [faseFormData, setFaseFormData] = useState({
-     numero: '',
-     nombre: '',
-     descripcion: ''
-   });
-   const [actividadFormData, setActividadFormData] = useState({
-     nombre: '',
-     descripcion: '',
-     tipo: 'teórica',
-     fase: '',
-     orden: '',
-     requiereAdjunto: false
-   });
-   const [procesando, setProcesando] = useState(false);
-   const [snackbar, setSnackbar] = useState({
-     open: false,
-     message: '',
-     severity: 'success' as 'success' | 'error'
-   });
-   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
--  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
--    open: false,
--    title: '',
--    descripcion: '',
--  });
- 
-   const fetchData = useCallback(async () => {
-     try {
-       setLoading(true);
- 
-       //const usuariosRes = await api.get('/users');
-       //setUsuariosLista(usuariosRes.data.data);
- 
-       const hospitalesRes = await api.get('/hospitals');
-       setHospitales(hospitalesRes.data.data);
- 
-       const fasesRes = await api.get('/fasesSoc');
-       setFases(fasesRes.data.data);
- 
-       const actividadesRes = await api.get('/actividadesSoc');
-       setActividades(actividadesRes.data.data);
-     } catch (err: any) {
-       if (err.response?.status === 403) {
-         setError(t('adminPhases.errorForbidden'));
-       } else {
-         setError(err.response?.data?.error || t('adminPhases.errorLoadData'));
-       }
-     } finally {
-       setLoading(false);
-     }
-@@ -176,62 +169,50 @@ const AdminFases: React.FC = () => {
-   };
- 
-   const handleConfirmarEliminarFase = async (fase: any) => {
-     try {
-       setProcesando(true);
-       const res = await api.get(`/progreso/fase/${fase._id}/count`);
-       setProgresoVinculado(res.data.count);
-       setSelectedFase(fase);
-       setOpenEliminarFaseDialog(true);
-     } catch (err: any) {
-       setSnackbar({
-         open: true,
-         message: t('adminPhasesSoc.messages.progressCheckError'),
-         severity: 'error'
-       });
-     } finally {
-       setProcesando(false);
-     }
-   };
- 
-   const handleCloseEliminarFaseDialog = () => {
-     setOpenEliminarFaseDialog(false);
-     setSelectedFase(null);
-   };
- 
--  const handleOpenDescripcionActividadDialog = (actividad: any) => {
--    setDescripcionActividadDialog({
--      open: true,
--      title: actividad.nombre,
--      descripcion: actividad.descripcion || '',
--    });
--  };
--
--  const handleCloseDescripcionActividadDialog = () => {
--    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
--  };
--
-   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const { name, value } = e.target;
-     setFaseFormData({
-       ...faseFormData,
-       [name]: value
-     });
-   };
- 
-   const handleDescripcionChange = (descripcion: string) => {
-     setFaseFormData((prev) => ({
-       ...prev,
-       descripcion,
-     }));
-   };
- 
-   const handleActividadDescripcionChange = (descripcion: string) => {
-     setActividadFormData((prev) => ({
-       ...prev,
-       descripcion,
-     }));
-   };
- 
-   const handleCrearFase = async () => {
-     try {
-       setProcesando(true);
-@@ -649,72 +630,58 @@ const AdminFases: React.FC = () => {
-                           label={
-                               actividad.tipo === 'teórica'
-                                 ? t('adminPhases.theory')
-                                 : actividad.tipo === 'práctica'
-                                   ? t('adminPhases.practice')
-                                   : actividad.tipo === 'evaluación'
-                                     ? t('adminPhases.evaluation')
-                                     : actividad.tipo === 'observación'
-                                       ? t('adminPhases.observation')
-                                       : t('adminPhases.surgery')
-                             }
-                             color={
-                               actividad.tipo === 'teórica'
-                                 ? 'primary'
-                                 : actividad.tipo === 'práctica'
-                                   ? 'secondary'
-                                   : actividad.tipo === 'evaluación'
-                                     ? 'warning'
-                                     : actividad.tipo === 'observación'
-                                       ? 'info'
-                                       : 'success'
-                             }
-                             size="small"
-                           />
-                         </TableCell>
--                          <TableCell sx={{ width: '25%' }}>
--                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
--                              <RichTextViewer
--                                content={actividad.descripcion}
--                                minHeight={0}
--                                variant="inline"
--                                sx={{ fontSize: '0.9rem', flex: 1 }}
--                              />
--                              {actividad.descripcion && (
--                                <Tooltip title={t('adminPhases.viewDescription')}>
--                                  <IconButton
--                                    aria-label={t('adminPhases.viewDescription')}
--                                    color="primary"
--                                    size="small"
--                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
--                                  >
--                                    <InfoOutlinedIcon fontSize="small" />
--                                  </IconButton>
--                                </Tooltip>
--                              )}
--                            </Box>
--                          </TableCell>
-+                          <TableCell sx={{ width: '25%' }}>
-+                            <RichTextViewer
-+                              content={actividad.descripcion}
-+                              minHeight={0}
-+                              variant="inline"
-+                              sx={{ fontSize: '0.9rem' }}
-+                            />
-+                          </TableCell>
-                         <TableCell align="right">
-                           <IconButton 
-                             color="primary" 
-                             onClick={() => handleOpenEditarActividadDialog(actividad)}
-                             size="small"
-                           >
-                             <EditIcon />
-                           </IconButton>
-                           <IconButton 
-                             color="error" 
-                             onClick={() => handleConfirmarEliminarActividad(actividad)}
-                             size="small"
-                           >
-                             <DeleteIcon />
-                           </IconButton>
-                         </TableCell>
-                       </TableRow>
-                     ))}
-                   {actividades.filter(actividad => actividad.fase._id === fase._id).length === 0 && (
-                     <TableRow>
-                       <TableCell colSpan={6} align="center">
-                         {t('adminPhases.messages.noActivities')}
-                       </TableCell>
-                     </TableRow>
-                   )}
-@@ -1112,65 +1079,40 @@ const AdminFases: React.FC = () => {
-               />
-             ) : (
-               <Trans
-                 i18nKey="adminPhases.dialogs.deleteActivity.content"
-                 values={{ name: selectedActividad?.nombre }}
-                 components={{ strong: <strong /> }}
-               />
-             )}
-           </DialogContentText>
-         </DialogContent>
-         <DialogActions>
-           <Button onClick={handleCloseEliminarActividadDialog} color="primary">
-             {t('common.cancel')}
-           </Button>
-           <Button
-             onClick={handleEliminarActividad}
-             color="error"
-             variant="contained"
-             disabled={procesando}
-           >
-             {procesando ? t('common.deleting') : t('common.delete')}
-           </Button>
-         </DialogActions>
-       </Dialog>
- 
--      <Dialog
--        open={descripcionActividadDialog.open}
--        onClose={handleCloseDescripcionActividadDialog}
--        fullWidth
--        maxWidth="md"
--      >
--        <DialogTitle>
--          {t('adminPhases.descriptionDialogTitle', {
--            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
--          })}
--        </DialogTitle>
--        <DialogContent>
--          <RichTextViewer
--            content={descripcionActividadDialog.descripcion}
--            variant="inline"
--            minHeight={0}
--          />
--        </DialogContent>
--        <DialogActions>
--          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
--            {t('common.close')}
--          </Button>
--        </DialogActions>
--      </Dialog>
--
-       {/* Snackbar para notificaciones */}
-       <Snackbar
-         open={snackbar.open}
-         autoHideDuration={6000}
-         onClose={handleCloseSnackbar}
-       >
-         <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-           {snackbar.message}
-         </Alert>
-       </Snackbar>
-     </Box>
-   );
- };
- 
- export default AdminFases;
-diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
-index a73e21cda4be2c1ffae16432c9a8043ecfa9019b..80f6d71da0460dca6ef7b0aab7e195203abfb03b 100644
---- a/client/src/pages/dashboard/ResidenteFases.tsx
-+++ b/client/src/pages/dashboard/ResidenteFases.tsx
-@@ -134,66 +134,71 @@ const ResidenteFases: React.FC = () => {
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [dialogOpen, setDialogOpen] = useState(false);
-   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
-   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
-   const [comentario, setComentario] = useState('');
-   const [fecha, setFecha] = useState('');
-   const [archivos, setArchivos] = useState<File[]>([]);
-   const [archivoError, setArchivoError] = useState(false);
-   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
-   const [snackbarOpen, setSnackbarOpen] = useState(false);
-   const [snackbarMsg, setSnackbarMsg] = useState('');
-   const [snackbarError, setSnackbarError] = useState(false);
-   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
-   const [downloadLoading, setDownloadLoading] = useState(false);
-   const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
-   const [cirugia, setCirugia] = useState<any | null>(null);
-   const [otraCirugia, setOtraCirugia] = useState('');
-   const [surgeryInputValue, setSurgeryInputValue] = useState('');
-   const [nombreCirujano, setNombreCirujano] = useState('');
-   const [porcentaje, setPorcentaje] = useState<number>(0);
-   const [esCirugia, setEsCirugia] = useState(false);
-   const [mostrarErroresCirugia, setMostrarErroresCirugia] = useState(false);
-   const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
-   const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
--  const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
--  const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
--  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
--  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
-+  const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
-+  const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
-+  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
-+  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
-   const actividadSeleccionada = useMemo(() => {
-     if (!selectedProgresoId || selectedActividadIndex === null) return null;
-     const progresoActual = progresos.find(p => p._id === selectedProgresoId);
-     return progresoActual?.actividades?.[selectedActividadIndex] || null;
-   }, [progresos, selectedActividadIndex, selectedProgresoId]);
-   const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
-   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
--  const [instructionsDialog, setInstructionsDialog] = useState<{
--    open: boolean;
--    title: string;
--    description?: string;
--  }>({ open: false, title: '', description: undefined });
-+  const [instructionsDialog, setInstructionsDialog] = useState<{
-+    open: boolean;
-+    title: string;
-+    description?: string;
-+  }>({ open: false, title: '', description: undefined });
-+  const [activityDescriptionDialog, setActivityDescriptionDialog] = useState<{
-+    open: boolean;
-+    title: string;
-+    description?: string;
-+  }>({ open: false, title: '', description: undefined });
- 
-   const dateFieldMap: Record<number, keyof Sociedad> = {
-     1: 'fechaModulosOnline',
-     2: 'fechaSimulacion',
-     3: 'fechaAtividadesFirstAssistant',
-     4: 'fechaModuloOnlineStepByStep',
-     5: 'fechaHandOn'
-   };
- 
- 
-   const getSociedadDateObj = (fase: number): Date | null => {
-     if (!sociedadInfo) return null;
-     const field = dateFieldMap[fase];
-     const value = field ? (sociedadInfo as any)[field] : null;
-     return value ? new Date(value) : null;
-   };
- 
-   const getSociedadDate = (fase: number): string => {
-     const date = getSociedadDateObj(fase);
-     return date ? formatMonthYear(date.toISOString()) : '';
-   };
- 
-   const getSociedadDateShort = (fase: number): string => {
-     const date = getSociedadDateObj(fase);
-     return date ? formatDayMonthYear(date.toISOString()) : '';
-@@ -602,62 +607,78 @@ const ResidenteFases: React.FC = () => {
-     } catch (err: any) {
-       setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
-       setSnackbarError(true);
-       setSnackbarOpen(true);
-     } finally {
-       setDownloadLoading(false);
-     }
-   };
- 
-   const handleCloseSnackbar = () => {
-     setSnackbarOpen(false);
-   };
- 
-   const handleOpenInstructionsDialog = (fase: any, descriptionHtml: string) => {
-     const phaseLabel = t('residentPhases.phaseTitle', {
-       number: fase?.numero || '—',
-       name: fase?.nombre || t('residentPhases.noTitle'),
-     });
-     setInstructionsDialog({
-       open: true,
-       title: t('residentPhases.instructionsTitle', { phase: phaseLabel }),
-       description: descriptionHtml,
-     });
-   };
- 
--  const handleInstructionsButtonClick = (
--    event: React.MouseEvent<HTMLButtonElement>,
--    fase: any,
--    descriptionHtml: string,
--  ) => {
--    event.stopPropagation();
--    handleOpenInstructionsDialog(fase, descriptionHtml);
--  };
--
--  const handleCloseInstructionsDialog = () => {
--    setInstructionsDialog((prev) => ({ ...prev, open: false }));
--  };
-+  const handleInstructionsButtonClick = (
-+    event: React.MouseEvent<HTMLButtonElement>,
-+    fase: any,
-+    descriptionHtml: string,
-+  ) => {
-+    event.stopPropagation();
-+    handleOpenInstructionsDialog(fase, descriptionHtml);
-+  };
-+
-+  const handleCloseInstructionsDialog = () => {
-+    setInstructionsDialog((prev) => ({ ...prev, open: false }));
-+  };
-+
-+  const handleOpenActivityDescriptionDialog = (actividad: any) => {
-+    const descriptionHtml = richTextOrUndefined(actividad?.descripcion);
-+
-+    if (!descriptionHtml) return;
-+
-+    setActivityDescriptionDialog({
-+      open: true,
-+      title: actividad?.nombre || t('residentPhases.unnamedActivity'),
-+      description: descriptionHtml,
-+    });
-+  };
-+
-+  const handleCloseActivityDescriptionDialog = () => {
-+    setActivityDescriptionDialog((prev) => ({ ...prev, open: false }));
-+  };
- 
-   if (loading) {
-     return (
-       <Box>
-         <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
-         {[...Array(3)].map((_, i) => (
-           <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
-         ))}
-       </Box>
-     );
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index 41ba9bd9b264c8cb6371d1d4cb8ffd0abd7c3917..10d88b1d2e26c79ddde120543c783712a3601980 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -26,95 +26,121 @@ const updatePhaseStatus = async (progreso) => {
+     logger.info(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
    }
  
-   if (error) return <Alert severity="error">{error}</Alert>;
+   const ModeloFase = mongoose.model(progreso.faseModel || 'Fase');
+   const nextFase = await ModeloFase.findOne({ orden: progreso.fase.orden + 1 });
+   if (!nextFase) {
+     logger.info(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
+     return;
+   }
  
-   const residentPhases = progresos.filter((p) => p.faseModel === 'Fase');
-   const allValidado =
-     residentPhases.length > 0 &&
-     residentPhases.every((p) => p.estadoGeneral === 'validado');
+   const nextProgreso = await ProgresoResidente.findOne({
+     residente: progreso.residente._id,
+     fase: nextFase._id
+   });
  
-   return (
-     <Box>
-       <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
-       
-       {Array.isArray(progresos) && progresos.length > 0 ? (
-   progresos.map((item, index) => {
-@@ -773,62 +794,63 @@ const ResidenteFases: React.FC = () => {
-                       case 'pendiente':
-                         return {
-                           label: t('status.pendiente'),
-                           color: 'info' as const,
-                           icon: <HourglassEmptyIcon fontSize="small" />
-                         };
-                       default:
-                         return {
-                           label: t('status.noCompletada'),
-                           color: 'default' as const,
-                           icon: undefined
-                         };
-                     }
-                   })();
+   if (nextProgreso && nextProgreso.estadoGeneral === 'bloqueada') {
+     nextProgreso.estadoGeneral = 'en progreso';
+     await nextProgreso.save();
+     logger.info(`🚀 Fase "${nextFase.nombre}" DESBLOQUEADA para ${progreso.residente.email}`);
+   } else {
+     logger.info(`ℹ️ Fase "${nextFase.nombre}" ya estaba desbloqueada o no encontrada`);
+   }
+ };
  
-                   const showCompleteButton =
-                     (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
-                     item.estadoGeneral !== 'bloqueada';
  
-                   const canEditPending =
-                     act.estado === 'completado' && item.estadoGeneral !== 'bloqueada';
++const buildActividadDisplayData = (actividad = {}) => {
++  const actividadMaestra =
++    actividad.actividad && typeof actividad.actividad === 'object'
++      ? actividad.actividad
++      : null;
++
++  return {
++    nombre: actividadMaestra?.nombre || actividad.nombre,
++    descripcion:
++      actividadMaestra?.descripcion !== undefined
++        ? actividadMaestra.descripcion
++        : actividad.descripcion,
++    tipo: actividadMaestra?.tipo || actividad.tipo,
++    requiereAdjunto:
++      actividadMaestra?.requiereAdjunto !== undefined
++        ? actividadMaestra.requiereAdjunto
++        : actividad.requiereAdjunto,
++    actividadModel:
++      actividadMaestra?.constructor?.modelName || actividad.actividadModel,
++    actividadId: actividadMaestra?._id || actividad.actividad
++  };
++};
  
-                   const toggleKey = `${item._id}-${idx}`;
- 
-                   const completionDate = act.fecha || act.fechaRealizacion;
--                  const validationDate = act.fechaValidacion || act.validadoEl;
 -
--                  const statusDate =
--                    act.estado === 'validado'
--                      ? validationDate
--                      : act.estado === 'completado'
--                      ? completionDate
--                      : null;
--
--                  const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
--
--                  const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
-+                  const validationDate = act.fechaValidacion || act.validadoEl;
+-const formatProgresoParaResidente = (progresoDoc) => {
 +
-+                  const statusDate =
-+                    act.estado === 'validado'
-+                      ? validationDate
-+                      : act.estado === 'completado'
-+                      ? completionDate
-+                      : null;
-+
-+                  const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
-+                  const activityDescriptionHtml = richTextOrUndefined(act.descripcion);
-+
-+                  const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
- 
-                   if (act.tipo === 'cirugia') {
-                     if (act.cirugia?.name || act.otraCirugia) {
-                       surgeryDetails.push({
-                         label: getLabelFromTranslation('residentPhases.surgeryType', { type: placeholderToken }),
-                         value: act.cirugia?.name || act.otraCirugia
-                       });
-                     }
- 
-                     if (act.nombreCirujano) {
-                       surgeryDetails.push({
-                         label: getLabelFromTranslation('residentPhases.surgeonName', { name: placeholderToken }),
-                         value: act.nombreCirujano
-                       });
-                     }
- 
-                     if (typeof act.porcentajeParticipacion === 'number') {
-                       surgeryDetails.push({
-                         label: getLabelFromTranslation('residentPhases.participation', { percent: placeholderToken }),
-                         value: `${act.porcentajeParticipacion}%`
-                       });
-                     }
-                   }
- 
-                   const renderCommentSection = (
-@@ -897,83 +919,94 @@ const ResidenteFases: React.FC = () => {
-                         alignItems={{ xs: 'flex-start', sm: 'center' }}
-                         spacing={1.5}
-                       >
-                         <Stack
-                           direction="row"
-                           spacing={1}
-                           alignItems="center"
-                           flexWrap="wrap"
-                           useFlexGap
-                         >
-                           {formatActivityType(act.tipo) && (
-                             <Chip
-                               size="small"
-                               label={formatActivityType(act.tipo)}
-                               variant="outlined"
-                               sx={{
-                                 fontWeight: 600,
-                                 backgroundColor:
-                                   theme.palette.mode === 'light'
-                                     ? theme.palette.grey[100]
-                                     : theme.palette.grey[800],
-                                 color: theme.palette.text.primary
-                               }}
-                             />
-                           )}
--                          {act.requiereAdjunto && (
--                            <Chip
--                              size="small"
--                              icon={<AttachFileIcon fontSize="small" />}
--                              label={t('residentPhases.requiresAttachment')}
-+                          {act.requiereAdjunto && (
-+                            <Chip
-+                              size="small"
-+                              icon={<AttachFileIcon fontSize="small" />}
-+                              label={t('residentPhases.requiresAttachment')}
-                               sx={{
-                                 fontWeight: 600,
-                                 backgroundColor:
-                                   theme.palette.mode === 'light'
-                                     ? alpha(theme.palette.secondary.light, 0.25)
-                                     : alpha(theme.palette.secondary.main, 0.35),
-                                 color:
-                                   theme.palette.mode === 'light'
-                                     ? theme.palette.secondary.dark
-                                     : theme.palette.secondary.light,
-                                 '& .MuiChip-icon': {
-                                   color:
-                                     theme.palette.mode === 'light'
-                                       ? theme.palette.secondary.dark
-                                       : theme.palette.secondary.light,
-                                 },
-                                 border: `1px solid ${
-                                   theme.palette.mode === 'light'
-                                     ? alpha(theme.palette.secondary.main, 0.4)
-                                     : alpha(theme.palette.secondary.light, 0.6)
--                                }`,
--                              }}
--                            />
--                          )}
--                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
--                            {act.nombre || t('residentPhases.unnamedActivity')}
--                          </Typography>
--                        </Stack>
-+                                }`,
-+                              }}
-+                            />
-+                          )}
-+                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
-+                            {act.nombre || t('residentPhases.unnamedActivity')}
-+                          </Typography>
-+                          {activityDescriptionHtml && (
-+                            <Tooltip title={t('adminPhases.viewDescription')}>
-+                              <IconButton
-+                                size="small"
-+                                color="primary"
-+                                onClick={() => handleOpenActivityDescriptionDialog(act)}
-+                              >
-+                                <InfoOutlinedIcon fontSize="small" />
-+                              </IconButton>
-+                            </Tooltip>
-+                          )}
-+                        </Stack>
-                         <Box
-                           display="flex"
-                           flexDirection="column"
-                           alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
-                           gap={0.5}
-                         >
-                           <Chip
-                             size="small"
-                             label={statusData.label}
-                             color={statusData.color}
-                             icon={statusData.icon}
-                             sx={{
-                               fontWeight: 600,
-                               alignSelf: { xs: 'flex-start', sm: 'flex-end' }
-                             }}
-                           />
-                           {formattedStatusDate && (
-                             <Typography variant="caption" color="text.secondary">
-                               {formattedStatusDate}
-                             </Typography>
-                           )}
-                         </Box>
-                       </Stack>
- 
-                       <Box sx={{ mt: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-@@ -1156,75 +1189,96 @@ const ResidenteFases: React.FC = () => {
- )}
-       {allValidado && (
-         <Box textAlign="center" mt={2}>
-           <Button
-             variant="contained"
-             color="secondary"
-             onClick={handleDescargarCertificado}
-             disabled={downloadLoading}
-             startIcon={<WorkspacePremiumIcon />}
-           >
-             {t('residentProgress.downloadCertificate')}
-           </Button>
-         </Box>
-       )}
- 
-       <Backdrop
-         open={downloadLoading}
-         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-       >
-         <CircularProgress color="inherit" />
-       </Backdrop>
- 
- 
- 
- 
--      <Dialog
--        open={instructionsDialog.open}
--        onClose={handleCloseInstructionsDialog}
--        fullWidth
--        maxWidth="md"
-+      <Dialog
-+        open={instructionsDialog.open}
-+        onClose={handleCloseInstructionsDialog}
-+        fullWidth
-+        maxWidth="md"
-       >
-         <DialogTitle>
-           {instructionsDialog.title ||
-             t('residentPhases.instructionsTitle', {
-               phase: t('residentPhases.noTitle'),
-             })}
-         </DialogTitle>
-         <DialogContent>
-           <RichTextViewer
-             content={instructionsDialog.description}
-             variant="inline"
-             minHeight={0}
-           />
-         </DialogContent>
--        <DialogActions>
--          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
--        </DialogActions>
--      </Dialog>
--
--      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-+        <DialogActions>
-+          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
-+        </DialogActions>
-+      </Dialog>
-+
-+      <Dialog
-+        open={activityDescriptionDialog.open}
-+        onClose={handleCloseActivityDescriptionDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-+        <DialogTitle>
-+          {activityDescriptionDialog.title || t('residentPhases.unnamedActivity')}
-+        </DialogTitle>
-+        <DialogContent>
-+          <RichTextViewer
-+            content={activityDescriptionDialog.description}
-+            variant="inline"
-+            minHeight={0}
-+          />
-+        </DialogContent>
-+        <DialogActions>
-+          <Button onClick={handleCloseActivityDescriptionDialog}>{t('close')}</Button>
-+        </DialogActions>
-+      </Dialog>
-+
-+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-         <DialogTitle>
-           {dialogMode === 'edit'
-             ? t('residentPhases.dialog.editTitle')
-             : t('residentPhases.dialog.title')}
-         </DialogTitle>
-         <DialogContent>
-           <TextField
-             label={t('residentPhases.dialog.date')}
-             type="date"
-             value={fecha}
-             onChange={(e) => setFecha(e.target.value)}
-             fullWidth
-             margin="normal"
-             InputLabelProps={{ shrink: true }}
-           />
-           <TextField
-             label={t('residentPhases.dialog.comment')}
-             value={comentario}
-             onChange={(e) => setComentario(e.target.value)}
-             fullWidth
-             multiline
-             rows={3}
-             margin="normal"
-           />
-           {esCirugia && (
-diff --git a/client/src/pages/dashboard/TutorValidaciones.tsx b/client/src/pages/dashboard/TutorValidaciones.tsx
-index c6c0004f2892aae89a3910f61a479c86aa66e9f5..8e3ccb97980a7597ea3fd5f7af3fecf13d20c854 100644
---- a/client/src/pages/dashboard/TutorValidaciones.tsx
-+++ b/client/src/pages/dashboard/TutorValidaciones.tsx
-@@ -1,62 +1,67 @@
- import React, { useState, useEffect, useCallback } from 'react';
- import { useTranslation } from 'react-i18next';
- import {
-   Box,
-   Typography,
-   Paper,
-   Button,
-   Chip,
-   LinearProgress,
-   Alert,
-   Dialog,
-   DialogTitle,
-   DialogContent,
-   DialogContentText,
-   DialogActions,
-+  IconButton,
-   TextField,
-   Tab,
-   Tabs,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
--  TableRow
-+  TableRow,
-+  Tooltip
- } from '@mui/material';
- import { Theme } from '@mui/material/styles';
- import {
-   CheckCircle as CheckCircleIcon,
-   //Pending as PendingIcon,
--  Error as ErrorIcon,
--  //School as SchoolIcon,
--  OpenInNew as OpenInNewIcon,
--  Download as DownloadIcon
-+  Error as ErrorIcon,
-+  //School as SchoolIcon,
-+  OpenInNew as OpenInNewIcon,
-+  Download as DownloadIcon,
-+  InfoOutlined as InfoOutlinedIcon
- } from '@mui/icons-material';
- import { useAuth } from '../../context/AuthContext';
- import api from '../../api';
- import { formatDayMonthYear } from '../../utils/date';
-+import RichTextViewer from '../../components/RichTextViewer';
-+import { richTextOrUndefined } from '../../utils/richText';
- 
- interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
- }
- 
- function TabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`validaciones-tabpanel-${index}`}
-       aria-labelledby={`validaciones-tab-${index}`}
-       {...other}
-     >
-       {value === index && (
-         <Box sx={{ p: 2 }}>
-           {children}
-         </Box>
-       )}
-     </div>
-   );
-@@ -68,109 +73,157 @@ const getTableHeadStyles = (theme: Theme) => {
++const formatProgresoParaResidente = (progresoDoc) => {
+   const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
+   const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+     if (typeof adj.actividadIndex !== 'number') return acc;
+     const key = adj.actividadIndex;
+     if (!acc[key]) acc[key] = [];
+     acc[key].push({
+       _id: adj._id.toString(),
+       nombreArchivo: adj.nombreArchivo,
+       mimeType: adj.mimeType,
+       fechaSubida: adj.fechaSubida
+     });
+     return acc;
+   }, {});
  
    return {
-     backgroundColor,
-     '& .MuiTableCell-root': {
-       color: theme.palette.getContrastText(backgroundColor),
-       fontWeight: 600
-     }
-   };
+     _id: plain._id.toString(),
+     fase: plain.fase,
+     faseModel: plain.faseModel,
+     estadoGeneral: plain.estadoGeneral,
+-    actividades: (plain.actividades || []).map((act, index) => ({
+-      nombre: act.nombre,
+-      tipo: act.tipo,
+-      completada: act.estado === 'validado',
+-      comentariosResidente: act.comentariosResidente || '',
+-      comentariosTutor: act.comentariosTutor || '',
+-      fecha: act.fechaRealizacion,
+-      fechaValidacion: act.fechaValidacion,
+-      comentariosRechazo: act.comentariosRechazo || '',
+-      fechaRechazo: act.fechaRechazo,
+-      estado: act.estado,
+-      porcentajeParticipacion: act.porcentajeParticipacion,
+-      cirugia: act.cirugia,
+-      otraCirugia: act.otraCirugia,
+-      nombreCirujano: act.nombreCirujano,
+-      adjuntos: adjuntosPorIndice[index] || [],
+-      requiereAdjunto: Boolean(
+-        (act.actividad && act.actividad.requiereAdjunto) ||
+-          act.requiereAdjunto
+-      )
+-    }))
+-  };
+-};
++    actividades: (plain.actividades || []).map((act, index) => {
++      const actividadData = buildActividadDisplayData(act);
++
++      return {
++        nombre: actividadData.nombre,
++        descripcion: actividadData.descripcion,
++        tipo: actividadData.tipo,
++        actividad: actividadData.actividadId,
++        actividadModel: actividadData.actividadModel,
++        completada: act.estado === 'validado',
++        comentariosResidente: act.comentariosResidente || '',
++        comentariosTutor: act.comentariosTutor || '',
++        fecha: act.fechaRealizacion,
++        fechaValidacion: act.fechaValidacion,
++        comentariosRechazo: act.comentariosRechazo || '',
++        fechaRechazo: act.fechaRechazo,
++        estado: act.estado,
++        porcentajeParticipacion: act.porcentajeParticipacion,
++        cirugia: act.cirugia,
++        otraCirugia: act.otraCirugia,
++        nombreCirujano: act.nombreCirujano,
++        adjuntos: adjuntosPorIndice[index] || [],
++        requiereAdjunto: Boolean(actividadData.requiereAdjunto)
++      };
++    })
++  };
++};
+ 
+ 
+ const inicializarProgresoFormativo = async (req, res, next) => {
+   try {
+   const user = await User.findById(req.params.id);
+   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
+     return res.status(404).json({ success: false, error: 'Residente no válido' });
+   }
+ 
+      if (req.body.tipo) user.tipo = req.body.tipo;
+     const count = await inicializarProgresoFormativoDB(user);
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
+   }
  };
  
- const TutorValidaciones: React.FC = () => {
-   const { t } = useTranslation();
-   const { user } = useAuth();
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [pendientes, setPendientes] = useState<any[]>([]);
-   const [validadas, setValidadas] = useState<any[]>([]);
-   const [rechazadas, setRechazadas] = useState<any[]>([]);
-   const [tabValue, setTabValue] = useState(0);
-   const [openValidarDialog, setOpenValidarDialog] = useState(false);
-   const [openRechazarDialog, setOpenRechazarDialog] = useState(false);
-   const [selectedProgreso, setSelectedProgreso] = useState<any>(null);
-   const [comentarios, setComentarios] = useState('');
-   const [procesando, setProcesando] = useState(false);
-   const [firmaDigital, setFirmaDigital] = useState('');
--  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
--  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
-+  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
-+  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
-+  const [descripcionDialog, setDescripcionDialog] = useState({
-+    open: false,
-+    title: '',
-+    description: undefined as string | undefined
-+  });
-   const attachmentButtonStyles = { minWidth: 160, height: 36 };
-   const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
  
-   const formatFase = (fase: any) =>
-     fase
-       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
-       : t('tutorValidations.table.noPhase');
  
--  const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
--    if (cirugia?.name) return cirugia.name;
--    return otraCirugia || '-';
--  };
-+  const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
-+    if (cirugia?.name) return cirugia.name;
-+    return otraCirugia || '-';
-+  };
-+
-+  const renderActivityCell = (progreso: any) => {
-+    const descriptionHtml = richTextOrUndefined(progreso.actividad?.descripcion);
-+
-+    return (
-+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-+        <span>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</span>
-+        {descriptionHtml && (
-+          <Tooltip title={t('adminPhases.viewDescription')}>
-+            <IconButton
-+              size="small"
-+              color="primary"
-+              onClick={() => handleOpenDescripcionDialog(progreso, descriptionHtml)}
-+            >
-+              <InfoOutlinedIcon fontSize="small" />
-+            </IconButton>
-+          </Tooltip>
-+        )}
-+      </Box>
-+    );
-+  };
  
-   const fetchValidaciones = useCallback(async () => {
-     try {
-       setLoading(true);
  
-       const respuesta = await api.get(
-         '/progreso/tutor/validaciones/pendientes'
-       );
+ // @desc    Obtener todos los registros de progreso
+ // @route   GET /api/progreso
+ // @access  Private/Admin
+ const getAllProgreso = async (req, res, next) => {
+@@ -244,58 +270,68 @@ const getProgresoResidentePorFase = async (req, res, next) => {
+     const progreso = await ProgresoResidente.find({ residente: req.params.id })
+       .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia');
  
-       const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
-       setPendientes(pendientes || []);
-       setValidadas(validadas || []);
-       setRechazadas(rechazadas || []);
-     } catch (err: any) {
-       setError(err.response?.data?.error || t('tutorValidations.errorLoad'));
-     } finally {
-       setLoading(false);
-     }
-   }, [t]);
+     await ProgresoResidente.populate(progreso, {
+       path: 'adjuntos',
+       select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+     });
  
- useEffect(() => {
-   if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-     fetchValidaciones();
-   }
- }, [user, fetchValidaciones]);
-   
-   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-     setTabValue(newValue);
-   };
+     const resultado = progreso.map(item => {
+       const plain = item.toObject({ virtuals: true });
+       const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+         if (typeof adj.actividadIndex !== 'number') return acc;
+         const key = adj.actividadIndex;
+         if (!acc[key]) acc[key] = [];
+         acc[key].push({
+           _id: adj._id.toString(),
+           nombreArchivo: adj.nombreArchivo,
+           mimeType: adj.mimeType,
+           fechaSubida: adj.fechaSubida
+         });
+         return acc;
+       }, {});
  
-   const handleOpenValidarDialog = (progreso: any) => {
-     setSelectedProgreso(progreso);
-     setComentarios('');
-     setFirmaDigital(`${user?.nombre} ${user?.apellidos} - ${formatDayMonthYear(new Date().toISOString())}`);
-     setOpenValidarDialog(true);
-   };
- 
--  const handleOpenAdjuntosDialog = (progreso: any) => {
--    setAdjuntosSeleccionados({
--      progresoId: progreso.progresoId || progreso._id.split('-')[0],
--      index: progreso.index,
--      adjuntos: progreso.adjuntos || []
+-      return {
+-        ...plain,
+-        actividades: plain.actividades.map((act, index) => ({
+-          ...act,
+-          adjuntos: adjuntosPorIndice[index] || []
+-        }))
+-      };
 -    });
--    setOpenAdjuntosDialog(true);
--  };
-+  const handleOpenAdjuntosDialog = (progreso: any) => {
-+    setAdjuntosSeleccionados({
-+      progresoId: progreso.progresoId || progreso._id.split('-')[0],
-+      index: progreso.index,
-+      adjuntos: progreso.adjuntos || []
++      return {
++        ...plain,
++        actividades: plain.actividades.map((act, index) => {
++          const actividadData = buildActividadDisplayData(act);
++
++          return {
++            ...act,
++            nombre: actividadData.nombre,
++            descripcion: actividadData.descripcion,
++            tipo: actividadData.tipo,
++            actividadModel: actividadData.actividadModel,
++            actividad: actividadData.actividadId,
++            requiereAdjunto: Boolean(actividadData.requiereAdjunto),
++            adjuntos: adjuntosPorIndice[index] || []
++          };
++        })
++      };
 +    });
-+    setOpenAdjuntosDialog(true);
-+  };
-+
-+  const handleOpenDescripcionDialog = (
-+    progreso: any,
-+    descriptionHtml?: string
-+  ) => {
-+    const content = descriptionHtml ?? richTextOrUndefined(progreso.actividad?.descripcion);
-+
-+    if (!content) return;
-+
-+    setDescripcionDialog({
-+      open: true,
-+      title:
-+        progreso.actividad?.nombre ||
-+        progreso.nombre ||
-+        t('tutorValidations.table.noName'),
-+      description: content
-+    });
-+  };
-+
-+  const handleCloseDescripcionDialog = () => {
-+    setDescripcionDialog((prev) => ({ ...prev, open: false }));
-+  };
  
-   const handleCloseAdjuntosDialog = () => {
-     setOpenAdjuntosDialog(false);
-     setAdjuntosSeleccionados(null);
-   };
+     const filtered = resultado.filter(p => p.residente);
  
-   const handleVerAdjunto = async (progresoId: string, index: number, adjuntoId: string) => {
-     try {
-       const res = await api.get(
-         `/adjuntos/actividad/${progresoId}/${index}`,
-         {
-           params: { adjuntoId },
-           responseType: 'blob'
-         }
-       );
-       const blobUrl = URL.createObjectURL(res.data);
-       window.open(blobUrl, '_blank');
-       setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
-     } catch (e) {
-       console.error('Error obteniendo adjunto', e);
-     }
-   };
+     res.status(200).json({
+       success: true,
+       count: filtered.length,
+       data: filtered
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
  
-   const handleDescargarAdjunto = async (adjunto: { _id: string; nombreArchivo: string }, progresoId: string, index: number) => {
-     try {
-@@ -308,51 +361,51 @@ const handleRechazar = async () => {
-           {pendientes.length === 0 ? (
-             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-               {t('tutorValidations.empty.pending')}
-             </Typography>
-           ) : (
-             <TableContainer component={Paper}>
-               <Table size="small">
-                 <TableHead sx={(theme) => getTableHeadStyles(theme)}>
-                   <TableRow>
-                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
-                     <TableCell align="right">{t('tutorValidations.table.actions')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {pendientes.map((progreso) => (
-                     <TableRow key={progreso._id}>
-                       <TableCell>{formatFase(progreso.fase)}</TableCell>
--                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
-+                      <TableCell>{renderActivityCell(progreso)}</TableCell>
-                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
-                       </TableCell>
-                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
-                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.actividad?.tipo === 'cirugia'
-                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
-                           : '-'}
-                       </TableCell>
-                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
-                       <TableCell align="right">
-                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                           {progreso.adjuntos?.length > 0 && (
-                             <Button
-                               variant="contained"
-                               color="primary"
-                               size="small"
-                               onClick={() => handleOpenAdjuntosDialog(progreso)}
-                               sx={actionButtonStyles}
-                             >
-                               {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
-                             </Button>
-@@ -404,125 +457,146 @@ const handleRechazar = async () => {
-           {validadas.length === 0 ? (
-             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-               {t('tutorValidations.empty.validated')}
-             </Typography>
-           ) : (
-             <TableContainer component={Paper}>
-               <Table size="small">
-                 <TableHead sx={(theme) => getTableHeadStyles(theme)}>
-                   <TableRow>
-                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
-                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {validadas.map(progreso => (
-                     <TableRow key={progreso._id}>
-                       <TableCell>{formatFase(progreso.fase)}</TableCell>
--                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
-+                      <TableCell>{renderActivityCell(progreso)}</TableCell>
-                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
-                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
-                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
-                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.actividad?.tipo === 'cirugia'
-                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
-                           : '-'}
-                       </TableCell>
-                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
-                       <TableCell align="right">
-                         <Chip icon={<CheckCircleIcon />} label={t('tutorValidations.states.validated')} color="success" size="small" variant="outlined" />
-                       </TableCell>
-                     </TableRow>
-                   ))}
-                 </TableBody>
-               </Table>
-             </TableContainer>
-           )}
-         </TabPanel>
  
-         
-         {/* Panel de Rechazadas */}
-         <TabPanel value={tabValue} index={2}>
-           {rechazadas.length === 0 ? (
-             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-               {t('tutorValidations.empty.rejected')}
-             </Typography>
-           ) : (
-             <TableContainer component={Paper}>
-               <Table size="small">
-                 <TableHead sx={(theme) => getTableHeadStyles(theme)}>
-                   <TableRow>
-                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
-                     <TableCell>{t('tutorValidations.table.reason')}</TableCell>
-                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
-                   </TableRow>
-                 </TableHead>
-                 <TableBody>
-                   {rechazadas.map(progreso => (
-                     <TableRow key={progreso._id}>
-                       <TableCell>{formatFase(progreso.fase)}</TableCell>
--                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
-+                      <TableCell>{renderActivityCell(progreso)}</TableCell>
-                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
-                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
-                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
-                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
-                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
-                       <TableCell>
-                         {progreso.actividad?.tipo === 'cirugia'
-                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
-                           : '-'}
-                       </TableCell>
-                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
-                       <TableCell align="right">
-                         <Chip icon={<ErrorIcon />} label={t('tutorValidations.states.rejected')} color="error" size="small" variant="outlined" />
-                       </TableCell>
-                     </TableRow>
-                   ))}
-                 </TableBody>
-               </Table>
-             </TableContainer>
-           )}
-         </TabPanel>
-       </Paper>
--      
-+
-+      <Dialog
-+        open={descripcionDialog.open}
-+        onClose={handleCloseDescripcionDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-+        <DialogTitle>
-+          {descripcionDialog.title || t('tutorValidations.table.noName')}
-+        </DialogTitle>
-+        <DialogContent>
-+          <RichTextViewer
-+            content={descripcionDialog.description}
-+            variant="inline"
-+            minHeight={0}
-+          />
-+        </DialogContent>
-+        <DialogActions>
-+          <Button onClick={handleCloseDescripcionDialog}>{t('close')}</Button>
-+        </DialogActions>
-+      </Dialog>
-+
-       {/* Diálogo para validar */}
-       <Dialog open={openValidarDialog} onClose={handleCloseValidarDialog}>
-         <DialogTitle>{t('tutorValidations.dialog.validateTitle')}</DialogTitle>
-         <DialogContent>
-           <DialogContentText>
-             {t('tutorValidations.dialog.validateMessage', {
-               activity: selectedProgreso?.actividad?.nombre,
-               name: `${selectedProgreso?.residente?.nombre} ${selectedProgreso?.residente?.apellidos}`
-             })}
-           </DialogContentText>
-           <TextField
-             autoFocus
-             margin="dense"
-             id="comentarios"
-             label={t('tutorValidations.dialog.optionalComments')}
-             type="text"
-             fullWidth
-             multiline
-             rows={3}
-             variant="outlined"
-             value={comentarios}
-             onChange={(e) => setComentarios(e.target.value)}
-             sx={{ mb: 2 }}
-           />
-           <TextField
+ // @desc    Registrar nuevo progreso
+ // @route   POST /api/progreso
+ // @access  Private
+ 
+ 
+ 
+ 
+ const registrarProgreso = async (req, res, next) => {
+   try {
+     // Si el usuario es residente, solo puede registrar su propio progreso
+   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.body.residente !== req.user.id) {
