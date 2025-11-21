@@ -44,6 +44,8 @@
     "order": "Ordena",
     "type": "Mota",
     "description": "Deskribapena",
+    "viewDescription": "Ikusi deskribapena",
+    "descriptionDialogTitle": "{{activity}}(r)en deskribapena",
     "number": "Zenbakia",
     "tabs": {
       "aria": "faseen fitxak",

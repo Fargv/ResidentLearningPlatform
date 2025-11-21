@@ -47,6 +47,8 @@
     "order": "Order",
     "type": "Type",
     "description": "Description",
+    "viewDescription": "View description",
+    "descriptionDialogTitle": "Description for {{activity}}",
     "number": "Number",
     "evaluation": "Evaluation",
     "observation": "Observation",

@@ -46,6 +46,8 @@
     "order": "Orde",
     "type": "Tipo",
     "description": "Descrición",
+    "viewDescription": "Ver descrición",
+    "descriptionDialogTitle": "Descrición de {{activity}}",
     "number": "Número",
     "tabs": {
       "aria": "lapelas de fases",

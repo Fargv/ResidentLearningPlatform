@@ -47,6 +47,8 @@
     "order": "Orden",
     "type": "Tipo",
     "description": "Descripción",
+    "viewDescription": "Ver descripción",
+    "descriptionDialogTitle": "Descripción de {{activity}}",
     "number": "Número",
     "tabs": {
       "aria": "pestañas de fases",

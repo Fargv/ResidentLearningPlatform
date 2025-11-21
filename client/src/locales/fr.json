@@ -822,6 +822,8 @@
     "order": "Ordre",
     "type": "Type",
     "description": "Description",
+    "viewDescription": "Voir la description",
+    "descriptionDialogTitle": "Description de {{activity}}",
     "number": "Numéro",
     "evaluation": "Évaluation",
     "observation": "Observation",

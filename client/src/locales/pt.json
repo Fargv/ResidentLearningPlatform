@@ -204,6 +204,8 @@
     "address": "Endereço",
     "phone": "Telefone",
     "description": "Descrição",
+    "viewDescription": "Ver descrição",
+    "descriptionDialogTitle": "Descrição de {{activity}}",
     "number": "Número",
     "title": "Título",
     "completionDate": "Data de realização",

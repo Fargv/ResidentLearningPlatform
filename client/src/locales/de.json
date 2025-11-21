@@ -247,6 +247,8 @@
     "address": "Adresse",
     "phone": "Telefon",
     "description": "Beschreibung",
+    "viewDescription": "Beschreibung anzeigen",
+    "descriptionDialogTitle": "Beschreibung für {{activity}}",
     "number": "Nummer",
     "title": "Titel",
     "completionDate": "Abschlussdatum",

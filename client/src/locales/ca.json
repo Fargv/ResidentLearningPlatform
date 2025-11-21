@@ -277,6 +277,8 @@
     "order": "Ordre",
     "type": "Tipus",
     "description": "Descripció",
+    "viewDescription": "Veure descripció",
+    "descriptionDialogTitle": "Descripció de {{activity}}",
     "number": "Número",
     "tabs": {
       "aria": "pestanyes de fases",

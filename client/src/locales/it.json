@@ -44,6 +44,8 @@
     "order": "Ordine",
     "type": "Tipo",
     "description": "Descrizione",
+    "viewDescription": "Vedi descrizione",
+    "descriptionDialogTitle": "Descrizione di {{activity}}",
     "number": "Numero",
     "evaluation": "Valutazione",
     "observation": "Osservazione",

@@ -1,748 +1,1189 @@
-diff --git a/client/src/components/InviteUsersMail.tsx b/client/src/components/InviteUsersMail.tsx
-index 339c39af591399086631d120ef0887b680773d90..54352a138a38ccf24a0d11ca42778317c397ffb8 100644
---- a/client/src/components/InviteUsersMail.tsx
-+++ b/client/src/components/InviteUsersMail.tsx
-@@ -5,97 +5,99 @@ import {
-   Button,
-   Dialog,
-   DialogActions,
-   DialogContent,
-   DialogContentText,
-   DialogTitle,
-   FormControl,
-   InputLabel,
-   MenuItem,
-   Select,
-   TextField,
-   Typography,
- } from '@mui/material';
- import type { DialogProps } from '@mui/material/Dialog';
- import type { SelectChangeEvent } from '@mui/material/Select';
- import api from '../api';
- import Role from '../types/roles';
- 
- type ProgramType = 'Programa Residentes' | 'Programa Sociedades';
- 
- interface BasicEntity {
-   _id: string;
-   nombre: string;
- }
- 
--interface InviteUsersMailProps {
--  open: boolean;
--  onClose: () => void;
--  hospitals: BasicEntity[];
--  societies: BasicEntity[];
--}
-+interface InviteUsersMailProps {
-+  open: boolean;
-+  onClose: () => void;
-+  hospitals: BasicEntity[];
-+  societies: BasicEntity[];
-+  onSuccess?: () => void;
-+}
- 
- interface AccessCode {
-   codigo: string;
-   rol: Role;
-   tipo: ProgramType;
- }
- 
- const roles = Object.values(Role) as Role[];
- const isRole = (v: string): v is Role => (roles as string[]).includes(v);
- 
- const legacyRoleMap: Record<string, Role> = {
-   formador: Role.TUTOR,
-   coordinador: Role.CSM,
-   instructor: Role.PROFESOR,
-   alumno: Role.PARTICIPANTE,
- };
- 
- const zoneOptions = [
-   'NORDESTE',
-   'NORTE',
-   'CENTRO',
-   'ANDALUCÍA',
-   'PORTUGAL',
-   'LEVANTE',
-   'CANARIAS',
- ];
- 
- const normalizeRoleValue = (value: string): Role | undefined => {
-   if (isRole(value)) {
-     return value;
-   }
- 
-   return legacyRoleMap[value];
- };
- 
--const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
--  open,
--  onClose,
--  hospitals,
--  societies,
--}) => {
-+const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
-+  open,
-+  onClose,
-+  hospitals,
-+  societies,
-+  onSuccess,
-+}) => {
-   const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
-   const [role, setRole] = useState<Role | ''>('');
-   const [selectedCode, setSelectedCode] = useState<AccessCode | null>(null);
-   const [emails, setEmails] = useState<string[]>(['']);
-   const [selectedHospital, setSelectedHospital] = useState('');
-   const [selectedSociety, setSelectedSociety] = useState('');
-   const [selectedZone, setSelectedZone] = useState('');
-   const [feedback, setFeedback] = useState<
-     { type: 'success' | 'error'; message: string } | null
-   >(null);
-   const [submitting, setSubmitting] = useState(false);
- 
-   useEffect(() => {
-     if (open) {
-       api
-         .get('/access-codes')
-         .then((res) => {
-           const data = res.data.data || res.data;
-           setAccessCodes(data);
-         })
-         .catch(() => {
-           setAccessCodes([]);
-         });
+diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
+index 656191fcd49056133e0b7c8f1daec2a1b78660a3..3b4cf8770181b0d156e518de321c22d1d3ea9e5e 100644
+--- a/client/src/locales/ca.json
++++ b/client/src/locales/ca.json
+@@ -255,50 +255,52 @@
+     "dialog": {
+       "editTitle": "Editar Societat",
+       "createTitle": "Nova Societat"
+     },
+     "fields": {
+       "titulo": "Títol",
+       "status": "Estat",
+       "fechaConvocatoria": "Data de convocatòria",
+       "fechaPresentacion": "Data de presentació",
+       "fechaModulosOnline": "Mòduls en línia",
+       "fechaSimulacion": "Simulació",
+       "fechaAtividadesFirstAssistant": "Primer Ajudant",
+       "fechaModuloOnlineStepByStep": "Pas a Pas",
+       "fechaHandOn": "Hands On"
      }
-   }, [open]);
-@@ -263,60 +265,64 @@ const InviteUsersMail: React.FC<InviteUsersMailProps> = ({
-             email,
-           }),
-         ),
-       );
- 
-       const failures = results.filter(
-         (result): result is PromiseRejectedResult => result.status === 'rejected',
-       );
- 
-       if (failures.length > 0) {
-         const firstError = failures[0].reason as any;
-         const errorMessage =
-           firstError?.response?.data?.error ||
-           firstError?.message ||
-           'No se pudieron enviar algunas invitaciones.';
-         const successCount = results.length - failures.length;
-         const message =
-           successCount > 0
-             ? `Se enviaron ${successCount} invitaciones, pero otras fallaron: ${errorMessage}`
-             : errorMessage;
- 
-         setFeedback({ type: 'error', message });
-         return;
-       }
- 
--      setFeedback({
--        type: 'success',
--        message:
--          validEmails.length === 1
--            ? 'Invitación enviada correctamente.'
--            : 'Invitaciones enviadas correctamente.',
--      });
--
--      await new Promise((resolve) => setTimeout(resolve, 1500));
--      closeDialog();
-+      setFeedback({
-+        type: 'success',
-+        message:
-+          validEmails.length === 1
-+            ? 'Invitación enviada correctamente.'
-+            : 'Invitaciones enviadas correctamente.',
-+      });
-+
-+      if (onSuccess) {
-+        onSuccess();
-+      }
-+
-+      await new Promise((resolve) => setTimeout(resolve, 1500));
-+      closeDialog();
-     } catch (err: any) {
-       const message =
-         err?.response?.data?.error ||
-         err?.message ||
-         'No se pudo enviar la invitación.';
-       setFeedback({ type: 'error', message });
-     } finally {
-       setSubmitting(false);
-     }
-   };
- 
-   const requiresHospitalSelection =
-     role === Role.RESIDENTE || role === Role.TUTOR;
-   const requiresSocietySelection =
-     role === Role.PARTICIPANTE || role === Role.PROFESOR;
-   const requiresZoneSelection = role === Role.CSM;
- 
-   return (
-     <Dialog open={open} onClose={handleDialogClose} fullWidth maxWidth="sm">
-       <DialogTitle>Invitar Usuarios</DialogTitle>
-       <DialogContent>
-         <DialogContentText>
-           Todos los usuarios deben tener el mismo rol. Al cambiar el rol se
-           reinicia la lista de correos.
-         </DialogContentText>
+   },
+   "adminPhases": {
+     "_comment": "Gestió de fases per a administradors",
+     "phase": "Fase",
+     "activity": "Activitat",
+     "activities": "Activitats",
+     "name": "Nom",
+     "order": "Ordre",
+     "type": "Tipus",
+     "description": "Descripció",
++    "viewDescription": "Veure descripció",
++    "descriptionDialogTitle": "Descripció de {{activity}}",
+     "number": "Número",
+     "tabs": {
+       "aria": "pestanyes de fases",
+       "activities": "Activitats"
+     },
+     "table": {
+       "aria": "activitats de la fase {{number}}",
+       "order": "Ordre",
+       "name": "Nom",
+       "attachmentRequired": "Adjunt obligatori",
+       "type": "Tipus",
+       "actions": "Accions",
+       "description": "Descripció",
+       "empty": "No hi ha activitats en aquesta fase"
+     },
+     "messages": {
+       "noActivities": "No hi ha activitats en aquesta fase",
+       "noPhases": "No hi ha fases creades",
+       "created": "{{item}} creada correctament",
+       "createError": "Error en crear {{item}}",
+       "updated": "{{item}} actualitzada correctament",
+       "updateError": "Error en actualitzar {{item}}",
+       "deleted": "{{item}} eliminada correctament",
+       "deleteError": "Error en eliminar {{item}}",
+       "phaseCreated": "Fase creada correctament",
+diff --git a/client/src/locales/de.json b/client/src/locales/de.json
+index 59a87f3a7e965259ad0ceaecba4ae3c19c319a55..38cd2ba9c37f436e3d6c6f8b9c1a7225cc5f0816 100644
+--- a/client/src/locales/de.json
++++ b/client/src/locales/de.json
+@@ -225,50 +225,52 @@
+     "errorLoad": "Fehler beim Laden der Codes",
+     "errorDelete": "Fehler beim Löschen des Codes",
+     "errorSave": "Fehler beim Speichern des Codes"
+   },
+   "progress": {
+     "createSuccess": "Ausbildungsfortschritt erfolgreich erstellt"
+   },
+   "emails": {
+     "inviteSubject": "Einladung zur Da Vinci Ausbildungsplattform"
+   },
+   "debug": {
+     "tokenValid": "✅ Token ist gültig und entschlüsselt",
+     "tokenInvalid": "❌ Token ist ungültig oder beschädigt"
+   },
+   "dashboard": {
+     "manageAllUsers": "Alle Benutzer verwalten",
+     "noPermissions": "Sie haben keine Berechtigung, diesen Bereich zu sehen"
+   },
+   "forms": {
+     "code": "Code",
+     "numericCode": "Numerischer Code",
+     "postalCode": "Postleitzahl",
+     "address": "Adresse",
+     "phone": "Telefon",
+     "description": "Beschreibung",
++    "viewDescription": "Beschreibung anzeigen",
++    "descriptionDialogTitle": "Beschreibung für {{activity}}",
+     "number": "Nummer",
+     "title": "Titel",
+     "completionDate": "Abschlussdatum",
+     "selectDate": "Wählen Sie ein Abschlussdatum",
+     "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
+       "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
+     "fileTooLarge": "Die Datei überschreitet die maximale Größe von 5MB."
+   },
+   "society": {
+     "convocatoria": {
+       "label": "Ausschreibung",
+       "intro": "Beginn des Ausschreibungsverfahrens.",
+       "item1": "Einladungen versenden",
+       "item2": "Bewerbungen empfangen"
+     },
+     "presentacion": {
+       "label": "Präsentation",
+       "intro": "Präsentationssitzung des Programms.",
+       "item1": "Einführung in das Programm",
+       "item2": "Vorstellung der Tutor"
+     },
+     "modOnline": {
+       "label": "Online-Modul",
+       "intro": "Online-Lernmodule.",
+       "item1": "Zugang zur Plattform",
 diff --git a/client/src/locales/en.json b/client/src/locales/en.json
-index bde9be8c51de5d283186592c9c98f981a91f9897..a4d9817c22e11da0a3efda3e6f6e0da63c921879 100644
+index 08fde3b4b0ccd8fc951d7756794197af9cb10083..2b528ea26e10a27c891e587dbe72b3c5f29c92c6 100644
 --- a/client/src/locales/en.json
 +++ b/client/src/locales/en.json
-@@ -1081,58 +1081,60 @@
-     "rejected": "Rejected"
+@@ -25,50 +25,52 @@
+     "logout": "Logout",
+     "download": "Download",
+     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+     "downloadSurgeryReportError": "Error downloading surgery report"
    },
-   "adminInvitations": {
-     "title": "Sent invitations",
-     "subtitle": "Review, resend or cancel the invitations you have already sent.",
-     "searchPlaceholder": "Search by email, role, hospital, society or zone",
+   "adminConfig": {
+     "title": "Settings",
+     "hospitals": "Hospitals",
+     "societies": "Societies",
+     "residentProgram": "Resident Program",
+     "societiesProgram": "Societies Program",
+     "users": "Users",
+     "accessCodes": "Access Codes",
+     "surgeryTypes": "Surgery Types",
+     "debug": "Debug"
+   },
+   "adminPhases": {
+     "_comment": "Admin phases management",
+     "phase": "Phase",
+     "activity": "Activity",
+     "activities": "Activities",
+     "name": "Name",
+     "order": "Order",
+     "type": "Type",
+     "description": "Description",
++    "viewDescription": "View description",
++    "descriptionDialogTitle": "Description for {{activity}}",
+     "number": "Number",
+     "evaluation": "Evaluation",
+     "observation": "Observation",
+     "practice": "Practice",
+     "theory": "Theory",
+     "surgery": "Surgery",
+     "errorForbidden": "You do not have permission to view this section",
+     "errorLoadData": "Error loading data",
+     "tabs": {
+       "aria": "phases tabs",
+       "activities": "Activities"
+     },
      "table": {
-       "email": "Email",
-       "role": "Role",
-       "program": "Program",
-       "scope": "Context",
-       "sent": "Sent",
-       "expires": "Expires",
-       "status": "Status",
-       "admin": "Sent by",
+       "aria": "activities of phase {{number}}",
+       "order": "Order",
+       "name": "Name",
+       "attachmentRequired": "Attachment required",
+       "type": "Type",
        "actions": "Actions",
-       "loading": "Loading invitations...",
-       "empty": "No invitations found"
+       "description": "Description",
+       "empty": "No activities in this phase"
      },
-     "status": {
-       "pending": "Pending",
-       "expired": "Expired",
-       "accepted": "Accepted",
-       "registered": "User created"
-     },
--    "actions": {
--      "refresh": "Refresh",
--      "copy": "Copy link",
--      "resend": "Resend",
--      "delete": "Delete"
--    },
-+    "actions": {
-+      "invite": "New invitation",
-+      "refresh": "Refresh",
-+      "copy": "Copy link",
-+      "resend": "Resend",
-+      "delete": "Delete"
-+    },
-     "labels": {
-       "convertedTo": "Converted into user {{name}}"
-     },
-     "dialogs": {
-       "deleteTitle": "Delete invitation",
-       "deleteConfirm": "Do you want to delete the invitation to {{email}}?",
-       "cancel": "Cancel",
-       "delete": "Delete"
-     },
-     "feedback": {
-       "resent": "Invitation resent",
--      "resendError": "Could not resend the invitation",
--      "linkCopied": "Link copied to clipboard",
--      "copyError": "Could not copy the link",
--      "noLink": "There is no available link for this invitation",
--      "deleted": "Invitation deleted",
--      "deleteError": "Could not delete the invitation"
--    }
--  },
-+      "resendError": "Could not resend the invitation",
-+      "linkCopied": "Link copied to clipboard",
-+      "copyError": "Could not copy the link",
-+      "noLink": "There is no available link for this invitation",
-+      "deleted": "Invitation deleted",
-+      "deleteError": "Could not delete the invitation",
-+      "catalogsError": "Could not load the data to send a new invitation"
-+    }
-+  },
-   "privacyPolicy": {
-     "title": "Privacy Policy",
-     "lastUpdated": "Last updated: {{date}}"
-   },
-   "adminReports": {
-     "exportHospitals": "Hospitals"
-   }
- }
+     "messages": {
+       "noActivities": "No activities in this phase",
+       "noPhases": "No phases created. Create a new phase to get started.",
 diff --git a/client/src/locales/es.json b/client/src/locales/es.json
-index caec67d2d68c0a1160afef9ac31905e1e019950f..6b3697440c594b5b66290bf791b1b75df32149fa 100644
+index cbe7fafafc536724ce79afff9063c1bf586f04c6..62a5a0154d06620c32f48fc2e7cd24f537a8d10a 100644
 --- a/client/src/locales/es.json
 +++ b/client/src/locales/es.json
-@@ -1073,58 +1073,60 @@
-     "rejected": "Rechazado"
+@@ -25,50 +25,52 @@
+     "logout": "Cerrar sesión",
+     "download": "Descargar",
+     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+     "downloadSurgeryReportError": "Error al descargar informe de cirugías"
    },
-   "adminInvitations": {
-     "title": "Invitaciones enviadas",
-     "subtitle": "Supervisa, reenvía o elimina invitaciones ya enviadas.",
-     "searchPlaceholder": "Buscar por email, rol, hospital, sociedad o zona",
+   "adminConfig": {
+     "title": "Configuración",
+     "hospitals": "Hospitales",
+     "societies": "Sociedades",
+     "residentProgram": "Programa Residentes",
+     "societiesProgram": "Programa Sociedades",
+     "users": "Usuarios",
+     "accessCodes": "Códigos de Acceso",
+     "surgeryTypes": "Tipos de Cirugía",
+     "debug": "Debug"
+   },
+   "adminPhases": {
+     "_comment": "Gestión de fases para administradores",
+     "phase": "Fase",
+     "activity": "Actividad",
+     "activities": "Actividades",
+     "name": "Nombre",
+     "order": "Orden",
+     "type": "Tipo",
+     "description": "Descripción",
++    "viewDescription": "Ver descripción",
++    "descriptionDialogTitle": "Descripción de {{activity}}",
+     "number": "Número",
+     "tabs": {
+       "aria": "pestañas de fases",
+       "activities": "Actividades"
+     },
      "table": {
-       "email": "Email",
-       "role": "Rol",
-       "program": "Programa",
-       "scope": "Ámbito",
-       "sent": "Enviada",
-       "expires": "Caduca",
-       "status": "Estado",
-       "admin": "Enviada por",
+       "aria": "actividades de la fase {{number}}",
+       "order": "Orden",
+       "name": "Nombre",
+       "attachmentRequired": "Adjunto obligatorio",
+       "type": "Tipo",
        "actions": "Acciones",
-       "loading": "Cargando invitaciones...",
-       "empty": "No hay invitaciones registradas"
+       "description": "Descripción",
+       "empty": "No hay actividades en esta fase"
      },
-     "status": {
-       "pending": "Pendiente",
-       "expired": "Expirada",
-       "accepted": "Aceptada",
-       "registered": "Usuario creado"
-     },
--    "actions": {
--      "refresh": "Actualizar",
--      "copy": "Copiar enlace",
--      "resend": "Reenviar",
--      "delete": "Eliminar"
--    },
-+    "actions": {
-+      "invite": "Nueva invitación",
-+      "refresh": "Actualizar",
-+      "copy": "Copiar enlace",
-+      "resend": "Reenviar",
-+      "delete": "Eliminar"
-+    },
-     "labels": {
-       "convertedTo": "Convertida en usuario {{name}}"
-     },
-     "dialogs": {
-       "deleteTitle": "Eliminar invitación",
-       "deleteConfirm": "¿Quieres eliminar la invitación a {{email}}?",
-       "cancel": "Cancelar",
-       "delete": "Eliminar"
-     },
-     "feedback": {
-       "resent": "Invitación reenviada",
--      "resendError": "No se pudo reenviar la invitación",
--      "linkCopied": "Enlace copiado al portapapeles",
--      "copyError": "No se pudo copiar el enlace",
--      "noLink": "No hay enlace disponible para esta invitación",
--      "deleted": "Invitación eliminada",
--      "deleteError": "No se pudo eliminar la invitación"
--    }
--  },
-+      "resendError": "No se pudo reenviar la invitación",
-+      "linkCopied": "Enlace copiado al portapapeles",
-+      "copyError": "No se pudo copiar el enlace",
-+      "noLink": "No hay enlace disponible para esta invitación",
-+      "deleted": "Invitación eliminada",
-+      "deleteError": "No se pudo eliminar la invitación",
-+      "catalogsError": "No se pudieron cargar los datos para enviar una nueva invitación"
-+    }
-+  },
-   "privacyPolicy": {
-     "title": "Política de Privacidad",
-     "lastUpdated": "Última actualización: {{date}}"
+     "messages": {
+       "noActivities": "No hay actividades en esta fase",
+       "noPhases": "No hay fases creadas",
+       "created": "{{item}} creada correctamente",
+       "createError": "Error al crear {{item}}",
+       "updated": "{{item}} actualizada correctamente",
+       "updateError": "Error al actualizar {{item}}",
+       "deleted": "{{item}} eliminada correctamente",
+       "deleteError": "Error al eliminar {{item}}",
+       "phaseCreated": "Fase creada correctamente",
+diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
+index 4c05127108f30524f988f03a6699a77043ede16d..0904af257db9cb38bdf806143021b47c83b7246b 100644
+--- a/client/src/locales/eu.json
++++ b/client/src/locales/eu.json
+@@ -22,50 +22,52 @@
+     "users": "Erabiltzaileak",
+     "logout": "Saioa itxi",
+     "reports": "Txostenak",
+     "download": "Deskargatu"
    },
-   "adminReports": {
-     "exportHospitals": "Hospitales"
-   }
- }
+   "adminConfig": {
+     "title": "Konfigurazioa",
+     "hospitals": "Ospitaleak",
+     "societies": "Elkarteak",
+     "residentProgram": "Egoiliarren Programa",
+     "societiesProgram": "Elkarteen Programa",
+     "users": "Erabiltzaileak",
+     "accessCodes": "Sarbide kodeak",
+     "surgeryTypes": "Kirurgia Motak",
+     "debug": "Arazketa"
+   },
+   "adminPhases": {
+     "_comment": "Administratzaileentzako faseen kudeaketa",
+     "phase": "Fasea",
+     "activity": "Jarduera",
+     "activities": "Jarduerak",
+     "name": "Izena",
+     "order": "Ordena",
+     "type": "Mota",
+     "description": "Deskribapena",
++    "viewDescription": "Ikusi deskribapena",
++    "descriptionDialogTitle": "{{activity}}(r)en deskribapena",
+     "number": "Zenbakia",
+     "tabs": {
+       "aria": "faseen fitxak",
+       "activities": "Jarduerak"
+     },
+     "table": {
+       "aria": "{{number}}. faseko jarduerak",
+       "order": "Ordena",
+       "name": "Izena",
+       "attachmentRequired": "Eranskina derrigorrezkoa",
+       "type": "Mota",
+       "actions": "Ekintzak",
+       "description": "Deskribapena",
+       "empty": "Ez dago jarduerarik fase honetan"
+     },
+     "messages": {
+       "noActivities": "Ez dago jarduerarik fase honetan",
+       "noPhases": "Ez dago faserenik sortuta",
+       "created": "{{item}} ongi sortu da",
+       "createError": "Errorea {{item}} sortzean",
+       "updated": "{{item}} ongi eguneratu da",
+       "updateError": "Errorea {{item}} eguneratzean",
+       "deleted": "{{item}} ongi ezabatu da",
+       "deleteError": "Errorea {{item}} ezabatzean",
+       "phaseCreated": "Fasea ongi sortu da",
 diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
-index 9d20b02865253d8ec7ac8082612daea3773f92ce..029335a5f7bb247b8e1be5eefa39629d572f8dad 100644
+index 039ac0cbfaf2098f5b918a0ed553ff76ff7223bb..fcfe46a17d4f7ce7b7f0dc906c54044d169bd1c3 100644
 --- a/client/src/locales/fr.json
 +++ b/client/src/locales/fr.json
-@@ -1080,58 +1080,60 @@
+@@ -800,50 +800,52 @@
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Télécharger le rapport de {{phase}}",
+     "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
+   },
+   "certificate": {
+     "title": "Certificat de réussite",
+     "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
+     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
+     "dateLine": "Madrid, {{date}}",
+     "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
+     "tutorPrefix": "Tuteur du programme de résidents de ",
+     "tutorTitle": "Tuteur du programme de résidents",
+     "tutorPlaceholder": "Tuteur du programme :",
+     "signatureLine": "________________________________________",
+     "responsableTitle": "Responsable de formation du programme {{programa}}"
+   },
+   "adminPhases": {
+     "_comment": "Gestion des phases d'administration",
+     "phase": "Phase",
+     "activity": "Activité",
+     "activities": "Activités",
+     "name": "Nom",
+     "order": "Ordre",
+     "type": "Type",
+     "description": "Description",
++    "viewDescription": "Voir la description",
++    "descriptionDialogTitle": "Description de {{activity}}",
+     "number": "Numéro",
+     "evaluation": "Évaluation",
+     "observation": "Observation",
+     "practice": "Pratique",
+     "theory": "Théorie",
+     "surgery": "Chirurgie",
+     "errorForbidden": "Vous n'avez pas la permission d'accéder à cette section",
+     "errorLoadData": "Erreur lors du chargement des données",
+     "tabs": {
+       "aria": "onglets des phases",
+       "activities": "Activités"
+     },
+     "table": {
+       "aria": "activités de la phase {{number}}",
+       "order": "Ordre",
+       "name": "Nom",
+       "attachmentRequired": "Pièce jointe obligatoire",
+       "type": "Type",
+       "actions": "Actions",
+       "description": "Description",
+       "empty": "Aucune activité dans cette phase"
+     },
+     "messages": {
+       "noActivities": "Aucune activité dans cette phase",
+       "noPhases": "Aucune phase créée. Créez une nouvelle phase pour commencer.",
+diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
+index 90e1df026e5451485b033995d511d35bc586d28e..5cd9d528a802f3249713f4800239da63085bbad8 100644
+--- a/client/src/locales/gl.json
++++ b/client/src/locales/gl.json
+@@ -24,50 +24,52 @@
+     "logout": "Pechar sesión",
+     "download": "Descargar",
+     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
+     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
+   },
+   "adminConfig": {
+     "title": "Configuración",
+     "hospitals": "Hospitais",
+     "societies": "Sociedades",
+     "residentProgram": "Programa de Residentes",
+     "societiesProgram": "Programa de Sociedades",
+     "users": "Usuarios",
+     "accessCodes": "Códigos de acceso",
+     "surgeryTypes": "Tipos de Cirurxía",
+     "debug": "Depuración"
+   },
+   "adminPhases": {
+     "_comment": "Xestión de fases para administradores",
+     "phase": "Fase",
+     "activity": "Actividade",
+     "activities": "Actividades",
+     "name": "Nome",
+     "order": "Orde",
+     "type": "Tipo",
+     "description": "Descrición",
++    "viewDescription": "Ver descrición",
++    "descriptionDialogTitle": "Descrición de {{activity}}",
+     "number": "Número",
+     "tabs": {
+       "aria": "lapelas de fases",
+       "activities": "Actividades"
+     },
+     "table": {
+       "aria": "actividades da fase {{number}}",
+       "order": "Orde",
+       "name": "Nome",
+       "attachmentRequired": "Anexo obrigatorio",
+       "type": "Tipo",
+       "actions": "Accións",
+       "description": "Descrición",
+       "empty": "Non hai actividades nesta fase"
+     },
+     "messages": {
+       "noActivities": "Non hai actividades nesta fase",
+       "noPhases": "Non hai fases creadas",
+       "created": "{{item}} creada correctamente",
+       "createError": "Erro ao crear {{item}}",
+       "updated": "{{item}} actualizada correctamente",
+       "updateError": "Erro ao actualizar {{item}}",
+       "deleted": "{{item}} eliminada correctamente",
+       "deleteError": "Erro ao eliminar {{item}}",
+       "phaseCreated": "Fase creada correctamente",
+diff --git a/client/src/locales/it.json b/client/src/locales/it.json
+index 6563d646dd12d98b3b1d3b6169b7019900d9dd93..ed77f9b0681ce65b5b2971f3fab3d4630061fa1c 100644
+--- a/client/src/locales/it.json
++++ b/client/src/locales/it.json
+@@ -22,50 +22,52 @@
+     "users": "Utenti",
+     "logout": "Disconnetti",
+     "reports": "Report",
+     "download": "Scarica"
+   },
+   "adminConfig": {
+     "title": "Configurazione",
+     "hospitals": "Ospedali",
+     "societies": "Società",
+     "residentProgram": "Programma Residenti",
+     "societiesProgram": "Programma Società",
+     "users": "Utenti",
+     "accessCodes": "Codici di accesso",
+     "surgeryTypes": "Tipi di Chirurgia",
+     "debug": "Debug"
+   },
+   "adminPhases": {
+     "_comment": "Gestione delle fasi per amministratori",
+     "phase": "Fase",
+     "activity": "Attività",
+     "activities": "Attività",
+     "name": "Nome",
+     "order": "Ordine",
+     "type": "Tipo",
+     "description": "Descrizione",
++    "viewDescription": "Vedi descrizione",
++    "descriptionDialogTitle": "Descrizione di {{activity}}",
+     "number": "Numero",
+     "evaluation": "Valutazione",
+     "observation": "Osservazione",
+     "practice": "Pratica",
+     "theory": "Teoria",
+     "surgery": "Chirurgia",
+     "errorForbidden": "Non hai i permessi per vedere questa sezione",
+     "errorLoadData": "Errore nel caricamento dei dati",
+     "tabs": {
+       "aria": "schede delle fasi",
+       "activities": "Attività"
+     },
+     "table": {
+       "aria": "attività della fase {{number}}",
+       "order": "Ordine",
+       "name": "Nome",
+       "attachmentRequired": "Allegato obbligatorio",
+       "type": "Tipo",
+       "actions": "Azioni",
+       "description": "Descrizione",
+       "empty": "Nessuna attività in questa fase"
+     },
+     "messages": {
+       "noActivities": "Nessuna attività in questa fase",
+       "noPhases": "Nessuna fase creata. Crea una nuova fase per iniziare.",
+diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
+index ca1ed9cd530f95b41eb449effb434e476b3960fc..4656364d760da1f17117fb46601cb74187176282 100644
+--- a/client/src/locales/pt.json
++++ b/client/src/locales/pt.json
+@@ -182,50 +182,52 @@
+   "residentMilestones": {
+     "phase1": {
+       "label": "Fase 1 - Preparação Inicial",
+       "description": "Familiarização com o sistema Da Vinci e aspectos teóricos iniciais."
+     },
+     "phase2": {
+       "label": "Fase 2 - Treinamento Pré-clínico",
+       "description": "Exercícios de simulação e treinamento em ambiente seguro."
+     },
+     "phase3": {
+       "label": "Fase 3 - Assistência Cirúrgica",
+       "description": "Participação como assistente em sala cirúrgica."
+     },
+     "phase4": {
+       "label": "Fase 4 - Cirurgia no Console",
+       "description": "Cirurgias realizadas pelo residente com supervisão."
      }
    },
-   "adminInvitations": {
-     "title": "Invitations envoyées",
-     "subtitle": "Consultez, renvoyez ou supprimez les invitations déjà envoyées.",
-     "searchPlaceholder": "Rechercher par email, rôle, hôpital, société ou zone",
-     "table": {
-       "email": "Email",
-       "role": "Rôle",
-       "program": "Programme",
-       "scope": "Contexte",
-       "sent": "Envoyée",
-       "expires": "Expire",
-       "status": "Statut",
-       "admin": "Envoyée par",
-       "actions": "Actions",
-       "loading": "Chargement des invitations...",
-       "empty": "Aucune invitation enregistrée"
-     },
-     "status": {
-       "pending": "En attente",
-       "expired": "Expirée",
-       "accepted": "Acceptée",
-       "registered": "Utilisateur créé"
-     },
--    "actions": {
--      "refresh": "Actualiser",
--      "copy": "Copier le lien",
--      "resend": "Renvoyer",
--      "delete": "Supprimer"
--    },
-+    "actions": {
-+      "invite": "Nouvelle invitation",
-+      "refresh": "Actualiser",
-+      "copy": "Copier le lien",
-+      "resend": "Renvoyer",
-+      "delete": "Supprimer"
-+    },
-     "labels": {
-       "convertedTo": "Convertie en utilisateur {{name}}"
-     },
-     "dialogs": {
-       "deleteTitle": "Supprimer l'invitation",
-       "deleteConfirm": "Voulez-vous supprimer l'invitation envoyée à {{email}} ?",
-       "cancel": "Annuler",
-       "delete": "Supprimer"
-     },
-     "feedback": {
-       "resent": "Invitation renvoyée",
--      "resendError": "Impossible de renvoyer l'invitation",
--      "linkCopied": "Lien copié dans le presse-papiers",
--      "copyError": "Impossible de copier le lien",
--      "noLink": "Aucun lien disponible pour cette invitation",
--      "deleted": "Invitation supprimée",
--      "deleteError": "Impossible de supprimer l'invitation"
--    }
--  },
-+      "resendError": "Impossible de renvoyer l'invitation",
-+      "linkCopied": "Lien copié dans le presse-papiers",
-+      "copyError": "Impossible de copier le lien",
-+      "noLink": "Aucun lien disponible pour cette invitation",
-+      "deleted": "Invitation supprimée",
-+      "deleteError": "Impossible de supprimer l'invitation",
-+      "catalogsError": "Impossible de charger les données pour envoyer une nouvelle invitation"
-+    }
-+  },
-   "privacyPolicy": {
-     "title": "Politique de confidentialité",
-     "lastUpdated": "Dernière mise à jour : {{date}}"
+   "forms": {
+     "code": "Código",
+     "numericCode": "Código Numérico",
+     "postalCode": "Código Postal",
+     "address": "Endereço",
+     "phone": "Telefone",
+     "description": "Descrição",
++    "viewDescription": "Ver descrição",
++    "descriptionDialogTitle": "Descrição de {{activity}}",
+     "number": "Número",
+     "title": "Título",
+     "completionDate": "Data de realização",
+     "selectDate": "Selecione uma data de realização",
+     "optionalFileHint": "Anexe um arquivo opcional (máx. 5MB)",
+       "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
+     "fileTooLarge": "O arquivo excede o tamanho máximo de 5MB."
    },
-   "adminReports": {
-     "exportHospitals": "Hôpitaux"
-   }
- }
-diff --git a/client/src/pages/dashboard/AdminInvitaciones.tsx b/client/src/pages/dashboard/AdminInvitaciones.tsx
-index a04bb979fcb6031a33e1506339ff786fc88b4721..e8bc91e4bb153720f18c0ac6485e4883123e6629 100644
---- a/client/src/pages/dashboard/AdminInvitaciones.tsx
-+++ b/client/src/pages/dashboard/AdminInvitaciones.tsx
-@@ -4,123 +4,131 @@ import {
+   "residentProgress": {
+     "title": "Meu Progresso",
+     "errorLoad": "Erro ao carregar o progresso",
+     "downloadError": "Erro ao baixar certificado",
+     "downloadCertificate": "Certificado de Cumplimiento",
+     "downloadSurgeryReport": "Baixar relatório de {{phase}}",
+     "downloadSurgeryReportError": "Erro ao baixar relatório de cirurgias"
+   },
+   "residentPhases": {
+     "title": "Minhas Fases Formativas",
+     "errorLoad": "Erro ao carregar o progresso",
+     "activityFail": "Não foi possível completar a atividade.",
+     "activitySaveError": "Erro ao salvar a atividade.",
+     "activitySuccess": "✅ Atividade registrada com sucesso",
+     "noActivitySelectedError": "Erro interno: Nenhuma atividade selecionada.",
+     "noTitle": "Sem título",
+     "phaseTitle": "Fase {{number}}: {{name}}",
+diff --git a/client/src/pages/dashboard/AdminFases.tsx b/client/src/pages/dashboard/AdminFases.tsx
+index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b617adccd 100644
+--- a/client/src/pages/dashboard/AdminFases.tsx
++++ b/client/src/pages/dashboard/AdminFases.tsx
+@@ -2,58 +2,60 @@ import React, { useState, useEffect, useCallback } from 'react';
+ import {
    Box,
+   Typography,
+   Paper,
+   Divider,
    Button,
-   Chip,
+   TextField,
    Dialog,
-   DialogActions,
+   DialogTitle,
    DialogContent,
    DialogContentText,
-   DialogTitle,
-   IconButton,
-   LinearProgress,
-   Paper,
-   Snackbar,
-   Stack,
+   DialogActions,
    Table,
    TableBody,
    TableCell,
    TableContainer,
    TableHead,
    TableRow,
-   TextField,
-   Tooltip,
-   Typography
- } from '@mui/material';
+   IconButton,
+   Chip,
+   LinearProgress,
+   Alert,
+   Snackbar,
+   Tabs,
+   Tab,
+-  FormControlLabel,
+-  Switch,
++  FormControlLabel,
++  Switch,
++  Tooltip,
+ } from "@mui/material";
  import {
-   ContentCopy as ContentCopyIcon,
-+  MailOutline as MailOutlineIcon,
+   Add as AddIcon,
+   Edit as EditIcon,
    Delete as DeleteIcon,
-   Refresh as RefreshIcon,
-   Send as SendIcon
- } from '@mui/icons-material';
- import { useTranslation } from 'react-i18next';
- import BackButton from '../../components/BackButton';
-+import InviteUsersMail from '../../components/InviteUsersMail';
- import api, { getInvitations } from '../../api';
+-  Check as CheckIcon,
++  Check as CheckIcon,
++  InfoOutlined as InfoOutlinedIcon,
+ } from "@mui/icons-material";
+ import api from "../../api";
+ import { useTranslation, Trans } from "react-i18next";
+ import RichTextDescriptionField from "../../components/RichTextDescriptionField";
+ import RichTextViewer from "../../components/RichTextViewer";
  
- interface BasicEntity {
-   _id: string;
-   nombre?: string;
-   titulo?: string;
-   zona?: string;
+ interface TabPanelProps {
+   children?: React.ReactNode;
+   index: number;
+   value: number;
  }
  
- interface AdminUser {
-   nombre?: string;
-   apellidos?: string;
-   email?: string;
- }
+ function TabPanel(props: TabPanelProps) {
+   const { children, value, index, ...other } = props;
  
- interface Invitation {
-   _id: string;
-   email: string;
-   rol: string;
-   tipo: string;
-   hospital?: BasicEntity;
-   sociedad?: BasicEntity;
-   zona?: string;
-   estado?: string;
-   token?: string;
-   fechaEnvio?: string;
-   fechaExpiracion?: string;
-   admin?: AdminUser;
- }
+   return (
+     <div
+       role="tabpanel"
+       hidden={value !== index}
+       id={`fases-tabpanel-${index}`}
+       aria-labelledby={`fases-tab-${index}`}
+       {...other}
+     >
+       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+     </div>
+@@ -82,50 +84,55 @@ const AdminFases: React.FC = () => {
+   const [selectedActividad, setSelectedActividad] = useState<any>(null);
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   const [hospitales, setHospitales] = useState<any[]>([]);
+   const [faseFormData, setFaseFormData] = useState({
+     numero: "",
+     nombre: "",
+     descripcion: "",
+   });
+   const [actividadFormData, setActividadFormData] = useState({
+     nombre: "",
+     descripcion: "",
+     tipo: "teórica",
+     fase: "",
+     orden: "",
+     requiereAdjunto: false,
+   });
+   const [procesando, setProcesando] = useState(false);
+   const [snackbar, setSnackbar] = useState({
+     open: false,
+     message: "",
+     severity: "success" as "success" | "error",
+   });
+   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(
+     null,
+   );
++  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
++    open: false,
++    title: "",
++    descripcion: "",
++  });
  
- interface InvitationWithStatus extends Invitation {
-   userMatch?: { _id: string; nombre?: string; apellidos?: string; email: string };
-   derivedStatus: 'pendiente' | 'expirada' | 'aceptada' | 'registrado';
- }
- 
-+type CatalogEntity = { _id: string; nombre: string };
-+
- const formatDateTime = (value?: string) => {
-   if (!value) return '—';
-   const date = new Date(value);
-   if (Number.isNaN(date.getTime())) return '—';
- 
-   const day = String(date.getDate()).padStart(2, '0');
-   const month = String(date.getMonth() + 1).padStart(2, '0');
-   const year = date.getFullYear();
-   const hours = String(date.getHours()).padStart(2, '0');
-   const minutes = String(date.getMinutes()).padStart(2, '0');
- 
-   return `${day}/${month}/${year} ${hours}:${minutes}`;
- };
- 
- const getFrontendBaseUrl = () => {
-   const envValue = process.env.REACT_APP_FRONTEND_URL || (window as any).REACT_APP_FRONTEND_URL;
-   const base = envValue || window.location.origin;
-   return base.endsWith('/') ? base.slice(0, -1) : base;
- };
- 
- const AdminInvitaciones: React.FC = () => {
-   const { t } = useTranslation();
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState<string | null>(null);
-   const [invitations, setInvitations] = useState<InvitationWithStatus[]>([]);
-   const [search, setSearch] = useState('');
-   const [feedback, setFeedback] = useState<{
-     message: string;
-     severity: 'success' | 'error' | 'info';
-   } | null>(null);
-   const [confirming, setConfirming] = useState<InvitationWithStatus | null>(null);
-   const [actionId, setActionId] = useState<string | null>(null);
-+  const [openInviteDialog, setOpenInviteDialog] = useState(false);
-+  const [hospitals, setHospitals] = useState<CatalogEntity[]>([]);
-+  const [societies, setSocieties] = useState<CatalogEntity[]>([]);
-+  const [catalogsLoading, setCatalogsLoading] = useState(false);
- 
-   const fetchInvitations = async () => {
+   const fetchData = useCallback(async () => {
      try {
        setLoading(true);
-       setError(null);
  
-       const [invitationsRes, usersRes] = await Promise.all([
-         getInvitations(),
-         api.get('/users')
-       ]);
+       //const usuariosRes = await api.get('/users');
+       //setUsuariosLista(usuariosRes.data.data);
  
-       const users = usersRes.data?.data || [];
-       const data: Invitation[] = invitationsRes.data?.data || invitationsRes.data || [];
-       const now = Date.now();
+       const hospitalesRes = await api.get("/hospitals");
+       setHospitales(hospitalesRes.data.data);
  
-       const enriched = data.map<InvitationWithStatus>((invitation) => {
-         const userMatch = users.find(
-           (u: any) =>
-             typeof u.email === 'string' &&
-             u.email.toLowerCase() === (invitation.email || '').toLowerCase()
-         );
+       const fasesRes = await api.get("/fases");
+       setFases(fasesRes.data.data);
  
-         const expired = invitation.fechaExpiracion
-           ? new Date(invitation.fechaExpiracion).getTime() < now
-           : false;
-@@ -129,50 +137,84 @@ const AdminInvitaciones: React.FC = () => {
- 
-         if (userMatch) {
-           derivedStatus = 'registrado';
-         } else if (invitation.estado === 'aceptada') {
-           derivedStatus = 'aceptada';
-         } else if (expired || invitation.estado === 'expirada') {
-           derivedStatus = 'expirada';
-         }
- 
-         return { ...invitation, userMatch, derivedStatus };
-       });
- 
-       setInvitations(enriched);
+       const actividadesRes = await api.get("/actividades");
+       setActividades(actividadesRes.data.data);
      } catch (err: any) {
-       setError(err?.response?.data?.error || t('adminInvitations.loadError'));
+       if (err.response?.status === 403) {
+         setError(t("adminPhases.errorForbidden"));
+       } else {
+         setError(err.response?.data?.error || t("adminPhases.errorLoadData"));
+       }
      } finally {
        setLoading(false);
      }
+@@ -169,50 +176,62 @@ const AdminFases: React.FC = () => {
    };
  
-   useEffect(() => {
-     fetchInvitations();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
+   const handleConfirmarEliminarFase = async (fase: any) => {
+     try {
+       setProcesando(true);
+       const res = await api.get(`/progreso/fase/${fase._id}/count`);
+       setProgresoVinculado(res.data.count);
+       setSelectedFase(fase);
+       setOpenEliminarFaseDialog(true);
+     } catch (err: any) {
+       setSnackbar({
+         open: true,
+         message: t("adminPhases.messages.checkProgressError"),
+         severity: "error",
+       });
+     } finally {
+       setProcesando(false);
+     }
+   };
  
-+  useEffect(() => {
-+    if (!openInviteDialog) return;
-+
-+    const loadCatalogs = async () => {
-+      try {
-+        setCatalogsLoading(true);
-+        const [hospitalsRes, societiesRes] = await Promise.all([
-+          api.get('/hospitals'),
-+          api.get('/sociedades')
-+        ]);
-+
-+        const hospitalsData = hospitalsRes.data?.data || hospitalsRes.data || [];
-+        const societiesData = societiesRes.data?.data || societiesRes.data || [];
-+
-+        setHospitals(hospitalsData.map((hospital: any) => ({ _id: hospital._id, nombre: hospital.nombre })));
-+        setSocieties(
-+          societiesData.map((society: any) => ({
-+            _id: society._id,
-+            nombre: society.nombre || society.titulo || ''
-+          }))
-+        );
-+      } catch (err: any) {
-+        setFeedback({
-+          message: err?.response?.data?.error || t('adminInvitations.feedback.catalogsError'),
-+          severity: 'error'
-+        });
-+      } finally {
-+        setCatalogsLoading(false);
-+      }
-+    };
-+
-+    void loadCatalogs();
-+  }, [openInviteDialog, t]);
-+
-   const filteredInvitations = useMemo(() => {
-     const term = search.trim().toLowerCase();
-     if (!term) return invitations;
+   const handleCloseEliminarFaseDialog = () => {
+     setOpenEliminarFaseDialog(false);
+     setSelectedFase(null);
+   };
  
-     return invitations.filter((invitation) => {
-       const hospitalName = invitation.hospital?.nombre || '';
-       const sociedadName = invitation.sociedad?.nombre || invitation.sociedad?.titulo || '';
-       const adminName = `${invitation.admin?.nombre || ''} ${invitation.admin?.apellidos || ''}`;
-       return [
-         invitation.email,
-         invitation.rol,
-         invitation.tipo,
-         hospitalName,
-         sociedadName,
-         adminName,
-         invitation.zona || ''
-       ]
-         .join(' ')
-         .toLowerCase()
-         .includes(term);
++  const handleOpenDescripcionActividadDialog = (actividad: any) => {
++    setDescripcionActividadDialog({
++      open: true,
++      title: actividad.nombre,
++      descripcion: actividad.descripcion || "",
++    });
++  };
++
++  const handleCloseDescripcionActividadDialog = () => {
++    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
++  };
++
+   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const { name, value } = e.target;
+     setFaseFormData({
+       ...faseFormData,
+       [name]: value,
      });
-   }, [invitations, search]);
- 
-   const handleCopyLink = async (invitation: InvitationWithStatus) => {
-     const canCopyLink = invitation.derivedStatus === 'pendiente' && Boolean(invitation.token);
-@@ -256,50 +298,58 @@ const AdminInvitaciones: React.FC = () => {
- 
-     return <Chip label={labels[status]} color={colors[status]} size="small" />;
    };
  
-   return (
-     <Box>
-       <Box
-         sx={{
-           display: 'flex',
-           justifyContent: 'space-between',
-           alignItems: 'center',
-           mb: 3,
-           flexWrap: 'wrap',
-           gap: 2
-         }}
-       >
-         <Box>
-           <Typography variant="h4" component="h1" gutterBottom>
-             {t('adminInvitations.title')}
-           </Typography>
-           <Typography variant="body1" color="text.secondary">
-             {t('adminInvitations.subtitle')}
-           </Typography>
-         </Box>
-         <Stack direction="row" spacing={1} alignItems="center">
-+          <Button
-+            variant="contained"
-+            startIcon={<MailOutlineIcon />}
-+            onClick={() => setOpenInviteDialog(true)}
-+            disabled={catalogsLoading}
-+          >
-+            {t('adminInvitations.actions.invite')}
-+          </Button>
-           <BackButton />
-           <Button
-             variant="outlined"
-             startIcon={<RefreshIcon />}
-             onClick={fetchInvitations}
-             disabled={loading}
-           >
-             {t('adminInvitations.actions.refresh')}
+   const handleDescripcionChange = (descripcion: string) => {
+     setFaseFormData((prev) => ({
+       ...prev,
+       descripcion,
+     }));
+   };
+ 
+   const handleActividadDescripcionChange = (descripcion: string) => {
+     setActividadFormData((prev) => ({
+       ...prev,
+       descripcion,
+     }));
+   };
+ 
+   const handleCrearFase = async () => {
+     try {
+       setProcesando(true);
+@@ -685,58 +704,72 @@ const AdminFases: React.FC = () => {
+                               label={
+                                 actividad.tipo === "teórica"
+                                   ? t("adminPhases.theory")
+                                   : actividad.tipo === "práctica"
+                                     ? t("adminPhases.practice")
+                                     : actividad.tipo === "evaluación"
+                                       ? t("adminPhases.evaluation")
+                                       : actividad.tipo === "observación"
+                                         ? t("adminPhases.observation")
+                                         : t("adminPhases.surgery")
+                               }
+                               color={
+                                 actividad.tipo === "teórica"
+                                   ? "primary"
+                                   : actividad.tipo === "práctica"
+                                     ? "secondary"
+                                     : actividad.tipo === "evaluación"
+                                       ? "warning"
+                                       : actividad.tipo === "observación"
+                                         ? "info"
+                                         : "success"
+                               }
+                               size="small"
+                             />
+                           </TableCell>
+-                          <TableCell sx={{ width: '25%' }}>
+-                            <RichTextViewer
+-                              content={actividad.descripcion}
+-                              minHeight={0}
+-                              variant="inline"
+-                              sx={{ fontSize: '0.9rem' }}
+-                            />
+-                          </TableCell>
++                          <TableCell sx={{ width: '25%' }}>
++                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
++                              <RichTextViewer
++                                content={actividad.descripcion}
++                                minHeight={0}
++                                variant="inline"
++                                sx={{ fontSize: '0.9rem', flex: 1 }}
++                              />
++                              {actividad.descripcion && (
++                                <Tooltip title={t('adminPhases.viewDescription')}>
++                                  <IconButton
++                                    aria-label={t('adminPhases.viewDescription')}
++                                    color="primary"
++                                    size="small"
++                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
++                                  >
++                                    <InfoOutlinedIcon fontSize="small" />
++                                  </IconButton>
++                                </Tooltip>
++                              )}
++                            </Box>
++                          </TableCell>
+                           <TableCell align="right">
+                             <IconButton
+                               color="primary"
+                               onClick={() =>
+                                 handleOpenEditarActividadDialog(actividad)
+                               }
+                               size="small"
+                             >
+                               <EditIcon />
+                             </IconButton>
+                             <IconButton
+                               color="error"
+                               onClick={() =>
+                                 handleConfirmarEliminarActividad(actividad)
+                               }
+                               size="small"
+                             >
+                               <DeleteIcon />
+                             </IconButton>
+                           </TableCell>
+                         </TableRow>
+                       ))}
+                     {actividades.filter(
+                       (actividad) => actividad.fase._id === fase._id,
+                     ).length === 0 && (
+@@ -1167,44 +1200,69 @@ const AdminFases: React.FC = () => {
+               />
+             ) : (
+               <Trans
+                 i18nKey="adminPhases.dialogs.deleteActivity.confirm"
+                 values={{ name: selectedActividad?.nombre }}
+                 components={{ strong: <strong /> }}
+               />
+             )}
+           </DialogContentText>
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseEliminarActividadDialog} color="primary">
+             {t("common.cancel")}
            </Button>
-         </Stack>
-       </Box>
- 
-       <TextField
-         fullWidth
-         placeholder={t('adminInvitations.searchPlaceholder')}
-         value={search}
-         onChange={(e) => setSearch(e.target.value)}
-         sx={{ mb: 2 }}
-       />
- 
-       {loading && <LinearProgress sx={{ mb: 2 }} />}
-       {error && (
-         <Alert severity="error" sx={{ mb: 2 }}>
-           {error}
-         </Alert>
-@@ -455,30 +505,38 @@ const AdminInvitaciones: React.FC = () => {
-             startIcon={<DeleteIcon />}
-             disabled={Boolean(actionId)}
+           <Button
+             onClick={handleEliminarActividad}
+             color="error"
+             variant="contained"
+             disabled={procesando}
            >
-             {t('adminInvitations.dialogs.delete')}
+             {procesando ? t("common.deleting") : t("common.delete")}
            </Button>
          </DialogActions>
        </Dialog>
  
-       {feedback && (
-         <Snackbar
-             open
-             autoHideDuration={4000}
-             onClose={() => setFeedback(null)}
-             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-         >
-             <Alert
-             severity={feedback.severity}
-             onClose={() => setFeedback(null)}
-             sx={{ width: '100%' }}
-             >
-             {feedback.message}
-             </Alert>
-         </Snackbar>
-         )}
- 
-+      <InviteUsersMail
-+        open={openInviteDialog}
-+        onClose={() => setOpenInviteDialog(false)}
-+        hospitals={hospitals}
-+        societies={societies}
-+        onSuccess={fetchInvitations}
-+      />
++      <Dialog
++        open={descripcionActividadDialog.open}
++        onClose={handleCloseDescripcionActividadDialog}
++        fullWidth
++        maxWidth="md"
++      >
++        <DialogTitle>
++          {t('adminPhases.descriptionDialogTitle', {
++            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
++          })}
++        </DialogTitle>
++        <DialogContent>
++          <RichTextViewer
++            content={descripcionActividadDialog.descripcion}
++            variant="inline"
++            minHeight={0}
++          />
++        </DialogContent>
++        <DialogActions>
++          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
++            {t('common.close')}
++          </Button>
++        </DialogActions>
++      </Dialog>
 +
+       {/* Snackbar para notificaciones */}
+       <Snackbar
+         open={snackbar.open}
+         autoHideDuration={6000}
+         onClose={handleCloseSnackbar}
+       >
+         <Alert
+           onClose={handleCloseSnackbar}
+           severity={snackbar.severity}
+           sx={{ width: "100%" }}
+         >
+           {snackbar.message}
+         </Alert>
+       </Snackbar>
      </Box>
    );
  };
  
- export default AdminInvitaciones;
-\ No newline at end of file
+ export default AdminFases;
+diff --git a/client/src/pages/dashboard/AdminFasesSoc.tsx b/client/src/pages/dashboard/AdminFasesSoc.tsx
+index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345a980fe30 100644
+--- a/client/src/pages/dashboard/AdminFasesSoc.tsx
++++ b/client/src/pages/dashboard/AdminFasesSoc.tsx
+@@ -1,59 +1,61 @@
+ import React, { useState, useEffect, useCallback } from 'react';
+ import {
+   Box,
+   Typography,
+   Paper,
+   Divider,
+   Button,
+   TextField,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogContentText,
+   DialogActions,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   IconButton,
+   Chip,
+   LinearProgress,
+   Alert,
+   Snackbar,
+   Tabs,
+-  Tab,
+-  FormControlLabel,
+-  Switch
++  Tab,
++  FormControlLabel,
++  Switch,
++  Tooltip
+ } from '@mui/material';
+ import {
+   Add as AddIcon,
+   Edit as EditIcon,
+   Delete as DeleteIcon,
+-  Check as CheckIcon,
++  Check as CheckIcon,
++  InfoOutlined as InfoOutlinedIcon
+ } from '@mui/icons-material';
+ import api from '../../api';
+ import { useTranslation, Trans } from 'react-i18next';
+ import RichTextDescriptionField from '../../components/RichTextDescriptionField';
+ import RichTextViewer from '../../components/RichTextViewer';
+ 
+ 
+ interface TabPanelProps {
+   children?: React.ReactNode;
+   index: number;
+   value: number;
+ }
+ 
+ function TabPanel(props: TabPanelProps) {
+   const { children, value, index, ...other } = props;
+ 
+   return (
+     <div
+       role="tabpanel"
+       hidden={value !== index}
+       id={`fases-tabpanel-${index}`}
+       aria-labelledby={`fases-tab-${index}`}
+       {...other}
+     >
+       {value === index && (
+@@ -82,50 +84,55 @@ const AdminFases: React.FC = () => {
+   const [openEliminarActividadDialog, setOpenEliminarActividadDialog] = useState(false);
+   const [selectedFase, setSelectedFase] = useState<any>(null);
+   const [selectedActividad, setSelectedActividad] = useState<any>(null);
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   const [hospitales, setHospitales] = useState<any[]>([]);
+   const [faseFormData, setFaseFormData] = useState({
+     numero: '',
+     nombre: '',
+     descripcion: ''
+   });
+   const [actividadFormData, setActividadFormData] = useState({
+     nombre: '',
+     descripcion: '',
+     tipo: 'teórica',
+     fase: '',
+     orden: '',
+     requiereAdjunto: false
+   });
+   const [procesando, setProcesando] = useState(false);
+   const [snackbar, setSnackbar] = useState({
+     open: false,
+     message: '',
+     severity: 'success' as 'success' | 'error'
+   });
+   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
++  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
++    open: false,
++    title: '',
++    descripcion: '',
++  });
+ 
+   const fetchData = useCallback(async () => {
+     try {
+       setLoading(true);
+ 
+       //const usuariosRes = await api.get('/users');
+       //setUsuariosLista(usuariosRes.data.data);
+ 
+       const hospitalesRes = await api.get('/hospitals');
+       setHospitales(hospitalesRes.data.data);
+ 
+       const fasesRes = await api.get('/fasesSoc');
+       setFases(fasesRes.data.data);
+ 
+       const actividadesRes = await api.get('/actividadesSoc');
+       setActividades(actividadesRes.data.data);
+     } catch (err: any) {
+       if (err.response?.status === 403) {
+         setError(t('adminPhases.errorForbidden'));
+       } else {
+         setError(err.response?.data?.error || t('adminPhases.errorLoadData'));
+       }
+     } finally {
+       setLoading(false);
+     }
+@@ -169,50 +176,62 @@ const AdminFases: React.FC = () => {
+   };
+ 
+   const handleConfirmarEliminarFase = async (fase: any) => {
+     try {
+       setProcesando(true);
+       const res = await api.get(`/progreso/fase/${fase._id}/count`);
+       setProgresoVinculado(res.data.count);
+       setSelectedFase(fase);
+       setOpenEliminarFaseDialog(true);
+     } catch (err: any) {
+       setSnackbar({
+         open: true,
+         message: t('adminPhasesSoc.messages.progressCheckError'),
+         severity: 'error'
+       });
+     } finally {
+       setProcesando(false);
+     }
+   };
+ 
+   const handleCloseEliminarFaseDialog = () => {
+     setOpenEliminarFaseDialog(false);
+     setSelectedFase(null);
+   };
+ 
++  const handleOpenDescripcionActividadDialog = (actividad: any) => {
++    setDescripcionActividadDialog({
++      open: true,
++      title: actividad.nombre,
++      descripcion: actividad.descripcion || '',
++    });
++  };
++
++  const handleCloseDescripcionActividadDialog = () => {
++    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
++  };
++
+   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const { name, value } = e.target;
+     setFaseFormData({
+       ...faseFormData,
+       [name]: value
+     });
+   };
+ 
+   const handleDescripcionChange = (descripcion: string) => {
+     setFaseFormData((prev) => ({
+       ...prev,
+       descripcion,
+     }));
+   };
+ 
+   const handleActividadDescripcionChange = (descripcion: string) => {
+     setActividadFormData((prev) => ({
+       ...prev,
+       descripcion,
+     }));
+   };
+ 
+   const handleCrearFase = async () => {
+     try {
+       setProcesando(true);
+@@ -630,58 +649,72 @@ const AdminFases: React.FC = () => {
+                           label={
+                               actividad.tipo === 'teórica'
+                                 ? t('adminPhases.theory')
+                                 : actividad.tipo === 'práctica'
+                                   ? t('adminPhases.practice')
+                                   : actividad.tipo === 'evaluación'
+                                     ? t('adminPhases.evaluation')
+                                     : actividad.tipo === 'observación'
+                                       ? t('adminPhases.observation')
+                                       : t('adminPhases.surgery')
+                             }
+                             color={
+                               actividad.tipo === 'teórica'
+                                 ? 'primary'
+                                 : actividad.tipo === 'práctica'
+                                   ? 'secondary'
+                                   : actividad.tipo === 'evaluación'
+                                     ? 'warning'
+                                     : actividad.tipo === 'observación'
+                                       ? 'info'
+                                       : 'success'
+                             }
+                             size="small"
+                           />
+                         </TableCell>
+-                          <TableCell sx={{ width: '25%' }}>
+-                            <RichTextViewer
+-                              content={actividad.descripcion}
+-                              minHeight={0}
+-                              variant="inline"
+-                              sx={{ fontSize: '0.9rem' }}
+-                            />
+-                          </TableCell>
++                          <TableCell sx={{ width: '25%' }}>
++                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
++                              <RichTextViewer
++                                content={actividad.descripcion}
++                                minHeight={0}
++                                variant="inline"
++                                sx={{ fontSize: '0.9rem', flex: 1 }}
++                              />
++                              {actividad.descripcion && (
++                                <Tooltip title={t('adminPhases.viewDescription')}>
++                                  <IconButton
++                                    aria-label={t('adminPhases.viewDescription')}
++                                    color="primary"
++                                    size="small"
++                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
++                                  >
++                                    <InfoOutlinedIcon fontSize="small" />
++                                  </IconButton>
++                                </Tooltip>
++                              )}
++                            </Box>
++                          </TableCell>
+                         <TableCell align="right">
+                           <IconButton 
+                             color="primary" 
+                             onClick={() => handleOpenEditarActividadDialog(actividad)}
+                             size="small"
+                           >
+                             <EditIcon />
+                           </IconButton>
+                           <IconButton 
+                             color="error" 
+                             onClick={() => handleConfirmarEliminarActividad(actividad)}
+                             size="small"
+                           >
+                             <DeleteIcon />
+                           </IconButton>
+                         </TableCell>
+                       </TableRow>
+                     ))}
+                   {actividades.filter(actividad => actividad.fase._id === fase._id).length === 0 && (
+                     <TableRow>
+                       <TableCell colSpan={6} align="center">
+                         {t('adminPhases.messages.noActivities')}
+                       </TableCell>
+                     </TableRow>
+                   )}
+@@ -1078,41 +1111,66 @@ const AdminFases: React.FC = () => {
+                 components={{ strong: <strong /> }}
+               />
+             ) : (
+               <Trans
+                 i18nKey="adminPhases.dialogs.deleteActivity.content"
+                 values={{ name: selectedActividad?.nombre }}
+                 components={{ strong: <strong /> }}
+               />
+             )}
+           </DialogContentText>
+         </DialogContent>
+         <DialogActions>
+           <Button onClick={handleCloseEliminarActividadDialog} color="primary">
+             {t('common.cancel')}
+           </Button>
+           <Button
+             onClick={handleEliminarActividad}
+             color="error"
+             variant="contained"
+             disabled={procesando}
+           >
+             {procesando ? t('common.deleting') : t('common.delete')}
+           </Button>
+         </DialogActions>
+       </Dialog>
+-      
++
++      <Dialog
++        open={descripcionActividadDialog.open}
++        onClose={handleCloseDescripcionActividadDialog}
++        fullWidth
++        maxWidth="md"
++      >
++        <DialogTitle>
++          {t('adminPhases.descriptionDialogTitle', {
++            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
++          })}
++        </DialogTitle>
++        <DialogContent>
++          <RichTextViewer
++            content={descripcionActividadDialog.descripcion}
++            variant="inline"
++            minHeight={0}
++          />
++        </DialogContent>
++        <DialogActions>
++          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
++            {t('common.close')}
++          </Button>
++        </DialogActions>
++      </Dialog>
++
+       {/* Snackbar para notificaciones */}
+       <Snackbar
+         open={snackbar.open}
+         autoHideDuration={6000}
+         onClose={handleCloseSnackbar}
+       >
+         <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+           {snackbar.message}
+         </Alert>
+       </Snackbar>
+     </Box>
+   );
+ };
+ 
+ export default AdminFases;
