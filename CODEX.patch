@@ -1,521 +1,8 @@
-diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
-index 656191fcd49056133e0b7c8f1daec2a1b78660a3..3b4cf8770181b0d156e518de321c22d1d3ea9e5e 100644
---- a/client/src/locales/ca.json
-+++ b/client/src/locales/ca.json
-@@ -255,50 +255,52 @@
-     "dialog": {
-       "editTitle": "Editar Societat",
-       "createTitle": "Nova Societat"
-     },
-     "fields": {
-       "titulo": "Títol",
-       "status": "Estat",
-       "fechaConvocatoria": "Data de convocatòria",
-       "fechaPresentacion": "Data de presentació",
-       "fechaModulosOnline": "Mòduls en línia",
-       "fechaSimulacion": "Simulació",
-       "fechaAtividadesFirstAssistant": "Primer Ajudant",
-       "fechaModuloOnlineStepByStep": "Pas a Pas",
-       "fechaHandOn": "Hands On"
-     }
-   },
-   "adminPhases": {
-     "_comment": "Gestió de fases per a administradors",
-     "phase": "Fase",
-     "activity": "Activitat",
-     "activities": "Activitats",
-     "name": "Nom",
-     "order": "Ordre",
-     "type": "Tipus",
-     "description": "Descripció",
-+    "viewDescription": "Veure descripció",
-+    "descriptionDialogTitle": "Descripció de {{activity}}",
-     "number": "Número",
-     "tabs": {
-       "aria": "pestanyes de fases",
-       "activities": "Activitats"
-     },
-     "table": {
-       "aria": "activitats de la fase {{number}}",
-       "order": "Ordre",
-       "name": "Nom",
-       "attachmentRequired": "Adjunt obligatori",
-       "type": "Tipus",
-       "actions": "Accions",
-       "description": "Descripció",
-       "empty": "No hi ha activitats en aquesta fase"
-     },
-     "messages": {
-       "noActivities": "No hi ha activitats en aquesta fase",
-       "noPhases": "No hi ha fases creades",
-       "created": "{{item}} creada correctament",
-       "createError": "Error en crear {{item}}",
-       "updated": "{{item}} actualitzada correctament",
-       "updateError": "Error en actualitzar {{item}}",
-       "deleted": "{{item}} eliminada correctament",
-       "deleteError": "Error en eliminar {{item}}",
-       "phaseCreated": "Fase creada correctament",
-diff --git a/client/src/locales/de.json b/client/src/locales/de.json
-index 59a87f3a7e965259ad0ceaecba4ae3c19c319a55..38cd2ba9c37f436e3d6c6f8b9c1a7225cc5f0816 100644
---- a/client/src/locales/de.json
-+++ b/client/src/locales/de.json
-@@ -225,50 +225,52 @@
-     "errorLoad": "Fehler beim Laden der Codes",
-     "errorDelete": "Fehler beim Löschen des Codes",
-     "errorSave": "Fehler beim Speichern des Codes"
-   },
-   "progress": {
-     "createSuccess": "Ausbildungsfortschritt erfolgreich erstellt"
-   },
-   "emails": {
-     "inviteSubject": "Einladung zur Da Vinci Ausbildungsplattform"
-   },
-   "debug": {
-     "tokenValid": "✅ Token ist gültig und entschlüsselt",
-     "tokenInvalid": "❌ Token ist ungültig oder beschädigt"
-   },
-   "dashboard": {
-     "manageAllUsers": "Alle Benutzer verwalten",
-     "noPermissions": "Sie haben keine Berechtigung, diesen Bereich zu sehen"
-   },
-   "forms": {
-     "code": "Code",
-     "numericCode": "Numerischer Code",
-     "postalCode": "Postleitzahl",
-     "address": "Adresse",
-     "phone": "Telefon",
-     "description": "Beschreibung",
-+    "viewDescription": "Beschreibung anzeigen",
-+    "descriptionDialogTitle": "Beschreibung für {{activity}}",
-     "number": "Nummer",
-     "title": "Titel",
-     "completionDate": "Abschlussdatum",
-     "selectDate": "Wählen Sie ein Abschlussdatum",
-     "optionalFileHint": "Optional eine Datei anhängen (max. 5MB)",
-       "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
-     "fileTooLarge": "Die Datei überschreitet die maximale Größe von 5MB."
-   },
-   "society": {
-     "convocatoria": {
-       "label": "Ausschreibung",
-       "intro": "Beginn des Ausschreibungsverfahrens.",
-       "item1": "Einladungen versenden",
-       "item2": "Bewerbungen empfangen"
-     },
-     "presentacion": {
-       "label": "Präsentation",
-       "intro": "Präsentationssitzung des Programms.",
-       "item1": "Einführung in das Programm",
-       "item2": "Vorstellung der Tutor"
-     },
-     "modOnline": {
-       "label": "Online-Modul",
-       "intro": "Online-Lernmodule.",
-       "item1": "Zugang zur Plattform",
-diff --git a/client/src/locales/en.json b/client/src/locales/en.json
-index 08fde3b4b0ccd8fc951d7756794197af9cb10083..2b528ea26e10a27c891e587dbe72b3c5f29c92c6 100644
---- a/client/src/locales/en.json
-+++ b/client/src/locales/en.json
-@@ -25,50 +25,52 @@
-     "logout": "Logout",
-     "download": "Download",
-     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
-     "downloadSurgeryReportError": "Error downloading surgery report"
-   },
-   "adminConfig": {
-     "title": "Settings",
-     "hospitals": "Hospitals",
-     "societies": "Societies",
-     "residentProgram": "Resident Program",
-     "societiesProgram": "Societies Program",
-     "users": "Users",
-     "accessCodes": "Access Codes",
-     "surgeryTypes": "Surgery Types",
-     "debug": "Debug"
-   },
-   "adminPhases": {
-     "_comment": "Admin phases management",
-     "phase": "Phase",
-     "activity": "Activity",
-     "activities": "Activities",
-     "name": "Name",
-     "order": "Order",
-     "type": "Type",
-     "description": "Description",
-+    "viewDescription": "View description",
-+    "descriptionDialogTitle": "Description for {{activity}}",
-     "number": "Number",
-     "evaluation": "Evaluation",
-     "observation": "Observation",
-     "practice": "Practice",
-     "theory": "Theory",
-     "surgery": "Surgery",
-     "errorForbidden": "You do not have permission to view this section",
-     "errorLoadData": "Error loading data",
-     "tabs": {
-       "aria": "phases tabs",
-       "activities": "Activities"
-     },
-     "table": {
-       "aria": "activities of phase {{number}}",
-       "order": "Order",
-       "name": "Name",
-       "attachmentRequired": "Attachment required",
-       "type": "Type",
-       "actions": "Actions",
-       "description": "Description",
-       "empty": "No activities in this phase"
-     },
-     "messages": {
-       "noActivities": "No activities in this phase",
-       "noPhases": "No phases created. Create a new phase to get started.",
-diff --git a/client/src/locales/es.json b/client/src/locales/es.json
-index cbe7fafafc536724ce79afff9063c1bf586f04c6..62a5a0154d06620c32f48fc2e7cd24f537a8d10a 100644
---- a/client/src/locales/es.json
-+++ b/client/src/locales/es.json
-@@ -25,50 +25,52 @@
-     "logout": "Cerrar sesión",
-     "download": "Descargar",
-     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
-     "downloadSurgeryReportError": "Error al descargar informe de cirugías"
-   },
-   "adminConfig": {
-     "title": "Configuración",
-     "hospitals": "Hospitales",
-     "societies": "Sociedades",
-     "residentProgram": "Programa Residentes",
-     "societiesProgram": "Programa Sociedades",
-     "users": "Usuarios",
-     "accessCodes": "Códigos de Acceso",
-     "surgeryTypes": "Tipos de Cirugía",
-     "debug": "Debug"
-   },
-   "adminPhases": {
-     "_comment": "Gestión de fases para administradores",
-     "phase": "Fase",
-     "activity": "Actividad",
-     "activities": "Actividades",
-     "name": "Nombre",
-     "order": "Orden",
-     "type": "Tipo",
-     "description": "Descripción",
-+    "viewDescription": "Ver descripción",
-+    "descriptionDialogTitle": "Descripción de {{activity}}",
-     "number": "Número",
-     "tabs": {
-       "aria": "pestañas de fases",
-       "activities": "Actividades"
-     },
-     "table": {
-       "aria": "actividades de la fase {{number}}",
-       "order": "Orden",
-       "name": "Nombre",
-       "attachmentRequired": "Adjunto obligatorio",
-       "type": "Tipo",
-       "actions": "Acciones",
-       "description": "Descripción",
-       "empty": "No hay actividades en esta fase"
-     },
-     "messages": {
-       "noActivities": "No hay actividades en esta fase",
-       "noPhases": "No hay fases creadas",
-       "created": "{{item}} creada correctamente",
-       "createError": "Error al crear {{item}}",
-       "updated": "{{item}} actualizada correctamente",
-       "updateError": "Error al actualizar {{item}}",
-       "deleted": "{{item}} eliminada correctamente",
-       "deleteError": "Error al eliminar {{item}}",
-       "phaseCreated": "Fase creada correctamente",
-diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
-index 4c05127108f30524f988f03a6699a77043ede16d..0904af257db9cb38bdf806143021b47c83b7246b 100644
---- a/client/src/locales/eu.json
-+++ b/client/src/locales/eu.json
-@@ -22,50 +22,52 @@
-     "users": "Erabiltzaileak",
-     "logout": "Saioa itxi",
-     "reports": "Txostenak",
-     "download": "Deskargatu"
-   },
-   "adminConfig": {
-     "title": "Konfigurazioa",
-     "hospitals": "Ospitaleak",
-     "societies": "Elkarteak",
-     "residentProgram": "Egoiliarren Programa",
-     "societiesProgram": "Elkarteen Programa",
-     "users": "Erabiltzaileak",
-     "accessCodes": "Sarbide kodeak",
-     "surgeryTypes": "Kirurgia Motak",
-     "debug": "Arazketa"
-   },
-   "adminPhases": {
-     "_comment": "Administratzaileentzako faseen kudeaketa",
-     "phase": "Fasea",
-     "activity": "Jarduera",
-     "activities": "Jarduerak",
-     "name": "Izena",
-     "order": "Ordena",
-     "type": "Mota",
-     "description": "Deskribapena",
-+    "viewDescription": "Ikusi deskribapena",
-+    "descriptionDialogTitle": "{{activity}}(r)en deskribapena",
-     "number": "Zenbakia",
-     "tabs": {
-       "aria": "faseen fitxak",
-       "activities": "Jarduerak"
-     },
-     "table": {
-       "aria": "{{number}}. faseko jarduerak",
-       "order": "Ordena",
-       "name": "Izena",
-       "attachmentRequired": "Eranskina derrigorrezkoa",
-       "type": "Mota",
-       "actions": "Ekintzak",
-       "description": "Deskribapena",
-       "empty": "Ez dago jarduerarik fase honetan"
-     },
-     "messages": {
-       "noActivities": "Ez dago jarduerarik fase honetan",
-       "noPhases": "Ez dago faserenik sortuta",
-       "created": "{{item}} ongi sortu da",
-       "createError": "Errorea {{item}} sortzean",
-       "updated": "{{item}} ongi eguneratu da",
-       "updateError": "Errorea {{item}} eguneratzean",
-       "deleted": "{{item}} ongi ezabatu da",
-       "deleteError": "Errorea {{item}} ezabatzean",
-       "phaseCreated": "Fasea ongi sortu da",
-diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
-index 039ac0cbfaf2098f5b918a0ed553ff76ff7223bb..fcfe46a17d4f7ce7b7f0dc906c54044d169bd1c3 100644
---- a/client/src/locales/fr.json
-+++ b/client/src/locales/fr.json
-@@ -800,50 +800,52 @@
-     "downloadCertificate": "Certificado de Cumplimiento",
-     "downloadSurgeryReport": "Télécharger le rapport de {{phase}}",
-     "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
-   },
-   "certificate": {
-     "title": "Certificat de réussite",
-     "body": "Il est certifié que <strong>{{name}}</strong> a terminé avec succès la phase de formation assignée du Programme Académique sur les technologies du robot Da Vinci®. <br /><br />Ce cours s'inscrit dans le plan de formation en technologie robotique en collaboration avec l'hôpital <strong>{{hospital}}</strong> et sous la supervision de son tuteur assigné.",
-     "bodySociedad": "Se certifica que <strong>{{name}}</strong> ha completado el currículum formativo de cirugía robótica INTUITIVE / {{sociedad}}.",
-     "dateLine": "Madrid, {{date}}",
-     "footer": "Certificado generado automáticamente por Academic Program da Vinci, no acreditativo para da Vinci Technology Training Certificate - {{url}}",
-     "tutorPrefix": "Tuteur du programme de résidents de ",
-     "tutorTitle": "Tuteur du programme de résidents",
-     "tutorPlaceholder": "Tuteur du programme :",
-     "signatureLine": "________________________________________",
-     "responsableTitle": "Responsable de formation du programme {{programa}}"
-   },
-   "adminPhases": {
-     "_comment": "Gestion des phases d'administration",
-     "phase": "Phase",
-     "activity": "Activité",
-     "activities": "Activités",
-     "name": "Nom",
-     "order": "Ordre",
-     "type": "Type",
-     "description": "Description",
-+    "viewDescription": "Voir la description",
-+    "descriptionDialogTitle": "Description de {{activity}}",
-     "number": "Numéro",
-     "evaluation": "Évaluation",
-     "observation": "Observation",
-     "practice": "Pratique",
-     "theory": "Théorie",
-     "surgery": "Chirurgie",
-     "errorForbidden": "Vous n'avez pas la permission d'accéder à cette section",
-     "errorLoadData": "Erreur lors du chargement des données",
-     "tabs": {
-       "aria": "onglets des phases",
-       "activities": "Activités"
-     },
-     "table": {
-       "aria": "activités de la phase {{number}}",
-       "order": "Ordre",
-       "name": "Nom",
-       "attachmentRequired": "Pièce jointe obligatoire",
-       "type": "Type",
-       "actions": "Actions",
-       "description": "Description",
-       "empty": "Aucune activité dans cette phase"
-     },
-     "messages": {
-       "noActivities": "Aucune activité dans cette phase",
-       "noPhases": "Aucune phase créée. Créez une nouvelle phase pour commencer.",
-diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
-index 90e1df026e5451485b033995d511d35bc586d28e..5cd9d528a802f3249713f4800239da63085bbad8 100644
---- a/client/src/locales/gl.json
-+++ b/client/src/locales/gl.json
-@@ -24,50 +24,52 @@
-     "logout": "Pechar sesión",
-     "download": "Descargar",
-     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
-     "downloadSurgeryReportError": "Erro ao descargar o informe de cirurxías"
-   },
-   "adminConfig": {
-     "title": "Configuración",
-     "hospitals": "Hospitais",
-     "societies": "Sociedades",
-     "residentProgram": "Programa de Residentes",
-     "societiesProgram": "Programa de Sociedades",
-     "users": "Usuarios",
-     "accessCodes": "Códigos de acceso",
-     "surgeryTypes": "Tipos de Cirurxía",
-     "debug": "Depuración"
-   },
-   "adminPhases": {
-     "_comment": "Xestión de fases para administradores",
-     "phase": "Fase",
-     "activity": "Actividade",
-     "activities": "Actividades",
-     "name": "Nome",
-     "order": "Orde",
-     "type": "Tipo",
-     "description": "Descrición",
-+    "viewDescription": "Ver descrición",
-+    "descriptionDialogTitle": "Descrición de {{activity}}",
-     "number": "Número",
-     "tabs": {
-       "aria": "lapelas de fases",
-       "activities": "Actividades"
-     },
-     "table": {
-       "aria": "actividades da fase {{number}}",
-       "order": "Orde",
-       "name": "Nome",
-       "attachmentRequired": "Anexo obrigatorio",
-       "type": "Tipo",
-       "actions": "Accións",
-       "description": "Descrición",
-       "empty": "Non hai actividades nesta fase"
-     },
-     "messages": {
-       "noActivities": "Non hai actividades nesta fase",
-       "noPhases": "Non hai fases creadas",
-       "created": "{{item}} creada correctamente",
-       "createError": "Erro ao crear {{item}}",
-       "updated": "{{item}} actualizada correctamente",
-       "updateError": "Erro ao actualizar {{item}}",
-       "deleted": "{{item}} eliminada correctamente",
-       "deleteError": "Erro ao eliminar {{item}}",
-       "phaseCreated": "Fase creada correctamente",
-diff --git a/client/src/locales/it.json b/client/src/locales/it.json
-index 6563d646dd12d98b3b1d3b6169b7019900d9dd93..ed77f9b0681ce65b5b2971f3fab3d4630061fa1c 100644
---- a/client/src/locales/it.json
-+++ b/client/src/locales/it.json
-@@ -22,50 +22,52 @@
-     "users": "Utenti",
-     "logout": "Disconnetti",
-     "reports": "Report",
-     "download": "Scarica"
-   },
-   "adminConfig": {
-     "title": "Configurazione",
-     "hospitals": "Ospedali",
-     "societies": "Società",
-     "residentProgram": "Programma Residenti",
-     "societiesProgram": "Programma Società",
-     "users": "Utenti",
-     "accessCodes": "Codici di accesso",
-     "surgeryTypes": "Tipi di Chirurgia",
-     "debug": "Debug"
-   },
-   "adminPhases": {
-     "_comment": "Gestione delle fasi per amministratori",
-     "phase": "Fase",
-     "activity": "Attività",
-     "activities": "Attività",
-     "name": "Nome",
-     "order": "Ordine",
-     "type": "Tipo",
-     "description": "Descrizione",
-+    "viewDescription": "Vedi descrizione",
-+    "descriptionDialogTitle": "Descrizione di {{activity}}",
-     "number": "Numero",
-     "evaluation": "Valutazione",
-     "observation": "Osservazione",
-     "practice": "Pratica",
-     "theory": "Teoria",
-     "surgery": "Chirurgia",
-     "errorForbidden": "Non hai i permessi per vedere questa sezione",
-     "errorLoadData": "Errore nel caricamento dei dati",
-     "tabs": {
-       "aria": "schede delle fasi",
-       "activities": "Attività"
-     },
-     "table": {
-       "aria": "attività della fase {{number}}",
-       "order": "Ordine",
-       "name": "Nome",
-       "attachmentRequired": "Allegato obbligatorio",
-       "type": "Tipo",
-       "actions": "Azioni",
-       "description": "Descrizione",
-       "empty": "Nessuna attività in questa fase"
-     },
-     "messages": {
-       "noActivities": "Nessuna attività in questa fase",
-       "noPhases": "Nessuna fase creata. Crea una nuova fase per iniziare.",
-diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
-index ca1ed9cd530f95b41eb449effb434e476b3960fc..4656364d760da1f17117fb46601cb74187176282 100644
---- a/client/src/locales/pt.json
-+++ b/client/src/locales/pt.json
-@@ -182,50 +182,52 @@
-   "residentMilestones": {
-     "phase1": {
-       "label": "Fase 1 - Preparação Inicial",
-       "description": "Familiarização com o sistema Da Vinci e aspectos teóricos iniciais."
-     },
-     "phase2": {
-       "label": "Fase 2 - Treinamento Pré-clínico",
-       "description": "Exercícios de simulação e treinamento em ambiente seguro."
-     },
-     "phase3": {
-       "label": "Fase 3 - Assistência Cirúrgica",
-       "description": "Participação como assistente em sala cirúrgica."
-     },
-     "phase4": {
-       "label": "Fase 4 - Cirurgia no Console",
-       "description": "Cirurgias realizadas pelo residente com supervisão."
-     }
-   },
-   "forms": {
-     "code": "Código",
-     "numericCode": "Código Numérico",
-     "postalCode": "Código Postal",
-     "address": "Endereço",
-     "phone": "Telefone",
-     "description": "Descrição",
-+    "viewDescription": "Ver descrição",
-+    "descriptionDialogTitle": "Descrição de {{activity}}",
-     "number": "Número",
-     "title": "Título",
-     "completionDate": "Data de realização",
-     "selectDate": "Selecione uma data de realização",
-     "optionalFileHint": "Anexe um arquivo opcional (máx. 5MB)",
-       "mandatoryFileHint": "Attachments are mandatory for this activity (up to {{max}} files, 5MB each)",
-     "fileTooLarge": "O arquivo excede o tamanho máximo de 5MB."
-   },
-   "residentProgress": {
-     "title": "Meu Progresso",
-     "errorLoad": "Erro ao carregar o progresso",
-     "downloadError": "Erro ao baixar certificado",
-     "downloadCertificate": "Certificado de Cumplimiento",
-     "downloadSurgeryReport": "Baixar relatório de {{phase}}",
-     "downloadSurgeryReportError": "Erro ao baixar relatório de cirurgias"
-   },
-   "residentPhases": {
-     "title": "Minhas Fases Formativas",
-     "errorLoad": "Erro ao carregar o progresso",
-     "activityFail": "Não foi possível completar a atividade.",
-     "activitySaveError": "Erro ao salvar a atividade.",
-     "activitySuccess": "✅ Atividade registrada com sucesso",
-     "noActivitySelectedError": "Erro interno: Nenhuma atividade selecionada.",
-     "noTitle": "Sem título",
-     "phaseTitle": "Fase {{number}}: {{name}}",
 diff --git a/client/src/pages/dashboard/AdminFases.tsx b/client/src/pages/dashboard/AdminFases.tsx
-index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b617adccd 100644
+index d10e8e7dd3d0e39ecedd9daa2ae49379e9d21abc..8415b166658f7505a9fdf44bfb0122ef8b645c84 100644
 --- a/client/src/pages/dashboard/AdminFases.tsx
 +++ b/client/src/pages/dashboard/AdminFases.tsx
-@@ -2,58 +2,60 @@ import React, { useState, useEffect, useCallback } from 'react';
+@@ -2,60 +2,58 @@ import React, { useState, useEffect, useCallback } from 'react';
  import {
    Box,
    Typography,
@@ -543,17 +30,17 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
    Tab,
 -  FormControlLabel,
 -  Switch,
+-  Tooltip,
 +  FormControlLabel,
 +  Switch,
-+  Tooltip,
  } from "@mui/material";
  import {
    Add as AddIcon,
    Edit as EditIcon,
    Delete as DeleteIcon,
 -  Check as CheckIcon,
+-  InfoOutlined as InfoOutlinedIcon,
 +  Check as CheckIcon,
-+  InfoOutlined as InfoOutlinedIcon,
  } from "@mui/icons-material";
  import api from "../../api";
  import { useTranslation, Trans } from "react-i18next";
@@ -579,7 +66,7 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
      >
        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
      </div>
-@@ -82,50 +84,55 @@ const AdminFases: React.FC = () => {
+@@ -84,55 +82,50 @@ const AdminFases: React.FC = () => {
    const [selectedActividad, setSelectedActividad] = useState<any>(null);
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    const [hospitales, setHospitales] = useState<any[]>([]);
@@ -605,11 +92,11 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
    const [progresoVinculado, setProgresoVinculado] = useState<number | null>(
      null,
    );
-+  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
-+    open: false,
-+    title: "",
-+    descripcion: "",
-+  });
+-  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
+-    open: false,
+-    title: "",
+-    descripcion: "",
+-  });
  
    const fetchData = useCallback(async () => {
      try {
@@ -635,7 +122,7 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
      } finally {
        setLoading(false);
      }
-@@ -169,50 +176,62 @@ const AdminFases: React.FC = () => {
+@@ -176,62 +169,50 @@ const AdminFases: React.FC = () => {
    };
  
    const handleConfirmarEliminarFase = async (fase: any) => {
@@ -661,18 +148,18 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
      setSelectedFase(null);
    };
  
-+  const handleOpenDescripcionActividadDialog = (actividad: any) => {
-+    setDescripcionActividadDialog({
-+      open: true,
-+      title: actividad.nombre,
-+      descripcion: actividad.descripcion || "",
-+    });
-+  };
-+
-+  const handleCloseDescripcionActividadDialog = () => {
-+    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
-+  };
-+
+-  const handleOpenDescripcionActividadDialog = (actividad: any) => {
+-    setDescripcionActividadDialog({
+-      open: true,
+-      title: actividad.nombre,
+-      descripcion: actividad.descripcion || "",
+-    });
+-  };
+-
+-  const handleCloseDescripcionActividadDialog = () => {
+-    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
+-  };
+-
    const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
      const { name, value } = e.target;
      setFaseFormData({
@@ -698,7 +185,7 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
    const handleCrearFase = async () => {
      try {
        setProcesando(true);
-@@ -685,58 +704,72 @@ const AdminFases: React.FC = () => {
+@@ -704,72 +685,58 @@ const AdminFases: React.FC = () => {
                                label={
                                  actividad.tipo === "teórica"
                                    ? t("adminPhases.theory")
@@ -725,34 +212,34 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
                              />
                            </TableCell>
 -                          <TableCell sx={{ width: '25%' }}>
--                            <RichTextViewer
--                              content={actividad.descripcion}
--                              minHeight={0}
--                              variant="inline"
--                              sx={{ fontSize: '0.9rem' }}
--                            />
+-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+-                              <RichTextViewer
+-                                content={actividad.descripcion}
+-                                minHeight={0}
+-                                variant="inline"
+-                                sx={{ fontSize: '0.9rem', flex: 1 }}
+-                              />
+-                              {actividad.descripcion && (
+-                                <Tooltip title={t('adminPhases.viewDescription')}>
+-                                  <IconButton
+-                                    aria-label={t('adminPhases.viewDescription')}
+-                                    color="primary"
+-                                    size="small"
+-                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
+-                                  >
+-                                    <InfoOutlinedIcon fontSize="small" />
+-                                  </IconButton>
+-                                </Tooltip>
+-                              )}
+-                            </Box>
 -                          </TableCell>
 +                          <TableCell sx={{ width: '25%' }}>
-+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-+                              <RichTextViewer
-+                                content={actividad.descripcion}
-+                                minHeight={0}
-+                                variant="inline"
-+                                sx={{ fontSize: '0.9rem', flex: 1 }}
-+                              />
-+                              {actividad.descripcion && (
-+                                <Tooltip title={t('adminPhases.viewDescription')}>
-+                                  <IconButton
-+                                    aria-label={t('adminPhases.viewDescription')}
-+                                    color="primary"
-+                                    size="small"
-+                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
-+                                  >
-+                                    <InfoOutlinedIcon fontSize="small" />
-+                                  </IconButton>
-+                                </Tooltip>
-+                              )}
-+                            </Box>
++                            <RichTextViewer
++                              content={actividad.descripcion}
++                              minHeight={0}
++                              variant="inline"
++                              sx={{ fontSize: '0.9rem' }}
++                            />
 +                          </TableCell>
                            <TableCell align="right">
                              <IconButton
@@ -779,7 +266,7 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
                      {actividades.filter(
                        (actividad) => actividad.fase._id === fase._id,
                      ).length === 0 && (
-@@ -1167,44 +1200,69 @@ const AdminFases: React.FC = () => {
+@@ -1200,69 +1167,44 @@ const AdminFases: React.FC = () => {
                />
              ) : (
                <Trans
@@ -805,31 +292,31 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
          </DialogActions>
        </Dialog>
  
-+      <Dialog
-+        open={descripcionActividadDialog.open}
-+        onClose={handleCloseDescripcionActividadDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-+        <DialogTitle>
-+          {t('adminPhases.descriptionDialogTitle', {
-+            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
-+          })}
-+        </DialogTitle>
-+        <DialogContent>
-+          <RichTextViewer
-+            content={descripcionActividadDialog.descripcion}
-+            variant="inline"
-+            minHeight={0}
-+          />
-+        </DialogContent>
-+        <DialogActions>
-+          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
-+            {t('common.close')}
-+          </Button>
-+        </DialogActions>
-+      </Dialog>
-+
+-      <Dialog
+-        open={descripcionActividadDialog.open}
+-        onClose={handleCloseDescripcionActividadDialog}
+-        fullWidth
+-        maxWidth="md"
+-      >
+-        <DialogTitle>
+-          {t('adminPhases.descriptionDialogTitle', {
+-            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
+-          })}
+-        </DialogTitle>
+-        <DialogContent>
+-          <RichTextViewer
+-            content={descripcionActividadDialog.descripcion}
+-            variant="inline"
+-            minHeight={0}
+-          />
+-        </DialogContent>
+-        <DialogActions>
+-          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
+-            {t('common.close')}
+-          </Button>
+-        </DialogActions>
+-      </Dialog>
+-
        {/* Snackbar para notificaciones */}
        <Snackbar
          open={snackbar.open}
@@ -850,10 +337,10 @@ index b10a317ef2eff7f75ce8e6313443d1d1ea04b1ae..59e18846dd0fc73688e99ae88415460b
  
  export default AdminFases;
 diff --git a/client/src/pages/dashboard/AdminFasesSoc.tsx b/client/src/pages/dashboard/AdminFasesSoc.tsx
-index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345a980fe30 100644
+index d98f6f1c11a09aa3347464b6815c78346754f090..3db7fb2ae037dd45f2af712f1e52140691402c3f 100644
 --- a/client/src/pages/dashboard/AdminFasesSoc.tsx
 +++ b/client/src/pages/dashboard/AdminFasesSoc.tsx
-@@ -1,59 +1,61 @@
+@@ -1,61 +1,59 @@
  import React, { useState, useEffect, useCallback } from 'react';
  import {
    Box,
@@ -881,19 +368,19 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
    Tabs,
 -  Tab,
 -  FormControlLabel,
--  Switch
+-  Switch,
+-  Tooltip
 +  Tab,
 +  FormControlLabel,
-+  Switch,
-+  Tooltip
++  Switch
  } from '@mui/material';
  import {
    Add as AddIcon,
    Edit as EditIcon,
    Delete as DeleteIcon,
 -  Check as CheckIcon,
+-  InfoOutlined as InfoOutlinedIcon
 +  Check as CheckIcon,
-+  InfoOutlined as InfoOutlinedIcon
  } from '@mui/icons-material';
  import api from '../../api';
  import { useTranslation, Trans } from 'react-i18next';
@@ -919,7 +406,7 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
        {...other}
      >
        {value === index && (
-@@ -82,50 +84,55 @@ const AdminFases: React.FC = () => {
+@@ -84,55 +82,50 @@ const AdminFases: React.FC = () => {
    const [openEliminarActividadDialog, setOpenEliminarActividadDialog] = useState(false);
    const [selectedFase, setSelectedFase] = useState<any>(null);
    const [selectedActividad, setSelectedActividad] = useState<any>(null);
@@ -945,11 +432,11 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
      severity: 'success' as 'success' | 'error'
    });
    const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
-+  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
-+    open: false,
-+    title: '',
-+    descripcion: '',
-+  });
+-  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
+-    open: false,
+-    title: '',
+-    descripcion: '',
+-  });
  
    const fetchData = useCallback(async () => {
      try {
@@ -975,7 +462,7 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
      } finally {
        setLoading(false);
      }
-@@ -169,50 +176,62 @@ const AdminFases: React.FC = () => {
+@@ -176,62 +169,50 @@ const AdminFases: React.FC = () => {
    };
  
    const handleConfirmarEliminarFase = async (fase: any) => {
@@ -1001,18 +488,18 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
      setSelectedFase(null);
    };
  
-+  const handleOpenDescripcionActividadDialog = (actividad: any) => {
-+    setDescripcionActividadDialog({
-+      open: true,
-+      title: actividad.nombre,
-+      descripcion: actividad.descripcion || '',
-+    });
-+  };
-+
-+  const handleCloseDescripcionActividadDialog = () => {
-+    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
-+  };
-+
+-  const handleOpenDescripcionActividadDialog = (actividad: any) => {
+-    setDescripcionActividadDialog({
+-      open: true,
+-      title: actividad.nombre,
+-      descripcion: actividad.descripcion || '',
+-    });
+-  };
+-
+-  const handleCloseDescripcionActividadDialog = () => {
+-    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
+-  };
+-
    const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
      const { name, value } = e.target;
      setFaseFormData({
@@ -1038,7 +525,7 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
    const handleCrearFase = async () => {
      try {
        setProcesando(true);
-@@ -630,58 +649,72 @@ const AdminFases: React.FC = () => {
+@@ -649,72 +630,58 @@ const AdminFases: React.FC = () => {
                            label={
                                actividad.tipo === 'teórica'
                                  ? t('adminPhases.theory')
@@ -1065,34 +552,34 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
                            />
                          </TableCell>
 -                          <TableCell sx={{ width: '25%' }}>
--                            <RichTextViewer
--                              content={actividad.descripcion}
--                              minHeight={0}
--                              variant="inline"
--                              sx={{ fontSize: '0.9rem' }}
--                            />
+-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+-                              <RichTextViewer
+-                                content={actividad.descripcion}
+-                                minHeight={0}
+-                                variant="inline"
+-                                sx={{ fontSize: '0.9rem', flex: 1 }}
+-                              />
+-                              {actividad.descripcion && (
+-                                <Tooltip title={t('adminPhases.viewDescription')}>
+-                                  <IconButton
+-                                    aria-label={t('adminPhases.viewDescription')}
+-                                    color="primary"
+-                                    size="small"
+-                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
+-                                  >
+-                                    <InfoOutlinedIcon fontSize="small" />
+-                                  </IconButton>
+-                                </Tooltip>
+-                              )}
+-                            </Box>
 -                          </TableCell>
 +                          <TableCell sx={{ width: '25%' }}>
-+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-+                              <RichTextViewer
-+                                content={actividad.descripcion}
-+                                minHeight={0}
-+                                variant="inline"
-+                                sx={{ fontSize: '0.9rem', flex: 1 }}
-+                              />
-+                              {actividad.descripcion && (
-+                                <Tooltip title={t('adminPhases.viewDescription')}>
-+                                  <IconButton
-+                                    aria-label={t('adminPhases.viewDescription')}
-+                                    color="primary"
-+                                    size="small"
-+                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
-+                                  >
-+                                    <InfoOutlinedIcon fontSize="small" />
-+                                  </IconButton>
-+                                </Tooltip>
-+                              )}
-+                            </Box>
++                            <RichTextViewer
++                              content={actividad.descripcion}
++                              minHeight={0}
++                              variant="inline"
++                              sx={{ fontSize: '0.9rem' }}
++                            />
 +                          </TableCell>
                          <TableCell align="right">
                            <IconButton 
@@ -1119,8 +606,7 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
                        </TableCell>
                      </TableRow>
                    )}
-@@ -1078,41 +1111,66 @@ const AdminFases: React.FC = () => {
-                 components={{ strong: <strong /> }}
+@@ -1112,65 +1079,40 @@ const AdminFases: React.FC = () => {
                />
              ) : (
                <Trans
@@ -1145,33 +631,32 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
            </Button>
          </DialogActions>
        </Dialog>
--      
-+
-+      <Dialog
-+        open={descripcionActividadDialog.open}
-+        onClose={handleCloseDescripcionActividadDialog}
-+        fullWidth
-+        maxWidth="md"
-+      >
-+        <DialogTitle>
-+          {t('adminPhases.descriptionDialogTitle', {
-+            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
-+          })}
-+        </DialogTitle>
-+        <DialogContent>
-+          <RichTextViewer
-+            content={descripcionActividadDialog.descripcion}
-+            variant="inline"
-+            minHeight={0}
-+          />
-+        </DialogContent>
-+        <DialogActions>
-+          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
-+            {t('common.close')}
-+          </Button>
-+        </DialogActions>
-+      </Dialog>
-+
+ 
+-      <Dialog
+-        open={descripcionActividadDialog.open}
+-        onClose={handleCloseDescripcionActividadDialog}
+-        fullWidth
+-        maxWidth="md"
+-      >
+-        <DialogTitle>
+-          {t('adminPhases.descriptionDialogTitle', {
+-            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
+-          })}
+-        </DialogTitle>
+-        <DialogContent>
+-          <RichTextViewer
+-            content={descripcionActividadDialog.descripcion}
+-            variant="inline"
+-            minHeight={0}
+-          />
+-        </DialogContent>
+-        <DialogActions>
+-          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
+-            {t('common.close')}
+-          </Button>
+-        </DialogActions>
+-      </Dialog>
+-
        {/* Snackbar para notificaciones */}
        <Snackbar
          open={snackbar.open}
@@ -1187,3 +672,923 @@ index 292bbe091eb1daf07a7eef2b4d7e389eda36189c..931db539d54ab953085eb93a4009e345
  };
  
  export default AdminFases;
+diff --git a/client/src/pages/dashboard/ResidenteFases.tsx b/client/src/pages/dashboard/ResidenteFases.tsx
+index a73e21cda4be2c1ffae16432c9a8043ecfa9019b..80f6d71da0460dca6ef7b0aab7e195203abfb03b 100644
+--- a/client/src/pages/dashboard/ResidenteFases.tsx
++++ b/client/src/pages/dashboard/ResidenteFases.tsx
+@@ -134,66 +134,71 @@ const ResidenteFases: React.FC = () => {
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [selectedProgresoId, setSelectedProgresoId] = useState<string | null>(null);
+   const [selectedActividadIndex, setSelectedActividadIndex] = useState<number | null>(null);
+   const [comentario, setComentario] = useState('');
+   const [fecha, setFecha] = useState('');
+   const [archivos, setArchivos] = useState<File[]>([]);
+   const [archivoError, setArchivoError] = useState(false);
+   const [archivoErrorMsg, setArchivoErrorMsg] = useState('');
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
+   const [snackbarMsg, setSnackbarMsg] = useState('');
+   const [snackbarError, setSnackbarError] = useState(false);
+   const [sociedadInfo, setSociedadInfo] = useState<Sociedad | null>(null);
+   const [downloadLoading, setDownloadLoading] = useState(false);
+   const [surgeryTypes, setSurgeryTypes] = useState<any[]>([]);
+   const [cirugia, setCirugia] = useState<any | null>(null);
+   const [otraCirugia, setOtraCirugia] = useState('');
+   const [surgeryInputValue, setSurgeryInputValue] = useState('');
+   const [nombreCirujano, setNombreCirujano] = useState('');
+   const [porcentaje, setPorcentaje] = useState<number>(0);
+   const [esCirugia, setEsCirugia] = useState(false);
+   const [mostrarErroresCirugia, setMostrarErroresCirugia] = useState(false);
+   const [otraCirugiaSeleccionada, setOtraCirugiaSeleccionada] = useState(false);
+   const [completionToggles, setCompletionToggles] = useState<Record<string, boolean>>({});
+-  const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
+-  const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
+-  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
+-  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
++  const [activeToggleKey, setActiveToggleKey] = useState<string | null>(null);
++  const [dialogMode, setDialogMode] = useState<'complete' | 'edit'>('complete');
++  const [adjuntosExistentes, setAdjuntosExistentes] = useState<any[]>([]);
++  const [adjuntosEliminados, setAdjuntosEliminados] = useState<string[]>([]);
+   const actividadSeleccionada = useMemo(() => {
+     if (!selectedProgresoId || selectedActividadIndex === null) return null;
+     const progresoActual = progresos.find(p => p._id === selectedProgresoId);
+     return progresoActual?.actividades?.[selectedActividadIndex] || null;
+   }, [progresos, selectedActividadIndex, selectedProgresoId]);
+   const actividadRequiereAdjunto = Boolean(actividadSeleccionada?.requiereAdjunto);
+   const [attachmentDownloading, setAttachmentDownloading] = useState<string | null>(null);
+-  const [instructionsDialog, setInstructionsDialog] = useState<{
+-    open: boolean;
+-    title: string;
+-    description?: string;
+-  }>({ open: false, title: '', description: undefined });
++  const [instructionsDialog, setInstructionsDialog] = useState<{
++    open: boolean;
++    title: string;
++    description?: string;
++  }>({ open: false, title: '', description: undefined });
++  const [activityDescriptionDialog, setActivityDescriptionDialog] = useState<{
++    open: boolean;
++    title: string;
++    description?: string;
++  }>({ open: false, title: '', description: undefined });
+ 
+   const dateFieldMap: Record<number, keyof Sociedad> = {
+     1: 'fechaModulosOnline',
+     2: 'fechaSimulacion',
+     3: 'fechaAtividadesFirstAssistant',
+     4: 'fechaModuloOnlineStepByStep',
+     5: 'fechaHandOn'
+   };
+ 
+ 
+   const getSociedadDateObj = (fase: number): Date | null => {
+     if (!sociedadInfo) return null;
+     const field = dateFieldMap[fase];
+     const value = field ? (sociedadInfo as any)[field] : null;
+     return value ? new Date(value) : null;
+   };
+ 
+   const getSociedadDate = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatMonthYear(date.toISOString()) : '';
+   };
+ 
+   const getSociedadDateShort = (fase: number): string => {
+     const date = getSociedadDateObj(fase);
+     return date ? formatDayMonthYear(date.toISOString()) : '';
+@@ -602,62 +607,78 @@ const ResidenteFases: React.FC = () => {
+     } catch (err: any) {
+       setSnackbarMsg(t('residentProgress.downloadSurgeryReportError'));
+       setSnackbarError(true);
+       setSnackbarOpen(true);
+     } finally {
+       setDownloadLoading(false);
+     }
+   };
+ 
+   const handleCloseSnackbar = () => {
+     setSnackbarOpen(false);
+   };
+ 
+   const handleOpenInstructionsDialog = (fase: any, descriptionHtml: string) => {
+     const phaseLabel = t('residentPhases.phaseTitle', {
+       number: fase?.numero || '—',
+       name: fase?.nombre || t('residentPhases.noTitle'),
+     });
+     setInstructionsDialog({
+       open: true,
+       title: t('residentPhases.instructionsTitle', { phase: phaseLabel }),
+       description: descriptionHtml,
+     });
+   };
+ 
+-  const handleInstructionsButtonClick = (
+-    event: React.MouseEvent<HTMLButtonElement>,
+-    fase: any,
+-    descriptionHtml: string,
+-  ) => {
+-    event.stopPropagation();
+-    handleOpenInstructionsDialog(fase, descriptionHtml);
+-  };
+-
+-  const handleCloseInstructionsDialog = () => {
+-    setInstructionsDialog((prev) => ({ ...prev, open: false }));
+-  };
++  const handleInstructionsButtonClick = (
++    event: React.MouseEvent<HTMLButtonElement>,
++    fase: any,
++    descriptionHtml: string,
++  ) => {
++    event.stopPropagation();
++    handleOpenInstructionsDialog(fase, descriptionHtml);
++  };
++
++  const handleCloseInstructionsDialog = () => {
++    setInstructionsDialog((prev) => ({ ...prev, open: false }));
++  };
++
++  const handleOpenActivityDescriptionDialog = (actividad: any) => {
++    const descriptionHtml = richTextOrUndefined(actividad?.descripcion);
++
++    if (!descriptionHtml) return;
++
++    setActivityDescriptionDialog({
++      open: true,
++      title: actividad?.nombre || t('residentPhases.unnamedActivity'),
++      description: descriptionHtml,
++    });
++  };
++
++  const handleCloseActivityDescriptionDialog = () => {
++    setActivityDescriptionDialog((prev) => ({ ...prev, open: false }));
++  };
+ 
+   if (loading) {
+     return (
+       <Box>
+         <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
+         {[...Array(3)].map((_, i) => (
+           <Skeleton key={i} variant="rectangular" height={120} sx={{ mb: 2 }} />
+         ))}
+       </Box>
+     );
+   }
+ 
+   if (error) return <Alert severity="error">{error}</Alert>;
+ 
+   const residentPhases = progresos.filter((p) => p.faseModel === 'Fase');
+   const allValidado =
+     residentPhases.length > 0 &&
+     residentPhases.every((p) => p.estadoGeneral === 'validado');
+ 
+   return (
+     <Box>
+       <Typography variant="h4" gutterBottom>{t('residentPhases.title')}</Typography>
+       
+       {Array.isArray(progresos) && progresos.length > 0 ? (
+   progresos.map((item, index) => {
+@@ -773,62 +794,63 @@ const ResidenteFases: React.FC = () => {
+                       case 'pendiente':
+                         return {
+                           label: t('status.pendiente'),
+                           color: 'info' as const,
+                           icon: <HourglassEmptyIcon fontSize="small" />
+                         };
+                       default:
+                         return {
+                           label: t('status.noCompletada'),
+                           color: 'default' as const,
+                           icon: undefined
+                         };
+                     }
+                   })();
+ 
+                   const showCompleteButton =
+                     (!act.estado || act.estado === 'pendiente' || act.estado === 'rechazado') &&
+                     item.estadoGeneral !== 'bloqueada';
+ 
+                   const canEditPending =
+                     act.estado === 'completado' && item.estadoGeneral !== 'bloqueada';
+ 
+                   const toggleKey = `${item._id}-${idx}`;
+ 
+                   const completionDate = act.fecha || act.fechaRealizacion;
+-                  const validationDate = act.fechaValidacion || act.validadoEl;
+-
+-                  const statusDate =
+-                    act.estado === 'validado'
+-                      ? validationDate
+-                      : act.estado === 'completado'
+-                      ? completionDate
+-                      : null;
+-
+-                  const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
+-
+-                  const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
++                  const validationDate = act.fechaValidacion || act.validadoEl;
++
++                  const statusDate =
++                    act.estado === 'validado'
++                      ? validationDate
++                      : act.estado === 'completado'
++                      ? completionDate
++                      : null;
++
++                  const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
++                  const activityDescriptionHtml = richTextOrUndefined(act.descripcion);
++
++                  const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
+ 
+                   if (act.tipo === 'cirugia') {
+                     if (act.cirugia?.name || act.otraCirugia) {
+                       surgeryDetails.push({
+                         label: getLabelFromTranslation('residentPhases.surgeryType', { type: placeholderToken }),
+                         value: act.cirugia?.name || act.otraCirugia
+                       });
+                     }
+ 
+                     if (act.nombreCirujano) {
+                       surgeryDetails.push({
+                         label: getLabelFromTranslation('residentPhases.surgeonName', { name: placeholderToken }),
+                         value: act.nombreCirujano
+                       });
+                     }
+ 
+                     if (typeof act.porcentajeParticipacion === 'number') {
+                       surgeryDetails.push({
+                         label: getLabelFromTranslation('residentPhases.participation', { percent: placeholderToken }),
+                         value: `${act.porcentajeParticipacion}%`
+                       });
+                     }
+                   }
+ 
+                   const renderCommentSection = (
+@@ -897,83 +919,94 @@ const ResidenteFases: React.FC = () => {
+                         alignItems={{ xs: 'flex-start', sm: 'center' }}
+                         spacing={1.5}
+                       >
+                         <Stack
+                           direction="row"
+                           spacing={1}
+                           alignItems="center"
+                           flexWrap="wrap"
+                           useFlexGap
+                         >
+                           {formatActivityType(act.tipo) && (
+                             <Chip
+                               size="small"
+                               label={formatActivityType(act.tipo)}
+                               variant="outlined"
+                               sx={{
+                                 fontWeight: 600,
+                                 backgroundColor:
+                                   theme.palette.mode === 'light'
+                                     ? theme.palette.grey[100]
+                                     : theme.palette.grey[800],
+                                 color: theme.palette.text.primary
+                               }}
+                             />
+                           )}
+-                          {act.requiereAdjunto && (
+-                            <Chip
+-                              size="small"
+-                              icon={<AttachFileIcon fontSize="small" />}
+-                              label={t('residentPhases.requiresAttachment')}
++                          {act.requiereAdjunto && (
++                            <Chip
++                              size="small"
++                              icon={<AttachFileIcon fontSize="small" />}
++                              label={t('residentPhases.requiresAttachment')}
+                               sx={{
+                                 fontWeight: 600,
+                                 backgroundColor:
+                                   theme.palette.mode === 'light'
+                                     ? alpha(theme.palette.secondary.light, 0.25)
+                                     : alpha(theme.palette.secondary.main, 0.35),
+                                 color:
+                                   theme.palette.mode === 'light'
+                                     ? theme.palette.secondary.dark
+                                     : theme.palette.secondary.light,
+                                 '& .MuiChip-icon': {
+                                   color:
+                                     theme.palette.mode === 'light'
+                                       ? theme.palette.secondary.dark
+                                       : theme.palette.secondary.light,
+                                 },
+                                 border: `1px solid ${
+                                   theme.palette.mode === 'light'
+                                     ? alpha(theme.palette.secondary.main, 0.4)
+                                     : alpha(theme.palette.secondary.light, 0.6)
+-                                }`,
+-                              }}
+-                            />
+-                          )}
+-                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+-                            {act.nombre || t('residentPhases.unnamedActivity')}
+-                          </Typography>
+-                        </Stack>
++                                }`,
++                              }}
++                            />
++                          )}
++                          <Typography variant="subtitle1" fontWeight={600} color="text.primary">
++                            {act.nombre || t('residentPhases.unnamedActivity')}
++                          </Typography>
++                          {activityDescriptionHtml && (
++                            <Tooltip title={t('adminPhases.viewDescription')}>
++                              <IconButton
++                                size="small"
++                                color="primary"
++                                onClick={() => handleOpenActivityDescriptionDialog(act)}
++                              >
++                                <InfoOutlinedIcon fontSize="small" />
++                              </IconButton>
++                            </Tooltip>
++                          )}
++                        </Stack>
+                         <Box
+                           display="flex"
+                           flexDirection="column"
+                           alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                           gap={0.5}
+                         >
+                           <Chip
+                             size="small"
+                             label={statusData.label}
+                             color={statusData.color}
+                             icon={statusData.icon}
+                             sx={{
+                               fontWeight: 600,
+                               alignSelf: { xs: 'flex-start', sm: 'flex-end' }
+                             }}
+                           />
+                           {formattedStatusDate && (
+                             <Typography variant="caption" color="text.secondary">
+                               {formattedStatusDate}
+                             </Typography>
+                           )}
+                         </Box>
+                       </Stack>
+ 
+                       <Box sx={{ mt: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+@@ -1156,75 +1189,96 @@ const ResidenteFases: React.FC = () => {
+ )}
+       {allValidado && (
+         <Box textAlign="center" mt={2}>
+           <Button
+             variant="contained"
+             color="secondary"
+             onClick={handleDescargarCertificado}
+             disabled={downloadLoading}
+             startIcon={<WorkspacePremiumIcon />}
+           >
+             {t('residentProgress.downloadCertificate')}
+           </Button>
+         </Box>
+       )}
+ 
+       <Backdrop
+         open={downloadLoading}
+         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+       >
+         <CircularProgress color="inherit" />
+       </Backdrop>
+ 
+ 
+ 
+ 
+-      <Dialog
+-        open={instructionsDialog.open}
+-        onClose={handleCloseInstructionsDialog}
+-        fullWidth
+-        maxWidth="md"
++      <Dialog
++        open={instructionsDialog.open}
++        onClose={handleCloseInstructionsDialog}
++        fullWidth
++        maxWidth="md"
+       >
+         <DialogTitle>
+           {instructionsDialog.title ||
+             t('residentPhases.instructionsTitle', {
+               phase: t('residentPhases.noTitle'),
+             })}
+         </DialogTitle>
+         <DialogContent>
+           <RichTextViewer
+             content={instructionsDialog.description}
+             variant="inline"
+             minHeight={0}
+           />
+         </DialogContent>
+-        <DialogActions>
+-          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
+-        </DialogActions>
+-      </Dialog>
+-
+-      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
++        <DialogActions>
++          <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
++        </DialogActions>
++      </Dialog>
++
++      <Dialog
++        open={activityDescriptionDialog.open}
++        onClose={handleCloseActivityDescriptionDialog}
++        fullWidth
++        maxWidth="md"
++      >
++        <DialogTitle>
++          {activityDescriptionDialog.title || t('residentPhases.unnamedActivity')}
++        </DialogTitle>
++        <DialogContent>
++          <RichTextViewer
++            content={activityDescriptionDialog.description}
++            variant="inline"
++            minHeight={0}
++          />
++        </DialogContent>
++        <DialogActions>
++          <Button onClick={handleCloseActivityDescriptionDialog}>{t('close')}</Button>
++        </DialogActions>
++      </Dialog>
++
++      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+         <DialogTitle>
+           {dialogMode === 'edit'
+             ? t('residentPhases.dialog.editTitle')
+             : t('residentPhases.dialog.title')}
+         </DialogTitle>
+         <DialogContent>
+           <TextField
+             label={t('residentPhases.dialog.date')}
+             type="date"
+             value={fecha}
+             onChange={(e) => setFecha(e.target.value)}
+             fullWidth
+             margin="normal"
+             InputLabelProps={{ shrink: true }}
+           />
+           <TextField
+             label={t('residentPhases.dialog.comment')}
+             value={comentario}
+             onChange={(e) => setComentario(e.target.value)}
+             fullWidth
+             multiline
+             rows={3}
+             margin="normal"
+           />
+           {esCirugia && (
+diff --git a/client/src/pages/dashboard/TutorValidaciones.tsx b/client/src/pages/dashboard/TutorValidaciones.tsx
+index c6c0004f2892aae89a3910f61a479c86aa66e9f5..8e3ccb97980a7597ea3fd5f7af3fecf13d20c854 100644
+--- a/client/src/pages/dashboard/TutorValidaciones.tsx
++++ b/client/src/pages/dashboard/TutorValidaciones.tsx
+@@ -1,62 +1,67 @@
+ import React, { useState, useEffect, useCallback } from 'react';
+ import { useTranslation } from 'react-i18next';
+ import {
+   Box,
+   Typography,
+   Paper,
+   Button,
+   Chip,
+   LinearProgress,
+   Alert,
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogContentText,
+   DialogActions,
++  IconButton,
+   TextField,
+   Tab,
+   Tabs,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+-  TableRow
++  TableRow,
++  Tooltip
+ } from '@mui/material';
+ import { Theme } from '@mui/material/styles';
+ import {
+   CheckCircle as CheckCircleIcon,
+   //Pending as PendingIcon,
+-  Error as ErrorIcon,
+-  //School as SchoolIcon,
+-  OpenInNew as OpenInNewIcon,
+-  Download as DownloadIcon
++  Error as ErrorIcon,
++  //School as SchoolIcon,
++  OpenInNew as OpenInNewIcon,
++  Download as DownloadIcon,
++  InfoOutlined as InfoOutlinedIcon
+ } from '@mui/icons-material';
+ import { useAuth } from '../../context/AuthContext';
+ import api from '../../api';
+ import { formatDayMonthYear } from '../../utils/date';
++import RichTextViewer from '../../components/RichTextViewer';
++import { richTextOrUndefined } from '../../utils/richText';
+ 
+ interface TabPanelProps {
+   children?: React.ReactNode;
+   index: number;
+   value: number;
+ }
+ 
+ function TabPanel(props: TabPanelProps) {
+   const { children, value, index, ...other } = props;
+ 
+   return (
+     <div
+       role="tabpanel"
+       hidden={value !== index}
+       id={`validaciones-tabpanel-${index}`}
+       aria-labelledby={`validaciones-tab-${index}`}
+       {...other}
+     >
+       {value === index && (
+         <Box sx={{ p: 2 }}>
+           {children}
+         </Box>
+       )}
+     </div>
+   );
+@@ -68,109 +73,157 @@ const getTableHeadStyles = (theme: Theme) => {
+ 
+   return {
+     backgroundColor,
+     '& .MuiTableCell-root': {
+       color: theme.palette.getContrastText(backgroundColor),
+       fontWeight: 600
+     }
+   };
+ };
+ 
+ const TutorValidaciones: React.FC = () => {
+   const { t } = useTranslation();
+   const { user } = useAuth();
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [pendientes, setPendientes] = useState<any[]>([]);
+   const [validadas, setValidadas] = useState<any[]>([]);
+   const [rechazadas, setRechazadas] = useState<any[]>([]);
+   const [tabValue, setTabValue] = useState(0);
+   const [openValidarDialog, setOpenValidarDialog] = useState(false);
+   const [openRechazarDialog, setOpenRechazarDialog] = useState(false);
+   const [selectedProgreso, setSelectedProgreso] = useState<any>(null);
+   const [comentarios, setComentarios] = useState('');
+   const [procesando, setProcesando] = useState(false);
+   const [firmaDigital, setFirmaDigital] = useState('');
+-  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
+-  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
++  const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
++  const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
++  const [descripcionDialog, setDescripcionDialog] = useState({
++    open: false,
++    title: '',
++    description: undefined as string | undefined
++  });
+   const attachmentButtonStyles = { minWidth: 160, height: 36 };
+   const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
+ 
+   const formatFase = (fase: any) =>
+     fase
+       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
+       : t('tutorValidations.table.noPhase');
+ 
+-  const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
+-    if (cirugia?.name) return cirugia.name;
+-    return otraCirugia || '-';
+-  };
++  const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
++    if (cirugia?.name) return cirugia.name;
++    return otraCirugia || '-';
++  };
++
++  const renderActivityCell = (progreso: any) => {
++    const descriptionHtml = richTextOrUndefined(progreso.actividad?.descripcion);
++
++    return (
++      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
++        <span>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</span>
++        {descriptionHtml && (
++          <Tooltip title={t('adminPhases.viewDescription')}>
++            <IconButton
++              size="small"
++              color="primary"
++              onClick={() => handleOpenDescripcionDialog(progreso, descriptionHtml)}
++            >
++              <InfoOutlinedIcon fontSize="small" />
++            </IconButton>
++          </Tooltip>
++        )}
++      </Box>
++    );
++  };
+ 
+   const fetchValidaciones = useCallback(async () => {
+     try {
+       setLoading(true);
+ 
+       const respuesta = await api.get(
+         '/progreso/tutor/validaciones/pendientes'
+       );
+ 
+       const { pendientes, validadas, rechazadas } = respuesta.data.data || {};
+       setPendientes(pendientes || []);
+       setValidadas(validadas || []);
+       setRechazadas(rechazadas || []);
+     } catch (err: any) {
+       setError(err.response?.data?.error || t('tutorValidations.errorLoad'));
+     } finally {
+       setLoading(false);
+     }
+   }, [t]);
+ 
+ useEffect(() => {
+   if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+     fetchValidaciones();
+   }
+ }, [user, fetchValidaciones]);
+   
+   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+     setTabValue(newValue);
+   };
+ 
+   const handleOpenValidarDialog = (progreso: any) => {
+     setSelectedProgreso(progreso);
+     setComentarios('');
+     setFirmaDigital(`${user?.nombre} ${user?.apellidos} - ${formatDayMonthYear(new Date().toISOString())}`);
+     setOpenValidarDialog(true);
+   };
+ 
+-  const handleOpenAdjuntosDialog = (progreso: any) => {
+-    setAdjuntosSeleccionados({
+-      progresoId: progreso.progresoId || progreso._id.split('-')[0],
+-      index: progreso.index,
+-      adjuntos: progreso.adjuntos || []
+-    });
+-    setOpenAdjuntosDialog(true);
+-  };
++  const handleOpenAdjuntosDialog = (progreso: any) => {
++    setAdjuntosSeleccionados({
++      progresoId: progreso.progresoId || progreso._id.split('-')[0],
++      index: progreso.index,
++      adjuntos: progreso.adjuntos || []
++    });
++    setOpenAdjuntosDialog(true);
++  };
++
++  const handleOpenDescripcionDialog = (
++    progreso: any,
++    descriptionHtml?: string
++  ) => {
++    const content = descriptionHtml ?? richTextOrUndefined(progreso.actividad?.descripcion);
++
++    if (!content) return;
++
++    setDescripcionDialog({
++      open: true,
++      title:
++        progreso.actividad?.nombre ||
++        progreso.nombre ||
++        t('tutorValidations.table.noName'),
++      description: content
++    });
++  };
++
++  const handleCloseDescripcionDialog = () => {
++    setDescripcionDialog((prev) => ({ ...prev, open: false }));
++  };
+ 
+   const handleCloseAdjuntosDialog = () => {
+     setOpenAdjuntosDialog(false);
+     setAdjuntosSeleccionados(null);
+   };
+ 
+   const handleVerAdjunto = async (progresoId: string, index: number, adjuntoId: string) => {
+     try {
+       const res = await api.get(
+         `/adjuntos/actividad/${progresoId}/${index}`,
+         {
+           params: { adjuntoId },
+           responseType: 'blob'
+         }
+       );
+       const blobUrl = URL.createObjectURL(res.data);
+       window.open(blobUrl, '_blank');
+       setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+     } catch (e) {
+       console.error('Error obteniendo adjunto', e);
+     }
+   };
+ 
+   const handleDescargarAdjunto = async (adjunto: { _id: string; nombreArchivo: string }, progresoId: string, index: number) => {
+     try {
+@@ -308,51 +361,51 @@ const handleRechazar = async () => {
+           {pendientes.length === 0 ? (
+             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+               {t('tutorValidations.empty.pending')}
+             </Typography>
+           ) : (
+             <TableContainer component={Paper}>
+               <Table size="small">
+                 <TableHead sx={(theme) => getTableHeadStyles(theme)}>
+                   <TableRow>
+                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
+                     <TableCell align="right">{t('tutorValidations.table.actions')}</TableCell>
+                   </TableRow>
+                 </TableHead>
+                 <TableBody>
+                   {pendientes.map((progreso) => (
+                     <TableRow key={progreso._id}>
+                       <TableCell>{formatFase(progreso.fase)}</TableCell>
+-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
++                      <TableCell>{renderActivityCell(progreso)}</TableCell>
+                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
+                       </TableCell>
+                       <TableCell>{formatDayMonthYear(progreso.fechaCreacion)}</TableCell>
+                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.actividad?.tipo === 'cirugia'
+                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                           : '-'}
+                       </TableCell>
+                       <TableCell>{progreso.actividad?.comentariosResidente || '-'}</TableCell>
+                       <TableCell align="right">
+                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                           {progreso.adjuntos?.length > 0 && (
+                             <Button
+                               variant="contained"
+                               color="primary"
+                               size="small"
+                               onClick={() => handleOpenAdjuntosDialog(progreso)}
+                               sx={actionButtonStyles}
+                             >
+                               {`${t('tutorValidations.buttons.viewAttachment')} (${progreso.adjuntos.length})`}
+                             </Button>
+@@ -404,125 +457,146 @@ const handleRechazar = async () => {
+           {validadas.length === 0 ? (
+             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+               {t('tutorValidations.empty.validated')}
+             </Typography>
+           ) : (
+             <TableContainer component={Paper}>
+               <Table size="small">
+                 <TableHead sx={(theme) => getTableHeadStyles(theme)}>
+                   <TableRow>
+                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.comments')}</TableCell>
+                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
+                   </TableRow>
+                 </TableHead>
+                 <TableBody>
+                   {validadas.map(progreso => (
+                     <TableRow key={progreso._id}>
+                       <TableCell>{formatFase(progreso.fase)}</TableCell>
+-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
++                      <TableCell>{renderActivityCell(progreso)}</TableCell>
+                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
+                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
+                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.actividad?.tipo === 'cirugia'
+                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                           : '-'}
+                       </TableCell>
+                       <TableCell>{progreso.validaciones?.[0]?.comentarios || '-'}</TableCell>
+                       <TableCell align="right">
+                         <Chip icon={<CheckCircleIcon />} label={t('tutorValidations.states.validated')} color="success" size="small" variant="outlined" />
+                       </TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
+               </Table>
+             </TableContainer>
+           )}
+         </TabPanel>
+ 
+         
+         {/* Panel de Rechazadas */}
+         <TabPanel value={tabValue} index={2}>
+           {rechazadas.length === 0 ? (
+             <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
+               {t('tutorValidations.empty.rejected')}
+             </Typography>
+           ) : (
+             <TableContainer component={Paper}>
+               <Table size="small">
+                 <TableHead sx={(theme) => getTableHeadStyles(theme)}>
+                   <TableRow>
+                     <TableCell>{t('tutorValidations.table.phase')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.activity')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.type')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.resident')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.date')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeryType')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.surgeon')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.participation')}</TableCell>
+                     <TableCell>{t('tutorValidations.table.reason')}</TableCell>
+                     <TableCell align="right">{t('tutorValidations.table.state')}</TableCell>
+                   </TableRow>
+                 </TableHead>
+                 <TableBody>
+                   {rechazadas.map(progreso => (
+                     <TableRow key={progreso._id}>
+                       <TableCell>{formatFase(progreso.fase)}</TableCell>
+-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
++                      <TableCell>{renderActivityCell(progreso)}</TableCell>
+                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
+                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
+                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
+                       <TableCell>{getSurgeryType(progreso.actividad?.cirugia, progreso.actividad?.otraCirugia)}</TableCell>
+                       <TableCell>{progreso.actividad?.nombreCirujano || '-'}</TableCell>
+                       <TableCell>
+                         {progreso.actividad?.tipo === 'cirugia'
+                           ? progreso.actividad?.porcentajeParticipacion ?? '-'
+                           : '-'}
+                       </TableCell>
+                       <TableCell>{progreso.comentariosRechazo || '-'}</TableCell>
+                       <TableCell align="right">
+                         <Chip icon={<ErrorIcon />} label={t('tutorValidations.states.rejected')} color="error" size="small" variant="outlined" />
+                       </TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
+               </Table>
+             </TableContainer>
+           )}
+         </TabPanel>
+       </Paper>
+-      
++
++      <Dialog
++        open={descripcionDialog.open}
++        onClose={handleCloseDescripcionDialog}
++        fullWidth
++        maxWidth="md"
++      >
++        <DialogTitle>
++          {descripcionDialog.title || t('tutorValidations.table.noName')}
++        </DialogTitle>
++        <DialogContent>
++          <RichTextViewer
++            content={descripcionDialog.description}
++            variant="inline"
++            minHeight={0}
++          />
++        </DialogContent>
++        <DialogActions>
++          <Button onClick={handleCloseDescripcionDialog}>{t('close')}</Button>
++        </DialogActions>
++      </Dialog>
++
+       {/* Diálogo para validar */}
+       <Dialog open={openValidarDialog} onClose={handleCloseValidarDialog}>
+         <DialogTitle>{t('tutorValidations.dialog.validateTitle')}</DialogTitle>
+         <DialogContent>
+           <DialogContentText>
+             {t('tutorValidations.dialog.validateMessage', {
+               activity: selectedProgreso?.actividad?.nombre,
+               name: `${selectedProgreso?.residente?.nombre} ${selectedProgreso?.residente?.apellidos}`
+             })}
+           </DialogContentText>
+           <TextField
+             autoFocus
+             margin="dense"
+             id="comentarios"
+             label={t('tutorValidations.dialog.optionalComments')}
+             type="text"
+             fullWidth
+             multiline
+             rows={3}
+             variant="outlined"
+             value={comentarios}
+             onChange={(e) => setComentarios(e.target.value)}
+             sx={{ mb: 2 }}
+           />
+           <TextField

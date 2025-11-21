@@ -25,15 +25,13 @@ import {
   Tabs,
   Tab,
   FormControlLabel,
-  Switch,
-  Tooltip
+  Switch
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Check as CheckIcon,
-  InfoOutlined as InfoOutlinedIcon
 } from '@mui/icons-material';
 import api from '../../api';
 import { useTranslation, Trans } from 'react-i18next';
@@ -106,11 +104,6 @@ const AdminFases: React.FC = () => {
     severity: 'success' as 'success' | 'error'
   });
   const [progresoVinculado, setProgresoVinculado] = useState<number | null>(null);
-  const [descripcionActividadDialog, setDescripcionActividadDialog] = useState({
-    open: false,
-    title: '',
-    descripcion: '',
-  });
 
   const fetchData = useCallback(async () => {
     try {
@@ -196,18 +189,6 @@ const AdminFases: React.FC = () => {
   const handleCloseEliminarFaseDialog = () => {
     setOpenEliminarFaseDialog(false);
     setSelectedFase(null);
-  };
-
-  const handleOpenDescripcionActividadDialog = (actividad: any) => {
-    setDescripcionActividadDialog({
-      open: true,
-      title: actividad.nombre,
-      descripcion: actividad.descripcion || '',
-    });
-  };
-
-  const handleCloseDescripcionActividadDialog = () => {
-    setDescripcionActividadDialog((prev) => ({ ...prev, open: false }));
   };
 
   const handleFaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -672,26 +653,12 @@ const AdminFases: React.FC = () => {
                           />
                         </TableCell>
                           <TableCell sx={{ width: '25%' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <RichTextViewer
-                                content={actividad.descripcion}
-                                minHeight={0}
-                                variant="inline"
-                                sx={{ fontSize: '0.9rem', flex: 1 }}
-                              />
-                              {actividad.descripcion && (
-                                <Tooltip title={t('adminPhases.viewDescription')}>
-                                  <IconButton
-                                    aria-label={t('adminPhases.viewDescription')}
-                                    color="primary"
-                                    size="small"
-                                    onClick={() => handleOpenDescripcionActividadDialog(actividad)}
-                                  >
-                                    <InfoOutlinedIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
-                            </Box>
+                            <RichTextViewer
+                              content={actividad.descripcion}
+                              minHeight={0}
+                              variant="inline"
+                              sx={{ fontSize: '0.9rem' }}
+                            />
                           </TableCell>
                         <TableCell align="right">
                           <IconButton 
@@ -1130,31 +1097,6 @@ const AdminFases: React.FC = () => {
             disabled={procesando}
           >
             {procesando ? t('common.deleting') : t('common.delete')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={descripcionActividadDialog.open}
-        onClose={handleCloseDescripcionActividadDialog}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>
-          {t('adminPhases.descriptionDialogTitle', {
-            activity: descripcionActividadDialog.title || t('adminPhases.activity'),
-          })}
-        </DialogTitle>
-        <DialogContent>
-          <RichTextViewer
-            content={descripcionActividadDialog.descripcion}
-            variant="inline"
-            minHeight={0}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDescripcionActividadDialog} color="primary">
-            {t('common.close')}
           </Button>
         </DialogActions>
       </Dialog>

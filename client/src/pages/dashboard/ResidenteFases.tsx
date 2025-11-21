@@ -172,6 +172,11 @@ const ResidenteFases: React.FC = () => {
     title: string;
     description?: string;
   }>({ open: false, title: '', description: undefined });
+  const [activityDescriptionDialog, setActivityDescriptionDialog] = useState<{
+    open: boolean;
+    title: string;
+    description?: string;
+  }>({ open: false, title: '', description: undefined });
 
   const dateFieldMap: Record<number, keyof Sociedad> = {
     1: 'fechaModulosOnline',
@@ -637,6 +642,22 @@ const ResidenteFases: React.FC = () => {
     setInstructionsDialog((prev) => ({ ...prev, open: false }));
   };
 
+  const handleOpenActivityDescriptionDialog = (actividad: any) => {
+    const descriptionHtml = richTextOrUndefined(actividad?.descripcion);
+
+    if (!descriptionHtml) return;
+
+    setActivityDescriptionDialog({
+      open: true,
+      title: actividad?.nombre || t('residentPhases.unnamedActivity'),
+      description: descriptionHtml,
+    });
+  };
+
+  const handleCloseActivityDescriptionDialog = () => {
+    setActivityDescriptionDialog((prev) => ({ ...prev, open: false }));
+  };
+
   if (loading) {
     return (
       <Box>
@@ -805,6 +826,7 @@ const ResidenteFases: React.FC = () => {
                       : null;
 
                   const formattedStatusDate = statusDate ? formatDayMonthYear(statusDate) : null;
+                  const activityDescriptionHtml = richTextOrUndefined(act.descripcion);
 
                   const surgeryDetails: Array<{ label: string; value: React.ReactNode }> = [];
 
@@ -951,6 +973,17 @@ const ResidenteFases: React.FC = () => {
                           <Typography variant="subtitle1" fontWeight={600} color="text.primary">
                             {act.nombre || t('residentPhases.unnamedActivity')}
                           </Typography>
+                          {activityDescriptionHtml && (
+                            <Tooltip title={t('adminPhases.viewDescription')}>
+                              <IconButton
+                                size="small"
+                                color="primary"
+                                onClick={() => handleOpenActivityDescriptionDialog(act)}
+                              >
+                                <InfoOutlinedIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                         </Stack>
                         <Box
                           display="flex"
@@ -1199,6 +1232,27 @@ const ResidenteFases: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseInstructionsDialog}>{t('close')}</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={activityDescriptionDialog.open}
+        onClose={handleCloseActivityDescriptionDialog}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          {activityDescriptionDialog.title || t('residentPhases.unnamedActivity')}
+        </DialogTitle>
+        <DialogContent>
+          <RichTextViewer
+            content={activityDescriptionDialog.description}
+            variant="inline"
+            minHeight={0}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseActivityDescriptionDialog}>{t('close')}</Button>
         </DialogActions>
       </Dialog>
 

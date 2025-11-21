@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  IconButton,
   TextField,
   Tab,
   Tabs,
@@ -21,7 +22,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Tooltip
 } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import {
@@ -30,11 +32,14 @@ import {
   Error as ErrorIcon,
   //School as SchoolIcon,
   OpenInNew as OpenInNewIcon,
-  Download as DownloadIcon
+  Download as DownloadIcon,
+  InfoOutlined as InfoOutlinedIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import { formatDayMonthYear } from '../../utils/date';
+import RichTextViewer from '../../components/RichTextViewer';
+import { richTextOrUndefined } from '../../utils/richText';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -92,6 +97,11 @@ const TutorValidaciones: React.FC = () => {
   const [firmaDigital, setFirmaDigital] = useState('');
   const [openAdjuntosDialog, setOpenAdjuntosDialog] = useState(false);
   const [adjuntosSeleccionados, setAdjuntosSeleccionados] = useState<any>(null);
+  const [descripcionDialog, setDescripcionDialog] = useState({
+    open: false,
+    title: '',
+    description: undefined as string | undefined
+  });
   const attachmentButtonStyles = { minWidth: 160, height: 36 };
   const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
 
@@ -103,6 +113,27 @@ const TutorValidaciones: React.FC = () => {
   const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
     if (cirugia?.name) return cirugia.name;
     return otraCirugia || '-';
+  };
+
+  const renderActivityCell = (progreso: any) => {
+    const descriptionHtml = richTextOrUndefined(progreso.actividad?.descripcion);
+
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <span>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</span>
+        {descriptionHtml && (
+          <Tooltip title={t('adminPhases.viewDescription')}>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => handleOpenDescripcionDialog(progreso, descriptionHtml)}
+            >
+              <InfoOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
+    );
   };
 
   const fetchValidaciones = useCallback(async () => {
@@ -148,6 +179,28 @@ useEffect(() => {
       adjuntos: progreso.adjuntos || []
     });
     setOpenAdjuntosDialog(true);
+  };
+
+  const handleOpenDescripcionDialog = (
+    progreso: any,
+    descriptionHtml?: string
+  ) => {
+    const content = descriptionHtml ?? richTextOrUndefined(progreso.actividad?.descripcion);
+
+    if (!content) return;
+
+    setDescripcionDialog({
+      open: true,
+      title:
+        progreso.actividad?.nombre ||
+        progreso.nombre ||
+        t('tutorValidations.table.noName'),
+      description: content
+    });
+  };
+
+  const handleCloseDescripcionDialog = () => {
+    setDescripcionDialog((prev) => ({ ...prev, open: false }));
   };
 
   const handleCloseAdjuntosDialog = () => {
@@ -330,7 +383,7 @@ const handleRechazar = async () => {
                   {pendientes.map((progreso) => (
                     <TableRow key={progreso._id}>
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                      <TableCell>{renderActivityCell(progreso)}</TableCell>
                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>
                         {progreso.residente?.nombre || '—'} {progreso.residente?.apellidos || ''}
@@ -426,7 +479,7 @@ const handleRechazar = async () => {
                   {validadas.map(progreso => (
                     <TableRow key={progreso._id}>
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                      <TableCell>{renderActivityCell(progreso)}</TableCell>
                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
@@ -477,7 +530,7 @@ const handleRechazar = async () => {
                   {rechazadas.map(progreso => (
                     <TableRow key={progreso._id}>
                       <TableCell>{formatFase(progreso.fase)}</TableCell>
-                      <TableCell>{progreso.actividad?.nombre || progreso.nombre || t('tutorValidations.table.noName')}</TableCell>
+                      <TableCell>{renderActivityCell(progreso)}</TableCell>
                       <TableCell>{progreso.actividad?.tipo || '-'}</TableCell>
                       <TableCell>{progreso.residente?.nombre} {progreso.residente?.apellidos}</TableCell>
                       <TableCell>{formatDayMonthYear(progreso.fechaActualizacion || progreso.fechaCreacion)}</TableCell>
@@ -500,7 +553,28 @@ const handleRechazar = async () => {
           )}
         </TabPanel>
       </Paper>
-      
+
+      <Dialog
+        open={descripcionDialog.open}
+        onClose={handleCloseDescripcionDialog}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          {descripcionDialog.title || t('tutorValidations.table.noName')}
+        </DialogTitle>
+        <DialogContent>
+          <RichTextViewer
+            content={descripcionDialog.description}
+            variant="inline"
+            minHeight={0}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDescripcionDialog}>{t('close')}</Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Diálogo para validar */}
       <Dialog open={openValidarDialog} onClose={handleCloseValidarDialog}>
         <DialogTitle>{t('tutorValidations.dialog.validateTitle')}</DialogTitle>
