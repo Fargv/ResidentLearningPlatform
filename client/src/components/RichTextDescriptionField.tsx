@@ -44,30 +44,28 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<string>(value || '');
 
+  // Cuando NO estamos editando, mantén el draft sincronizado con value
   useEffect(() => {
     if (!isEditing) {
       setDraft(value || '');
     }
   }, [isEditing, value]);
 
+  // Pintar el contenido inicial cuando NO estamos editando (modo lectura)
   useEffect(() => {
-    if (editorRef.current) {
+    if (!isEditing && editorRef.current) {
       editorRef.current.innerHTML = value || '';
     }
   }, [isEditing, value]);
 
+  // Cuando entramos en modo edición, pinta el borrador UNA sola vez
   useEffect(() => {
     if (isEditing && editorRef.current) {
-      editorRef.current.innerHTML = draft;
+      editorRef.current.innerHTML = draft || '';
       editorRef.current.focus();
-      const selection = window.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(editorRef.current);
-      range.collapse(false);
-      selection?.removeAllRanges();
-      selection?.addRange(range);
+      // Importante: no tocamos la selección ni movemos el cursor
     }
-  }, [isEditing, draft]);
+  }, [isEditing]); // solo cuando cambia el modo, no en cada tecla
 
   const toolbarItems = useMemo(
     () => [
@@ -90,6 +88,7 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
 
   const handleInput = useCallback(() => {
     const html = editorRef.current?.innerHTML ?? '';
+    // Actualizamos el estado, pero ya NO reescribimos innerHTML desde ningún efecto
     setDraft(html);
   }, []);
 
@@ -105,6 +104,7 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
       } else {
         document.execCommand(command, false);
       }
+      // Después de aplicar el comando, leemos el contenido actual
       handleInput();
     },
     [handleInput, t],
