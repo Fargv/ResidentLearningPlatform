@@ -335,7 +335,7 @@ const AdminSociedades = () => {
           />
           <RichTextDescriptionField
             label={t('adminSocieties.fields.programInfo')}
-            value={formData.programInfo}
+            value={formData.programInfo ?? ''}
             onChange={handleProgramInfoChange}
             minHeight={160}
           />

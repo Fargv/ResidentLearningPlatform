@@ -599,7 +599,7 @@ const AdminHospitales: React.FC = () => {
           />
           <RichTextDescriptionField
             label={t('adminHospitals.fields.programInfo')}
-            value={formData.programInfo}
+            value={formData.programInfo ?? ''}
             onChange={handleProgramInfoChange}
             minHeight={160}
           />
@@ -782,7 +782,7 @@ const AdminHospitales: React.FC = () => {
           />
           <RichTextDescriptionField
             label={t('adminHospitals.fields.programInfo')}
-            value={formData.programInfo}
+            value={formData.programInfo ?? ''}
             onChange={handleProgramInfoChange}
             minHeight={160}
           />
