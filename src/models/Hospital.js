@@ -39,6 +39,10 @@ const hospitalSchema = new mongoose.Schema({
     type: String,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Por favor proporcione un email válido']
   },
+  programInfo: {
+    type: String,
+    default: ''
+  },
   urlHospiLogo: {
     type: String
   },

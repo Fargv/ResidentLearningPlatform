@@ -46,7 +46,21 @@ exports.getHospital = async (req, res, next) => {
 // @access  Private/Admin
 exports.createHospital = async (req, res, next) => {
   try {
-    const fields = ['nombre','codigoNumerico','direccion','ciudad','provincia','zona','codigoPostal','telefono','email','tipoSistema','activo','urlHospiLogo'];
+    const fields = [
+      'nombre',
+      'codigoNumerico',
+      'direccion',
+      'ciudad',
+      'provincia',
+      'zona',
+      'codigoPostal',
+      'telefono',
+      'email',
+      'tipoSistema',
+      'activo',
+      'urlHospiLogo',
+      'programInfo'
+    ];
     const data = {};
     fields.forEach(f => {
       if (req.body[f] !== undefined) data[f] = req.body[f];
@@ -83,7 +97,21 @@ exports.updateHospital = async (req, res, next) => {
 
     const prevZona = hospital.zona;
 
-    const fields = ['nombre','codigoNumerico','direccion','ciudad','provincia','zona','codigoPostal','telefono','email','tipoSistema','activo','urlHospiLogo'];
+    const fields = [
+      'nombre',
+      'codigoNumerico',
+      'direccion',
+      'ciudad',
+      'provincia',
+      'zona',
+      'codigoPostal',
+      'telefono',
+      'email',
+      'tipoSistema',
+      'activo',
+      'urlHospiLogo',
+      'programInfo'
+    ];
     const updates = {};
     fields.forEach(f => {
       if (req.body[f] !== undefined) updates[f] = req.body[f];

@@ -39,6 +39,7 @@ import {
 import BackButton from '../../components/BackButton';
 import api from '../../api';
 import { useTranslation, Trans } from 'react-i18next';
+import RichTextDescriptionField from '../../components/RichTextDescriptionField';
 
 interface Hospital {
   _id: string;
@@ -52,6 +53,7 @@ interface Hospital {
   email?: string;
   tipoSistema?: string;
   zona?: string;
+  programInfo?: string;
   urlHospiLogo?: string;
 }
 
@@ -82,6 +84,7 @@ const AdminHospitales: React.FC = () => {
         email: '',
         tipoSistema: '',
         zona: '',
+        programInfo: '',
         urlHospiLogo: ''
       });
   const [procesando, setProcesando] = useState(false);
@@ -142,6 +145,7 @@ const AdminHospitales: React.FC = () => {
       email: hospital.email || '',
       tipoSistema: hospital.tipoSistema || '',
       zona: hospital.zona || '',
+      programInfo: hospital.programInfo || '',
       urlHospiLogo: hospital.urlHospiLogo || ''
     });
     setOpenEditarDialog(true);
@@ -181,6 +185,13 @@ const AdminHospitales: React.FC = () => {
     [name as string]: value
   });
 };
+
+  const handleProgramInfoChange = (value?: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      programInfo: value || ''
+    }));
+  };
 
   const handleCrear = async () => {
     try {
@@ -586,6 +597,12 @@ const AdminHospitales: React.FC = () => {
             value={formData.urlHospiLogo}
             onChange={handleChange}
           />
+          <RichTextDescriptionField
+            label={t('adminHospitals.fields.programInfo')}
+            value={formData.programInfo}
+            onChange={handleProgramInfoChange}
+            minHeight={160}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCrearDialog} color="primary">
@@ -762,6 +779,12 @@ const AdminHospitales: React.FC = () => {
             variant="outlined"
             value={formData.urlHospiLogo}
             onChange={handleChange}
+          />
+          <RichTextDescriptionField
+            label={t('adminHospitals.fields.programInfo')}
+            value={formData.programInfo}
+            onChange={handleProgramInfoChange}
+            minHeight={160}
           />
         </DialogContent>
         <DialogActions>

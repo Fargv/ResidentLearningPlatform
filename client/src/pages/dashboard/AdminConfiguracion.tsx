@@ -7,7 +7,8 @@ import {
   Settings as SettingsIcon,
   BugReport as BugReportIcon,
   People as PeopleIcon,
-  MedicalServices as MedicalServicesIcon
+  MedicalServices as MedicalServicesIcon,
+  InfoOutlined as InfoIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ const AdminConfiguracion: React.FC = () => {
     { label: t('adminConfig.users'), path: '/dashboard/usuarios', icon: <PeopleIcon sx={{ fontSize: 40 }} /> },
     { label: t('adminConfig.accessCodes'), path: '/dashboard/access-codes', icon: <SettingsIcon sx={{ fontSize: 40 }} /> },
     { label: t('adminConfig.surgeryTypes'), path: '/dashboard/cirugias', icon: <MedicalServicesIcon sx={{ fontSize: 40 }} /> },
+    { label: t('adminConfig.siteInfo'), path: '/dashboard/site-info', icon: <InfoIcon sx={{ fontSize: 40 }} /> },
     ...(isDev ? [{ label: t('adminConfig.debug'), path: '/dashboard/debug', icon: <BugReportIcon sx={{ fontSize: 40 }} /> }] : [])
   ];
 

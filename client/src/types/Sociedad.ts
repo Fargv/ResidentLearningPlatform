@@ -9,6 +9,7 @@ export interface Sociedad {
   fechaAtividadesFirstAssistant?: string;
   fechaModuloOnlineStepByStep?: string;
   fechaHandOn?: string;
+  programInfo?: string;
   createdAt?: string;
   updatedAt?: string;
 }

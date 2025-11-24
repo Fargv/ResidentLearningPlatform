@@ -23,6 +23,7 @@ import {
 import api from '../../api';
 import BackButton from '../../components/BackButton';
 import { useTranslation } from 'react-i18next';
+import RichTextDescriptionField from '../../components/RichTextDescriptionField';
 
 interface Sociedad {
   _id?: string;
@@ -37,6 +38,7 @@ interface Sociedad {
   fechaAtividadesFirstAssistant?: string;
   fechaModuloOnlineStepByStep?: string;
   fechaHandOn?: string;
+  programInfo?: string;
 }
 
 const AdminSociedades = () => {
@@ -56,7 +58,8 @@ const AdminSociedades = () => {
     fechaSimulacion: '',
     fechaAtividadesFirstAssistant: '',
     fechaModuloOnlineStepByStep: '',
-    fechaHandOn: ''
+    fechaHandOn: '',
+    programInfo: ''
   });
 
   const { t } = useTranslation();
@@ -84,7 +87,8 @@ const AdminSociedades = () => {
         fechaSimulacion: s.fechaSimulacion?.slice(0, 10) || '',
         fechaAtividadesFirstAssistant: s.fechaAtividadesFirstAssistant?.slice(0, 10) || '',
         fechaModuloOnlineStepByStep: s.fechaModuloOnlineStepByStep?.slice(0, 10) || '',
-        fechaHandOn: s.fechaHandOn?.slice(0, 10) || ''
+        fechaHandOn: s.fechaHandOn?.slice(0, 10) || '',
+        programInfo: s.programInfo || ''
       });
     } else {
       setFormData({
@@ -98,7 +102,8 @@ const AdminSociedades = () => {
         fechaSimulacion: '',
         fechaAtividadesFirstAssistant: '',
         fechaModuloOnlineStepByStep: '',
-        fechaHandOn: ''
+        fechaHandOn: '',
+        programInfo: ''
       });
     }
     setOpen(true);
@@ -116,9 +121,14 @@ const AdminSociedades = () => {
       fechaSimulacion: '',
       fechaAtividadesFirstAssistant: '',
       fechaModuloOnlineStepByStep: '',
-      fechaHandOn: ''
+      fechaHandOn: '',
+      programInfo: ''
     });
     setOpen(false);
+  };
+
+  const handleProgramInfoChange = (value?: string) => {
+    setFormData((prev) => ({ ...prev, programInfo: value || '' }));
   };
 
   const handleChange = (
@@ -322,6 +332,12 @@ const AdminSociedades = () => {
             fullWidth
             value={formData.responsablePrograma}
             onChange={handleChange}
+          />
+          <RichTextDescriptionField
+            label={t('adminSocieties.fields.programInfo')}
+            value={formData.programInfo}
+            onChange={handleProgramInfoChange}
+            minHeight={160}
           />
           {[
             'fechaConvocatoria',

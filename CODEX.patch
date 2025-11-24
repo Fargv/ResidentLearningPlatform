@@ -1,228 +1,108 @@
-diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
-index 41ba9bd9b264c8cb6371d1d4cb8ffd0abd7c3917..10d88b1d2e26c79ddde120543c783712a3601980 100644
---- a/src/controllers/progresoController.js
-+++ b/src/controllers/progresoController.js
-@@ -26,95 +26,121 @@ const updatePhaseStatus = async (progreso) => {
-     logger.info(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
-   }
+diff --git a/src/server.js b/src/server.js
+index 9c1c65d1881ef4eba6494e1ea4d9a157545a6874..1a97aac4edc890894c8cb518e7862c7bf624a5ed 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -12,50 +12,51 @@ const connectDB = require('./config/database');
  
-   const ModeloFase = mongoose.model(progreso.faseModel || 'Fase');
-   const nextFase = await ModeloFase.findOne({ orden: progreso.fase.orden + 1 });
-   if (!nextFase) {
-     logger.info(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
-     return;
-   }
+ // Cargar variables de entorno
+ dotenv.config();
  
-   const nextProgreso = await ProgresoResidente.findOne({
-     residente: progreso.residente._id,
-     fase: nextFase._id
+ // Conectar a la base de datos
+ connectDB();
+ 
+ // Importar rutas
+ const authRoutes = require('./routes/authRoutes');
+ const userRoutes = require('./routes/userRoutes');
+ const hospitalRoutes = require('./routes/hospitalRoutes');
+ const faseRoutes = require('./routes/faseRoutes');
+ const actividadRoutes = require('./routes/actividadRoutes');
+ const faseSocRoutes = require('./routes/faseSocRoutes');
+ const actividadSocRoutes = require('./routes/actividadSocRoutes');
+ const progresoRoutes = require('./routes/progresoRoutes');
+ const adjuntoRoutes = require('./routes/adjuntoRoutes');
+ const notificacionRoutes = require('./routes/notificacionRoutes');
+ const adminRoutes = require('./routes/adminRoutes');
+ const sociedadesRoutes = require('./routes/sociedadesRoutes');
+ const certificadoRoutes = require('./routes/certificadoRoutes');
+ const accessCodeRoutes = require('./routes/accessCodeRoutes');
+ const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
+ const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
+ const informesRoutes = require('./routes/informesRoutes');
++const siteInfoRoutes = require('./routes/siteInfoRoutes');
+ 
+ // Inicializar app
+ const app = express();
+ 
+ // Middlewares esenciales
+ app.use(express.json());
+ app.use(cookieParser());
+ app.use(helmet());
+ const envOrigins = process.env.CLIENT_ORIGIN
+   ? process.env.CLIENT_ORIGIN
+       .split(',')
+       .map(origin => origin.trim())
+       .filter(Boolean)
+   : [];
+ 
+ const allowedOrigins = Array.from(new Set([
+   'http://localhost:3000',
+   'http://localhost:5173',
+   'https://residentlearningplatform.netlify.app',
+   'https://academicprogramdavinci.com',
+   'https://academicprogramdavinci.netlify.app',
+   ...envOrigins,
+ ]));
+ 
+ const corsOptions = {
+@@ -78,50 +79,51 @@ app.use(fileupload());
+ if (process.env.NODE_ENV === 'development') {
+   app.use(morgan('dev'));
+ }
+ 
+ // Directorio público
+ app.use(express.static(path.join(__dirname, '../public')));
+ 
+ // Rutas principales
+ app.use('/api/auth', authRoutes);
+ app.use('/api/users', userRoutes);
+ app.use('/api/hospitals', hospitalRoutes);
+ app.use('/api/fases', faseRoutes);
+ app.use('/api/fasesSoc', faseSocRoutes);
+ app.use('/api/actividades', actividadRoutes);
+ app.use('/api/actividadesSoc', actividadSocRoutes);
+ app.use('/api/progreso', progresoRoutes);
+ app.use('/api/adjuntos', adjuntoRoutes);
+ app.use('/api/notificaciones', notificacionRoutes);
+ app.use('/api/admin', adminRoutes);
+ app.use('/api/sociedades', sociedadesRoutes);
+ app.use('/api/certificado', certificadoRoutes);
+ app.use('/api/access-codes', accessCodeRoutes);
+ app.use('/api/surgery-types', surgeryTypeRoutes);
+ app.use('/api/informe-cirugias', informeCirugiasRoutes);
+ app.use('/api/informes', informesRoutes);
++app.use('/api/site-info', siteInfoRoutes);
+ 
+ 
+ // Ruta test del servidor
+ app.get('/', (req, res) => {
+   res.json({
+     success: true,
+     message: 'API de la plataforma de formación Da Vinci',
+     version: '1.0.0'
    });
+ });
  
-   if (nextProgreso && nextProgreso.estadoGeneral === 'bloqueada') {
-     nextProgreso.estadoGeneral = 'en progreso';
-     await nextProgreso.save();
-     logger.info(`🚀 Fase "${nextFase.nombre}" DESBLOQUEADA para ${progreso.residente.email}`);
-   } else {
-     logger.info(`ℹ️ Fase "${nextFase.nombre}" ya estaba desbloqueada o no encontrada`);
-   }
- };
+ // Middleware de errores
+ app.use(errorHandler);
  
+ // Configuración del puerto
+ const PORT = process.env.PORT || 5000;
+ const server = app.listen(PORT, () => {
+   console.log(`Servidor en modo ${process.env.NODE_ENV} en puerto ${PORT}`);
+ });
  
-+const buildActividadDisplayData = (actividad = {}) => {
-+  const actividadMaestra =
-+    actividad.actividad && typeof actividad.actividad === 'object'
-+      ? actividad.actividad
-+      : null;
-+
-+  return {
-+    nombre: actividadMaestra?.nombre || actividad.nombre,
-+    descripcion:
-+      actividadMaestra?.descripcion !== undefined
-+        ? actividadMaestra.descripcion
-+        : actividad.descripcion,
-+    tipo: actividadMaestra?.tipo || actividad.tipo,
-+    requiereAdjunto:
-+      actividadMaestra?.requiereAdjunto !== undefined
-+        ? actividadMaestra.requiereAdjunto
-+        : actividad.requiereAdjunto,
-+    actividadModel:
-+      actividadMaestra?.constructor?.modelName || actividad.actividadModel,
-+    actividadId: actividadMaestra?._id || actividad.actividad
-+  };
-+};
- 
--
--const formatProgresoParaResidente = (progresoDoc) => {
-+
-+const formatProgresoParaResidente = (progresoDoc) => {
-   const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
-   const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
-     if (typeof adj.actividadIndex !== 'number') return acc;
-     const key = adj.actividadIndex;
-     if (!acc[key]) acc[key] = [];
-     acc[key].push({
-       _id: adj._id.toString(),
-       nombreArchivo: adj.nombreArchivo,
-       mimeType: adj.mimeType,
-       fechaSubida: adj.fechaSubida
-     });
-     return acc;
-   }, {});
- 
-   return {
-     _id: plain._id.toString(),
-     fase: plain.fase,
-     faseModel: plain.faseModel,
-     estadoGeneral: plain.estadoGeneral,
--    actividades: (plain.actividades || []).map((act, index) => ({
--      nombre: act.nombre,
--      tipo: act.tipo,
--      completada: act.estado === 'validado',
--      comentariosResidente: act.comentariosResidente || '',
--      comentariosTutor: act.comentariosTutor || '',
--      fecha: act.fechaRealizacion,
--      fechaValidacion: act.fechaValidacion,
--      comentariosRechazo: act.comentariosRechazo || '',
--      fechaRechazo: act.fechaRechazo,
--      estado: act.estado,
--      porcentajeParticipacion: act.porcentajeParticipacion,
--      cirugia: act.cirugia,
--      otraCirugia: act.otraCirugia,
--      nombreCirujano: act.nombreCirujano,
--      adjuntos: adjuntosPorIndice[index] || [],
--      requiereAdjunto: Boolean(
--        (act.actividad && act.actividad.requiereAdjunto) ||
--          act.requiereAdjunto
--      )
--    }))
--  };
--};
-+    actividades: (plain.actividades || []).map((act, index) => {
-+      const actividadData = buildActividadDisplayData(act);
-+
-+      return {
-+        nombre: actividadData.nombre,
-+        descripcion: actividadData.descripcion,
-+        tipo: actividadData.tipo,
-+        actividad: actividadData.actividadId,
-+        actividadModel: actividadData.actividadModel,
-+        completada: act.estado === 'validado',
-+        comentariosResidente: act.comentariosResidente || '',
-+        comentariosTutor: act.comentariosTutor || '',
-+        fecha: act.fechaRealizacion,
-+        fechaValidacion: act.fechaValidacion,
-+        comentariosRechazo: act.comentariosRechazo || '',
-+        fechaRechazo: act.fechaRechazo,
-+        estado: act.estado,
-+        porcentajeParticipacion: act.porcentajeParticipacion,
-+        cirugia: act.cirugia,
-+        otraCirugia: act.otraCirugia,
-+        nombreCirujano: act.nombreCirujano,
-+        adjuntos: adjuntosPorIndice[index] || [],
-+        requiereAdjunto: Boolean(actividadData.requiereAdjunto)
-+      };
-+    })
-+  };
-+};
- 
- 
- const inicializarProgresoFormativo = async (req, res, next) => {
-   try {
-   const user = await User.findById(req.params.id);
-   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
-     return res.status(404).json({ success: false, error: 'Residente no válido' });
-   }
- 
-      if (req.body.tipo) user.tipo = req.body.tipo;
-     const count = await inicializarProgresoFormativoDB(user);
-     res.status(200).json({ success: true, count });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- 
- 
- 
- 
- // @desc    Obtener todos los registros de progreso
- // @route   GET /api/progreso
- // @access  Private/Admin
- const getAllProgreso = async (req, res, next) => {
-@@ -244,58 +270,68 @@ const getProgresoResidentePorFase = async (req, res, next) => {
-     const progreso = await ProgresoResidente.find({ residente: req.params.id })
-       .populate('fase')
-       .populate('actividades.actividad')
-       .populate('actividades.cirugia');
- 
-     await ProgresoResidente.populate(progreso, {
-       path: 'adjuntos',
-       select: 'nombreArchivo mimeType fechaSubida actividadIndex'
-     });
- 
-     const resultado = progreso.map(item => {
-       const plain = item.toObject({ virtuals: true });
-       const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
-         if (typeof adj.actividadIndex !== 'number') return acc;
-         const key = adj.actividadIndex;
-         if (!acc[key]) acc[key] = [];
-         acc[key].push({
-           _id: adj._id.toString(),
-           nombreArchivo: adj.nombreArchivo,
-           mimeType: adj.mimeType,
-           fechaSubida: adj.fechaSubida
-         });
-         return acc;
-       }, {});
- 
--      return {
--        ...plain,
--        actividades: plain.actividades.map((act, index) => ({
--          ...act,
--          adjuntos: adjuntosPorIndice[index] || []
--        }))
--      };
--    });
-+      return {
-+        ...plain,
-+        actividades: plain.actividades.map((act, index) => {
-+          const actividadData = buildActividadDisplayData(act);
-+
-+          return {
-+            ...act,
-+            nombre: actividadData.nombre,
-+            descripcion: actividadData.descripcion,
-+            tipo: actividadData.tipo,
-+            actividadModel: actividadData.actividadModel,
-+            actividad: actividadData.actividadId,
-+            requiereAdjunto: Boolean(actividadData.requiereAdjunto),
-+            adjuntos: adjuntosPorIndice[index] || []
-+          };
-+        })
-+      };
-+    });
- 
-     const filtered = resultado.filter(p => p.residente);
- 
-     res.status(200).json({
-       success: true,
-       count: filtered.length,
-       data: filtered
-     });
-   } catch (err) {
-     next(err);
-   }
- };
- 
- 
- // @desc    Registrar nuevo progreso
- // @route   POST /api/progreso
- // @access  Private
- 
- 
- 
- 
- const registrarProgreso = async (req, res, next) => {
-   try {
-     // Si el usuario es residente, solo puede registrar su propio progreso
-   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.body.residente !== req.user.id) {
+ // Captura errores no gestionados
+ process.on('unhandledRejection', (err, promise) => {
+   console.error(`Error no capturado: ${err.message}`);
+   server.close(() => process.exit(1));
+ });

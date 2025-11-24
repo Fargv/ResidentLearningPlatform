@@ -28,12 +28,25 @@ beforeEach(() => {
     }
   } as any);
 
-  mockedGet.mockResolvedValue({
-    data: {
-      titulo: 'Soc Test',
-      status: 'ACTIVO',
-      fechaModulosOnline: '2025-01-01'
+  mockedGet.mockImplementation((url: string) => {
+    if (url.includes('/sociedades/')) {
+      return Promise.resolve({
+        data: {
+          titulo: 'Soc Test',
+          status: 'ACTIVO',
+          fechaModulosOnline: '2025-01-01',
+          programInfo: '<p>Programa</p>'
+        }
+      });
     }
+
+    if (url.includes('/site-info')) {
+      return Promise.resolve({
+        data: { success: true, data: { platformInfo: '<p>Plataforma</p>' } }
+      });
+    }
+
+    return Promise.resolve({ data: { data: [] } });
   });
 });
 

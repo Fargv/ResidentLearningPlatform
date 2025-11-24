@@ -57,6 +57,12 @@ interface SocietyPhaseSummary {
   description?: string | null;
 }
 
+interface HospitalInfo {
+  _id?: string;
+  nombre?: string;
+  programInfo?: string;
+}
+
 interface PhaseDialogData {
   label: string;
   date?: string;
@@ -92,6 +98,10 @@ const DashboardHome: React.FC = () => {
   const [socAllValidado, setSocAllValidado] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<PhaseDialogData | null>(null);
+  const [siteInfoContent, setSiteInfoContent] = useState('');
+  const [hospitalInfo, setHospitalInfo] = useState<HospitalInfo | null>(null);
+  const [programInfo, setProgramInfo] = useState('');
+  const [infoLoading, setInfoLoading] = useState(false);
 
 
   const societyMilestones = [
@@ -254,6 +264,46 @@ const DashboardHome: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
+    if (!user || user.rol === 'administrador' || user.rol === 'csm') return;
+
+    const loadSiteInfo = async () => {
+      try {
+        setInfoLoading(true);
+        const res = await api.get('/site-info');
+        setSiteInfoContent(richTextOrUndefined(res.data?.data?.platformInfo) || '');
+      } catch (err) {
+        console.error('Error cargando información de la plataforma', err);
+      } finally {
+        setInfoLoading(false);
+      }
+    };
+
+    loadSiteInfo();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || user.rol === 'administrador' || user.rol === 'csm') return;
+    if (user.tipo !== 'Programa Residentes') return;
+
+    const hospitalId = (user as any)?.hospital?._id || (user as any)?.hospital;
+    if (!hospitalId) return;
+
+    const loadHospital = async () => {
+      try {
+        setInfoLoading(true);
+        const res = await api.get(`/hospitals/${hospitalId}`);
+        setHospitalInfo(res.data?.data || null);
+      } catch (err) {
+        console.error('Error cargando hospital', err);
+      } finally {
+        setInfoLoading(false);
+      }
+    };
+
+    loadHospital();
+  }, [user]);
+
+  useEffect(() => {
     const loadProgress = async () => {
       const isResidentes =
         user?.tipo === "Programa Residentes" &&
@@ -341,6 +391,21 @@ const DashboardHome: React.FC = () => {
 
     loadProgress();
   }, [user]);
+
+  useEffect(() => {
+    if (!user || user.rol === 'administrador' || user.rol === 'csm') {
+      setProgramInfo('');
+      return;
+    }
+
+    if (user.tipo === 'Programa Sociedades') {
+      setProgramInfo(richTextOrUndefined(sociedadInfo?.programInfo) || '');
+    } else if (user.tipo === 'Programa Residentes') {
+      setProgramInfo(richTextOrUndefined(hospitalInfo?.programInfo) || '');
+    } else {
+      setProgramInfo('');
+    }
+  }, [hospitalInfo?.programInfo, sociedadInfo?.programInfo, user]);
 
   const handleDescargarCertificado = async () => {
     if (!user?._id) return;
@@ -463,7 +528,7 @@ const DashboardHome: React.FC = () => {
     phaseSummary.every((p) => p.percent === 100);
 
   const renderContent = () => {
-    if (loading || progressLoading) {
+    if (loading || progressLoading || infoLoading) {
       return (
         <Box display="flex" justifyContent="center" mt={2}>
           <CircularProgress />
@@ -519,6 +584,21 @@ const DashboardHome: React.FC = () => {
     [sociedadInfo?.titulo, t, user?.especialidad, user?.hospital?.nombre, user?.rol, user?.tipo, user?.zona],
   );
 
+  const programLabel = useMemo(
+    () => {
+      if (user?.tipo === 'Programa Sociedades') {
+        return sociedadInfo?.titulo || t('dashboardInfo.programDefault');
+      }
+
+      if (user?.tipo === 'Programa Residentes') {
+        return hospitalInfo?.nombre || user?.hospital?.nombre || t('dashboardInfo.programDefault');
+      }
+
+      return t('dashboardInfo.programDefault');
+    },
+    [hospitalInfo?.nombre, sociedadInfo?.titulo, t, user?.hospital?.nombre, user?.tipo],
+  );
+
   const societyDownloadButtons = socPhaseSummary
     .filter((phase) => phase.estadoGeneral === 'validado' && phase.hasSurgery)
     .map((phase) => {
@@ -545,6 +625,8 @@ const DashboardHome: React.FC = () => {
           `${t('adminPhases.phase')} ${phase.faseNumero}`,
         ),
     }));
+
+  const showInfoCards = user?.rol !== 'administrador' && user?.rol !== 'csm';
 
   return (
     <Box sx={{ px: 3, py: 2 }}>
@@ -638,6 +720,48 @@ const DashboardHome: React.FC = () => {
             </Paper>
           </Box>
         </Stack>
+
+        {showInfoCards && (
+          <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
+            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  {t('dashboardInfo.platformTitle')}
+                </Typography>
+                {siteInfoContent ? (
+                  <RichTextViewer
+                    content={siteInfoContent}
+                    variant="inline"
+                    sx={{ '& > :last-child': { mb: 0 } }}
+                  />
+                ) : (
+                  <Typography color="text.secondary">
+                    {t('dashboardInfo.platformFallback')}
+                  </Typography>
+                )}
+              </Paper>
+            </Box>
+            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 50%' } }}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  {t('dashboardInfo.programTitle', { program: programLabel })}
+                </Typography>
+                {programInfo ? (
+                  <RichTextViewer
+                    content={programInfo}
+                    variant="inline"
+                    sx={{ '& > :last-child': { mb: 0 } }}
+                  />
+                ) : (
+                  <Typography color="text.secondary">
+                    {t('dashboardInfo.programFallback')}
+                  </Typography>
+                )}
+              </Paper>
+            </Box>
+          </Stack>
+        )}
+
         {user?.tipo === "Programa Sociedades" && sociedadInfo && (
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>

@@ -62,6 +62,7 @@ import ResidenteFases from './dashboard/ResidenteFases';
 import AdminAccessCodes from './dashboard/AdminAccessCodes';
 import AdminConfiguracion from './dashboard/AdminConfiguracion';
 import AdminCirugias from './dashboard/AdminCirugias';
+import AdminSiteInfo from './dashboard/AdminSiteInfo';
 import LanguageSelector from '../components/LanguageSelector';
 import AdminInformes from './dashboard/AdminInformes';
 import AdminInvitaciones from './dashboard/AdminInvitaciones';
@@ -623,6 +624,9 @@ const Dashboard: React.FC = () => {
           />
           {user?.rol === 'administrador' && (
             <Route path="/config" element={<AdminConfiguracion />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/site-info" element={<AdminSiteInfo />} />
           )}
           {user?.rol === 'administrador' && (
             <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />

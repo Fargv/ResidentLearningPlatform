@@ -16,6 +16,7 @@ const SociedadSchema = new mongoose.Schema({
   fechaAtividadesFirstAssistant: { type: Date },
   fechaModuloOnlineStepByStep: { type: Date },
   fechaHandOn: { type: Date },
+  programInfo: { type: String, default: '' },
 }, {
   timestamps: true
 });

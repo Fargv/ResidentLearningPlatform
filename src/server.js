@@ -34,6 +34,7 @@ const accessCodeRoutes = require('./routes/accessCodeRoutes');
 const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
 const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
 const informesRoutes = require('./routes/informesRoutes');
+const siteInfoRoutes = require('./routes/siteInfoRoutes');
 
 // Inicializar app
 const app = express();
@@ -100,6 +101,7 @@ app.use('/api/access-codes', accessCodeRoutes);
 app.use('/api/surgery-types', surgeryTypeRoutes);
 app.use('/api/informe-cirugias', informeCirugiasRoutes);
 app.use('/api/informes', informesRoutes);
+app.use('/api/site-info', siteInfoRoutes);
 
 
 // Ruta test del servidor

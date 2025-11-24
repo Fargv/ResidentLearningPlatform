@@ -8,6 +8,13 @@
     "participant": "Participante del programa de sociedades {{title}}",
     "professor": "Profesor del programa de sociedades {{title}}"
   },
+  "dashboardInfo": {
+    "platformTitle": "Sobre la plataforma",
+    "programTitle": "Sobre tu programa {{program}}",
+    "platformFallback": "Pronto añadiremos información sobre la plataforma.",
+    "programFallback": "Pronto añadiremos información sobre tu programa.",
+    "programDefault": "tu programa"
+  },
   "actions": {
     "dashboard": "Dashboard",
     "myProgress": "Mi Progreso",
@@ -36,6 +43,7 @@
     "users": "Usuarios",
     "accessCodes": "Códigos de Acceso",
     "surgeryTypes": "Tipos de Cirugía",
+    "siteInfo": "Info de sitio",
     "debug": "Debug"
   },
   "adminPhases": {
@@ -337,6 +345,19 @@
       "tipSignOut": "Cierra sesión en dispositivos compartidos."
     }
   },
+  "adminSiteInfo": {
+    "title": "Información del sitio",
+    "subtitle": "Edita el mensaje general que verán los usuarios en el dashboard de inicio.",
+    "fields": {
+      "platformInfo": "Sobre la plataforma"
+    },
+    "saveButton": "Guardar contenido",
+    "saveSuccess": "Información de la plataforma actualizada.",
+    "saveError": "No se pudo actualizar la información.",
+    "loadError": "No se pudo cargar la información del sitio.",
+    "previewTitle": "Vista previa",
+    "empty": "Aún no hay información guardada."
+  },
   "adminHospitals": {
     "title": "Gestión de Hospitales",
     "new": "Nuevo Hospital",
@@ -369,7 +390,8 @@
       "phone": "Teléfono",
       "systemType": "Tipo de Sistema",
       "email": "Email",
-      "logoUrl": "URL del logo"
+      "logoUrl": "URL del logo",
+      "programInfo": "Sobre el programa"
     },
     "system": {
       "other": "Otro"
@@ -422,7 +444,8 @@
       "fechaModuloOnlineStepByStep": "Step By Step",
       "fechaHandOn": "Hand On",
       "urlLogo": "URL del logo",
-      "responsablePrograma": "Responsable del programa"
+      "responsablePrograma": "Responsable del programa",
+      "programInfo": "Sobre el programa"
     }
   },
   "adminUsers": {
