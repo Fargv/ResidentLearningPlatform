@@ -59,13 +59,12 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
   }, [isEditing, value]);
 
   // Cuando entramos en modo edición, pinta el borrador UNA sola vez
-  useEffect(() => {
-    if (isEditing && editorRef.current) {
-      editorRef.current.innerHTML = draft || '';
-      editorRef.current.focus();
-      // Importante: no tocamos la selección ni movemos el cursor
-    }
-  }, [isEditing]); // solo cuando cambia el modo, no en cada tecla
+    useEffect(() => {
+      if (isEditing && editorRef.current) {
+        editorRef.current.innerHTML = draft || '';
+        editorRef.current.focus();
+      }
+    }, [isEditing]);
 
   const toolbarItems = useMemo(
     () => [
