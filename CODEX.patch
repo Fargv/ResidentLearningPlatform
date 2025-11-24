@@ -1,8 +1,19 @@
 diff --git a/client/src/components/RichTextDescriptionField.tsx b/client/src/components/RichTextDescriptionField.tsx
-index af02b5dbbb189aaa793498ace9524e393147ae0f..18f388c78465c18bf928ed3005742ddffc278c36 100644
+index 6fbb38c64ae2f4aba8767f8b5cb940d4bd2b8654..ff28fb8c8f581abf301589380cdc9dcf1e8fb087 100644
 --- a/client/src/components/RichTextDescriptionField.tsx
 +++ b/client/src/components/RichTextDescriptionField.tsx
-@@ -30,62 +30,66 @@ type ToolbarCommand =
+@@ -19,77 +19,76 @@ import { useTranslation } from 'react-i18next';
+ import { normalizeRichText, stripHtmlText } from '../utils/richText';
+ 
+ interface RichTextDescriptionFieldProps {
+   label: string;
+   value: string;
+   onChange: (value: string) => void;
+   minHeight?: number;
+ }
+ 
+ type ToolbarCommand =
+   | 'bold'
    | 'italic'
    | 'insertUnorderedList'
    | 'insertOrderedList'
@@ -17,9 +28,14 @@ index af02b5dbbb189aaa793498ace9524e393147ae0f..18f388c78465c18bf928ed3005742ddf
    const { t } = useTranslation();
    const theme = useTheme();
    const editorRef = useRef<HTMLDivElement | null>(null);
++  const draftRef = useRef(draft);
    const [isEditing, setIsEditing] = useState(false);
    const [draft, setDraft] = useState<string>(value || '');
  
++  useEffect(() => {
++    draftRef.current = draft;
++  }, [draft]);
++
    useEffect(() => {
      if (!isEditing) {
        setDraft(value || '');
@@ -27,34 +43,32 @@ index af02b5dbbb189aaa793498ace9524e393147ae0f..18f388c78465c18bf928ed3005742ddf
    }, [isEditing, value]);
  
    useEffect(() => {
-     if (editorRef.current) {
--      editorRef.current.innerHTML = isEditing ? draft : value || '';
--      if (isEditing) {
--        editorRef.current.focus();
--        const selection = window.getSelection();
--        const range = document.createRange();
--        range.selectNodeContents(editorRef.current);
--        range.collapse(false);
--        selection?.removeAllRanges();
--        selection?.addRange(range);
--      }
-+      editorRef.current.innerHTML = value || '';
-+    }
-+  }, [isEditing, value]);
+-    if (editorRef.current) {
+-      editorRef.current.innerHTML = value || '';
+-    }
+-  }, [isEditing, value]);
++    if (!isEditing || !editorRef.current) return;
 +
-+  useEffect(() => {
-+    if (isEditing && editorRef.current) {
-+      editorRef.current.innerHTML = draft;
-+      editorRef.current.focus();
-+      const selection = window.getSelection();
-+      const range = document.createRange();
-+      range.selectNodeContents(editorRef.current);
-+      range.collapse(false);
-+      selection?.removeAllRanges();
-+      selection?.addRange(range);
-     }
--  }, [draft, isEditing, value]);
++    editorRef.current.innerHTML = draftRef.current;
++    editorRef.current.focus();
 +  }, [isEditing]);
+ 
+   useEffect(() => {
+-    if (isEditing && editorRef.current) {
+-      editorRef.current.innerHTML = draft;
+-      editorRef.current.focus();
+-      const selection = window.getSelection();
+-      const range = document.createRange();
+-      range.selectNodeContents(editorRef.current);
+-      range.collapse(false);
+-      selection?.removeAllRanges();
+-      selection?.addRange(range);
+-    }
+-  }, [isEditing, draft]);
++    if (isEditing || !editorRef.current) return;
++
++    editorRef.current.innerHTML = value || '';
++  }, [isEditing, value]);
  
    const toolbarItems = useMemo(
      () => [
@@ -80,42 +94,3 @@ index af02b5dbbb189aaa793498ace9524e393147ae0f..18f388c78465c18bf928ed3005742ddf
      setDraft(html);
    }, []);
  
-@@ -172,38 +176,36 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
-           </Button>
-         </Box>
-       ) : (
-         <Stack
-           direction={{ xs: 'column', md: 'row' }}
-           spacing={1.5}
-           alignItems={{ xs: 'stretch', md: 'center' }}
-           sx={{ mt: 1 }}
-         >
-           <ButtonGroup variant="outlined" size="small">
-             {toolbarItems.map((item) => (
-               <Button key={item.command} onClick={() => execCommand(item.command)} aria-label={item.label}>
-                 {item.icon}
-               </Button>
-             ))}
-           </ButtonGroup>
-           <Box flexGrow={1} />
-           <Stack direction="row" spacing={1} justifyContent="flex-end">
-             <Button startIcon={<CloseIcon />} onClick={handleCancel}>
-               {t('common.cancel')}
-             </Button>
-             <Button
-               variant="contained"
-               startIcon={<CheckIcon />}
-               onClick={handleSave}
--              disabled={stripHtmlText(draft) === stripHtmlText(value || '')}
--
-             >
-               {t('common.saveChanges')}
-             </Button>
-           </Stack>
-         </Stack>
-       )}
-     </Box>
-   );
- };
- 
- export default RichTextDescriptionField;
