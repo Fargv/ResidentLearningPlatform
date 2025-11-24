@@ -67,7 +67,7 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
       selection?.removeAllRanges();
       selection?.addRange(range);
     }
-  }, [isEditing]);
+  }, [isEditing, draft]);
 
   const toolbarItems = useMemo(
     () => [
