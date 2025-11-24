@@ -52,18 +52,22 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
 
   useEffect(() => {
     if (editorRef.current) {
-      editorRef.current.innerHTML = isEditing ? draft : value || '';
-      if (isEditing) {
-        editorRef.current.focus();
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(editorRef.current);
-        range.collapse(false);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-      }
+      editorRef.current.innerHTML = value || '';
     }
-  }, [draft, isEditing, value]);
+  }, [isEditing, value]);
+
+  useEffect(() => {
+    if (isEditing && editorRef.current) {
+      editorRef.current.innerHTML = draft;
+      editorRef.current.focus();
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(editorRef.current);
+      range.collapse(false);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+  }, [isEditing]);
 
   const toolbarItems = useMemo(
     () => [
@@ -194,8 +198,6 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
               variant="contained"
               startIcon={<CheckIcon />}
               onClick={handleSave}
-              disabled={stripHtmlText(draft) === stripHtmlText(value || '')}
-
             >
               {t('common.saveChanges')}
             </Button>

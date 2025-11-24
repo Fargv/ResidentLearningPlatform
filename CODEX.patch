@@ -1,108 +1,121 @@
-diff --git a/src/server.js b/src/server.js
-index 9c1c65d1881ef4eba6494e1ea4d9a157545a6874..1a97aac4edc890894c8cb518e7862c7bf624a5ed 100644
---- a/src/server.js
-+++ b/src/server.js
-@@ -12,50 +12,51 @@ const connectDB = require('./config/database');
+diff --git a/client/src/components/RichTextDescriptionField.tsx b/client/src/components/RichTextDescriptionField.tsx
+index af02b5dbbb189aaa793498ace9524e393147ae0f..18f388c78465c18bf928ed3005742ddffc278c36 100644
+--- a/client/src/components/RichTextDescriptionField.tsx
++++ b/client/src/components/RichTextDescriptionField.tsx
+@@ -30,62 +30,66 @@ type ToolbarCommand =
+   | 'italic'
+   | 'insertUnorderedList'
+   | 'insertOrderedList'
+   | 'createLink';
  
- // Cargar variables de entorno
- dotenv.config();
+ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
+   label,
+   value,
+   onChange,
+   minHeight = 220,
+ }) => {
+   const { t } = useTranslation();
+   const theme = useTheme();
+   const editorRef = useRef<HTMLDivElement | null>(null);
+   const [isEditing, setIsEditing] = useState(false);
+   const [draft, setDraft] = useState<string>(value || '');
  
- // Conectar a la base de datos
- connectDB();
+   useEffect(() => {
+     if (!isEditing) {
+       setDraft(value || '');
+     }
+   }, [isEditing, value]);
  
- // Importar rutas
- const authRoutes = require('./routes/authRoutes');
- const userRoutes = require('./routes/userRoutes');
- const hospitalRoutes = require('./routes/hospitalRoutes');
- const faseRoutes = require('./routes/faseRoutes');
- const actividadRoutes = require('./routes/actividadRoutes');
- const faseSocRoutes = require('./routes/faseSocRoutes');
- const actividadSocRoutes = require('./routes/actividadSocRoutes');
- const progresoRoutes = require('./routes/progresoRoutes');
- const adjuntoRoutes = require('./routes/adjuntoRoutes');
- const notificacionRoutes = require('./routes/notificacionRoutes');
- const adminRoutes = require('./routes/adminRoutes');
- const sociedadesRoutes = require('./routes/sociedadesRoutes');
- const certificadoRoutes = require('./routes/certificadoRoutes');
- const accessCodeRoutes = require('./routes/accessCodeRoutes');
- const surgeryTypeRoutes = require('./routes/surgeryTypeRoutes');
- const informeCirugiasRoutes = require('./routes/informeCirugiasRoutes');
- const informesRoutes = require('./routes/informesRoutes');
-+const siteInfoRoutes = require('./routes/siteInfoRoutes');
+   useEffect(() => {
+     if (editorRef.current) {
+-      editorRef.current.innerHTML = isEditing ? draft : value || '';
+-      if (isEditing) {
+-        editorRef.current.focus();
+-        const selection = window.getSelection();
+-        const range = document.createRange();
+-        range.selectNodeContents(editorRef.current);
+-        range.collapse(false);
+-        selection?.removeAllRanges();
+-        selection?.addRange(range);
+-      }
++      editorRef.current.innerHTML = value || '';
++    }
++  }, [isEditing, value]);
++
++  useEffect(() => {
++    if (isEditing && editorRef.current) {
++      editorRef.current.innerHTML = draft;
++      editorRef.current.focus();
++      const selection = window.getSelection();
++      const range = document.createRange();
++      range.selectNodeContents(editorRef.current);
++      range.collapse(false);
++      selection?.removeAllRanges();
++      selection?.addRange(range);
+     }
+-  }, [draft, isEditing, value]);
++  }, [isEditing]);
  
- // Inicializar app
- const app = express();
+   const toolbarItems = useMemo(
+     () => [
+       { command: 'bold' as ToolbarCommand, icon: <FormatBoldIcon fontSize="small" />, label: t('richText.bold') },
+       { command: 'italic' as ToolbarCommand, icon: <FormatItalicIcon fontSize="small" />, label: t('richText.italic') },
+       {
+         command: 'insertUnorderedList' as ToolbarCommand,
+         icon: <FormatListBulletedIcon fontSize="small" />,
+         label: t('richText.bulletList'),
+       },
+       {
+         command: 'insertOrderedList' as ToolbarCommand,
+         icon: <FormatListNumberedIcon fontSize="small" />,
+         label: t('richText.orderedList'),
+       },
+       { command: 'createLink' as ToolbarCommand, icon: <LinkIcon fontSize="small" />, label: t('richText.link') },
+     ],
+     [t],
+   );
  
- // Middlewares esenciales
- app.use(express.json());
- app.use(cookieParser());
- app.use(helmet());
- const envOrigins = process.env.CLIENT_ORIGIN
-   ? process.env.CLIENT_ORIGIN
-       .split(',')
-       .map(origin => origin.trim())
-       .filter(Boolean)
-   : [];
+   const handleInput = useCallback(() => {
+     const html = editorRef.current?.innerHTML ?? '';
+     setDraft(html);
+   }, []);
  
- const allowedOrigins = Array.from(new Set([
-   'http://localhost:3000',
-   'http://localhost:5173',
-   'https://residentlearningplatform.netlify.app',
-   'https://academicprogramdavinci.com',
-   'https://academicprogramdavinci.netlify.app',
-   ...envOrigins,
- ]));
+@@ -172,38 +176,36 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
+           </Button>
+         </Box>
+       ) : (
+         <Stack
+           direction={{ xs: 'column', md: 'row' }}
+           spacing={1.5}
+           alignItems={{ xs: 'stretch', md: 'center' }}
+           sx={{ mt: 1 }}
+         >
+           <ButtonGroup variant="outlined" size="small">
+             {toolbarItems.map((item) => (
+               <Button key={item.command} onClick={() => execCommand(item.command)} aria-label={item.label}>
+                 {item.icon}
+               </Button>
+             ))}
+           </ButtonGroup>
+           <Box flexGrow={1} />
+           <Stack direction="row" spacing={1} justifyContent="flex-end">
+             <Button startIcon={<CloseIcon />} onClick={handleCancel}>
+               {t('common.cancel')}
+             </Button>
+             <Button
+               variant="contained"
+               startIcon={<CheckIcon />}
+               onClick={handleSave}
+-              disabled={stripHtmlText(draft) === stripHtmlText(value || '')}
+-
+             >
+               {t('common.saveChanges')}
+             </Button>
+           </Stack>
+         </Stack>
+       )}
+     </Box>
+   );
+ };
  
- const corsOptions = {
-@@ -78,50 +79,51 @@ app.use(fileupload());
- if (process.env.NODE_ENV === 'development') {
-   app.use(morgan('dev'));
- }
- 
- // Directorio público
- app.use(express.static(path.join(__dirname, '../public')));
- 
- // Rutas principales
- app.use('/api/auth', authRoutes);
- app.use('/api/users', userRoutes);
- app.use('/api/hospitals', hospitalRoutes);
- app.use('/api/fases', faseRoutes);
- app.use('/api/fasesSoc', faseSocRoutes);
- app.use('/api/actividades', actividadRoutes);
- app.use('/api/actividadesSoc', actividadSocRoutes);
- app.use('/api/progreso', progresoRoutes);
- app.use('/api/adjuntos', adjuntoRoutes);
- app.use('/api/notificaciones', notificacionRoutes);
- app.use('/api/admin', adminRoutes);
- app.use('/api/sociedades', sociedadesRoutes);
- app.use('/api/certificado', certificadoRoutes);
- app.use('/api/access-codes', accessCodeRoutes);
- app.use('/api/surgery-types', surgeryTypeRoutes);
- app.use('/api/informe-cirugias', informeCirugiasRoutes);
- app.use('/api/informes', informesRoutes);
-+app.use('/api/site-info', siteInfoRoutes);
- 
- 
- // Ruta test del servidor
- app.get('/', (req, res) => {
-   res.json({
-     success: true,
-     message: 'API de la plataforma de formación Da Vinci',
-     version: '1.0.0'
-   });
- });
- 
- // Middleware de errores
- app.use(errorHandler);
- 
- // Configuración del puerto
- const PORT = process.env.PORT || 5000;
- const server = app.listen(PORT, () => {
-   console.log(`Servidor en modo ${process.env.NODE_ENV} en puerto ${PORT}`);
- });
- 
- // Captura errores no gestionados
- process.on('unhandledRejection', (err, promise) => {
-   console.error(`Error no capturado: ${err.message}`);
-   server.close(() => process.exit(1));
- });
+ export default RichTextDescriptionField;
