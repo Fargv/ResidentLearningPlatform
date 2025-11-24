@@ -41,8 +41,14 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
   const { t } = useTranslation();
   const theme = useTheme();
   const editorRef = useRef<HTMLDivElement | null>(null);
+  const draftRef = useRef<string>('');
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<string>(value || '');
+
+  // Mantén un ref con el draft para usarlo al inicializar el editor sin gatillar re-renderizados
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
 
   // Cuando NO estamos editando, mantén el draft sincronizado con value
   useEffect(() => {
@@ -59,17 +65,17 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
   }, [isEditing, value]);
   
   const initEditor = useCallback(() => {
-  if (editorRef.current) {
-    editorRef.current.innerHTML = draft || '';
-    editorRef.current.focus();
-  }
-}, [draft]); // Esto NO rompe el cursor porque solo se ejecuta cuando yo la llamo
+    if (editorRef.current) {
+      editorRef.current.innerHTML = draftRef.current || '';
+      editorRef.current.focus();
+    }
+  }, []);
 
-        useEffect(() => {
-      if (isEditing) {
-        initEditor();
-      }
-    }, [isEditing, initEditor]);
+  useEffect(() => {
+    if (isEditing) {
+      initEditor();
+    }
+  }, [isEditing, initEditor]);
 
   const toolbarItems = useMemo(
     () => [

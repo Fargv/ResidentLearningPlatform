@@ -1,8 +1,8 @@
 diff --git a/client/src/components/RichTextDescriptionField.tsx b/client/src/components/RichTextDescriptionField.tsx
-index 6fbb38c64ae2f4aba8767f8b5cb940d4bd2b8654..ff28fb8c8f581abf301589380cdc9dcf1e8fb087 100644
+index b3c0448aae6be8d63169ad97cef624ffbe62ce0c..865da1775a97fd29a6ea49ed8018f5af6aa091fe 100644
 --- a/client/src/components/RichTextDescriptionField.tsx
 +++ b/client/src/components/RichTextDescriptionField.tsx
-@@ -19,77 +19,76 @@ import { useTranslation } from 'react-i18next';
+@@ -19,79 +19,85 @@ import { useTranslation } from 'react-i18next';
  import { normalizeRichText, stripHtmlText } from '../utils/richText';
  
  interface RichTextDescriptionFieldProps {
@@ -28,47 +28,51 @@ index 6fbb38c64ae2f4aba8767f8b5cb940d4bd2b8654..ff28fb8c8f581abf301589380cdc9dcf
    const { t } = useTranslation();
    const theme = useTheme();
    const editorRef = useRef<HTMLDivElement | null>(null);
-+  const draftRef = useRef(draft);
++  const draftRef = useRef<string>('');
    const [isEditing, setIsEditing] = useState(false);
    const [draft, setDraft] = useState<string>(value || '');
  
++  // Mantén un ref con el draft para usarlo al inicializar el editor sin gatillar re-renderizados
 +  useEffect(() => {
 +    draftRef.current = draft;
 +  }, [draft]);
 +
+   // Cuando NO estamos editando, mantén el draft sincronizado con value
    useEffect(() => {
      if (!isEditing) {
        setDraft(value || '');
      }
    }, [isEditing, value]);
  
+   // Pintar el contenido inicial cuando NO estamos editando (modo lectura)
    useEffect(() => {
--    if (editorRef.current) {
--      editorRef.current.innerHTML = value || '';
--    }
--  }, [isEditing, value]);
-+    if (!isEditing || !editorRef.current) return;
-+
-+    editorRef.current.innerHTML = draftRef.current;
-+    editorRef.current.focus();
-+  }, [isEditing]);
+     if (!isEditing && editorRef.current) {
+       editorRef.current.innerHTML = value || '';
+     }
+   }, [isEditing, value]);
+   
+   const initEditor = useCallback(() => {
+-  if (editorRef.current) {
+-    editorRef.current.innerHTML = draft || '';
+-    editorRef.current.focus();
+-  }
+-}, [draft]); // Esto NO rompe el cursor porque solo se ejecuta cuando yo la llamo
++    if (editorRef.current) {
++      editorRef.current.innerHTML = draftRef.current || '';
++      editorRef.current.focus();
++    }
++  }, []);
  
-   useEffect(() => {
--    if (isEditing && editorRef.current) {
--      editorRef.current.innerHTML = draft;
--      editorRef.current.focus();
--      const selection = window.getSelection();
--      const range = document.createRange();
--      range.selectNodeContents(editorRef.current);
--      range.collapse(false);
--      selection?.removeAllRanges();
--      selection?.addRange(range);
--    }
--  }, [isEditing, draft]);
-+    if (isEditing || !editorRef.current) return;
-+
-+    editorRef.current.innerHTML = value || '';
-+  }, [isEditing, value]);
+-        useEffect(() => {
+-      if (isEditing) {
+-        initEditor();
+-      }
+-    }, [isEditing, initEditor]);
++  useEffect(() => {
++    if (isEditing) {
++      initEditor();
++    }
++  }, [isEditing, initEditor]);
  
    const toolbarItems = useMemo(
      () => [
@@ -91,6 +95,6 @@ index 6fbb38c64ae2f4aba8767f8b5cb940d4bd2b8654..ff28fb8c8f581abf301589380cdc9dcf
  
    const handleInput = useCallback(() => {
      const html = editorRef.current?.innerHTML ?? '';
+     // Actualizamos el estado, pero ya NO reescribimos innerHTML desde ningún efecto
      setDraft(html);
    }, []);
- 
