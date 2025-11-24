@@ -57,14 +57,19 @@ const RichTextDescriptionField: React.FC<RichTextDescriptionFieldProps> = ({
       editorRef.current.innerHTML = value || '';
     }
   }, [isEditing, value]);
+  
+  const initEditor = useCallback(() => {
+  if (editorRef.current) {
+    editorRef.current.innerHTML = draft || '';
+    editorRef.current.focus();
+  }
+}, [draft]); // Esto NO rompe el cursor porque solo se ejecuta cuando yo la llamo
 
-  // Cuando entramos en modo edición, pinta el borrador UNA sola vez
-    useEffect(() => {
-      if (isEditing && editorRef.current) {
-        editorRef.current.innerHTML = draft || '';
-        editorRef.current.focus();
+        useEffect(() => {
+      if (isEditing) {
+        initEditor();
       }
-    }, [isEditing]);
+    }, [isEditing, initEditor]);
 
   const toolbarItems = useMemo(
     () => [
