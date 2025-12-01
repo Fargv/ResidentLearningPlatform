@@ -6,9 +6,16 @@ const InstallPrompt: React.FC = () => {
   const [ctaVisible, setCtaVisible] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
   const [installOutcome, setInstallOutcome] = useState<'accepted' | 'dismissed' | null>(null);
+  const [hasDismissed, setHasDismissed] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(isStandalone());
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
+      if (isInstalled || hasDismissed) {
+        event.preventDefault();
+        return;
+      }
+
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
       setCtaVisible(true);
@@ -19,13 +26,40 @@ const InstallPrompt: React.FC = () => {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
+  }, [hasDismissed, isInstalled]);
+
+  useEffect(() => {
+    const handleAppInstalled = () => {
+      setInstallOutcome(null);
+      setCtaVisible(false);
+      setDeferredPrompt(null);
+      setShowIosHelp(false);
+      setIsInstalled(true);
+    };
+
+    window.addEventListener('appinstalled', handleAppInstalled);
+    return () => {
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   useEffect(() => {
+    if (isInstalled || hasDismissed) {
+      setShowIosHelp(false);
+      return;
+    }
+
     if (isIosDevice() && !isStandalone()) {
       setShowIosHelp(true);
     }
-  }, []);
+  }, [hasDismissed, isInstalled]);
+
+  useEffect(() => {
+    if (!installOutcome) return;
+
+    const timeoutId = window.setTimeout(() => setInstallOutcome(null), 4000);
+    return () => window.clearTimeout(timeoutId);
+  }, [installOutcome]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -40,11 +74,14 @@ const InstallPrompt: React.FC = () => {
   const handleDismiss = () => {
     setCtaVisible(false);
     setShowIosHelp(false);
+    setInstallOutcome(null);
+    setHasDismissed(true);
+    setDeferredPrompt(null);
   };
 
   const shouldRenderBanner = useMemo(
-    () => ctaVisible || showIosHelp || Boolean(installOutcome),
-    [ctaVisible, showIosHelp, installOutcome]
+    () => !isInstalled && !hasDismissed && (ctaVisible || showIosHelp || Boolean(installOutcome)),
+    [ctaVisible, showIosHelp, installOutcome, hasDismissed, isInstalled]
   );
 
   if (!shouldRenderBanner) {

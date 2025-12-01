@@ -1,327 +1,117 @@
-diff --git a/client/public/index.html b/client/public/index.html
-index aa069f27cbd9d53394428171c3989fd03db73c76..9951daad4cfbc1a7fc4df5cb86ec12db9143bef1 100644
---- a/client/public/index.html
-+++ b/client/public/index.html
-@@ -1,43 +1,46 @@
- <!DOCTYPE html>
- <html lang="en">
-   <head>
-     <meta charset="utf-8" />
-     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-     <meta name="viewport" content="width=device-width, initial-scale=1" />
--    <meta name="theme-color" content="#000000" />
-+    <meta name="theme-color" content="#0b4f6c" />
-     <meta
-       name="description"
--      content="Web site created using create-react-app"
-+      content="Instala Resident Learning Platform como aplicación para acceder rápidamente al programa académico."
-     />
--    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-+    <meta name="apple-mobile-web-app-capable" content="yes" />
-+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192v2.png" />
-+    <meta name="apple-mobile-web-app-title" content="ResiLearning" />
-     <!--
-       manifest.json provides metadata used when your web app is installed on a
-       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-     -->
-     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-     <!--
-       Notice the use of %PUBLIC_URL% in the tags above.
-       It will be replaced with the URL of the `public` folder during the build.
-       Only files inside the `public` folder can be referenced from the HTML.
+diff --git a/client/src/components/InstallPrompt.tsx b/client/src/components/InstallPrompt.tsx
+index ce1be3f1c1a6cb7e8debd99fe6a90e9b0f4b9b10..474f7dbe6bbafe21790f5ab13cfb53a495cba8ef 100644
+--- a/client/src/components/InstallPrompt.tsx
++++ b/client/src/components/InstallPrompt.tsx
+@@ -1,72 +1,109 @@
+ import React, { useEffect, useMemo, useState } from 'react';
+ import { isIosDevice, isStandalone } from '../utils/pwa';
  
-       Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-       work correctly both with client-side routing and a non-root public URL.
-       Learn how to configure a non-root public URL by running `npm run build`.
-     -->
--    <title>React App</title>
-+    <title>Resident Learning Platform</title>
-   </head>
-   <body>
-     <noscript>You need to enable JavaScript to run this app.</noscript>
-     <div id="root"></div>
-     <!--
-       This HTML file is a template.
-       If you open it directly in the browser, you will see an empty page.
+ const InstallPrompt: React.FC = () => {
+   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+   const [ctaVisible, setCtaVisible] = useState(false);
+   const [showIosHelp, setShowIosHelp] = useState(false);
+   const [installOutcome, setInstallOutcome] = useState<'accepted' | 'dismissed' | null>(null);
++  const [hasDismissed, setHasDismissed] = useState(false);
++  const [isInstalled, setIsInstalled] = useState(isStandalone());
  
-       You can add webfonts, meta tags, or analytics to this file.
-       The build step will place the bundled scripts into the <body> tag.
- 
-       To begin the development, run `npm start` or `yarn start`.
-       To create a production bundle, use `npm run build` or `yarn build`.
-     -->
-   </body>
- </html>
-diff --git a/client/public/manifest.json b/client/public/manifest.json
-index 080d6c77ac21bb2ef88a6992b2b73ad93daaca92..4ba2576b9671e60fbb3826e8a03ba7b92a983f7a 100644
---- a/client/public/manifest.json
-+++ b/client/public/manifest.json
-@@ -1,25 +1,32 @@
- {
--  "short_name": "React App",
--  "name": "Create React App Sample",
-+  "short_name": "ResiLearning",
-+  "name": "Resident Learning Platform",
-+  "description": "Accede al programa académico desde la pantalla de inicio con una experiencia tipo app.",
-   "icons": [
-     {
--      "src": "favicon.ico",
--      "sizes": "64x64 32x32 24x24 16x16",
--      "type": "image/x-icon"
-+      "src": "logo192v2.png",
-+      "type": "image/png",
-+      "sizes": "192x192"
-+    },
-+    {
-+      "src": "logo512v2.png",
-+      "type": "image/png",
-+      "sizes": "512x512"
-     },
-     {
-       "src": "logo192.png",
-       "type": "image/png",
-       "sizes": "192x192"
-     },
-     {
-       "src": "logo512.png",
-       "type": "image/png",
-       "sizes": "512x512"
-     }
-   ],
--  "start_url": ".",
-+  "start_url": "/",
-+  "scope": "/",
-   "display": "standalone",
--  "theme_color": "#000000",
-+  "theme_color": "#0b4f6c",
-   "background_color": "#ffffff"
- }
-diff --git a/client/src/App.tsx b/client/src/App.tsx
-index f3eacafa2c0b27e67aa96e49170bf336edbdff1b..b1355226df9b2e7761402995021cdaee32b20cb0 100644
---- a/client/src/App.tsx
-+++ b/client/src/App.tsx
-@@ -11,91 +11,91 @@ import { AuthProvider } from './context/AuthContext';
- // Componentes de enrutamiento
- import PrivateRoute from './components/routing/PrivateRoute';
- import AdminRoute from './components/routing/AdminRoute';
- import TutorRoute from './components/routing/TutorRoute';
- 
- // Páginas públicas
- import Login from './pages/Login';
- import Register from './pages/Register';
- import RegisterInvite from './pages/RegisterInvite';
- import ForgotPassword from './pages/ForgotPassword';
- import ResetPassword from './pages/ResetPassword';
- import NotFound from './pages/NotFound';
- import PrivacyPolicy from './pages/PrivacyPolicy';
- 
- // Páginas del dashboard
- import Dashboard from './pages/Dashboard';
- import DashboardHome from './pages/dashboard/DashboardHome';
- import TutorValidaciones from './pages/dashboard/TutorValidaciones';
- import Usuarios from './pages/dashboard/Usuarios';
- import AdminHospitales from './pages/dashboard/AdminHospitales';
- import AdminFases from './pages/dashboard/AdminFases';
- import Perfil from './pages/dashboard/Perfil';
- import Notificaciones from './pages/dashboard/Notificaciones';
- import AdminSociedades from "./pages/dashboard/AdminSociedades";
- import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
--import AdminInformes from './pages/dashboard/AdminInformes';
-+import AdminInformes from './pages/dashboard/AdminInformes';
-+import InstallPrompt from './components/InstallPrompt';
- 
- 
- declare global {
-   interface Window {
-     REACT_APP_ENV?: string;
-   }
- }
- 
- function App() {
    useEffect(() => {
-     console.log("REACT_APP_API_URL cargada:", process.env.REACT_APP_API_URL);
+     const handleBeforeInstallPrompt = (event: Event) => {
++      if (isInstalled || hasDismissed) {
++        event.preventDefault();
++        return;
++      }
++
+       event.preventDefault();
+       setDeferredPrompt(event as BeforeInstallPromptEvent);
+       setCtaVisible(true);
+       setInstallOutcome(null);
+     };
+ 
+     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+     return () => {
+       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+     };
++  }, [hasDismissed, isInstalled]);
++
++  useEffect(() => {
++    const handleAppInstalled = () => {
++      setInstallOutcome(null);
++      setCtaVisible(false);
++      setDeferredPrompt(null);
++      setShowIosHelp(false);
++      setIsInstalled(true);
++    };
++
++    window.addEventListener('appinstalled', handleAppInstalled);
++    return () => {
++      window.removeEventListener('appinstalled', handleAppInstalled);
++    };
    }, []);
  
-   const env = process.env.REACT_APP_ENV || window.REACT_APP_ENV;
-   const isDev = env === 'dev';
- 
    useEffect(() => {
-     document.title = isDev ? 'DEV Academic Prog' : 'Academic Program';
-   }, [isDev]);
++    if (isInstalled || hasDismissed) {
++      setShowIosHelp(false);
++      return;
++    }
++
+     if (isIosDevice() && !isStandalone()) {
+       setShowIosHelp(true);
+     }
+-  }, []);
++  }, [hasDismissed, isInstalled]);
++
++  useEffect(() => {
++    if (!installOutcome) return;
++
++    const timeoutId = window.setTimeout(() => setInstallOutcome(null), 4000);
++    return () => window.clearTimeout(timeoutId);
++  }, [installOutcome]);
  
-   const wrapperStyle: React.CSSProperties | undefined =
-     isDev ? { backgroundColor: '#fdd', minHeight: '100vh' } : undefined;
+   const handleInstallClick = async () => {
+     if (!deferredPrompt) return;
+ 
+     deferredPrompt.prompt();
+     const choiceResult = await deferredPrompt.userChoice;
+     setInstallOutcome(choiceResult.outcome);
+     setCtaVisible(false);
+     setDeferredPrompt(null);
+   };
+ 
+   const handleDismiss = () => {
+     setCtaVisible(false);
+     setShowIosHelp(false);
++    setInstallOutcome(null);
++    setHasDismissed(true);
++    setDeferredPrompt(null);
+   };
+ 
+   const shouldRenderBanner = useMemo(
+-    () => ctaVisible || showIosHelp || Boolean(installOutcome),
+-    [ctaVisible, showIosHelp, installOutcome]
++    () => !isInstalled && !hasDismissed && (ctaVisible || showIosHelp || Boolean(installOutcome)),
++    [ctaVisible, showIosHelp, installOutcome, hasDismissed, isInstalled]
+   );
+ 
+   if (!shouldRenderBanner) {
+     return null;
+   }
  
    return (
-     <div style={wrapperStyle}>
-       {isDev && (
-         <div
-           style={{
-             background: 'red',
-             color: 'white',
-             textAlign: 'center',
-             padding: '0.5rem',
-             fontWeight: 'bold',
-           }}
-         >
-           ⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️
-         </div>
-       )}
--
--
-+      <InstallPrompt />
-       <Router>
-         <AuthProvider>
-           <Routes>
-             {/* Rutas públicas */}
-             <Route path="/login" element={<Login />} />
-             <Route path="/register" element={<Register />} />
-             <Route path="/register/:token" element={<RegisterInvite />} />
-             <Route path="/forgot-password" element={<ForgotPassword />} />
-             <Route path="/reset-password/:token" element={<ResetPassword />} />
-             <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
- 
-             {/* Ruta raíz redirige a dashboard o login */}
-             <Route path="/" element={<Navigate to="/dashboard" replace />} />
- 
-             <Route path="/dashboard/*" element={
-               <PrivateRoute>
-                 <Dashboard />
-               </PrivateRoute>
-             }>
- 
-               <Route index element={<DashboardHome />} />
- 
-               {/* Rutas para residentes */}
- 
- 
-diff --git a/client/src/index.css b/client/src/index.css
-index 1d03b7083d9575c49690818d59755f889d54ed82..886ff6044759c2915da7101a674371c50a014d8e 100644
---- a/client/src/index.css
-+++ b/client/src/index.css
-@@ -1,15 +1,91 @@
- @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
- 
- body {
-   margin: 0;
-   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-     'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-     'Helvetica Neue', sans-serif;
-   -webkit-font-smoothing: antialiased;
-   -moz-osx-font-smoothing: grayscale;
- }
- 
- code {
-   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-     monospace;
- }
-+
-+.install-banner {
-+  position: fixed;
-+  right: 16px;
-+  bottom: 16px;
-+  z-index: 1400;
-+  background: #ffffff;
-+  color: #0b4f6c;
-+  border-radius: 12px;
-+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-+  max-width: 360px;
-+  width: calc(100% - 32px);
-+  border: 1px solid #e2e8f0;
-+}
-+
-+.install-banner__content {
-+  display: flex;
-+  justify-content: space-between;
-+  gap: 16px;
-+  padding: 16px;
-+  align-items: center;
-+}
-+
-+.install-banner__actions {
-+  display: flex;
-+  flex-direction: column;
-+  gap: 8px;
-+  min-width: 110px;
-+  align-items: flex-end;
-+}
-+
-+.install-banner__button {
-+  background: #0b4f6c;
-+  color: #ffffff;
-+  border: none;
-+  border-radius: 8px;
-+  padding: 8px 12px;
-+  cursor: pointer;
-+  font-weight: 600;
-+}
-+
-+.install-banner__button:hover {
-+  background: #0d5f82;
-+}
-+
-+.install-banner__link {
-+  background: transparent;
-+  border: none;
-+  color: #0b4f6c;
-+  cursor: pointer;
-+  font-weight: 600;
-+  text-decoration: underline;
-+}
-+
-+.install-banner__hint {
-+  margin: 6px 0 0 0;
-+}
-+
-+@media (max-width: 640px) {
-+  .install-banner {
-+    right: 8px;
-+    left: 8px;
-+    width: auto;
-+  }
-+
-+  .install-banner__content {
-+    flex-direction: column;
-+    align-items: flex-start;
-+  }
-+
-+  .install-banner__actions {
-+    width: 100%;
-+    flex-direction: row;
-+    justify-content: flex-end;
-+  }
-+}
-diff --git a/client/src/index.tsx b/client/src/index.tsx
-index 06b86b71979857ccf6c22e6faa3ba93d108f6666..e456bc9c150b78e6f4885ba7943bdd340c8ded4e 100644
---- a/client/src/index.tsx
-+++ b/client/src/index.tsx
-@@ -1,26 +1,28 @@
- import React from 'react';
- import ReactDOM from 'react-dom/client';
- import './index.css';
- import App from './App';
- import reportWebVitals from './reportWebVitals';
- import { I18nextProvider } from 'react-i18next';
- import i18n from './i18n';
- import { ColorModeProvider } from './context/ColorModeContext';
-+import { registerServiceWorker } from './utils/pwa';
- 
- const root = ReactDOM.createRoot(
-   document.getElementById('root') as HTMLElement
- );
- root.render(
-   <React.StrictMode>
-     <I18nextProvider i18n={i18n}>
-       <ColorModeProvider>
-         <App />
-       </ColorModeProvider>
-     </I18nextProvider>
-   </React.StrictMode>
- );
- 
- // If you want to start measuring performance in your app, pass a function
- // to log results (for example: reportWebVitals(console.log))
- // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
- reportWebVitals();
-+registerServiceWorker();
+     <div className="install-banner">
+       <div className="install-banner__content">
+         <div>
+           <strong>Instala la aplicación</strong>
+           {ctaVisible && (
+             <p>
+               Guarda la plataforma en tu pantalla de inicio para acceder más rápido y con
+               experiencia de app.
+             </p>
+           )}
+           {installOutcome && (
+             <p>
+               Preferencia registrada: {installOutcome === 'accepted' ? 'instalación iniciada' : 'instalación cancelada'}.
+             </p>
+           )}
+           {showIosHelp && (
+             <p className="install-banner__hint">
+               En Safari para iOS toca <strong>Compartir</strong> y selecciona
