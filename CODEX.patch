@@ -1,61 +1,90 @@
-diff --git a/client/src/context/AuthContext.tsx b/client/src/context/AuthContext.tsx
-index ef9c6af35bffccc7f5d04168bcfb19e171a7bcfd..ed188da48ff7f3aa34841876ecc7165230c8b74c 100644
---- a/client/src/context/AuthContext.tsx
-+++ b/client/src/context/AuthContext.tsx
-@@ -115,50 +115,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
-           especialidad: userData.especialidad,
-           tutor: userData.tutor ?? null,
-           token
-         };
-         setUser(userWithToken);
-         setIsAuthenticated(true);
-         localStorage.setItem('user', JSON.stringify(userWithToken));
-         scheduleInactivityLogout();
-       } catch (err: any) {
-         localStorage.removeItem('token');
+diff --git a/client/public/sw.js b/client/public/sw.js
+index 643c9f4075886fc23ae393f519ea9d01469adfad..6c33b4f1fd6ad46040326bb1f510060609a83622 100644
+--- a/client/public/sw.js
++++ b/client/public/sw.js
+@@ -1,55 +1,83 @@
+-const CACHE_NAME = 'resident-learning-cache-v1';
++const CACHE_NAME = 'resident-learning-cache-v2';
+ const ASSETS_TO_CACHE = [
+   '/',
+   '/index.html',
+   '/manifest.json',
+   '/logo192v2.png',
+   '/logo512v2.png'
+ ];
  
-         setError(err.response?.data?.error || 'Error al cargar el usuario');
-       } finally {
-         setLoading(false);
-       }
-     };
+ self.addEventListener('install', (event) => {
+   event.waitUntil(
+     caches
+       .open(CACHE_NAME)
+       .then((cache) => cache.addAll(ASSETS_TO_CACHE))
+       .then(() => self.skipWaiting())
+   );
+ });
  
-     loadUser();
-   }, [scheduleInactivityLogout]);
+ self.addEventListener('activate', (event) => {
+   event.waitUntil(
+     caches
+       .keys()
+       .then((cacheNames) =>
+         Promise.all(
+           cacheNames
+             .filter((cacheName) => cacheName !== CACHE_NAME)
+             .map((cacheName) => caches.delete(cacheName))
+         )
+       )
+       .then(() => self.clients.claim())
+   );
+ });
  
-   const login = async (email: string, password: string) => {
-     try {
-       setLoading(true);
-       setError(null);
- 
-+      // Limpiar cualquier sesión previa antes de intentar iniciar sesión con nuevas credenciales
-+      localStorage.removeItem('token');
-+      localStorage.removeItem('user');
-+      setUser(null);
-+      setIsAuthenticated(false);
++const isApiRequest = (requestUrl) => {
++  // Evitamos cachear peticiones a la API (ej. /api/auth/me) para no servir datos obsoletos de sesión
++  return requestUrl.pathname.startsWith('/api/');
++};
 +
-       const res = await api.post('/auth/login', { email, password });
-       const token = res.data.token;
+ self.addEventListener('fetch', (event) => {
+   const { request } = event;
++
+   if (request.method !== 'GET') {
+     return;
+   }
  
-       localStorage.setItem('token', token);
++  const requestUrl = new URL(request.url);
++
++  if (isApiRequest(requestUrl)) {
++    // Respuestas siempre en vivo para endpoints de autenticación/datos dinámicos
++    event.respondWith(fetch(request));
++    return;
++  }
++
++  if (request.mode === 'navigate') {
++    // Network-first para obtener siempre la versión más reciente de la app
++    event.respondWith(
++      fetch(request)
++        .then((networkResponse) => {
++          const responseClone = networkResponse.clone();
++          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', responseClone));
++          return networkResponse;
++        })
++        .catch(() => caches.match('/index.html'))
++    );
++    return;
++  }
++
+   event.respondWith(
+     caches.match(request).then((cachedResponse) => {
+       if (cachedResponse) {
+         return cachedResponse;
+       }
  
-       const userRes = await api.get('/auth/me');
-       const userData = userRes.data.data;
-       const userWithToken: User = {
-         ...userData,
-         especialidad: userData.especialidad,
-         tutor: userData.tutor ?? null,
-         token
-       };
- 
-       setUser(userWithToken);
-       setIsAuthenticated(true);
-       localStorage.setItem("user", JSON.stringify(userWithToken));
- 
-       navigate('/dashboard');
-       scheduleInactivityLogout();
-     } catch (err: any) {
-       setError(err.response?.data?.error || 'Error al iniciar sesión');
-     } finally {
-       setLoading(false);
-     }
+       return fetch(request)
+         .then((networkResponse) => {
+           const responseClone = networkResponse.clone();
+           caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+           return networkResponse;
+         })
+-        .catch(() => caches.match('/')); // fallback to cached home when offline
++        .catch(() => caches.match('/'));
+     })
+   );
+ });
