@@ -1,11 +1,17 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ResiLearning",
+  "name": "Resident Learning Platform",
+  "description": "Accede al programa académico desde la pantalla de inicio con una experiencia tipo app.",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "logo192v2.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512v2.png",
+      "type": "image/png",
+      "sizes": "512x512"
     },
     {
       "src": "logo192.png",
@@ -18,8 +24,9 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#0b4f6c",
   "background_color": "#ffffff"
 }

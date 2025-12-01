@@ -34,6 +34,7 @@ import Notificaciones from './pages/dashboard/Notificaciones';
 import AdminSociedades from "./pages/dashboard/AdminSociedades";
 import AdminProgresoDetalle from './pages/dashboard/AdminProgresoDetalle';
 import AdminInformes from './pages/dashboard/AdminInformes';
+import InstallPrompt from './components/InstallPrompt';
 
 
 declare global {
@@ -72,8 +73,7 @@ function App() {
           ⚠️ ESTÁS EN ENTORNO DE DESARROLLO ⚠️
         </div>
       )}
-
-
+      <InstallPrompt />
       <Router>
         <AuthProvider>
           <Routes>
