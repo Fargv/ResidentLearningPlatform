@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const inactivityTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inactivityTimeoutRef = useRef<number | null>(null);
   const navigate = useNavigate();
 
   const clearInactivityTimer = useCallback(() => {
