@@ -137,6 +137,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
 
+      // Limpiar cualquier sesión previa antes de intentar iniciar sesión con nuevas credenciales
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAuthenticated(false);
+
       const res = await api.post('/auth/login', { email, password });
       const token = res.data.token;
 
