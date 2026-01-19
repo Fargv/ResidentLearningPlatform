@@ -116,10 +116,14 @@ const AdminValidaciones: React.FC = () => {
   const attachmentButtonStyles = { minWidth: 160, height: 36 };
   const actionButtonStyles = { minWidth: 170, height: 36, mt: 1 };
 
-  const formatFase = (fase: any) =>
+  const formatFase = useCallback(
+  (fase: any) =>
     fase
       ? `${t('common.phase')} ${fase.numero}: ${fase.nombre}`
-      : t('tutorValidations.table.noPhase');
+      : t('tutorValidations.table.noPhase'),
+  [t]
+);
+
 
   const getSurgeryType = (cirugia?: any, otraCirugia?: string) => {
     if (cirugia?.name) return cirugia.name;
@@ -375,17 +379,20 @@ const AdminValidaciones: React.FC = () => {
     });
 
     return Array.from(phasesMap.entries()).map(([id, label]) => ({ id, label }));
-  }, [combinedRecords, t]);
+  }, [combinedRecords, formatFase]);
 
-  const getDateForFilter = (record: any) => {
-    if (record?.actividad?.estado === 'validado') return record.actividad?.fechaValidacion;
-    if (record?.actividad?.estado === 'rechazado') return record.actividad?.fechaRechazo;
-    return record?.fechaCreacion;
-  };
+  const getDateForFilter = useCallback((record: any) => {
+  if (record?.actividad?.estado === 'validado') return record.actividad?.fechaValidacion;
+  if (record?.actividad?.estado === 'rechazado') return record.actividad?.fechaRechazo;
+  return record?.fechaCreacion;
+}, []);
 
-  const matchesFilters = (record: any) => {
+  const matchesFilters = useCallback(
+  (record: any) => {
     const resident = record.residente || {};
-    const residentName = `${resident.nombre || ''} ${resident.apellidos || ''}`.trim().toLowerCase();
+    const residentName = `${resident.nombre || ''} ${resident.apellidos || ''}`
+      .trim()
+      .toLowerCase();
     const residentEmail = (resident.email || '').toLowerCase();
     const searchValue = filters.participantQuery.trim().toLowerCase();
 
@@ -416,6 +423,7 @@ const AdminValidaciones: React.FC = () => {
     }
 
     const recordDate = getDateForFilter(record);
+
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
       if (!recordDate || new Date(recordDate) < fromDate) return false;
@@ -428,20 +436,26 @@ const AdminValidaciones: React.FC = () => {
     }
 
     return true;
-  };
+  },
+  [filters, getDateForFilter]
+);
+
 
   const filteredPendientes = useMemo(
-    () => pendientes.filter(matchesFilters),
-    [pendientes, filters]
-  );
-  const filteredValidadas = useMemo(
-    () => validadas.filter(matchesFilters),
-    [validadas, filters]
-  );
-  const filteredRechazadas = useMemo(
-    () => rechazadas.filter(matchesFilters),
-    [rechazadas, filters]
-  );
+  () => pendientes.filter(matchesFilters),
+  [pendientes, matchesFilters]
+);
+
+const filteredValidadas = useMemo(
+  () => validadas.filter(matchesFilters),
+  [validadas, matchesFilters]
+);
+
+const filteredRechazadas = useMemo(
+  () => rechazadas.filter(matchesFilters),
+  [rechazadas, matchesFilters]
+);
+
 
   if (loading) {
     return (
