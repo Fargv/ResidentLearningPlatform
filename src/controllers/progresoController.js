@@ -1039,7 +1039,7 @@ const getValidacionesPendientesAdmin = async (req, res, next) => {
     const progresos = await ProgresoResidente.find()
       .populate({
         path: 'residente',
-        select: 'nombre apellidos tipo hospital sociedad'
+        select: 'nombre apellidos email tipo hospital sociedad'
       })
       .populate('fase')
       .populate('actividades.actividad')

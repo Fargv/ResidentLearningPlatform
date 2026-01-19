@@ -793,6 +793,41 @@
       "noAttachments": "Aucune pièce jointe disponible"
     }
   },
+  "adminValidations": {
+    "title": "Validations (Admin)",
+    "menu": "Validations (Admin)",
+    "signaturePrefix": "Administrateur",
+    "actions": {
+      "refresh": "Actualiser"
+    },
+    "filters": {
+      "title": "Filtres",
+      "participantType": "Type de participant",
+      "residentsProgram": "Programme Résidents",
+      "societies": "Sociétés",
+      "society": "Société",
+      "hospital": "Hôpital",
+      "participant": "Participant",
+      "participantPlaceholder": "Nom ou e-mail",
+      "phase": "Phase",
+      "status": "Statut",
+      "statusPending": "En attente",
+      "statusValidated": "Validé",
+      "statusRejected": "Rejeté",
+      "dateFrom": "De",
+      "dateTo": "À",
+      "clear": "Effacer les filtres",
+      "all": "Tous"
+    },
+    "table": {
+      "validator": "Validateur"
+    },
+    "empty": {
+      "pending": "Aucune validation en attente avec ces filtres",
+      "validated": "Aucune validation terminée avec ces filtres",
+      "rejected": "Aucune validation rejetée avec ces filtres"
+    }
+  },
   "residentProgress": {
     "title": "Mon progrès",
     "errorLoad": "Erreur lors du chargement du progrès",

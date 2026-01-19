@@ -974,6 +974,41 @@
       "noAttachments": "Nessun allegato disponibile"
     }
   },
+  "adminValidations": {
+    "title": "Validazioni (Admin)",
+    "menu": "Validazioni (Admin)",
+    "signaturePrefix": "Amministratore",
+    "actions": {
+      "refresh": "Aggiorna"
+    },
+    "filters": {
+      "title": "Filtri",
+      "participantType": "Tipo di partecipante",
+      "residentsProgram": "Programma residenti",
+      "societies": "Società",
+      "society": "Società",
+      "hospital": "Ospedale",
+      "participant": "Partecipante",
+      "participantPlaceholder": "Nome o email",
+      "phase": "Fase",
+      "status": "Stato",
+      "statusPending": "In attesa",
+      "statusValidated": "Validato",
+      "statusRejected": "Respinto",
+      "dateFrom": "Da",
+      "dateTo": "A",
+      "clear": "Cancella filtri",
+      "all": "Tutti"
+    },
+    "table": {
+      "validator": "Validatore"
+    },
+    "empty": {
+      "pending": "Nessuna validazione in attesa con questi filtri",
+      "validated": "Nessuna validazione completata con questi filtri",
+      "rejected": "Nessuna validazione respinta con questi filtri"
+    }
+  },
   "residentPhases": {
     "title": "Le mie fasi formative",
     "errorLoad": "Errore nel caricamento del progresso",

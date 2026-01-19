@@ -49,6 +49,7 @@ import { useColorMode } from '../context/ColorModeContext';
 // Páginas del dashboard
 import DashboardHome from './dashboard/DashboardHome';
 import TutorValidaciones from './dashboard/TutorValidaciones';
+import AdminValidaciones from './dashboard/AdminValidaciones';
 import Usuarios from './dashboard/Usuarios';
 import AdminHospitales from './dashboard/AdminHospitales';
 import AdminFases from './dashboard/AdminFases';
@@ -142,6 +143,7 @@ const Dashboard: React.FC = () => {
       items.push(
         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
         { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
+        { text: t('adminValidations.menu'), icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] },
         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
       );
@@ -614,6 +616,9 @@ const Dashboard: React.FC = () => {
           )}
           {user?.rol === 'administrador' && (
             <Route path="/informes" element={<AdminInformes />} />
+          )}
+          {user?.rol === 'administrador' && (
+            <Route path="/validaciones-admin" element={<AdminValidaciones />} />
           )}
           {user?.rol === 'administrador' && (
             <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />

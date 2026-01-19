@@ -1055,6 +1055,41 @@
       "noAttachments": "Keine Anhänge verfügbar"
     }
   },
+  "adminValidations": {
+    "title": "Validierungen (Admin)",
+    "menu": "Validierungen (Admin)",
+    "signaturePrefix": "Administrator",
+    "actions": {
+      "refresh": "Aktualisieren"
+    },
+    "filters": {
+      "title": "Filter",
+      "participantType": "Teilnehmertyp",
+      "residentsProgram": "Residentenprogramm",
+      "societies": "Gesellschaften",
+      "society": "Gesellschaft",
+      "hospital": "Krankenhaus",
+      "participant": "Teilnehmer",
+      "participantPlaceholder": "Name oder E-Mail",
+      "phase": "Phase",
+      "status": "Status",
+      "statusPending": "Ausstehend",
+      "statusValidated": "Validiert",
+      "statusRejected": "Abgelehnt",
+      "dateFrom": "Von",
+      "dateTo": "Bis",
+      "clear": "Filter löschen",
+      "all": "Alle"
+    },
+    "table": {
+      "validator": "Validierer"
+    },
+    "empty": {
+      "pending": "Keine ausstehenden Validierungen mit diesen Filtern",
+      "validated": "Keine abgeschlossenen Validierungen mit diesen Filtern",
+      "rejected": "Keine abgelehnten Validierungen mit diesen Filtern"
+    }
+  },
   "privacyPolicy": {
     "title": "Datenschutzerklärung",
     "lastUpdated": "Zuletzt aktualisiert: {{date}}"

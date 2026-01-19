@@ -933,6 +933,41 @@
       "noAttachments": "Ez dago eranskinik erabilgarri"
     }
   },
+  "adminValidations": {
+    "title": "Balidazioak (Admin)",
+    "menu": "Balidazioak (Admin)",
+    "signaturePrefix": "Administratzailea",
+    "actions": {
+      "refresh": "Eguneratu"
+    },
+    "filters": {
+      "title": "Iragazkiak",
+      "participantType": "Parte-hartzaile mota",
+      "residentsProgram": "Egoiliarren programa",
+      "societies": "Elkarteak",
+      "society": "Elkartea",
+      "hospital": "Ospitalea",
+      "participant": "Parte-hartzailea",
+      "participantPlaceholder": "Izena edo emaila",
+      "phase": "Fasea",
+      "status": "Egoera",
+      "statusPending": "Zain",
+      "statusValidated": "Balidatua",
+      "statusRejected": "Baztertua",
+      "dateFrom": "Noiztik",
+      "dateTo": "Noiz arte",
+      "clear": "Iragazkiak garbitu",
+      "all": "Guztiak"
+    },
+    "table": {
+      "validator": "Balidatzailea"
+    },
+    "empty": {
+      "pending": "Ez dago balidazio zainik iragazki hauekin",
+      "validated": "Ez dago balidazio osaturik iragazki hauekin",
+      "rejected": "Ez dago balidazio baztertua iragazki hauekin"
+    }
+  },
   "residentPhases": {
     "title": "Nire prestakuntza faseak",
     "errorLoad": "Errorea aurrerapena kargatzean",

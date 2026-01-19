@@ -26,6 +26,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Dashboard from './pages/Dashboard';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import TutorValidaciones from './pages/dashboard/TutorValidaciones';
+import AdminValidaciones from './pages/dashboard/AdminValidaciones';
 import Usuarios from './pages/dashboard/Usuarios';
 import AdminHospitales from './pages/dashboard/AdminHospitales';
 import AdminFases from './pages/dashboard/AdminFases';
@@ -142,6 +143,11 @@ function App() {
               <Route path="informes" element={
                 <AdminRoute>
                   <AdminInformes />
+                </AdminRoute>
+              } />
+              <Route path="validaciones-admin" element={
+                <AdminRoute>
+                  <AdminValidaciones />
                 </AdminRoute>
               } />
 

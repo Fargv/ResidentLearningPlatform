@@ -971,6 +971,41 @@
       "noAttachments": "No attachments available"
     }
   },
+  "adminValidations": {
+    "title": "Validations (Admin)",
+    "menu": "Validations (Admin)",
+    "signaturePrefix": "Administrator",
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "filters": {
+      "title": "Filters",
+      "participantType": "Participant type",
+      "residentsProgram": "Residents Program",
+      "societies": "Societies",
+      "society": "Society",
+      "hospital": "Hospital",
+      "participant": "Participant",
+      "participantPlaceholder": "Name or email",
+      "phase": "Phase",
+      "status": "Status",
+      "statusPending": "Pending",
+      "statusValidated": "Validated",
+      "statusRejected": "Rejected",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "clear": "Clear filters",
+      "all": "All"
+    },
+    "table": {
+      "validator": "Validator"
+    },
+    "empty": {
+      "pending": "No pending validations with these filters",
+      "validated": "No completed validations with these filters",
+      "rejected": "No rejected validations with these filters"
+    }
+  },
   "residentPhases": {
     "title": "My Training Phases",
     "errorLoad": "Error loading progress",

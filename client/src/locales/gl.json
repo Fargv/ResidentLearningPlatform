@@ -918,6 +918,41 @@
       "noAttachments": "Non hai anexos dispoñibles"
     }
   },
+  "adminValidations": {
+    "title": "Validacións (Admin)",
+    "menu": "Validacións (Admin)",
+    "signaturePrefix": "Administrador",
+    "actions": {
+      "refresh": "Actualizar"
+    },
+    "filters": {
+      "title": "Filtros",
+      "participantType": "Tipo de participante",
+      "residentsProgram": "Programa de residentes",
+      "societies": "Sociedades",
+      "society": "Sociedade",
+      "hospital": "Hospital",
+      "participant": "Participante",
+      "participantPlaceholder": "Nome ou correo",
+      "phase": "Fase",
+      "status": "Estado",
+      "statusPending": "Pendente",
+      "statusValidated": "Validado",
+      "statusRejected": "Rexeitado",
+      "dateFrom": "Desde",
+      "dateTo": "Ata",
+      "clear": "Limpar filtros",
+      "all": "Todos"
+    },
+    "table": {
+      "validator": "Validador"
+    },
+    "empty": {
+      "pending": "Non hai validacións pendentes con estes filtros",
+      "validated": "Non hai validacións completadas con estes filtros",
+      "rejected": "Non hai validacións rexeitadas con estes filtros"
+    }
+  },
   "emails": {
     "inviteSubject": "Invitación á Plataforma de Formación Da Vinci"
   },

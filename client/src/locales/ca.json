@@ -754,6 +754,41 @@
       "noAttachments": "No hi ha adjunts disponibles"
     }
   },
+  "adminValidations": {
+    "title": "Validacions (Admin)",
+    "menu": "Validacions (Admin)",
+    "signaturePrefix": "Administrador",
+    "actions": {
+      "refresh": "Actualitzar"
+    },
+    "filters": {
+      "title": "Filtres",
+      "participantType": "Tipus de participant",
+      "residentsProgram": "Programa de Residents",
+      "societies": "Societats",
+      "society": "Societat",
+      "hospital": "Hospital",
+      "participant": "Participant",
+      "participantPlaceholder": "Nom o correu",
+      "phase": "Fase",
+      "status": "Estat",
+      "statusPending": "Pendent",
+      "statusValidated": "Validat",
+      "statusRejected": "Rebutjat",
+      "dateFrom": "Des de",
+      "dateTo": "Fins a",
+      "clear": "Netejar filtres",
+      "all": "Tots"
+    },
+    "table": {
+      "validator": "Validador"
+    },
+    "empty": {
+      "pending": "No hi ha validacions pendents amb aquests filtres",
+      "validated": "No hi ha validacions completades amb aquests filtres",
+      "rejected": "No hi ha validacions rebutjades amb aquests filtres"
+    }
+  },
   "auth": {
     "login": "Iniciar sessió",
     "logout": "Tancar sessió",

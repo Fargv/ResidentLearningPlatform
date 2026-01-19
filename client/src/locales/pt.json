@@ -1059,6 +1059,41 @@
       "noAttachments": "Nenhum anexo disponível"
     }
   },
+  "adminValidations": {
+    "title": "Validações (Admin)",
+    "menu": "Validações (Admin)",
+    "signaturePrefix": "Administrador",
+    "actions": {
+      "refresh": "Atualizar"
+    },
+    "filters": {
+      "title": "Filtros",
+      "participantType": "Tipo de participante",
+      "residentsProgram": "Programa de residentes",
+      "societies": "Sociedades",
+      "society": "Sociedade",
+      "hospital": "Hospital",
+      "participant": "Participante",
+      "participantPlaceholder": "Nome ou e-mail",
+      "phase": "Fase",
+      "status": "Estado",
+      "statusPending": "Pendente",
+      "statusValidated": "Validado",
+      "statusRejected": "Rejeitado",
+      "dateFrom": "De",
+      "dateTo": "Até",
+      "clear": "Limpar filtros",
+      "all": "Todos"
+    },
+    "table": {
+      "validator": "Validador"
+    },
+    "empty": {
+      "pending": "Nenhuma validação pendente com esses filtros",
+      "validated": "Nenhuma validação concluída com esses filtros",
+      "rejected": "Nenhuma validação rejeitada com esses filtros"
+    }
+  },
   "certificate": {
     "title": "Certificado de Cumprimento",
     "body": "Certifica-se que <strong>{{name}}</strong> completou satisfatoriamente a fase formativa designada do Academic Program em tecnologias do robô Da Vinci®. <br /><br />Este curso faz parte do plano formativo em tecnologia robótica em colaboração com o hospital <strong>{{hospital}}</strong> e sob a supervisão do seu tutor designado.",
