@@ -14,6 +14,7 @@
     "trainingPhases": "Phases de formation",
     "validations": "Validations",
     "myUsers": "Mes utilisateurs",
+    "followUp": "Seguimiento",
     "invitations": "Invitations",
     "usersProgress": "Progrès des utilisateurs",
     "settings": "Paramètres",
@@ -26,6 +27,78 @@
     "download": "Télécharger",
     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Erreur lors du téléchargement du rapport des chirurgies"
+  },
+  "followUp": {
+    "title": "Seguimiento",
+    "error": "Error al cargar el seguimiento",
+    "programs": {
+      "residents": "Programa Residentes",
+      "societies": "Programa Sociedades"
+    },
+    "filters": {
+      "program": "Programa",
+      "hospital": "Hospital",
+      "society": "Sociedad",
+      "search": "Buscar por nombre o email",
+      "phase": "Fase",
+      "phaseOption": "Fase {{number}}: {{name}}",
+      "status": "Estado",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "clear": "Limpiar filtros",
+      "all": "Todas"
+    },
+    "table": {
+      "user": "Usuario",
+      "program": "Programa",
+      "center": "Hospital/Sociedad",
+      "currentPhase": "Fase actual",
+      "progress": "Progreso",
+      "pending": "Pendientes de validar",
+      "lastUpdate": "Última actualización",
+      "status": "Estado",
+      "actions": "Acciones",
+      "viewDetail": "Ver detalle"
+    },
+    "status": {
+      "upToDate": "Al día",
+      "pendingValidation": "Pendiente validación",
+      "blocked": "Bloqueado",
+      "noActivity": "Sin actividad"
+    },
+    "phaseLabel": "Fase {{number}}: {{name}}",
+    "empty": {
+      "noUsers": "No hay usuarios asignados para ti todavía",
+      "noZone": "No hay usuarios asignados a tu zona"
+    },
+    "detail": {
+      "title": "Detalle de seguimiento",
+      "back": "Volver",
+      "error": "Error al cargar el detalle",
+      "currentPhase": "Fase actual",
+      "progress": "Progreso total",
+      "pending": "Pendientes de validar",
+      "lastUpdate": "Última actualización",
+      "noActivity": "Sin actividad registrada",
+      "dates": {
+        "created": "Creación",
+        "validated": "Validación",
+        "rejected": "Rechazo"
+      },
+      "comments": {
+        "user": "Comentarios del usuario",
+        "tutor": "Comentarios del tutor",
+        "rejection": "Motivo de rechazo"
+      },
+      "signature": "Firma digital",
+      "attachments": "Adjuntos"
+    },
+    "activityStatus": {
+      "pending": "Pendiente",
+      "completed": "Completada",
+      "validated": "Validada",
+      "rejected": "Rechazada"
+    }
   },
   "profile": {
     "title": "Mon profil",

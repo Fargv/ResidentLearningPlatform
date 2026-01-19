@@ -6,6 +6,22 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
+const isProfesorAuthorized = (profesor, residente) => {
+  if (!profesor || !residente) return false;
+  if (residente.tipo === 'Programa Residentes') {
+    return (
+      profesor.hospital &&
+      residente.hospital &&
+      profesor.hospital.toString() === residente.hospital._id.toString()
+    );
+  }
+  return (
+    residente.sociedad &&
+    profesor.sociedad &&
+    profesor.sociedad.toString() === residente.sociedad.toString()
+  );
+};
+
 // @desc    Subir adjunto para un progreso
 // @route   POST /api/adjuntos/:progresoId
 // @access  Private
@@ -27,7 +43,7 @@ exports.subirAdjunto = async (req, res, next) => {
         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
+      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
     ) {
       return next(new ErrorResponse('No autorizado para subir adjuntos a este progreso', 403));
     }
@@ -132,7 +148,7 @@ exports.getAdjuntosProgreso = async (req, res, next) => {
         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
+      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
     ) {
       return next(new ErrorResponse('No autorizado para ver adjuntos de este progreso', 403));
     }
@@ -225,7 +241,7 @@ exports.getAdjuntoActividad = async (req, res, next) => {
         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
+      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
     ) {
       return next(new ErrorResponse('No autorizado', 403));
     }
@@ -263,7 +279,7 @@ exports.eliminarAdjunto = async (req, res, next) => {
         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
+      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
     ) {
       return next(new ErrorResponse('No autorizado para eliminar este adjunto', 403));
     }
@@ -320,7 +336,7 @@ exports.descargarAdjunto = async (req, res, next) => {
         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
+      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
     ) {
       return next(new ErrorResponse('No autorizado para descargar este adjunto', 403));
     }

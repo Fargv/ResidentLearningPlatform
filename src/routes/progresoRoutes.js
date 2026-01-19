@@ -7,6 +7,7 @@ const {
   actualizarProgreso,
   crearProgresoParaUsuario,
   getAllProgreso,
+  getSeguimientoUsuarios,
   getEstadisticasResidente,
   getProgresoResidente,
   getProgresoResidentePorFase,
@@ -34,6 +35,9 @@ router.get('/admin/validaciones/pendientes', authorize(Role.ADMINISTRADOR), getV
 router.route('/')
   .get(authorize(Role.ADMINISTRADOR), getAllProgreso)
   .post(registrarProgreso);
+
+// ✅ Seguimiento de usuarios asignados
+router.get('/seguimiento', authorize(Role.ADMINISTRADOR, Role.CSM, Role.PROFESOR), getSeguimientoUsuarios);
 
 // ✅ Obtener progreso de un residente
 router.route('/residente/:id')

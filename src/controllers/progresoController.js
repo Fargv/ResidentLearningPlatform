@@ -6,6 +6,8 @@ const Validacion = require('../models/Validacion');
 const Adjunto = require('../models/Adjunto');
 const Notificacion = require('../models/Notificacion');
 const Fase = require('../models/Fase');
+const Hospital = require('../models/Hospital');
+const { Role } = require('../utils/roles');
 const { createAuditLog } = require('../utils/auditLog');
 const logger = require('../utils/logger');
 const mongoose = require('mongoose');
@@ -104,6 +106,7 @@ const formatProgresoParaResidente = (progresoDoc) => {
         completada: act.estado === 'validado',
         comentariosResidente: act.comentariosResidente || '',
         comentariosTutor: act.comentariosTutor || '',
+        firmaDigital: act.firmaDigital || '',
         fecha: act.fechaRealizacion,
         fechaValidacion: act.fechaValidacion,
         comentariosRechazo: act.comentariosRechazo || '',
@@ -117,6 +120,112 @@ const formatProgresoParaResidente = (progresoDoc) => {
         requiereAdjunto: Boolean(actividadData.requiereAdjunto)
       };
     })
+  };
+};
+
+const getPhaseOrder = (fase) => {
+  if (!fase) return 0;
+  if (typeof fase.orden === 'number') return fase.orden;
+  if (typeof fase.numero === 'number') return fase.numero;
+  return 0;
+};
+
+const getLatestDateFromProgreso = (progreso) => {
+  const dates = [];
+  if (progreso.updatedAt) dates.push(new Date(progreso.updatedAt));
+  if (progreso.fechaRegistro) dates.push(new Date(progreso.fechaRegistro));
+  if (progreso.fechaInicio) dates.push(new Date(progreso.fechaInicio));
+  if (progreso.fechaFin) dates.push(new Date(progreso.fechaFin));
+  (progreso.actividades || []).forEach((actividad) => {
+    if (actividad.fechaRealizacion) dates.push(new Date(actividad.fechaRealizacion));
+    if (actividad.fechaValidacion) dates.push(new Date(actividad.fechaValidacion));
+    if (actividad.fechaRechazo) dates.push(new Date(actividad.fechaRechazo));
+  });
+  if (dates.length === 0) return null;
+  return new Date(Math.max(...dates.map((date) => date.getTime())));
+};
+
+const getCurrentPhase = (progresos) => {
+  if (!progresos.length) return null;
+  const ordered = [...progresos].sort(
+    (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
+  );
+  const enProgreso = ordered.filter((p) => p.estadoGeneral === 'en progreso');
+  if (enProgreso.length) {
+    const pick = enProgreso.reduce((acc, item) =>
+      getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
+    );
+    return pick.fase || null;
+  }
+  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
+  if (avanzadas.length) {
+    return avanzadas[avanzadas.length - 1].fase || null;
+  }
+  return ordered[ordered.length - 1].fase || null;
+};
+
+const summarizeUserProgress = (user, progresos = []) => {
+  const totalActividades = progresos.reduce(
+    (acc, item) => acc + (item.actividades ? item.actividades.length : 0),
+    0
+  );
+  const actividadesValidadas = progresos.reduce(
+    (acc, item) =>
+      acc +
+      (item.actividades || []).filter((actividad) => actividad.estado === 'validado')
+        .length,
+    0
+  );
+  const pendientesValidacion = progresos.reduce(
+    (acc, item) =>
+      acc +
+      (item.actividades || []).filter((actividad) => actividad.estado === 'completado')
+        .length,
+    0
+  );
+
+  const lastUpdates = progresos
+    .map(getLatestDateFromProgreso)
+    .filter(Boolean)
+    .map((date) => date.getTime());
+  const ultimaActualizacion = lastUpdates.length
+    ? new Date(Math.max(...lastUpdates))
+    : null;
+
+  let estadoGeneral = 'sin_actividad';
+  if (progresos.length) {
+    if (pendientesValidacion > 0) {
+      estadoGeneral = 'pendiente_validacion';
+    } else if (progresos.some((item) => item.estadoGeneral === 'bloqueada')) {
+      estadoGeneral = 'bloqueado';
+    } else {
+      estadoGeneral = 'al_dia';
+    }
+  }
+
+  const faseActual = getCurrentPhase(progresos);
+
+  return {
+    user: {
+      _id: user._id,
+      nombre: user.nombre,
+      apellidos: user.apellidos,
+      email: user.email,
+      tipo: user.tipo,
+      hospital: user.hospital,
+      sociedad: user.sociedad
+    },
+    faseActual,
+    progreso: {
+      total: totalActividades,
+      validadas: actividadesValidadas,
+      porcentaje: totalActividades
+        ? Math.round((actividadesValidadas / totalActividades) * 100)
+        : 0
+    },
+    pendientesValidacion,
+    ultimaActualizacion,
+    estadoGeneral
   };
 };
 
@@ -173,6 +282,155 @@ const getAllProgreso = async (req, res, next) => {
   }
 };
 
+// @desc    Obtener resumen de seguimiento de usuarios
+// @route   GET /api/progreso/seguimiento
+// @access  Private/Profesor|CSM|Admin
+const getSeguimientoUsuarios = async (req, res, next) => {
+  try {
+    const {
+      programa = 'all',
+      hospitalId = 'all',
+      sociedadId = 'all',
+      search = '',
+      faseId = 'all',
+      estado = 'all',
+      dateFrom,
+      dateTo,
+      userId
+    } = req.query;
+    let usersQuery = {};
+    let emptyReason;
+
+    if (req.user.rol === Role.ADMINISTRADOR) {
+      usersQuery = { rol: { $in: [Role.RESIDENTE, Role.PARTICIPANTE] } };
+    } else if (req.user.rol === Role.CSM) {
+      if (!req.user.zona) {
+        return res.status(200).json({
+          success: true,
+          count: 0,
+          data: [],
+          message: 'No hay usuarios asignados a tu zona'
+        });
+      }
+      const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
+      const ids = hospitales.map((h) => h._id);
+      usersQuery = {
+        hospital: { $in: ids },
+        rol: Role.RESIDENTE,
+        tipo: 'Programa Residentes'
+      };
+    } else if (req.user.rol === Role.PROFESOR) {
+      if (req.user.tipo === 'Programa Residentes') {
+        if (!req.user.hospital) {
+          emptyReason = 'No hay usuarios asignados para tu hospital';
+          usersQuery = { _id: null };
+        } else {
+          usersQuery = {
+            hospital: req.user.hospital,
+            rol: Role.RESIDENTE,
+            tipo: 'Programa Residentes'
+          };
+        }
+      } else {
+        if (!req.user.sociedad) {
+          emptyReason = 'No hay usuarios asignados para tu sociedad';
+          usersQuery = { _id: null };
+        } else {
+          usersQuery = {
+            sociedad: req.user.sociedad,
+            rol: Role.PARTICIPANTE,
+            tipo: 'Programa Sociedades'
+          };
+        }
+      }
+    } else {
+      return res.status(403).json({ success: false, error: 'No autorizado para ver seguimiento' });
+    }
+
+    if (programa !== 'all') {
+      usersQuery.tipo = programa;
+    }
+    if (hospitalId !== 'all') {
+      usersQuery.hospital = hospitalId;
+    }
+    if (sociedadId !== 'all') {
+      usersQuery.sociedad = sociedadId;
+    }
+    if (userId) {
+      usersQuery._id = userId;
+    }
+
+    const users = await User.find(usersQuery)
+      .populate('hospital', 'nombre zona')
+      .populate('sociedad', 'titulo')
+      .select('nombre apellidos email tipo hospital sociedad')
+      .lean();
+
+    const filteredUsers = users.filter((user) => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return (
+        user.nombre?.toLowerCase().includes(q) ||
+        user.apellidos?.toLowerCase().includes(q) ||
+        user.email?.toLowerCase().includes(q)
+      );
+    });
+
+    const userIds = filteredUsers.map((user) => user._id);
+    const progresos = await ProgresoResidente.find({ residente: { $in: userIds } })
+      .populate('fase', 'nombre numero orden')
+      .select('residente fase actividades estadoGeneral fechaRegistro fechaInicio fechaFin updatedAt')
+      .lean();
+
+    const progresosMap = progresos.reduce((acc, item) => {
+      const key = item.residente?.toString();
+      if (!key) return acc;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+
+    let summaries = filteredUsers.map((user) =>
+      summarizeUserProgress(user, progresosMap[user._id.toString()] || [])
+    );
+
+    if (faseId !== 'all') {
+      summaries = summaries.filter((summary) =>
+        summary.faseActual && summary.faseActual._id.toString() === faseId
+      );
+    }
+
+    if (estado !== 'all') {
+      summaries = summaries.filter((summary) => summary.estadoGeneral === estado);
+    }
+
+    if (dateFrom || dateTo) {
+      const from = dateFrom ? new Date(dateFrom) : null;
+      const to = dateTo ? new Date(dateTo) : null;
+      summaries = summaries.filter((summary) => {
+        if (!summary.ultimaActualizacion) return false;
+        const date = new Date(summary.ultimaActualizacion);
+        if (from && date < from) return false;
+        if (to) {
+          const end = new Date(to);
+          end.setHours(23, 59, 59, 999);
+          if (date > end) return false;
+        }
+        return true;
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: summaries.length,
+      data: summaries,
+      message: summaries.length === 0 && emptyReason ? emptyReason : undefined
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 // @desc    Obtener progreso de un residente específico
 // @route   GET /api/progreso/residente/:id
@@ -208,8 +466,14 @@ const getProgresoResidente = async (req, res, next) => {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
     }
 
-    if (req.user.rol === 'profesor' && (!residente.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString())) {
-      return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
+    if (req.user.rol === 'profesor') {
+      if (residente.tipo === 'Programa Residentes') {
+        if (!req.user.hospital || req.user.hospital.toString() !== residente.hospital._id.toString()) {
+          return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+        }
+      } else if (!residente.sociedad || !req.user.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString()) {
+        return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
+      }
     }
 
     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
@@ -265,6 +529,15 @@ const getProgresoResidentePorFase = async (req, res, next) => {
     }
     if (req.user.rol === 'csm' && req.user.zona !== residente.hospital.zona) {
       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
+    }
+    if (req.user.rol === 'profesor') {
+      if (residente.tipo === 'Programa Residentes') {
+        if (!req.user.hospital || req.user.hospital.toString() !== residente.hospital._id.toString()) {
+          return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+        }
+      } else if (!residente.sociedad || !req.user.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString()) {
+        return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
+      }
     }
 
     const progreso = await ProgresoResidente.find({ residente: req.params.id })
@@ -1276,6 +1549,7 @@ const getCountProgresosByFase = async (req, res, next) => {
 module.exports = {
   inicializarProgresoFormativo,
   getAllProgreso,
+  getSeguimientoUsuarios,
   getProgresoResidente,
   getProgresoResidentePorFase,
   registrarProgreso,

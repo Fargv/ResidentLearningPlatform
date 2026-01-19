@@ -1,15 +1,8 @@
 diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d617b62c4 100644
+index 445fa647e8613ea4b9c0eb4f9be6f26ffcafc3e5..b857a9bd674756883d208d7d4bd8d6d81614a2bd 100644
 --- a/client/src/pages/Dashboard.tsx
 +++ b/client/src/pages/Dashboard.tsx
-@@ -26,51 +26,52 @@ import {
-   ChevronLeft as ChevronLeftIcon,
-   Dashboard as DashboardIcon,
-   People as PeopleIcon,
-   School as SchoolIcon,
-   Assignment as AssignmentIcon,
-   Notifications as NotificationsIcon,
-   ExitToApp as LogoutIcon,
+@@ -33,62 +33,64 @@ import {
    Person as PersonIcon,
    Settings as SettingsIcon,
    Brightness4 as Brightness4Icon,
@@ -28,26 +21,34 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
  
  // Páginas del dashboard
  import DashboardHome from './dashboard/DashboardHome';
--import TutorValidaciones from './dashboard/TutorValidaciones';
-+import TutorValidaciones from './dashboard/TutorValidaciones';
-+import AdminValidaciones from './dashboard/AdminValidaciones';
+ import TutorValidaciones from './dashboard/TutorValidaciones';
+ import AdminValidaciones from './dashboard/AdminValidaciones';
  import Usuarios from './dashboard/Usuarios';
  import AdminHospitales from './dashboard/AdminHospitales';
  import AdminFases from './dashboard/AdminFases';
  import AdminFasesSoc from './dashboard/AdminFasesSoc';
  import AdminSociedades from './dashboard/AdminSociedades';
- import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
- import Perfil from './dashboard/Perfil';
- import Notificaciones from './dashboard/Notificaciones';
- import DebugDashboard from './DebugDashboard';
- import ResidenteFases from './dashboard/ResidenteFases';
+-import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
+-import Perfil from './dashboard/Perfil';
+-import Notificaciones from './dashboard/Notificaciones';
+-import DebugDashboard from './DebugDashboard';
+-import ResidenteFases from './dashboard/ResidenteFases';
++import AdminProgresoDetalle from './dashboard/AdminProgresoDetalle';
++import Perfil from './dashboard/Perfil';
++import Notificaciones from './dashboard/Notificaciones';
++import DebugDashboard from './DebugDashboard';
++import ResidenteFases from './dashboard/ResidenteFases';
  import AdminAccessCodes from './dashboard/AdminAccessCodes';
  import AdminConfiguracion from './dashboard/AdminConfiguracion';
  import AdminCirugias from './dashboard/AdminCirugias';
  import AdminSiteInfo from './dashboard/AdminSiteInfo';
  import LanguageSelector from '../components/LanguageSelector';
- import AdminInformes from './dashboard/AdminInformes';
- import AdminInvitaciones from './dashboard/AdminInvitaciones';
+-import AdminInformes from './dashboard/AdminInformes';
+-import AdminInvitaciones from './dashboard/AdminInvitaciones';
++import AdminInformes from './dashboard/AdminInformes';
++import AdminInvitaciones from './dashboard/AdminInvitaciones';
++import SeguimientoUsuarios from './dashboard/SeguimientoUsuarios';
++import SeguimientoDetalle from './dashboard/SeguimientoDetalle';
  
  const drawerWidth = 240;
  
@@ -56,7 +57,36 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
    const [drawerOpen, setDrawerOpen] = useState(false);
    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
    const [unreadCount, setUnreadCount] = useState(0);
-@@ -116,58 +117,59 @@ const Dashboard: React.FC = () => {
+   const [isPinned, setIsPinned] = useState(false);
+   const [isHovering, setIsHovering] = useState(false);
+   const { user, logout } = useAuth();
+   const navigate = useNavigate();
+   const theme = useTheme();
+   const { toggleColorMode } = useColorMode();
+   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+   const env = process.env.REACT_APP_ENV || (window as any).REACT_APP_ENV;
+   const isDev = env === 'dev';
+ 
+   const refreshUnreadCount = async () => {
+     try {
+       const res = await getNotificacionesNoLeidas();
+       setUnreadCount(res.data.count || 0);
+     } catch (err) {
+       console.error('Error obteniendo notificaciones no leidas', err);
+     }
+@@ -105,61 +107,64 @@ const Dashboard: React.FC = () => {
+   const hoverTransitionDuration = 350;
+   const handleDrawerToggle = () => setDrawerOpen((prev) => !prev);
+   const handleDrawerClose = () => setDrawerOpen(false);
+   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+   const handleMenuClose = () => setAnchorEl(null);
+   const handleLogout = async () => {
+     handleMenuClose();
+     await logout();
+     navigate('/login');
+   };
+   const handleProfileClick = () => {
+     handleMenuClose();
      navigate('/dashboard/perfil');
    };
  
@@ -70,35 +100,36 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
        }
      ];
  
-     if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
-     }
+-    if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
+-      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
+-    }
++    if (user?.rol === 'residente' || user?.rol === 'participante') {
++      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante'] });
++    }
  
      if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
        items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
      }
  
-     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
-     }
- 
--    if (user?.rol === 'administrador') {
--      items.push(
--        { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
--        { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
--        { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
--        { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
--      );
+-    if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+-      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
 -    }
-+    if (user?.rol === 'administrador') {
-+      items.push(
-+        { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-+        { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
-+        { text: t('adminValidations.menu'), icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] },
-+        { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
-+        { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
-+      );
++    if (user?.rol === 'tutor') {
++      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor'] });
 +    }
++    if (user?.rol === 'csm' || user?.rol === 'profesor') {
++      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor'] });
++    }
+ 
+     if (user?.rol === 'administrador') {
+       items.push(
+         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+         { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
+         { text: t('adminValidations.menu'), icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] },
+         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
+         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
+       );
+     }
  
      return items;
    };
@@ -114,17 +145,22 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
    const sidebarTopOffset = toolbarHeight + sidebarPadding;
    const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
    const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
- 
-   const handleSidebarHover = () => {
-     if (!isMobile && !isPinned) {
-       setIsHovering(true);
-     }
-   };
- 
-   const handleSidebarLeave = () => {
-     if (!isMobile && !isPinned) {
-       setIsHovering(false);
-@@ -590,53 +592,56 @@ const Dashboard: React.FC = () => {
+@@ -577,77 +582,84 @@ const Dashboard: React.FC = () => {
+               top: `${toolbarHeight}px`
+             }
+           }}
+           ModalProps={{ keepMounted: true }}
+         >
+           <SidebarContent showLabels isMobileView onClose={handleDrawerClose} />
+         </Drawer>
+       )}
+       <Box
+         component="main"
+         sx={{
+           flexGrow: 1,
+           p: 2.5,
+           ml: 0,
+           width: '100%',
            backgroundColor: 'background.default',
            minHeight: '100vh'
          }}
@@ -135,9 +171,16 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
            <Route path="/validaciones" element={<TutorValidaciones />} />
            <Route path="/usuarios" element={<Usuarios />} />
            <Route path="/hospitals" element={<AdminHospitales />} />
-           {user?.rol === 'administrador' && (
-             <Route path="/fases" element={<AdminFases />} />
-           )}
+-          {user?.rol === 'administrador' && (
+-            <Route path="/fases" element={<AdminFases />} />
+-          )}
++          {user?.rol === 'administrador' ? (
++            <Route path="/fases" element={<AdminFases />} />
++          ) : user?.rol === 'residente' || user?.rol === 'participante' ? (
++            <Route path="/fases" element={<ResidenteFases />} />
++          ) : (
++            <Route path="/fases" element={<Navigate to="/dashboard" replace />} />
++          )}
            {user?.rol === 'administrador' && (
              <Route path="/invitations" element={<AdminInvitaciones />} />
            )}
@@ -150,15 +193,12 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
            {user?.rol === 'administrador' && (
              <Route path="/fases-soc" element={<AdminFasesSoc />} />
            )}
--          {user?.rol === 'administrador' && (
--            <Route path="/informes" element={<AdminInformes />} />
--          )}
-+          {user?.rol === 'administrador' && (
-+            <Route path="/informes" element={<AdminInformes />} />
-+          )}
-+          {user?.rol === 'administrador' && (
-+            <Route path="/validaciones-admin" element={<AdminValidaciones />} />
-+          )}
+           {user?.rol === 'administrador' && (
+             <Route path="/informes" element={<AdminInformes />} />
+           )}
+           {user?.rol === 'administrador' && (
+             <Route path="/validaciones-admin" element={<AdminValidaciones />} />
+           )}
            {user?.rol === 'administrador' && (
              <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
            )}
@@ -176,68 +216,997 @@ index 62c18477a52db34c98e531cb7c8562f8055e34c5..140f1bb48a41cd6851e9539296c5b63d
              <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
            )}
            <Route path="/sociedades" element={<AdminSociedades />} />
-           {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
-             <Route path="/fases" element={<ResidenteFases />} />
-           ) : null}
+-          {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
+-            <Route path="/fases" element={<ResidenteFases />} />
+-          ) : null}
++          {(user?.rol === 'csm' || user?.rol === 'profesor') && (
++            <>
++              <Route path="/seguimiento" element={<SeguimientoUsuarios />} />
++              <Route path="/seguimiento/:userId" element={<SeguimientoDetalle />} />
++            </>
++          )}
            <Route path="/perfil" element={<Perfil />} />
            <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
            {isDev && <Route path="/debug" element={<DebugDashboard />} />}
          </Routes>
  
-diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
-index ffe4105674a7c424419d4b8740fa87897fc5bee0..869ca8566f385df0f0a6a8bfc0b880d591ba48ef 100644
---- a/src/controllers/progresoController.js
-+++ b/src/controllers/progresoController.js
-@@ -1017,51 +1017,51 @@ const getValidacionesPendientes = async (req, res, next) => {
+       </Box>
+     </Box>
+   );
+ };
+ 
+ export default Dashboard;
+diff --git a/src/controllers/adjuntoController.js b/src/controllers/adjuntoController.js
+index ed8e17812c869928a55c90ab2e48c0157f86a175..86c9e3e065a78e7bc63063e79e05074cafc30f22 100644
+--- a/src/controllers/adjuntoController.js
++++ b/src/controllers/adjuntoController.js
+@@ -1,55 +1,71 @@
+ const ErrorResponse = require('../utils/errorResponse');
+ const Adjunto = require('../models/Adjunto');
+ const ProgresoResidente = require('../models/ProgresoResidente');
+ const { createAuditLog } = require('../utils/auditLog');
+ const path = require('path');
+ const fs = require('fs');
+ const crypto = require('crypto');
+ 
++const isProfesorAuthorized = (profesor, residente) => {
++  if (!profesor || !residente) return false;
++  if (residente.tipo === 'Programa Residentes') {
++    return (
++      profesor.hospital &&
++      residente.hospital &&
++      profesor.hospital.toString() === residente.hospital._id.toString()
++    );
++  }
++  return (
++    residente.sociedad &&
++    profesor.sociedad &&
++    profesor.sociedad.toString() === residente.sociedad.toString()
++  );
++};
++
+ // @desc    Subir adjunto para un progreso
+ // @route   POST /api/adjuntos/:progresoId
+ // @access  Private
+ exports.subirAdjunto = async (req, res, next) => {
+   try {
+     const progreso = await ProgresoResidente.findById(req.params.progresoId)
+       .populate({ path: 'residente', populate: { path: 'hospital' } })
+       .populate('actividad');
+ 
+     if (!progreso) {
+       return next(new ErrorResponse(`Progreso no encontrado con id ${req.params.progresoId}`, 404));
+     }
+ 
+     // Verificar permisos: solo el propio residente, tutores de su hospital o administradores
+     if (
+       req.user.rol !== 'administrador' &&
+       req.user.id !== progreso.residente._id.toString() &&
+       (req.user.rol !== 'tutor' ||
+         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
+       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
+-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
++      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
+     ) {
+       return next(new ErrorResponse('No autorizado para subir adjuntos a este progreso', 403));
+     }
+ 
+     // Verificar que se ha subido un archivo
+     if (!req.files || Object.keys(req.files).length === 0) {
+       return next(new ErrorResponse('Por favor suba un archivo', 400));
+     }
+ 
+     const file = req.files.file;
+ 
+     // Verificar tipo de archivo
+     const fileTypes = /jpeg|jpg|png|gif|pdf|doc|docx|xls|xlsx|ppt|pptx|txt/;
+     const extname = fileTypes.test(path.extname(file.name).toLowerCase());
+     
+     if (!extname) {
+       return next(new ErrorResponse('Por favor suba un archivo válido', 400));
+     }
+ 
+     // Crear nombre de archivo único
+     const fileName = `${crypto.randomBytes(10).toString('hex')}_${file.name}`;
+     
+     // Directorio de almacenamiento
+     const uploadDir = path.join(__dirname, '../../public/uploads');
+     
+@@ -110,51 +126,51 @@ exports.subirAdjunto = async (req, res, next) => {
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Obtener adjuntos de un progreso
+ // @route   GET /api/adjuntos/progreso/:progresoId
+ // @access  Private
+ exports.getAdjuntosProgreso = async (req, res, next) => {
+   try {
+     const progreso = await ProgresoResidente.findById(req.params.progresoId)
+       .populate({ path: 'residente', populate: { path: 'hospital' } });
+ 
+     if (!progreso) {
+       return next(new ErrorResponse(`Progreso no encontrado con id ${req.params.progresoId}`, 404));
+     }
+ 
+     // Verificar permisos: solo el propio residente, tutores de su hospital o administradores
+     if (
+       req.user.rol !== 'administrador' &&
+       req.user.id !== progreso.residente._id.toString() &&
+       (req.user.rol !== 'tutor' ||
+         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
+       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
+-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
++      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
+     ) {
+       return next(new ErrorResponse('No autorizado para ver adjuntos de este progreso', 403));
+     }
+ 
+    const adjuntos = await Adjunto.find({ progreso: req.params.progresoId });
+ 
      res.status(200).json({
        success: true,
-       data: {
-         pendientes,
-         validadas,
-         rechazadas
-       }
+       count: adjuntos.length,
+       data: adjuntos
      });
    } catch (err) {
      next(err);
    }
  };
  
- // @desc Obtener lista de validaciones pendientes sin filtros
- // @route GET /api/progreso/admin/validaciones/pendientes
- // @access Private/Admin
- const getValidacionesPendientesAdmin = async (req, res, next) => {
+ // @desc    Subir adjunto para una actividad concreta (almacenado en MongoDB)
+ // @route   POST /api/adjuntos/actividad/:progresoId/:index
+ // @access  Private
+ exports.subirAdjuntoActividad = async (req, res, next) => {
    try {
-     if (req.user.rol !== 'administrador') {
-       return res.status(403).json({ success: false, error: 'No autorizado' });
+     const { progresoId, index } = req.params;
+     const progreso = await ProgresoResidente.findById(progresoId).populate({ path: 'residente', populate: { path: 'hospital' } });
+     if (!progreso || !progreso.actividades[index]) {
+       return next(new ErrorResponse('Progreso o actividad no válida', 404));
+@@ -203,89 +219,89 @@ exports.getAdjuntoActividad = async (req, res, next) => {
+   try {
+     const { progresoId, index } = req.params;
+     const { adjuntoId } = req.query;
+     const filtro = {
+       progreso: progresoId,
+       actividadIndex: Number(index)
+     };
+ 
+     if (adjuntoId) {
+       filtro._id = adjuntoId;
      }
  
-     const progresos = await ProgresoResidente.find()
+     const adjunto = await Adjunto.findOne(filtro);
+     if (!adjunto) return next(new ErrorResponse('Adjunto no encontrado', 404));
+ 
+     const progreso = await ProgresoResidente.findById(progresoId).populate('residente');
+     if (!progreso) return next(new ErrorResponse('Progreso no encontrado', 404));
+ 
+     if (
+       req.user.rol !== 'administrador' &&
+       req.user.id !== progreso.residente._id.toString() &&
+       (req.user.rol !== 'tutor' ||
+         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
+       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
+-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
++      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
+     ) {
+       return next(new ErrorResponse('No autorizado', 403));
+     }
+ 
+     res.set('Content-Type', adjunto.mimeType);
+     return res.send(adjunto.datos);
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ // @desc    Eliminar un adjunto
+ // @route   DELETE /api/adjuntos/:id
+ // @access  Private
+ exports.eliminarAdjunto = async (req, res, next) => {
+   try {
+     const adjunto = await Adjunto.findById(req.params.id);
+ 
+     if (!adjunto) {
+       return next(new ErrorResponse(`Adjunto no encontrado con id ${req.params.id}`, 404));
+     }
+ 
+     const progreso = await ProgresoResidente.findById(adjunto.progreso)
+       .populate({ path: 'residente', populate: { path: 'hospital' } });
+ 
+     if (!progreso) {
+       return next(new ErrorResponse('Progreso asociado no encontrado', 404));
+     }
+ 
+     // Verificar permisos: solo el propio residente, tutores de su hospital o administradores
+     if (
+       req.user.rol !== 'administrador' &&
+       req.user.id !== progreso.residente._id.toString() &&
+       (req.user.rol !== 'tutor' ||
+         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
+       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
+-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
++      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
+     ) {
+       return next(new ErrorResponse('No autorizado para eliminar este adjunto', 403));
+     }
+ 
+     // Eliminar archivo físico
+     const filePath = path.join(__dirname, '../../public', adjunto.rutaArchivo);
+     
+     if (fs.existsSync(filePath)) {
+       fs.unlinkSync(filePath);
+     }
+ 
+     await adjunto.remove();
+ 
+     // Crear registro de auditoría
+     await createAuditLog({
+       usuario: req.user._id,
+       accion: 'eliminar_adjunto',
+       descripcion: `Adjunto eliminado: ${adjunto.nombreArchivo}`,
+       ip: req.ip
+     });
+ 
+     res.status(200).json({
+       success: true,
+       data: {}
+     });
+@@ -298,51 +314,51 @@ exports.eliminarAdjunto = async (req, res, next) => {
+ // @route   GET /api/adjuntos/:id/download
+ // @access  Private
+ exports.descargarAdjunto = async (req, res, next) => {
+   try {
+     const adjunto = await Adjunto.findById(req.params.id);
+ 
+     if (!adjunto) {
+       return next(new ErrorResponse(`Adjunto no encontrado con id ${req.params.id}`, 404));
+     }
+ 
+     const progreso = await ProgresoResidente.findById(adjunto.progreso)
+       .populate({ path: 'residente', populate: { path: 'hospital' } });
+ 
+     if (!progreso) {
+       return next(new ErrorResponse('Progreso asociado no encontrado', 404));
+     }
+ 
+     // Verificar permisos: solo el propio residente, tutores de su hospital o administradores
+     if (
+       req.user.rol !== 'administrador' &&
+       req.user.id !== progreso.residente._id.toString() &&
+       (req.user.rol !== 'tutor' ||
+         req.user.hospital.toString() !== progreso.residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== progreso.residente.especialidad)) &&
+       (req.user.rol !== 'csm' || req.user.zona !== progreso.residente.hospital.zona) &&
+-      (req.user.rol !== 'profesor' || !progreso.residente.sociedad || req.user.sociedad.toString() !== progreso.residente.sociedad.toString())
++      (req.user.rol !== 'profesor' || !isProfesorAuthorized(req.user, progreso.residente))
+     ) {
+       return next(new ErrorResponse('No autorizado para descargar este adjunto', 403));
+     }
+ 
+     // Descargar desde almacenamiento en base de datos si existe contenido binario
+     if (adjunto.datos && adjunto.datos.length) {
+       await createAuditLog({
+         usuario: req.user._id,
+         accion: 'descargar_adjunto',
+         descripcion: `Adjunto descargado: ${adjunto.nombreArchivo}`,
+         ip: req.ip
+       });
+ 
+       res.setHeader('Content-Type', adjunto.mimeType || 'application/octet-stream');
+       res.setHeader('Content-Disposition', `attachment; filename="${adjunto.nombreArchivo}"`);
+       res.setHeader('Content-Length', adjunto.datos.length);
+ 
+       return res.send(adjunto.datos);
+     }
+ 
+     if (!adjunto.rutaArchivo) {
+       return next(new ErrorResponse('Archivo no disponible', 404));
+     }
+ 
+     const filePath = path.join(__dirname, '../../public', adjunto.rutaArchivo);
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index b67418dff113b1edc3d357b2ec41361fcada4f9f..0e4631d1d232b849168d6447ab9c36832e5cfbb9 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -1,33 +1,35 @@
+ const ErrorResponse = require('../utils/errorResponse');
+ const ProgresoResidente = require('../models/ProgresoResidente');
+ const Actividad = require('../models/Actividad');
+ const User = require('../models/User');
+ const Validacion = require('../models/Validacion');
+ const Adjunto = require('../models/Adjunto');
+ const Notificacion = require('../models/Notificacion');
+ const Fase = require('../models/Fase');
++const Hospital = require('../models/Hospital');
++const { Role } = require('../utils/roles');
+ const { createAuditLog } = require('../utils/auditLog');
+ const logger = require('../utils/logger');
+ const mongoose = require('mongoose');
+ const { inicializarProgresoFormativo: inicializarProgresoFormativoDB } = require('../utils/initProgreso');
+ 
+ const updatePhaseStatus = async (progreso) => {
+   await progreso.populate(['fase', 'residente']);
+ 
+   const todasValidadas = progreso.actividades.every(a => a.estado === 'validado');
+   if (!todasValidadas) {
+     logger.info(`⏳ No todas las actividades están validadas aún en fase "${progreso.fase.nombre}" para ${progreso.residente.email}`);
+     return;
+   }
+ 
+   if (progreso.estadoGeneral !== 'validado') {
+     progreso.estadoGeneral = 'validado';
+     await progreso.save();
+     logger.info(`✅ Fase "${progreso.fase.nombre}" marcada como COMPLETADA para ${progreso.residente.email}`);
+   }
+ 
+   const ModeloFase = mongoose.model(progreso.faseModel || 'Fase');
+   const nextFase = await ModeloFase.findOne({ orden: progreso.fase.orden + 1 });
+   if (!nextFase) {
+     logger.info(`🎉 No hay más fases después de "${progreso.fase.nombre}". Fin del plan formativo para ${progreso.residente.email}`);
+     return;
+@@ -50,99 +52,206 @@ const updatePhaseStatus = async (progreso) => {
+ 
+ const buildActividadDisplayData = (actividad = {}) => {
+   const actividadMaestra =
+     actividad.actividad && typeof actividad.actividad === 'object'
+       ? actividad.actividad
+       : null;
+ 
+   return {
+     nombre: actividadMaestra?.nombre || actividad.nombre,
+     descripcion:
+       actividadMaestra?.descripcion !== undefined
+         ? actividadMaestra.descripcion
+         : actividad.descripcion,
+     tipo: actividadMaestra?.tipo || actividad.tipo,
+     requiereAdjunto:
+       actividadMaestra?.requiereAdjunto !== undefined
+         ? actividadMaestra.requiereAdjunto
+         : actividad.requiereAdjunto,
+     actividadModel:
+       actividadMaestra?.constructor?.modelName || actividad.actividadModel,
+     actividadId: actividadMaestra?._id || actividad.actividad
+   };
+ };
+ 
+ 
+-const formatProgresoParaResidente = (progresoDoc) => {
+-  const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
+-  const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
++const formatProgresoParaResidente = (progresoDoc) => {
++  const plain = progresoDoc.toObject ? progresoDoc.toObject({ virtuals: true }) : progresoDoc;
++  const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+     if (typeof adj.actividadIndex !== 'number') return acc;
+     const key = adj.actividadIndex;
+     if (!acc[key]) acc[key] = [];
+     acc[key].push({
+       _id: adj._id.toString(),
+       nombreArchivo: adj.nombreArchivo,
+       mimeType: adj.mimeType,
+       fechaSubida: adj.fechaSubida
+     });
+     return acc;
+   }, {});
+ 
+   return {
+     _id: plain._id.toString(),
+     fase: plain.fase,
+     faseModel: plain.faseModel,
+     estadoGeneral: plain.estadoGeneral,
+     actividades: (plain.actividades || []).map((act, index) => {
+       const actividadData = buildActividadDisplayData(act);
+ 
+       return {
+         nombre: actividadData.nombre,
+         descripcion: actividadData.descripcion,
+         tipo: actividadData.tipo,
+         actividad: actividadData.actividadId,
+         actividadModel: actividadData.actividadModel,
+         completada: act.estado === 'validado',
+         comentariosResidente: act.comentariosResidente || '',
+-        comentariosTutor: act.comentariosTutor || '',
+-        fecha: act.fechaRealizacion,
+-        fechaValidacion: act.fechaValidacion,
+-        comentariosRechazo: act.comentariosRechazo || '',
++        comentariosTutor: act.comentariosTutor || '',
++        firmaDigital: act.firmaDigital || '',
++        fecha: act.fechaRealizacion,
++        fechaValidacion: act.fechaValidacion,
++        comentariosRechazo: act.comentariosRechazo || '',
+         fechaRechazo: act.fechaRechazo,
+         estado: act.estado,
+         porcentajeParticipacion: act.porcentajeParticipacion,
+         cirugia: act.cirugia,
+         otraCirugia: act.otraCirugia,
+         nombreCirujano: act.nombreCirujano,
+         adjuntos: adjuntosPorIndice[index] || [],
+         requiereAdjunto: Boolean(actividadData.requiereAdjunto)
+       };
+     })
+-  };
+-};
+-
+-
++  };
++};
++
++const getPhaseOrder = (fase) => {
++  if (!fase) return 0;
++  if (typeof fase.orden === 'number') return fase.orden;
++  if (typeof fase.numero === 'number') return fase.numero;
++  return 0;
++};
++
++const getLatestDateFromProgreso = (progreso) => {
++  const dates = [];
++  if (progreso.updatedAt) dates.push(new Date(progreso.updatedAt));
++  if (progreso.fechaRegistro) dates.push(new Date(progreso.fechaRegistro));
++  if (progreso.fechaInicio) dates.push(new Date(progreso.fechaInicio));
++  if (progreso.fechaFin) dates.push(new Date(progreso.fechaFin));
++  (progreso.actividades || []).forEach((actividad) => {
++    if (actividad.fechaRealizacion) dates.push(new Date(actividad.fechaRealizacion));
++    if (actividad.fechaValidacion) dates.push(new Date(actividad.fechaValidacion));
++    if (actividad.fechaRechazo) dates.push(new Date(actividad.fechaRechazo));
++  });
++  if (dates.length === 0) return null;
++  return new Date(Math.max(...dates.map((date) => date.getTime())));
++};
++
++const getCurrentPhase = (progresos) => {
++  if (!progresos.length) return null;
++  const ordered = [...progresos].sort(
++    (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
++  );
++  const enProgreso = ordered.filter((p) => p.estadoGeneral === 'en progreso');
++  if (enProgreso.length) {
++    const pick = enProgreso.reduce((acc, item) =>
++      getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
++    );
++    return pick.fase || null;
++  }
++  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
++  if (avanzadas.length) {
++    return avanzadas[avanzadas.length - 1].fase || null;
++  }
++  return ordered[ordered.length - 1].fase || null;
++};
++
++const summarizeUserProgress = (user, progresos = []) => {
++  const totalActividades = progresos.reduce(
++    (acc, item) => acc + (item.actividades ? item.actividades.length : 0),
++    0
++  );
++  const actividadesValidadas = progresos.reduce(
++    (acc, item) =>
++      acc +
++      (item.actividades || []).filter((actividad) => actividad.estado === 'validado')
++        .length,
++    0
++  );
++  const pendientesValidacion = progresos.reduce(
++    (acc, item) =>
++      acc +
++      (item.actividades || []).filter((actividad) => actividad.estado === 'completado')
++        .length,
++    0
++  );
++
++  const lastUpdates = progresos
++    .map(getLatestDateFromProgreso)
++    .filter(Boolean)
++    .map((date) => date.getTime());
++  const ultimaActualizacion = lastUpdates.length
++    ? new Date(Math.max(...lastUpdates))
++    : null;
++
++  let estadoGeneral = 'sin_actividad';
++  if (progresos.length) {
++    if (pendientesValidacion > 0) {
++      estadoGeneral = 'pendiente_validacion';
++    } else if (progresos.some((item) => item.estadoGeneral === 'bloqueada')) {
++      estadoGeneral = 'bloqueado';
++    } else {
++      estadoGeneral = 'al_dia';
++    }
++  }
++
++  const faseActual = getCurrentPhase(progresos);
++
++  return {
++    user: {
++      _id: user._id,
++      nombre: user.nombre,
++      apellidos: user.apellidos,
++      email: user.email,
++      tipo: user.tipo,
++      hospital: user.hospital,
++      sociedad: user.sociedad
++    },
++    faseActual,
++    progreso: {
++      total: totalActividades,
++      validadas: actividadesValidadas,
++      porcentaje: totalActividades
++        ? Math.round((actividadesValidadas / totalActividades) * 100)
++        : 0
++    },
++    pendientesValidacion,
++    ultimaActualizacion,
++    estadoGeneral
++  };
++};
++
++
+ const inicializarProgresoFormativo = async (req, res, next) => {
+   try {
+   const user = await User.findById(req.params.id);
+   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
+     return res.status(404).json({ success: false, error: 'Residente no válido' });
+   }
+ 
+      if (req.body.tipo) user.tipo = req.body.tipo;
+     const count = await inicializarProgresoFormativoDB(user);
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ 
+ 
+ 
+ 
+ // @desc    Obtener todos los registros de progreso
+ // @route   GET /api/progreso
+ // @access  Private/Admin
+ const getAllProgreso = async (req, res, next) => {
+   try {
+     // Solo administrador puede acceder a todos los progresos
+@@ -151,87 +260,242 @@ const getAllProgreso = async (req, res, next) => {
+     }
+ 
+     const progreso = await ProgresoResidente.find()
        .populate({
          path: 'residente',
--        select: 'nombre apellidos tipo hospital sociedad'
-+        select: 'nombre apellidos email tipo hospital sociedad'
+         select: 'nombre apellidos email hospital',
+         populate: { path: 'hospital', select: 'nombre' }
        })
+      .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia')
+       .lean();
+ 
+     const filtered = progreso.filter(p => p.residente);
+ 
+     res.status(200).json({
+       success: true,
+       count: filtered.length,
+       data: filtered
+     });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
++// @desc    Obtener resumen de seguimiento de usuarios
++// @route   GET /api/progreso/seguimiento
++// @access  Private/Profesor|CSM|Admin
++const getSeguimientoUsuarios = async (req, res, next) => {
++  try {
++    const {
++      programa = 'all',
++      hospitalId = 'all',
++      sociedadId = 'all',
++      search = '',
++      faseId = 'all',
++      estado = 'all',
++      dateFrom,
++      dateTo,
++      userId
++    } = req.query;
++    let usersQuery = {};
++    let emptyReason;
++
++    if (req.user.rol === Role.ADMINISTRADOR) {
++      usersQuery = { rol: { $in: [Role.RESIDENTE, Role.PARTICIPANTE] } };
++    } else if (req.user.rol === Role.CSM) {
++      if (!req.user.zona) {
++        return res.status(200).json({
++          success: true,
++          count: 0,
++          data: [],
++          message: 'No hay usuarios asignados a tu zona'
++        });
++      }
++      const hospitales = await Hospital.find({ zona: req.user.zona }).select('_id');
++      const ids = hospitales.map((h) => h._id);
++      usersQuery = {
++        hospital: { $in: ids },
++        rol: Role.RESIDENTE,
++        tipo: 'Programa Residentes'
++      };
++    } else if (req.user.rol === Role.PROFESOR) {
++      if (req.user.tipo === 'Programa Residentes') {
++        if (!req.user.hospital) {
++          emptyReason = 'No hay usuarios asignados para tu hospital';
++          usersQuery = { _id: null };
++        } else {
++          usersQuery = {
++            hospital: req.user.hospital,
++            rol: Role.RESIDENTE,
++            tipo: 'Programa Residentes'
++          };
++        }
++      } else {
++        if (!req.user.sociedad) {
++          emptyReason = 'No hay usuarios asignados para tu sociedad';
++          usersQuery = { _id: null };
++        } else {
++          usersQuery = {
++            sociedad: req.user.sociedad,
++            rol: Role.PARTICIPANTE,
++            tipo: 'Programa Sociedades'
++          };
++        }
++      }
++    } else {
++      return res.status(403).json({ success: false, error: 'No autorizado para ver seguimiento' });
++    }
++
++    if (programa !== 'all') {
++      usersQuery.tipo = programa;
++    }
++    if (hospitalId !== 'all') {
++      usersQuery.hospital = hospitalId;
++    }
++    if (sociedadId !== 'all') {
++      usersQuery.sociedad = sociedadId;
++    }
++    if (userId) {
++      usersQuery._id = userId;
++    }
++
++    const users = await User.find(usersQuery)
++      .populate('hospital', 'nombre zona')
++      .populate('sociedad', 'titulo')
++      .select('nombre apellidos email tipo hospital sociedad')
++      .lean();
++
++    const filteredUsers = users.filter((user) => {
++      if (!search) return true;
++      const q = search.toLowerCase();
++      return (
++        user.nombre?.toLowerCase().includes(q) ||
++        user.apellidos?.toLowerCase().includes(q) ||
++        user.email?.toLowerCase().includes(q)
++      );
++    });
++
++    const userIds = filteredUsers.map((user) => user._id);
++    const progresos = await ProgresoResidente.find({ residente: { $in: userIds } })
++      .populate('fase', 'nombre numero orden')
++      .select('residente fase actividades estadoGeneral fechaRegistro fechaInicio fechaFin updatedAt')
++      .lean();
++
++    const progresosMap = progresos.reduce((acc, item) => {
++      const key = item.residente?.toString();
++      if (!key) return acc;
++      if (!acc[key]) acc[key] = [];
++      acc[key].push(item);
++      return acc;
++    }, {});
++
++    let summaries = filteredUsers.map((user) =>
++      summarizeUserProgress(user, progresosMap[user._id.toString()] || [])
++    );
++
++    if (faseId !== 'all') {
++      summaries = summaries.filter((summary) =>
++        summary.faseActual && summary.faseActual._id.toString() === faseId
++      );
++    }
++
++    if (estado !== 'all') {
++      summaries = summaries.filter((summary) => summary.estadoGeneral === estado);
++    }
++
++    if (dateFrom || dateTo) {
++      const from = dateFrom ? new Date(dateFrom) : null;
++      const to = dateTo ? new Date(dateTo) : null;
++      summaries = summaries.filter((summary) => {
++        if (!summary.ultimaActualizacion) return false;
++        const date = new Date(summary.ultimaActualizacion);
++        if (from && date < from) return false;
++        if (to) {
++          const end = new Date(to);
++          end.setHours(23, 59, 59, 999);
++          if (date > end) return false;
++        }
++        return true;
++      });
++    }
++
++    res.status(200).json({
++      success: true,
++      count: summaries.length,
++      data: summaries,
++      message: summaries.length === 0 && emptyReason ? emptyReason : undefined
++    });
++  } catch (err) {
++    next(err);
++  }
++};
++
+ 
+ // @desc    Obtener progreso de un residente específico
+ // @route   GET /api/progreso/residente/:id
+ // @access  Private
+ 
+ 
+ 
+ const getProgresoResidente = async (req, res, next) => {
+   try {
+     const residente = await User.findById(req.params.id).populate('hospital');
+ 
+     if (!residente) {
+       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
+     }
+ 
+   if (residente.rol !== 'residente' && residente.rol !== 'participante') {
+       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
+   }
+ 
+   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.user.id !== req.params.id) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
+   }
+ 
+ 
+     if (
+       req.user.rol === 'tutor' &&
+       (req.user.hospital.toString() !== residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== residente.especialidad))
+     ) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+     }
+     if (req.user.rol === 'csm' && req.user.zona !== residente.hospital.zona) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
+     }
+ 
+-    if (req.user.rol === 'profesor' && (!residente.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString())) {
+-      return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
++    if (req.user.rol === 'profesor') {
++      if (residente.tipo === 'Programa Residentes') {
++        if (!req.user.hospital || req.user.hospital.toString() !== residente.hospital._id.toString()) {
++          return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
++        }
++      } else if (!residente.sociedad || !req.user.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString()) {
++        return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
++      }
+     }
+ 
+     const progresoPorFase = await ProgresoResidente.find({ residente: req.params.id })
        .populate('fase')
        .populate('actividades.actividad')
        .populate('actividades.cirugia');
  
-     const pendientes = [];
-     const validadas = [];
-     const rechazadas = [];
+     await ProgresoResidente.populate(progresoPorFase, {
+       path: 'adjuntos',
+       select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+     });
  
-     const progresoIds = progresos.map(p => p._id);
-     const adjuntosPorActividad = new Map();
+     // Ordenar las fases por su campo 'orden'
+     progresoPorFase.sort((a, b) => a.fase.orden - b.fase.orden);
+     const resultado = progresoPorFase.map(formatProgresoParaResidente);
+       
  
-     if (progresoIds.length) {
-       const adjuntos = await Adjunto.find({
-         progreso: { $in: progresoIds },
-         actividadIndex: { $ne: null }
-       })
-         .select('_id progreso actividadIndex nombreArchivo mimeType fechaSubida')
-         .lean();
+     res.status(200).json({
+       success: true,
+       count: resultado.length,
+       data: resultado
+     });
+   } catch (err) {
+     console.error("Error en getProgresoResidente:", err);
+     next(err);
+@@ -244,53 +508,62 @@ const getProgresoResidentePorFase = async (req, res, next) => {
+   try {
+     const residente = await User.findById(req.params.id).populate('hospital');
  
-       adjuntos.forEach(adjunto => {
-         const key = `${adjunto.progreso.toString()}-${adjunto.actividadIndex}`;
-         if (!adjuntosPorActividad.has(key)) {
-           adjuntosPorActividad.set(key, []);
-         }
+     if (!residente) {
+       return next(new ErrorResponse(`Residente no encontrado con id ${req.params.id}`, 404));
+     }
+ 
+   if (residente.rol !== 'residente' && residente.rol !== 'participante') {
+       return next(new ErrorResponse(`El usuario con id ${req.params.id} no es un residente`, 400));
+   }
+ 
+   if ((req.user.rol === 'residente' || req.user.rol === 'participante') && req.user.id !== req.params.id) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver el progreso de otro residente' });
+   }
+ 
+     if (
+       req.user.rol === 'tutor' &&
+       (req.user.hospital.toString() !== residente.hospital._id.toString() ||
+         (req.user.especialidad !== 'ALL' && req.user.especialidad !== residente.especialidad))
+     ) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
+     }
+     if (req.user.rol === 'csm' && req.user.zona !== residente.hospital.zona) {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra zona' });
+     }
++    if (req.user.rol === 'profesor') {
++      if (residente.tipo === 'Programa Residentes') {
++        if (!req.user.hospital || req.user.hospital.toString() !== residente.hospital._id.toString()) {
++          return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otro hospital' });
++        }
++      } else if (!residente.sociedad || !req.user.sociedad || req.user.sociedad.toString() !== residente.sociedad.toString()) {
++        return res.status(403).json({ success: false, error: 'No autorizado para ver residentes de otra sociedad' });
++      }
++    }
+ 
+     const progreso = await ProgresoResidente.find({ residente: req.params.id })
+-      .populate('fase')
++      .populate('fase')
+       .populate('actividades.actividad')
+       .populate('actividades.cirugia');
+ 
+     await ProgresoResidente.populate(progreso, {
+       path: 'adjuntos',
+       select: 'nombreArchivo mimeType fechaSubida actividadIndex'
+     });
+ 
+     const resultado = progreso.map(item => {
+       const plain = item.toObject({ virtuals: true });
+       const adjuntosPorIndice = (plain.adjuntos || []).reduce((acc, adj) => {
+         if (typeof adj.actividadIndex !== 'number') return acc;
+         const key = adj.actividadIndex;
+         if (!acc[key]) acc[key] = [];
+         acc[key].push({
+           _id: adj._id.toString(),
+           nombreArchivo: adj.nombreArchivo,
+           mimeType: adj.mimeType,
+           fechaSubida: adj.fechaSubida
+         });
+         return acc;
+       }, {});
+ 
+       return {
+         ...plain,
+@@ -1254,43 +1527,44 @@ const crearProgresoParaUsuario = async (req, res, next) => {
+ };
+ 
+ const getCountProgresosByActividad = async (req, res, next) => {
+   try {
+     const count = await ProgresoResidente.countDocuments({
+       'actividades.actividad': req.params.id
+     });
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ const getCountProgresosByFase = async (req, res, next) => {
+   try {
+     const count = await ProgresoResidente.countDocuments({ fase: req.params.id });
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
+   }
+ };
+ 
+ module.exports = {
+   inicializarProgresoFormativo,
+   getAllProgreso,
++  getSeguimientoUsuarios,
+   getProgresoResidente,
+   getProgresoResidentePorFase,
+   registrarProgreso,
+   actualizarProgreso,
+   validarProgreso,
+   rechazarProgreso,
+   getEstadisticasResidente,
+   marcarActividadCompletada,
+   getProgresosPendientesDelHospital,
+   getValidacionesPendientes,
+   getValidacionesPendientesAdmin,
+   validarActividad,
+   rechazarActividad,
+   crearProgresoParaUsuario,
+   updatePhaseStatus,
+   getCountProgresosByActividad,
+   getCountProgresosByFase
+ };
+diff --git a/src/routes/progresoRoutes.js b/src/routes/progresoRoutes.js
+index 77c79e8a0927ead2db36af5db7048c54e94e20b9..ca14ce37efca0b2ee13a44eb1c9d851f22b57ec8 100644
+--- a/src/routes/progresoRoutes.js
++++ b/src/routes/progresoRoutes.js
+@@ -1,76 +1,80 @@
+ const express = require('express');
+ const router = express.Router();
+ const { protect, authorize } = require('../middleware/auth');
+ const { Role } = require('../utils/roles');
+ 
+ const {
+   actualizarProgreso,
+   crearProgresoParaUsuario,
+   getAllProgreso,
++  getSeguimientoUsuarios,
+   getEstadisticasResidente,
+   getProgresoResidente,
+   getProgresoResidentePorFase,
+   getValidacionesPendientes,
+   getValidacionesPendientesAdmin, 
+   inicializarProgresoFormativo,
+   marcarActividadCompletada,
+   rechazarActividad,
+   rechazarProgreso,
+   registrarProgreso,
+   validarActividad,
+   validarProgreso,
+   getCountProgresosByActividad,
+   getCountProgresosByFase
+ } = require('../controllers/progresoController');
+ 
+ // ✅ Middleware de autenticación para todas las rutas
+ router.use(protect);
+ 
+ // ✅ Validaciones pendientes del tutor
+ router.get('/tutor/validaciones/pendientes', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR), getValidacionesPendientes);
+ router.get('/admin/validaciones/pendientes', authorize(Role.ADMINISTRADOR), getValidacionesPendientesAdmin);
+ 
+ // ✅ Listado general y creación de progreso
+ router.route('/')
+   .get(authorize(Role.ADMINISTRADOR), getAllProgreso)
+   .post(registrarProgreso);
+ 
++// ✅ Seguimiento de usuarios asignados
++router.get('/seguimiento', authorize(Role.ADMINISTRADOR, Role.CSM, Role.PROFESOR), getSeguimientoUsuarios);
++
+ // ✅ Obtener progreso de un residente
+ router.route('/residente/:id')
+   .get(getProgresoResidente);
+ 
+ // ✅ Obtener progreso por fase
+ router.route('/residente/:id/fase/:faseId')
+   .get(getProgresoResidentePorFase);
+ 
+ // ✅ Estadísticas por residente
+ router.route('/stats/residente/:id')
+   .get(getEstadisticasResidente);
+ 
+ // ✅ Actualizar progreso
+ router.route('/:id')
+   .put(actualizarProgreso);
+ 
+ // ✅ Marcar actividad completada
+ router.put('/:id/actividad/:index', marcarActividadCompletada);
+ 
+ router.post('/:id/actividad/:index/validar', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), validarActividad);
+ router.post('/:id/actividad/:index/rechazar', authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), rechazarActividad);
+ 
+ 
+ // ✅ Validar o rechazar progreso
+ router.route('/:id/validar')
+   .post(authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), validarProgreso);
+ 
+ router.route('/:id/rechazar')
+   .post(authorize(Role.TUTOR, Role.CSM, Role.PROFESOR, Role.ADMINISTRADOR), rechazarProgreso);
+ 
+ // ✅ Inicializar progreso formativo de un residente
+ router.post('/init/:id', authorize(Role.ADMINISTRADOR), inicializarProgresoFormativo);
+ 
+ router.post('/crear/:id', authorize(Role.ADMINISTRADOR), crearProgresoParaUsuario);
+ 
+ router.get('/actividad/:id/count', getCountProgresosByActividad);
+ router.get('/fase/:id/count', getCountProgresosByFase);
+ 
+-module.exports = router;
+\ No newline at end of file
++module.exports = router;

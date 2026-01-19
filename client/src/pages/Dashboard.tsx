@@ -67,6 +67,8 @@ import AdminSiteInfo from './dashboard/AdminSiteInfo';
 import LanguageSelector from '../components/LanguageSelector';
 import AdminInformes from './dashboard/AdminInformes';
 import AdminInvitaciones from './dashboard/AdminInvitaciones';
+import SeguimientoUsuarios from './dashboard/SeguimientoUsuarios';
+import SeguimientoDetalle from './dashboard/SeguimientoDetalle';
 
 const drawerWidth = 240;
 
@@ -127,16 +129,19 @@ const Dashboard: React.FC = () => {
       }
     ];
 
-    if (user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor') {
-      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante', 'profesor'] });
+    if (user?.rol === 'residente' || user?.rol === 'participante') {
+      items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante'] });
     }
 
     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
     }
 
-    if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor', 'csm', 'profesor'] });
+    if (user?.rol === 'tutor') {
+      items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor'] });
+    }
+    if (user?.rol === 'csm' || user?.rol === 'profesor') {
+      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor'] });
     }
 
     if (user?.rol === 'administrador') {
@@ -599,8 +604,12 @@ const Dashboard: React.FC = () => {
           <Route path="/validaciones" element={<TutorValidaciones />} />
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/hospitals" element={<AdminHospitales />} />
-          {user?.rol === 'administrador' && (
+          {user?.rol === 'administrador' ? (
             <Route path="/fases" element={<AdminFases />} />
+          ) : user?.rol === 'residente' || user?.rol === 'participante' ? (
+            <Route path="/fases" element={<ResidenteFases />} />
+          ) : (
+            <Route path="/fases" element={<Navigate to="/dashboard" replace />} />
           )}
           {user?.rol === 'administrador' && (
             <Route path="/invitations" element={<AdminInvitaciones />} />
@@ -637,9 +646,12 @@ const Dashboard: React.FC = () => {
             <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
           )}
           <Route path="/sociedades" element={<AdminSociedades />} />
-          {user?.rol === 'residente' || user?.rol === 'participante' || user?.rol === 'profesor' ? (
-            <Route path="/fases" element={<ResidenteFases />} />
-          ) : null}
+          {(user?.rol === 'csm' || user?.rol === 'profesor') && (
+            <>
+              <Route path="/seguimiento" element={<SeguimientoUsuarios />} />
+              <Route path="/seguimiento/:userId" element={<SeguimientoDetalle />} />
+            </>
+          )}
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
           {isDev && <Route path="/debug" element={<DebugDashboard />} />}

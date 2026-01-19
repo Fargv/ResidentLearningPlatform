@@ -21,6 +21,7 @@
     "trainingPhases": "Training Phases",
     "validations": "Validations",
     "myUsers": "My Users",
+    "followUp": "Follow-up",
     "invitations": "Invitations",
     "usersProgress": "Users Progress",
     "settings": "Settings",
@@ -33,6 +34,78 @@
     "download": "Download",
     "downloadSurgeryReport": "Descargar informe de cirugías de {{phase}}",
     "downloadSurgeryReportError": "Error downloading surgery report"
+  },
+  "followUp": {
+    "title": "Follow-up",
+    "error": "Error loading follow-up data",
+    "programs": {
+      "residents": "Resident Program",
+      "societies": "Societies Program"
+    },
+    "filters": {
+      "program": "Program",
+      "hospital": "Hospital",
+      "society": "Society",
+      "search": "Search by name or email",
+      "phase": "Phase",
+      "phaseOption": "Phase {{number}}: {{name}}",
+      "status": "Status",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "clear": "Clear filters",
+      "all": "All"
+    },
+    "table": {
+      "user": "User",
+      "program": "Program",
+      "center": "Hospital/Society",
+      "currentPhase": "Current phase",
+      "progress": "Progress",
+      "pending": "Pending validations",
+      "lastUpdate": "Last update",
+      "status": "Status",
+      "actions": "Actions",
+      "viewDetail": "View detail"
+    },
+    "status": {
+      "upToDate": "Up to date",
+      "pendingValidation": "Pending validation",
+      "blocked": "Blocked",
+      "noActivity": "No activity"
+    },
+    "phaseLabel": "Phase {{number}}: {{name}}",
+    "empty": {
+      "noUsers": "No users assigned yet",
+      "noZone": "No users assigned to your zone"
+    },
+    "detail": {
+      "title": "User follow-up",
+      "back": "Back",
+      "error": "Error loading detail",
+      "currentPhase": "Current phase",
+      "progress": "Total progress",
+      "pending": "Pending validations",
+      "lastUpdate": "Last update",
+      "noActivity": "No activity recorded yet",
+      "dates": {
+        "created": "Created",
+        "validated": "Validated",
+        "rejected": "Rejected"
+      },
+      "comments": {
+        "user": "User comment",
+        "tutor": "Tutor comment",
+        "rejection": "Rejection reason"
+      },
+      "signature": "Digital signature",
+      "attachments": "Attachments"
+    },
+    "activityStatus": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "validated": "Validated",
+      "rejected": "Rejected"
+    }
   },
   "adminConfig": {
     "title": "Settings",
