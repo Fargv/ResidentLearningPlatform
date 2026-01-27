@@ -221,6 +221,25 @@ const SeguimientoUsuarios: React.FC = () => {
     </Box>
   );
 
+  const normalizeProgresosResumen = useCallback((summary: SeguimientoSummary) => {
+    const faseNumeroActual = summary.faseActual?.numero;
+    return (summary.progresosResumen || []).map((progreso) => {
+      const estadoGeneral =
+        progreso.estadoGeneral === 'en_progreso' ? 'en progreso' : progreso.estadoGeneral;
+      const numero =
+        typeof progreso.fase?.numero === 'number'
+          ? progreso.fase.numero
+          : estadoGeneral === 'en progreso'
+            ? faseNumeroActual
+            : undefined;
+      return {
+        ...progreso,
+        estadoGeneral,
+        fase: typeof numero === 'number' ? { numero } : progreso.fase || null
+      };
+    });
+  }, []);
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -417,7 +436,7 @@ const SeguimientoUsuarios: React.FC = () => {
                       : summary.user.hospital?.nombre || '-'}
                   </TableCell>
                   <TableCell>
-                    {getCurrentPhaseLabel(t, summary.progresosResumen || []) || '-'}
+                    {getCurrentPhaseLabel(t, normalizeProgresosResumen(summary)) || '-'}
                   </TableCell>
                   <TableCell>{renderProgress(summary)}</TableCell>
                   <TableCell>{summary.pendientesValidacion}</TableCell>
