@@ -296,19 +296,7 @@ const SeguimientoDetalle: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return <Alert severity="error">{error}</Alert>;
-  }
-
-  const backPath = useMemo(() => {
+    const backPath = useMemo(() => {
     const fromState = (location.state as { from?: string } | null)?.from;
     if (fromState === 'admin-users') {
       return '/dashboard/usuarios';
@@ -322,6 +310,17 @@ const SeguimientoDetalle: React.FC = () => {
     }
     return '/dashboard/seguimiento';
   }, [location.search, location.state]);
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
 
   return (
     <Box>
