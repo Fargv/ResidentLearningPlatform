@@ -62,6 +62,7 @@ interface SummaryResponse {
   };
   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
   estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
+  progresosResumen?: Array<{ estadoGeneral?: string; fase?: { numero?: number } | null }>;
   progreso: { total: number; validadas: number; porcentaje: number };
   pendientesValidacion: number;
   ultimaActualizacion?: string | null;
@@ -375,7 +376,7 @@ const SeguimientoDetalle: React.FC = () => {
             {[
               {
                 label: t('followUp.detail.currentPhase'),
-                value: getCurrentPhaseLabel(t, summary)
+                value: getCurrentPhaseLabel(t, progresos) || '-'
               },
               {
                 label: t('followUp.detail.progress'),

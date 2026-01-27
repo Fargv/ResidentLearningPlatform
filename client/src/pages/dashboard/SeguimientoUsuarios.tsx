@@ -38,6 +38,7 @@ interface SeguimientoSummary {
   };
   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
   estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
+  progresosResumen?: Array<{ estadoGeneral?: string; fase?: { numero?: number } | null }>;
   progreso: {
     total: number;
     validadas: number;
@@ -415,7 +416,9 @@ const SeguimientoUsuarios: React.FC = () => {
                       ? summary.user.sociedad?.titulo || '-'
                       : summary.user.hospital?.nombre || '-'}
                   </TableCell>
-                  <TableCell>{getCurrentPhaseLabel(t, summary)}</TableCell>
+                  <TableCell>
+                    {getCurrentPhaseLabel(t, summary.progresosResumen || []) || '-'}
+                  </TableCell>
                   <TableCell>{renderProgress(summary)}</TableCell>
                   <TableCell>{summary.pendientesValidacion}</TableCell>
                   <TableCell>

@@ -1,237 +1,130 @@
-diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
-index dcc96177d2e57a0ff35ee571bc88f5233e4d2b18..8f16d408743d4caea75f6335e0dda94904953913 100644
---- a/client/src/pages/Dashboard.tsx
-+++ b/client/src/pages/Dashboard.tsx
-@@ -118,53 +118,53 @@ const Dashboard: React.FC = () => {
-     handleMenuClose();
-     navigate('/dashboard/perfil');
-   };
- 
-   const getMenuItems = () => {
-     const items = [
-       {
-         text: t('actions.dashboard'),
-         icon: <DashboardIcon />,
-         path: '/dashboard',
-         roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
-       }
-     ];
- 
-     if (user?.rol === 'residente' || user?.rol === 'participante') {
-       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante'] });
-     }
- 
-     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
-       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
-     }
- 
-     if (user?.rol === 'tutor') {
-       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor'] });
-     }
--    if (user?.rol === 'csm' || user?.rol === 'profesor') {
--      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor'] });
--    }
-+    if (user?.rol === 'csm' || user?.rol === 'profesor' || user?.rol === 'administrador') {
-+      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor', 'administrador'] });
-+    }
- 
-     if (user?.rol === 'administrador') {
-       items.push(
-         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
-         { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
-         { text: t('adminValidations.menu'), icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] },
-         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
-         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
-       );
-     }
- 
-     return items;
-   };
- 
- 
-   const menuItems = getMenuItems();
- 
-   const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
-   const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
-   const sidebarWidthCss = `${sidebarWidth}px`;
-   const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
-   const toolbarHeight = isMobile ? 56 : 64;
-   const sidebarTopOffset = toolbarHeight + sidebarPadding;
-   const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
-   const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
 diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
-index cc5b6c0a68c5f52d2ba6ee4e3151f47af1fecbaa..c92577bc83f0f06ff19518110f37338266a044a9 100644
+index 2e6d2affebe3ea6677c378eb7a429d7ee52286cf..0c8321ed737b5df62e4a75975219aed75da27791 100644
 --- a/client/src/pages/dashboard/AdminUsuarios.tsx
 +++ b/client/src/pages/dashboard/AdminUsuarios.tsx
-@@ -1130,65 +1130,53 @@ const AdminUsuarios: React.FC = () => {
-                           TABLE_ACTION_BUTTON_SX,
-                           (theme) => getEditActionButtonStyles(theme),
-                         ]}
-                       >
-                         {t("adminUsers.actions.edit")}
-                       </Button>
-                       {['residente', 'participante'].includes(usuario.rol) &&
-                         user?.rol === "administrador" &&
-                         usuario.tieneProgreso && (
-                           <Button
-                             variant="contained"
-                             startIcon={<AssessmentIcon />}
-                             onClick={() =>
-                               navigate(
-                                 `/dashboard/progreso-usuario/${usuario._id}`,
-                               )
-                             }
-                             sx={[
-                               TABLE_ACTION_BUTTON_SX,
-                               (theme) => getProgressActionButtonStyles(theme),
-                             ]}
-                           >
-                             {t('adminUserProgress.editProgress')}
-                           </Button>
-                         )}
--                      {['residente', 'participante'].includes(usuario.rol) &&
--                        user?.rol === "administrador" && (
--                          <Button
--                            variant="outlined"
--                            onClick={() =>
--                              navigate(`/dashboard/seguimiento/${usuario._id}`)
--                            }
--                            sx={TABLE_ACTION_BUTTON_SX}
--                          >
--                            {t('adminUsers.actions.viewFollowUp')}
--                          </Button>
--                        )}
--                      {['residente', 'participante'].includes(usuario.rol) &&
--                        !usuario.tieneProgreso && (
--                          <Button
-+                      {['residente', 'participante'].includes(usuario.rol) &&
-+                        !usuario.tieneProgreso && (
-+                          <Button
-                             variant="outlined"
-                             onClick={() => handleCrearProgreso(usuario._id)}
-                             sx={TABLE_ACTION_BUTTON_SX}
-                           >
-                             {t("adminUsers.actions.createProgress")}
-                           </Button>
-                         )}
-                     </Box>
-                   </TableCell>
-                 </TableRow>
-               ))}
-             </TableBody>
-           </Table>
-         </TableContainer>
-       </Paper>
+@@ -32,50 +32,51 @@ import {
+ import type { SxProps, Theme } from "@mui/material/styles";
+ import {
+   Add as AddIcon,
+   Edit as EditIcon,
+   Download as DownloadIcon,
+   Assessment as AssessmentIcon,
+   ArrowDropDown as ArrowDropDownIcon,
+   MailOutline as MailOutlineIcon,
  
+    //Person as PersonIcon,
+   //Email as EmailIcon
+ } from "@mui/icons-material";
+ import { useAuth } from "../../context/AuthContext";
+ import { useNavigate } from "react-router-dom";
+ import api, {
+   createUser,
+   updateUserPassword,
+   getTutors,
+   sendResetPasswordEmail,
+   clearResetNotifications,
+ } from "../../api";
+ import InviteUsersMail from "../../components/InviteUsersMail";
+ import BackButton from "../../components/BackButton";
+ import { useTranslation, Trans } from "react-i18next";
+ import { getRoleChipSx } from "../../utils/roleChipColors";
++import { getCurrentPhaseLabel } from "../../utils/followUp";
+ import { FaseCirugia } from "../../types/FaseCirugia";
  
-       {/* Diálogo para invitar usuario */}
-       <InviteUsersMail
-         open={openInvitarDialog}
-         onClose={handleCloseInvitarDialog}
-         hospitals={hospitales}
-         societies={sociedades}
-       />
+ const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+   flexWrap: "wrap",
+   gap: 1,
+   justifyContent: "center",
+ };
  
-diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
-index 6933d25addb7bb830a6b99f3378e95355c48ad43..73886e7fb593b2b09055d36b66f10076329ab288 100644
---- a/client/src/pages/dashboard/DashboardHome.tsx
-+++ b/client/src/pages/dashboard/DashboardHome.tsx
-@@ -459,56 +459,56 @@ const DashboardHome: React.FC = () => {
+ const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+   minWidth: { xs: "100%", sm: 180 },
+   height: 40,
+   fontSize: "0.9rem",
+   mt: { xs: 1, sm: 0 },
+   fontWeight: 600,
+   flexBasis: { xs: "100%", sm: "auto" },
+ };
  
-   type Action = {
-     label: string;
-     path: string;
-     icon: React.ReactNode;
-   };
+ const TABLE_ACTIONS_CONTAINER_SX: SxProps<Theme> = {
+   display: "flex",
+   flexDirection: "column",
+   alignItems: "center",
+   justifyContent: "center",
+   width: "100%",
+   gap: 0.75,
+ };
+@@ -245,64 +246,51 @@ const AdminUsuarios: React.FC = () => {
+     const fetchData = async () => {
+       try {
+         setLoading(true);
  
-   const actions: Action[] = [];
+         const usuariosRes = await api.get("/users");
  
-   if (user?.rol === "residente" || user?.rol === "participante") {
-     actions.push({
-       label: t('actions.trainingPhases'),
-       path: "/dashboard/fases",
-       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-     });
-   }
+         const usuariosConProgreso = await Promise.all(
+           usuariosRes.data.data.map(async (u: any) => {
+             let fasesCirugia: FaseCirugia[] = [];
+             let faseActual: string | undefined;
+             if (["residente", "participante"].includes(u.rol)) {
+               try {
+                 const progRes = await api.get(`/progreso/residente/${u._id}`);
+                 const progresos = progRes.data.data;
+                 fasesCirugia = progresos
+                   .filter(
+                     (p: any) =>
+                       p.estadoGeneral === "validado" &&
+                       p.actividades.some(
+                         (a: any) =>
+                           a.tipo === "cirugia" && a.estado === "validado",
+                       ),
+                   )
+                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
  
-   if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
-     actions.push({
-       label: t('actions.validations'),
-       path: "/dashboard/validaciones",
-       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
-     });
-   }
+-                const enProgreso = progresos.filter(
+-                  (p: any) => p.estadoGeneral === "en progreso",
+-                );
+-                if (enProgreso.length > 0) {
+-                  const numero = Math.max(
+-                    ...enProgreso.map((p: any) => p.fase.numero),
+-                  );
+-                  faseActual = `${t("adminPhases.phase")} ${numero}`;
+-                } else if (
+-                  progresos.length > 0 &&
+-                  progresos.every((p: any) => p.estadoGeneral === "validado")
+-                ) {
+-                  faseActual = "Programa Completado";
+-                }
++                faseActual = getCurrentPhaseLabel(t, progresos);
+               } catch {
+                 fasesCirugia = [];
+               }
+             }
+             return { ...u, fasesCirugia, faseActual };
+           }),
+         );
  
--  if (user?.rol === "profesor") {
--    actions.push({
--      label: t('actions.followUpUsers'),
--      path: "/dashboard/seguimiento",
--      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
--    });
-+  if (user?.rol === "profesor" || user?.rol === "administrador") {
-+    actions.push({
-+      label: t('actions.followUpUsers'),
-+      path: "/dashboard/seguimiento",
-+      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
-+    });
-   }
+         setUsuariosLista(usuariosConProgreso);
  
-   if (user?.rol === "tutor" || user?.rol === "csm") {
-     actions.push({
-       label: t('actions.myUsers'),
-       path: "/dashboard/usuarios",
-       icon: <PeopleIcon sx={{ fontSize: 40 }} />,
-     });
-   }
+         const hospitalesRes = await api.get("/hospitals");
  
-   if (user?.rol === "administrador") {
-     actions.push(
-       {
-         label: t('actions.reports'),
-         path: "/dashboard/informes",
-         icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
-       },
-       {
-         label: t('actions.settings'),
-         path: "/dashboard/config",
-         icon: <SettingsIcon sx={{ fontSize: 40 }} />,
-       }
-     );
-   }
+         setHospitales(hospitalesRes.data.data);
  
+         const sociedadesRes = await api.get("/sociedades");
+         const sociedadesData =
+           (sociedadesRes.data && sociedadesRes.data.data) ||
+           sociedadesRes.data ||
+           [];
+         const sociedadesActivas = Array.isArray(sociedadesData)
+           ? sociedadesData.filter((s: any) => s.status === "ACTIVO")
+           : [];
+         setSociedades(
+           sociedadesActivas.map((s: any) => ({
+             _id: s._id,
 diff --git a/client/src/pages/dashboard/SeguimientoDetalle.tsx b/client/src/pages/dashboard/SeguimientoDetalle.tsx
-index 3017548bbcf3c64b8d919ccedd8da80719eadd1c..19362c754857dc92ad4376a48e7823a92a2370a4 100644
+index 6f8868ce6889457a1ff143281fb78c211a7ca3d4..951d00f7a2aa7f386d73da66b70c30c2d164e724 100644
 --- a/client/src/pages/dashboard/SeguimientoDetalle.tsx
 +++ b/client/src/pages/dashboard/SeguimientoDetalle.tsx
-@@ -1,50 +1,50 @@
- import React, { useCallback, useEffect, useMemo, useState } from 'react';
- import {
-   Alert,
-   Accordion,
-   AccordionDetails,
-   AccordionSummary,
-   Box,
-   Button,
-   Chip,
-   CircularProgress,
-   Dialog,
-   DialogActions,
-   DialogContent,
-   DialogTitle,
-   Paper,
-   TextField,
-   Typography
- } from '@mui/material';
- import { alpha, useTheme } from '@mui/material/styles';
- import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
- import CancelIcon from '@mui/icons-material/Cancel';
- import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
- import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
- import VerifiedIcon from '@mui/icons-material/Verified';
--import { useNavigate, useParams } from 'react-router-dom';
-+import { useLocation, useNavigate, useParams } from 'react-router-dom';
- import { useTranslation } from 'react-i18next';
- import api from '../../api';
+@@ -28,63 +28,64 @@ import api from '../../api';
  import { useAuth } from '../../context/AuthContext';
  import { formatDayMonthYear } from '../../utils/date';
  import { getCurrentPhaseLabel } from '../../utils/followUp';
@@ -255,7 +148,12 @@ index 3017548bbcf3c64b8d919ccedd8da80719eadd1c..19362c754857dc92ad4376a48e7823a9
    fase: { _id: string; numero: number; nombre: string };
    estadoGeneral: string;
    actividades: Actividad[];
-@@ -56,51 +56,52 @@ interface SummaryResponse {
+ }
+ 
+-interface SummaryResponse {
++interface SummaryResponse {
+   user: {
+     _id: string;
      nombre: string;
      apellidos: string;
      email: string;
@@ -263,9 +161,13 @@ index 3017548bbcf3c64b8d919ccedd8da80719eadd1c..19362c754857dc92ad4376a48e7823a9
      hospital?: { _id?: string; nombre?: string; zona?: string } | null;
      sociedad?: { _id?: string; titulo?: string } | null;
    };
-   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
-   estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
-   progreso: { total: number; validadas: number; porcentaje: number };
+-  faseActual?: { _id: string; nombre?: string; numero?: number } | null;
+-  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
+-  progreso: { total: number; validadas: number; porcentaje: number };
++  faseActual?: { _id: string; nombre?: string; numero?: number } | null;
++  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
++  progresosResumen?: Array<{ estadoGeneral?: string; fase?: { numero?: number } | null }>;
++  progreso: { total: number; validadas: number; porcentaje: number };
    pendientesValidacion: number;
    ultimaActualizacion?: string | null;
    estadoGeneral: string;
@@ -281,9 +183,8 @@ index 3017548bbcf3c64b8d919ccedd8da80719eadd1c..19362c754857dc92ad4376a48e7823a9
    const { userId } = useParams();
    const { t } = useTranslation();
    const navigate = useNavigate();
--  const { user } = useAuth();
-+  const location = useLocation();
-+  const { user } = useAuth();
+   const location = useLocation();
+   const { user } = useAuth();
    const [summary, setSummary] = useState<SummaryResponse | null>(null);
    const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
    const [loading, setLoading] = useState(true);
@@ -292,104 +193,97 @@ index 3017548bbcf3c64b8d919ccedd8da80719eadd1c..19362c754857dc92ad4376a48e7823a9
    const [actionDialog, setActionDialog] = useState<{
      type: 'validate' | 'reject';
      progresoId: string;
-     index: number;
-     activityName: string;
-   } | null>(null);
-   const [actionComments, setActionComments] = useState('');
-   const [actionProcessing, setActionProcessing] = useState(false);
-   const [actionError, setActionError] = useState<string | null>(null);
- 
-   const getActivityStatusData = useCallback(
-     (estado?: Actividad['estado']) => {
-       switch (estado) {
-         case 'validado':
-           return {
-             label: t('status.validado'),
-             color: 'success' as const,
-             icon: <VerifiedIcon fontSize="small" />
-           };
-         case 'rechazado':
-@@ -285,56 +286,71 @@ const SeguimientoDetalle: React.FC = () => {
-         actionDialog.type === 'validate'
-           ? { comentarios: actionComments, firmaDigital: signatureValue }
-           : { comentarios: actionComments };
-       await api.post(endpoint, payload);
-       closeActionDialog();
-       fetchData();
-     } catch (err: any) {
-       setActionError(err.response?.data?.error || t('followUp.detail.error'));
-     } finally {
-       setActionProcessing(false);
-     }
-   };
- 
-   if (loading) {
-     return (
-       <Box display="flex" justifyContent="center" mt={4}>
-         <CircularProgress />
-       </Box>
-     );
-   }
- 
-   if (error) {
-     return <Alert severity="error">{error}</Alert>;
-   }
- 
-+  const backPath = useMemo(() => {
-+    const fromState = (location.state as { from?: string } | null)?.from;
-+    if (fromState === 'admin-users') {
-+      return '/dashboard/usuarios';
-+    }
-+    if (fromState === 'seguimiento') {
-+      return '/dashboard/seguimiento';
-+    }
-+    const params = new URLSearchParams(location.search);
-+    if (params.get('from') === 'usuarios') {
-+      return '/dashboard/usuarios';
-+    }
-+    return '/dashboard/seguimiento';
-+  }, [location.search, location.state]);
-+
-   return (
-     <Box>
--      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
--        <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')}>
--          {t('followUp.detail.back')}
--        </Button>
-+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-+        <Button variant="outlined" onClick={() => navigate(backPath)}>
-+          {t('followUp.detail.back')}
-+        </Button>
-         {user?.rol === 'administrador' && summary?.user?._id && (
-           <Button
-             variant="contained"
-             onClick={() => navigate(`/dashboard/progreso-usuario/${summary.user._id}`)}
-           >
-             {t('adminUserProgress.editProgress')}
-           </Button>
-         )}
-       </Box>
- 
-       <Typography variant="h4" gutterBottom>
-         {t('followUp.detail.title')}
-       </Typography>
- 
-       {summary && (
-         <Paper
-           sx={{
-             p: 3,
-             mb: 3,
-             borderRadius: 3,
-             backgroundColor:
-               theme.palette.mode === 'light'
+@@ -353,52 +354,52 @@ const SeguimientoDetalle: React.FC = () => {
                  ? theme.palette.grey[100]
                  : theme.palette.grey[900],
              border: `1px solid ${theme.palette.divider}`
+           }}
+         >
+           <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+             <Box>
+               <Typography variant="h6" gutterBottom>
+                 {summary.user.nombre} {summary.user.apellidos}
+               </Typography>
+               <Typography variant="body2" color="text.secondary">
+                 {summary.user.email}
+               </Typography>
+             </Box>
+             <Chip
+               label={summaryStatus.label}
+               color={summaryStatus.color}
+               variant="outlined"
+               sx={{ fontWeight: 600 }}
+             />
+           </Box>
+           <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+             {[
+               {
+                 label: t('followUp.detail.currentPhase'),
+-                value: getCurrentPhaseLabel(t, summary)
+-              },
++                value: getCurrentPhaseLabel(t, progresos) || '-'
++              },
+               {
+                 label: t('followUp.detail.progress'),
+                 value: `${summary.progreso.validadas}/${summary.progreso.total} (${summary.progreso.porcentaje}%)`
+               },
+               {
+                 label: t('followUp.detail.pending'),
+                 value: `${summary.pendientesValidacion}`
+               },
+               summary.ultimaActualizacion
+                 ? {
+                     label: t('followUp.detail.lastUpdate'),
+                     value: formatDayMonthYear(summary.ultimaActualizacion)
+                   }
+                 : null
+             ]
+               .filter(Boolean)
+               .map((item) => (
+                 <Box key={(item as { label: string }).label}>
+                   <Typography variant="subtitle2">{(item as { label: string }).label}</Typography>
+                   <Typography variant="body2">{(item as { value: string }).value}</Typography>
+                 </Box>
+               ))}
+           </Box>
+         </Paper>
+       )}
 diff --git a/client/src/pages/dashboard/SeguimientoUsuarios.tsx b/client/src/pages/dashboard/SeguimientoUsuarios.tsx
-index 623f256707ab5f8ffd60535ce00abe659e9b6ae8..08e107bb16ef8790773b736385bb936d85b5bab9 100644
+index 57a94651e292d123cb303c8cf3653d1d51574c5d..f53e778e461c1533b1983cf9c429c1d8844c3c3b 100644
 --- a/client/src/pages/dashboard/SeguimientoUsuarios.tsx
 +++ b/client/src/pages/dashboard/SeguimientoUsuarios.tsx
-@@ -44,50 +44,53 @@ interface SeguimientoSummary {
+@@ -15,51 +15,52 @@ import {
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   TextField,
+   Typography
+ } from '@mui/material';
+ import { useNavigate } from 'react-router-dom';
+ import { useTranslation } from 'react-i18next';
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ import { formatDayMonthYear } from '../../utils/date';
+ import { getCurrentPhaseLabel } from '../../utils/followUp';
+ 
+ interface SeguimientoSummary {
+   user: {
+     _id: string;
+     nombre: string;
+     apellidos: string;
+     email: string;
+     tipo?: string;
+     hospital?: { _id?: string; nombre?: string } | null;
+     sociedad?: { _id?: string; titulo?: string } | null;
+   };
+   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
+-  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
++  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
++  progresosResumen?: Array<{ estadoGeneral?: string; fase?: { numero?: number } | null }>;
+   progreso: {
+     total: number;
+     validadas: number;
      porcentaje: number;
    };
    pendientesValidacion: number;
@@ -412,290 +306,36 @@ index 623f256707ab5f8ffd60535ce00abe659e9b6ae8..08e107bb16ef8790773b736385bb936d
    const [emptyMessage, setEmptyMessage] = useState<string | null>(null);
    const [hospitals, setHospitals] = useState<any[]>([]);
    const [societies, setSocieties] = useState<any[]>([]);
-   const [phases, setPhases] = useState<any[]>([]);
- 
-   const programOptions = useMemo(() => {
-+    if (user?.rol === 'administrador') {
-+      return ['all', 'Programa Residentes', 'Programa Sociedades'];
-+    }
-     if (user?.rol === 'csm') {
-       return ['Programa Residentes'];
-     }
-     if (user?.tipo) {
-       return [user.tipo];
-     }
-     return ['Programa Residentes', 'Programa Sociedades'];
-   }, [user?.rol, user?.tipo]);
- 
-   const defaultProgram = programOptions[0] || 'Programa Residentes';
- 
-   const [filters, setFilters] = useState({
-     program: defaultProgram,
-     hospitalId: 'all',
-     sociedadId: 'all',
-     search: '',
-     faseId: 'all',
-     estado: 'all',
-     dateFrom: '',
-     dateTo: ''
-   });
- 
-   useEffect(() => {
-     setFilters((prev) => ({
-       ...prev,
-@@ -113,50 +116,54 @@ const SeguimientoUsuarios: React.FC = () => {
-   );
- 
-   const fetchFiltersData = useCallback(async () => {
-     try {
-       const [hospitalRes, societyRes] = await Promise.all([
-         api.get('/hospitals'),
-         api.get('/sociedades')
-       ]);
-       const hospitalsData = hospitalRes.data?.data || [];
-       const societiesData = societyRes.data?.data || [];
-       const filteredHospitals = user?.rol === 'csm' && user?.zona
-         ? hospitalsData.filter((hospital: any) =>
-             hospital?.zona?.toUpperCase() === user.zona?.toUpperCase()
-           )
-         : hospitalsData;
-       setHospitals(filteredHospitals);
-       setSocieties(societiesData);
-     } catch {
-       setHospitals([]);
-       setSocieties([]);
-     }
-   }, [user?.rol, user?.zona]);
- 
-   const fetchPhases = useCallback(async () => {
-     try {
-+      if (filters.program === 'all') {
-+        setPhases([]);
-+        return;
-+      }
-       const endpoint = filters.program === 'Programa Sociedades' ? '/fases-soc' : '/fases';
-       const response = await api.get(endpoint);
-       setPhases(response.data?.data || []);
-     } catch {
-       setPhases([]);
-     }
-   }, [filters.program]);
- 
-   const fetchSeguimiento = useCallback(async () => {
-     if (user?.rol === 'csm' && !user?.zona) {
-       setData([]);
-       setEmptyMessage(t('followUp.empty.noZone'));
-       setLoading(false);
-       return;
-     }
- 
-     try {
-       setLoading(true);
-       const params: Record<string, string> = {
-         programa: filters.program,
-         hospitalId: filters.hospitalId,
-         sociedadId: filters.sociedadId,
-         search: filters.search,
-         faseId: filters.faseId,
-         estado: filters.estado,
-@@ -180,83 +187,98 @@ const SeguimientoUsuarios: React.FC = () => {
-   }, [fetchFiltersData]);
- 
-   useEffect(() => {
-     fetchPhases();
-   }, [fetchPhases]);
- 
-   useEffect(() => {
-     fetchSeguimiento();
-   }, [fetchSeguimiento]);
- 
-   const handleClearFilters = () => {
-     setFilters({
-       program: defaultProgram,
-       hospitalId: 'all',
-       sociedadId: 'all',
-       search: '',
-       faseId: 'all',
-       estado: 'all',
-       dateFrom: '',
-       dateTo: ''
-     });
-   };
- 
-   const showHospitalFilter = filters.program === 'Programa Residentes';
-   const showSocietyFilter = filters.program === 'Programa Sociedades';
-+  const showPhaseFilter = filters.program !== 'all';
- 
-   const renderProgress = (summary: SeguimientoSummary) => (
-     <Box sx={{ minWidth: 160 }}>
-       <Typography variant="body2" sx={{ mb: 0.5 }}>
-         {summary.progreso.validadas}/{summary.progreso.total} ({summary.progreso.porcentaje}%)
-       </Typography>
-       <LinearProgress variant="determinate" value={summary.progreso.porcentaje} />
-     </Box>
-   );
- 
-   return (
-     <Box>
-       <Typography variant="h4" gutterBottom>
-         {t('followUp.title')}
-       </Typography>
- 
-       <Paper sx={{ p: 2, mb: 2 }}>
-         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
-           <FormControl sx={{ minWidth: 200 }} size="small">
-             <InputLabel>{t('followUp.filters.program')}</InputLabel>
-             <Select
-               label={t('followUp.filters.program')}
-               value={filters.program}
-               onChange={(event) =>
--                setFilters((prev) => ({ ...prev, program: event.target.value }))
-+                setFilters((prev) => {
-+                  const nextProgram = event.target.value;
-+                  if (nextProgram === 'all') {
-+                    return {
-+                      ...prev,
-+                      program: nextProgram,
-+                      hospitalId: 'all',
-+                      sociedadId: 'all',
-+                      faseId: 'all'
-+                    };
-+                  }
-+                  return { ...prev, program: nextProgram };
-+                })
-               }
-               disabled={programOptions.length === 1}
-             >
-               {programOptions.map((program) => (
-                 <MenuItem key={program} value={program}>
--                  {program === 'Programa Residentes'
--                    ? t('followUp.programs.residents')
--                    : t('followUp.programs.societies')}
-+                  {program === 'all'
-+                    ? t('followUp.filters.all')
-+                    : program === 'Programa Residentes'
-+                      ? t('followUp.programs.residents')
-+                      : t('followUp.programs.societies')}
-                 </MenuItem>
-               ))}
-             </Select>
-           </FormControl>
- 
-           {showHospitalFilter && (
-             <FormControl sx={{ minWidth: 220 }} size="small">
-               <InputLabel>{t('followUp.filters.hospital')}</InputLabel>
-               <Select
-                 label={t('followUp.filters.hospital')}
-                 value={filters.hospitalId}
-                 onChange={(event) =>
-                   setFilters((prev) => ({ ...prev, hospitalId: event.target.value }))
-                 }
-               >
-                 <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
-                 {hospitals.map((hospital) => (
-                   <MenuItem key={hospital._id} value={hospital._id}>
-                     {hospital.nombre}
-                   </MenuItem>
-                 ))}
-               </Select>
-             </FormControl>
-           )}
- 
-@@ -265,67 +287,69 @@ const SeguimientoUsuarios: React.FC = () => {
-               <InputLabel>{t('followUp.filters.society')}</InputLabel>
-               <Select
-                 label={t('followUp.filters.society')}
-                 value={filters.sociedadId}
-                 onChange={(event) =>
-                   setFilters((prev) => ({ ...prev, sociedadId: event.target.value }))
-                 }
-               >
-                 <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
-                 {societies.map((society) => (
-                   <MenuItem key={society._id} value={society._id}>
-                     {society.titulo}
-                   </MenuItem>
-                 ))}
-               </Select>
-             </FormControl>
-           )}
- 
-           <TextField
-             size="small"
-             label={t('followUp.filters.search')}
-             value={filters.search}
-             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
-           />
- 
--          <FormControl sx={{ minWidth: 200 }} size="small">
--            <InputLabel>{t('followUp.filters.phase')}</InputLabel>
--            <Select
--              label={t('followUp.filters.phase')}
--              value={filters.faseId}
--              onChange={(event) =>
--                setFilters((prev) => ({ ...prev, faseId: event.target.value }))
--              }
--            >
--              <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
--              {phases.map((phase: any) => (
--                <MenuItem key={phase._id} value={phase._id}>
--                  {t('followUp.filters.phaseOption', { number: phase.numero, name: phase.nombre })}
--                </MenuItem>
--              ))}
--            </Select>
--          </FormControl>
-+          {showPhaseFilter && (
-+            <FormControl sx={{ minWidth: 200 }} size="small">
-+              <InputLabel>{t('followUp.filters.phase')}</InputLabel>
-+              <Select
-+                label={t('followUp.filters.phase')}
-+                value={filters.faseId}
-+                onChange={(event) =>
-+                  setFilters((prev) => ({ ...prev, faseId: event.target.value }))
-+                }
-+              >
-+                <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
-+                {phases.map((phase: any) => (
-+                  <MenuItem key={phase._id} value={phase._id}>
-+                    {t('followUp.filters.phaseOption', { number: phase.numero, name: phase.nombre })}
-+                  </MenuItem>
-+                ))}
-+              </Select>
-+            </FormControl>
-+          )}
- 
-           <FormControl sx={{ minWidth: 200 }} size="small">
-             <InputLabel>{t('followUp.filters.status')}</InputLabel>
-             <Select
-               label={t('followUp.filters.status')}
-               value={filters.estado}
-               onChange={(event) =>
-                 setFilters((prev) => ({ ...prev, estado: event.target.value }))
-               }
-             >
-               <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
-               {Object.entries(statusConfig).map(([key, config]) => (
-                 <MenuItem key={key} value={key}>
-                   {config.label}
-                 </MenuItem>
-               ))}
-             </Select>
-           </FormControl>
- 
-           <TextField
-             size="small"
-             type="date"
-             label={t('followUp.filters.dateFrom')}
-             InputLabelProps={{ shrink: true }}
-             value={filters.dateFrom}
-@@ -388,41 +412,45 @@ const SeguimientoUsuarios: React.FC = () => {
+@@ -393,51 +394,53 @@ const SeguimientoUsuarios: React.FC = () => {
+                 <TableCell>{t('followUp.table.status')}</TableCell>
+                 <TableCell align="right">{t('followUp.table.actions')}</TableCell>
+               </TableRow>
+             </TableHead>
+             <TableBody>
+               {data.map((summary) => (
+                 <TableRow key={summary.user._id} hover>
+                   <TableCell>
+                     <Typography variant="subtitle2">
+                       {summary.user.nombre} {summary.user.apellidos}
+                     </Typography>
+                     <Typography variant="body2" color="text.secondary">
+                       {summary.user.email}
+                     </Typography>
+                   </TableCell>
+                   <TableCell>
+                     {summary.user.tipo === 'Programa Sociedades'
+                       ? t('followUp.programs.societies')
+                       : t('followUp.programs.residents')}
                    </TableCell>
                    <TableCell>
                      {summary.user.tipo === 'Programa Sociedades'
                        ? summary.user.sociedad?.titulo || '-'
                        : summary.user.hospital?.nombre || '-'}
                    </TableCell>
-                   <TableCell>{getCurrentPhaseLabel(t, summary)}</TableCell>
+-                  <TableCell>{getCurrentPhaseLabel(t, summary)}</TableCell>
++                  <TableCell>
++                    {getCurrentPhaseLabel(t, summary.progresosResumen || []) || '-'}
++                  </TableCell>
                    <TableCell>{renderProgress(summary)}</TableCell>
                    <TableCell>{summary.pendientesValidacion}</TableCell>
                    <TableCell>
@@ -714,63 +354,368 @@ index 623f256707ab5f8ffd60535ce00abe659e9b6ae8..08e107bb16ef8790773b736385bb936d
                      <Button
                        variant="outlined"
                        size="small"
--                      onClick={() => navigate(`/dashboard/seguimiento/${summary.user._id}`)}
-+                      onClick={() =>
-+                        navigate(`/dashboard/seguimiento/${summary.user._id}`, {
-+                          state: { from: 'seguimiento' }
-+                        })
-+                      }
+                       onClick={() =>
+                         navigate(`/dashboard/seguimiento/${summary.user._id}`, {
+                           state: { from: 'seguimiento' }
+                         })
+                       }
                      >
                        {t('followUp.table.viewDetail')}
-                     </Button>
-                   </TableCell>
-                 </TableRow>
-               ))}
-             </TableBody>
-           </Table>
-         </TableContainer>
-       )}
+diff --git a/client/src/pages/dashboard/TutorUsuarios.tsx b/client/src/pages/dashboard/TutorUsuarios.tsx
+index 6387843c07aa6342a87d734fc039682c713ee1ec..765ccf80a43e91cb207d83d73dea174e15c4a478 100644
+--- a/client/src/pages/dashboard/TutorUsuarios.tsx
++++ b/client/src/pages/dashboard/TutorUsuarios.tsx
+@@ -23,54 +23,55 @@ import {
+   Select,
+   Snackbar,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   TextField,
+   Tooltip,
+   Typography,
+ } from '@mui/material';
+ import {
+   Add as AddIcon,
+   Edit as EditIcon,
+   Delete as DeleteIcon,
+   Download as DownloadIcon,
+   ArrowDropDown as ArrowDropDownIcon,
+ } from '@mui/icons-material';
+ import { useAuth } from '../../context/AuthContext';
+ import { useTranslation, Trans } from 'react-i18next';
+ import type { SelectChangeEvent } from '@mui/material/Select';
+ import type { SxProps, Theme } from '@mui/material/styles';
+ import api, {
+   updateUserPassword,
+-  sendResetPasswordEmail,
++  sendResetPasswordEmail,
+   clearResetNotifications,
+ } from '../../api';
+ import { getRoleChipSx } from '../../utils/roleChipColors';
++import { getCurrentPhaseLabel } from '../../utils/followUp';
+ import { FaseCirugia } from '../../types/FaseCirugia';
+ 
+ const DIALOG_ACTIONS_SX: SxProps<Theme> = {
+   flexWrap: 'wrap',
+   gap: 1,
+   justifyContent: 'center',
+ };
+ 
+ const ACTION_BUTTON_BASE_SX: SxProps<Theme> = {
+   minWidth: { xs: '100%', sm: 220 },
+   height: 44,
+   mt: { xs: 1, sm: 0 },
+   fontWeight: 600,
+   flexBasis: { xs: '100%', sm: 'auto' },
+ };
+ 
+ const getPasswordButtonStyles = (theme: Theme) => {
+   const baseBg = theme.palette.mode === 'light' ? '#7E57C2' : '#9575CD';
+   const hoverBg = theme.palette.mode === 'light' ? '#673AB7' : '#7E57C2';
+ 
+   return {
+     backgroundColor: baseBg,
+     color: theme.palette.getContrastText(baseBg),
+     '&:hover': {
+       backgroundColor: hoverBg,
+@@ -170,64 +171,51 @@ const TutorUsuarios: React.FC = () => {
+         res = await api.get(`/users/hospital/${user.hospital._id}`);
+       }
+       if (res) {
+         const filtrados = res.data.data.filter(
+           (u: any) => u._id !== user?._id && u.tipo === user?.tipo
+         );
+         const usuariosConProgreso = await Promise.all(
+           filtrados.map(async (u: any) => {
+             let fasesCirugia: FaseCirugia[] = [];
+             let faseActual: string | undefined;
+             if (["residente", "participante"].includes(u.rol)) {
+               try {
+                 const progRes = await api.get(`/progreso/residente/${u._id}`);
+                 const progresos = progRes.data.data;
+                 fasesCirugia = progresos
+                   .filter(
+                     (p: any) =>
+                       p.estadoGeneral === "validado" &&
+                       p.actividades.some(
+                         (a: any) =>
+                           a.tipo === "cirugia" && a.estado === "validado",
+                       ),
+                   )
+                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
+ 
+-                const enProgreso = progresos.filter(
+-                  (p: any) => p.estadoGeneral === "en progreso",
+-                );
+-                if (enProgreso.length > 0) {
+-                  const numero = Math.max(
+-                    ...enProgreso.map((p: any) => p.fase.numero),
+-                  );
+-                  faseActual = `${t('adminPhases.phase')} ${numero}`;
+-                } else if (
+-                  progresos.length > 0 &&
+-                  progresos.every((p: any) => p.estadoGeneral === "validado")
+-                ) {
+-                  faseActual = "Programa Completado";
+-                }
++                faseActual = getCurrentPhaseLabel(t, progresos);
+               } catch {
+                 fasesCirugia = [];
+               }
+             }
+             return { ...u, fasesCirugia, faseActual };
+           }),
+         );
+         setUsuarios(usuariosConProgreso);
+       }
+     } catch (err: any) {
+       setError(err.response?.data?.error || t('tutorUsers.loadError'));
+     } finally {
+       setLoading(false);
+     }
+   }, [user?._id, user?.hospital?._id, user?.rol, user?.tipo, t]);
+ 
+   useEffect(() => {
+     fetchUsuarios();
+   }, [fetchUsuarios, t]);
+ 
+   useEffect(() => {
+     const fetchHospitals = async () => {
+       if (user?.rol !== 'csm' || !user?.zona) {
+         setAvailableHospitals([]);
+         return;
+@@ -1015,26 +1003,25 @@ const TutorUsuarios: React.FC = () => {
+             disabled={procesando}
+           >
+             {procesando ? t('common.deleting') : t('common.delete')}
+           </Button>
+         </DialogActions>
+       </Dialog>
+ 
+       <Backdrop
+         open={downloadLoading}
+         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+       >
+         <CircularProgress color="inherit" />
+       </Backdrop>
+       <Snackbar
+         open={snackbar.open}
+         autoHideDuration={6000}
+         onClose={() => setSnackbar({ ...snackbar, open: false })}
+       >
+         <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+       </Snackbar>
      </Box>
    );
  };
  
- export default SeguimientoUsuarios;
+ export default TutorUsuarios;
+-
 diff --git a/client/src/utils/followUp.ts b/client/src/utils/followUp.ts
-index edd7b20dfbce8be5e122f5b568500f0ba6752bec..7055cb0ccaf05ce095331a88106d71ca8528244b 100644
+index c08eacd5d05556a828652bf404f4171386a695f0..578dfe761525a571f952d2925be1b35ac823762e 100644
 --- a/client/src/utils/followUp.ts
 +++ b/client/src/utils/followUp.ts
-@@ -1,27 +1,28 @@
+@@ -1,28 +1,32 @@
  import { TFunction } from 'i18next';
  
  type FollowUpPhaseSummary = {
-   faseActual?: { numero?: number; nombre?: string } | null;
-   estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
+-  faseActual?: { numero?: number; nombre?: string } | null;
+-  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
++  estadoGeneral?: string;
++  fase?: { numero?: number } | null;
  };
  
  export const getCurrentPhaseLabel = (
    t: TFunction,
-   summary: FollowUpPhaseSummary
- ): string => {
-+  const phaseNumber = summary.faseActual?.numero;
-+  const phaseName = summary.faseActual?.nombre;
-+  if (typeof phaseNumber === 'number') {
-+    const baseLabel = `${t('adminPhases.phase')} ${phaseNumber}`;
-+    return phaseName ? `${baseLabel}: ${phaseName}` : baseLabel;
+-  summary: FollowUpPhaseSummary
+-): string => {
+-  const phaseNumber = summary.faseActual?.numero;
+-  const phaseName = summary.faseActual?.nombre;
+-  if (typeof phaseNumber === 'number') {
+-    const baseLabel = `${t('adminPhases.phase')} ${phaseNumber}`;
+-    return phaseName ? `${baseLabel}: ${phaseName}` : baseLabel;
+-  }
+-
+-  switch (summary.estadoFaseActual) {
+-    case 'completadas':
+-      return t('followUp.phase.completed');
+-    case 'sin_iniciar':
+-      return t('followUp.phase.notStarted');
+-    case 'en_progreso':
+-    default:
+-      return t('followUp.phase.none');
++  progresos: FollowUpPhaseSummary[]
++): string | undefined => {
++  if (!progresos.length) {
++    return 'Sin iniciar';
+   }
++
++  const enProgreso = progresos.filter((progreso) => progreso.estadoGeneral === 'en progreso');
++  if (enProgreso.length > 0) {
++    const numeros = enProgreso
++      .map((progreso) => progreso.fase?.numero)
++      .filter((numero): numero is number => typeof numero === 'number');
++    if (numeros.length > 0) {
++      const numero = Math.max(...numeros);
++      return `${t('adminPhases.phase')} ${numero}`;
++    }
 +  }
 +
-   switch (summary.estadoFaseActual) {
-     case 'completadas':
-       return t('followUp.phase.completed');
-     case 'sin_iniciar':
-       return t('followUp.phase.notStarted');
-     case 'en_progreso':
-     default:
--      if (summary.faseActual) {
--        return t('followUp.phaseLabel', {
--          number: summary.faseActual.numero,
--          name: summary.faseActual.nombre
--        });
--      }
-       return t('followUp.phase.none');
++  if (progresos.every((progreso) => progreso.estadoGeneral === 'validado')) {
++    return 'Programa Completado';
++  }
++
++  return undefined;
+ };
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index a583e3bf52adad43c3439272f0b5fa0cff4158c9..585460bedcaf0d60d6907f0673cc9bb39dce9089 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -153,51 +153,51 @@ const getCurrentPhaseStatus = (progresos) => {
+     (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
+   );
+   const enProgreso = ordered.find((progreso) => progreso.estadoGeneral === 'en progreso');
+   if (enProgreso) {
+     return { faseActual: enProgreso.fase || null, estadoFaseActual: 'en_progreso' };
+   }
+   const started = ordered.some((progreso) => progreso.estadoGeneral !== 'bloqueada');
+   const allCompleted = started && ordered.every((progreso) =>
+     ['completado', 'validado'].includes(progreso.estadoGeneral)
+   );
+   if (allCompleted) {
+     return { faseActual: null, estadoFaseActual: 'completadas' };
+   }
+   if (!started) {
+     return { faseActual: null, estadoFaseActual: 'sin_iniciar' };
+   }
+   const lastStarted = [...ordered]
+     .filter((progreso) => progreso.estadoGeneral !== 'bloqueada')
+     .pop();
+   return {
+     faseActual: lastStarted?.fase || null,
+     estadoFaseActual: lastStarted?.fase ? 'en_progreso' : 'sin_iniciar'
+   };
+ };
+ 
+-const summarizeUserProgress = (user, progresos = []) => {
++const summarizeUserProgress = (user, progresos = []) => {
+   const totalActividades = progresos.reduce(
+     (acc, item) => acc + (item.actividades ? item.actividades.length : 0),
+     0
+   );
+   const actividadesValidadas = progresos.reduce(
+     (acc, item) =>
+       acc +
+       (item.actividades || []).filter((actividad) => actividad.estado === 'validado')
+         .length,
+     0
+   );
+   const pendientesValidacion = progresos.reduce(
+     (acc, item) =>
+       acc +
+       (item.actividades || []).filter((actividad) => actividad.estado === 'completado')
+         .length,
+     0
+   );
+ 
+   const lastUpdates = progresos
+     .map(getLatestDateFromProgreso)
+     .filter(Boolean)
+     .map((date) => date.getTime());
+   const ultimaActualizacion = lastUpdates.length
+     ? new Date(Math.max(...lastUpdates))
+@@ -240,68 +240,72 @@ const summarizeUserProgress = (user, progresos = []) => {
+       default:
+         return null;
+     }
+   })();
+   const isOnSchedule = Boolean(
+     societyPhaseDate && new Date(societyPhaseDate) >= new Date()
+   );
+ 
+   const progresoCompleto =
+     progresos.length > 0 &&
+     progresos.every((item) => item.estadoGeneral === 'validado');
+ 
+   let estadoGeneral = 'sin_actividad';
+   if (pendientesValidacion > 0) {
+     estadoGeneral = 'pendiente_validacion';
+   } else if (progresoCompleto) {
+     estadoGeneral = 'progreso_completado';
+   } else if (totalActividades === 0) {
+     estadoGeneral = 'sin_actividad';
+   } else if (hasSchedule && isOnSchedule) {
+     estadoGeneral = 'al_dia';
+   } else {
+     estadoGeneral = 'en_curso';
+   }
+ 
+-  return {
+-    user: {
+-      _id: user._id,
+-      nombre: user.nombre,
+-      apellidos: user.apellidos,
+-      email: user.email,
+-      tipo: user.tipo,
+-      hospital: user.hospital,
+-      sociedad: user.sociedad
+-    },
+-    faseActual,
+-    estadoFaseActual,
+-    progreso: {
+-      total: totalActividades,
+-      validadas: actividadesValidadas,
+-      porcentaje: totalActividades
+-        ? Math.round((actividadesValidadas / totalActividades) * 100)
+-        : 0
++  return {
++    user: {
++      _id: user._id,
++      nombre: user.nombre,
++      apellidos: user.apellidos,
++      email: user.email,
++      tipo: user.tipo,
++      hospital: user.hospital,
++      sociedad: user.sociedad
++    },
++    faseActual,
++    estadoFaseActual,
++    progresosResumen: progresos.map((item) => ({
++      estadoGeneral: item.estadoGeneral,
++      fase: item.fase ? { numero: item.fase.numero } : null
++    })),
++    progreso: {
++      total: totalActividades,
++      validadas: actividadesValidadas,
++      porcentaje: totalActividades
++        ? Math.round((actividadesValidadas / totalActividades) * 100)
++        : 0
+     },
+     pendientesValidacion,
+     ultimaActualizacion,
+     estadoGeneral
+   };
+ };
+ 
+ 
+ const inicializarProgresoFormativo = async (req, res, next) => {
+   try {
+   const user = await User.findById(req.params.id);
+   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
+     return res.status(404).json({ success: false, error: 'Residente no válido' });
+   }
+ 
+      if (req.body.tipo) user.tipo = req.body.tipo;
+     const count = await inicializarProgresoFormativoDB(user);
+     res.status(200).json({ success: true, count });
+   } catch (err) {
+     next(err);
    }
  };
+ 
+ 
+ 

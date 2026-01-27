@@ -49,6 +49,7 @@ import api, {
   clearResetNotifications,
 } from '../../api';
 import { getRoleChipSx } from '../../utils/roleChipColors';
+import { getCurrentPhaseLabel } from '../../utils/followUp';
 import { FaseCirugia } from '../../types/FaseCirugia';
 
 const DIALOG_ACTIONS_SX: SxProps<Theme> = {
@@ -192,20 +193,7 @@ const TutorUsuarios: React.FC = () => {
                   )
                   .map((p: any) => ({ id: p._id, fase: p.fase.nombre }));
 
-                const enProgreso = progresos.filter(
-                  (p: any) => p.estadoGeneral === "en progreso",
-                );
-                if (enProgreso.length > 0) {
-                  const numero = Math.max(
-                    ...enProgreso.map((p: any) => p.fase.numero),
-                  );
-                  faseActual = `${t('adminPhases.phase')} ${numero}`;
-                } else if (
-                  progresos.length > 0 &&
-                  progresos.every((p: any) => p.estadoGeneral === "validado")
-                ) {
-                  faseActual = "Programa Completado";
-                }
+                faseActual = getCurrentPhaseLabel(t, progresos);
               } catch {
                 fasesCirugia = [];
               }
@@ -1037,4 +1025,3 @@ const TutorUsuarios: React.FC = () => {
 };
 
 export default TutorUsuarios;
-

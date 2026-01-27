@@ -1,28 +1,32 @@
 import { TFunction } from 'i18next';
 
 type FollowUpPhaseSummary = {
-  faseActual?: { numero?: number; nombre?: string } | null;
-  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
+  estadoGeneral?: string;
+  fase?: { numero?: number } | null;
 };
 
 export const getCurrentPhaseLabel = (
   t: TFunction,
-  summary: FollowUpPhaseSummary
-): string => {
-  const phaseNumber = summary.faseActual?.numero;
-  const phaseName = summary.faseActual?.nombre;
-  if (typeof phaseNumber === 'number') {
-    const baseLabel = `${t('adminPhases.phase')} ${phaseNumber}`;
-    return phaseName ? `${baseLabel}: ${phaseName}` : baseLabel;
+  progresos: FollowUpPhaseSummary[]
+): string | undefined => {
+  if (!progresos.length) {
+    return 'Sin iniciar';
   }
 
-  switch (summary.estadoFaseActual) {
-    case 'completadas':
-      return t('followUp.phase.completed');
-    case 'sin_iniciar':
-      return t('followUp.phase.notStarted');
-    case 'en_progreso':
-    default:
-      return t('followUp.phase.none');
+  const enProgreso = progresos.filter((progreso) => progreso.estadoGeneral === 'en progreso');
+  if (enProgreso.length > 0) {
+    const numeros = enProgreso
+      .map((progreso) => progreso.fase?.numero)
+      .filter((numero): numero is number => typeof numero === 'number');
+    if (numeros.length > 0) {
+      const numero = Math.max(...numeros);
+      return `${t('adminPhases.phase')} ${numero}`;
+    }
   }
+
+  if (progresos.every((progreso) => progreso.estadoGeneral === 'validado')) {
+    return 'Programa Completado';
+  }
+
+  return undefined;
 };

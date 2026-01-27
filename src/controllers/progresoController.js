@@ -274,6 +274,10 @@ const summarizeUserProgress = (user, progresos = []) => {
     },
     faseActual,
     estadoFaseActual,
+    progresosResumen: progresos.map((item) => ({
+      estadoGeneral: item.estadoGeneral,
+      fase: item.fase ? { numero: item.fase.numero } : null
+    })),
     progreso: {
       total: totalActividades,
       validadas: actividadesValidadas,
