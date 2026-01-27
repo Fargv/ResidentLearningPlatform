@@ -9,6 +9,13 @@ export const getCurrentPhaseLabel = (
   t: TFunction,
   summary: FollowUpPhaseSummary
 ): string => {
+  const phaseNumber = summary.faseActual?.numero;
+  const phaseName = summary.faseActual?.nombre;
+  if (typeof phaseNumber === 'number') {
+    const baseLabel = `${t('adminPhases.phase')} ${phaseNumber}`;
+    return phaseName ? `${baseLabel}: ${phaseName}` : baseLabel;
+  }
+
   switch (summary.estadoFaseActual) {
     case 'completadas':
       return t('followUp.phase.completed');
@@ -16,12 +23,6 @@ export const getCurrentPhaseLabel = (
       return t('followUp.phase.notStarted');
     case 'en_progreso':
     default:
-      if (summary.faseActual) {
-        return t('followUp.phaseLabel', {
-          number: summary.faseActual.numero,
-          name: summary.faseActual.nombre
-        });
-      }
       return t('followUp.phase.none');
   }
 };

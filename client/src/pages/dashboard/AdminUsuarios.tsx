@@ -1153,18 +1153,6 @@ const AdminUsuarios: React.FC = () => {
                           </Button>
                         )}
                       {['residente', 'participante'].includes(usuario.rol) &&
-                        user?.rol === "administrador" && (
-                          <Button
-                            variant="outlined"
-                            onClick={() =>
-                              navigate(`/dashboard/seguimiento/${usuario._id}`)
-                            }
-                            sx={TABLE_ACTION_BUTTON_SX}
-                          >
-                            {t('adminUsers.actions.viewFollowUp')}
-                          </Button>
-                        )}
-                      {['residente', 'participante'].includes(usuario.rol) &&
                         !usuario.tieneProgreso && (
                           <Button
                             variant="outlined"

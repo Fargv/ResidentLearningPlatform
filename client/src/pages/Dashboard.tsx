@@ -140,8 +140,8 @@ const Dashboard: React.FC = () => {
     if (user?.rol === 'tutor') {
       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor'] });
     }
-    if (user?.rol === 'csm' || user?.rol === 'profesor') {
-      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor'] });
+    if (user?.rol === 'csm' || user?.rol === 'profesor' || user?.rol === 'administrador') {
+      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor', 'administrador'] });
     }
 
     if (user?.rol === 'administrador') {

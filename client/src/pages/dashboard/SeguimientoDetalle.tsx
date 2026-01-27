@@ -22,7 +22,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
@@ -78,6 +78,7 @@ const SeguimientoDetalle: React.FC = () => {
   const { userId } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const [summary, setSummary] = useState<SummaryResponse | null>(null);
   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
@@ -307,10 +308,25 @@ const SeguimientoDetalle: React.FC = () => {
     return <Alert severity="error">{error}</Alert>;
   }
 
+  const backPath = useMemo(() => {
+    const fromState = (location.state as { from?: string } | null)?.from;
+    if (fromState === 'admin-users') {
+      return '/dashboard/usuarios';
+    }
+    if (fromState === 'seguimiento') {
+      return '/dashboard/seguimiento';
+    }
+    const params = new URLSearchParams(location.search);
+    if (params.get('from') === 'usuarios') {
+      return '/dashboard/usuarios';
+    }
+    return '/dashboard/seguimiento';
+  }, [location.search, location.state]);
+
   return (
     <Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-        <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')}>
+        <Button variant="outlined" onClick={() => navigate(backPath)}>
           {t('followUp.detail.back')}
         </Button>
         {user?.rol === 'administrador' && summary?.user?._id && (

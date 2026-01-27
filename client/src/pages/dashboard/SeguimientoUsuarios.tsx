@@ -66,6 +66,9 @@ const SeguimientoUsuarios: React.FC = () => {
   const [phases, setPhases] = useState<any[]>([]);
 
   const programOptions = useMemo(() => {
+    if (user?.rol === 'administrador') {
+      return ['all', 'Programa Residentes', 'Programa Sociedades'];
+    }
     if (user?.rol === 'csm') {
       return ['Programa Residentes'];
     }
@@ -135,6 +138,10 @@ const SeguimientoUsuarios: React.FC = () => {
 
   const fetchPhases = useCallback(async () => {
     try {
+      if (filters.program === 'all') {
+        setPhases([]);
+        return;
+      }
       const endpoint = filters.program === 'Programa Sociedades' ? '/fases-soc' : '/fases';
       const response = await api.get(endpoint);
       setPhases(response.data?.data || []);
@@ -202,6 +209,7 @@ const SeguimientoUsuarios: React.FC = () => {
 
   const showHospitalFilter = filters.program === 'Programa Residentes';
   const showSocietyFilter = filters.program === 'Programa Sociedades';
+  const showPhaseFilter = filters.program !== 'all';
 
   const renderProgress = (summary: SeguimientoSummary) => (
     <Box sx={{ minWidth: 160 }}>
@@ -226,15 +234,29 @@ const SeguimientoUsuarios: React.FC = () => {
               label={t('followUp.filters.program')}
               value={filters.program}
               onChange={(event) =>
-                setFilters((prev) => ({ ...prev, program: event.target.value }))
+                setFilters((prev) => {
+                  const nextProgram = event.target.value;
+                  if (nextProgram === 'all') {
+                    return {
+                      ...prev,
+                      program: nextProgram,
+                      hospitalId: 'all',
+                      sociedadId: 'all',
+                      faseId: 'all'
+                    };
+                  }
+                  return { ...prev, program: nextProgram };
+                })
               }
               disabled={programOptions.length === 1}
             >
               {programOptions.map((program) => (
                 <MenuItem key={program} value={program}>
-                  {program === 'Programa Residentes'
-                    ? t('followUp.programs.residents')
-                    : t('followUp.programs.societies')}
+                  {program === 'all'
+                    ? t('followUp.filters.all')
+                    : program === 'Programa Residentes'
+                      ? t('followUp.programs.residents')
+                      : t('followUp.programs.societies')}
                 </MenuItem>
               ))}
             </Select>
@@ -287,23 +309,25 @@ const SeguimientoUsuarios: React.FC = () => {
             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
           />
 
-          <FormControl sx={{ minWidth: 200 }} size="small">
-            <InputLabel>{t('followUp.filters.phase')}</InputLabel>
-            <Select
-              label={t('followUp.filters.phase')}
-              value={filters.faseId}
-              onChange={(event) =>
-                setFilters((prev) => ({ ...prev, faseId: event.target.value }))
-              }
-            >
-              <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
-              {phases.map((phase: any) => (
-                <MenuItem key={phase._id} value={phase._id}>
-                  {t('followUp.filters.phaseOption', { number: phase.numero, name: phase.nombre })}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {showPhaseFilter && (
+            <FormControl sx={{ minWidth: 200 }} size="small">
+              <InputLabel>{t('followUp.filters.phase')}</InputLabel>
+              <Select
+                label={t('followUp.filters.phase')}
+                value={filters.faseId}
+                onChange={(event) =>
+                  setFilters((prev) => ({ ...prev, faseId: event.target.value }))
+                }
+              >
+                <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
+                {phases.map((phase: any) => (
+                  <MenuItem key={phase._id} value={phase._id}>
+                    {t('followUp.filters.phaseOption', { number: phase.numero, name: phase.nombre })}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
 
           <FormControl sx={{ minWidth: 200 }} size="small">
             <InputLabel>{t('followUp.filters.status')}</InputLabel>
@@ -410,7 +434,11 @@ const SeguimientoUsuarios: React.FC = () => {
                     <Button
                       variant="outlined"
                       size="small"
-                      onClick={() => navigate(`/dashboard/seguimiento/${summary.user._id}`)}
+                      onClick={() =>
+                        navigate(`/dashboard/seguimiento/${summary.user._id}`, {
+                          state: { from: 'seguimiento' }
+                        })
+                      }
                     >
                       {t('followUp.table.viewDetail')}
                     </Button>

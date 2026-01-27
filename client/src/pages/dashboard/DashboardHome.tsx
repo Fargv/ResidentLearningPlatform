@@ -481,7 +481,7 @@ const DashboardHome: React.FC = () => {
     });
   }
 
-  if (user?.rol === "profesor") {
+  if (user?.rol === "profesor" || user?.rol === "administrador") {
     actions.push({
       label: t('actions.followUpUsers'),
       path: "/dashboard/seguimiento",

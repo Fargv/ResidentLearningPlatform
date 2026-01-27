@@ -1,512 +1,213 @@
-diff --git a/client/src/locales/ca.json b/client/src/locales/ca.json
-index 43457b77196ded5cda294465b5f075ba6bb2e319..dbe3a416b01e886e7ded0638c625bf48f4ff47e2 100644
---- a/client/src/locales/ca.json
-+++ b/client/src/locales/ca.json
-@@ -45,53 +45,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
+diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
+index dcc96177d2e57a0ff35ee571bc88f5233e4d2b18..8f16d408743d4caea75f6335e0dda94904953913 100644
+--- a/client/src/pages/Dashboard.tsx
++++ b/client/src/pages/Dashboard.tsx
+@@ -118,53 +118,53 @@ const Dashboard: React.FC = () => {
+     handleMenuClose();
+     navigate('/dashboard/perfil');
+   };
+ 
+   const getMenuItems = () => {
+     const items = [
+       {
+         text: t('actions.dashboard'),
+         icon: <DashboardIcon />,
+         path: '/dashboard',
+         roles: ['administrador', 'tutor', 'csm', 'residente', 'participante']
+       }
+     ];
+ 
+     if (user?.rol === 'residente' || user?.rol === 'participante') {
+       items.push({ text: t('actions.trainingPhases'), icon: <AssignmentIcon />, path: '/dashboard/fases', roles: ['residente', 'participante'] });
+     }
+ 
+     if (user?.rol === 'tutor' || user?.rol === 'csm' || user?.rol === 'profesor') {
+       items.push({ text: t('actions.validations'), icon: <SchoolIcon />, path: '/dashboard/validaciones', roles: ['tutor', 'csm', 'profesor'] });
+     }
+ 
+     if (user?.rol === 'tutor') {
+       items.push({ text: t('actions.myUsers'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['tutor'] });
+     }
+-    if (user?.rol === 'csm' || user?.rol === 'profesor') {
+-      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor'] });
+-    }
++    if (user?.rol === 'csm' || user?.rol === 'profesor' || user?.rol === 'administrador') {
++      items.push({ text: t('actions.followUp'), icon: <AssignmentIcon />, path: '/dashboard/seguimiento', roles: ['csm', 'profesor', 'administrador'] });
++    }
+ 
+     if (user?.rol === 'administrador') {
+       items.push(
+         { text: t('actions.users'), icon: <PeopleIcon />, path: '/dashboard/usuarios', roles: ['administrador'] },
+         { text: t('actions.invitations'), icon: <MailOutlineIcon />, path: '/dashboard/invitations', roles: ['administrador'] },
+         { text: t('adminValidations.menu'), icon: <SchoolIcon />, path: '/dashboard/validaciones-admin', roles: ['administrador'] },
+         { text: 'Informes', icon: <DescriptionIcon />, path: '/dashboard/informes', roles: ['administrador'] },
+         { text: t('actions.settings'), icon: <SettingsIcon />, path: '/dashboard/config', roles: ['administrador'] }
+       );
+     }
+ 
+     return items;
+   };
+ 
+ 
+   const menuItems = getMenuItems();
+ 
+   const collapsedWidth = useMemo(() => parseInt(theme.spacing(9), 10), [theme]);
+   const sidebarWidth = isMobile ? 0 : isPinned ? drawerWidth : collapsedWidth;
+   const sidebarWidthCss = `${sidebarWidth}px`;
+   const sidebarPadding = useMemo(() => parseInt(theme.spacing(1), 10), [theme]);
+   const toolbarHeight = isMobile ? 56 : 64;
+   const sidebarTopOffset = toolbarHeight + sidebarPadding;
+   const sidebarHeightCss = `calc(100% - ${sidebarTopOffset + sidebarPadding}px)`;
+   const sidebarSpace = isMobile ? 0 : sidebarWidth + sidebarPadding * 2;
+diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
+index cc5b6c0a68c5f52d2ba6ee4e3151f47af1fecbaa..c92577bc83f0f06ff19518110f37338266a044a9 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.tsx
+@@ -1130,65 +1130,53 @@ const AdminUsuarios: React.FC = () => {
+                           TABLE_ACTION_BUTTON_SX,
+                           (theme) => getEditActionButtonStyles(theme),
+                         ]}
+                       >
+                         {t("adminUsers.actions.edit")}
+                       </Button>
+                       {['residente', 'participante'].includes(usuario.rol) &&
+                         user?.rol === "administrador" &&
+                         usuario.tieneProgreso && (
+                           <Button
+                             variant="contained"
+                             startIcon={<AssessmentIcon />}
+                             onClick={() =>
+                               navigate(
+                                 `/dashboard/progreso-usuario/${usuario._id}`,
+                               )
+                             }
+                             sx={[
+                               TABLE_ACTION_BUTTON_SX,
+                               (theme) => getProgressActionButtonStyles(theme),
+                             ]}
+                           >
+                             {t('adminUserProgress.editProgress')}
+                           </Button>
+                         )}
+-                      {['residente', 'participante'].includes(usuario.rol) &&
+-                        user?.rol === "administrador" && (
+-                          <Button
+-                            variant="outlined"
+-                            onClick={() =>
+-                              navigate(`/dashboard/seguimiento/${usuario._id}`)
+-                            }
+-                            sx={TABLE_ACTION_BUTTON_SX}
+-                          >
+-                            {t('adminUsers.actions.viewFollowUp')}
+-                          </Button>
+-                        )}
+-                      {['residente', 'participante'].includes(usuario.rol) &&
+-                        !usuario.tieneProgreso && (
+-                          <Button
++                      {['residente', 'participante'].includes(usuario.rol) &&
++                        !usuario.tieneProgreso && (
++                          <Button
+                             variant="outlined"
+                             onClick={() => handleCrearProgreso(usuario._id)}
+                             sx={TABLE_ACTION_BUTTON_SX}
+                           >
+                             {t("adminUsers.actions.createProgress")}
+                           </Button>
+                         )}
+                     </Box>
+                   </TableCell>
+                 </TableRow>
+               ))}
+             </TableBody>
+           </Table>
+         </TableContainer>
+       </Paper>
+ 
+ 
+       {/* Diálogo para invitar usuario */}
+       <InviteUsersMail
+         open={openInvitarDialog}
+         onClose={handleCloseInvitarDialog}
+         hospitals={hospitales}
+         societies={sociedades}
+       />
+ 
+diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
+index 6933d25addb7bb830a6b99f3378e95355c48ad43..73886e7fb593b2b09055d36b66f10076329ab288 100644
+--- a/client/src/pages/dashboard/DashboardHome.tsx
++++ b/client/src/pages/dashboard/DashboardHome.tsx
+@@ -459,56 +459,56 @@ const DashboardHome: React.FC = () => {
+ 
+   type Action = {
+     label: string;
+     path: string;
+     icon: React.ReactNode;
+   };
+ 
+   const actions: Action[] = [];
+ 
+   if (user?.rol === "residente" || user?.rol === "participante") {
+     actions.push({
+       label: t('actions.trainingPhases'),
+       path: "/dashboard/fases",
+       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+     });
+   }
+ 
+   if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
+     actions.push({
+       label: t('actions.validations'),
+       path: "/dashboard/validaciones",
+       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+     });
+   }
+ 
+-  if (user?.rol === "profesor") {
+-    actions.push({
+-      label: t('actions.followUpUsers'),
+-      path: "/dashboard/seguimiento",
+-      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
+-    });
++  if (user?.rol === "profesor" || user?.rol === "administrador") {
++    actions.push({
++      label: t('actions.followUpUsers'),
++      path: "/dashboard/seguimiento",
++      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
++    });
+   }
+ 
+   if (user?.rol === "tutor" || user?.rol === "csm") {
+     actions.push({
+       label: t('actions.myUsers'),
+       path: "/dashboard/usuarios",
+       icon: <PeopleIcon sx={{ fontSize: 40 }} />,
+     });
+   }
+ 
+   if (user?.rol === "administrador") {
+     actions.push(
+       {
+         label: t('actions.reports'),
+         path: "/dashboard/informes",
+         icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
        },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/de.json b/client/src/locales/de.json
-index 1b5e520de9abeca4db0e2c7ebcf210009ea6edfe..83ce18b07c1a44328d7cf21ec9265ca2a8adbb2b 100644
---- a/client/src/locales/de.json
-+++ b/client/src/locales/de.json
-@@ -44,53 +44,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/es.json b/client/src/locales/es.json
-index 4cc2e1cb448d2e9dda3c9abd2a924c077d00dd3b..ac4462d0ad13170183b3275045638453c023af04 100644
---- a/client/src/locales/es.json
-+++ b/client/src/locales/es.json
-@@ -54,53 +54,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/eu.json b/client/src/locales/eu.json
-index aa62bf887874e871453abcf723e20c07a40d9b4f..79d95bcdd3b24713151484eb85506ccc089a15db 100644
---- a/client/src/locales/eu.json
-+++ b/client/src/locales/eu.json
-@@ -44,53 +44,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/fr.json b/client/src/locales/fr.json
-index 6231b1cd39021817634b3a85ae8e30bb7bd8bd81..474b616a570c71bfa2445364f3a2b4de14811688 100644
---- a/client/src/locales/fr.json
-+++ b/client/src/locales/fr.json
-@@ -47,53 +47,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/gl.json b/client/src/locales/gl.json
-index cee4aca39b11a18c244e35283b5062c99f79347d..a1e6c0c74c63a614ab461fbfe2408833e8454ebd 100644
---- a/client/src/locales/gl.json
-+++ b/client/src/locales/gl.json
-@@ -46,53 +46,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/it.json b/client/src/locales/it.json
-index e0f5066323b82d077ff975c718bd8901840f56e6..b29c4334d744395739cad5180339018eb7639bc3 100644
---- a/client/src/locales/it.json
-+++ b/client/src/locales/it.json
-@@ -44,53 +44,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
-diff --git a/client/src/locales/pt.json b/client/src/locales/pt.json
-index 55e5e31040bdbd5f233194e59267e553d5c161a9..1f9134eb59b58dbf5182c021d7597f01b304c355 100644
---- a/client/src/locales/pt.json
-+++ b/client/src/locales/pt.json
-@@ -46,53 +46,55 @@
-       "dateFrom": "Desde",
-       "dateTo": "Hasta",
-       "clear": "Limpiar filtros",
-       "all": "Todas"
-     },
-     "table": {
-       "user": "Usuario",
-       "program": "Programa",
-       "center": "Hospital/Sociedad",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "status": "Estado",
-       "actions": "Acciones",
-       "viewDetail": "Ver detalle"
-     },
-     "status": {
-       "upToDate": "Al día",
-       "pendingValidation": "Pendiente validación",
-       "completedProgress": "Progreso completado",
-       "inProgress": "En curso",
-       "blocked": "Bloqueado",
-       "noActivity": "Sin actividad"
-     },
--    "phase": {
--      "none": "Sin fase"
--    },
-+    "phase": {
-+      "none": "Sin fase",
-+      "notStarted": "Sin iniciar",
-+      "completed": "Fases completadas"
-+    },
-     "phaseLabel": "Fase {{number}}: {{name}}",
-     "empty": {
-       "noUsers": "No hay usuarios asignados para ti todavía",
-       "noZone": "No hay usuarios asignados a tu zona"
-     },
-     "detail": {
-       "title": "Detalle de seguimiento",
-       "back": "Volver",
-       "error": "Error al cargar el detalle",
-       "currentPhase": "Fase actual",
-       "progress": "Progreso total",
-       "pending": "Pendientes de validar",
-       "lastUpdate": "Última actualización",
-       "noActivity": "Sin actividad registrada",
-       "dates": {
-         "created": "Creación",
-         "validated": "Validación",
-         "rejected": "Rechazo"
-       },
-       "comments": {
-         "user": "Comentarios del usuario",
-         "tutor": "Comentarios del tutor",
-         "rejection": "Motivo de rechazo"
-       },
-       "signature": "Firma digital",
+       {
+         label: t('actions.settings'),
+         path: "/dashboard/config",
+         icon: <SettingsIcon sx={{ fontSize: 40 }} />,
+       }
+     );
+   }
+ 
 diff --git a/client/src/pages/dashboard/SeguimientoDetalle.tsx b/client/src/pages/dashboard/SeguimientoDetalle.tsx
-index abc4919072288d9713f61f7f48fbb316e7c9543b..66fca82a0750742c2e065203a6ea5a574e9d26c5 100644
+index 3017548bbcf3c64b8d919ccedd8da80719eadd1c..19362c754857dc92ad4376a48e7823a92a2370a4 100644
 --- a/client/src/pages/dashboard/SeguimientoDetalle.tsx
 +++ b/client/src/pages/dashboard/SeguimientoDetalle.tsx
-@@ -5,83 +5,85 @@ import {
+@@ -1,50 +1,50 @@
+ import React, { useCallback, useEffect, useMemo, useState } from 'react';
+ import {
+   Alert,
+   Accordion,
    AccordionDetails,
    AccordionSummary,
    Box,
@@ -527,12 +228,13 @@ index abc4919072288d9713f61f7f48fbb316e7c9543b..66fca82a0750742c2e065203a6ea5a57
  import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
  import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
  import VerifiedIcon from '@mui/icons-material/Verified';
- import { useNavigate, useParams } from 'react-router-dom';
+-import { useNavigate, useParams } from 'react-router-dom';
++import { useLocation, useNavigate, useParams } from 'react-router-dom';
  import { useTranslation } from 'react-i18next';
  import api from '../../api';
  import { useAuth } from '../../context/AuthContext';
  import { formatDayMonthYear } from '../../utils/date';
-+import { getCurrentPhaseLabel } from '../../utils/followUp';
+ import { getCurrentPhaseLabel } from '../../utils/followUp';
  
  interface Actividad {
    nombre?: string;
@@ -553,11 +255,7 @@ index abc4919072288d9713f61f7f48fbb316e7c9543b..66fca82a0750742c2e065203a6ea5a57
    fase: { _id: string; numero: number; nombre: string };
    estadoGeneral: string;
    actividades: Actividad[];
- }
- 
- interface SummaryResponse {
-   user: {
-     _id: string;
+@@ -56,51 +56,52 @@ interface SummaryResponse {
      nombre: string;
      apellidos: string;
      email: string;
@@ -566,7 +264,7 @@ index abc4919072288d9713f61f7f48fbb316e7c9543b..66fca82a0750742c2e065203a6ea5a57
      sociedad?: { _id?: string; titulo?: string } | null;
    };
    faseActual?: { _id: string; nombre?: string; numero?: number } | null;
-+  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
+   estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
    progreso: { total: number; validadas: number; porcentaje: number };
    pendientesValidacion: number;
    ultimaActualizacion?: string | null;
@@ -583,7 +281,9 @@ index abc4919072288d9713f61f7f48fbb316e7c9543b..66fca82a0750742c2e065203a6ea5a57
    const { userId } = useParams();
    const { t } = useTranslation();
    const navigate = useNavigate();
-   const { user } = useAuth();
+-  const { user } = useAuth();
++  const location = useLocation();
++  const { user } = useAuth();
    const [summary, setSummary] = useState<SummaryResponse | null>(null);
    const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
    const [loading, setLoading] = useState(true);
@@ -592,113 +292,104 @@ index abc4919072288d9713f61f7f48fbb316e7c9543b..66fca82a0750742c2e065203a6ea5a57
    const [actionDialog, setActionDialog] = useState<{
      type: 'validate' | 'reject';
      progresoId: string;
-@@ -336,57 +338,52 @@ const SeguimientoDetalle: React.FC = () => {
+     index: number;
+     activityName: string;
+   } | null>(null);
+   const [actionComments, setActionComments] = useState('');
+   const [actionProcessing, setActionProcessing] = useState(false);
+   const [actionError, setActionError] = useState<string | null>(null);
+ 
+   const getActivityStatusData = useCallback(
+     (estado?: Actividad['estado']) => {
+       switch (estado) {
+         case 'validado':
+           return {
+             label: t('status.validado'),
+             color: 'success' as const,
+             icon: <VerifiedIcon fontSize="small" />
+           };
+         case 'rechazado':
+@@ -285,56 +286,71 @@ const SeguimientoDetalle: React.FC = () => {
+         actionDialog.type === 'validate'
+           ? { comentarios: actionComments, firmaDigital: signatureValue }
+           : { comentarios: actionComments };
+       await api.post(endpoint, payload);
+       closeActionDialog();
+       fetchData();
+     } catch (err: any) {
+       setActionError(err.response?.data?.error || t('followUp.detail.error'));
+     } finally {
+       setActionProcessing(false);
+     }
+   };
+ 
+   if (loading) {
+     return (
+       <Box display="flex" justifyContent="center" mt={4}>
+         <CircularProgress />
+       </Box>
+     );
+   }
+ 
+   if (error) {
+     return <Alert severity="error">{error}</Alert>;
+   }
+ 
++  const backPath = useMemo(() => {
++    const fromState = (location.state as { from?: string } | null)?.from;
++    if (fromState === 'admin-users') {
++      return '/dashboard/usuarios';
++    }
++    if (fromState === 'seguimiento') {
++      return '/dashboard/seguimiento';
++    }
++    const params = new URLSearchParams(location.search);
++    if (params.get('from') === 'usuarios') {
++      return '/dashboard/usuarios';
++    }
++    return '/dashboard/seguimiento';
++  }, [location.search, location.state]);
++
+   return (
+     <Box>
+-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+-        <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')}>
+-          {t('followUp.detail.back')}
+-        </Button>
++      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
++        <Button variant="outlined" onClick={() => navigate(backPath)}>
++          {t('followUp.detail.back')}
++        </Button>
+         {user?.rol === 'administrador' && summary?.user?._id && (
+           <Button
+             variant="contained"
+             onClick={() => navigate(`/dashboard/progreso-usuario/${summary.user._id}`)}
+           >
+             {t('adminUserProgress.editProgress')}
+           </Button>
+         )}
+       </Box>
+ 
+       <Typography variant="h4" gutterBottom>
+         {t('followUp.detail.title')}
+       </Typography>
+ 
+       {summary && (
+         <Paper
+           sx={{
+             p: 3,
+             mb: 3,
+             borderRadius: 3,
+             backgroundColor:
+               theme.palette.mode === 'light'
                  ? theme.palette.grey[100]
                  : theme.palette.grey[900],
              border: `1px solid ${theme.palette.divider}`
-           }}
-         >
-           <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-             <Box>
-               <Typography variant="h6" gutterBottom>
-                 {summary.user.nombre} {summary.user.apellidos}
-               </Typography>
-               <Typography variant="body2" color="text.secondary">
-                 {summary.user.email}
-               </Typography>
-             </Box>
-             <Chip
-               label={summaryStatus.label}
-               color={summaryStatus.color}
-               variant="outlined"
-               sx={{ fontWeight: 600 }}
-             />
-           </Box>
-           <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-             {[
-               {
-                 label: t('followUp.detail.currentPhase'),
--                value: summary.faseActual
--                  ? t('followUp.phaseLabel', {
--                      number: summary.faseActual.numero,
--                      name: summary.faseActual.nombre
--                    })
--                  : t('followUp.phase.none')
--              },
-+                value: getCurrentPhaseLabel(t, summary)
-+              },
-               {
-                 label: t('followUp.detail.progress'),
-                 value: `${summary.progreso.validadas}/${summary.progreso.total} (${summary.progreso.porcentaje}%)`
-               },
-               {
-                 label: t('followUp.detail.pending'),
-                 value: `${summary.pendientesValidacion}`
-               },
-               summary.ultimaActualizacion
-                 ? {
-                     label: t('followUp.detail.lastUpdate'),
-                     value: formatDayMonthYear(summary.ultimaActualizacion)
-                   }
-                 : null
-             ]
-               .filter(Boolean)
-               .map((item) => (
-                 <Box key={(item as { label: string }).label}>
-                   <Typography variant="subtitle2">{(item as { label: string }).label}</Typography>
-                   <Typography variant="body2">{(item as { value: string }).value}</Typography>
-                 </Box>
-               ))}
-           </Box>
-         </Paper>
-       )}
 diff --git a/client/src/pages/dashboard/SeguimientoUsuarios.tsx b/client/src/pages/dashboard/SeguimientoUsuarios.tsx
-index 3460e996c9d07780e698d1b0191a94d05c3aa675..88f0bb3fcdc5de0a5f4f2f43b30274756dfa5520 100644
+index 623f256707ab5f8ffd60535ce00abe659e9b6ae8..08e107bb16ef8790773b736385bb936d85b5bab9 100644
 --- a/client/src/pages/dashboard/SeguimientoUsuarios.tsx
 +++ b/client/src/pages/dashboard/SeguimientoUsuarios.tsx
-@@ -2,62 +2,64 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
- import {
-   Alert,
-   Box,
-   Button,
-   Chip,
-   FormControl,
-   InputLabel,
-   LinearProgress,
-   MenuItem,
-   Paper,
-   Select,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   TextField,
-   Typography
- } from '@mui/material';
- import { useNavigate } from 'react-router-dom';
- import { useTranslation } from 'react-i18next';
- import api from '../../api';
- import { useAuth } from '../../context/AuthContext';
- import { formatDayMonthYear } from '../../utils/date';
-+import { getCurrentPhaseLabel } from '../../utils/followUp';
- 
- interface SeguimientoSummary {
-   user: {
-     _id: string;
-     nombre: string;
-     apellidos: string;
-     email: string;
-     tipo?: string;
-     hospital?: { _id?: string; nombre?: string } | null;
-     sociedad?: { _id?: string; titulo?: string } | null;
-   };
-   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
-+  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
-   progreso: {
-     total: number;
-     validadas: number;
+@@ -44,50 +44,53 @@ interface SeguimientoSummary {
      porcentaje: number;
    };
    pendientesValidacion: number;
@@ -721,41 +412,290 @@ index 3460e996c9d07780e698d1b0191a94d05c3aa675..88f0bb3fcdc5de0a5f4f2f43b3027475
    const [emptyMessage, setEmptyMessage] = useState<string | null>(null);
    const [hospitals, setHospitals] = useState<any[]>([]);
    const [societies, setSocieties] = useState<any[]>([]);
-@@ -367,58 +369,51 @@ const SeguimientoUsuarios: React.FC = () => {
-                 <TableCell>{t('followUp.table.status')}</TableCell>
-                 <TableCell align="right">{t('followUp.table.actions')}</TableCell>
-               </TableRow>
-             </TableHead>
-             <TableBody>
-               {data.map((summary) => (
-                 <TableRow key={summary.user._id} hover>
-                   <TableCell>
-                     <Typography variant="subtitle2">
-                       {summary.user.nombre} {summary.user.apellidos}
-                     </Typography>
-                     <Typography variant="body2" color="text.secondary">
-                       {summary.user.email}
-                     </Typography>
-                   </TableCell>
-                   <TableCell>
-                     {summary.user.tipo === 'Programa Sociedades'
-                       ? t('followUp.programs.societies')
-                       : t('followUp.programs.residents')}
+   const [phases, setPhases] = useState<any[]>([]);
+ 
+   const programOptions = useMemo(() => {
++    if (user?.rol === 'administrador') {
++      return ['all', 'Programa Residentes', 'Programa Sociedades'];
++    }
+     if (user?.rol === 'csm') {
+       return ['Programa Residentes'];
+     }
+     if (user?.tipo) {
+       return [user.tipo];
+     }
+     return ['Programa Residentes', 'Programa Sociedades'];
+   }, [user?.rol, user?.tipo]);
+ 
+   const defaultProgram = programOptions[0] || 'Programa Residentes';
+ 
+   const [filters, setFilters] = useState({
+     program: defaultProgram,
+     hospitalId: 'all',
+     sociedadId: 'all',
+     search: '',
+     faseId: 'all',
+     estado: 'all',
+     dateFrom: '',
+     dateTo: ''
+   });
+ 
+   useEffect(() => {
+     setFilters((prev) => ({
+       ...prev,
+@@ -113,50 +116,54 @@ const SeguimientoUsuarios: React.FC = () => {
+   );
+ 
+   const fetchFiltersData = useCallback(async () => {
+     try {
+       const [hospitalRes, societyRes] = await Promise.all([
+         api.get('/hospitals'),
+         api.get('/sociedades')
+       ]);
+       const hospitalsData = hospitalRes.data?.data || [];
+       const societiesData = societyRes.data?.data || [];
+       const filteredHospitals = user?.rol === 'csm' && user?.zona
+         ? hospitalsData.filter((hospital: any) =>
+             hospital?.zona?.toUpperCase() === user.zona?.toUpperCase()
+           )
+         : hospitalsData;
+       setHospitals(filteredHospitals);
+       setSocieties(societiesData);
+     } catch {
+       setHospitals([]);
+       setSocieties([]);
+     }
+   }, [user?.rol, user?.zona]);
+ 
+   const fetchPhases = useCallback(async () => {
+     try {
++      if (filters.program === 'all') {
++        setPhases([]);
++        return;
++      }
+       const endpoint = filters.program === 'Programa Sociedades' ? '/fases-soc' : '/fases';
+       const response = await api.get(endpoint);
+       setPhases(response.data?.data || []);
+     } catch {
+       setPhases([]);
+     }
+   }, [filters.program]);
+ 
+   const fetchSeguimiento = useCallback(async () => {
+     if (user?.rol === 'csm' && !user?.zona) {
+       setData([]);
+       setEmptyMessage(t('followUp.empty.noZone'));
+       setLoading(false);
+       return;
+     }
+ 
+     try {
+       setLoading(true);
+       const params: Record<string, string> = {
+         programa: filters.program,
+         hospitalId: filters.hospitalId,
+         sociedadId: filters.sociedadId,
+         search: filters.search,
+         faseId: filters.faseId,
+         estado: filters.estado,
+@@ -180,83 +187,98 @@ const SeguimientoUsuarios: React.FC = () => {
+   }, [fetchFiltersData]);
+ 
+   useEffect(() => {
+     fetchPhases();
+   }, [fetchPhases]);
+ 
+   useEffect(() => {
+     fetchSeguimiento();
+   }, [fetchSeguimiento]);
+ 
+   const handleClearFilters = () => {
+     setFilters({
+       program: defaultProgram,
+       hospitalId: 'all',
+       sociedadId: 'all',
+       search: '',
+       faseId: 'all',
+       estado: 'all',
+       dateFrom: '',
+       dateTo: ''
+     });
+   };
+ 
+   const showHospitalFilter = filters.program === 'Programa Residentes';
+   const showSocietyFilter = filters.program === 'Programa Sociedades';
++  const showPhaseFilter = filters.program !== 'all';
+ 
+   const renderProgress = (summary: SeguimientoSummary) => (
+     <Box sx={{ minWidth: 160 }}>
+       <Typography variant="body2" sx={{ mb: 0.5 }}>
+         {summary.progreso.validadas}/{summary.progreso.total} ({summary.progreso.porcentaje}%)
+       </Typography>
+       <LinearProgress variant="determinate" value={summary.progreso.porcentaje} />
+     </Box>
+   );
+ 
+   return (
+     <Box>
+       <Typography variant="h4" gutterBottom>
+         {t('followUp.title')}
+       </Typography>
+ 
+       <Paper sx={{ p: 2, mb: 2 }}>
+         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
+           <FormControl sx={{ minWidth: 200 }} size="small">
+             <InputLabel>{t('followUp.filters.program')}</InputLabel>
+             <Select
+               label={t('followUp.filters.program')}
+               value={filters.program}
+               onChange={(event) =>
+-                setFilters((prev) => ({ ...prev, program: event.target.value }))
++                setFilters((prev) => {
++                  const nextProgram = event.target.value;
++                  if (nextProgram === 'all') {
++                    return {
++                      ...prev,
++                      program: nextProgram,
++                      hospitalId: 'all',
++                      sociedadId: 'all',
++                      faseId: 'all'
++                    };
++                  }
++                  return { ...prev, program: nextProgram };
++                })
+               }
+               disabled={programOptions.length === 1}
+             >
+               {programOptions.map((program) => (
+                 <MenuItem key={program} value={program}>
+-                  {program === 'Programa Residentes'
+-                    ? t('followUp.programs.residents')
+-                    : t('followUp.programs.societies')}
++                  {program === 'all'
++                    ? t('followUp.filters.all')
++                    : program === 'Programa Residentes'
++                      ? t('followUp.programs.residents')
++                      : t('followUp.programs.societies')}
+                 </MenuItem>
+               ))}
+             </Select>
+           </FormControl>
+ 
+           {showHospitalFilter && (
+             <FormControl sx={{ minWidth: 220 }} size="small">
+               <InputLabel>{t('followUp.filters.hospital')}</InputLabel>
+               <Select
+                 label={t('followUp.filters.hospital')}
+                 value={filters.hospitalId}
+                 onChange={(event) =>
+                   setFilters((prev) => ({ ...prev, hospitalId: event.target.value }))
+                 }
+               >
+                 <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
+                 {hospitals.map((hospital) => (
+                   <MenuItem key={hospital._id} value={hospital._id}>
+                     {hospital.nombre}
+                   </MenuItem>
+                 ))}
+               </Select>
+             </FormControl>
+           )}
+ 
+@@ -265,67 +287,69 @@ const SeguimientoUsuarios: React.FC = () => {
+               <InputLabel>{t('followUp.filters.society')}</InputLabel>
+               <Select
+                 label={t('followUp.filters.society')}
+                 value={filters.sociedadId}
+                 onChange={(event) =>
+                   setFilters((prev) => ({ ...prev, sociedadId: event.target.value }))
+                 }
+               >
+                 <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
+                 {societies.map((society) => (
+                   <MenuItem key={society._id} value={society._id}>
+                     {society.titulo}
+                   </MenuItem>
+                 ))}
+               </Select>
+             </FormControl>
+           )}
+ 
+           <TextField
+             size="small"
+             label={t('followUp.filters.search')}
+             value={filters.search}
+             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
+           />
+ 
+-          <FormControl sx={{ minWidth: 200 }} size="small">
+-            <InputLabel>{t('followUp.filters.phase')}</InputLabel>
+-            <Select
+-              label={t('followUp.filters.phase')}
+-              value={filters.faseId}
+-              onChange={(event) =>
+-                setFilters((prev) => ({ ...prev, faseId: event.target.value }))
+-              }
+-            >
+-              <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
+-              {phases.map((phase: any) => (
+-                <MenuItem key={phase._id} value={phase._id}>
+-                  {t('followUp.filters.phaseOption', { number: phase.numero, name: phase.nombre })}
+-                </MenuItem>
+-              ))}
+-            </Select>
+-          </FormControl>
++          {showPhaseFilter && (
++            <FormControl sx={{ minWidth: 200 }} size="small">
++              <InputLabel>{t('followUp.filters.phase')}</InputLabel>
++              <Select
++                label={t('followUp.filters.phase')}
++                value={filters.faseId}
++                onChange={(event) =>
++                  setFilters((prev) => ({ ...prev, faseId: event.target.value }))
++                }
++              >
++                <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
++                {phases.map((phase: any) => (
++                  <MenuItem key={phase._id} value={phase._id}>
++                    {t('followUp.filters.phaseOption', { number: phase.numero, name: phase.nombre })}
++                  </MenuItem>
++                ))}
++              </Select>
++            </FormControl>
++          )}
+ 
+           <FormControl sx={{ minWidth: 200 }} size="small">
+             <InputLabel>{t('followUp.filters.status')}</InputLabel>
+             <Select
+               label={t('followUp.filters.status')}
+               value={filters.estado}
+               onChange={(event) =>
+                 setFilters((prev) => ({ ...prev, estado: event.target.value }))
+               }
+             >
+               <MenuItem value="all">{t('followUp.filters.all')}</MenuItem>
+               {Object.entries(statusConfig).map(([key, config]) => (
+                 <MenuItem key={key} value={key}>
+                   {config.label}
+                 </MenuItem>
+               ))}
+             </Select>
+           </FormControl>
+ 
+           <TextField
+             size="small"
+             type="date"
+             label={t('followUp.filters.dateFrom')}
+             InputLabelProps={{ shrink: true }}
+             value={filters.dateFrom}
+@@ -388,41 +412,45 @@ const SeguimientoUsuarios: React.FC = () => {
                    </TableCell>
                    <TableCell>
                      {summary.user.tipo === 'Programa Sociedades'
                        ? summary.user.sociedad?.titulo || '-'
                        : summary.user.hospital?.nombre || '-'}
                    </TableCell>
--                  <TableCell>
--                    {summary.faseActual
--                      ? t('followUp.phaseLabel', {
--                          number: summary.faseActual.numero,
--                          name: summary.faseActual.nombre
--                        })
--                      : t('followUp.phase.none')}
--                  </TableCell>
-+                  <TableCell>{getCurrentPhaseLabel(t, summary)}</TableCell>
+                   <TableCell>{getCurrentPhaseLabel(t, summary)}</TableCell>
                    <TableCell>{renderProgress(summary)}</TableCell>
                    <TableCell>{summary.pendientesValidacion}</TableCell>
                    <TableCell>
@@ -774,199 +714,63 @@ index 3460e996c9d07780e698d1b0191a94d05c3aa675..88f0bb3fcdc5de0a5f4f2f43b3027475
                      <Button
                        variant="outlined"
                        size="small"
-                       onClick={() => navigate(`/dashboard/seguimiento/${summary.user._id}`)}
+-                      onClick={() => navigate(`/dashboard/seguimiento/${summary.user._id}`)}
++                      onClick={() =>
++                        navigate(`/dashboard/seguimiento/${summary.user._id}`, {
++                          state: { from: 'seguimiento' }
++                        })
++                      }
                      >
                        {t('followUp.table.viewDetail')}
                      </Button>
                    </TableCell>
                  </TableRow>
                ))}
-diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
-index 97403bf4f7cf8ba959961d015d791e0ce1a91b24..a96ca218bf56d44a1c89503ea9b7751ecd68826b 100644
---- a/src/controllers/progresoController.js
-+++ b/src/controllers/progresoController.js
-@@ -123,100 +123,109 @@ const formatProgresoParaResidente = (progresoDoc) => {
-   };
+             </TableBody>
+           </Table>
+         </TableContainer>
+       )}
+     </Box>
+   );
  };
  
- const getPhaseOrder = (fase) => {
-   if (!fase) return 0;
-   if (typeof fase.orden === 'number') return fase.orden;
-   if (typeof fase.numero === 'number') return fase.numero;
-   return 0;
+ export default SeguimientoUsuarios;
+diff --git a/client/src/utils/followUp.ts b/client/src/utils/followUp.ts
+index edd7b20dfbce8be5e122f5b568500f0ba6752bec..7055cb0ccaf05ce095331a88106d71ca8528244b 100644
+--- a/client/src/utils/followUp.ts
++++ b/client/src/utils/followUp.ts
+@@ -1,27 +1,28 @@
+ import { TFunction } from 'i18next';
+ 
+ type FollowUpPhaseSummary = {
+   faseActual?: { numero?: number; nombre?: string } | null;
+   estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
  };
  
- const getLatestDateFromProgreso = (progreso) => {
-   const dates = [];
-   if (progreso.updatedAt) dates.push(new Date(progreso.updatedAt));
-   if (progreso.fechaRegistro) dates.push(new Date(progreso.fechaRegistro));
-   if (progreso.fechaInicio) dates.push(new Date(progreso.fechaInicio));
-   if (progreso.fechaFin) dates.push(new Date(progreso.fechaFin));
-   (progreso.actividades || []).forEach((actividad) => {
-     if (actividad.fechaRealizacion) dates.push(new Date(actividad.fechaRealizacion));
-     if (actividad.fechaValidacion) dates.push(new Date(actividad.fechaValidacion));
-     if (actividad.fechaRechazo) dates.push(new Date(actividad.fechaRechazo));
-   });
-   if (dates.length === 0) return null;
-   return new Date(Math.max(...dates.map((date) => date.getTime())));
- };
- 
--const getCurrentPhase = (progresos) => {
--  if (!progresos.length) return null;
--  const ordered = [...progresos].sort(
--    (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
--  );
--  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
--  if (!avanzadas.length) {
--    return ordered[ordered.length - 1].fase || null;
--  }
--  const enCurso = avanzadas.filter(
--    (p) => p.estadoGeneral !== 'validado' && p.estadoGeneral !== 'completado'
--  );
--  if (enCurso.length) {
--    const pick = enCurso.reduce((acc, item) =>
--      getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
--    );
--    return pick.fase || null;
--  }
--  return avanzadas[avanzadas.length - 1].fase || null;
--};
-+const getCurrentPhaseStatus = (progresos) => {
-+  if (!progresos.length) {
-+    return { faseActual: null, estadoFaseActual: 'sin_iniciar' };
+ export const getCurrentPhaseLabel = (
+   t: TFunction,
+   summary: FollowUpPhaseSummary
+ ): string => {
++  const phaseNumber = summary.faseActual?.numero;
++  const phaseName = summary.faseActual?.nombre;
++  if (typeof phaseNumber === 'number') {
++    const baseLabel = `${t('adminPhases.phase')} ${phaseNumber}`;
++    return phaseName ? `${baseLabel}: ${phaseName}` : baseLabel;
 +  }
-+  const ordered = [...progresos].sort(
-+    (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
-+  );
-+  const enProgreso = ordered.find((progreso) => progreso.estadoGeneral === 'en progreso');
-+  if (enProgreso) {
-+    return { faseActual: enProgreso.fase || null, estadoFaseActual: 'en_progreso' };
-+  }
-+  const started = ordered.some((progreso) => progreso.estadoGeneral !== 'bloqueada');
-+  const allCompleted = started && ordered.every((progreso) =>
-+    ['completado', 'validado'].includes(progreso.estadoGeneral)
-+  );
-+  if (allCompleted) {
-+    return { faseActual: null, estadoFaseActual: 'completadas' };
-+  }
-+  if (!started) {
-+    return { faseActual: null, estadoFaseActual: 'sin_iniciar' };
-+  }
-+  const lastStarted = [...ordered]
-+    .filter((progreso) => progreso.estadoGeneral !== 'bloqueada')
-+    .pop();
-+  return {
-+    faseActual: lastStarted?.fase || null,
-+    estadoFaseActual: lastStarted?.fase ? 'en_progreso' : 'sin_iniciar'
-+  };
-+};
- 
- const summarizeUserProgress = (user, progresos = []) => {
-   const totalActividades = progresos.reduce(
-     (acc, item) => acc + (item.actividades ? item.actividades.length : 0),
-     0
-   );
-   const actividadesValidadas = progresos.reduce(
-     (acc, item) =>
-       acc +
-       (item.actividades || []).filter((actividad) => actividad.estado === 'validado')
-         .length,
-     0
-   );
-   const pendientesValidacion = progresos.reduce(
-     (acc, item) =>
-       acc +
-       (item.actividades || []).filter((actividad) => actividad.estado === 'completado')
-         .length,
-     0
-   );
- 
-   const lastUpdates = progresos
-     .map(getLatestDateFromProgreso)
-     .filter(Boolean)
-     .map((date) => date.getTime());
-   const ultimaActualizacion = lastUpdates.length
-     ? new Date(Math.max(...lastUpdates))
-     : null;
- 
--  const faseActual = getCurrentPhase(progresos);
-+  const { faseActual, estadoFaseActual } = getCurrentPhaseStatus(progresos);
-   const sociedad = user?.tipo === 'Programa Sociedades' ? user?.sociedad : null;
-   const hasSchedule =
-     Boolean(
-       sociedad &&
-         [
-           'fechaConvocatoria',
-           'fechaPresentacion',
-           'fechaModulosOnline',
-           'fechaSimulacion',
-           'fechaAtividadesFirstAssistant',
-           'fechaModuloOnlineStepByStep',
-           'fechaHandOn'
-         ].some((key) => sociedad?.[key])
-     );
-   const societyPhaseDate = (() => {
-     if (!sociedad || !faseActual) return null;
-     const phaseOrder = getPhaseOrder(faseActual);
-     switch (phaseOrder) {
-       case 1:
-         return (
-           sociedad.fechaModulosOnline ||
-           sociedad.fechaPresentacion ||
-           sociedad.fechaConvocatoria ||
-           null
-         );
-@@ -241,51 +250,52 @@ const summarizeUserProgress = (user, progresos = []) => {
-     progresos.every((item) => item.estadoGeneral === 'validado');
- 
-   let estadoGeneral = 'sin_actividad';
-   if (pendientesValidacion > 0) {
-     estadoGeneral = 'pendiente_validacion';
-   } else if (progresoCompleto) {
-     estadoGeneral = 'progreso_completado';
-   } else if (totalActividades === 0) {
-     estadoGeneral = 'sin_actividad';
-   } else if (hasSchedule && isOnSchedule) {
-     estadoGeneral = 'al_dia';
-   } else {
-     estadoGeneral = 'en_curso';
++
+   switch (summary.estadoFaseActual) {
+     case 'completadas':
+       return t('followUp.phase.completed');
+     case 'sin_iniciar':
+       return t('followUp.phase.notStarted');
+     case 'en_progreso':
+     default:
+-      if (summary.faseActual) {
+-        return t('followUp.phaseLabel', {
+-          number: summary.faseActual.numero,
+-          name: summary.faseActual.nombre
+-        });
+-      }
+       return t('followUp.phase.none');
    }
- 
-   return {
-     user: {
-       _id: user._id,
-       nombre: user.nombre,
-       apellidos: user.apellidos,
-       email: user.email,
-       tipo: user.tipo,
-       hospital: user.hospital,
-       sociedad: user.sociedad
-     },
--    faseActual,
-+    faseActual,
-+    estadoFaseActual,
-     progreso: {
-       total: totalActividades,
-       validadas: actividadesValidadas,
-       porcentaje: totalActividades
-         ? Math.round((actividadesValidadas / totalActividades) * 100)
-         : 0
-     },
-     pendientesValidacion,
-     ultimaActualizacion,
-     estadoGeneral
-   };
  };
- 
- 
- const inicializarProgresoFormativo = async (req, res, next) => {
-   try {
-   const user = await User.findById(req.params.id);
-   if (!user || (user.rol !== 'residente' && user.rol !== 'participante')) {
-     return res.status(404).json({ success: false, error: 'Residente no válido' });
-   }
- 
-      if (req.body.tipo) user.tipo = req.body.tipo;
-     const count = await inicializarProgresoFormativoDB(user);
-     res.status(200).json({ success: true, count });
-   } catch (err) {
