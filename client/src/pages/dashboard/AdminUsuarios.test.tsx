@@ -32,7 +32,7 @@ afterEach(() => {
   jest.useRealTimers();
 });
 
-test('muestra boton Ver Progreso cuando tiene progreso', async () => {
+test('muestra boton Editar progreso cuando tiene progreso', async () => {
   mockedGet
     .mockResolvedValueOnce({
       data: {
@@ -57,7 +57,7 @@ test('muestra boton Ver Progreso cuando tiene progreso', async () => {
       <AdminUsuarios />
     </I18nextProvider>
   );
-  expect(await screen.findByText('Ver Progreso')).toBeInTheDocument();
+  expect(await screen.findByText('Editar progreso')).toBeInTheDocument();
 });
 
 test('muestra boton Crear progreso cuando no existe progreso', async () => {
@@ -76,7 +76,7 @@ test('muestra boton Crear progreso cuando no existe progreso', async () => {
   expect(await screen.findByText('Crear progreso')).toBeInTheDocument();
 });
 
-test('muestra boton Ver Progreso cuando tiene progreso', async () => {
+test('muestra boton Editar progreso cuando tiene progreso', async () => {
   mockedGet
     .mockResolvedValueOnce({ data: { data: [
       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: true }
@@ -90,7 +90,7 @@ test('muestra boton Ver Progreso cuando tiene progreso', async () => {
     </I18nextProvider>
   );
   await screen.findByText('Res A');
-  expect(screen.getByText('Ver Progreso')).toBeInTheDocument();
+  expect(screen.getByText('Editar progreso')).toBeInTheDocument();
   expect(screen.queryByText('Crear progreso')).not.toBeInTheDocument();
 });
 

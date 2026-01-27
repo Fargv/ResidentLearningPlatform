@@ -15,6 +15,7 @@
     "validations": "Validierungen",
     "myUsers": "Meine Benutzer",
     "followUp": "Seguimiento",
+    "followUpUsers": "Seguimiento de mis usuarios",
     "usersProgress": "Benutzerfortschritt",
     "settings": "Einstellungen",
     "myProfile": "Mein Profil",
@@ -60,8 +61,13 @@
     "status": {
       "upToDate": "Al día",
       "pendingValidation": "Pendiente validación",
+      "completedProgress": "Progreso completado",
+      "inProgress": "En curso",
       "blocked": "Bloqueado",
       "noActivity": "Sin actividad"
+    },
+    "phase": {
+      "none": "Sin fase"
     },
     "phaseLabel": "Fase {{number}}: {{name}}",
     "empty": {
@@ -756,6 +762,7 @@
   "adminUsers": {
     "titleAll": "Alle Benutzer verwalten",
     "titleHospital": "Benutzer Ihres Krankenhauses",
+    "filtersTitle": "Filtros",
     "searchPlaceholder": "Nach Name oder E-Mail suchen",
     "loadError": "Fehler beim Laden der Daten",
     "actions": {
@@ -766,6 +773,7 @@
       "changePassword": "Passwort ändern",
       "sendResetLink": "Reset-Link senden",
       "createProgress": "Fortschritt erstellen",
+      "viewFollowUp": "Ver seguimiento",
       "downloadSurgeryReport": "Bericht für {{phase}} herunterladen"
     },
     "createSuccess": "Benutzer erfolgreich erstellt",
@@ -944,7 +952,8 @@
       "role": "Rolle",
       "actions": "Aktionen"
     },
-    "viewProgress": "Fortschritt"
+    "viewProgress": "Fortschritt",
+    "editProgress": "Editar progreso"
   },
   "adminProgressDetail": {
     "loadError": "Fehler beim Laden des Fortschritts",

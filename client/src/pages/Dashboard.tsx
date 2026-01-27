@@ -646,7 +646,7 @@ const Dashboard: React.FC = () => {
             <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
           )}
           <Route path="/sociedades" element={<AdminSociedades />} />
-          {(user?.rol === 'csm' || user?.rol === 'profesor') && (
+          {(user?.rol === 'csm' || user?.rol === 'profesor' || user?.rol === 'administrador') && (
             <>
               <Route path="/seguimiento" element={<SeguimientoUsuarios />} />
               <Route path="/seguimiento/:userId" element={<SeguimientoDetalle />} />

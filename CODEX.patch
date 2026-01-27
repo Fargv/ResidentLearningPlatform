@@ -1,324 +1,730 @@
+diff --git a/client/src/pages/Dashboard.tsx b/client/src/pages/Dashboard.tsx
+index 7bd04cadac9d20a110a24467ee1fc2832b9981e1..6771e25c6a32f55f1744acc6d0a77a92e0fffc72 100644
+--- a/client/src/pages/Dashboard.tsx
++++ b/client/src/pages/Dashboard.tsx
+@@ -624,42 +624,42 @@ const Dashboard: React.FC = () => {
+             <Route path="/fases-soc" element={<AdminFasesSoc />} />
+           )}
+           {user?.rol === 'administrador' && (
+             <Route path="/informes" element={<AdminInformes />} />
+           )}
+           {user?.rol === 'administrador' && (
+             <Route path="/validaciones-admin" element={<AdminValidaciones />} />
+           )}
+           {user?.rol === 'administrador' && (
+             <Route path="/progreso-usuarios" element={<Navigate to="/dashboard/usuarios" />} />
+           )}
+           <Route
+             path="/dashboard/progreso"
+             element={<Navigate to="/dashboard" replace />}
+           />
+           {user?.rol === 'administrador' && (
+             <Route path="/config" element={<AdminConfiguracion />} />
+           )}
+           {user?.rol === 'administrador' && (
+             <Route path="/site-info" element={<AdminSiteInfo />} />
+           )}
+           {user?.rol === 'administrador' && (
+             <Route path="/progreso-usuario/:userId" element={<AdminProgresoDetalle />} />
+           )}
+           <Route path="/sociedades" element={<AdminSociedades />} />
+-          {(user?.rol === 'csm' || user?.rol === 'profesor') && (
+-            <>
+-              <Route path="/seguimiento" element={<SeguimientoUsuarios />} />
+-              <Route path="/seguimiento/:userId" element={<SeguimientoDetalle />} />
+-            </>
+-          )}
++          {(user?.rol === 'csm' || user?.rol === 'profesor' || user?.rol === 'administrador') && (
++            <>
++              <Route path="/seguimiento" element={<SeguimientoUsuarios />} />
++              <Route path="/seguimiento/:userId" element={<SeguimientoDetalle />} />
++            </>
++          )}
+           <Route path="/perfil" element={<Perfil />} />
+           <Route path="/notificaciones" element={<Notificaciones onChange={refreshUnreadCount} />} />
+           {isDev && <Route path="/debug" element={<DebugDashboard />} />}
+         </Routes>
+ 
+       </Box>
+     </Box>
+   );
+ };
+ 
+ export default Dashboard;
+diff --git a/client/src/pages/dashboard/AdminUsuarios.test.tsx b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+index d2e6fe6a12ce233d3602e112dec7a67cbe717ea5..05f9dcde980f585e6e0efbb264d33747d9fe3eba 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.test.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.test.tsx
+@@ -10,109 +10,109 @@ jest.mock('../../context/AuthContext');
+ jest.mock('react-router-dom', () => ({
+   useNavigate: () => jest.fn()
+ }));
+ 
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ 
+ const mockedUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+ const mockedGet = (api as any).get as jest.Mock;
+ const mockedPut = (api as any).put as jest.Mock;
+ const mockedPost = (api as any).post as jest.Mock;
+ 
+ beforeEach(() => {
+   mockedUseAuth.mockReturnValue({ user: { rol: 'administrador' } } as any);
+   i18n.changeLanguage('es');
+ });
+ 
+ afterEach(() => {
+   jest.clearAllMocks();
+   mockedGet.mockReset();
+   mockedPut.mockReset();
+   mockedPost.mockReset();
+   jest.useRealTimers();
+ });
+ 
+-test('muestra boton Ver Progreso cuando tiene progreso', async () => {
++test('muestra boton Editar progreso cuando tiene progreso', async () => {
+   mockedGet
+     .mockResolvedValueOnce({
+       data: {
+         data: [
+           {
+             _id: 'u1',
+             nombre: 'Res',
+             apellidos: 'A',
+             email: 'r@a.com',
+             rol: 'residente',
+             tipo: 'Programa Residentes',
+             tieneProgreso: true,
+           },
+         ],
+       },
+     })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+-  expect(await screen.findByText('Ver Progreso')).toBeInTheDocument();
++  expect(await screen.findByText('Editar progreso')).toBeInTheDocument();
+ });
+ 
+ test('muestra boton Crear progreso cuando no existe progreso', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   expect(await screen.findByText('Crear progreso')).toBeInTheDocument();
+ });
+ 
+-test('muestra boton Ver Progreso cuando tiene progreso', async () => {
++test('muestra boton Editar progreso cuando tiene progreso', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: true }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   await screen.findByText('Res A');
+-  expect(screen.getByText('Ver Progreso')).toBeInTheDocument();
++  expect(screen.getByText('Editar progreso')).toBeInTheDocument();
+   expect(screen.queryByText('Crear progreso')).not.toBeInTheDocument();
+ });
+ 
+ test('muestra boton Cambiar contraseña para administradores', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+     .mockResolvedValueOnce({ data: [] });
+ 
+   render(
+     <I18nextProvider i18n={i18n}>
+       <AdminUsuarios />
+     </I18nextProvider>
+   );
+   expect(await screen.findByText('Cambiar contraseña')).toBeInTheDocument();
+ });
+ 
+ test('muestra botones Editar y Eliminar', async () => {
+   mockedGet
+     .mockResolvedValueOnce({ data: { data: [
+       { _id: 'u1', nombre: 'Res', apellidos: 'A', email: 'r@a.com', rol: 'residente', tipo: 'Programa Residentes', tieneProgreso: false }
+     ] } })
+     .mockResolvedValueOnce({ data: { data: [] } })
+diff --git a/client/src/pages/dashboard/AdminUsuarios.tsx b/client/src/pages/dashboard/AdminUsuarios.tsx
+index 9e66e7ef7cff3cc3fc5d5b77c782dd2b6e1d53b6..7960096d2d8e89a8bfd676c1ad465e9f63e7d64c 100644
+--- a/client/src/pages/dashboard/AdminUsuarios.tsx
++++ b/client/src/pages/dashboard/AdminUsuarios.tsx
+@@ -841,134 +841,160 @@ const AdminUsuarios: React.FC = () => {
+               {t("adminUsers.actions.create")}
+             </Button>
+           )}
+           {user?.rol === "administrador" && (
+             <Button
+               variant="outlined"
+               color="secondary"
+               startIcon={<MailOutlineIcon />}
+               onClick={() => navigate("/dashboard/invitations")}
+               sx={{ mr: 1 }}
+             >
+               {t("adminUsers.actions.manageInvitations")}
+             </Button>
+           )}
+           <Button
+             variant="contained"
+             color="primary"
+             startIcon={<AddIcon />}
+             onClick={handleOpenInvitarDialog}
+           >
+             {t("adminUsers.actions.invite")}
+           </Button>
+         </Box>
+       </Box>
+ 
+-     <TextField
+-        variant="outlined"
+-        placeholder={t("adminUsers.searchPlaceholder")}
+-        value={search}
+-        onChange={(e) => setSearch(e.target.value)}
+-        fullWidth
+-        margin="normal"
+-      />
+-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+-        <Autocomplete
+-          multiple
+-          options={allRoles}
+-          value={selectedRoles}
+-          onChange={(e, newValue) =>
+-            setSelectedRoles(newValue as string[])
+-          }
+-          renderInput={(params) => (
+-            <TextField {...params} label={t("adminUsers.fields.role")} />
+-          )}
+-          sx={{ minWidth: 200 }}
+-        />
+-        <Autocomplete
+-          multiple
+-          options={hospitalSociedadOptions}
+-          getOptionLabel={(option) => option.nombre}
+-          value={hospitalSociedadOptions.filter((h) =>
+-            selectedHospitals.includes(h._id),
+-          )}
+-          onChange={(e, newValue) =>
+-            setSelectedHospitals(newValue.map((h: any) => h._id))
+-          }
+-          renderInput={(params) => (
+-            <TextField {...params} label={t("adminUsers.fields.hospital")} />
+-          )}
+-          sx={{ minWidth: 200 }}
+-        />
+-        <Autocomplete
+-          multiple
+-          options={zonaOptions}
+-          value={selectedZonas}
+-          onChange={(e, newValue) =>
+-            setSelectedZonas(newValue as string[])
+-          }
+-          renderInput={(params) => (
+-            <TextField {...params} label={t("adminUsers.fields.zone")} />
+-          )}
+-          sx={{ minWidth: 200 }}
+-        />
+-        <Autocomplete
+-          multiple
+-          options={especialidadOptions}
+-          value={selectedEspecialidades}
+-          onChange={(e, newValue) =>
+-            setSelectedEspecialidades(newValue as string[])
+-          }
+-          renderInput={(params) => (
+-            <TextField {...params} label={t("adminUsers.fields.specialty")} />
+-          )}
+-          sx={{ minWidth: 200 }}
+-        />
+-        <Autocomplete
+-          multiple
+-          options={["Programa Residentes", "Programa Sociedades"]}
+-          value={selectedTipos}
+-          onChange={(e, newValue) => setSelectedTipos(newValue as string[])}
+-          renderInput={(params) => (
+-            <TextField {...params} label={t("adminUsers.fields.type")} />
+-          )}
+-          sx={{ minWidth: 200 }}
+-        />
+-        <Autocomplete
+-          multiple
+-          options={faseOptions}
+-          value={selectedFases}
+-          onChange={(e, newValue) => setSelectedFases(newValue as string[])}
+-          renderInput={(params) => (
+-            <TextField
+-              {...params}
+-              label={t("adminUsers.fields.phase", "Fase")}
+-            />
+-          )}
+-          sx={{ minWidth: 200 }}
+-        />
+-      </Box>
++      <Paper sx={{ p: 2, mb: 3 }}>
++        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
++          {t('adminUsers.filtersTitle')}
++        </Typography>
++        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
++          <TextField
++            variant="outlined"
++            placeholder={t("adminUsers.searchPlaceholder")}
++            value={search}
++            onChange={(e) => setSearch(e.target.value)}
++            size="small"
++            sx={{ flex: "1 1 240px", minWidth: 200 }}
++          />
++          <Autocomplete
++            multiple
++            options={allRoles}
++            value={selectedRoles}
++            onChange={(e, newValue) =>
++              setSelectedRoles(newValue as string[])
++            }
++            renderInput={(params) => (
++              <TextField
++                {...params}
++                label={t("adminUsers.fields.role")}
++                size="small"
++              />
++            )}
++            sx={{ minWidth: 200 }}
++          />
++          <Autocomplete
++            multiple
++            options={hospitalSociedadOptions}
++            getOptionLabel={(option) => option.nombre}
++            value={hospitalSociedadOptions.filter((h) =>
++              selectedHospitals.includes(h._id),
++            )}
++            onChange={(e, newValue) =>
++              setSelectedHospitals(newValue.map((h: any) => h._id))
++            }
++            renderInput={(params) => (
++              <TextField
++                {...params}
++                label={t("adminUsers.fields.hospital")}
++                size="small"
++              />
++            )}
++            sx={{ minWidth: 200 }}
++          />
++          <Autocomplete
++            multiple
++            options={zonaOptions}
++            value={selectedZonas}
++            onChange={(e, newValue) =>
++              setSelectedZonas(newValue as string[])
++            }
++            renderInput={(params) => (
++              <TextField
++                {...params}
++                label={t("adminUsers.fields.zone")}
++                size="small"
++              />
++            )}
++            sx={{ minWidth: 200 }}
++          />
++          <Autocomplete
++            multiple
++            options={especialidadOptions}
++            value={selectedEspecialidades}
++            onChange={(e, newValue) =>
++              setSelectedEspecialidades(newValue as string[])
++            }
++            renderInput={(params) => (
++              <TextField
++                {...params}
++                label={t("adminUsers.fields.specialty")}
++                size="small"
++              />
++            )}
++            sx={{ minWidth: 200 }}
++          />
++          <Autocomplete
++            multiple
++            options={["Programa Residentes", "Programa Sociedades"]}
++            value={selectedTipos}
++            onChange={(e, newValue) => setSelectedTipos(newValue as string[])}
++            renderInput={(params) => (
++              <TextField
++                {...params}
++                label={t("adminUsers.fields.type")}
++                size="small"
++              />
++            )}
++            sx={{ minWidth: 200 }}
++          />
++          <Autocomplete
++            multiple
++            options={faseOptions}
++            value={selectedFases}
++            onChange={(e, newValue) => setSelectedFases(newValue as string[])}
++            renderInput={(params) => (
++              <TextField
++                {...params}
++                label={t("adminUsers.fields.phase", "Fase")}
++                size="small"
++              />
++            )}
++            sx={{ minWidth: 200 }}
++          />
++        </Box>
++      </Paper>
+ 
+      {/* Tabla de usuarios */}
+       <Paper sx={{ width: "100%", overflow: "hidden" }}>
+         <TableContainer>
+           <Table stickyHeader aria-label={t("adminUsers.table.aria")}>
+             <TableHead>
+               <TableRow
+                 sx={(theme) => {
+                   const backgroundColor =
+                     theme.palette.mode === "light"
+                       ? theme.palette.primary.light
+                       : theme.palette.primary.dark;
+                   const textColor = theme.palette.getContrastText(backgroundColor);
+ 
+                   return {
+                     backgroundColor,
+                     "& .MuiTableCell-root": {
+                       backgroundColor,
+                       color: textColor,
+                       fontWeight: 600,
+                     },
+                   };
+                 }}
+               >
+                 <TableCell
+@@ -1085,69 +1111,81 @@ const AdminUsuarios: React.FC = () => {
+                                 handleCloseInformeMenu();
+                               }}
+                             >
+                               {t('adminUsers.actions.downloadSurgeryReport', {
+                                 phase: fase.fase,
+                               })}
+                             </MenuItem>
+                           ))}
+                         </Menu>
+                       </>
+                     ) : null}
+                   </TableCell>
+                   <TableCell align="right">
+                     <Box sx={TABLE_ACTIONS_CONTAINER_SX}>
+                       <Button
+                         variant="contained"
+                         onClick={() => handleOpenEditarDialog(usuario)}
+                         startIcon={<EditIcon />}
+                         sx={[
+                           TABLE_ACTION_BUTTON_SX,
+                           (theme) => getEditActionButtonStyles(theme),
+                         ]}
+                       >
+                         {t("adminUsers.actions.edit")}
+                       </Button>
+-                      {['residente', 'participante'].includes(usuario.rol) &&
+-                        user?.rol === "administrador" &&
+-                        usuario.tieneProgreso && (
+-                          <Button
+-                            variant="contained"
+-                            startIcon={<AssessmentIcon />}
+-                            onClick={() =>
+-                              navigate(
+-                                `/dashboard/progreso-usuario/${usuario._id}`,
+-                              )
+-                            }
++                      {['residente', 'participante'].includes(usuario.rol) &&
++                        user?.rol === "administrador" &&
++                        usuario.tieneProgreso && (
++                          <Button
++                            variant="contained"
++                            startIcon={<AssessmentIcon />}
++                            onClick={() =>
++                              navigate(
++                                `/dashboard/progreso-usuario/${usuario._id}`,
++                              )
++                            }
+                             sx={[
+                               TABLE_ACTION_BUTTON_SX,
+                               (theme) => getProgressActionButtonStyles(theme),
+                             ]}
+-                          >
+-                            {t('adminUserProgress.viewProgress')}
+-                          </Button>
+-                        )}
++                          >
++                            {t('adminUserProgress.editProgress')}
++                          </Button>
++                        )}
++                      {['residente', 'participante'].includes(usuario.rol) &&
++                        user?.rol === "administrador" && (
++                          <Button
++                            variant="outlined"
++                            onClick={() =>
++                              navigate(`/dashboard/seguimiento/${usuario._id}`)
++                            }
++                            sx={TABLE_ACTION_BUTTON_SX}
++                          >
++                            {t('adminUsers.actions.viewFollowUp')}
++                          </Button>
++                        )}
+                       {['residente', 'participante'].includes(usuario.rol) &&
+                         !usuario.tieneProgreso && (
+                           <Button
+                             variant="outlined"
+                             onClick={() => handleCrearProgreso(usuario._id)}
+                             sx={TABLE_ACTION_BUTTON_SX}
+                           >
+                             {t("adminUsers.actions.createProgress")}
+                           </Button>
+                         )}
+                     </Box>
+                   </TableCell>
+                 </TableRow>
+               ))}
+             </TableBody>
+           </Table>
+         </TableContainer>
+       </Paper>
+ 
+ 
+       {/* Diálogo para invitar usuario */}
+       <InviteUsersMail
+         open={openInvitarDialog}
+         onClose={handleCloseInvitarDialog}
+         hospitals={hospitales}
+@@ -1767,26 +1805,26 @@ const AdminUsuarios: React.FC = () => {
+       <Backdrop
+         open={downloadLoading}
+         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+       >
+         <CircularProgress color="inherit" />
+       </Backdrop>
+ 
+       {/* Snackbar para notificaciones */}
+       <Snackbar
+         open={snackbar.open}
+         autoHideDuration={6000}
+         onClose={handleCloseSnackbar}
+       >
+         <Alert
+           onClose={handleCloseSnackbar}
+           severity={snackbar.severity}
+           sx={{ width: "100%" }}
+         >
+           {snackbar.message}
+         </Alert>
+       </Snackbar>
+     </Box>
+   );
+ };
+ 
+-export default AdminUsuarios;
+\ No newline at end of file
++export default AdminUsuarios;
+diff --git a/client/src/pages/dashboard/DashboardHome.tsx b/client/src/pages/dashboard/DashboardHome.tsx
+index ffce4a5fd00043bb701c1f6694e2261b8fc33f99..9fbd3c01fa4fd9e40939683faae4b151735c1a56 100644
+--- a/client/src/pages/dashboard/DashboardHome.tsx
++++ b/client/src/pages/dashboard/DashboardHome.tsx
+@@ -443,70 +443,74 @@ const DashboardHome: React.FC = () => {
+       link.href = url;
+       link.setAttribute(
+         'download',
+         `informe-cirugias-${nombreFase}_${nombreUsuario}.xlsx`,
+       );
+       document.body.appendChild(link);
+       link.click();
+       link.remove();
+     } catch (err: any) {
+       setError(t('residentProgress.downloadSurgeryReportError'));
+     } finally {
+       setDownloadLoading(false);
+     }
+   };
+ 
+   const navigate = useNavigate();
+ 
+   type Action = {
+     label: string;
+     path: string;
+     icon: React.ReactNode;
+   };
+ 
+   const actions: Action[] = [];
+ 
+-  if (
+-    user?.rol === "residente" ||
+-    user?.rol === "participante" ||
+-    user?.rol === "profesor"
+-  ) {
++  if (user?.rol === "residente" || user?.rol === "participante") {
+     actions.push({
+       label: t('actions.trainingPhases'),
+       path: "/dashboard/fases",
+       icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
+     });
+   }
+ 
+   if (user?.rol === "tutor" || user?.rol === "csm" || user?.rol === "profesor") {
+     actions.push({
+       label: t('actions.validations'),
+       path: "/dashboard/validaciones",
+       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+     });
+   }
+ 
++  if (user?.rol === "profesor") {
++    actions.push({
++      label: t('actions.followUpUsers'),
++      path: "/dashboard/seguimiento",
++      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
++    });
++  }
++
+   if (user?.rol === "tutor" || user?.rol === "csm") {
+     actions.push({
+       label: t('actions.myUsers'),
+       path: "/dashboard/usuarios",
+       icon: <PeopleIcon sx={{ fontSize: 40 }} />,
+     });
+   }
+ 
+   if (user?.rol === "administrador") {
+     actions.push(
+       {
+         label: t('actions.reports'),
+         path: "/dashboard/informes",
+         icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
+       },
+       {
+         label: t('actions.settings'),
+         path: "/dashboard/config",
+         icon: <SettingsIcon sx={{ fontSize: 40 }} />,
+       }
+     );
+   }
+ 
+   actions.push(
+     {
 diff --git a/client/src/pages/dashboard/SeguimientoDetalle.tsx b/client/src/pages/dashboard/SeguimientoDetalle.tsx
-index 5b0b1d0a87cebec29d0bd7877bc588e63f25efea..88f56c32b8e4c2e66998640cfd3efa4e6e2f8322 100644
+index 050b78ce0aca28a2a14e011591d7633296bea874..0e2a826ad4bcebfbf6ed944866dd560c2314b795 100644
 --- a/client/src/pages/dashboard/SeguimientoDetalle.tsx
 +++ b/client/src/pages/dashboard/SeguimientoDetalle.tsx
-@@ -1,287 +1,701 @@
- import React, { useCallback, useEffect, useMemo, useState } from 'react';
- import {
-   Alert,
-+  Accordion,
-+  AccordionDetails,
-+  AccordionSummary,
-   Box,
-   Button,
-   Chip,
-   CircularProgress,
--  Divider,
-+  Dialog,
-+  DialogActions,
-+  DialogContent,
-+  DialogTitle,
-   Paper,
-+  TextField,
-   Typography
- } from '@mui/material';
-+import { alpha, useTheme } from '@mui/material/styles';
-+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-+import CancelIcon from '@mui/icons-material/Cancel';
-+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-+import VerifiedIcon from '@mui/icons-material/Verified';
- import { useNavigate, useParams } from 'react-router-dom';
- import { useTranslation } from 'react-i18next';
- import api from '../../api';
-+import { useAuth } from '../../context/AuthContext';
- import { formatDayMonthYear } from '../../utils/date';
- 
- interface Actividad {
-   nombre?: string;
-+  tipo?: string;
-   estado?: 'pendiente' | 'completado' | 'rechazado' | 'validado';
-   fecha?: string;
-   fechaValidacion?: string;
-   fechaRechazo?: string;
-   comentariosResidente?: string;
-   comentariosTutor?: string;
-   comentariosRechazo?: string;
--  firmaDigital?: string;
-   adjuntos?: Array<{ _id: string; nombreArchivo: string }>;
-+  requiereAdjunto?: boolean;
- }
- 
- interface ProgresoFase {
-   _id: string;
-   fase: { _id: string; numero: number; nombre: string };
-   estadoGeneral: string;
-   actividades: Actividad[];
- }
- 
- interface SummaryResponse {
-   user: {
-     _id: string;
-     nombre: string;
-     apellidos: string;
-     email: string;
-     tipo?: string;
--    hospital?: { nombre?: string } | null;
--    sociedad?: { titulo?: string } | null;
-+    hospital?: { _id?: string; nombre?: string; zona?: string } | null;
-+    sociedad?: { _id?: string; titulo?: string } | null;
-   };
-   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
-   progreso: { total: number; validadas: number; porcentaje: number };
-   pendientesValidacion: number;
-   ultimaActualizacion?: string | null;
-   estadoGeneral: string;
- }
- 
-+const formatActivityType = (type?: string): string => {
-+  if (!type) return '';
-+  return type.charAt(0).toUpperCase() + type.slice(1);
-+};
-+
- const SeguimientoDetalle: React.FC = () => {
-+  const theme = useTheme();
-   const { userId } = useParams();
-   const { t } = useTranslation();
-   const navigate = useNavigate();
-+  const { user } = useAuth();
-   const [summary, setSummary] = useState<SummaryResponse | null>(null);
-   const [progresos, setProgresos] = useState<ProgresoFase[]>([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState<string | null>(null);
-   const [downloading, setDownloading] = useState<string | null>(null);
-+  const [actionDialog, setActionDialog] = useState<{
-+    type: 'validate' | 'reject';
-+    progresoId: string;
-+    index: number;
-+    activityName: string;
-+  } | null>(null);
-+  const [actionComments, setActionComments] = useState('');
-+  const [actionProcessing, setActionProcessing] = useState(false);
-+  const [actionError, setActionError] = useState<string | null>(null);
- 
--  const statusLabels = useMemo(
--    () => ({
--      pendiente: t('followUp.activityStatus.pending'),
--      completado: t('followUp.activityStatus.completed'),
--      validado: t('followUp.activityStatus.validated'),
--      rechazado: t('followUp.activityStatus.rejected')
--    }),
-+  const getActivityStatusData = useCallback(
-+    (estado?: Actividad['estado']) => {
-+      switch (estado) {
-+        case 'validado':
-+          return {
-+            label: t('status.validado'),
-+            color: 'success' as const,
-+            icon: <VerifiedIcon fontSize="small" />
-+          };
-+        case 'rechazado':
-+          return {
-+            label: t('status.rechazado'),
-+            color: 'error' as const,
-+            icon: <CancelIcon fontSize="small" />
-+          };
-+        case 'completado':
-+          return {
-+            label: t('status.pendingValidation'),
-+            color: 'warning' as const,
-+            icon: <CheckCircleOutlineIcon fontSize="small" />
-+          };
-+        case 'pendiente':
-+        default:
-+          return {
-+            label: t('status.pendiente'),
-+            color: 'info' as const,
-+            icon: <HourglassEmptyIcon fontSize="small" />
-+          };
-+      }
-+    },
+@@ -107,64 +107,66 @@ const SeguimientoDetalle: React.FC = () => {
+             color: 'error' as const,
+             icon: <CancelIcon fontSize="small" />
+           };
+         case 'completado':
+           return {
+             label: t('status.pendingValidation'),
+             color: 'warning' as const,
+             icon: <CheckCircleOutlineIcon fontSize="small" />
+           };
+         case 'pendiente':
+         default:
+           return {
+             label: t('status.pendiente'),
+             color: 'info' as const,
+             icon: <HourglassEmptyIcon fontSize="small" />
+           };
+       }
+     },
      [t]
    );
  
--  const statusColors = useMemo(
--    () => ({
--      pendiente: 'warning' as const,
--      completado: 'info' as const,
--      validado: 'success' as const,
--      rechazado: 'error' as const
--    }),
--    []
--  );
-+  const phaseStatusKey = useCallback((status: string) => (
-+    status === 'en progreso' ? 'enProgreso' : status
-+  ), []);
-+
+   const phaseStatusKey = useCallback((status: string) => (
+     status === 'en progreso' ? 'enProgreso' : status
+   ), []);
+ 
+-  const summaryStatus = useMemo(() => {
+-    switch (summary?.estadoGeneral) {
+-      case 'al_dia':
+-        return { label: t('followUp.status.upToDate'), color: 'success' as const };
+-      case 'pendiente_validacion':
+-        return { label: t('followUp.status.pendingValidation'), color: 'warning' as const };
+-      case 'bloqueado':
+-        return { label: t('followUp.status.blocked'), color: 'error' as const };
+-      case 'sin_actividad':
+-        return { label: t('followUp.status.noActivity'), color: 'default' as const };
+-      default:
+-        return { label: '-', color: 'default' as const };
+-    }
+-  }, [summary?.estadoGeneral, t]);
 +  const summaryStatus = useMemo(() => {
 +    switch (summary?.estadoGeneral) {
-+      case 'al_dia':
-+        return { label: t('followUp.status.upToDate'), color: 'success' as const };
 +      case 'pendiente_validacion':
 +        return { label: t('followUp.status.pendingValidation'), color: 'warning' as const };
-+      case 'bloqueado':
-+        return { label: t('followUp.status.blocked'), color: 'error' as const };
++      case 'progreso_completado':
++        return { label: t('followUp.status.completedProgress'), color: 'success' as const };
++      case 'al_dia':
++        return { label: t('followUp.status.upToDate'), color: 'success' as const };
++      case 'en_curso':
++        return { label: t('followUp.status.inProgress'), color: 'info' as const };
 +      case 'sin_actividad':
 +        return { label: t('followUp.status.noActivity'), color: 'default' as const };
 +      default:
 +        return { label: '-', color: 'default' as const };
 +    }
 +  }, [summary?.estadoGeneral, t]);
-+
-+  const canValidate = useMemo(() => {
-+    if (!user || !summary) return false;
-+    if (user.rol === 'administrador') return true;
-+    if (user.rol === 'csm') {
-+      if (!user.zona || !summary.user.hospital?.zona) return false;
-+      return user.zona.toUpperCase() === summary.user.hospital.zona.toUpperCase();
-+    }
-+    if (user.rol === 'tutor') {
-+      return Boolean(
-+        user.hospital?._id &&
-+          summary.user.hospital?._id &&
-+          user.hospital._id === summary.user.hospital._id
-+      );
-+    }
-+    if (user.rol === 'profesor') {
-+      if (summary.user.tipo === 'Programa Residentes') {
-+        return Boolean(
-+          user.hospital?._id &&
-+            summary.user.hospital?._id &&
-+            user.hospital._id === summary.user.hospital._id
-+        );
-+      }
-+      const userSociedadId =
-+        typeof user.sociedad === 'string' ? user.sociedad : user.sociedad?._id;
-+      return Boolean(userSociedadId && summary.user.sociedad?._id === userSociedadId);
-+    }
-+    return false;
-+  }, [summary, user]);
  
-   const fetchData = useCallback(async () => {
-     try {
-       setLoading(true);
-       const [summaryRes, progressRes] = await Promise.all([
-         api.get('/progreso/seguimiento', { params: { userId } }),
-         api.get(`/progreso/residente/${userId}`)
-       ]);
- 
-       const summaryData = summaryRes.data?.data?.[0] || null;
-       setSummary(summaryData);
-       setProgresos(progressRes.data?.data || []);
-       setError(null);
+   const canValidate = useMemo(() => {
+     if (!user || !summary) return false;
+     if (user.rol === 'administrador') return true;
+     if (user.rol === 'csm') {
+       if (!user.zona || !summary.user.hospital?.zona) return false;
+       return user.zona.toUpperCase() === summary.user.hospital.zona.toUpperCase();
+     }
+     if (user.rol === 'tutor') {
+       return Boolean(
+         user.hospital?._id &&
+           summary.user.hospital?._id &&
+           user.hospital._id === summary.user.hospital._id
+       );
+     }
+     if (user.rol === 'profesor') {
+       if (summary.user.tipo === 'Programa Residentes') {
+         return Boolean(
+           user.hospital?._id &&
+             summary.user.hospital?._id &&
+             user.hospital._id === summary.user.hospital._id
+         );
+       }
+       const userSociedadId =
+         typeof user.sociedad === 'string' ? user.sociedad : user.sociedad?._id;
+@@ -283,97 +285,107 @@ const SeguimientoDetalle: React.FC = () => {
+           : { comentarios: actionComments };
+       await api.post(endpoint, payload);
+       closeActionDialog();
+       fetchData();
      } catch (err: any) {
-       setError(err.response?.data?.error || t('followUp.detail.error'));
+       setActionError(err.response?.data?.error || t('followUp.detail.error'));
      } finally {
-       setLoading(false);
-     }
-   }, [t, userId]);
- 
-   useEffect(() => {
-     fetchData();
-   }, [fetchData]);
- 
-   const handleDownloadAdjunto = async (adjuntoId: string, nombreArchivo: string) => {
-     try {
-       setDownloading(adjuntoId);
-       const res = await api.get(`/adjuntos/${adjuntoId}/download`, { responseType: 'blob' });
-       const url = window.URL.createObjectURL(new Blob([res.data]));
-       const link = document.createElement('a');
-       link.href = url;
-       link.setAttribute('download', nombreArchivo || 'adjunto');
-       document.body.appendChild(link);
-       link.click();
-       link.remove();
-       window.URL.revokeObjectURL(url);
-     } catch {
-       // no-op, handled by UI
-     } finally {
-       setDownloading(null);
+       setActionProcessing(false);
      }
    };
  
-   const renderComment = (label: string, value?: string) => {
-     if (!value) return null;
-     return (
-       <Box sx={{ mt: 1 }}>
--        <Typography variant="subtitle2">{label}</Typography>
--        <Typography variant="body2" color="text.secondary">
--          {value}
-+        <Typography
-+          variant="caption"
-+          color="text.secondary"
-+          fontWeight={600}
-+          sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-+        >
-+          {label}
-         </Typography>
-+        <Paper
-+          elevation={0}
-+          sx={{
-+            mt: 0.75,
-+            p: 1.5,
-+            borderRadius: 2,
-+            backgroundColor:
-+              theme.palette.mode === 'light'
-+                ? theme.palette.common.white
-+                : theme.palette.grey[800],
-+            border: `1px solid ${theme.palette.divider}`
-+          }}
-+        >
-+          <Typography variant="body2" color="text.primary">
-+            {value}
-+          </Typography>
-+        </Paper>
-       </Box>
-     );
-   };
- 
-+  const openActionDialog = (
-+    type: 'validate' | 'reject',
-+    progresoId: string,
-+    index: number,
-+    activityName: string
-+  ) => {
-+    setActionDialog({ type, progresoId, index, activityName });
-+    setActionComments('');
-+    setActionError(null);
-+  };
-+
-+  const closeActionDialog = () => {
-+    if (actionProcessing) return;
-+    setActionDialog(null);
-+    setActionComments('');
-+    setActionError(null);
-+  };
-+
-+  const handleConfirmAction = async () => {
-+    if (!actionDialog) return;
-+    try {
-+      setActionProcessing(true);
-+      const endpoint =
-+        actionDialog.type === 'validate'
-+          ? `/progreso/${actionDialog.progresoId}/actividad/${actionDialog.index}/validar`
-+          : `/progreso/${actionDialog.progresoId}/actividad/${actionDialog.index}/rechazar`;
-+      const signatureValue = user
-+        ? `${user.nombre} ${user.apellidos} - ${formatDayMonthYear(new Date().toISOString())}`
-+        : '';
-+      const payload =
-+        actionDialog.type === 'validate'
-+          ? { comentarios: actionComments, firmaDigital: signatureValue }
-+          : { comentarios: actionComments };
-+      await api.post(endpoint, payload);
-+      closeActionDialog();
-+      fetchData();
-+    } catch (err: any) {
-+      setActionError(err.response?.data?.error || t('followUp.detail.error'));
-+    } finally {
-+      setActionProcessing(false);
-+    }
-+  };
-+
    if (loading) {
      return (
        <Box display="flex" justifyContent="center" mt={4}>
@@ -333,502 +739,547 @@ index 5b0b1d0a87cebec29d0bd7877bc588e63f25efea..88f56c32b8e4c2e66998640cfd3efa4e
  
    return (
      <Box>
-       <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')} sx={{ mb: 2 }}>
-         {t('followUp.detail.back')}
-       </Button>
+-      <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')} sx={{ mb: 2 }}>
+-        {t('followUp.detail.back')}
+-      </Button>
++      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
++        <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')}>
++          {t('followUp.detail.back')}
++        </Button>
++        {user?.rol === 'administrador' && summary?.user?._id && (
++          <Button
++            variant="contained"
++            onClick={() => navigate(`/dashboard/progreso-usuario/${summary.user._id}`)}
++          >
++            {t('adminUserProgress.editProgress')}
++          </Button>
++        )}
++      </Box>
  
        <Typography variant="h4" gutterBottom>
          {t('followUp.detail.title')}
        </Typography>
  
        {summary && (
--        <Paper sx={{ p: 2, mb: 3 }}>
--          <Typography variant="h6" gutterBottom>
--            {summary.user.nombre} {summary.user.apellidos}
--          </Typography>
--          <Typography variant="body2" color="text.secondary" gutterBottom>
--            {summary.user.email}
--          </Typography>
--          <Divider sx={{ my: 2 }} />
--          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-+        <Paper
-+          sx={{
-+            p: 3,
-+            mb: 3,
-+            borderRadius: 3,
-+            backgroundColor:
-+              theme.palette.mode === 'light'
-+                ? theme.palette.grey[100]
-+                : theme.palette.grey[900],
-+            border: `1px solid ${theme.palette.divider}`
-+          }}
-+        >
-+          <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+         <Paper
+           sx={{
+             p: 3,
+             mb: 3,
+             borderRadius: 3,
+             backgroundColor:
+               theme.palette.mode === 'light'
+                 ? theme.palette.grey[100]
+                 : theme.palette.grey[900],
+             border: `1px solid ${theme.palette.divider}`
+           }}
+         >
+           <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
              <Box>
--              <Typography variant="subtitle2">{t('followUp.detail.currentPhase')}</Typography>
--              <Typography variant="body2">
--                {summary.faseActual
-+              <Typography variant="h6" gutterBottom>
-+                {summary.user.nombre} {summary.user.apellidos}
-+              </Typography>
-+              <Typography variant="body2" color="text.secondary">
-+                {summary.user.email}
-+              </Typography>
-+            </Box>
-+            <Chip
-+              label={summaryStatus.label}
-+              color={summaryStatus.color}
-+              variant="outlined"
-+              sx={{ fontWeight: 600 }}
-+            />
-+          </Box>
-+          <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-+            {[
-+              {
-+                label: t('followUp.detail.currentPhase'),
+               <Typography variant="h6" gutterBottom>
+                 {summary.user.nombre} {summary.user.apellidos}
+               </Typography>
+               <Typography variant="body2" color="text.secondary">
+                 {summary.user.email}
+               </Typography>
+             </Box>
+             <Chip
+               label={summaryStatus.label}
+               color={summaryStatus.color}
+               variant="outlined"
+               sx={{ fontWeight: 600 }}
+             />
+           </Box>
+           <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+             {[
+               {
+                 label: t('followUp.detail.currentPhase'),
+-                value: summary.faseActual
 +                value: summary.faseActual
                    ? t('followUp.phaseLabel', {
                        number: summary.faseActual.numero,
                        name: summary.faseActual.nombre
                      })
--                  : t('followUp.status.noActivity')}
--              </Typography>
--            </Box>
--            <Box>
--              <Typography variant="subtitle2">{t('followUp.detail.progress')}</Typography>
--              <Typography variant="body2">
--                {summary.progreso.validadas}/{summary.progreso.total} ({summary.progreso.porcentaje}%)
--              </Typography>
--            </Box>
--            <Box>
--              <Typography variant="subtitle2">{t('followUp.detail.pending')}</Typography>
--              <Typography variant="body2">{summary.pendientesValidacion}</Typography>
--            </Box>
--            <Box>
--              <Typography variant="subtitle2">{t('followUp.detail.lastUpdate')}</Typography>
--              <Typography variant="body2">
--                {summary.ultimaActualizacion
--                  ? formatDayMonthYear(summary.ultimaActualizacion)
--                  : '-'}
--              </Typography>
--            </Box>
-+                  : t('followUp.status.noActivity')
-+              },
-+              {
-+                label: t('followUp.detail.progress'),
-+                value: `${summary.progreso.validadas}/${summary.progreso.total} (${summary.progreso.porcentaje}%)`
-+              },
-+              {
-+                label: t('followUp.detail.pending'),
-+                value: `${summary.pendientesValidacion}`
-+              },
-+              summary.ultimaActualizacion
-+                ? {
-+                    label: t('followUp.detail.lastUpdate'),
-+                    value: formatDayMonthYear(summary.ultimaActualizacion)
-+                  }
-+                : null
-+            ]
-+              .filter(Boolean)
-+              .map((item) => (
-+                <Box key={(item as { label: string }).label}>
-+                  <Typography variant="subtitle2">{(item as { label: string }).label}</Typography>
-+                  <Typography variant="body2">{(item as { value: string }).value}</Typography>
-+                </Box>
-+              ))}
+-                  : t('followUp.status.noActivity')
++                  : t('followUp.phase.none')
+               },
+               {
+                 label: t('followUp.detail.progress'),
+                 value: `${summary.progreso.validadas}/${summary.progreso.total} (${summary.progreso.porcentaje}%)`
+               },
+               {
+                 label: t('followUp.detail.pending'),
+                 value: `${summary.pendientesValidacion}`
+               },
+               summary.ultimaActualizacion
+                 ? {
+                     label: t('followUp.detail.lastUpdate'),
+                     value: formatDayMonthYear(summary.ultimaActualizacion)
+                   }
+                 : null
+             ]
+               .filter(Boolean)
+               .map((item) => (
+                 <Box key={(item as { label: string }).label}>
+                   <Typography variant="subtitle2">{(item as { label: string }).label}</Typography>
+                   <Typography variant="body2">{(item as { value: string }).value}</Typography>
+                 </Box>
+               ))}
            </Box>
          </Paper>
-       )}
+diff --git a/client/src/pages/dashboard/SeguimientoUsuarios.tsx b/client/src/pages/dashboard/SeguimientoUsuarios.tsx
+index ed90b95b4699161685e7e760a1d508b47bfef883..07a75b02142ee72f9104f88b104a225d3c5701d2 100644
+--- a/client/src/pages/dashboard/SeguimientoUsuarios.tsx
++++ b/client/src/pages/dashboard/SeguimientoUsuarios.tsx
+@@ -21,100 +21,112 @@ import {
+ } from '@mui/material';
+ import { useNavigate } from 'react-router-dom';
+ import { useTranslation } from 'react-i18next';
+ import api from '../../api';
+ import { useAuth } from '../../context/AuthContext';
+ import { formatDayMonthYear } from '../../utils/date';
  
-       {progresos.length === 0 && (
-         <Alert severity="info">{t('followUp.detail.noActivity')}</Alert>
-       )}
+ interface SeguimientoSummary {
+   user: {
+     _id: string;
+     nombre: string;
+     apellidos: string;
+     email: string;
+     tipo?: string;
+     hospital?: { _id?: string; nombre?: string } | null;
+     sociedad?: { _id?: string; titulo?: string } | null;
+   };
+   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
+   progreso: {
+     total: number;
+     validadas: number;
+     porcentaje: number;
+   };
+   pendientesValidacion: number;
+   ultimaActualizacion?: string | null;
+-  estadoGeneral: 'al_dia' | 'pendiente_validacion' | 'bloqueado' | 'sin_actividad';
++  estadoGeneral:
++    | 'al_dia'
++    | 'pendiente_validacion'
++    | 'progreso_completado'
++    | 'en_curso'
++    | 'sin_actividad';
+ }
  
-       {progresos.map((progreso) => (
--        <Paper key={progreso._id} sx={{ p: 2, mb: 2 }}>
--          <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
--            <Typography variant="h6">
--              {t('followUp.phaseLabel', {
--                number: progreso.fase.numero,
--                name: progreso.fase.nombre
--              })}
--            </Typography>
--            <Chip label={progreso.estadoGeneral} variant="outlined" />
--          </Box>
--          <Divider sx={{ my: 2 }} />
--
--          {progreso.actividades.map((actividad, index) => (
--            <Paper key={`${progreso._id}-${index}`} sx={{ p: 2, mb: 2 }} variant="outlined">
--              <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
--                <Typography variant="subtitle1">{actividad.nombre}</Typography>
--                <Chip
--                  label={statusLabels[actividad.estado || 'pendiente']}
--                  color={statusColors[actividad.estado || 'pendiente']}
--                  variant="outlined"
--                />
--              </Box>
--              <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
--                <Typography variant="body2">
--                  {t('followUp.detail.dates.created')}: {actividad.fecha ? formatDayMonthYear(actividad.fecha) : '-'}
--                </Typography>
--                <Typography variant="body2">
--                  {t('followUp.detail.dates.validated')}:{' '}
--                  {actividad.fechaValidacion ? formatDayMonthYear(actividad.fechaValidacion) : '-'}
--                </Typography>
--                <Typography variant="body2">
--                  {t('followUp.detail.dates.rejected')}:{' '}
--                  {actividad.fechaRechazo ? formatDayMonthYear(actividad.fechaRechazo) : '-'}
--                </Typography>
--              </Box>
--
--              {renderComment(t('followUp.detail.comments.user'), actividad.comentariosResidente)}
--              {renderComment(t('followUp.detail.comments.tutor'), actividad.comentariosTutor)}
--              {renderComment(t('followUp.detail.comments.rejection'), actividad.comentariosRechazo)}
--
--              {actividad.firmaDigital && (
--                <Box sx={{ mt: 2 }}>
--                  <Typography variant="subtitle2">{t('followUp.detail.signature')}</Typography>
--                  <Box
--                    component="img"
--                    src={actividad.firmaDigital}
--                    alt={t('followUp.detail.signature')}
--                    sx={{ maxWidth: 220, border: '1px solid', borderColor: 'divider', mt: 1 }}
--                  />
--                </Box>
--              )}
--
--              {actividad.adjuntos && actividad.adjuntos.length > 0 && (
--                <Box sx={{ mt: 2 }}>
--                  <Typography variant="subtitle2">{t('followUp.detail.attachments')}</Typography>
--                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
--                    {actividad.adjuntos.map((adjunto) => (
--                      <Button
--                        key={adjunto._id}
--                        variant="outlined"
-+        <Accordion
-+          key={progreso._id}
-+          defaultExpanded={progreso.estadoGeneral === 'en progreso'}
-+          sx={{ mb: 2 }}
-+        >
-+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-+            <Box
-+              sx={{
-+                display: 'flex',
-+                alignItems: 'center',
-+                gap: 1,
-+                flexWrap: 'wrap',
-+                flex: 1
-+              }}
-+            >
-+              <Typography variant="h6">
-+                {t('followUp.phaseLabel', {
-+                  number: progreso.fase.numero,
-+                  name: progreso.fase.nombre
-+                })}
-+              </Typography>
-+            </Box>
-+          </AccordionSummary>
-+          <AccordionDetails>
-+            <Box display="flex" alignItems="center" sx={{ mb: 2, gap: 2, flexWrap: 'wrap' }}>
-+              <Chip
-+                label={progreso.estadoGeneral ? t(`status.${phaseStatusKey(progreso.estadoGeneral)}`) : '—'}
-+                color={
-+                  progreso.estadoGeneral === 'validado'
-+                    ? 'success'
-+                    : progreso.estadoGeneral === 'completado'
-+                    ? 'primary'
-+                    : 'default'
-+                }
-+                variant="outlined"
-+                sx={{ fontWeight: 600 }}
-+              />
-+              <Typography variant="body2" color="text.secondary">
-+                {t('followUp.detail.progress')}: {' '}
-+                {progreso.actividades.filter((act) => act.estado === 'validado').length}/
-+                {progreso.actividades.length}
-+              </Typography>
-+            </Box>
-+
-+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-+              {progreso.actividades.map((actividad, index) => {
-+                const statusData = getActivityStatusData(actividad.estado);
-+                const dateEntries = [
-+                  actividad.fecha
-+                    ? {
-+                        label: t('followUp.detail.dates.created'),
-+                        value: formatDayMonthYear(actividad.fecha)
-+                      }
-+                    : null,
-+                  actividad.fechaValidacion
-+                    ? {
-+                        label: t('followUp.detail.dates.validated'),
-+                        value: formatDayMonthYear(actividad.fechaValidacion)
-+                      }
-+                    : null,
-+                  actividad.fechaRechazo
-+                    ? {
-+                        label: t('followUp.detail.dates.rejected'),
-+                        value: formatDayMonthYear(actividad.fechaRechazo)
-+                      }
-+                    : null
-+                ].filter(Boolean) as Array<{ label: string; value: string }>;
-+                const canShowActions = canValidate && actividad.estado === 'completado';
-+                const showAdjuntos =
-+                  actividad.estado === 'completado' &&
-+                  actividad.adjuntos &&
-+                  actividad.adjuntos.length > 0;
-+
-+                return (
-+                  <Paper
-+                    key={`${progreso._id}-${index}`}
-+                    variant="outlined"
-+                    sx={{
-+                      p: 2,
-+                      borderRadius: 2,
-+                      backgroundColor:
-+                        theme.palette.mode === 'light'
-+                          ? theme.palette.grey[100]
-+                          : theme.palette.grey[900],
-+                      borderColor:
-+                        theme.palette.mode === 'light'
-+                          ? theme.palette.grey[300]
-+                          : theme.palette.grey[700],
-+                      boxShadow:
-+                        theme.palette.mode === 'light'
-+                          ? '0 4px 10px rgba(15, 23, 42, 0.08)'
-+                          : '0 4px 12px rgba(15, 23, 42, 0.35)',
-+                      flex: '1 1 320px',
-+                      minWidth: { xs: '100%', lg: 'calc(50% - 16px)' },
-+                      maxWidth: { xs: '100%', lg: 'calc(50% - 16px)' },
-+                      display: 'flex',
-+                      flexDirection: 'column'
-+                    }}
-+                  >
-+                    <Box
-+                      sx={{
-+                        display: 'flex',
-+                        justifyContent: 'space-between',
-+                        flexWrap: 'wrap',
-+                        gap: 1
-+                      }}
-+                    >
-+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-+                        {formatActivityType(actividad.tipo) && (
-+                          <Chip
-+                            size="small"
-+                            label={formatActivityType(actividad.tipo)}
-+                            variant="outlined"
-+                            sx={{
-+                              fontWeight: 600,
-+                              backgroundColor:
-+                                theme.palette.mode === 'light'
-+                                  ? theme.palette.grey[100]
-+                                  : theme.palette.grey[800]
-+                            }}
-+                          />
-+                        )}
-+                        {actividad.requiereAdjunto && (
-+                          <Chip
-+                            size="small"
-+                            label={t('residentPhases.requiresAttachment')}
-+                            sx={{
-+                              fontWeight: 600,
-+                              backgroundColor:
-+                                theme.palette.mode === 'light'
-+                                  ? alpha(theme.palette.secondary.light, 0.25)
-+                                  : alpha(theme.palette.secondary.main, 0.35),
-+                              color:
-+                                theme.palette.mode === 'light'
-+                                  ? theme.palette.secondary.dark
-+                                  : theme.palette.secondary.light,
-+                              border: `1px solid ${
-+                                theme.palette.mode === 'light'
-+                                  ? alpha(theme.palette.secondary.main, 0.4)
-+                                  : alpha(theme.palette.secondary.light, 0.6)
-+                              }`
-+                            }}
-+                          />
-+                        )}
-+                        <Typography variant="subtitle1" fontWeight={600}>
-+                          {actividad.nombre || t('residentPhases.unnamedActivity')}
-+                        </Typography>
-+                      </Box>
-+                      <Chip
-                         size="small"
--                        onClick={() => handleDownloadAdjunto(adjunto._id, adjunto.nombreArchivo)}
--                        disabled={downloading === adjunto._id}
--                        sx={{ alignSelf: 'flex-start' }}
-+                        label={statusData.label}
-+                        color={statusData.color}
-+                        icon={statusData.icon}
-+                        sx={{ fontWeight: 600 }}
-+                      />
-+                    </Box>
-+
-+                    {dateEntries.length > 0 && (
-+                      <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-+                        {dateEntries.map((entry) => (
-+                          <Box key={entry.label}>
-+                            <Typography
-+                              variant="caption"
-+                              color="text.secondary"
-+                              fontWeight={600}
-+                              sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-+                            >
-+                              {entry.label}
-+                            </Typography>
-+                            <Typography variant="body2">{entry.value}</Typography>
-+                          </Box>
-+                        ))}
-+                      </Box>
-+                    )}
-+
-+                    <Box sx={{ mt: 2, flexGrow: 1 }}>
-+                      {renderComment(t('followUp.detail.comments.user'), actividad.comentariosResidente)}
-+                      {renderComment(t('followUp.detail.comments.tutor'), actividad.comentariosTutor)}
-+                      {renderComment(t('followUp.detail.comments.rejection'), actividad.comentariosRechazo)}
-+
-+                      {showAdjuntos && (
-+                        <Box sx={{ mt: 2 }}>
-+                          <Typography
-+                            variant="caption"
-+                            color="text.secondary"
-+                            fontWeight={600}
-+                            sx={{ textTransform: 'uppercase', letterSpacing: 0.5 }}
-+                          >
-+                            {t('followUp.detail.attachments')}
-+                          </Typography>
-+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
-+                            {actividad.adjuntos?.map((adjunto) => (
-+                              <Button
-+                                key={adjunto._id}
-+                                variant="outlined"
-+                                size="small"
-+                                onClick={() => handleDownloadAdjunto(adjunto._id, adjunto.nombreArchivo)}
-+                                disabled={downloading === adjunto._id}
-+                                sx={{ alignSelf: 'flex-start' }}
-+                              >
-+                                {adjunto.nombreArchivo}
-+                              </Button>
-+                            ))}
-+                          </Box>
-+                        </Box>
-+                      )}
-+                    </Box>
-+
-+                    {canShowActions && (
-+                      <Box
-+                        sx={{
-+                          display: 'flex',
-+                          flexWrap: 'wrap',
-+                          gap: 2,
-+                          justifyContent: 'flex-end',
-+                          mt: 2
-+                        }}
-                       >
--                        {adjunto.nombreArchivo}
--                      </Button>
--                    ))}
--                  </Box>
--                </Box>
--              )}
--            </Paper>
--          ))}
--        </Paper>
-+                        <Button
-+                          variant="contained"
-+                          color="success"
-+                          onClick={() =>
-+                            openActionDialog(
-+                              'validate',
-+                              progreso._id,
-+                              index,
-+                              actividad.nombre || t('residentPhases.unnamedActivity')
-+                            )
-+                          }
-+                        >
-+                          {t('common.validate')}
-+                        </Button>
-+                        <Button
-+                          variant="outlined"
-+                          color="error"
-+                          onClick={() =>
-+                            openActionDialog(
-+                              'reject',
-+                              progreso._id,
-+                              index,
-+                              actividad.nombre || t('residentPhases.unnamedActivity')
-+                            )
-+                          }
-+                        >
-+                          {t('common.reject')}
-+                        </Button>
-+                      </Box>
-+                    )}
-+                  </Paper>
-+                );
-+              })}
-+            </Box>
-+          </AccordionDetails>
-+        </Accordion>
-       ))}
-+
-+      <Dialog open={Boolean(actionDialog)} onClose={closeActionDialog} maxWidth="sm" fullWidth>
-+        <DialogTitle>
-+          {actionDialog?.type === 'validate'
-+            ? t('tutorValidations.dialogs.validateTitle')
-+            : t('tutorValidations.dialogs.rejectTitle')}
-+        </DialogTitle>
-+        <DialogContent>
-+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-+            {actionDialog?.type === 'validate'
-+              ? t('tutorValidations.dialogs.validateConfirm', {
-+                  activity: actionDialog.activityName,
-+                  resident: summary ? `${summary.user.nombre} ${summary.user.apellidos}` : ''
-+                })
-+              : t('tutorValidations.dialogs.rejectConfirm', {
-+                  activity: actionDialog?.activityName,
-+                  resident: summary ? `${summary.user.nombre} ${summary.user.apellidos}` : ''
-+                })}
-+          </Typography>
-+          <TextField
-+            fullWidth
-+            multiline
-+            minRows={3}
-+            label={
-+              actionDialog?.type === 'validate'
-+                ? t('tutorValidations.dialogs.commentsOptional')
-+                : t('tutorValidations.dialogs.rejectReason')
-+            }
-+            value={actionComments}
-+            onChange={(event) => setActionComments(event.target.value)}
-+          />
-+          {actionError && (
-+            <Alert severity="error" sx={{ mt: 2 }}>
-+              {actionError}
-+            </Alert>
-+          )}
-+        </DialogContent>
-+        <DialogActions>
-+          <Button onClick={closeActionDialog} disabled={actionProcessing}>
-+            {t('common.cancel')}
-+          </Button>
-+          <Button
-+            variant="contained"
-+            color={actionDialog?.type === 'validate' ? 'success' : 'error'}
-+            onClick={handleConfirmAction}
-+            disabled={actionProcessing}
-+          >
-+            {actionProcessing
-+              ? t('common.processing')
-+              : actionDialog?.type === 'validate'
-+              ? t('common.validate')
-+              : t('common.reject')}
-+          </Button>
-+        </DialogActions>
-+      </Dialog>
-     </Box>
+ const SeguimientoUsuarios: React.FC = () => {
+   const { t } = useTranslation();
+   const { user } = useAuth();
+   const navigate = useNavigate();
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [data, setData] = useState<SeguimientoSummary[]>([]);
+   const [emptyMessage, setEmptyMessage] = useState<string | null>(null);
+   const [hospitals, setHospitals] = useState<any[]>([]);
+   const [societies, setSocieties] = useState<any[]>([]);
+   const [phases, setPhases] = useState<any[]>([]);
+ 
+   const programOptions = useMemo(() => {
+     if (user?.rol === 'csm') {
+       return ['Programa Residentes'];
+     }
+     if (user?.tipo) {
+       return [user.tipo];
+     }
+     return ['Programa Residentes', 'Programa Sociedades'];
+   }, [user?.rol, user?.tipo]);
+ 
+   const defaultProgram = programOptions[0] || 'Programa Residentes';
+ 
+   const [filters, setFilters] = useState({
+     program: defaultProgram,
+     hospitalId: 'all',
+     sociedadId: 'all',
+     search: '',
+     faseId: 'all',
+     estado: 'all',
+     dateFrom: '',
+     dateTo: ''
+   });
+ 
+   useEffect(() => {
+     setFilters((prev) => ({
+       ...prev,
+       program: defaultProgram
+     }));
+   }, [defaultProgram]);
+ 
+   const statusConfig = useMemo(
+     () => ({
++      pendiente_validacion: {
++        label: t('followUp.status.pendingValidation'),
++        color: 'warning' as const
++      },
++      progreso_completado: {
++        label: t('followUp.status.completedProgress'),
++        color: 'success' as const
++      },
+       al_dia: { label: t('followUp.status.upToDate'), color: 'success' as const },
+-      pendiente_validacion: { label: t('followUp.status.pendingValidation'), color: 'warning' as const },
+-      bloqueado: { label: t('followUp.status.blocked'), color: 'error' as const },
++      en_curso: { label: t('followUp.status.inProgress'), color: 'info' as const },
+       sin_actividad: { label: t('followUp.status.noActivity'), color: 'default' as const }
+     }),
+     [t]
    );
+ 
+   const fetchFiltersData = useCallback(async () => {
+     try {
+       const [hospitalRes, societyRes] = await Promise.all([
+         api.get('/hospitals'),
+         api.get('/sociedades')
+       ]);
+       const hospitalsData = hospitalRes.data?.data || [];
+       const societiesData = societyRes.data?.data || [];
+       const filteredHospitals = user?.rol === 'csm' && user?.zona
+         ? hospitalsData.filter((hospital: any) =>
+             hospital?.zona?.toUpperCase() === user.zona?.toUpperCase()
+           )
+         : hospitalsData;
+       setHospitals(filteredHospitals);
+       setSocieties(societiesData);
+     } catch {
+       setHospitals([]);
+       setSocieties([]);
+     }
+   }, [user?.rol, user?.zona]);
+@@ -361,51 +373,51 @@ const SeguimientoUsuarios: React.FC = () => {
+                 <TableRow key={summary.user._id} hover>
+                   <TableCell>
+                     <Typography variant="subtitle2">
+                       {summary.user.nombre} {summary.user.apellidos}
+                     </Typography>
+                     <Typography variant="body2" color="text.secondary">
+                       {summary.user.email}
+                     </Typography>
+                   </TableCell>
+                   <TableCell>
+                     {summary.user.tipo === 'Programa Sociedades'
+                       ? t('followUp.programs.societies')
+                       : t('followUp.programs.residents')}
+                   </TableCell>
+                   <TableCell>
+                     {summary.user.tipo === 'Programa Sociedades'
+                       ? summary.user.sociedad?.titulo || '-'
+                       : summary.user.hospital?.nombre || '-'}
+                   </TableCell>
+                   <TableCell>
+                     {summary.faseActual
+                       ? t('followUp.phaseLabel', {
+                           number: summary.faseActual.numero,
+                           name: summary.faseActual.nombre
+                         })
+-                      : t('followUp.status.noActivity')}
++                      : t('followUp.phase.none')}
+                   </TableCell>
+                   <TableCell>{renderProgress(summary)}</TableCell>
+                   <TableCell>{summary.pendientesValidacion}</TableCell>
+                   <TableCell>
+                     {summary.ultimaActualizacion
+                       ? formatDayMonthYear(summary.ultimaActualizacion)
+                       : '-'}
+                   </TableCell>
+                   <TableCell>
+                     <Chip
+                       label={statusConfig[summary.estadoGeneral]?.label}
+                       color={statusConfig[summary.estadoGeneral]?.color}
+                       variant="outlined"
+                     />
+                   </TableCell>
+                   <TableCell align="right">
+                     <Button
+                       variant="outlined"
+                       size="small"
+                       onClick={() => navigate(`/dashboard/seguimiento/${summary.user._id}`)}
+                     >
+                       {t('followUp.table.viewDetail')}
+                     </Button>
+                   </TableCell>
+                 </TableRow>
+diff --git a/src/controllers/progresoController.js b/src/controllers/progresoController.js
+index e9bd1ae11a354803fc45f3d19e8f7369455e4bdf..0075be4696a92bc38db869d360df34831e15f091 100644
+--- a/src/controllers/progresoController.js
++++ b/src/controllers/progresoController.js
+@@ -123,109 +123,157 @@ const formatProgresoParaResidente = (progresoDoc) => {
+   };
  };
  
- export default SeguimientoDetalle;
+ const getPhaseOrder = (fase) => {
+   if (!fase) return 0;
+   if (typeof fase.orden === 'number') return fase.orden;
+   if (typeof fase.numero === 'number') return fase.numero;
+   return 0;
+ };
+ 
+ const getLatestDateFromProgreso = (progreso) => {
+   const dates = [];
+   if (progreso.updatedAt) dates.push(new Date(progreso.updatedAt));
+   if (progreso.fechaRegistro) dates.push(new Date(progreso.fechaRegistro));
+   if (progreso.fechaInicio) dates.push(new Date(progreso.fechaInicio));
+   if (progreso.fechaFin) dates.push(new Date(progreso.fechaFin));
+   (progreso.actividades || []).forEach((actividad) => {
+     if (actividad.fechaRealizacion) dates.push(new Date(actividad.fechaRealizacion));
+     if (actividad.fechaValidacion) dates.push(new Date(actividad.fechaValidacion));
+     if (actividad.fechaRechazo) dates.push(new Date(actividad.fechaRechazo));
+   });
+   if (dates.length === 0) return null;
+   return new Date(Math.max(...dates.map((date) => date.getTime())));
+ };
+ 
+-const getCurrentPhase = (progresos) => {
+-  if (!progresos.length) return null;
+-  const ordered = [...progresos].sort(
+-    (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
+-  );
+-  const enProgreso = ordered.filter((p) => p.estadoGeneral === 'en progreso');
+-  if (enProgreso.length) {
+-    const pick = enProgreso.reduce((acc, item) =>
+-      getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
+-    );
+-    return pick.fase || null;
+-  }
+-  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
+-  if (avanzadas.length) {
+-    return avanzadas[avanzadas.length - 1].fase || null;
+-  }
+-  return ordered[ordered.length - 1].fase || null;
+-};
++const getCurrentPhase = (progresos) => {
++  if (!progresos.length) return null;
++  const ordered = [...progresos].sort(
++    (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
++  );
++  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
++  if (!avanzadas.length) {
++    return ordered[ordered.length - 1].fase || null;
++  }
++  const enCurso = avanzadas.filter(
++    (p) => p.estadoGeneral !== 'validado' && p.estadoGeneral !== 'completado'
++  );
++  if (enCurso.length) {
++    const pick = enCurso.reduce((acc, item) =>
++      getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
++    );
++    return pick.fase || null;
++  }
++  return avanzadas[avanzadas.length - 1].fase || null;
++};
+ 
+-const summarizeUserProgress = (user, progresos = []) => {
+-  const totalActividades = progresos.reduce(
+-    (acc, item) => acc + (item.actividades ? item.actividades.length : 0),
+-    0
+-  );
+-  const actividadesValidadas = progresos.reduce(
+-    (acc, item) =>
+-      acc +
+-      (item.actividades || []).filter((actividad) => actividad.estado === 'validado')
+-        .length,
+-    0
+-  );
+-  const pendientesValidacion = progresos.reduce(
+-    (acc, item) =>
+-      acc +
+-      (item.actividades || []).filter((actividad) => actividad.estado === 'completado')
+-        .length,
+-    0
+-  );
++const summarizeUserProgress = (user, progresos = []) => {
++  const totalActividades = progresos.reduce(
++    (acc, item) => acc + (item.actividades ? item.actividades.length : 0),
++    0
++  );
++  const actividadesValidadas = progresos.reduce(
++    (acc, item) =>
++      acc +
++      (item.actividades || []).filter((actividad) => actividad.estado === 'validado')
++        .length,
++    0
++  );
++  const pendientesValidacion = progresos.reduce(
++    (acc, item) =>
++      acc +
++      (item.actividades || []).filter((actividad) => actividad.estado === 'completado')
++        .length,
++    0
++  );
+ 
+   const lastUpdates = progresos
+     .map(getLatestDateFromProgreso)
+     .filter(Boolean)
+     .map((date) => date.getTime());
+   const ultimaActualizacion = lastUpdates.length
+     ? new Date(Math.max(...lastUpdates))
+     : null;
+ 
+-  let estadoGeneral = 'sin_actividad';
+-  if (progresos.length) {
+-    if (pendientesValidacion > 0) {
+-      estadoGeneral = 'pendiente_validacion';
+-    } else if (progresos.some((item) => item.estadoGeneral === 'bloqueada')) {
+-      estadoGeneral = 'bloqueado';
+-    } else {
+-      estadoGeneral = 'al_dia';
+-    }
+-  }
+-
+-  const faseActual = getCurrentPhase(progresos);
++  const faseActual = getCurrentPhase(progresos);
++  const sociedad = user?.tipo === 'Programa Sociedades' ? user?.sociedad : null;
++  const hasSchedule =
++    Boolean(
++      sociedad &&
++        [
++          'fechaConvocatoria',
++          'fechaPresentacion',
++          'fechaModulosOnline',
++          'fechaSimulacion',
++          'fechaAtividadesFirstAssistant',
++          'fechaModuloOnlineStepByStep',
++          'fechaHandOn'
++        ].some((key) => sociedad?.[key])
++    );
++  const societyPhaseDate = (() => {
++    if (!sociedad || !faseActual) return null;
++    const phaseOrder = getPhaseOrder(faseActual);
++    switch (phaseOrder) {
++      case 1:
++        return (
++          sociedad.fechaModulosOnline ||
++          sociedad.fechaPresentacion ||
++          sociedad.fechaConvocatoria ||
++          null
++        );
++      case 2:
++        return sociedad.fechaSimulacion || null;
++      case 3:
++        return sociedad.fechaAtividadesFirstAssistant || null;
++      case 4:
++        return sociedad.fechaModuloOnlineStepByStep || null;
++      case 5:
++        return sociedad.fechaHandOn || null;
++      default:
++        return null;
++    }
++  })();
++  const isOnSchedule = Boolean(
++    societyPhaseDate && new Date(societyPhaseDate) >= new Date()
++  );
++
++  const progresoCompleto =
++    progresos.length > 0 &&
++    progresos.every((item) => item.estadoGeneral === 'validado');
++
++  let estadoGeneral = 'sin_actividad';
++  if (pendientesValidacion > 0) {
++    estadoGeneral = 'pendiente_validacion';
++  } else if (progresoCompleto) {
++    estadoGeneral = 'progreso_completado';
++  } else if (totalActividades === 0) {
++    estadoGeneral = 'sin_actividad';
++  } else if (hasSchedule && isOnSchedule) {
++    estadoGeneral = 'al_dia';
++  } else {
++    estadoGeneral = 'en_curso';
++  }
+ 
+   return {
+     user: {
+       _id: user._id,
+       nombre: user.nombre,
+       apellidos: user.apellidos,
+       email: user.email,
+       tipo: user.tipo,
+       hospital: user.hospital,
+       sociedad: user.sociedad
+     },
+     faseActual,
+     progreso: {
+       total: totalActividades,
+       validadas: actividadesValidadas,
+       porcentaje: totalActividades
+         ? Math.round((actividadesValidadas / totalActividades) * 100)
+         : 0
+     },
+     pendientesValidacion,
+     ultimaActualizacion,
+     estadoGeneral
+   };
+ };
+ 
+@@ -338,55 +386,67 @@ const getSeguimientoUsuarios = async (req, res, next) => {
+         } else {
+           usersQuery = {
+             sociedad: req.user.sociedad,
+             rol: Role.PARTICIPANTE,
+             tipo: 'Programa Sociedades'
+           };
+         }
+       }
+     } else {
+       return res.status(403).json({ success: false, error: 'No autorizado para ver seguimiento' });
+     }
+ 
+     if (programa !== 'all') {
+       usersQuery.tipo = programa;
+     }
+     if (hospitalId !== 'all') {
+       usersQuery.hospital = hospitalId;
+     }
+     if (sociedadId !== 'all') {
+       usersQuery.sociedad = sociedadId;
+     }
+     if (userId) {
+       usersQuery._id = userId;
+     }
+ 
+-    const users = await User.find(usersQuery)
+-      .populate('hospital', 'nombre zona')
+-      .populate('sociedad', 'titulo')
+-      .select('nombre apellidos email tipo hospital sociedad')
+-      .lean();
++    const users = await User.find(usersQuery)
++      .populate('hospital', 'nombre zona')
++      .populate(
++        'sociedad',
++        [
++          'titulo',
++          'fechaConvocatoria',
++          'fechaPresentacion',
++          'fechaModulosOnline',
++          'fechaSimulacion',
++          'fechaAtividadesFirstAssistant',
++          'fechaModuloOnlineStepByStep',
++          'fechaHandOn'
++        ].join(' ')
++      )
++      .select('nombre apellidos email tipo hospital sociedad')
++      .lean();
+ 
+     const filteredUsers = users.filter((user) => {
+       if (!search) return true;
+       const q = search.toLowerCase();
+       return (
+         user.nombre?.toLowerCase().includes(q) ||
+         user.apellidos?.toLowerCase().includes(q) ||
+         user.email?.toLowerCase().includes(q)
+       );
+     });
+ 
+     const userIds = filteredUsers.map((user) => user._id);
+     const progresos = await ProgresoResidente.find({ residente: { $in: userIds } })
+       .populate('fase', 'nombre numero orden')
+       .select('residente fase actividades estadoGeneral fechaRegistro fechaInicio fechaFin updatedAt')
+       .lean();
+ 
+     const progresosMap = progresos.reduce((acc, item) => {
+       const key = item.residente?.toString();
+       if (!key) return acc;
+       if (!acc[key]) acc[key] = [];
+       acc[key].push(item);
+       return acc;
+     }, {});
+ 

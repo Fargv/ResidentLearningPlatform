@@ -150,18 +150,20 @@ const getCurrentPhase = (progresos) => {
   const ordered = [...progresos].sort(
     (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
   );
-  const enProgreso = ordered.filter((p) => p.estadoGeneral === 'en progreso');
-  if (enProgreso.length) {
-    const pick = enProgreso.reduce((acc, item) =>
+  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
+  if (!avanzadas.length) {
+    return ordered[ordered.length - 1].fase || null;
+  }
+  const enCurso = avanzadas.filter(
+    (p) => p.estadoGeneral !== 'validado' && p.estadoGeneral !== 'completado'
+  );
+  if (enCurso.length) {
+    const pick = enCurso.reduce((acc, item) =>
       getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
     );
     return pick.fase || null;
   }
-  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
-  if (avanzadas.length) {
-    return avanzadas[avanzadas.length - 1].fase || null;
-  }
-  return ordered[ordered.length - 1].fase || null;
+  return avanzadas[avanzadas.length - 1].fase || null;
 };
 
 const summarizeUserProgress = (user, progresos = []) => {
@@ -192,18 +194,64 @@ const summarizeUserProgress = (user, progresos = []) => {
     ? new Date(Math.max(...lastUpdates))
     : null;
 
-  let estadoGeneral = 'sin_actividad';
-  if (progresos.length) {
-    if (pendientesValidacion > 0) {
-      estadoGeneral = 'pendiente_validacion';
-    } else if (progresos.some((item) => item.estadoGeneral === 'bloqueada')) {
-      estadoGeneral = 'bloqueado';
-    } else {
-      estadoGeneral = 'al_dia';
-    }
-  }
-
   const faseActual = getCurrentPhase(progresos);
+  const sociedad = user?.tipo === 'Programa Sociedades' ? user?.sociedad : null;
+  const hasSchedule =
+    Boolean(
+      sociedad &&
+        [
+          'fechaConvocatoria',
+          'fechaPresentacion',
+          'fechaModulosOnline',
+          'fechaSimulacion',
+          'fechaAtividadesFirstAssistant',
+          'fechaModuloOnlineStepByStep',
+          'fechaHandOn'
+        ].some((key) => sociedad?.[key])
+    );
+  const societyPhaseDate = (() => {
+    if (!sociedad || !faseActual) return null;
+    const phaseOrder = getPhaseOrder(faseActual);
+    switch (phaseOrder) {
+      case 1:
+        return (
+          sociedad.fechaModulosOnline ||
+          sociedad.fechaPresentacion ||
+          sociedad.fechaConvocatoria ||
+          null
+        );
+      case 2:
+        return sociedad.fechaSimulacion || null;
+      case 3:
+        return sociedad.fechaAtividadesFirstAssistant || null;
+      case 4:
+        return sociedad.fechaModuloOnlineStepByStep || null;
+      case 5:
+        return sociedad.fechaHandOn || null;
+      default:
+        return null;
+    }
+  })();
+  const isOnSchedule = Boolean(
+    societyPhaseDate && new Date(societyPhaseDate) >= new Date()
+  );
+
+  const progresoCompleto =
+    progresos.length > 0 &&
+    progresos.every((item) => item.estadoGeneral === 'validado');
+
+  let estadoGeneral = 'sin_actividad';
+  if (pendientesValidacion > 0) {
+    estadoGeneral = 'pendiente_validacion';
+  } else if (progresoCompleto) {
+    estadoGeneral = 'progreso_completado';
+  } else if (totalActividades === 0) {
+    estadoGeneral = 'sin_actividad';
+  } else if (hasSchedule && isOnSchedule) {
+    estadoGeneral = 'al_dia';
+  } else {
+    estadoGeneral = 'en_curso';
+  }
 
   return {
     user: {
@@ -362,7 +410,19 @@ const getSeguimientoUsuarios = async (req, res, next) => {
 
     const users = await User.find(usersQuery)
       .populate('hospital', 'nombre zona')
-      .populate('sociedad', 'titulo')
+      .populate(
+        'sociedad',
+        [
+          'titulo',
+          'fechaConvocatoria',
+          'fechaPresentacion',
+          'fechaModulosOnline',
+          'fechaSimulacion',
+          'fechaAtividadesFirstAssistant',
+          'fechaModuloOnlineStepByStep',
+          'fechaHandOn'
+        ].join(' ')
+      )
       .select('nombre apellidos email tipo hospital sociedad')
       .lean();
 

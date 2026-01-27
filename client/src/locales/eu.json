@@ -15,6 +15,7 @@
     "validations": "Balidazioak",
     "myUsers": "Nire erabiltzaileak",
     "followUp": "Seguimiento",
+    "followUpUsers": "Seguimiento de mis usuarios",
     "usersProgress": "Erabiltzaileen aurrerapena",
     "settings": "Ezarpenak",
     "myProfile": "Nire profila",
@@ -60,8 +61,13 @@
     "status": {
       "upToDate": "Al día",
       "pendingValidation": "Pendiente validación",
+      "completedProgress": "Progreso completado",
+      "inProgress": "En curso",
       "blocked": "Bloqueado",
       "noActivity": "Sin actividad"
+    },
+    "phase": {
+      "none": "Sin fase"
     },
     "phaseLabel": "Fase {{number}}: {{name}}",
     "empty": {
@@ -495,6 +501,7 @@
   "adminUsers": {
     "titleAll": "Erabiltzaile guztien kudeaketa",
     "titleHospital": "Zure ospitaleko erabiltzaileak",
+    "filtersTitle": "Filtros",
     "searchPlaceholder": "Bilatu izenaren edo emailaren arabera",
     "loadError": "Errorea datuak kargatzean",
     "actions": {
@@ -505,6 +512,7 @@
       "changePassword": "Pasahitza aldatu",
       "sendResetLink": "Berrezartze esteka bidali",
       "createProgress": "Aurrerapena sortu",
+      "viewFollowUp": "Ver seguimiento",
       "downloadSurgeryReport": "Deskargatu {{phase}} txostena"
     },
     "createSuccess": "Erabiltzailea ongi sortu da",
@@ -684,7 +692,8 @@
       "role": "Rola",
       "actions": "Ekintzak"
     },
-    "viewProgress": "Aurrerapena"
+    "viewProgress": "Aurrerapena",
+    "editProgress": "Editar progreso"
   },
   "adminProgressDetail": {
     "loadError": "Errorea aurrerapena kargatzean",

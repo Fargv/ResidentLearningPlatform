@@ -43,7 +43,12 @@ interface SeguimientoSummary {
   };
   pendientesValidacion: number;
   ultimaActualizacion?: string | null;
-  estadoGeneral: 'al_dia' | 'pendiente_validacion' | 'bloqueado' | 'sin_actividad';
+  estadoGeneral:
+    | 'al_dia'
+    | 'pendiente_validacion'
+    | 'progreso_completado'
+    | 'en_curso'
+    | 'sin_actividad';
 }
 
 const SeguimientoUsuarios: React.FC = () => {
@@ -90,9 +95,16 @@ const SeguimientoUsuarios: React.FC = () => {
 
   const statusConfig = useMemo(
     () => ({
+      pendiente_validacion: {
+        label: t('followUp.status.pendingValidation'),
+        color: 'warning' as const
+      },
+      progreso_completado: {
+        label: t('followUp.status.completedProgress'),
+        color: 'success' as const
+      },
       al_dia: { label: t('followUp.status.upToDate'), color: 'success' as const },
-      pendiente_validacion: { label: t('followUp.status.pendingValidation'), color: 'warning' as const },
-      bloqueado: { label: t('followUp.status.blocked'), color: 'error' as const },
+      en_curso: { label: t('followUp.status.inProgress'), color: 'info' as const },
       sin_actividad: { label: t('followUp.status.noActivity'), color: 'default' as const }
     }),
     [t]
@@ -383,7 +395,7 @@ const SeguimientoUsuarios: React.FC = () => {
                           number: summary.faseActual.numero,
                           name: summary.faseActual.nombre
                         })
-                      : t('followUp.status.noActivity')}
+                      : t('followUp.phase.none')}
                   </TableCell>
                   <TableCell>{renderProgress(summary)}</TableCell>
                   <TableCell>{summary.pendientesValidacion}</TableCell>

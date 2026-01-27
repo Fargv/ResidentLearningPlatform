@@ -22,6 +22,7 @@
     "validations": "Validations",
     "myUsers": "My Users",
     "followUp": "Follow-up",
+    "followUpUsers": "Follow-up for my users",
     "invitations": "Invitations",
     "usersProgress": "Users Progress",
     "settings": "Settings",
@@ -70,8 +71,13 @@
     "status": {
       "upToDate": "Up to date",
       "pendingValidation": "Pending validation",
+      "completedProgress": "Progress completed",
+      "inProgress": "In progress",
       "blocked": "Blocked",
       "noActivity": "No activity"
+    },
+    "phase": {
+      "none": "No phase"
     },
     "phaseLabel": "Phase {{number}}: {{name}}",
     "empty": {
@@ -527,6 +533,7 @@
   "adminUsers": {
     "titleAll": "Manage All Users",
     "titleHospital": "Users of Your Hospital",
+    "filtersTitle": "Filters",
     "searchPlaceholder": "Search by name or email",
     "loadError": "Error loading data",
     "actions": {
@@ -538,6 +545,7 @@
       "changePassword": "Change password",
       "sendResetLink": "Send reset link",
       "createProgress": "Create progress",
+      "viewFollowUp": "View follow-up",
       "downloadSurgeryReport": "Download report for {{phase}}"
     },
     "createSuccess": "User created successfully",
@@ -719,7 +727,8 @@
       "role": "Role",
       "actions": "Actions"
     },
-    "viewProgress": "Progress"
+    "viewProgress": "Progress",
+    "editProgress": "Edit progress"
   },
   "adminProgressDetail": {
     "loadError": "Error loading progress",

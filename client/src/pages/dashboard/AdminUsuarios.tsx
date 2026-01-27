@@ -863,90 +863,116 @@ const AdminUsuarios: React.FC = () => {
         </Box>
       </Box>
 
-     <TextField
-        variant="outlined"
-        placeholder={t("adminUsers.searchPlaceholder")}
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        fullWidth
-        margin="normal"
-      />
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
-        <Autocomplete
-          multiple
-          options={allRoles}
-          value={selectedRoles}
-          onChange={(e, newValue) =>
-            setSelectedRoles(newValue as string[])
-          }
-          renderInput={(params) => (
-            <TextField {...params} label={t("adminUsers.fields.role")} />
-          )}
-          sx={{ minWidth: 200 }}
-        />
-        <Autocomplete
-          multiple
-          options={hospitalSociedadOptions}
-          getOptionLabel={(option) => option.nombre}
-          value={hospitalSociedadOptions.filter((h) =>
-            selectedHospitals.includes(h._id),
-          )}
-          onChange={(e, newValue) =>
-            setSelectedHospitals(newValue.map((h: any) => h._id))
-          }
-          renderInput={(params) => (
-            <TextField {...params} label={t("adminUsers.fields.hospital")} />
-          )}
-          sx={{ minWidth: 200 }}
-        />
-        <Autocomplete
-          multiple
-          options={zonaOptions}
-          value={selectedZonas}
-          onChange={(e, newValue) =>
-            setSelectedZonas(newValue as string[])
-          }
-          renderInput={(params) => (
-            <TextField {...params} label={t("adminUsers.fields.zone")} />
-          )}
-          sx={{ minWidth: 200 }}
-        />
-        <Autocomplete
-          multiple
-          options={especialidadOptions}
-          value={selectedEspecialidades}
-          onChange={(e, newValue) =>
-            setSelectedEspecialidades(newValue as string[])
-          }
-          renderInput={(params) => (
-            <TextField {...params} label={t("adminUsers.fields.specialty")} />
-          )}
-          sx={{ minWidth: 200 }}
-        />
-        <Autocomplete
-          multiple
-          options={["Programa Residentes", "Programa Sociedades"]}
-          value={selectedTipos}
-          onChange={(e, newValue) => setSelectedTipos(newValue as string[])}
-          renderInput={(params) => (
-            <TextField {...params} label={t("adminUsers.fields.type")} />
-          )}
-          sx={{ minWidth: 200 }}
-        />
-        <Autocomplete
-          multiple
-          options={faseOptions}
-          value={selectedFases}
-          onChange={(e, newValue) => setSelectedFases(newValue as string[])}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={t("adminUsers.fields.phase", "Fase")}
-            />
-          )}
-          sx={{ minWidth: 200 }}
-        />
-      </Box>
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+          {t('adminUsers.filtersTitle')}
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          <TextField
+            variant="outlined"
+            placeholder={t("adminUsers.searchPlaceholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            size="small"
+            sx={{ flex: "1 1 240px", minWidth: 200 }}
+          />
+          <Autocomplete
+            multiple
+            options={allRoles}
+            value={selectedRoles}
+            onChange={(e, newValue) =>
+              setSelectedRoles(newValue as string[])
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("adminUsers.fields.role")}
+                size="small"
+              />
+            )}
+            sx={{ minWidth: 200 }}
+          />
+          <Autocomplete
+            multiple
+            options={hospitalSociedadOptions}
+            getOptionLabel={(option) => option.nombre}
+            value={hospitalSociedadOptions.filter((h) =>
+              selectedHospitals.includes(h._id),
+            )}
+            onChange={(e, newValue) =>
+              setSelectedHospitals(newValue.map((h: any) => h._id))
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("adminUsers.fields.hospital")}
+                size="small"
+              />
+            )}
+            sx={{ minWidth: 200 }}
+          />
+          <Autocomplete
+            multiple
+            options={zonaOptions}
+            value={selectedZonas}
+            onChange={(e, newValue) =>
+              setSelectedZonas(newValue as string[])
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("adminUsers.fields.zone")}
+                size="small"
+              />
+            )}
+            sx={{ minWidth: 200 }}
+          />
+          <Autocomplete
+            multiple
+            options={especialidadOptions}
+            value={selectedEspecialidades}
+            onChange={(e, newValue) =>
+              setSelectedEspecialidades(newValue as string[])
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("adminUsers.fields.specialty")}
+                size="small"
+              />
+            )}
+            sx={{ minWidth: 200 }}
+          />
+          <Autocomplete
+            multiple
+            options={["Programa Residentes", "Programa Sociedades"]}
+            value={selectedTipos}
+            onChange={(e, newValue) => setSelectedTipos(newValue as string[])}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("adminUsers.fields.type")}
+                size="small"
+              />
+            )}
+            sx={{ minWidth: 200 }}
+          />
+          <Autocomplete
+            multiple
+            options={faseOptions}
+            value={selectedFases}
+            onChange={(e, newValue) => setSelectedFases(newValue as string[])}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t("adminUsers.fields.phase", "Fase")}
+                size="small"
+              />
+            )}
+            sx={{ minWidth: 200 }}
+          />
+        </Box>
+      </Paper>
 
      {/* Tabla de usuarios */}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -1123,7 +1149,19 @@ const AdminUsuarios: React.FC = () => {
                               (theme) => getProgressActionButtonStyles(theme),
                             ]}
                           >
-                            {t('adminUserProgress.viewProgress')}
+                            {t('adminUserProgress.editProgress')}
+                          </Button>
+                        )}
+                      {['residente', 'participante'].includes(usuario.rol) &&
+                        user?.rol === "administrador" && (
+                          <Button
+                            variant="outlined"
+                            onClick={() =>
+                              navigate(`/dashboard/seguimiento/${usuario._id}`)
+                            }
+                            sx={TABLE_ACTION_BUTTON_SX}
+                          >
+                            {t('adminUsers.actions.viewFollowUp')}
                           </Button>
                         )}
                       {['residente', 'participante'].includes(usuario.rol) &&

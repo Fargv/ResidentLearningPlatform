@@ -465,11 +465,7 @@ const DashboardHome: React.FC = () => {
 
   const actions: Action[] = [];
 
-  if (
-    user?.rol === "residente" ||
-    user?.rol === "participante" ||
-    user?.rol === "profesor"
-  ) {
+  if (user?.rol === "residente" || user?.rol === "participante") {
     actions.push({
       label: t('actions.trainingPhases'),
       path: "/dashboard/fases",
@@ -482,6 +478,14 @@ const DashboardHome: React.FC = () => {
       label: t('actions.validations'),
       path: "/dashboard/validaciones",
       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+    });
+  }
+
+  if (user?.rol === "profesor") {
+    actions.push({
+      label: t('actions.followUpUsers'),
+      path: "/dashboard/seguimiento",
+      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
     });
   }
 

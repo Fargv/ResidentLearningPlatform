@@ -131,12 +131,14 @@ const SeguimientoDetalle: React.FC = () => {
 
   const summaryStatus = useMemo(() => {
     switch (summary?.estadoGeneral) {
-      case 'al_dia':
-        return { label: t('followUp.status.upToDate'), color: 'success' as const };
       case 'pendiente_validacion':
         return { label: t('followUp.status.pendingValidation'), color: 'warning' as const };
-      case 'bloqueado':
-        return { label: t('followUp.status.blocked'), color: 'error' as const };
+      case 'progreso_completado':
+        return { label: t('followUp.status.completedProgress'), color: 'success' as const };
+      case 'al_dia':
+        return { label: t('followUp.status.upToDate'), color: 'success' as const };
+      case 'en_curso':
+        return { label: t('followUp.status.inProgress'), color: 'info' as const };
       case 'sin_actividad':
         return { label: t('followUp.status.noActivity'), color: 'default' as const };
       default:
@@ -305,9 +307,19 @@ const SeguimientoDetalle: React.FC = () => {
 
   return (
     <Box>
-      <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')} sx={{ mb: 2 }}>
-        {t('followUp.detail.back')}
-      </Button>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+        <Button variant="outlined" onClick={() => navigate('/dashboard/seguimiento')}>
+          {t('followUp.detail.back')}
+        </Button>
+        {user?.rol === 'administrador' && summary?.user?._id && (
+          <Button
+            variant="contained"
+            onClick={() => navigate(`/dashboard/progreso-usuario/${summary.user._id}`)}
+          >
+            {t('adminUserProgress.editProgress')}
+          </Button>
+        )}
+      </Box>
 
       <Typography variant="h4" gutterBottom>
         {t('followUp.detail.title')}
@@ -351,7 +363,7 @@ const SeguimientoDetalle: React.FC = () => {
                       number: summary.faseActual.numero,
                       name: summary.faseActual.nombre
                     })
-                  : t('followUp.status.noActivity')
+                  : t('followUp.phase.none')
               },
               {
                 label: t('followUp.detail.progress'),
