@@ -77,7 +77,9 @@
       "noActivity": "Sin actividad"
     },
     "phase": {
-      "none": "Sin fase"
+      "none": "Sin fase",
+      "notStarted": "Sin iniciar",
+      "completed": "Fases completadas"
     },
     "phaseLabel": "Fase {{number}}: {{name}}",
     "empty": {

@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { formatDayMonthYear } from '../../utils/date';
+import { getCurrentPhaseLabel } from '../../utils/followUp';
 
 interface SeguimientoSummary {
   user: {
@@ -36,6 +37,7 @@ interface SeguimientoSummary {
     sociedad?: { _id?: string; titulo?: string } | null;
   };
   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
+  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
   progreso: {
     total: number;
     validadas: number;
@@ -389,14 +391,7 @@ const SeguimientoUsuarios: React.FC = () => {
                       ? summary.user.sociedad?.titulo || '-'
                       : summary.user.hospital?.nombre || '-'}
                   </TableCell>
-                  <TableCell>
-                    {summary.faseActual
-                      ? t('followUp.phaseLabel', {
-                          number: summary.faseActual.numero,
-                          name: summary.faseActual.nombre
-                        })
-                      : t('followUp.phase.none')}
-                  </TableCell>
+                  <TableCell>{getCurrentPhaseLabel(t, summary)}</TableCell>
                   <TableCell>{renderProgress(summary)}</TableCell>
                   <TableCell>{summary.pendientesValidacion}</TableCell>
                   <TableCell>

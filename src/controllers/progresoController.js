@@ -145,25 +145,34 @@ const getLatestDateFromProgreso = (progreso) => {
   return new Date(Math.max(...dates.map((date) => date.getTime())));
 };
 
-const getCurrentPhase = (progresos) => {
-  if (!progresos.length) return null;
+const getCurrentPhaseStatus = (progresos) => {
+  if (!progresos.length) {
+    return { faseActual: null, estadoFaseActual: 'sin_iniciar' };
+  }
   const ordered = [...progresos].sort(
     (a, b) => getPhaseOrder(a.fase) - getPhaseOrder(b.fase)
   );
-  const avanzadas = ordered.filter((p) => p.estadoGeneral !== 'bloqueada');
-  if (!avanzadas.length) {
-    return ordered[ordered.length - 1].fase || null;
+  const enProgreso = ordered.find((progreso) => progreso.estadoGeneral === 'en progreso');
+  if (enProgreso) {
+    return { faseActual: enProgreso.fase || null, estadoFaseActual: 'en_progreso' };
   }
-  const enCurso = avanzadas.filter(
-    (p) => p.estadoGeneral !== 'validado' && p.estadoGeneral !== 'completado'
+  const started = ordered.some((progreso) => progreso.estadoGeneral !== 'bloqueada');
+  const allCompleted = started && ordered.every((progreso) =>
+    ['completado', 'validado'].includes(progreso.estadoGeneral)
   );
-  if (enCurso.length) {
-    const pick = enCurso.reduce((acc, item) =>
-      getPhaseOrder(item.fase) > getPhaseOrder(acc.fase) ? item : acc
-    );
-    return pick.fase || null;
+  if (allCompleted) {
+    return { faseActual: null, estadoFaseActual: 'completadas' };
   }
-  return avanzadas[avanzadas.length - 1].fase || null;
+  if (!started) {
+    return { faseActual: null, estadoFaseActual: 'sin_iniciar' };
+  }
+  const lastStarted = [...ordered]
+    .filter((progreso) => progreso.estadoGeneral !== 'bloqueada')
+    .pop();
+  return {
+    faseActual: lastStarted?.fase || null,
+    estadoFaseActual: lastStarted?.fase ? 'en_progreso' : 'sin_iniciar'
+  };
 };
 
 const summarizeUserProgress = (user, progresos = []) => {
@@ -194,7 +203,7 @@ const summarizeUserProgress = (user, progresos = []) => {
     ? new Date(Math.max(...lastUpdates))
     : null;
 
-  const faseActual = getCurrentPhase(progresos);
+  const { faseActual, estadoFaseActual } = getCurrentPhaseStatus(progresos);
   const sociedad = user?.tipo === 'Programa Sociedades' ? user?.sociedad : null;
   const hasSchedule =
     Boolean(
@@ -264,6 +273,7 @@ const summarizeUserProgress = (user, progresos = []) => {
       sociedad: user.sociedad
     },
     faseActual,
+    estadoFaseActual,
     progreso: {
       total: totalActividades,
       validadas: actividadesValidadas,

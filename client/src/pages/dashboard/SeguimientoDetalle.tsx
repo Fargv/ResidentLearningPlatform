@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { formatDayMonthYear } from '../../utils/date';
+import { getCurrentPhaseLabel } from '../../utils/followUp';
 
 interface Actividad {
   nombre?: string;
@@ -60,6 +61,7 @@ interface SummaryResponse {
     sociedad?: { _id?: string; titulo?: string } | null;
   };
   faseActual?: { _id: string; nombre?: string; numero?: number } | null;
+  estadoFaseActual?: 'en_progreso' | 'completadas' | 'sin_iniciar' | null;
   progreso: { total: number; validadas: number; porcentaje: number };
   pendientesValidacion: number;
   ultimaActualizacion?: string | null;
@@ -358,12 +360,7 @@ const SeguimientoDetalle: React.FC = () => {
             {[
               {
                 label: t('followUp.detail.currentPhase'),
-                value: summary.faseActual
-                  ? t('followUp.phaseLabel', {
-                      number: summary.faseActual.numero,
-                      name: summary.faseActual.nombre
-                    })
-                  : t('followUp.phase.none')
+                value: getCurrentPhaseLabel(t, summary)
               },
               {
                 label: t('followUp.detail.progress'),
